@@ -1,0 +1,2 @@
+afun <-
+function() {}
