@@ -8,6 +8,8 @@ afun(x)
 }
 \arguments{
 \item{x}{This is a parameter}
+
+\item{y}{This is another parameter}
 }
 \description{
 This is the title

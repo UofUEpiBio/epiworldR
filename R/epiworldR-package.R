@@ -1,4 +1,4 @@
-#' first_function()
+#' Epi Functions
 #' @param x This is a number
 #' @param y This is another number
 #' @param z This is the last number 
@@ -11,5 +11,14 @@ first_function <- function(x,y,z) {
   x + y + z
 }
 
-?first_function
+#' @rdname first_function
+second_function <- function(x) {
+  
+}
+
+#' @details
+#' The only function you're likely to need from roxygen2 is [roxygenize()]. 
+#' Otherwise refer to the vignettes to see how to format the documentation.
+#' @keywords internal
+"_PACKAGE"
 

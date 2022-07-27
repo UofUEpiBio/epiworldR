@@ -2,9 +2,12 @@
 % Please edit documentation in R/epiworldR-package.R
 \name{first_function}
 \alias{first_function}
-\title{first_function()}
+\alias{second_function}
+\title{Epi Functions}
 \usage{
 first_function(x, y, z)
+
+second_function(x)
 }
 \arguments{
 \item{x}{This is a number}
@@ -17,7 +20,7 @@ first_function(x, y, z)
 The sum of \code{x}, \code{y}, and \code{z}.
 }
 \description{
-first_function()
+Epi Functions
 }
 \examples{
 first_function(1, 1, 3)
