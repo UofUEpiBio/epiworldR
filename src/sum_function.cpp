@@ -2,6 +2,8 @@
 using namespace cpp11;
 namespace writable = cpp11::writable;
 
+//' This thing sums vectors
+//' @param x A numeric vector
 //' @export
 [[cpp11::register]]
 double sum_cpp(doubles x) {
