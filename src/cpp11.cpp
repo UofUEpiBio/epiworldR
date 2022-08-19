@@ -5,6 +5,41 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// model_sir.cpp
+SEXP ModelSIR(std::string name, double prevalence, double infectiousness, double recovery);
+extern "C" SEXP _epiworldR_ModelSIR(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP recovery) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSIR(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+  END_CPP11
+}
+// model_sir.cpp
+int init(SEXP m, int days, int seed);
+extern "C" SEXP _epiworldR_init(SEXP m, SEXP days, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(init(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(days), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// model_sir.cpp
+int print(SEXP m);
+extern "C" SEXP _epiworldR_print(SEXP m) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(print(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+  END_CPP11
+}
+// model_sir.cpp
+int agents_smallworld(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+extern "C" SEXP _epiworldR_agents_smallworld(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_smallworld(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// model_sir.cpp
+int run(SEXP m);
+extern "C" SEXP _epiworldR_run(SEXP m) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+  END_CPP11
+}
 // sum_function.cpp
 double sum_cpp(doubles x);
 extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
@@ -15,7 +50,12 @@ extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_epiworldR_sum_cpp", (DL_FUNC) &_epiworldR_sum_cpp, 1},
+    {"_epiworldR_ModelSIR",          (DL_FUNC) &_epiworldR_ModelSIR,          4},
+    {"_epiworldR_agents_smallworld", (DL_FUNC) &_epiworldR_agents_smallworld, 5},
+    {"_epiworldR_init",              (DL_FUNC) &_epiworldR_init,              3},
+    {"_epiworldR_print",             (DL_FUNC) &_epiworldR_print,             1},
+    {"_epiworldR_run",               (DL_FUNC) &_epiworldR_run,               1},
+    {"_epiworldR_sum_cpp",           (DL_FUNC) &_epiworldR_sum_cpp,           1},
     {NULL, NULL, 0}
 };
 }

@@ -24,32 +24,65 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(epiworldR)
-## basic example code
+
+# Creating a SIR model
+sir <- epiworldR:::ModelSIR(
+  name = "COVID-19",
+  prevalence = .1,
+  infectiousness = .9,
+  recovery = .3
+  )
+
+# Adding a Small world population 
+epiworldR:::agents_smallworld(
+  sir,
+  n = 10000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+#> [1] 0
+
+# Initializing 
+epiworldR:::init(sir, days = 100, seed = 1912)
+#> [1] 0
+
+# Running and printing
+epiworldR:::run(sir)
+#> Running the model...
+#> _________________________________________________________________________
+#> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+#> [1] 0
+epiworldR:::print(sir)
+#> 
+#> ________________________________________________________________________________
+#> SIMULATION STUDY
+#> 
+#> Population size     : 10000
+#> Number of entitites : 0
+#> Days (duration)     : 100 (of 100)
+#> Number of variants  : 1
+#> Last run elapsed t  : 97.00ms
+#> Rewiring            : off
+#> 
+#> Virus(es):
+#>  - COVID-19 (baseline prevalence: 10.00%)
+#> 
+#> Tool(s):
+#>  (none)
+#> 
+#> Model parameters:
+#>  - Infectiousness    : 0.9000
+#>  - Prob. of Recovery : 0.3000
+#> 
+#> Distribution of the population at time 100:
+#>  - (0) Susceptible :  9000 -> 0
+#>  - (1) Infected    :  1000 -> 0
+#>  - (2) Recovered   :     0 -> 10000
+#> 
+#> Transition Probabilities:
+#>  - Susceptible  0.29  0.71  0.00
+#>  - Infected     0.00  0.73  0.27
+#>  - Recovered    0.00  0.00  1.00
+#> [1] 0
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
-```
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
