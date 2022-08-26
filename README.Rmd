@@ -37,7 +37,7 @@ This is a basic example which shows you how to solve a common problem:
 library(epiworldR)
 
 # Creating a SIR model
-sir <- epiworldR:::ModelSIR(
+sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .1,
   infectiousness = .9,
@@ -45,7 +45,7 @@ sir <- epiworldR:::ModelSIR(
   )
 
 # Adding a Small world population 
-epiworldR:::agents_smallworld(
+agents_smallworld(
   sir,
   n = 10000,
   k = 5,
@@ -54,9 +54,9 @@ epiworldR:::agents_smallworld(
   )
 
 # Initializing 
-epiworldR:::init(sir, days = 100, seed = 1912)
+init(sir, days = 100, seed = 1912)
 
 # Running and printing
-epiworldR:::run(sir)
-epiworldR:::print(sir)
+run(sir)
+sir
 ```

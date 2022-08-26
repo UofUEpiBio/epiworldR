@@ -5,11 +5,15 @@
 
 using namespace cpp11;
 
-#define WrapSIR(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIR<>> (a)
+
+// Model definitions:
+// https://github.com/UofUEpi/epiworld/tree/master/include/epiworld/models
+
+#define WrapSIS(a) \
+  cpp11::external_pointer<epiworld::epimodels::ModelSIS<>> (a)
 
 [[cpp11::register]]
-SEXP ModelSIR_cpp(
+SEXP ModelSIS(
   std::string name,
   double prevalence,
   double infectiousness,
@@ -17,8 +21,8 @@ SEXP ModelSIR_cpp(
 ) {
   
   // Creating a pointer to a ModelSIR model
-  WrapSIR(ptr)(
-    new epiworld::epimodels::ModelSIR<>(
+  WrapSIS(ptr)(
+    new epiworld::epimodels::ModelSIS<>(
       name,
       prevalence,
       infectiousness,
@@ -30,19 +34,19 @@ SEXP ModelSIR_cpp(
 }
 
 [[cpp11::register]]
-int init_sir(SEXP m, int days, int seed) {
+int init_sis(SEXP m, int days, int seed) {
   
-  WrapSIR(ptr)(m);
+  WrapSIS(ptr)(m);
   ptr->init(days, seed);
   
   return 0;
   
 }
-
-[[cpp11::register]]
-int print_sir(SEXP m) {
   
-  WrapSIR(ptr)(m);
+[[cpp11::register]]
+int print_sis(SEXP m) {
+  
+  WrapSIS(ptr)(m);
   ptr->print();
   
   return 0;
@@ -50,7 +54,7 @@ int print_sir(SEXP m) {
 }
   
 [[cpp11::register]]
-int agents_smallworld_sir(
+int agents_smallworld_sis(
     SEXP m,
     unsigned int n = 1000,
     unsigned int k = 5,
@@ -59,7 +63,7 @@ int agents_smallworld_sir(
 
   ) {
   
-  WrapSIR(ptr)(m);
+  WrapSIS(ptr)(m);
   ptr->agents_smallworld(n, k, d, p);
   
   return 0;
@@ -67,13 +71,13 @@ int agents_smallworld_sir(
 }
 
 [[cpp11::register]]
-int run_sir(SEXP m) {
+int run_sis(SEXP m) {
   
-  WrapSIR(ptr)(m);
+  WrapSIS(ptr)(m);
   ptr->run();
   
   return 0;
   
 }
 
-#undef WrapSIR
+#undef WrapSIS
