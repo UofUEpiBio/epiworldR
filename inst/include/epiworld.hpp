@@ -455,7 +455,10 @@ using MapVec_type = std::unordered_map< std::vector< Ta >, Tb, vecHasher<Ta>>;
 template<typename TSeq = int>
 inline TSeq default_sequence();
 
-int _n_sequences_created = 0;
+// Making it 'static' so that we don't have problems when including the
+// header. This is important during the linkage, e.g., in R.
+// See https://en.cppreference.com/w/cpp/language/storage_duration#Linkage
+static int _n_sequences_created = 0;
 
 template<>
 inline bool default_sequence() {
@@ -4497,6 +4500,8 @@ class Model {
     friend class Queue<TSeq>;
 private:
 
+    std::string name = ""; ///< Name of the model
+
     DataBase<TSeq> db = DataBase<TSeq>(*this);
 
     std::vector< Agent<TSeq> > population;
@@ -5033,6 +5038,13 @@ public:
      */
     void set_agents_data(double * data_, size_t ncols_);
 
+    /**
+     * @brief Set the name object
+     * 
+     * @param name 
+     */
+    void set_name(std::string name);
+
 };
 
 #endif
@@ -5419,6 +5431,7 @@ inline epiworld_double death_reduction_mixer_default(
 
 template<typename TSeq>
 inline Model<TSeq>::Model(const Model<TSeq> & model) :
+    name(model.name),
     db(model.db),
     viruses(model.viruses),
     prevalence_virus(model.prevalence_virus),
@@ -5471,6 +5484,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
 
 template<typename TSeq>
 inline Model<TSeq>::Model(Model<TSeq> && model) :
+    name(std::move(model.name)),
     db(std::move(model.db)),
     population(std::move(model.population)),
     population_data(std::move(model.population_data)),
@@ -6620,6 +6634,8 @@ inline void Model<TSeq>::print() const
     EPI_DEBUG_NOTIFY_ACTIVE()
 
     printf_epiworld("\n%s\n%s\n\n",line.c_str(), "SIMULATION STUDY");
+
+    printf_epiworld("Name of the model   : %s\n", (this->name == "") ? std::string("(none)").c_str() : name.c_str());
     printf_epiworld("Population size     : %i\n", static_cast<int>(size()));
     printf_epiworld("Number of entitites : %i\n", static_cast<int>(entities.size()));
     printf_epiworld("Days (duration)     : %i (of %i)\n", today(), ndays);
@@ -6634,6 +6650,23 @@ inline void Model<TSeq>::print() const
         if (n_replicates > 1u)
         {
             printf_epiworld("Total elapsed t     : %.2f%s (%i runs)\n", total, abbr.c_str(), n_replicates);
+        }
+
+        // Elapsed time in speed
+        get_elapsed("microseconds", &elapsed, &total, &abbr, false);
+        printf_epiworld("Last run speed      : %.2f million agents x day / second\n",
+            static_cast<double>(this->size()) *
+            static_cast<double>(this->get_ndays()) /
+            static_cast<double>(elapsed)
+            );
+        if (n_replicates > 1u)
+        {
+            printf_epiworld("Average run speed   : %.2f million agents x day / second\n",
+                static_cast<double>(this->size()) *
+                static_cast<double>(this->get_ndays()) *
+                static_cast<double>(n_replicates) /
+                static_cast<double>(total)
+            );
         }
 
     } else {
@@ -7249,6 +7282,12 @@ inline void Model<TSeq>::set_agents_data(double * data_, size_t ncols_)
 {
     population_data = data_;
     population_data_n_features = ncols_;
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_name(std::string name)
+{
+    this->name = name;
 }
 
 #undef DURCAST
@@ -11340,6 +11379,8 @@ inline ModelSIS<TSeq>::ModelSIS(
     )
 {
 
+    model.set_name("Susceptible-Infected-Susceptible (SIS)");
+
     // Adding statuses
     model.add_status("Susceptible", epiworld::default_update_susceptible<TSeq>);
     model.add_status("Infected", epiworld::default_update_exposed<TSeq>);
@@ -11466,6 +11507,8 @@ inline ModelSIR<TSeq>::ModelSIR(
     
     model.add_virus(virus, prevalence);
 
+    model.set_name("Susceptible-Infected-Recovered (SIR)");
+
     return;
    
 }
@@ -11496,6 +11539,155 @@ inline ModelSIR<TSeq>::ModelSIR(
 ////////////////////////////////////////////////////////////////////////////////
 
  End of -include/epiworld//models/sir.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/seir.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_MODELS_SEIR_HPP
+#define EPIWORLD_MODELS_SEIR_HPP
+
+/**
+ * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
+ * 
+ * @param model A Model<TSeq> object where to set up the SIR.
+ * @param vname std::string Name of the virus
+ * @param initial_prevalence epiworld_double Initial prevalence
+ * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
+ * @param initial_recovery epiworld_double Initial recovery rate of the immune system
+ */
+template<typename TSeq = int>
+class ModelSEIR : public epiworld::Model<TSeq>
+{
+private:
+    static const int SUSCEPTIBLE = 0;
+    static const int EXPOSED     = 1;
+    static const int INFECTED    = 2;
+    static const int REMOVED     = 3;
+
+public:
+
+    ModelSEIR() {};
+
+    ModelSEIR(
+        ModelSEIR<TSeq> & model,
+        std::string vname,
+        epiworld_double prevalence,
+        epiworld_double infectiousness,
+        epiworld_double incubation_days,
+        epiworld_double recovery
+    );
+
+    ModelSEIR(
+        std::string vname,
+        epiworld_double prevalence,
+        epiworld_double infectiousness,
+        epiworld_double incubation_days,
+        epiworld_double recovery
+    );
+    
+    epiworld::UpdateFun<TSeq> update_exposed_seir = [](
+        epiworld::Agent<TSeq> * p,
+        epiworld::Model<TSeq> * m
+    ) -> void {
+        // Does the agent become infected?
+        if (m->runif() < 1.0/(*m->p1))
+            p->change_status(ModelSEIR<TSeq>::INFECTED);
+
+        return;    
+    };
+      
+
+    epiworld::UpdateFun<TSeq> update_infected_seir = [](
+        epiworld::Agent<TSeq> * p,
+        epiworld::Model<TSeq> * m
+    ) -> void {
+        // Does the agent recover?
+        if (m->runif() < (*m->p2))
+            p->rm_virus(0);
+
+        return;    
+    };
+
+};
+
+
+template<typename TSeq>
+inline ModelSEIR<TSeq>::ModelSEIR(
+    ModelSEIR<TSeq> & model,
+    std::string vname,
+    epiworld_double prevalence,
+    epiworld_double infectiousness,
+    epiworld_double incubation_days,
+    epiworld_double recovery
+    )
+{
+
+    // Adding statuses
+    model.add_status("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_status("Exposed", model.update_exposed_seir);
+    model.add_status("Infected", model.update_infected_seir);
+    model.add_status("Removed");
+
+    // Setting up parameters
+    model.add_param(infectiousness, "Infectiousness");
+    model.add_param(incubation_days, "Incubation days");
+    model.add_param(recovery, "Immune recovery");
+
+    // Preparing the virus -------------------------------------------
+    epiworld::Virus<TSeq> virus(vname);
+    virus.set_status(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
+
+    virus.set_prob_infecting(&model("Infectiousness"));
+    
+    // Adding the tool and the virus
+    model.add_virus(virus, prevalence);
+    
+    model.set_name("Susceptible-Exposed-Infected-Removed (SEIR)");
+
+    return;
+   
+}
+
+template<typename TSeq>
+inline ModelSEIR<TSeq>::ModelSEIR(
+    std::string vname,
+    epiworld_double prevalence,
+    epiworld_double infectiousness,
+    epiworld_double incubation_days,
+    epiworld_double recovery
+    )
+{
+
+    ModelSEIR<TSeq>(
+        *this,
+        vname,
+        prevalence,
+        infectiousness,
+        incubation_days,
+        recovery
+        );
+
+    return;
+
+}
+
+
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/seir.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/

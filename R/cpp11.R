@@ -20,6 +20,26 @@ run_sir <- function(m) {
   .Call(`_epiworldR_run_sir`, m)
 }
 
+ModelSIS <- function(name, prevalence, infectiousness, recovery) {
+  .Call(`_epiworldR_ModelSIS`, name, prevalence, infectiousness, recovery)
+}
+
+init_sis <- function(m, days, seed) {
+  .Call(`_epiworldR_init_sis`, m, days, seed)
+}
+
+print_sis <- function(m) {
+  .Call(`_epiworldR_print_sis`, m)
+}
+
+agents_smallworld_sis <- function(m, n, k, d, p) {
+  .Call(`_epiworldR_agents_smallworld_sis`, m, n, k, d, p)
+}
+
+run_sis <- function(m) {
+  .Call(`_epiworldR_run_sis`, m)
+}
+
 sum_cpp <- function(x) {
   .Call(`_epiworldR_sum_cpp`, x)
 }

@@ -4,6 +4,7 @@
 # epiworldR
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 The goal of epiworldR is to …
@@ -26,7 +27,7 @@ This is a basic example which shows you how to solve a common problem:
 library(epiworldR)
 
 # Creating a SIR model
-sir <- epiworldR:::ModelSIR(
+sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .1,
   infectiousness = .9,
@@ -34,7 +35,7 @@ sir <- epiworldR:::ModelSIR(
   )
 
 # Adding a Small world population 
-epiworldR:::agents_smallworld(
+agents_smallworld(
   sir,
   n = 10000,
   k = 5,
@@ -44,25 +45,27 @@ epiworldR:::agents_smallworld(
 #> [1] 0
 
 # Initializing 
-epiworldR:::init(sir, days = 100, seed = 1912)
+init(sir, days = 100, seed = 1912)
 #> [1] 0
 
 # Running and printing
-epiworldR:::run(sir)
+run(sir)
 #> Running the model...
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> [1] 0
-epiworldR:::print(sir)
+sir
 #> 
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
 #> 
+#> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 10000
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 97.00ms
+#> Last run elapsed t  : 106.00ms
+#> Last run speed      : 9.37 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -84,5 +87,4 @@ epiworldR:::print(sir)
 #>  - Susceptible  0.29  0.71  0.00
 #>  - Infected     0.00  0.73  0.27
 #>  - Recovered    0.00  0.00  1.00
-#> [1] 0
 ```

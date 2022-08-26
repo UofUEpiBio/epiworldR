@@ -40,6 +40,41 @@ extern "C" SEXP _epiworldR_run_sir(SEXP m) {
     return cpp11::as_sexp(run_sir(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
   END_CPP11
 }
+// model_sis.cpp
+SEXP ModelSIS(std::string name, double prevalence, double infectiousness, double recovery);
+extern "C" SEXP _epiworldR_ModelSIS(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP recovery) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSIS(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+  END_CPP11
+}
+// model_sis.cpp
+int init_sis(SEXP m, int days, int seed);
+extern "C" SEXP _epiworldR_init_sis(SEXP m, SEXP days, SEXP seed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(init_sis(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(days), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+  END_CPP11
+}
+// model_sis.cpp
+int print_sis(SEXP m);
+extern "C" SEXP _epiworldR_print_sis(SEXP m) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(print_sis(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+  END_CPP11
+}
+// model_sis.cpp
+int agents_smallworld_sis(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+extern "C" SEXP _epiworldR_agents_smallworld_sis(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_smallworld_sis(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// model_sis.cpp
+int run_sis(SEXP m);
+extern "C" SEXP _epiworldR_run_sis(SEXP m) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(run_sis(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+  END_CPP11
+}
 // sum_function.cpp
 double sum_cpp(doubles x);
 extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
@@ -51,10 +86,15 @@ extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSIR_cpp",          (DL_FUNC) &_epiworldR_ModelSIR_cpp,          4},
+    {"_epiworldR_ModelSIS",              (DL_FUNC) &_epiworldR_ModelSIS,              4},
     {"_epiworldR_agents_smallworld_sir", (DL_FUNC) &_epiworldR_agents_smallworld_sir, 5},
+    {"_epiworldR_agents_smallworld_sis", (DL_FUNC) &_epiworldR_agents_smallworld_sis, 5},
     {"_epiworldR_init_sir",              (DL_FUNC) &_epiworldR_init_sir,              3},
+    {"_epiworldR_init_sis",              (DL_FUNC) &_epiworldR_init_sis,              3},
     {"_epiworldR_print_sir",             (DL_FUNC) &_epiworldR_print_sir,             1},
+    {"_epiworldR_print_sis",             (DL_FUNC) &_epiworldR_print_sis,             1},
     {"_epiworldR_run_sir",               (DL_FUNC) &_epiworldR_run_sir,               1},
+    {"_epiworldR_run_sis",               (DL_FUNC) &_epiworldR_run_sis,               1},
     {"_epiworldR_sum_cpp",               (DL_FUNC) &_epiworldR_sum_cpp,               1},
     {NULL, NULL, 0}
 };
