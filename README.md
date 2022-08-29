@@ -64,8 +64,8 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 106.00ms
-#> Last run speed      : 9.37 million agents x day / second
+#> Last run elapsed t  : 108.00ms
+#> Last run speed      : 9.20 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):

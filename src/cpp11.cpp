@@ -5,6 +5,34 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// data.cpp
+data_frame get_hist_total_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_hist_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
+// data.cpp
+doubles get_transition_probability_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_transition_probability_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
+// data.cpp
+cpp11::strings get_status_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_get_status_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
+// data.cpp
+cpp11::data_frame get_reproductive_number_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_reproductive_number_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
 // model_sir.cpp
 SEXP ModelSIR_cpp(std::string name, double prevalence, double infectiousness, double recovery);
 extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP recovery) {
@@ -85,17 +113,21 @@ extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_epiworldR_ModelSIR_cpp",          (DL_FUNC) &_epiworldR_ModelSIR_cpp,          4},
-    {"_epiworldR_ModelSIS",              (DL_FUNC) &_epiworldR_ModelSIS,              4},
-    {"_epiworldR_agents_smallworld_sir", (DL_FUNC) &_epiworldR_agents_smallworld_sir, 5},
-    {"_epiworldR_agents_smallworld_sis", (DL_FUNC) &_epiworldR_agents_smallworld_sis, 5},
-    {"_epiworldR_init_sir",              (DL_FUNC) &_epiworldR_init_sir,              3},
-    {"_epiworldR_init_sis",              (DL_FUNC) &_epiworldR_init_sis,              3},
-    {"_epiworldR_print_sir",             (DL_FUNC) &_epiworldR_print_sir,             1},
-    {"_epiworldR_print_sis",             (DL_FUNC) &_epiworldR_print_sis,             1},
-    {"_epiworldR_run_sir",               (DL_FUNC) &_epiworldR_run_sir,               1},
-    {"_epiworldR_run_sis",               (DL_FUNC) &_epiworldR_run_sis,               1},
-    {"_epiworldR_sum_cpp",               (DL_FUNC) &_epiworldR_sum_cpp,               1},
+    {"_epiworldR_ModelSIR_cpp",                   (DL_FUNC) &_epiworldR_ModelSIR_cpp,                   4},
+    {"_epiworldR_ModelSIS",                       (DL_FUNC) &_epiworldR_ModelSIS,                       4},
+    {"_epiworldR_agents_smallworld_sir",          (DL_FUNC) &_epiworldR_agents_smallworld_sir,          5},
+    {"_epiworldR_agents_smallworld_sis",          (DL_FUNC) &_epiworldR_agents_smallworld_sis,          5},
+    {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,             2},
+    {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,    2},
+    {"_epiworldR_get_status_cpp",                 (DL_FUNC) &_epiworldR_get_status_cpp,                 2},
+    {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp, 2},
+    {"_epiworldR_init_sir",                       (DL_FUNC) &_epiworldR_init_sir,                       3},
+    {"_epiworldR_init_sis",                       (DL_FUNC) &_epiworldR_init_sis,                       3},
+    {"_epiworldR_print_sir",                      (DL_FUNC) &_epiworldR_print_sir,                      1},
+    {"_epiworldR_print_sis",                      (DL_FUNC) &_epiworldR_print_sis,                      1},
+    {"_epiworldR_run_sir",                        (DL_FUNC) &_epiworldR_run_sir,                        1},
+    {"_epiworldR_run_sis",                        (DL_FUNC) &_epiworldR_run_sis,                        1},
+    {"_epiworldR_sum_cpp",                        (DL_FUNC) &_epiworldR_sum_cpp,                        1},
     {NULL, NULL, 0}
 };
 }
