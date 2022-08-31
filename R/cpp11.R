@@ -16,6 +16,26 @@ get_reproductive_number_cpp <- function(model, model_class) {
   .Call(`_epiworldR_get_reproductive_number_cpp`, model, model_class)
 }
 
+ModelSEIR <- function(name, prevalence, infectiousness, incubation_days, recovery) {
+  .Call(`_epiworldR_ModelSEIR`, name, prevalence, infectiousness, incubation_days, recovery)
+}
+
+init_seir <- function(m, days, seed) {
+  .Call(`_epiworldR_init_seir`, m, days, seed)
+}
+
+print_seir <- function(m) {
+  .Call(`_epiworldR_print_seir`, m)
+}
+
+agents_smallworld_seir <- function(m, n, k, d, p) {
+  .Call(`_epiworldR_agents_smallworld_seir`, m, n, k, d, p)
+}
+
+run_seir <- function(m) {
+  .Call(`_epiworldR_run_seir`, m)
+}
+
 ModelSEIRCONN <- function(name, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
   .Call(`_epiworldR_ModelSEIRCONN`, name, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
 }
