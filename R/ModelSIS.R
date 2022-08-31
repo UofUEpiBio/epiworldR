@@ -19,7 +19,7 @@ ModelSIS <- function(
 #' @rdname ModelSIS
 #' @export
 init.epiworld_sis <- function(m, days, seed) {
-  init_sir(m, days, seed)
+  init_sis(m, days, seed)
 }
 
 #' @rdname ModelSIS
