@@ -32,6 +32,9 @@ SIR model
 }
 \seealso{
 Other Models: 
+\code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIS}()}
 }
 \concept{Models}

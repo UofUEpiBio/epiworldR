@@ -32,6 +32,9 @@ Susceptible Infected Susceptible model (SIS)
 }
 \seealso{
 Other Models: 
+\code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIR}()}
 }
 \concept{Models}

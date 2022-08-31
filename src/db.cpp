@@ -39,6 +39,18 @@ data_frame get_hist_total_cpp(
     WrapModel(ModelSEIR, ptr)(model);
     ptr->get_db().get_hist_total(&dates, &status, &counts);
     
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    ptr->get_db().get_hist_total(&dates, &status, &counts);
+    
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
+    ptr->get_db().get_hist_total(&dates, &status, &counts);
+    
   } else // Error
     cpp11::stop("Objects of class %s are not supported", model_class.c_str());
   
@@ -81,6 +93,18 @@ doubles get_transition_probability_cpp(
     WrapModel(ModelSEIR, ptr)(model);
     return cpp11::writable::doubles(ptr->get_db().transition_probability(false));
     
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    return cpp11::writable::doubles(ptr->get_db().transition_probability(false));
+    
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
+    return cpp11::writable::doubles(ptr->get_db().transition_probability(false));
+    
   } else // Error
     cpp11::stop("Objects of class %s are not supported", model_class.c_str());
   
@@ -112,6 +136,18 @@ cpp11::strings get_status_cpp(
   {
     
     WrapModel(ModelSEIR, ptr)(model);
+    return cpp11::writable::strings(ptr->get_status());
+    
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    return cpp11::writable::strings(ptr->get_status());
+    
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
     return cpp11::writable::strings(ptr->get_status());
     
   } else // Error
@@ -152,6 +188,18 @@ cpp11::data_frame get_reproductive_number_cpp(
   {
     
     WrapModel(ModelSEIR, ptr)(model);
+    rn = ptr->get_db().reproductive_number();
+    
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    rn = ptr->get_db().reproductive_number();
+    
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
     rn = ptr->get_db().reproductive_number();
     
   } else // Error
