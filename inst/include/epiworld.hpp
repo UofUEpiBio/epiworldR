@@ -1435,7 +1435,7 @@ inline epiworld_double kernel_fun_uniform(
 
 }
 
-constexpr epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
+static const epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
 
 /**
  * @brief Gaussian kernel
