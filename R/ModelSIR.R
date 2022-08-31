@@ -4,6 +4,7 @@
 #' @param infectiousness a number
 #' @param recovery a number
 #' @export
+#' @family Models
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery
 ) {

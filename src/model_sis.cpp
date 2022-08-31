@@ -30,6 +30,7 @@ SEXP ModelSIS(
     )
   );
   
+  
   return ptr;
 }
 

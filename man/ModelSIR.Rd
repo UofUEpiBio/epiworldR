@@ -30,3 +30,8 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \description{
 SIR model
 }
+\seealso{
+Other Models: 
+\code{\link{ModelSIS}()}
+}
+\concept{Models}

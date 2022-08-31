@@ -30,4 +30,8 @@ ModelSIS(name, prevalence, infectiousness, recovery)
 \description{
 Susceptible Infected Susceptible model (SIS)
 }
+\seealso{
+Other Models: 
+\code{\link{ModelSIR}()}
+}
 \concept{Models}
