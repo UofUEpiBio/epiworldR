@@ -5,7 +5,7 @@
 \alias{init.epiworld_seirconn}
 \alias{print.epiworld_seirconn}
 \alias{run.epiworld_seirconn}
-\title{Susceptible Infected Susceptible model (SEIRCONN)}
+\title{Susceptible Exposed Infected Removed model (SEIR connected)}
 \usage{
 ModelSEIRCONN(
   name,
@@ -26,30 +26,28 @@ ModelSEIRCONN(
 \arguments{
 \item{name}{Name of the virus}
 
-\item{prevalence}{a number}
+\item{n}{Integer greater than zero. Population size.}
 
-\item{reproductive_number}{a number}
+\item{prevalence}{Initial proportion of individuals with the virus}
 
-\item{prob_transmission}{a number}
+\item{reproductive_number}{Numeric scalar. Reproductive number.}
 
-\item{incubation_days}{a number}
+\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of transmission.}
 
-\item{prob_recovery}{a number}
+\item{incubation_days}{Numeric scalar greater than 0. Average number of incubation days.}
+
+\item{prob_recovery}{a Numeric scalar between 0 and 1. Probability of recovery.}
 }
 \description{
-Susceptible Infected Susceptible model (SEIRCONN)
-
-#' @rdname ModelSEIRCONN
-#' @export
-agents_smallworld.epiworld_seirconn <- function(m, n, k, d, p) {
-agents_smallworld_sir(m, n, k, d, p)
-}
+The SEIR connected model implements a model where all agents are connected.
+This is equivalent to a comparmental model.
 }
 \seealso{
 Other Models: 
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIR}()},
-\code{\link{ModelSIS}()}
+\code{\link{ModelSIS}()},
+\code{\link{epiworld-data}}
 }
 \concept{Models}

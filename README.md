@@ -4,10 +4,11 @@
 # epiworldR
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
-The goal of epiworldR is to …
+This R package is a wrapper of the C++ library
+[epiworld](https://github.com/UofUEpi/epiworld). It provides a general
+framework for modeling disease transmission using Agent-Based Models.
 
 ## Installation
 
@@ -37,7 +38,7 @@ sir <- ModelSIR(
 # Adding a Small world population 
 agents_smallworld(
   sir,
-  n = 10000,
+  n = 100000,
   k = 5,
   d = FALSE,
   p = .01
@@ -60,12 +61,12 @@ sir
 #> SIMULATION STUDY
 #> 
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
-#> Population size     : 10000
+#> Population size     : 100000
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 108.00ms
-#> Last run speed      : 9.20 million agents x day / second
+#> Last run elapsed t  : 356.00ms
+#> Last run speed      : 28.04 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -79,12 +80,38 @@ sir
 #>  - Prob. of Recovery : 0.3000
 #> 
 #> Distribution of the population at time 100:
-#>  - (0) Susceptible :  9000 -> 0
-#>  - (1) Infected    :  1000 -> 0
-#>  - (2) Recovered   :     0 -> 10000
+#>  - (0) Susceptible :  90000 -> 0
+#>  - (1) Infected    :  10000 -> 0
+#>  - (2) Recovered   :      0 -> 100000
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.29  0.71  0.00
-#>  - Infected     0.00  0.73  0.27
+#>  - Susceptible  0.28  0.71  0.00
+#>  - Infected     0.00  0.69  0.31
 #>  - Recovered    0.00  0.00  1.00
 ```
+
+Visualizing the outputs
+
+``` r
+x <- get_hist_total(sir)
+x <- x[x$dates < 15,]
+
+with(
+  x[x$status == "Susceptible",],
+  plot(
+    x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
+    ylab = "Population", xlab = "days", main = "SIR model")
+  )
+
+with(
+  x[x$status == "Infected",],
+  lines(x = dates, y = counts, col = "red")
+  )
+
+with(
+  x[x$status == "Recovered",],
+  lines(x = dates, y = counts, col = "darkgreen")
+  )
+```
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />

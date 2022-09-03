@@ -194,13 +194,6 @@ extern "C" SEXP _epiworldR_run_sis(SEXP m) {
     return cpp11::as_sexp(run_sis(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
   END_CPP11
 }
-// sum_function.cpp
-double sum_cpp(doubles x);
-extern "C" SEXP _epiworldR_sum_cpp(SEXP x) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(sum_cpp(cpp11::as_cpp<cpp11::decay_t<doubles>>(x)));
-  END_CPP11
-}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -231,7 +224,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_sir",                        (DL_FUNC) &_epiworldR_run_sir,                        1},
     {"_epiworldR_run_sirconn",                    (DL_FUNC) &_epiworldR_run_sirconn,                    1},
     {"_epiworldR_run_sis",                        (DL_FUNC) &_epiworldR_run_sis,                        1},
-    {"_epiworldR_sum_cpp",                        (DL_FUNC) &_epiworldR_sum_cpp,                        1},
     {NULL, NULL, 0}
 };
 }

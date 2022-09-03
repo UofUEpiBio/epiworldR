@@ -5,7 +5,7 @@
 \alias{init.epiworld_sirconn}
 \alias{print.epiworld_sirconn}
 \alias{run.epiworld_sirconn}
-\title{Susceptible Infected Susceptible model (SIRCONN)}
+\title{Susceptible Infected Removed model (SIR connected)}
 \usage{
 ModelSIRCONN(
   name,
@@ -34,13 +34,14 @@ ModelSIRCONN(
 \item{prob_recovery}{a number}
 }
 \description{
-Susceptible Infected Susceptible model (SIRCONN)
+Susceptible Infected Removed model (SIR connected)
 }
 \seealso{
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIR}()},
-\code{\link{ModelSIS}()}
+\code{\link{ModelSIS}()},
+\code{\link{epiworld-data}}
 }
 \concept{Models}

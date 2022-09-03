@@ -107,7 +107,3 @@ agents_smallworld_sis <- function(m, n, k, d, p) {
 run_sis <- function(m) {
   .Call(`_epiworldR_run_sis`, m)
 }
-
-sum_cpp <- function(x) {
-  .Call(`_epiworldR_sum_cpp`, x)
-}
