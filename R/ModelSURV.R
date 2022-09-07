@@ -6,11 +6,13 @@
 #' @export
 #' @family Models
 ModelSURV <- function(
-    name, prevalence, infectiousness, recovery
+    name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
+    prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect  
 ) {
   
   structure(
-    ModelSURV_cpp(name, prevalence, infectiousness, recovery),
+    ModelSURV_cpp(name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
+    prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect),
     class = "epiworld_surv"
   )
   

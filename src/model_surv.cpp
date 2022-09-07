@@ -16,21 +16,39 @@ using namespace cpp11;
 SEXP ModelSURV(
   std::string name,
   double prevalence,
-  double infectiousness,
-  double recovery
+  double efficacy_vax,
+  double latent_period,         
+  double prob_symptoms,         
+  double prop_vaccinated,       
+  double prop_vax_redux_transm, 
+  double infect_period,         
+  double prop_vax_redux_infect, 
+  double surveillance_prob,     
+  double prob_transmission,     
+  double prob_death,            
+  double prob_noreinfect       
 ) {
-  
+    
+
   // Creating a pointer to a ModelSIR model
   WrapSURV(ptr)(
     new epiworld::epimodels::ModelSURV<>(
       name,
       prevalence,
-      infectiousness,
-      recovery
+      efficacy_vax,
+      latent_period,  
+      infect_period,  
+      prob_symptoms,         
+      prop_vaccinated,       
+      prop_vax_redux_transm, 
+      prop_vax_redux_infect, 
+      surveillance_prob,     
+      prob_transmission,     
+      prob_death,            
+      prob_noreinfect   
     )
   );
-  
-  
+
   return ptr;
 }
 
