@@ -18,7 +18,8 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of epiworldR is to ...
+This R package is a wrapper of the C++ library [epiworld](https://github.com/UofUEpi/epiworld). 
+It provides a general framework for modeling disease transmission using Agent-Based Models.
 
 ## Installation
 
@@ -47,7 +48,7 @@ sir <- ModelSIR(
 # Adding a Small world population 
 agents_smallworld(
   sir,
-  n = 10000,
+  n = 100000,
   k = 5,
   d = FALSE,
   p = .01
@@ -60,3 +61,30 @@ init(sir, days = 100, seed = 1912)
 run(sir)
 sir
 ```
+
+Visualizing the outputs
+
+```{r}
+x <- get_hist_total(sir)
+x <- x[x$dates < 15,]
+
+with(
+  x[x$status == "Susceptible",],
+  plot(
+    x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
+    ylab = "Population", xlab = "days", main = "SIR model")
+  )
+
+with(
+  x[x$status == "Infected",],
+  lines(x = dates, y = counts, col = "red")
+  )
+
+with(
+  x[x$status == "Recovered",],
+  lines(x = dates, y = counts, col = "darkgreen")
+  )
+
+
+```
+

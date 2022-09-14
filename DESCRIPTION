@@ -1,10 +1,13 @@
 Package: epiworldR
 Type: Package
 Title: Fast Epi Simulations in R
-Version: 1.0
+Version: 0.0-1
 Date: 2022-07-20
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Authors@R: c(
+         person("Derek", "Meyer", role=c("aut","cre")),
+         person("George", "Vega Yon", role=c("aut"),
+         email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844"))
+         )
 Description: More about what it does (maybe more than one line)
 License: MIT + file LICENSE
 RoxygenNote: 7.2.1

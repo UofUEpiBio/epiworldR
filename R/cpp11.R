@@ -16,8 +16,8 @@ get_reproductive_number_cpp <- function(model, model_class) {
   .Call(`_epiworldR_get_reproductive_number_cpp`, model, model_class)
 }
 
-ModelSEIR <- function(name, prevalence, infectiousness, incubation_days, recovery) {
-  .Call(`_epiworldR_ModelSEIR`, name, prevalence, infectiousness, incubation_days, recovery)
+ModelSEIR_cpp <- function(name, prevalence, infectiousness, incubation_days, recovery) {
+  .Call(`_epiworldR_ModelSEIR_cpp`, name, prevalence, infectiousness, incubation_days, recovery)
 }
 
 init_seir <- function(m, days, seed) {
@@ -36,8 +36,8 @@ run_seir <- function(m) {
   .Call(`_epiworldR_run_seir`, m)
 }
 
-ModelSEIRCONN <- function(name, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
-  .Call(`_epiworldR_ModelSEIRCONN`, name, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
+ModelSEIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
+  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
 }
 
 init_seirconn <- function(m, days, seed) {
@@ -46,10 +46,6 @@ init_seirconn <- function(m, days, seed) {
 
 print_seirconn <- function(m) {
   .Call(`_epiworldR_print_seirconn`, m)
-}
-
-agents_smallworld_seirconn <- function(m, n, k, d, p) {
-  .Call(`_epiworldR_agents_smallworld_seirconn`, m, n, k, d, p)
 }
 
 run_seirconn <- function(m) {
@@ -76,8 +72,8 @@ run_sir <- function(m) {
   .Call(`_epiworldR_run_sir`, m)
 }
 
-ModelSIRCONN <- function(name, prevalence, reproductive_number, prob_transmission, prob_recovery) {
-  .Call(`_epiworldR_ModelSIRCONN`, name, prevalence, reproductive_number, prob_transmission, prob_recovery)
+ModelSIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery) {
+  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, prob_recovery)
 }
 
 init_sirconn <- function(m, days, seed) {
@@ -88,16 +84,12 @@ print_sirconn <- function(m) {
   .Call(`_epiworldR_print_sirconn`, m)
 }
 
-agents_smallworld_sirconn <- function(m, n, k, d, p) {
-  .Call(`_epiworldR_agents_smallworld_sirconn`, m, n, k, d, p)
-}
-
 run_sirconn <- function(m) {
   .Call(`_epiworldR_run_sirconn`, m)
 }
 
-ModelSIS <- function(name, prevalence, infectiousness, recovery) {
-  .Call(`_epiworldR_ModelSIS`, name, prevalence, infectiousness, recovery)
+ModelSIS_cpp <- function(name, prevalence, infectiousness, recovery) {
+  .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, infectiousness, recovery)
 }
 
 init_sis <- function(m, days, seed) {
@@ -114,8 +106,4 @@ agents_smallworld_sis <- function(m, n, k, d, p) {
 
 run_sis <- function(m) {
   .Call(`_epiworldR_run_sis`, m)
-}
-
-sum_cpp <- function(x) {
-  .Call(`_epiworldR_sum_cpp`, x)
 }

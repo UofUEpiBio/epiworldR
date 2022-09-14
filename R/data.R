@@ -1,5 +1,8 @@
 #' Accessing the database of `epiworld`
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' any model.
 #' @name epiworld-data
+#' @family Models
 NULL
 
 #' @export

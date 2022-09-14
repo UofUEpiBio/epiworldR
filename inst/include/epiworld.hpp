@@ -1435,7 +1435,7 @@ inline epiworld_double kernel_fun_uniform(
 
 }
 
-static const epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
+constexpr epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
 
 /**
  * @brief Gaussian kernel
@@ -4771,6 +4771,7 @@ public:
         bool d = false,
         epiworld_double p = .01
         );
+    void agents_empty_graph(unsigned int n = 1000);
     ///@}
 
     /**
@@ -5603,6 +5604,26 @@ inline void Model<TSeq>::agents_smallworld(
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::agents_empty_graph(
+    unsigned int n
+) 
+{
+
+    // Resizing the people
+    population.clear();
+    population.resize(n, Agent<TSeq>());
+
+    // Filling the model and ids
+    size_t i = 0u;
+    for (auto & p : population)
+    {
+        p.model = this;
+        p.id    = i++;
+    }
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::set_rand_engine(std::mt19937 & eng)
 {
     engine = std::make_shared< std::mt19937 >(eng);
@@ -6215,24 +6236,15 @@ template<typename TSeq>
 inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
 
     // Resizing the people
-    population.clear();
-    population.resize(al.vcount(), Agent<TSeq>());
-
+    agents_empty_graph(al.vcount());
+    
     const auto & tmpdat = al.get_dat();
-
-    // Filling the model and ids
-    size_t i = 0u;
-    for (auto & p : population)
-    {
-        p.model = this;
-        p.id    = i++;
-    }
     
     for (size_t i = 0u; i < tmpdat.size(); ++i)
     {
 
-        population[i].id    = i;
-        population[i].model = this;
+        // population[i].id    = i;
+        // population[i].model = this;
 
         for (const auto & link: tmpdat[i])
         {
@@ -12081,23 +12093,6 @@ inline ModelSURV<TSeq>::ModelSURV(
 #ifndef EPIWORLD_MODELS_SIRCONNECTED_HPP 
 #define EPIWORLD_MODELS_SIRCONNECTED_HPP
 
-// namespace SIRCONN {
-
-//     static const int SUSCEPTIBLE = 0;
-//     static const int INFECTED    = 1;
-//     static const int RECOVERED   = 2;
-
-
-
-//     bool tracked_started = false;
-//     int tracked_ninfected = 0;
-//     int tracked_ninfected_next = 0;
-//     epiworld_double tracked_current_infect_prob = 0.0;
-
-    
-
-// }
-
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRCONN : public epiworld::Model<TSeq>
 {
@@ -12113,6 +12108,7 @@ public:
     ModelSIRCONN(
         ModelSIRCONN<TSeq> & model,
         std::string vname,
+        unsigned int n,
         epiworld_double prevalence,
         epiworld_double reproductive_number,
         epiworld_double prob_transmission,
@@ -12121,6 +12117,7 @@ public:
 
     ModelSIRCONN(
         std::string vname,
+        unsigned int n,
         epiworld_double prevalence,
         epiworld_double reproductive_number,
         epiworld_double prob_transmission,
@@ -12153,6 +12150,7 @@ template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     ModelSIRCONN<TSeq> & model,
     std::string vname,
+    unsigned int n,
     epiworld_double prevalence,
     epiworld_double reproductive_number,
     epiworld_double prob_transmission,
@@ -12348,6 +12346,10 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
     model.queuing_off(); // No queuing need
 
+    model.agents_empty_graph(n);
+
+    model.set_name("Susceptible-Exposed-Infected-Removed (SEIR) (connected)");
+
     return;
 
 }
@@ -12355,6 +12357,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     std::string vname,
+    unsigned int n,
     epiworld_double prevalence,
     epiworld_double reproductive_number,
     epiworld_double prob_transmission,
@@ -12365,6 +12368,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     ModelSIRCONN(
         *this,
         vname,
+        n,
         prevalence,
         reproductive_number,
         prob_transmission,
@@ -12414,6 +12418,7 @@ public:
     ModelSEIRCONN(
         ModelSEIRCONN<TSeq> & model,
         std::string vname,
+        unsigned int n,
         epiworld_double prevalence,
         epiworld_double reproductive_number,
         epiworld_double prob_transmission,
@@ -12423,6 +12428,7 @@ public:
     
     ModelSEIRCONN(
         std::string vname,
+        unsigned int n,
         epiworld_double prevalence,
         epiworld_double reproductive_number,
         epiworld_double prob_transmission,
@@ -12454,6 +12460,7 @@ template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     ModelSEIRCONN<TSeq> & model,
     std::string vname,
+    unsigned int n,
     epiworld_double prevalence,
     epiworld_double reproductive_number,
     epiworld_double prob_transmission,
@@ -12669,6 +12676,11 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
     model.queuing_off(); // No queuing need
 
+    // Adding the empty population
+    model.agents_empty_graph(n);
+
+    model.set_name("Susceptible-Exposed-Infected-Removed (SEIR) (connected)");
+
     return;
 
 }
@@ -12676,6 +12688,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     std::string vname,
+    unsigned int n,
     epiworld_double prevalence,
     epiworld_double reproductive_number,
     epiworld_double prob_transmission,
@@ -12687,6 +12700,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     ModelSEIRCONN(
         *this,
         vname,
+        n,
         prevalence,
         reproductive_number,
         prob_transmission,

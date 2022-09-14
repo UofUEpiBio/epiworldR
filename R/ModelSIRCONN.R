@@ -1,4 +1,4 @@
-#' Susceptible Infected Susceptible model (SIRCONN)
+#' Susceptible Infected Removed model (SIR connected)
 #' @param name Name of the virus
 #' @param prevalence a number
 #' @param reproductive_number a number
@@ -7,11 +7,11 @@
 #' @export
 #' @family Models
 ModelSIRCONN <- function(
-    name, prevalence, reproductive_number, prob_transmission, prob_recovery
+    name, n, prevalence, reproductive_number, prob_transmission, prob_recovery
 ) {
   
   structure(
-    ModelSIRCONN_cpp(name, prevalence, reproductive_number, prob_transmission, prob_recovery),
+    ModelSIRCONN_cpp(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery),
     class = "epiworld_sirconn"
   )
   
@@ -27,12 +27,6 @@ init.epiworld_sirconn <- function(m, days, seed) {
 #' @export
 print.epiworld_sirconn <- function(x, ...) {
   print_sirconn(x)
-}
-
-#' @rdname ModelSIRCONN  
-#' @export
-agents_smallworld.epiworld_sirconn <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
 }
 
 #' @rdname ModelSIRCONN

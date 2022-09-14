@@ -4,12 +4,7 @@
 \name{epiworldR-package}
 \alias{epiworldR}
 \alias{epiworldR-package}
-\title{epiworldR: Fast Epi Simulations in R}
+\title{epiworldR}
 \description{
 More about what it does (maybe more than one line)
 }
-\details{
-The only function you're likely to need from roxygen2 is \code{\link[=roxygenize]{roxygenize()}}.
-Otherwise refer to the vignettes to see how to format the documentation.
-}
-\keyword{internal}

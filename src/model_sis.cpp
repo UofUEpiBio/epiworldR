@@ -13,7 +13,7 @@ using namespace cpp11;
   cpp11::external_pointer<epiworld::epimodels::ModelSIS<>> (a)
 
 [[cpp11::register]]
-SEXP ModelSIS(
+SEXP ModelSIS_cpp(
   std::string name,
   double prevalence,
   double infectiousness,

@@ -13,8 +13,14 @@ using namespace cpp11;
   cpp11::external_pointer<epiworld::epimodels::ModelSEIRCONN<>> (a)
 
 [[cpp11::register]]
+<<<<<<< HEAD
 SEXP ModelSEIRCONN(
   std::string name,
+=======
+SEXP ModelSEIRCONN_cpp(
+  std::string name,
+  unsigned int n,
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
   double prevalence,
   double reproductive_number,
   double prob_transmission,
@@ -26,6 +32,10 @@ SEXP ModelSEIRCONN(
   WrapSEIRCONN(ptr)(
     new epiworld::epimodels::ModelSEIRCONN<>(
       name,
+<<<<<<< HEAD
+=======
+      n,
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
       prevalence,
       reproductive_number,
       prob_transmission,
@@ -56,6 +66,7 @@ int print_seirconn(SEXP m) {
   return 0;
   
 }
+<<<<<<< HEAD
   
 [[cpp11::register]]
 int agents_smallworld_seirconn(
@@ -73,6 +84,8 @@ int agents_smallworld_seirconn(
   return 0;
   
 }
+=======
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
 
 [[cpp11::register]]
 int run_seirconn(SEXP m) {

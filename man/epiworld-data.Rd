@@ -16,6 +16,19 @@ get_status(x)
 
 get_reproductive_number(x)
 }
+\arguments{
+\item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
+any model.}
+}
 \description{
 Accessing the database of \code{epiworld}
 }
+\seealso{
+Other Models: 
+\code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSIRCONN}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIS}()}
+}
+\concept{Models}
