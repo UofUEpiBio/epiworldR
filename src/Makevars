@@ -1,2 +1,2 @@
-CXX_STD = CXX11
+CXX_STD = CXX17
 PKG_CXXFLAGS= -I../inst/include/ -O2 -Wall -pedantic

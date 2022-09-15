@@ -4,7 +4,7 @@ Title: Fast Epi Simulations in R
 Version: 0.0-1
 Date: 2022-07-20
 Authors@R: c(
-         person("Derek", "Meyer", role=c("aut","cre")),
+         person("Derek", "Meyer", role=c("aut","cre"), email="derekmeyer37@gmail.com"),
          person("George", "Vega Yon", role=c("aut"),
          email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844"))
          )

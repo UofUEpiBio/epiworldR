@@ -8,3 +8,12 @@
 \description{
 More about what it does (maybe more than one line)
 }
+\author{
+\strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com}
+
+Authors:
+\itemize{
+  \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
+}
+
+}

@@ -42,6 +42,7 @@ Other Models:
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIS}()},
+\code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }
 \concept{Models}

@@ -29,6 +29,7 @@ Other Models:
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIR}()},
-\code{\link{ModelSIS}()}
+\code{\link{ModelSIS}()},
+\code{\link{ModelSURV}()}
 }
 \concept{Models}

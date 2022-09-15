@@ -36,6 +36,7 @@ Other Models:
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIR}()},
+\code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }
 \concept{Models}

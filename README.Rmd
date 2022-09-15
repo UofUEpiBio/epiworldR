@@ -40,7 +40,7 @@ library(epiworldR)
 # Creating a SIR model
 sir <- ModelSIR(
   name = "COVID-19",
-  prevalence = .1,
+  prevalence = .01,
   infectiousness = .9,
   recovery = .3
   )
@@ -66,13 +66,14 @@ Visualizing the outputs
 
 ```{r}
 x <- get_hist_total(sir)
-x <- x[x$dates < 15,]
+x$counts <- x$counts/1000
+x <- x[x$dates < 50,]
 
 with(
   x[x$status == "Susceptible",],
   plot(
     x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
-    ylab = "Population", xlab = "days", main = "SIR model")
+    ylab = "Population (thousands)", xlab = "days", main = "SIR model")
   )
 
 with(
@@ -85,6 +86,14 @@ with(
   lines(x = dates, y = counts, col = "darkgreen")
   )
 
+legend(
+  "right",
+  legend = c("Susceptible", "Infected", "Removed"),
+  col    = c("blue", "red", "darkgreen"),
+  lty    = 1,
+  lwd    = 2,
+  bty    = "n"
+  )
 
 ```
 
