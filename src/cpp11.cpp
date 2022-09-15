@@ -34,10 +34,17 @@ extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model, SEXP model_cl
   END_CPP11
 }
 // model_seir.cpp
+<<<<<<< HEAD
+SEXP ModelSEIR(std::string name, double prevalence, double infectiousness, double incubation_days, double recovery);
+extern "C" SEXP _epiworldR_ModelSEIR(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP incubation_days, SEXP recovery) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSEIR(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+=======
 SEXP ModelSEIR_cpp(std::string name, double prevalence, double infectiousness, double incubation_days, double recovery);
 extern "C" SEXP _epiworldR_ModelSEIR_cpp(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP incubation_days, SEXP recovery) {
   BEGIN_CPP11
     return cpp11::as_sexp(ModelSEIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
   END_CPP11
 }
 // model_seir.cpp
@@ -69,10 +76,17 @@ extern "C" SEXP _epiworldR_run_seir(SEXP m) {
   END_CPP11
 }
 // model_seirconn.cpp
+<<<<<<< HEAD
+SEXP ModelSEIRCONN(std::string name, double prevalence, double reproductive_number, double prob_transmission, double incubation_days, double prob_recovery);
+extern "C" SEXP _epiworldR_ModelSEIRCONN(SEXP name, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP incubation_days, SEXP prob_recovery) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSEIRCONN(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+=======
 SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double reproductive_number, double prob_transmission, double incubation_days, double prob_recovery);
 extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP incubation_days, SEXP prob_recovery) {
   BEGIN_CPP11
     return cpp11::as_sexp(ModelSEIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
   END_CPP11
 }
 // model_seirconn.cpp
@@ -90,6 +104,16 @@ extern "C" SEXP _epiworldR_print_seirconn(SEXP m) {
   END_CPP11
 }
 // model_seirconn.cpp
+<<<<<<< HEAD
+int agents_smallworld_seirconn(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+extern "C" SEXP _epiworldR_agents_smallworld_seirconn(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_smallworld_seirconn(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// model_seirconn.cpp
+=======
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
 int run_seirconn(SEXP m);
 extern "C" SEXP _epiworldR_run_seirconn(SEXP m) {
   BEGIN_CPP11
@@ -132,10 +156,17 @@ extern "C" SEXP _epiworldR_run_sir(SEXP m) {
   END_CPP11
 }
 // model_sirconn.cpp
+<<<<<<< HEAD
+SEXP ModelSIRCONN(std::string name, double prevalence, double reproductive_number, double prob_transmission, double prob_recovery);
+extern "C" SEXP _epiworldR_ModelSIRCONN(SEXP name, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP prob_recovery) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSIRCONN(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+=======
 SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double reproductive_number, double prob_transmission, double prob_recovery);
 extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP prob_recovery) {
   BEGIN_CPP11
     return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
   END_CPP11
 }
 // model_sirconn.cpp
@@ -153,6 +184,16 @@ extern "C" SEXP _epiworldR_print_sirconn(SEXP m) {
   END_CPP11
 }
 // model_sirconn.cpp
+<<<<<<< HEAD
+int agents_smallworld_sirconn(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+extern "C" SEXP _epiworldR_agents_smallworld_sirconn(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_smallworld_sirconn(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// model_sirconn.cpp
+=======
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
 int run_sirconn(SEXP m);
 extern "C" SEXP _epiworldR_run_sirconn(SEXP m) {
   BEGIN_CPP11
@@ -197,13 +238,24 @@ extern "C" SEXP _epiworldR_run_sis(SEXP m) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
+<<<<<<< HEAD
+    {"_epiworldR_ModelSEIR",                      (DL_FUNC) &_epiworldR_ModelSEIR,                      5},
+    {"_epiworldR_ModelSEIRCONN",                  (DL_FUNC) &_epiworldR_ModelSEIRCONN,                  6},
+    {"_epiworldR_ModelSIRCONN",                   (DL_FUNC) &_epiworldR_ModelSIRCONN,                   5},
+    {"_epiworldR_ModelSIR_cpp",                   (DL_FUNC) &_epiworldR_ModelSIR_cpp,                   4},
+    {"_epiworldR_ModelSIS",                       (DL_FUNC) &_epiworldR_ModelSIS,                       4},
+    {"_epiworldR_agents_smallworld_seir",         (DL_FUNC) &_epiworldR_agents_smallworld_seir,         5},
+    {"_epiworldR_agents_smallworld_seirconn",     (DL_FUNC) &_epiworldR_agents_smallworld_seirconn,     5},
+=======
     {"_epiworldR_ModelSEIRCONN_cpp",              (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,              7},
     {"_epiworldR_ModelSEIR_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                  5},
     {"_epiworldR_ModelSIRCONN_cpp",               (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,               6},
     {"_epiworldR_ModelSIR_cpp",                   (DL_FUNC) &_epiworldR_ModelSIR_cpp,                   4},
     {"_epiworldR_ModelSIS_cpp",                   (DL_FUNC) &_epiworldR_ModelSIS_cpp,                   4},
     {"_epiworldR_agents_smallworld_seir",         (DL_FUNC) &_epiworldR_agents_smallworld_seir,         5},
+>>>>>>> c4b483bb37e81678bcb5a10721bf8633e1d05332
     {"_epiworldR_agents_smallworld_sir",          (DL_FUNC) &_epiworldR_agents_smallworld_sir,          5},
+    {"_epiworldR_agents_smallworld_sirconn",      (DL_FUNC) &_epiworldR_agents_smallworld_sirconn,      5},
     {"_epiworldR_agents_smallworld_sis",          (DL_FUNC) &_epiworldR_agents_smallworld_sis,          5},
     {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,             2},
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,    2},

@@ -29,7 +29,6 @@ print.epiworld_sirconn <- function(x, ...) {
   print_sirconn(x)
 }
 
-
 #' @rdname ModelSIRCONN
 #' @export
 run.epiworld_sirconn <- function(m) {
