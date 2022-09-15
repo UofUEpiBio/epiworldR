@@ -6,6 +6,7 @@ build: update
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
 update:
-	rsync -avz ../../research/world-epi/epiworld.hpp inst/include/epiworld.hpp 
+	wget https://raw.githubusercontent.com/UofUEpi/epiworld/master/epiworld.hpp && \
+		mv epiworld.hpp inst/include/epiworld.hpp 
 
 .PHONY: build update
