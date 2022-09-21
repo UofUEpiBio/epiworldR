@@ -9,20 +9,21 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Overview: 
+#Overview 
 Epiworld is an Agent Based coding package developed with the sole purpose of simulating infectious diseases 
 as they spread through populations. The user is able to specify certain parameters in order to
 replicate real-world conditions such as initial population size, vaccination rates, hospitalization 
 rates, schools as entities, and of course, the disease of interest. Epiworld contains several 
 epidemiological models in which the user may select to run such a simulation. These models include:
-SIR, SIRConnected, SIS, SEIR, SEIRConnected, and Surveillance.
+SIR, SIRConnected, SIS, SEIR, SEIRConnected, and Surveillance.  
+  
+Epiworld makes use of agent based modeling. That is, it is a computational model 
+with the purpose of simulating the interactions of autonomous agents (people). Due to the ABM structure
+of epiworld, the ability to analyze the effects of diseases like COVID and the Flu on populations given 
+specified parameters reflecting human interaction can be done in seconds. 
 
-
--ABM BASICS
-
-
-Simulation: (COVID/FLU in SLC - Parameters: schools as entities, population = 500k,
-Family distribution in Damon's paper, Vaccination rates, SEIR model+hospitalization)
+##Simulation
+#(COVID/FLU in SLC - Parameters: schools as entities, population = 500k, Family distribution in Damon's paper, Vaccination rates, SEIR model+hospitalization)
 ```{r}
 
 ```
