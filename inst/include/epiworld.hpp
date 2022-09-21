@@ -991,10 +991,10 @@ public:
     ///@}
 
     // Accessing parameters of the function
-    const size_t get_n_samples() {return n_samples;};
-    const size_t get_n_statistics() {return n_statistics;};
-    const size_t get_n_parameters() {return n_parameters;};
-    const epiworld_double get_epsilon() {return epsilon;};
+    size_t get_n_samples() const {return n_samples;};
+    size_t get_n_statistics() const {return n_statistics;};
+    size_t get_n_parameters() const {return n_parameters;};
+    epiworld_double get_epsilon() const {return epsilon;};
 
     const std::vector< epiworld_double > & get_params_now() {return params_now;};
     const std::vector< epiworld_double > & get_params_prev() {return params_prev;};
@@ -1263,10 +1263,10 @@ public:
     ///@}
 
     // Accessing parameters of the function
-    const size_t get_n_samples() {return n_samples;};
-    const size_t get_n_statistics() {return n_statistics;};
-    const size_t get_n_parameters() {return n_parameters;};
-    const epiworld_double get_epsilon() {return epsilon;};
+    size_t get_n_samples() const {return n_samples;};
+    size_t get_n_statistics() const {return n_statistics;};
+    size_t get_n_parameters() const {return n_parameters;};
+    epiworld_double get_epsilon() const {return epsilon;};
 
     const std::vector< epiworld_double > & get_params_now() {return params_now;};
     const std::vector< epiworld_double > & get_params_prev() {return params_prev;};
@@ -1437,7 +1437,7 @@ inline epiworld_double kernel_fun_uniform(
 
 }
 
-constexpr epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
+#define sqrt2pi() 2.5066282746310002416
 
 /**
  * @brief Gaussian kernel
@@ -3618,6 +3618,11 @@ public:
         bool directed
         );
 
+    AdjList(AdjList && a); // Move constructor
+    AdjList(const AdjList & a); // Copy constructor
+    AdjList& operator=(const AdjList& a);
+
+
     /**
      * @brief Read an edgelist
      * 
@@ -3731,6 +3736,38 @@ inline AdjList::AdjList(
 
 }
 
+
+inline AdjList::AdjList(AdjList && a) :
+    dat(std::move(a.dat)),
+    directed(a.directed),
+    N(a.N),
+    E(a.E)
+{
+
+}
+
+inline AdjList::AdjList(const AdjList & a) :
+    dat(a.dat),
+    directed(a.directed),
+    N(a.N),
+    E(a.E)
+{
+
+}
+
+inline AdjList& AdjList::operator=(const AdjList& a)
+{
+    if (this == &a)
+        return *this;
+
+    this->dat = a.dat;
+    this->directed = a.directed;
+    this->N = a.N;
+    this->E = a.E;
+
+    return *this;
+}
+
 inline void AdjList::read_edgelist(
     std::string fn,
     int size,
@@ -3804,9 +3841,10 @@ inline std::map<unsigned int,unsigned int> AdjList::operator()(
             "The vertex id " + std::to_string(i) + " is not in the network."
             );
 
-    dat[i];
+    return dat[i];
 
 }
+
 inline void AdjList::print(unsigned int limit) const {
 
 
@@ -4161,8 +4199,8 @@ inline AdjList rgraph_bernoulli(
     Model<TSeq> & model
 ) {
 
-    std::vector< unsigned int > source;
-    std::vector< unsigned int > target;
+    std::vector< epiworld_fast_uint > source;
+    std::vector< epiworld_fast_uint > target;
 
     // Checking the density (how many)
     std::binomial_distribution<> d(
@@ -4197,7 +4235,7 @@ inline AdjList rgraph_bernoulli(
 
     }
 
-    AdjList al(source, target, directed, 0, static_cast<int>(n) - 1);
+    AdjList al(source, target, static_cast<int>(n), directed);
 
     return al;
     
@@ -4211,8 +4249,8 @@ inline AdjList rgraph_bernoulli2(
     Model<TSeq> & model
 ) {
 
-    std::vector< unsigned int > source;
-    std::vector< unsigned int > target;
+    std::vector< epiworld_fast_uint > source;
+    std::vector< epiworld_fast_uint > target;
 
     // Checking the density (how many)
     std::binomial_distribution<> d(
@@ -4247,7 +4285,7 @@ inline AdjList rgraph_bernoulli2(
 
     }
 
-    AdjList al(source, target, directed, 0, static_cast<int>(n) - 1);
+    AdjList al(source, target, static_cast<int>(n), directed);
 
     return al;
     
@@ -5985,19 +6023,19 @@ inline std::mt19937 * Model<TSeq>::get_rand_endgine()
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::runif() {
     // CHECK_INIT()
-    return runifd->operator()(*engine);
+    return (runifd->operator())(*engine);
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::runif(epiworld_double a, epiworld_double b) {
     // CHECK_INIT()
-    return (runifd->operator()(*engine) * (b - a) + a);
+    return ((runifd->operator())(*engine) * (b - a) + a);
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rnorm() {
     // CHECK_INIT()
-    return (rnormd->operator()(*engine));
+    return (rnormd->operator())(*engine);
 }
 
 template<typename TSeq>
@@ -6008,42 +6046,42 @@ inline epiworld_double Model<TSeq>::rnorm(epiworld_double mean, epiworld_double 
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rgamma() {
-    return rgammad->operator()(*engine);
+    return (rgammad->operator())(*engine);
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_double beta) {
     auto old_param = rgammad->param();
     rgammad->param(std::gamma_distribution<>::param_type(alpha, beta));
-    epiworld_double ans = rgammad->operator()(*engine);
+    epiworld_double ans = (rgammad->operator())(*engine);
     rgammad->param(old_param);
     return ans;
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rexp() {
-    return rexp->operator()(*engine);
+    return (rexpd->operator())(*engine);
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rexp(epiworld_double lambda) {
     auto old_param = rexpd->param();
     rexpd->param(std::exponential_distribution<>::param_type(lambda));
-    epiworld_double ans = rexpd->operator()(*engine);
+    epiworld_double ans = (rexpd->operator())(*engine);
     rexpd->param(old_param);
     return ans;
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rlognormal() {
-    return rlognormald->operator()(*engine);
+    return (rlognormald->operator())(*engine);
 }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_double shape) {
     auto old_param = rlognormald->param();
     rlognormald->param(std::lognormal_distribution<>::param_type(mean, shape));
-    epiworld_double ans = rlognormald->operator()(*engine);
+    epiworld_double ans = (rlognormald->operator())(*engine);
     rlognormald->param(old_param);
     return ans;
 }
@@ -7674,13 +7712,13 @@ public:
     void get_status(
         epiworld_fast_int * init,
         epiworld_fast_int * end,
-        epiworld_fast_int * removed = -99
+        epiworld_fast_int * removed = nullptr
         );
 
     void get_queue(
         epiworld_fast_int * init,
         epiworld_fast_int * end,
-        epiworld_fast_int * removed = -99
+        epiworld_fast_int * removed = nullptr
         );
     ///@}
 
@@ -10416,7 +10454,8 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p)
 
     // Dealing with the virus
     viruses.reserve(p.get_n_viruses());
-    for (const auto & v : p.get_viruses())
+    const auto & viruses_ = p.get_viruses();
+    for (const auto & v : viruses_)
     {
         // Will create a copy of the virus, with the exeption of
         // the virus code
@@ -10428,7 +10467,8 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p)
     n_viruses = p.n_viruses;
 
     tools.reserve(p.get_n_tools());
-    for (const auto & t : p.get_tools())
+    const auto & tools_ = p.get_tools();
+    for (const auto & t : tools_)
     {
         // Will create a copy of the virus, with the exeption of
         // the virus code
