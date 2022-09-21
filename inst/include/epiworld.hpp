@@ -991,10 +991,10 @@ public:
     ///@}
 
     // Accessing parameters of the function
-    const size_t get_n_samples() {return n_samples;};
-    const size_t get_n_statistics() {return n_statistics;};
-    const size_t get_n_parameters() {return n_parameters;};
-    const epiworld_double get_epsilon() {return epsilon;};
+    size_t get_n_samples() const {return n_samples;};
+    size_t get_n_statistics() const {return n_statistics;};
+    size_t get_n_parameters() const {return n_parameters;};
+    epiworld_double get_epsilon() const {return epsilon;};
 
     const std::vector< epiworld_double > & get_params_now() {return params_now;};
     const std::vector< epiworld_double > & get_params_prev() {return params_prev;};
@@ -1263,10 +1263,10 @@ public:
     ///@}
 
     // Accessing parameters of the function
-    const size_t get_n_samples() {return n_samples;};
-    const size_t get_n_statistics() {return n_statistics;};
-    const size_t get_n_parameters() {return n_parameters;};
-    const epiworld_double get_epsilon() {return epsilon;};
+    size_t get_n_samples() const {return n_samples;};
+    size_t get_n_statistics() const {return n_statistics;};
+    size_t get_n_parameters() const {return n_parameters;};
+    epiworld_double get_epsilon() const {return epsilon;};
 
     const std::vector< epiworld_double > & get_params_now() {return params_now;};
     const std::vector< epiworld_double > & get_params_prev() {return params_prev;};
@@ -1437,7 +1437,7 @@ inline epiworld_double kernel_fun_uniform(
 
 }
 
-constexpr epiworld_double sqrt2pi() {return std::sqrt(2.0 * M_PI);}
+#define sqrt2pi() 2.5066282746310002416
 
 /**
  * @brief Gaussian kernel
@@ -4197,7 +4197,7 @@ inline AdjList rgraph_bernoulli(
 
     }
 
-    AdjList al(source, target, directed, 0, static_cast<int>(n) - 1);
+    AdjList al(source, target, static_cast<int>(n), directed);
 
     return al;
     
@@ -4247,7 +4247,7 @@ inline AdjList rgraph_bernoulli2(
 
     }
 
-    AdjList al(source, target, directed, 0, static_cast<int>(n) - 1);
+    AdjList al(source, target, static_cast<int>(n), directed);
 
     return al;
     
@@ -10416,7 +10416,8 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p)
 
     // Dealing with the virus
     viruses.reserve(p.get_n_viruses());
-    for (const auto & v : p.get_viruses())
+    const auto & viruses_ = p.get_viruses();
+    for (const auto & v : viruses_)
     {
         // Will create a copy of the virus, with the exeption of
         // the virus code
@@ -10428,7 +10429,8 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p)
     n_viruses = p.n_viruses;
 
     tools.reserve(p.get_n_tools());
-    for (const auto & t : p.get_tools())
+    const auto & tools_ = p.get_tools();
+    for (const auto & t : tools_)
     {
         // Will create a copy of the virus, with the exeption of
         // the virus code

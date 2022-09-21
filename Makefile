@@ -1,4 +1,4 @@
-build: update
+build: 
 	Rscript -e 'Rcpp::compileAttributes()' && \
 		Rscript -e 'roxygen2::roxygenize()' && \
 		R CMD INSTALL .
