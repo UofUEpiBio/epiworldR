@@ -6060,7 +6060,7 @@ inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_doubl
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rexp() {
-    return (rexp->operator())(*engine);
+    return (*rexp)(*engine);
 }
 
 template<typename TSeq>
