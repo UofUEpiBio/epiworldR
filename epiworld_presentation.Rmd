@@ -1,0 +1,29 @@
+---
+title: "Epiworld Presentation"
+author: "Derek Meyer"
+date: "October, 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Overview: 
+Epiworld is an Agent Based coding package developed with the sole purpose of simulating infectious diseases 
+as they spread through populations. The user is able to specify certain parameters in order to
+replicate real-world conditions such as initial population size, vaccination rates, hospitalization 
+rates, schools as entities, and of course, the disease of interest. Epiworld contains several 
+epidemiological models in which the user may select to run such a simulation. These models include:
+SIR, SIRConnected, SIS, SEIR, SEIRConnected, and Surveillance.
+
+
+-ABM BASICS
+
+
+Simulation: (COVID/FLU in SLC - Parameters: schools as entities, population = 500k,
+Family distribution in Damon's paper, Vaccination rates, SEIR model+hospitalization)
+```{r}
+
+```
+
