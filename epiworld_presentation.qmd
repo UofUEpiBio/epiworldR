@@ -1,0 +1,108 @@
+---
+title: "Epiworld"
+format: revealjs
+editor: visual
+author: "Derek Meyer"
+---
+
+## Overview
+
+Epiworld is a coding package created for the sole purpose of simulating infectious diseases as they spread through populations. The user is able to specify certain parameters in order to replicate real-world conditions such as population size, vaccination rates, hospitalization rates, schools as entities, and of course, the disease of interest.
+
+Epiworld contains several epidemiological models in which the user may select to run such a simulation. These models include: SIR, SIS, SEIR, and Surveillance.
+
+## Agent-Based Modeling
+
+Epiworld makes use of agent based modeling. That is, it is a computational model with the purpose of simulating the interactions of autonomous agents (people). Due to the ABM structure of epiworld, the ability to analyze the effects of diseases like COVID and the Flu on populations given specified parameters reflecting human interaction can be done in seconds.
+
+## Epiworld Models
+
+#### Currently Supported:
+
+1.  SIR - Susceptible, Infected, Recovered
+
+2.  SIS - Susceptible, Infected, Susceptible
+
+3.  SEIR - Susceptible, Exposed, Infected, Recovered
+
+4.  Surveillance
+
+##### \*More models to come.
+
+## Simulation Parameters
+
+Model to use: SEIR
+
+Disease of interest: COVID-19
+
+Initial population size: 200,000 (Salt Lake City)
+
+Vaccination rate: tbd
+
+Hospitalization rate: tbd
+
+Schools as entities: tbd
+
+## Simulation
+
+```{r}
+library(epiworldR)
+seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, incubation_days = 4, recovery = 0.3)
+
+# Adding a Small world population 
+agents_smallworld(
+  seir,
+  n = 200000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+
+# Initializing 
+init(seir, days = 100, seed = 1912)
+
+# Running and printing
+run(seir)
+seir
+```
+
+## Visualization
+
+```{r}
+x <- get_hist_total(seir)
+x$counts <- x$counts/1000
+x <- x[x$dates < 50,]
+
+with(
+  x[x$status == "Susceptible",],
+  plot(
+    x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
+    ylab = "Population (thousands)", xlab = "days", main = "SEIR model")
+  )
+
+with(
+  x[x$status == "Exposed",],
+  lines(x = dates, y = counts, col = "purple")
+  )
+
+with(
+  x[x$status == "Infected",],
+  lines(x = dates, y = counts, col = "red")
+  )
+
+with(
+  x[x$status == "Recovered",],
+  lines(x = dates, y = counts, col = "darkgreen")
+  )
+
+legend(
+  "right",
+  legend = c("Susceptible", "Exposed", "Infected", "Removed"),
+  col    = c("blue", "purple", "red", "darkgreen"),
+  lty    = 1,
+  lwd    = 2,
+  bty    = "n"
+  )
+```
+
+Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
