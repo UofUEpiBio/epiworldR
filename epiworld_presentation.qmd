@@ -11,6 +11,28 @@ Epiworld is a coding package created for the sole purpose of simulating infectio
 
 Epiworld contains several epidemiological models in which the user may select to run such a simulation. These models include: SIR, SIS, SEIR, and Surveillance.
 
+## Main Features
+
+![](images/Screen%20Shot%202022-09-26%20at%201.28.30%20PM.png)
+
+## Feature 1: C++ Header only template library
+
+![](images/Screen%20Shot%202022-09-26%20at%201.26.49%20PM.png)
+
+## Feature 2: Designed to be fast
+
+![](images/Screen%20Shot%202022-09-26%20at%201.21.02%20PM.png)
+
+## Queuing
+
+![](images/Screen%20Shot%202022-09-26%20at%201.19.44%20PM.png)
+
+## Feature 3: Calibration done via Likelihood-free MCMC
+
+## Feature 4: From very simple to highly-complex models
+
+![](images/Screen%20Shot%202022-09-26%20at%201.18.13%20PM.png)
+
 ## Agent-Based Modeling
 
 Epiworld makes use of agent based modeling. That is, it is a computational model with the purpose of simulating the interactions of autonomous agents (people). Due to the ABM structure of epiworld, the ability to analyze the effects of diseases like COVID and the Flu on populations given specified parameters reflecting human interaction can be done in seconds.
@@ -19,11 +41,11 @@ Epiworld makes use of agent based modeling. That is, it is a computational model
 
 #### Currently Supported:
 
-1.  SIR - Susceptible, Infected, Recovered
+1.  SIR - Susceptible - Infected - Recovered
 
-2.  SIS - Susceptible, Infected, Susceptible
+2.  SIS - Susceptible - Infected - Susceptible
 
-3.  SEIR - Susceptible, Exposed, Infected, Recovered
+3.  SEIR - Susceptible - Exposed - Infected - Recovered
 
 4.  Surveillance
 
@@ -64,6 +86,7 @@ init(seir, days = 100, seed = 1912)
 # Running and printing
 run(seir)
 seir
+
 ```
 
 ## Visualization
@@ -104,5 +127,3 @@ legend(
   bty    = "n"
   )
 ```
-
-Quarto enables you to weave together content and executable code into a finished presentation. To learn more about Quarto presentations see <https://quarto.org/docs/presentations/>.
