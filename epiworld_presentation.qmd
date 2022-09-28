@@ -114,7 +114,7 @@ with(
   )
 
 with(
-  x[x$status == "Recovered",],
+  x[x$status == "Removed",],
   lines(x = dates, y = counts, col = "darkgreen")
   )
 
