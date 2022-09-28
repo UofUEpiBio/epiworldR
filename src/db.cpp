@@ -8,7 +8,96 @@ using namespace cpp11;
 
 #define WrapModel(model, name) \
   cpp11::external_pointer<epiworld::epimodels::model<>> (name) 
+
+[[cpp11::register]]
+int queuing_on_cpp(
+  SEXP model,
+  std::string model_class
+  ) {
+
+  // Getting the right class
+  if (model_class == "epiworld_sir")
+  {
     
+    WrapModel(ModelSIR, ptr)(model);
+    ptr->queuing_on();
+  
+  } else if (model_class == "epiworld_sis")
+  {
+    
+    WrapModel(ModelSIS, ptr)(model);
+    ptr->queuing_on();
+    
+  } else if (model_class == "epiworld_seir")
+  {
+    
+    WrapModel(ModelSEIR, ptr)(model);
+    ptr->queuing_on();    
+
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    ptr->queuing_on();
+
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
+    ptr->queuing_on();
+    
+  } else // Error
+    cpp11::stop("Objects of class %s are not supported", model_class.c_str());
+
+  return 0;  
+
+}
+
+[[cpp11::register]]
+int queuing_off_cpp(
+  SEXP model,
+  std::string model_class
+  ) {
+
+  // Getting the right class
+  if (model_class == "epiworld_sir")
+  {
+    
+    WrapModel(ModelSIR, ptr)(model);
+    ptr->queuing_off();
+  
+  } else if (model_class == "epiworld_sis")
+  {
+    
+    WrapModel(ModelSIS, ptr)(model);
+    ptr->queuing_off();
+    
+  } else if (model_class == "epiworld_seir")
+  {
+    
+    WrapModel(ModelSEIR, ptr)(model);
+    ptr->queuing_off();    
+
+  } else if (model_class == "epiworld_seirconn")
+  {
+    
+    WrapModel(ModelSEIRCONN, ptr)(model);
+    ptr->queuing_off();
+
+  } else if (model_class == "epiworld_sirconn")
+  {
+    
+    WrapModel(ModelSIRCONN, ptr)(model);
+    ptr->queuing_off();
+    
+  } else // Error
+    cpp11::stop("Objects of class %s are not supported", model_class.c_str());
+
+  return 0;  
+
+}
+
+
 [[cpp11::register]]
 data_frame get_hist_total_cpp(
   SEXP model,
