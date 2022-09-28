@@ -6,6 +6,20 @@
 #include <R_ext/Visibility.h>
 
 // db.cpp
+int queuing_on_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_queuing_on_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(queuing_on_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
+// db.cpp
+int queuing_off_cpp(SEXP model, std::string model_class);
+extern "C" SEXP _epiworldR_queuing_off_cpp(SEXP model, SEXP model_class) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(queuing_off_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+  END_CPP11
+}
+// db.cpp
 data_frame get_hist_total_cpp(SEXP model, std::string model_class);
 extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model, SEXP model_class) {
   BEGIN_CPP11
@@ -258,6 +272,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_print_sirconn",                  (DL_FUNC) &_epiworldR_print_sirconn,                   1},
     {"_epiworldR_print_sis",                      (DL_FUNC) &_epiworldR_print_sis,                       1},
     {"_epiworldR_print_surv",                     (DL_FUNC) &_epiworldR_print_surv,                      1},
+    {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 2},
+    {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  2},
     {"_epiworldR_run_seir",                       (DL_FUNC) &_epiworldR_run_seir,                        1},
     {"_epiworldR_run_seirconn",                   (DL_FUNC) &_epiworldR_run_seirconn,                    1},
     {"_epiworldR_run_sir",                        (DL_FUNC) &_epiworldR_run_sir,                         1},

@@ -2,12 +2,18 @@
 % Please edit documentation in R/data.R
 \name{epiworld-data}
 \alias{epiworld-data}
+\alias{queuing_on}
+\alias{queuing_off}
 \alias{get_hist_total}
 \alias{get_transition_probability}
 \alias{get_status}
 \alias{get_reproductive_number}
 \title{Accessing the database of \code{epiworld}}
 \usage{
+queuing_on(x)
+
+queuing_off(x)
+
 get_hist_total(x)
 
 get_transition_probability(x)

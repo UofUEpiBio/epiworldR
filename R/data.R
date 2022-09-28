@@ -5,6 +5,14 @@
 #' @family Models
 NULL
 
+#' @rdname epiworld-data
+#' @export
+queuing_on <- function(x) invisible(queuing_on_cpp(x, class(x)))
+
+#' @rdname epiworld-data
+#' @export
+queuing_off <- function(x) invisible(queuing_off_cpp(x, class(x)))
+
 #' @export
 #' @rdname epiworld-data
 get_hist_total <- function(x) get_hist_total_cpp(x, class(x))

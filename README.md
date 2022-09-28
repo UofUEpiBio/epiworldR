@@ -66,7 +66,7 @@ sir
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
 #> Last run elapsed t  : 1.00s
-#> Last run speed      : 7.63 million agents x day / second
+#> Last run speed      : 7.10 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
