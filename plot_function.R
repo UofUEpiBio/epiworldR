@@ -23,11 +23,9 @@ seir
 #-------------------------------------------------------------------------------
 # PLOTTING FUNCTION
 
-#1 Specify dates, status, and counts
-test <- get_hist_total(seir)
-
-#2 Build seir plotting function
-plot_seir <- function(x){
+#1 Build seir plotting function
+plot_seir <- function(seir_model){
+    x <- get_hist_total(seir_model)
     x$counts <- x$counts/1000
     x <- x[x$dates < 50,]
     
@@ -64,4 +62,4 @@ plot_seir <- function(x){
 }
 
 # Run seir plotting function
-plot_seir(test)
+plot_seir(seir)
