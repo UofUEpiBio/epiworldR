@@ -4,8 +4,10 @@
 #' @param reproductive_number a number
 #' @param prob_transmission a number
 #' @param prob_recovery a number
+#' @param n,m,days,seed,x,... to be documented
 #' @export
 #' @family Models
+#' @aliases epiworld_sirconn
 ModelSIRCONN <- function(
     name, n, prevalence, reproductive_number, prob_transmission, prob_recovery
 ) {

@@ -6,7 +6,7 @@
 \alias{epiworldR-package}
 \title{epiworldR}
 \description{
-More about what it does (maybe more than one line)
+Epidemiological simulations using the epiworld C++ template library. It provides a fast way to prototype models involving social networks, multiple dieases, and arbitrary policy strategies.
 }
 \author{
 \strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com}

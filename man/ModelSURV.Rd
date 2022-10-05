@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSURV.R
 \name{ModelSURV}
 \alias{ModelSURV}
+\alias{epiworld_surv}
 \alias{init.epiworld_surv}
 \alias{print.epiworld_surv}
 \alias{agents_smallworld.epiworld_surv}
@@ -37,9 +38,29 @@ ModelSURV(
 
 \item{prevalence}{a number}
 
-\item{infectiousness}{a number}
+\item{efficacy_vax}{to be explained}
 
-\item{recovery}{a number}
+\item{latent_period}{to be explained}
+
+\item{prob_symptoms}{to be explained}
+
+\item{prop_vaccinated}{to be explained}
+
+\item{prop_vax_redux_transm}{to be explained}
+
+\item{infect_period}{to be explained}
+
+\item{prop_vax_redux_infect}{to be explained}
+
+\item{surveillance_prob}{to be explained}
+
+\item{prob_transmission}{to be explained}
+
+\item{prob_death}{to be explained}
+
+\item{prob_noreinfect}{to be explained}
+
+\item{m, days, seed, x, ..., n, k, d, p}{to be explained}
 }
 \description{
 Susceptible Infected Susceptible model (SURV)

@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSIS.R
 \name{ModelSIS}
 \alias{ModelSIS}
+\alias{epiworld_sis}
 \alias{init.epiworld_sis}
 \alias{print.epiworld_sis}
 \alias{agents_smallworld.epiworld_sis}
@@ -26,6 +27,8 @@ ModelSIS(name, prevalence, infectiousness, recovery)
 \item{infectiousness}{a number}
 
 \item{recovery}{a number}
+
+\item{m, days, seed, x, ..., n, k, d, p}{to be documented}
 }
 \description{
 Susceptible Infected Susceptible model (SIS)

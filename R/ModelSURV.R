@@ -1,10 +1,22 @@
 #' Susceptible Infected Susceptible model (SURV)
+#'
 #' @param name Name of the virus
+#' @param efficacy_vax to be explained
+#' @param latent_period to be explained
+#' @param infect_period to be explained
+#' @param prob_symptoms to be explained
+#' @param prop_vaccinated to be explained
+#' @param prop_vax_redux_transm to be explained
+#' @param prop_vax_redux_infect to be explained
+#' @param surveillance_prob to be explained
+#' @param prob_transmission to be explained
+#' @param prob_death to be explained
+#' @param prob_noreinfect to be explained
 #' @param prevalence a number
-#' @param infectiousness a number
-#' @param recovery a number
+#' @param m,days,seed,x,...,n,k,d,p to be explained
 #' @export
 #' @family Models
+#' @aliases epiworld_surv
 ModelSURV <- function(
     name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
     prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect  

@@ -3,8 +3,10 @@
 #' @param prevalence a number
 #' @param infectiousness a number
 #' @param recovery a number
+#' @param m,days,seed,x,...,n,k,d,p to be documented
 #' @export
 #' @family Models
+#' @aliases epiworld_sir
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery
 ) {

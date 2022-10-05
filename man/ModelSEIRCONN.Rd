@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSEIRCONN.R
 \name{ModelSEIRCONN}
 \alias{ModelSEIRCONN}
+\alias{epiworld_seirconn}
 \alias{init.epiworld_seirconn}
 \alias{print.epiworld_seirconn}
 \alias{run.epiworld_seirconn}
@@ -37,6 +38,16 @@ ModelSEIRCONN(
 \item{incubation_days}{Numeric scalar greater than 0. Average number of incubation days.}
 
 \item{prob_recovery}{a Numeric scalar between 0 and 1. Probability of recovery.}
+
+\item{m}{to be documented}
+
+\item{days}{to be documented}
+
+\item{seed}{to be documented}
+
+\item{x}{to be documented}
+
+\item{...}{to be documented}
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.

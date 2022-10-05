@@ -10,8 +10,14 @@
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of transmission.
 #' @param incubation_days Numeric scalar greater than 0. Average number of incubation days.
 #' @param prob_recovery a Numeric scalar between 0 and 1. Probability of recovery.
+#' @param m  to be documented
+#' @param days to be documented
+#' @param seed to be documented
+#' @param x to be documented
+#' @param ... to be documented
 #' @export
 #' @family Models
+#' @aliases epiworld_seirconn
 ModelSEIRCONN <- function(
     name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery
 ) {

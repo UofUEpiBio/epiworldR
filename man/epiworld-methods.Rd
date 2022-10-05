@@ -13,6 +13,9 @@ agents_smallworld(m, n, k, d, p)
 
 run(m)
 }
+\arguments{
+\item{m, days, seed, n, k, d, p}{to be explained}
+}
 \description{
 Common methods for predefined models of Epiworld
 }

@@ -8,7 +8,9 @@ Authors@R: c(
          person("George", "Vega Yon", role=c("aut"),
          email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844"))
          )
-Description: More about what it does (maybe more than one line)
+Description: Epidemiological simulations using the epiworld C++ template library.
+  It provides a fast way to prototype models involving social networks, multiple dieases,
+  and arbitrary policy strategies.
 License: MIT + file LICENSE
 RoxygenNote: 7.2.1
 Encoding: UTF-8

@@ -1,4 +1,5 @@
 #' Common methods for predefined models of Epiworld
+#' @param m,days,seed,n,k,d,p to be explained
 #' @export
 #' @name epiworld-methods
 init <- function(m, days, seed) UseMethod("init")

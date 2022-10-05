@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSIRCONN.R
 \name{ModelSIRCONN}
 \alias{ModelSIRCONN}
+\alias{epiworld_sirconn}
 \alias{init.epiworld_sirconn}
 \alias{print.epiworld_sirconn}
 \alias{run.epiworld_sirconn}
@@ -24,6 +25,8 @@ ModelSIRCONN(
 }
 \arguments{
 \item{name}{Name of the virus}
+
+\item{n, m, days, seed, x, ...}{to be documented}
 
 \item{prevalence}{a number}
 
