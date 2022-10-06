@@ -50,6 +50,7 @@ init(sir, days = 100, seed = 1912)
 #> [1] 0
 
 # Running and printing
+queuing_off(sir)
 run(sir)
 #> Running the model...
 #> _________________________________________________________________________
@@ -65,8 +66,8 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 1.00s
-#> Last run speed      : 7.10 million agents x day / second
+#> Last run elapsed t  : 322.00ms
+#> Last run speed      : 30.99 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -80,13 +81,13 @@ sir
 #>  - Prob. of Recovery : 0.3000
 #> 
 #> Distribution of the population at time 100:
-#>  - (0) Susceptible :  99000 -> 0
+#>  - (0) Susceptible :  99000 -> 34117
 #>  - (1) Infected    :   1000 -> 0
-#>  - (2) Recovered   :      0 -> 100000
+#>  - (2) Recovered   :      0 -> 65883
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.87  0.13  0.00
-#>  - Infected     0.00  0.70  0.30
+#>  - Susceptible  0.99  0.01  0.00
+#>  - Infected     0.00  0.71  0.29
 #>  - Recovered    0.00  0.00  1.00
 ```
 
