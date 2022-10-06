@@ -35,21 +35,31 @@ Epiworld contains several epidemiological models in which the user may select to
 
 ## Agent-Based Modeling
 
-Epiworld makes use of agent based modeling. That is, it is a computational model with the purpose of simulating the interactions of autonomous agents (people). Due to the ABM structure of epiworld, the ability to analyze the effects of diseases like COVID and the Flu on populations given specified parameters reflecting human interaction can be done in seconds.
+-   Epiworld simulates the interactions of autonomous agents (people).
+
+-   The ability to analyze the effects of diseases like COVID and the Flu on human populations can be done in mere seconds.
+
+-   Specific parameters reflecting real-life human interactions can be set.
+
+## Network
+
+![](images/network.jpg){fig-align="center"}
 
 ## Epiworld Models
 
-#### Currently Supported:
+#### Currently Supported (More models to come):
 
 1.  SIR - Susceptible - Infected - Recovered
 
-2.  SIS - Susceptible - Infected - Susceptible
+2.  SIRCONNECTED - SIR model with the assumption that all agents are connected to each other
 
-3.  SEIR - Susceptible - Exposed - Infected - Recovered
+3.  SIS - Susceptible - Infected - Susceptible
 
-4.  Surveillance
+4.  SEIR - Susceptible - Exposed - Infected - Removed
 
-##### \*More models to come.
+5.  SEIRCONNECTED - SEIR model with the assumption that all agents are connected to each other
+
+6.  Surveillance - Models the effect of surveillance programs in a population
 
 ## Simulation Parameters
 

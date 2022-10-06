@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSIR.R
 \name{ModelSIR}
 \alias{ModelSIR}
+\alias{epiworld_sir}
 \alias{init.epiworld_sir}
 \alias{print.epiworld_sir}
 \alias{agents_smallworld.epiworld_sir}
@@ -26,6 +27,8 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \item{infectiousness}{a number}
 
 \item{recovery}{a number}
+
+\item{m, days, seed, x, ..., n, k, d, p}{to be documented}
 }
 \description{
 SIR model

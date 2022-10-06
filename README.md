@@ -1,6 +1,8 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+[![R-CMD-check](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml)
+
 # epiworldR
 
 <!-- badges: start -->
@@ -66,8 +68,13 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
+<<<<<<< HEAD
 #> Last run elapsed t  : 322.00ms
 #> Last run speed      : 30.99 million agents x day / second
+=======
+#> Last run elapsed t  : 1.00s
+#> Last run speed      : 7.99 million agents x day / second
+>>>>>>> 5429c97a779332f597bd028311af923186353d4f
 #> Rewiring            : off
 #> 
 #> Virus(es):

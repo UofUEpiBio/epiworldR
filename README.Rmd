@@ -13,7 +13,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-# epiworldR
+[![R-CMD-check](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml)
+
+# epiworldR 
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -58,7 +60,6 @@ agents_smallworld(
 init(sir, days = 100, seed = 1912)
 
 # Running and printing
-queuing_off(sir)
 run(sir)
 sir
 ```

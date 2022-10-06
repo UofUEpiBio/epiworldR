@@ -1,7 +1,7 @@
 
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
-#include "epiworld-common.hpp"
+#include "epiworld-common.h"
 
 using namespace cpp11;
 

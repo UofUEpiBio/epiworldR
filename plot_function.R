@@ -16,7 +16,7 @@ agents_smallworld(
 init(seir, days = 100, seed = 1912)
 
 # Running and printing
-#queue_off(seir)
+queuing_off(seir)
 run(seir)
 seir
 

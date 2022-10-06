@@ -2,6 +2,7 @@
 % Please edit documentation in R/ModelSEIR.R
 \name{ModelSEIR}
 \alias{ModelSEIR}
+\alias{epiworld_seir}
 \alias{init.epiworld_seir}
 \alias{print.epiworld_seir}
 \alias{agents_smallworld.epiworld_seir}
@@ -28,6 +29,24 @@ ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 \item{incubation_days}{a number}
 
 \item{recovery}{a number}
+
+\item{m}{to be documented}
+
+\item{days}{to be documented}
+
+\item{seed}{to be documented}
+
+\item{x}{to be documented}
+
+\item{...}{to be documented}
+
+\item{n}{to be documented}
+
+\item{k}{to be documented}
+
+\item{d}{to be documented}
+
+\item{p}{to be documented}
 }
 \description{
 Susceptible Infected Susceptible model (SEIR)
