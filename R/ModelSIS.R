@@ -41,3 +41,9 @@ agents_smallworld.epiworld_sis <- function(m, n, k, d, p) {
 run.epiworld_sis <- function(m) {
   run_sir(m)
 }
+
+#' @rdname ModelSIS
+#' @export
+plot.epiworld_sis <- function(x, ...) { # col = NULL
+ plot_epi(x, main = "SIS Model", ...)
+}

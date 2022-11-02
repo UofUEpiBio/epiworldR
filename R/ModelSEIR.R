@@ -58,25 +58,5 @@ run.epiworld_seir <- function(m) {
 #' @rdname ModelSEIR
 #' @export
 plot.epiworld_seir <- function(x, ...) { # col = NULL
-  x <- get_hist_total(x)
-  vnames <- sort(unique(x$status)) 
-  x$counts <- x$counts/1000
-  x <- x[x$dates < 50,]
-  counts_range <- range(x$counts)
-
-  # Plot the first status
-  with(x[x$status == vnames[1],], plot(x = dates, y = counts, 
-                                       type = 'l', col = 1, ylim = counts_range, 
-                                       xlab = "Days", 
-                                       ylab = "Population (thousands)", 
-                                       main = "SEIR Model"))
-
-  # Plot the remaining statuses
-  for (i in 2:length(vnames)) {
-    with(x[x$status == vnames[i],] ,lines(x = dates, y = counts, type = 'l', 
-                                          col = i))
-  }
-
-  legend("right", legend = vnames, col = 1:length(vnames), lty = 1, lwd = 2, 
-         bty = "n")
+ plot_epi(x, main = "SEIR Model", ...)
 }

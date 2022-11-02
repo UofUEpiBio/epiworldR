@@ -52,3 +52,9 @@ print.epiworld_seirconn <- function(x, ...) {
 run.epiworld_seirconn <- function(m) {
   run_seirconn(m)
 }
+
+#' @rdname ModelSEIRCONN
+#' @export
+plot.epiworld_seirconn <- function(x, ...) { # col = NULL
+ plot_epi(x, main = "SEIRCONN Model", ...)
+}

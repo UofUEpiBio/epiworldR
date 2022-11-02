@@ -36,3 +36,9 @@ print.epiworld_sirconn <- function(x, ...) {
 run.epiworld_sirconn <- function(m) {
   run_sirconn(m)
 }
+
+#' @rdname ModelSIRCONN
+#' @export
+plot.epiworld_sirconn <- function(x, ...) { # col = NULL
+ plot_epi(x, main = "SIRCONN Model", ...)
+}

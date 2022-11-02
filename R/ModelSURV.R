@@ -53,3 +53,9 @@ agents_smallworld.epiworld_surv <- function(m, n, k, d, p) {
 run.epiworld_surv <- function(m) {
   run_sir(m)
 }
+
+#' @rdname ModelSURV
+#' @export
+plot.epiworld_surv <- function(x, ...) { # col = NULL
+ plot_epi(x, main = "SURV Model", ...)
+}
