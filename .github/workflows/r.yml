@@ -54,3 +54,9 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+          check-dir: '"check"'
+          
+      - name: Print logs
+        run: |
+          cat check/epiworldR.Rcheck/00install.out
+          cat check/epiworldR.Rcheck/00check.log
