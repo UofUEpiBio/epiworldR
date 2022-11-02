@@ -57,39 +57,26 @@ run.epiworld_seir <- function(m) {
 
 #' @rdname ModelSEIR
 #' @export
-plot.epiworld_seir <- function(seir_model) {
-  x <- get_hist_total(seir_model)
-    x$counts <- x$counts/1000
-    x <- x[x$dates < 50,]
-    
-    with(
-      x[x$status == "Susceptible",],
-      plot(
-        x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
-        ylab = "Population (thousands)", xlab = "days", main = "SEIR model")
-      )
-    
-    with(
-      x[x$status == "Exposed",],
-      lines(x = dates, y = counts, col = "purple")
-      )
-    
-    with(
-      x[x$status == "Infected",],
-      lines(x = dates, y = counts, col = "red")
-      )
-    
-    with(
-      x[x$status == "Removed",],
-      lines(x = dates, y = counts, col = "darkgreen")
-      )
-    
-    legend(
-      "right",
-      legend = c("Susceptible", "Exposed", "Infected", "Removed"),
-      col    = c("blue", "purple", "red", "darkgreen"),
-      lty    = 1,
-      lwd    = 2,
-      bty    = "n"
-      )
+plot.epiworld_seir <- function(x, ...) { # col = NULL
+  x <- get_hist_total(x)
+  vnames <- sort(unique(x$status)) 
+  x$counts <- x$counts/1000
+  x <- x[x$dates < 50,]
+  counts_range <- range(x$counts)
+
+  # Plot the first status
+  with(x[x$status == vnames[1],], plot(x = dates, y = counts, 
+                                       type = 'l', col = 1, ylim = counts_range, 
+                                       xlab = "Days", 
+                                       ylab = "Population (thousands)", 
+                                       main = "SEIR Model"))
+
+  # Plot the remaining statuses
+  for (i in 2:length(vnames)) {
+    with(x[x$status == vnames[i],] ,lines(x = dates, y = counts, type = 'l', 
+                                          col = i))
+  }
+
+  legend("right", legend = vnames, col = 1:length(vnames), lty = 1, lwd = 2, 
+         bty = "n")
 }

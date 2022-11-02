@@ -7,6 +7,7 @@
 \alias{print.epiworld_seir}
 \alias{agents_smallworld.epiworld_seir}
 \alias{run.epiworld_seir}
+\alias{plot.epiworld_seir}
 \title{Susceptible Infected Susceptible model (SEIR)}
 \usage{
 ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
@@ -18,6 +19,8 @@ ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 \method{agents_smallworld}{epiworld_seir}(m, n, k, d, p)
 
 \method{run}{epiworld_seir}(m)
+
+\method{plot}{epiworld_seir}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}

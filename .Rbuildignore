@@ -9,3 +9,8 @@ Makefile
 # To exclude (for the moment)
 epiworld_presentation\.qmd
 plot_function\.R
+images
+test_files
+test\.html
+test\.pdf
+^tests
