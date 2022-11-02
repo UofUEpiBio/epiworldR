@@ -58,6 +58,8 @@ jobs:
           check-dir: '"check"'
           
       - name: Print logs
+        if: always()
         run: |
           cat check/epiworldR.Rcheck/00install.out
           cat check/epiworldR.Rcheck/00check.log
+          cat check/epiworldR.Rcheck/tests/tinytest.Rout
