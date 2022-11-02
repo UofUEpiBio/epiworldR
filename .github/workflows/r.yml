@@ -53,7 +53,8 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
-          upload-snapshots: true
+          upload-snapshots: false
+          upload-results: false
           check-dir: '"check"'
           
       - name: Print logs
