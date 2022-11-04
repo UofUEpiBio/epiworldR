@@ -43,4 +43,6 @@ plot_epi <- function(x, main = "", ...) {
          bty = "n")
 }
 
-plot_epi(seir, main = "SEIR Model")
+# plot_epi(seir, main = "SEIR Model")
+
+
