@@ -1,27 +1,26 @@
  #------------------------------------------------------------------------------
 # BUILDING AND INITIALIZING SEIR MODEL
-library(epiworldR)
-library(plyr)
+# library(epiworldR)
 
-sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, 
-                recovery = 0.1)
+# sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, 
+#                 recovery = 0.1)
 
 
-# Adding a Small world population
-agents_smallworld(
-  sir,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-  )
+# # Adding a Small world population
+# agents_smallworld(
+#   sir,
+#   n = 1000,
+#   k = 5,
+#   d = FALSE,
+#   p = .01
+#   )
 
-# Initializing
-init(sir, days = 100, seed = 1912)
-# Running and printing
-# queuing_off(sir)
-run(sir)
-sir
+# # Initializing
+# init(sir, days = 100, seed = 1912)
+# # Running and printing
+# # queuing_off(sir)
+# run(sir)
+# sir
 
 
 find_scale <- function(x) {
@@ -55,7 +54,7 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
       )
   }
   # Round the maximum date up to the nearest 10th 
-  max_date <- round_any(max(date_candidates), 10, ceiling)
+  max_date <- ceiling(max(date_candidates) / 10) * 10
   
   # Defining range of x values by max date as the max
   x <- x[x$dates < max_date,]
