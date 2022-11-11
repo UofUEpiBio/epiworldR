@@ -6,6 +6,7 @@
 \alias{init.epiworld_sirconn}
 \alias{print.epiworld_sirconn}
 \alias{run.epiworld_sirconn}
+\alias{plot.epiworld_sirconn}
 \title{Susceptible Infected Removed model (SIR connected)}
 \usage{
 ModelSIRCONN(
@@ -22,6 +23,8 @@ ModelSIRCONN(
 \method{print}{epiworld_sirconn}(x, ...)
 
 \method{run}{epiworld_sirconn}(m)
+
+\method{plot}{epiworld_sirconn}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}

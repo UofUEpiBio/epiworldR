@@ -7,6 +7,7 @@
 \alias{print.epiworld_sir}
 \alias{agents_smallworld.epiworld_sir}
 \alias{run.epiworld_sir}
+\alias{plot.epiworld_sir}
 \title{SIR model}
 \usage{
 ModelSIR(name, prevalence, infectiousness, recovery)
@@ -18,6 +19,8 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \method{agents_smallworld}{epiworld_sir}(m, n, k, d, p)
 
 \method{run}{epiworld_sir}(m)
+
+\method{plot}{epiworld_sir}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}

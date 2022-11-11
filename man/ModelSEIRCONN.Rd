@@ -6,6 +6,7 @@
 \alias{init.epiworld_seirconn}
 \alias{print.epiworld_seirconn}
 \alias{run.epiworld_seirconn}
+\alias{plot.epiworld_seirconn}
 \title{Susceptible Exposed Infected Removed model (SEIR connected)}
 \usage{
 ModelSEIRCONN(
@@ -23,6 +24,8 @@ ModelSEIRCONN(
 \method{print}{epiworld_seirconn}(x, ...)
 
 \method{run}{epiworld_seirconn}(m)
+
+\method{plot}{epiworld_seirconn}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}

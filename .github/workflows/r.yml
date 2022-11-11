@@ -53,4 +53,13 @@ jobs:
 
       - uses: r-lib/actions/check-r-package@v2
         with:
-          upload-snapshots: true
+          upload-snapshots: false
+          upload-results: false
+          check-dir: '"check"'
+          
+      - name: Print logs
+        if: always()
+        run: |
+          cat check/epiworldR.Rcheck/00install.out || echo "There's no 00install.out"
+          cat check/epiworldR.Rcheck/00check.log || echo "There's no 00check.out"
+          cat check/epiworldR.Rcheck/tests/tinytest.Rout || echo "There's no tinytest.Rout"

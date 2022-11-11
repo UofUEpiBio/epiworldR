@@ -7,6 +7,7 @@
 \alias{print.epiworld_surv}
 \alias{agents_smallworld.epiworld_surv}
 \alias{run.epiworld_surv}
+\alias{plot.epiworld_surv}
 \title{Susceptible Infected Susceptible model (SURV)}
 \usage{
 ModelSURV(
@@ -32,6 +33,8 @@ ModelSURV(
 \method{agents_smallworld}{epiworld_surv}(m, n, k, d, p)
 
 \method{run}{epiworld_surv}(m)
+
+\method{plot}{epiworld_surv}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}

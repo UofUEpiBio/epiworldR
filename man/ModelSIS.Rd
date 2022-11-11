@@ -7,6 +7,7 @@
 \alias{print.epiworld_sis}
 \alias{agents_smallworld.epiworld_sis}
 \alias{run.epiworld_sis}
+\alias{plot.epiworld_sis}
 \title{Susceptible Infected Susceptible model (SIS)}
 \usage{
 ModelSIS(name, prevalence, infectiousness, recovery)
@@ -18,6 +19,8 @@ ModelSIS(name, prevalence, infectiousness, recovery)
 \method{agents_smallworld}{epiworld_sis}(m, n, k, d, p)
 
 \method{run}{epiworld_sis}(m)
+
+\method{plot}{epiworld_sis}(x, ...)
 }
 \arguments{
 \item{name}{Name of the virus}
