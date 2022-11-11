@@ -1,15 +1,15 @@
 #' Susceptible Exposed Infected Removed model (SEIR connected)
 #' 
 #' The SEIR connected model implements a model where all agents are connected.
-#' This is equivalent to a comparmental model.
+#' This is equivalent to a compartmental model.
 #' 
 #' @param name Name of the virus
 #' @param n Integer greater than zero. Population size.
-#' @param prevalence Initial proportion of individuals with the virus
+#' @param prevalence Initial proportion of individuals with the virus.
 #' @param reproductive_number Numeric scalar. Reproductive number.
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of transmission.
 #' @param incubation_days Numeric scalar greater than 0. Average number of incubation days.
-#' @param prob_recovery a Numeric scalar between 0 and 1. Probability of recovery.
+#' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
 #' @param m  to be documented
 #' @param days to be documented
 #' @param seed to be documented
@@ -56,5 +56,5 @@ run.epiworld_seirconn <- function(m) {
 #' @rdname ModelSEIRCONN
 #' @export
 plot.epiworld_seirconn <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SEIRCONN Model", ...)
+ plot_epi(x, main = "SEIRCONN Model", counts_scale, ...)
 }

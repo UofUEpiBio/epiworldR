@@ -1,12 +1,29 @@
 #' SIR model
 #' @param name Name of the virus
-#' @param prevalence a number
-#' @param infectiousness a number
-#' @param recovery a number
+#' @param prevalence Initial proportion of individuals with the virus.
+#' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of infection.
+#' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
 #' @param m,days,seed,x,...,n,k,d,p to be documented
 #' @export
 #' @family Models
 #' @aliases epiworld_sir
+#' @examples 
+#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, recovery = 0.1)
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_sir,
+#'   n = 1000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#'   )
+#'   
+#' # Initializing
+#' init(model_sir, days = 100, seed = 1912)
+#' # Running and printing
+#' run(model_sir)
+#' model_sir
+
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery
 ) {
@@ -45,6 +62,6 @@ run.epiworld_sir <- function(m) {
 #' @rdname ModelSIR
 #' @export
 plot.epiworld_sir <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIR Model", ...)
+ plot_epi(x, main = "SIR Model", counts_scale, ...)
 }
 

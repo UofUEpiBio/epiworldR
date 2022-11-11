@@ -57,5 +57,5 @@ run.epiworld_surv <- function(m) {
 #' @rdname ModelSURV
 #' @export
 plot.epiworld_surv <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SURV Model", ...)
+ plot_epi(x, main = "SURV Model", counts_scale, ...)
 }
