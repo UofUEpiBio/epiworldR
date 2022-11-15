@@ -89,5 +89,5 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
          lwd = 2, bty = "n")
 }
 
-plot_epi(sir, main = "SIR Model")
+# plot_epi(sir, main = "SIR Model")
  

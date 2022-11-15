@@ -3,12 +3,14 @@
 #' The SEIR connected model implements a model where all agents are connected.
 #' This is equivalent to a compartmental model.
 #' 
-#' @param name Name of the virus
+#' @param name String. Name of the virus
 #' @param n Integer greater than zero. Population size.
 #' @param prevalence Initial proportion of individuals with the virus.
 #' @param reproductive_number Numeric scalar. Reproductive number.
-#' @param prob_transmission Numeric scalar between 0 and 1. Probability of transmission.
-#' @param incubation_days Numeric scalar greater than 0. Average number of incubation days.
+#' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
+#' transmission.
+#' @param incubation_days Numeric scalar greater than 0. Average number of 
+#' incubation days.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
 #' @param m  to be documented
 #' @param days to be documented
@@ -18,12 +20,35 @@
 #' @export
 #' @family Models
 #' @aliases epiworld_seirconn
+#' @examples 
+#' model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
+#'                              n = 10000, reproductive_number = 4, 
+#'                              prob_transmission = 0.5, incubation_days = 4, 
+#'                              prob_recovery = 0.99)
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_sirconn,
+#'   n = 1000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#'   )
+#'   
+#' # Initializing
+#' init(model_sirconn, days = 100, seed = 1912)
+#' # Running and printing
+#' run(model_sirconn)
+#' model_sirconn
+
 ModelSEIRCONN <- function(
-    name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery
+    name, n, prevalence, reproductive_number, prob_transmission, 
+    incubation_days, prob_recovery
 ) {
   
   structure(
-    ModelSEIRCONN_cpp(name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery),
+    ModelSEIRCONN_cpp(name, n, prevalence, reproductive_number, 
+                      prob_transmission, incubation_days, prob_recovery),
     class = "epiworld_seirconn"
   )
   

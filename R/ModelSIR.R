@@ -1,14 +1,17 @@
 #' SIR model
-#' @param name Name of the virus
-#' @param prevalence Initial proportion of individuals with the virus.
-#' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of infection.
+#' @param name String. Name of the virus
+#' @param prevalence Double. Initial proportion of individuals with the virus.
+#' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
+#' infection.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
 #' @param m,days,seed,x,...,n,k,d,p to be documented
 #' @export
 #' @family Models
 #' @aliases epiworld_sir
 #' @examples 
-#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, recovery = 0.1)
+#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
+#'                       infectiousness = 0.9, recovery = 0.1)
+#' 
 #' # Adding a small world population
 #' agents_smallworld(
 #'   model_sir,

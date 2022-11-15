@@ -28,19 +28,21 @@ ModelSEIRCONN(
 \method{plot}{epiworld_seirconn}(x, ...)
 }
 \arguments{
-\item{name}{Name of the virus}
+\item{name}{String. Name of the virus}
 
 \item{n}{Integer greater than zero. Population size.}
 
-\item{prevalence}{Initial proportion of individuals with the virus}
+\item{prevalence}{Initial proportion of individuals with the virus.}
 
 \item{reproductive_number}{Numeric scalar. Reproductive number.}
 
-\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of transmission.}
+\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
+transmission.}
 
-\item{incubation_days}{Numeric scalar greater than 0. Average number of incubation days.}
+\item{incubation_days}{Numeric scalar greater than 0. Average number of
+incubation days.}
 
-\item{prob_recovery}{a Numeric scalar between 0 and 1. Probability of recovery.}
+\item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
 \item{m}{to be documented}
 
@@ -54,7 +56,28 @@ ModelSEIRCONN(
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.
-This is equivalent to a comparmental model.
+This is equivalent to a compartmental model.
+}
+\examples{
+model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
+                             n = 10000, reproductive_number = 4, 
+                             prob_transmission = 0.5, incubation_days = 4, 
+                             prob_recovery = 0.99)
+
+# Adding a small world population
+agents_smallworld(
+  model_sirconn,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+  
+# Initializing
+init(model_sirconn, days = 100, seed = 1912)
+# Running and printing
+run(model_sirconn)
+model_sirconn
 }
 \seealso{
 Other Models: 

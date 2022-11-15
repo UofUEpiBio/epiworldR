@@ -1,15 +1,18 @@
 #' Susceptible Infected Removed model (SIR connected)
-#' @param name Name of the virus
-#' @param prevalence Initial proportion of individuals with the virus.
+#' @param name String. Name of the virus
+#' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param reproductive_number Numeric scalar. Reproductive number.
-#' @param prob_transmission Numeric scalar between 0 and 1. Probability of transmission.
+#' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
+#' transmission.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
 #' @param n,m,days,seed,x,... to be documented
 #' @export
 #' @family Models
 #' @aliases epiworld_sirconn
 #' @examples 
-#' model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, reproductive_number = 5, prob_transmission = 0.4, prob_recovery = 0.95)
+#' model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
+#'                               reproductive_number = 5, 
+#'                               prob_transmission = 0.4, prob_recovery = 0.95)
 #' # Adding a small world population
 #' agents_smallworld(
 #'   model_sirconn,
@@ -25,18 +28,14 @@
 #' run(model_sirconn)
 #' model_sirconn
 #' 
-#' 
-#' 
-#' 
-#' 
-#' 
-#' 
+
 ModelSIRCONN <- function(
     name, n, prevalence, reproductive_number, prob_transmission, prob_recovery
 ) {
   
   structure(
-    ModelSIRCONN_cpp(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery),
+    ModelSIRCONN_cpp(name, n, prevalence, reproductive_number, 
+                     prob_transmission, prob_recovery),
     class = "epiworld_sirconn"
   )
   

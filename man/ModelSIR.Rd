@@ -23,18 +23,38 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \method{plot}{epiworld_sir}(x, ...)
 }
 \arguments{
-\item{name}{Name of the virus}
+\item{name}{String. Name of the virus}
 
-\item{prevalence}{a number}
+\item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{infectiousness}{a number}
+\item{infectiousness}{Numeric scalar between 0 and 1. Virus's rate of
+infection.}
 
-\item{recovery}{a number}
+\item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
 \item{m, days, seed, x, ..., n, k, d, p}{to be documented}
 }
 \description{
 SIR model
+}
+\examples{
+model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
+                      infectiousness = 0.9, recovery = 0.1)
+
+# Adding a small world population
+agents_smallworld(
+  model_sir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+  
+# Initializing
+init(model_sir, days = 100, seed = 1912)
+# Running and printing
+run(model_sir)
+model_sir
 }
 \seealso{
 Other Models: 

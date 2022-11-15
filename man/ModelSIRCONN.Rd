@@ -27,20 +27,41 @@ ModelSIRCONN(
 \method{plot}{epiworld_sirconn}(x, ...)
 }
 \arguments{
-\item{name}{Name of the virus}
+\item{name}{String. Name of the virus}
 
 \item{n, m, days, seed, x, ...}{to be documented}
 
-\item{prevalence}{a number}
+\item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{reproductive_number}{a number}
+\item{reproductive_number}{Numeric scalar. Reproductive number.}
 
-\item{prob_transmission}{a number}
+\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
+transmission.}
 
-\item{prob_recovery}{a number}
+\item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 }
 \description{
 Susceptible Infected Removed model (SIR connected)
+}
+\examples{
+model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
+                              reproductive_number = 5, 
+                              prob_transmission = 0.4, prob_recovery = 0.95)
+# Adding a small world population
+agents_smallworld(
+  model_sirconn,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+  
+# Initializing
+init(model_sirconn, days = 100, seed = 1912)
+# Running and printing
+run(model_sirconn)
+model_sirconn
+
 }
 \seealso{
 Other Models: 

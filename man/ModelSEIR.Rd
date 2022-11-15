@@ -23,15 +23,17 @@ ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 \method{plot}{epiworld_seir}(x, ...)
 }
 \arguments{
-\item{name}{Name of the virus}
+\item{name}{String. Name of the virus}
 
-\item{prevalence}{a number}
+\item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{infectiousness}{a number}
+\item{infectiousness}{Numeric scalar between 0 and 1. Virus's rate of
+infection.}
 
-\item{incubation_days}{a number}
+\item{incubation_days}{Numeric scalar greater than 0. Average number of
+incubation days.}
 
-\item{recovery}{a number}
+\item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
 \item{m}{to be documented}
 
@@ -53,6 +55,25 @@ ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 }
 \description{
 Susceptible Infected Susceptible model (SEIR)
+}
+\examples{
+model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
+infectiousness = 0.9, recovery = 0.1, incubation_days = 4)
+
+# Adding a small world population
+agents_smallworld(
+  model_seir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+  )
+  
+# Initializing
+init(model_seir, days = 100, seed = 1912)
+# Running and printing
+run(model_seir)
+model_seir
 }
 \seealso{
 Other Models: 
