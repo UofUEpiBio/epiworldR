@@ -3794,7 +3794,7 @@ inline AdjList::AdjList(
         {
 
             if (dat[j].find(i) == dat[j].end())
-                dat[j].insert(std::pair<epiworld_fast_uint, epiworld_fast_uint>(j, 1u));
+                dat[j].insert(std::pair<epiworld_fast_uint, epiworld_fast_uint>(i, 1u));
             else
                 dat[j][i]++;
 
@@ -4377,8 +4377,8 @@ inline AdjList rgraph_ring_lattice(
     std::vector< epiworld_fast_uint > source;
     std::vector< epiworld_fast_uint > target;
 
-    // if (!directed)
-    //     if (k > 1u) k = static_cast< epiworld_fast_uint >(floor(k / 2.0));
+    if (!directed)
+        if (k > 1u) k = static_cast< epiworld_fast_uint >(floor(k / 2.0));
 
     for (epiworld_fast_uint i = 0; i < n; ++i)
     {
@@ -4401,6 +4401,17 @@ inline AdjList rgraph_ring_lattice(
 
 }
 
+/**
+ * @brief Smallworld network (Watts-Strogatz)
+ * 
+ * @tparam TSeq 
+ * @param n 
+ * @param k 
+ * @param p 
+ * @param directed 
+ * @param model 
+ * @return AdjList 
+ */
 template<typename TSeq>
 inline AdjList rgraph_smallworld(
     epiworld_fast_uint n,
@@ -4418,6 +4429,83 @@ inline AdjList rgraph_smallworld(
         rewire_degseq(&ring, &model, p);
         
     return ring;
+
+}
+
+/**
+ * @brief Generates a blocked network
+ * 
+ * Since block sizes and number of connections between blocks are fixed,
+ * this routine is fully deterministic.
+ * 
+ * @tparam TSeq 
+ * @param n Size of the network
+ * @param blocksize Size of the block.
+ * @param ncons Number of connections between blocks
+ * @param model A model
+ * @return AdjList 
+ */
+template<typename TSeq>
+inline AdjList rgraph_blocked(
+    epiworld_fast_uint n,
+    epiworld_fast_uint blocksize,
+    epiworld_fast_uint ncons,
+    Model<TSeq> & model
+) {
+
+    std::vector< epiworld_fast_uint > source_;
+    std::vector< epiworld_fast_uint > target_;
+
+    size_t i = 0u;
+    size_t cum_node_count = 0u;
+    while (i < n)
+    {
+
+        for (size_t j = 0; j < blocksize; ++j)
+        {
+
+            for (size_t k = 0; k < j; ++k)
+            {
+                // No loops
+                if (k == j)
+                    continue;
+
+                // Exists the loop in case there are no more 
+                // nodes available
+                if ((i + k) >= n)
+                    break;
+
+                source_.push_back(j + i);
+                target_.push_back(k + i);
+            }
+
+            // No more nodes left to build connections
+            if (++cum_node_count >= n)
+                break;
+            
+        }
+
+        // Connections between this and the previou sone
+        if (i != 0)
+        {
+
+            size_t max_cons = std::min(ncons, n - cum_node_count);
+
+            // Generating the connections
+            for (size_t j = 0u; j < max_cons; ++j)
+            {
+
+                source_.push_back(i + j - blocksize);
+                target_.push_back(i + j);
+
+            }
+        }
+
+        i += blocksize;
+        
+    }
+        
+    return AdjList(source_, target_, n, false);
 
 }
 
@@ -7201,7 +7289,7 @@ inline void Model<TSeq>::read_params(std::string fn)
     if (!paramsfile)
         throw std::logic_error("The file " + fn + " was not found.");
 
-    std::regex pattern("^([^:]+)\\s*[:]\\s*([0-9]+)(\\.[0-9]+)?\\s*$");
+    std::regex pattern("^([^:]+)\\s*[:]\\s*([0-9]+|[0-9]*\\.[0-9]+)?\\s*$");
 
     std::string line;
     std::smatch match;
@@ -7225,9 +7313,6 @@ inline void Model<TSeq>::read_params(std::string fn)
         epiworld_double tmp_num = static_cast<epiworld_double>(
             std::strtod(anumber.c_str(), nullptr)
             );
-
-        // Trimming text
-        
 
         add_param(
             tmp_num,
@@ -10276,7 +10361,7 @@ template<typename TSeq>
 inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m)
 {
 
-    Agent<TSeq> * p = a.agent;
+    Agent<TSeq> *  p = a.agent;
     VirusPtr<TSeq> v = a.virus;
 
     CHECK_COALESCE_(a.new_status, v->status_init, p->get_status())
@@ -11273,6 +11358,18 @@ inline AgentsSample<TSeq>::AgentsSample(Entity<TSeq> & entity_, size_t n, bool t
 
 }
 
+/**
+ * @brief Sample from the agent's entities
+ * 
+ * For example, how many individuals the agent contacts in a given point in time.
+ * 
+ * @tparam TSeq 
+ * @param agent_ 
+ * @param n Sample size
+ * @param truncate If the agent has fewer than `n` connections, then truncate = true
+ * will automatically reduce the number of possible samples. Otherwise, if false, then
+ * it returns an error.
+ */
 template<typename TSeq>
 inline AgentsSample<TSeq>::AgentsSample(Agent<TSeq> & agent_, size_t n, bool truncate)
 {
@@ -11288,6 +11385,7 @@ inline AgentsSample<TSeq>::AgentsSample(Agent<TSeq> & agent_, size_t n, bool tru
     agents_left   = &agent_.sampled_agents_left;
     agents_left_n = &agent_.sampled_agents_left_n;
 
+    // Computing the cumulative sum of counts across entities
     size_t agents_in_entities = 0;
     Entities<TSeq> entities_a = agent->get_entities();
 
@@ -11878,6 +11976,48 @@ private:
     static const int REMOVED               = 7;
 
 public:
+
+    /**
+     * @name Construct a new ModelSURV object
+     * 
+     * The ModelSURV class simulates a survaillence model where agents can be
+     * isolated, even if asyptomatic.
+     * 
+     * @param vname String. Name of the virus
+     * @param prevalence Integer. Number of initial cases of the virus.
+     * @param efficacy_vax Double. Efficacy of the vaccine (1 - P(acquire the disease)).
+     * @param latent_period Double. Shape parameter of a `Gamma(latent_period, 1)`
+     *   distribution. This coincides with the expected number of latent days.
+     * @param infect_period Double. Shape parameter of a `Gamma(infected_period, 1)`
+     *   distribution. This coincides with the expected number of infectious days.
+     * @param prob_symptoms Double. Probability of generating symptoms.
+     * @param prop_vaccinated Double. Probability of vaccination. Coincides with
+     *   the initial prevalence of vaccinated individuals.
+     * @param prop_vax_redux_transm Double. Factor by which the vaccine reduces
+     *   transmissibility.
+     * @param prop_vax_redux_infect Double. Factor by which the vaccine reduces
+     *   the chances of becoming infected.
+     * @param surveillance_prob Double. Probability of testing an agent.
+     * @param prob_transmission Double. Raw transmission probability.
+     * @param prob_death Double. Raw probability of death for symptomatic individuals.
+     * @param prob_noreinfect Double. Probability of no re-infection.
+     * 
+     * @details
+     * This model features the following states:
+     * 
+     * - Susceptible
+     * - Latent
+     * - Symptomatic
+     * - Symptomatic isolated
+     * - Asymptomatic
+     * - Asymptomatic isolated
+     * - Recovered
+     * - Removed    
+     * 
+     * @returns An object of class `epiworld_surv`
+     * 
+     */
+    ///@{
     ModelSURV() {};
 
     ModelSURV(
@@ -11899,7 +12039,7 @@ public:
 
     ModelSURV(
         std::string vname,
-        epiworld_fast_uint prevalence               = 50,
+        epiworld_fast_uint prevalence         = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
         epiworld_double infect_period         = 6u,
@@ -11912,18 +12052,10 @@ public:
         epiworld_double prob_death            = 0.001,
         epiworld_double prob_noreinfect       = 0.9
     );
+    ///@}
 
 };
 
-/**
- * @brief Template for a Susceptible-Infected-Removed (SIR) model
- * 
- * @param model A Model<TSeq> object where to set up the SIR.
- * @param vname std::string Name of the virus
- * @param initial_prevalence epiworld_double Initial prevalence
- * @param initial_susceptibility_reduction epiworld_double Initial susceptibility_reduction of the immune system
- * @param initial_recovery epiworld_double Initial recovery rate of the immune system
- */
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
     ModelSURV<TSeq> & model,
@@ -11997,11 +12129,11 @@ inline ModelSURV<TSeq>::ModelSURV(
         // Figuring out latent period
         if (v->get_data().size() == 0u)
         {
-            epiworld_double latent_days = m->rgamma(MPAR(0), 1.0);
+            epiworld_double latent_days = m->rgamma(*m->p0, 1.0);
             v->get_data().push_back(latent_days);
 
             v->get_data().push_back(
-                m->rgamma(MPAR(1), 1.0) + latent_days
+                m->rgamma(*m->p1, 1.0) + latent_days
             );
         }
         
@@ -12093,8 +12225,6 @@ inline ModelSURV<TSeq>::ModelSURV(
                 {
                     p->change_status(ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED);
                 }
-
-                
 
             }
 

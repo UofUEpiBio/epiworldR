@@ -15,10 +15,10 @@ ModelSURV(
   prevalence,
   efficacy_vax,
   latent_period,
+  infect_period,
   prob_symptoms,
   prop_vaccinated,
   prop_vax_redux_transm,
-  infect_period,
   prop_vax_redux_infect,
   surveillance_prob,
   prob_transmission,
@@ -39,13 +39,16 @@ ModelSURV(
 \arguments{
 \item{name}{String. Name of the virus}
 
-\item{prevalence}{Initial proportion of individuals with the virus.}
+\item{prevalence}{Initial number of individuals with the virus.}
 
 \item{efficacy_vax}{Double. Efficacy of the vaccine
 (1 - P(acquire the disease)).}
 
 \item{latent_period}{Double. Shape parameter of a 'Gamma(latent_period, 1)'
 distribution. This coincides with the expected number of latent days.}
+
+\item{infect_period}{Double. Shape parameter of a 'Gamma(infected_period, 1)'
+distribution. This coincides with the expected number of infectious days.}
 
 \item{prob_symptoms}{Double. Probability of generating symptoms.}
 
@@ -54,9 +57,6 @@ the initial prevalence of vaccinated individuals.}
 
 \item{prop_vax_redux_transm}{Double. Factor by which the vaccine reduces
 transmissibility.}
-
-\item{infect_period}{Double. Shape parameter of a 'Gamma(infected_period, 1)'
-distribution. This coincides with the expected number of infectious days.}
 
 \item{prop_vax_redux_infect}{Double. Factor by which the vaccine reduces
 the chances of becoming infected.}
@@ -76,18 +76,26 @@ individuals.}
 Susceptible Infected Susceptible model (SURV)
 }
 \examples{
-model_surv <- ModelSURV(name = "COVID-19", prevalence = 0.2, 
-                       efficacy_vax = 0.6, latent_period = 4, 
-                       infect_period = 5, prob_symptoms = 0.5, 
-                       prop_vaccinated = 0.7, prop_vax_redux_transm = 0.8, 
-                       prop_vax_redux_infect = 0.95, surveillance_prob = 0.1, 
-                       prob_transmission = 0.2, prob_death = 0.001, 
-                       prob_noreinfect = 0.5)
+model_surv <- ModelSURV(
+  name                  = "COVID-19",
+  prevalence            = 20,
+  efficacy_vax          = 0.6,
+  latent_period         = 4,
+  infect_period         = 5,
+  prob_symptoms         = 0.5,
+  prop_vaccinated       = 0.7,
+  prop_vax_redux_transm = 0.8,
+  prop_vax_redux_infect = 0.95,
+  surveillance_prob     = 0.1,
+  prob_transmission     = 0.2,
+  prob_death            = 0.001,
+  prob_noreinfect       = 0.5
+)
 
 # Adding a small world population
 agents_smallworld(
   model_surv,
-  n = 1000,
+  n = 10000,
   k = 5,
   d = FALSE,
   p = .01

@@ -59,25 +59,21 @@ The SEIR connected model implements a model where all agents are connected.
 This is equivalent to a compartmental model.
 }
 \examples{
-model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
-                             n = 10000, reproductive_number = 4, 
-                             prob_transmission = 0.5, incubation_days = 4, 
-                             prob_recovery = 0.99)
-
-# Adding a small world population
-agents_smallworld(
-  model_sirconn,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-  )
+model_seirconn <- ModelSEIRCONN(
+  name                = "COVID-19",
+  prevalence          = 0.01, 
+  n                   = 10000,
+  reproductive_number = 4, 
+  incubation_days     = 7, 
+  prob_transmission   = 0.5,
+  prob_recovery       = 0.99
+)
   
 # Initializing
-init(model_sirconn, days = 100, seed = 1912)
+init(model_seirconn, days = 100, seed = 1912)
 # Running and printing
-run(model_sirconn)
-model_sirconn
+run(model_seirconn)
+model_seirconn
 }
 \seealso{
 Other Models: 
