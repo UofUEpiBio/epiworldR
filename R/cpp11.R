@@ -135,3 +135,19 @@ agents_smallworld_surv <- function(m, n, k, d, p) {
 run_surv <- function(m) {
   .Call(`_epiworldR_run_surv`, m)
 }
+
+virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_death) {
+  .Call(`_epiworldR_virus_cpp`, name, post_immunity, prob_infecting, prob_recovery, prob_death)
+}
+
+virus_set_status_cpp <- function(v, init, end, removed) {
+  .Call(`_epiworldR_virus_set_status_cpp`, v, init, end, removed)
+}
+
+add_virus_cpp <- function(m, v, preval) {
+  .Call(`_epiworldR_add_virus_cpp`, m, v, preval)
+}
+
+add_virus_n_cpp <- function(m, v, preval) {
+  .Call(`_epiworldR_add_virus_n_cpp`, m, v, preval)
+}
