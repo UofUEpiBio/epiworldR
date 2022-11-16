@@ -5583,7 +5583,7 @@ template<typename TSeq>
 inline epiworld_double susceptibility_reduction_mixer_default(
     Agent<TSeq>* p,
     VirusPtr<TSeq> v,
-    Model<TSeq> * m
+    Model<TSeq> *
 )
 {
     epiworld_double total = 1.0;
@@ -5598,7 +5598,7 @@ template<typename TSeq>
 inline epiworld_double transmission_reduction_mixer_default(
     Agent<TSeq>* p,
     VirusPtr<TSeq> v,
-    Model<TSeq>* m
+    Model<TSeq>*
 )
 {
     epiworld_double total = 1.0;
@@ -5613,7 +5613,7 @@ template<typename TSeq>
 inline epiworld_double recovery_enhancer_mixer_default(
     Agent<TSeq>* p,
     VirusPtr<TSeq> v,
-    Model<TSeq>* m
+    Model<TSeq>*
 )
 {
     epiworld_double total = 1.0;
@@ -5628,9 +5628,9 @@ template<typename TSeq>
 inline epiworld_double death_reduction_mixer_default(
     Agent<TSeq>* p,
     VirusPtr<TSeq> v,
-    Model<TSeq>* m
-)
-{
+    Model<TSeq>* /*m*/
+) {
+
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
     {
@@ -6276,14 +6276,16 @@ inline void Model<TSeq>::add_virus(Virus<TSeq> v, epiworld_double preval)
             "The virus \"" + v.get_name() + "\" has no -post- status."
             );
 
-    // Setting the id
-    v.set_id(viruses.size());
+    // Setting sequence (if missing)
+    if (v.get_sequence() == nullptr)
+        v.set_sequence(default_sequence<TSeq>());    
     
     // Adding new virus
     viruses.push_back(std::make_shared< Virus<TSeq> >(v));
     prevalence_virus.push_back(preval);
     prevalence_virus_as_proportion.push_back(true);
     viruses_dist_funs.push_back(nullptr);
+    db.record_variant(*viruses[viruses.size() - 1u]);
 
 }
 
@@ -6969,6 +6971,11 @@ inline void Model<TSeq>::print() const
 
         }
 
+    }
+
+    if (db.variant_id.size() == 0u)
+    {
+        printf_epiworld(" (none)\n");
     }
 
     printf_epiworld("\nTool(s):\n");
@@ -7764,7 +7771,7 @@ private:
     int       agent_idx       = -99;
     int agent_exposure_number = -99;
 
-    std::shared_ptr<TSeq> baseline_sequence = std::make_shared<TSeq>(default_sequence<TSeq>());
+    std::shared_ptr<TSeq> baseline_sequence = nullptr;
     std::shared_ptr<std::string> virus_name = nullptr;
     int date = -99;
     int id   = -99;
@@ -8044,7 +8051,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting(epiworld_double * prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return *prob;
         };
@@ -8056,7 +8063,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_recovery(epiworld_double * prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return *prob;
         };
@@ -10436,7 +10443,7 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * m)
+inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * /*m*/)
 {
 
     Agent<TSeq> * p   = a.agent;    
@@ -10460,7 +10467,7 @@ inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * m)
+inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * /*m*/)
 {
 
     Agent<TSeq> * p  = a.agent;    
@@ -12688,13 +12695,13 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSEIRCONN : public epiworld::Model<TSeq> 
 {
-private:
+public:
+
     static const int SUSCEPTIBLE = 0;
     static const int EXPOSED     = 1;
     static const int INFECTED    = 2;
-    static const int RECOVERE    = 3;
+    static const int RECOVERED   = 3;
 
-public:
 
     ModelSEIRCONN() {
 
@@ -12956,7 +12963,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(1,3,3);
+    virus.set_status(ModelSEIRCONN<TSeq>::EXPOSED, ModelSEIRCONN<TSeq>::RECOVERED, ModelSEIRCONN<TSeq>::RECOVERED);
     model.add_virus(virus, prevalence);
 
     // Adding updating function

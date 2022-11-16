@@ -45,18 +45,18 @@ int init_seirconn(SEXP m, int days, int seed) {
   WrapSEIRCONN(ptr)(m);
   ptr->init(days, seed);
   
-  for (auto v : ptr->get_viruses())
-  {
-    printf_epiworld(
-      "Virus with id: %i, seq: %i, and name %s.\n",
-      v->get_id(),
-      v->get_sequence(),
-      v->get_name().c_str()
-    );
-  }
-  
-  
-  printf_epiworld("Total variants according to db %i\n.", ptr->get_db().get_n_variants());
+  // for (auto v : ptr->get_viruses())
+  // {
+  //   printf_epiworld(
+  //     "Virus with id: %i, seq: %i, and name %s.\n",
+  //     v->get_id(),
+  //     v->get_sequence(),
+  //     v->get_name().c_str()
+  //   );
+  // }
+  // 
+  // 
+  // printf_epiworld("Total variants according to db %i\n.", ptr->get_db().get_n_variants());
   
   return 0;
   
