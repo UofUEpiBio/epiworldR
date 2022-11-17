@@ -40,25 +40,25 @@ ModelSIS <- function(
 #' @rdname ModelSIS
 #' @export
 init.epiworld_sis <- function(m, days, seed) {
-  init_sis(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSIS
 #' @export
 print.epiworld_sis <- function(x, ...) {
-  print_sir(x)
+  print_cpp(x)
 }
 
 #' @rdname ModelSIS
 #' @export
 agents_smallworld.epiworld_sis <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
+  agents_smallworld_cpp(m, n, k, d, p)
 }
 
 #' @rdname ModelSIS
 #' @export
 run.epiworld_sis <- function(m) {
-  run_sir(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSIS

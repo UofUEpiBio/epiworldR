@@ -53,25 +53,25 @@ ModelSEIRCONN <- function(
 #' @rdname ModelSEIRCONN
 #' @export
 init.epiworld_seirconn <- function(m, days, seed) {
-  init_seirconn(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSEIRCONN
 #' @export
 print.epiworld_seirconn <- function(x, ...) {
-  print_seirconn(x)
+  print_cpp(x)
 }
 
 #' #' @rdname ModelSEIRCONN
 #' #' @export
 #' agents_smallworld.epiworld_seirconn <- function(m, n, k, d, p) {
-#'   agents_smallworld_sir(m, n, k, d, p)
+#'   agents_smallworld_cpp(m, n, k, d, p)
 #' }
 
 #' @rdname ModelSEIRCONN
 #' @export
 run.epiworld_seirconn <- function(m) {
-  run_seirconn(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSEIRCONN

@@ -40,19 +40,19 @@ ModelSIRCONN <- function(
 #' @rdname ModelSIRCONN
 #' @export
 init.epiworld_sirconn <- function(m, days, seed) {
-  init_sirconn(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSIRCONN
 #' @export
 print.epiworld_sirconn <- function(x, ...) {
-  print_sirconn(x)
+  print_cpp(x)
 }
 
 #' @rdname ModelSIRCONN
 #' @export
 run.epiworld_sirconn <- function(m) {
-  run_sirconn(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSIRCONN

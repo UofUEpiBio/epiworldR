@@ -50,13 +50,13 @@ ModelSEIR <- function(
 #' @rdname ModelSEIR
 #' @export
 init.epiworld_seir <- function(m, days, seed) {
-  init_sir(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSEIR
 #' @export
 print.epiworld_seir <- function(x, ...) {
-  print_sir(x)
+  print_cpp(x)
 }
 
 #' @param n to be documented
@@ -67,13 +67,13 @@ print.epiworld_seir <- function(x, ...) {
 #' @rdname ModelSEIR
 #' @export
 agents_smallworld.epiworld_seir <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
+  agents_smallworld_cpp(m, n, k, d, p)
 }
 
 #' @rdname ModelSEIR
 #' @export
 run.epiworld_seir <- function(m) {
-  run_sir(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSEIR

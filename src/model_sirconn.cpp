@@ -38,34 +38,4 @@ SEXP ModelSIRCONN_cpp(
   return ptr;
 }
 
-[[cpp11::register]]
-int init_sirconn(SEXP m, int days, int seed) {
-  
-  WrapSIRCONN(ptr)(m);
-  ptr->init(days, seed);
-  
-  return 0;
-  
-}
-  
-[[cpp11::register]]
-int print_sirconn(SEXP m) {
-  
-  WrapSIRCONN(ptr)(m);
-  ptr->print();
-  
-  return 0;
-  
-}
-
-[[cpp11::register]]
-int run_sirconn(SEXP m) {
-  
-  WrapSIRCONN(ptr)(m);
-  ptr->run();
-  
-  return 0;
-  
-}
-
 #undef WrapSIRCONN

@@ -76,25 +76,25 @@ ModelSURV <- function(
 #' @rdname ModelSURV
 #' @export
 init.epiworld_surv <- function(m, days, seed) {
-  init_surv(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSURV
 #' @export
 print.epiworld_surv <- function(x, ...) {
-  print_surv(x)
+  print_cpp(x)
 }
 
 #' @rdname ModelSURV
 #' @export
 agents_smallworld.epiworld_surv <- function(m, n, k, d, p) {
-  agents_smallworld_surv(m, n, k, d, p)
+  agents_smallworld_cpp(m, n, k, d, p)
 }
 
 #' @rdname ModelSURV
 #' @export
 run.epiworld_surv <- function(m) {
-  run_surv(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSURV
