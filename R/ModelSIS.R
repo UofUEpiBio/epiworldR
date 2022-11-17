@@ -4,7 +4,15 @@
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection 
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param m,days,seed,x,...,n,k,d,p to be documented
+#' @param m
+#' @param days Number of days.
+#' @param seed Seed to set for initializing random number generator.
+#' @param x
+#' @param ...
+#' @param n Number of individuals in the population.
+#' @param k
+#' @param d 
+#' @param p 
 #' @export
 #' @family Models
 #' @aliases epiworld_sis

@@ -8,7 +8,11 @@
 #' incubation days.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
 #' @param x to be documented
-#' @param ... to be documented
+#' @param ...
+#' @param n Number of individuals in the population.
+#' @param k
+#' @param d 
+#' @param p 
 #' @export
 #' @family Models
 #' @aliases epiworld_seir
