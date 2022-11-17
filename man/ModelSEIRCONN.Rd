@@ -44,17 +44,21 @@ incubation days.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
-\item{m}{}
+\item{m}{Model object.}
 
 \item{days}{Numeric scalar. Number of days the simulation is to run for.}
 
 \item{seed}{Seed to set for initializing random number generator.}
 
-\item{x}{}
+\item{x}{Object of class SEIRCONN.}
 
-\item{d}{}
+\item{...}{Currently ignore.}
 
-\item{p}{}
+\item{k}{Number of ties in the small world network.}
+
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.

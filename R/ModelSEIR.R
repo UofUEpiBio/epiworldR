@@ -7,12 +7,15 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param x to be documented
-#' @param ...
+#' @param m Model object.
+#' @param days Number of days.
+#' @param seed Seed to set for initializing random number generator.
+#' @param x Object of class SEIR. 
+#' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
-#' @param k
-#' @param d 
-#' @param p 
+#' @param k Number of ties in the small world network.
+#' @param d Logical scalar. Whether the graph is directed or not.
+#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_seir

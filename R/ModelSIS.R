@@ -4,15 +4,15 @@
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection 
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param m
+#' @param m Model object.
 #' @param days Number of days.
 #' @param seed Seed to set for initializing random number generator.
-#' @param x
-#' @param ...
+#' @param x Object of class SIS. 
+#' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
-#' @param k
-#' @param d 
-#' @param p 
+#' @param k Number of ties in the small world network.
+#' @param d Logical scalar. Whether the graph is directed or not.
+#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_sis

@@ -70,11 +70,17 @@ individuals.}
 
 \item{prob_noreinfect}{Double. Probability of no re-infection.}
 
+\item{x}{Object of class SURV.}
+
+\item{...}{Currently ignore.}
+
 \item{n}{Number of individuals in the population.}
 
-\item{d}{}
+\item{k}{Number of ties in the small world network.}
 
-\item{p}{}
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Susceptible model (SURV)

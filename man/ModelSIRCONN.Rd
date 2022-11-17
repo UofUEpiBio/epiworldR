@@ -40,9 +40,15 @@ transmission.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
-\item{d}{}
+\item{x}{Object of class SIRCONN.}
 
-\item{p}{}
+\item{...}{Currently ignore.}
+
+\item{k}{Number of ties in the small world network.}
+
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Removed model (SIR connected)

@@ -32,15 +32,23 @@ infection}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
+\item{m}{Model object.}
+
 \item{days}{Number of days.}
 
 \item{seed}{Seed to set for initializing random number generator.}
 
+\item{x}{Object of class SIS.}
+
+\item{...}{Currently ignore.}
+
 \item{n}{Number of individuals in the population.}
 
-\item{d}{}
+\item{k}{Number of ties in the small world network.}
 
-\item{p}{}
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Susceptible model (SIS)

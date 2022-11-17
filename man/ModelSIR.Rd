@@ -32,11 +32,17 @@ infection.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
+\item{x}{Object of class SIR.}
+
+\item{...}{Currently ignore.}
+
 \item{n}{Number of individuals in the population.}
 
-\item{d}{}
+\item{k}{Number of ties in the small world network.}
 
-\item{p}{}
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 SIR model
