@@ -20,7 +20,12 @@
 #' @param prob_death Double. Raw probability of death for symptomatic 
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
-#' @param m,days,seed,x,...,n,k,d,p to be explained
+#' @param x
+#' @param ...
+#' @param n Number of individuals in the population.
+#' @param k
+#' @param d 
+#' @param p  
 #' @export
 #' @family Models
 #' @aliases epiworld_surv

@@ -12,11 +12,15 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
-#' @param m  to be documented
-#' @param days to be documented
-#' @param seed to be documented
-#' @param x to be documented
-#' @param ... to be documented
+#' @param m  
+#' @param days Numeric scalar. Number of days the simulation is to run for. 
+#' @param seed Seed to set for initializing random number generator.
+#' @param x 
+#' @param ...
+#' @param n Number of individuals in the population.
+#' @param k
+#' @param d 
+#' @param p 
 #' @export
 #' @family Models
 #' @aliases epiworld_seirconn

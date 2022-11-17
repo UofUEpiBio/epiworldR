@@ -5,7 +5,12 @@
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
 #' transmission.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
-#' @param n,m,days,seed,x,... to be documented
+#' @param x
+#' @param ...
+#' @param n Number of individuals in the population.
+#' @param k
+#' @param d 
+#' @param p 
 #' @export
 #' @family Models
 #' @aliases epiworld_sirconn
