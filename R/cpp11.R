@@ -64,6 +64,18 @@ run_cpp <- function(m) {
   .Call(`_epiworldR_run_cpp`, m)
 }
 
+tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
+  .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
+}
+
+add_tool_cpp <- function(m, t, preval) {
+  .Call(`_epiworldR_add_tool_cpp`, m, t, preval)
+}
+
+add_tool_n_cpp <- function(m, t, preval) {
+  .Call(`_epiworldR_add_tool_n_cpp`, m, t, preval)
+}
+
 virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_death) {
   .Call(`_epiworldR_virus_cpp`, name, post_immunity, prob_infecting, prob_recovery, prob_death)
 }
