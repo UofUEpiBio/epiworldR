@@ -1,7 +1,7 @@
 #' Susceptible Infected Susceptible model (SURV)
 #'
 #' @param name String. Name of the virus
-#' @param prevalence Initial proportion of individuals with the virus.
+#' @param prevalence Initial number of individuals with the virus.
 #' @param efficacy_vax Double. Efficacy of the vaccine 
 #' (1 - P(acquire the disease)).
 #' @param latent_period Double. Shape parameter of a 'Gamma(latent_period, 1)'
@@ -30,18 +30,26 @@
 #' @family Models
 #' @aliases epiworld_surv
 #' @examples
-#' model_surv <- ModelSURV(name = "COVID-19", prevalence = 0.2, 
-#'                        efficacy_vax = 0.6, latent_period = 4, 
-#'                        infect_period = 5, prob_symptoms = 0.5, 
-#'                        prop_vaccinated = 0.7, prop_vax_redux_transm = 0.8, 
-#'                        prop_vax_redux_infect = 0.95, surveillance_prob = 0.1, 
-#'                        prob_transmission = 0.2, prob_death = 0.001, 
-#'                        prob_noreinfect = 0.5)
-#' 
+#' model_surv <- ModelSURV(
+#'   name                  = "COVID-19",
+#'   prevalence            = 20,
+#'   efficacy_vax          = 0.6,
+#'   latent_period         = 4,
+#'   infect_period         = 5,
+#'   prob_symptoms         = 0.5,
+#'   prop_vaccinated       = 0.7,
+#'   prop_vax_redux_transm = 0.8,
+#'   prop_vax_redux_infect = 0.95,
+#'   surveillance_prob     = 0.1,
+#'   prob_transmission     = 0.2,
+#'   prob_death            = 0.001,
+#'   prob_noreinfect       = 0.5
+#' )
+#'
 #' # Adding a small world population
 #' agents_smallworld(
 #'   model_surv,
-#'   n = 1000,
+#'   n = 10000,
 #'   k = 5,
 #'   d = FALSE,
 #'   p = .01
@@ -79,23 +87,23 @@ init.epiworld_surv <- function(m, days, seed) {
 #' @rdname ModelSURV
 #' @export
 print.epiworld_surv <- function(x, ...) {
-  print_sir(x)
+  print_surv(x)
 }
 
 #' @rdname ModelSURV
 #' @export
 agents_smallworld.epiworld_surv <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
+  agents_smallworld_surv(m, n, k, d, p)
 }
 
 #' @rdname ModelSURV
 #' @export
 run.epiworld_surv <- function(m) {
-  run_sir(m)
+  run_surv(m)
 }
 
 #' @rdname ModelSURV
 #' @export
 plot.epiworld_surv <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SURV Model", counts_scale, ...)
+ plot_epi(x, main = "SURV Model", ...)
 }

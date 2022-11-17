@@ -70,6 +70,6 @@ run.epiworld_sir <- function(m) {
 #' @rdname ModelSIR
 #' @export
 plot.epiworld_sir <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIR Model", counts_scale, ...)
+ plot_epi(x, main = "SIR Model", ...)
 }
 

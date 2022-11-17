@@ -44,17 +44,14 @@ transmission.}
 Susceptible Infected Removed model (SIR connected)
 }
 \examples{
-model_sirconn <- ModelSIRCONN(name = "COVID-19", prevalence = 0.01, 
-                              reproductive_number = 5, 
-                              prob_transmission = 0.4, prob_recovery = 0.95)
-# Adding a small world population
-agents_smallworld(
-  model_sirconn,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-  )
+model_sirconn <- ModelSIRCONN(
+  name                = "COVID-19",
+  n                   = 10000,
+  prevalence          = 0.01,
+  reproductive_number = 5,
+  prob_transmission   = 0.4,
+  prob_recovery       = 0.95
+)
   
 # Initializing
 init(model_sirconn, days = 100, seed = 1912)

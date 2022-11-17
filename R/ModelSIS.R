@@ -72,5 +72,5 @@ run.epiworld_sis <- function(m) {
 #' @rdname ModelSIS
 #' @export
 plot.epiworld_sis <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIS Model", counts_scale, ...)
+ plot_epi(x, main = "SIS Model", ...)
 }

@@ -209,10 +209,10 @@ extern "C" SEXP _epiworldR_run_sis(SEXP m) {
   END_CPP11
 }
 // model_surv.cpp
-SEXP ModelSURV(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double prob_transmission, double prob_death, double prob_noreinfect);
-extern "C" SEXP _epiworldR_ModelSURV(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP prob_transmission, SEXP prob_death, SEXP prob_noreinfect) {
+SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double prob_transmission, double prob_death, double prob_noreinfect);
+extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP prob_transmission, SEXP prob_death, SEXP prob_noreinfect) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSURV(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(efficacy_vax), cpp11::as_cpp<cpp11::decay_t<double>>(latent_period), cpp11::as_cpp<cpp11::decay_t<double>>(prob_symptoms), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vaccinated), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_transm), cpp11::as_cpp<cpp11::decay_t<double>>(infect_period), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_infect), cpp11::as_cpp<cpp11::decay_t<double>>(surveillance_prob), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(prob_noreinfect)));
+    return cpp11::as_sexp(ModelSURV_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(efficacy_vax), cpp11::as_cpp<cpp11::decay_t<double>>(latent_period), cpp11::as_cpp<cpp11::decay_t<double>>(prob_symptoms), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vaccinated), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_transm), cpp11::as_cpp<cpp11::decay_t<double>>(infect_period), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_infect), cpp11::as_cpp<cpp11::decay_t<double>>(surveillance_prob), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(prob_noreinfect)));
   END_CPP11
 }
 // model_surv.cpp
@@ -243,6 +243,34 @@ extern "C" SEXP _epiworldR_run_surv(SEXP m) {
     return cpp11::as_sexp(run_surv(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
   END_CPP11
 }
+// virus.cpp
+SEXP virus_cpp(std::string name, double post_immunity, double prob_infecting, double prob_recovery, double prob_death);
+extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP post_immunity, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(virus_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(post_immunity), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infecting), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death)));
+  END_CPP11
+}
+// virus.cpp
+int virus_set_status_cpp(SEXP v, size_t init, size_t end, size_t removed);
+extern "C" SEXP _epiworldR_virus_set_status_cpp(SEXP v, SEXP init, SEXP end, SEXP removed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(virus_set_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(init), cpp11::as_cpp<cpp11::decay_t<size_t>>(end), cpp11::as_cpp<cpp11::decay_t<size_t>>(removed)));
+  END_CPP11
+}
+// virus.cpp
+int add_virus_cpp(SEXP m, SEXP v, double preval);
+extern "C" SEXP _epiworldR_add_virus_cpp(SEXP m, SEXP v, SEXP preval) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<double>>(preval)));
+  END_CPP11
+}
+// virus.cpp
+int add_virus_n_cpp(SEXP m, SEXP v, size_t preval);
+extern "C" SEXP _epiworldR_add_virus_n_cpp(SEXP m, SEXP v, SEXP preval) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_virus_n_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(preval)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -251,7 +279,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSIRCONN_cpp",               (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                6},
     {"_epiworldR_ModelSIR_cpp",                   (DL_FUNC) &_epiworldR_ModelSIR_cpp,                    4},
     {"_epiworldR_ModelSIS_cpp",                   (DL_FUNC) &_epiworldR_ModelSIS_cpp,                    4},
-    {"_epiworldR_ModelSURV",                      (DL_FUNC) &_epiworldR_ModelSURV,                      13},
+    {"_epiworldR_ModelSURV_cpp",                  (DL_FUNC) &_epiworldR_ModelSURV_cpp,                  13},
+    {"_epiworldR_add_virus_cpp",                  (DL_FUNC) &_epiworldR_add_virus_cpp,                   3},
+    {"_epiworldR_add_virus_n_cpp",                (DL_FUNC) &_epiworldR_add_virus_n_cpp,                 3},
     {"_epiworldR_agents_smallworld_seir",         (DL_FUNC) &_epiworldR_agents_smallworld_seir,          5},
     {"_epiworldR_agents_smallworld_sir",          (DL_FUNC) &_epiworldR_agents_smallworld_sir,           5},
     {"_epiworldR_agents_smallworld_sis",          (DL_FUNC) &_epiworldR_agents_smallworld_sis,           5},
@@ -280,6 +310,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_sirconn",                    (DL_FUNC) &_epiworldR_run_sirconn,                     1},
     {"_epiworldR_run_sis",                        (DL_FUNC) &_epiworldR_run_sis,                         1},
     {"_epiworldR_run_surv",                       (DL_FUNC) &_epiworldR_run_surv,                        1},
+    {"_epiworldR_virus_cpp",                      (DL_FUNC) &_epiworldR_virus_cpp,                       5},
+    {"_epiworldR_virus_set_status_cpp",           (DL_FUNC) &_epiworldR_virus_set_status_cpp,            4},
     {NULL, NULL, 0}
 };
 }

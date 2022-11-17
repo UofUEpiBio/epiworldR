@@ -13,7 +13,7 @@ using namespace cpp11;
   cpp11::external_pointer<epiworld::epimodels::ModelSURV<>> (a)
 
 [[cpp11::register]]
-SEXP ModelSURV(
+SEXP ModelSURV_cpp(
   std::string name,
   double prevalence,
   double efficacy_vax,
