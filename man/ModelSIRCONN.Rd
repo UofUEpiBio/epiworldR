@@ -40,7 +40,7 @@ transmission.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
-\item{x}{Object of class SIS.}
+\item{x}{Object of class SIRCONN.}
 
 \item{...}{Currently ignore.}
 

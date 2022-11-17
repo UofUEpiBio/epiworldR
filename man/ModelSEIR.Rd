@@ -41,7 +41,7 @@ incubation days.}
 
 \item{seed}{to be documented}
 
-\item{x}{Object of class SIS.}
+\item{x}{Object of class SEIR.}
 
 \item{...}{Currently ignore.}
 

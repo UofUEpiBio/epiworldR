@@ -7,7 +7,10 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param x Object of class SIS. 
+#' @param m Model object.
+#' @param days Number of days.
+#' @param seed Seed to set for initializing random number generator.
+#' @param x Object of class SEIR. 
 #' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
 #' @param k Number of ties in the small world network.
@@ -54,13 +57,13 @@ ModelSEIR <- function(
 #' @rdname ModelSEIR
 #' @export
 init.epiworld_seir <- function(m, days, seed) {
-  init_sir(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSEIR
 #' @export
 print.epiworld_seir <- function(x, ...) {
-  print_sir(x)
+  print_cpp(x)
 }
 
 #' @param n to be documented
@@ -71,13 +74,13 @@ print.epiworld_seir <- function(x, ...) {
 #' @rdname ModelSEIR
 #' @export
 agents_smallworld.epiworld_seir <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
+  agents_smallworld_cpp(m, n, k, d, p)
 }
 
 #' @rdname ModelSEIR
 #' @export
 run.epiworld_seir <- function(m) {
-  run_sir(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSEIR

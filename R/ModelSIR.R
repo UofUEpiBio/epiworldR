@@ -4,7 +4,7 @@
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param x Object of class SIS. 
+#' @param x Object of class SIR. 
 #' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
 #' @param k Number of ties in the small world network.
@@ -46,25 +46,25 @@ ModelSIR <- function(
 #' @rdname ModelSIR
 #' @export
 init.epiworld_sir <- function(m, days, seed) {
-  init_sir(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSIR
 #' @export
 print.epiworld_sir <- function(x, ...) {
-  print_sir(x)
+  print_cpp(x)
 }
 
 #' @rdname ModelSIR
 #' @export
 agents_smallworld.epiworld_sir <- function(m, n, k, d, p) {
-  agents_smallworld_sir(m, n, k, d, p)
+  agents_smallworld_cpp(m, n, k, d, p)
 }
 
 #' @rdname ModelSIR
 #' @export
 run.epiworld_sir <- function(m) {
-  run_sir(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSIR

@@ -32,7 +32,7 @@ infection.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
-\item{x}{Object of class SIS.}
+\item{x}{Object of class SIR.}
 
 \item{...}{Currently ignore.}
 

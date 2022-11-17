@@ -5,7 +5,7 @@
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
 #' transmission.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
-#' @param x Object of class SIS. 
+#' @param x Object of class SIRCONN. 
 #' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @param k Number of ties in the small world network.
@@ -45,19 +45,19 @@ ModelSIRCONN <- function(
 #' @rdname ModelSIRCONN
 #' @export
 init.epiworld_sirconn <- function(m, days, seed) {
-  init_sirconn(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSIRCONN
 #' @export
 print.epiworld_sirconn <- function(x, ...) {
-  print_sirconn(x)
+  print_cpp(x)
 }
 
 #' @rdname ModelSIRCONN
 #' @export
 run.epiworld_sirconn <- function(m) {
-  run_sirconn(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSIRCONN

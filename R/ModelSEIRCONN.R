@@ -15,7 +15,7 @@
 #' @param m Model object.
 #' @param days Numeric scalar. Number of days the simulation is to run for. 
 #' @param seed Seed to set for initializing random number generator.
-#' @param x Object of class SIS. 
+#' @param x Object of class SEIRCONN. 
 #' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
 #' @param k Number of ties in the small world network.
@@ -57,25 +57,25 @@ ModelSEIRCONN <- function(
 #' @rdname ModelSEIRCONN
 #' @export
 init.epiworld_seirconn <- function(m, days, seed) {
-  init_seirconn(m, days, seed)
+  init_cpp(m, days, seed)
 }
 
 #' @rdname ModelSEIRCONN
 #' @export
 print.epiworld_seirconn <- function(x, ...) {
-  print_seirconn(x)
+  print_cpp(x)
 }
 
 #' #' @rdname ModelSEIRCONN
 #' #' @export
 #' agents_smallworld.epiworld_seirconn <- function(m, n, k, d, p) {
-#'   agents_smallworld_sir(m, n, k, d, p)
+#'   agents_smallworld_cpp(m, n, k, d, p)
 #' }
 
 #' @rdname ModelSEIRCONN
 #' @export
 run.epiworld_seirconn <- function(m) {
-  run_seirconn(m)
+  run_cpp(m)
 }
 
 #' @rdname ModelSEIRCONN

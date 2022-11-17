@@ -50,7 +50,7 @@ incubation days.}
 
 \item{seed}{Seed to set for initializing random number generator.}
 
-\item{x}{Object of class SIS.}
+\item{x}{Object of class SEIRCONN.}
 
 \item{...}{Currently ignore.}
 
