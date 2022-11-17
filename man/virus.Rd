@@ -3,12 +3,15 @@
 \name{virus}
 \alias{virus}
 \alias{add_virus}
+\alias{add_virus_n}
 \alias{virus_set_status}
 \title{Virus}
 \usage{
 virus(name, post_immunity, prob_infecting, prob_recovery, prob_death)
 
 add_virus(m, v, prevalence)
+
+add_virus_n(m, v, prevalence)
 
 virus_set_status(v, init, end, removed)
 }
@@ -34,7 +37,7 @@ mseirconn <- ModelSEIRCONN(
 delta <- virus("Delta Variant", 0, .5, .2, .01)
 virus_set_status(delta, 1, 3, 3)
 
-add_virus(mseirconn, delta, .1)
+add_virus(mseirconn, delta, .3)
 init(mseirconn, 100, 992)
 mseirconn
 

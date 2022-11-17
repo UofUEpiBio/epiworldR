@@ -41,9 +41,9 @@ incubation days.}
 
 \item{seed}{to be documented}
 
-\item{x}{to be documented}
+\item{x}{Object of class SIS.}
 
-\item{...}{to be documented}
+\item{...}{Currently ignore.}
 
 \item{n}{to be documented}
 

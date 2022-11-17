@@ -20,12 +20,12 @@
 #' @param prob_death Double. Raw probability of death for symptomatic 
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
-#' @param x
-#' @param ...
+#' @param x Object of class SIS. 
+#' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
-#' @param k
-#' @param d 
-#' @param p  
+#' @param k Number of ties in the small world network.
+#' @param d Logical scalar. Whether the graph is directed or not.
+#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_surv
