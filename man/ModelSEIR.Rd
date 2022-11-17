@@ -43,8 +43,6 @@ incubation days.}
 
 \item{x}{to be documented}
 
-\item{...}{to be documented}
-
 \item{n}{to be documented}
 
 \item{k}{to be documented}

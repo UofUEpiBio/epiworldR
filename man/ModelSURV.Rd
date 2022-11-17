@@ -70,7 +70,11 @@ individuals.}
 
 \item{prob_noreinfect}{Double. Probability of no re-infection.}
 
-\item{m, days, seed, x, ..., n, k, d, p}{to be explained}
+\item{n}{Number of individuals in the population.}
+
+\item{d}{}
+
+\item{p}{}
 }
 \description{
 Susceptible Infected Susceptible model (SURV)

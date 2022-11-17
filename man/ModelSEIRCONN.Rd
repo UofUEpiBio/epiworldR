@@ -30,7 +30,7 @@ ModelSEIRCONN(
 \arguments{
 \item{name}{String. Name of the virus}
 
-\item{n}{Integer greater than zero. Population size.}
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Initial proportion of individuals with the virus.}
 
@@ -44,15 +44,17 @@ incubation days.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
-\item{m}{to be documented}
+\item{m}{}
 
-\item{days}{to be documented}
+\item{days}{Numeric scalar. Number of days the simulation is to run for.}
 
-\item{seed}{to be documented}
+\item{seed}{Seed to set for initializing random number generator.}
 
-\item{x}{to be documented}
+\item{x}{}
 
-\item{...}{to be documented}
+\item{d}{}
+
+\item{p}{}
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.

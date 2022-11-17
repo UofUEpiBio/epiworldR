@@ -24,6 +24,30 @@ get_reproductive_number_cpp <- function(model, model_class) {
   .Call(`_epiworldR_get_reproductive_number_cpp`, model, model_class)
 }
 
+ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect) {
+  .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect)
+}
+
+ModelSEIR_cpp <- function(name, prevalence, infectiousness, incubation_days, recovery) {
+  .Call(`_epiworldR_ModelSEIR_cpp`, name, prevalence, infectiousness, incubation_days, recovery)
+}
+
+ModelSIS_cpp <- function(name, prevalence, infectiousness, recovery) {
+  .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, infectiousness, recovery)
+}
+
+ModelSIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery) {
+  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, prob_recovery)
+}
+
+ModelSIR_cpp <- function(name, prevalence, infectiousness, recovery) {
+  .Call(`_epiworldR_ModelSIR_cpp`, name, prevalence, infectiousness, recovery)
+}
+
+ModelSEIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
+  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
+}
+
 init_cpp <- function(m, days, seed) {
   .Call(`_epiworldR_init_cpp`, m, days, seed)
 }
@@ -38,38 +62,6 @@ agents_smallworld_cpp <- function(m, n, k, d, p) {
 
 run_cpp <- function(m) {
   .Call(`_epiworldR_run_cpp`, m)
-}
-
-ModelSEIR_cpp <- function(name, prevalence, infectiousness, incubation_days, recovery) {
-  .Call(`_epiworldR_ModelSEIR_cpp`, name, prevalence, infectiousness, incubation_days, recovery)
-}
-
-ModelSEIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
-  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
-}
-
-print_seirconn <- function(m) {
-  .Call(`_epiworldR_print_seirconn`, m)
-}
-
-run_seirconn <- function(m) {
-  .Call(`_epiworldR_run_seirconn`, m)
-}
-
-ModelSIR_cpp <- function(name, prevalence, infectiousness, recovery) {
-  .Call(`_epiworldR_ModelSIR_cpp`, name, prevalence, infectiousness, recovery)
-}
-
-ModelSIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery) {
-  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, prob_recovery)
-}
-
-ModelSIS_cpp <- function(name, prevalence, infectiousness, recovery) {
-  .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, infectiousness, recovery)
-}
-
-ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect) {
-  .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect)
 }
 
 virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_death) {

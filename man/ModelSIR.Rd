@@ -32,7 +32,11 @@ infection.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
-\item{m, days, seed, x, ..., n, k, d, p}{to be documented}
+\item{n}{Number of individuals in the population.}
+
+\item{d}{}
+
+\item{p}{}
 }
 \description{
 SIR model

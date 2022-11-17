@@ -29,7 +29,7 @@ ModelSIRCONN(
 \arguments{
 \item{name}{String. Name of the virus}
 
-\item{n, m, days, seed, x, ...}{to be documented}
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -39,6 +39,10 @@ ModelSIRCONN(
 transmission.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
+
+\item{d}{}
+
+\item{p}{}
 }
 \description{
 Susceptible Infected Removed model (SIR connected)
