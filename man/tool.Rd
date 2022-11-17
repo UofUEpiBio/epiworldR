@@ -24,3 +24,13 @@ add_tool_n(m, t, prevalence)
 \description{
 Tools in epiworld
 }
+\examples{
+epitool <- tool(
+  "Vaccine",
+  .9,
+  .3,
+  .5,
+  .9
+)
+
+}
