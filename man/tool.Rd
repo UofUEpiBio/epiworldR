@@ -24,3 +24,6 @@ add_tool_n(m, t, prevalence)
 \description{
 Tools in epiworld
 }
+\examples{
+epitool <- tool()
+}

@@ -14,7 +14,19 @@ agents_smallworld(m, n, k, d, p)
 run(m)
 }
 \arguments{
-\item{m, days, seed, n, k, d, p}{to be explained}
+\item{m}{Model object.}
+
+\item{days}{Number of days.}
+
+\item{seed}{Seed to set for initializing random number generator.}
+
+\item{n}{Number of individuals in the population.}
+
+\item{k}{Number of ties in the small world network.}
+
+\item{d}{Logical scalar. Whether the graph is directed or not.}
+
+\item{p}{Probability of rewiring.}
 }
 \description{
 Common methods for predefined models of Epiworld
