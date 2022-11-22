@@ -25,5 +25,11 @@ add_tool_n(m, t, prevalence)
 Tools in epiworld
 }
 \examples{
-epitool <- tool()
+epitool <- tool(
+  name = "Vaccine",
+  susceptibility_reduction = .9,
+  transmission_reduction = .5,
+  recovery_enhancer = .5, 
+  death_reduction = .9
+)
 }

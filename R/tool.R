@@ -6,7 +6,13 @@
 #' @param recovery_enhancer
 #' @param death_reduction
 #' @examples 
-#' epitool <- tool()
+#' epitool <- tool(
+#'   name = "Vaccine",
+#'   susceptibility_reduction = .9,
+#'   transmission_reduction = .5,
+#'   recovery_enhancer = .5, 
+#'   death_reduction = .9
+#' )
 #' @export
 tool <- function(
     name,

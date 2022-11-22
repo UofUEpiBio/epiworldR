@@ -49,11 +49,7 @@ ModelSEIR <- function(
   
 }
 
-#' @param m to be documented
-#'
-#' @param days to be documented
-#' @param seed to be documented
-#'
+
 #' @rdname ModelSEIR
 #' @export
 init.epiworld_seir <- function(m, days, seed) {
@@ -66,11 +62,6 @@ print.epiworld_seir <- function(x, ...) {
   print_cpp(x)
 }
 
-#' @param n to be documented
-#' @param k to be documented
-#' @param d to be documented
-#' @param p to be documented
-#'
 #' @rdname ModelSEIR
 #' @export
 agents_smallworld.epiworld_seir <- function(m, n, k, d, p) {

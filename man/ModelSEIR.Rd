@@ -35,23 +35,23 @@ incubation days.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
-\item{m}{to be documented}
+\item{m}{Model object.}
 
-\item{days}{to be documented}
+\item{days}{Number of days.}
 
-\item{seed}{to be documented}
+\item{seed}{Seed to set for initializing random number generator.}
 
 \item{x}{Object of class SEIR.}
 
 \item{...}{Currently ignore.}
 
-\item{n}{to be documented}
+\item{n}{Number of individuals in the population.}
 
-\item{k}{to be documented}
+\item{k}{Number of ties in the small world network.}
 
-\item{d}{to be documented}
+\item{d}{Logical scalar. Whether the graph is directed or not.}
 
-\item{p}{to be documented}
+\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Susceptible model (SEIR)
