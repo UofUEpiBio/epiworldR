@@ -3,9 +3,6 @@
 \name{ModelSIRCONN}
 \alias{ModelSIRCONN}
 \alias{epiworld_sirconn}
-\alias{init.epiworld_sirconn}
-\alias{print.epiworld_sirconn}
-\alias{run.epiworld_sirconn}
 \alias{plot.epiworld_sirconn}
 \title{Susceptible Infected Removed model (SIR connected)}
 \usage{
@@ -18,13 +15,7 @@ ModelSIRCONN(
   prob_recovery
 )
 
-\method{init}{epiworld_sirconn}(m, days, seed)
-
-\method{print}{epiworld_sirconn}(x, ...)
-
-\method{run}{epiworld_sirconn}(m)
-
-\method{plot}{epiworld_sirconn}(x, ...)
+\method{plot}{epiworld_sirconn}(x, main = "SIRCONN Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -42,13 +33,9 @@ transmission.}
 
 \item{x}{Object of class SIRCONN.}
 
+\item{main}{Title of the plot}
+
 \item{...}{Currently ignore.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Removed model (SIR connected)
@@ -68,9 +55,10 @@ init(model_sirconn, days = 100, seed = 1912)
 # Running and printing
 run(model_sirconn)
 model_sirconn
-
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},

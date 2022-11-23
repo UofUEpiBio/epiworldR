@@ -30,7 +30,8 @@ find_scale <- function(x) {
   res
 }
 
-  
+#' @noRd
+#' @importFrom graphics legend
 plot_epi <- function(x, main = "", counts_scale, ...) { 
   x <- get_hist_total(x)
   status_names <- sort(unique(x$status))

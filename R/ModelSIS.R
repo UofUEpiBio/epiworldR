@@ -4,15 +4,8 @@
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection 
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param m Model object.
-#' @param days Number of days.
-#' @param seed Seed to set for initializing random number generator.
 #' @param x Object of class SIS. 
 #' @param ... Currently ignore. 
-#' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_sis
@@ -34,43 +27,21 @@
 #' # Running and printing
 #' run(model_sis)
 #' model_sis
-
+#' @seealso epiworld-methods
 ModelSIS <- function(
     name, prevalence, infectiousness, recovery) {
   
   structure(
     ModelSIS_cpp(name, prevalence, infectiousness, recovery),
-    class = "epiworld_sis"
+    class = c("epiworld_model", "epiworld_sis")
   )
   
 }
 
-#' @rdname ModelSIS
-#' @export
-init.epiworld_sis <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
 
 #' @rdname ModelSIS
 #' @export
-print.epiworld_sis <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' @rdname ModelSIS
-#' @export
-agents_smallworld.epiworld_sis <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-}
-
-#' @rdname ModelSIS
-#' @export
-run.epiworld_sis <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSIS
-#' @export
-plot.epiworld_sis <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIS Model", ...)
+#' @param main Title of the plot
+plot.epiworld_sis <- function(x, main = "SIS Model",...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }

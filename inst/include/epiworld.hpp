@@ -5023,6 +5023,18 @@ public:
     ///@}
 
     /**
+     * @brief Associate agents-entities from a file
+     * 
+     * The structure of the file should be two columns separated by 
+     * space. The first column indexing between 0 and nagents-1, and the
+     * second column between 0 and nentities - 1.
+     * 
+     * @param fn Path to the file.
+     * @param skip How many rows to skip.
+     */
+    void load_agents_entities_ties(std::string fn, int skip);
+
+    /**
      * @name Accessing population of the model
      * 
      * @param fn std::string Filename of the edgelist file.
@@ -5321,6 +5333,7 @@ public:
      * @param name 
      */
     void set_name(std::string name);
+    std::string get_name() const;
 
 };
 
@@ -6491,6 +6504,92 @@ inline void Model<TSeq>::add_entity_fun(Entity<TSeq> e, EntityToAgentFun<TSeq> f
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::load_agents_entities_ties(
+    std::string fn,
+    int skip
+    )
+{
+
+    int i,j;
+    std::ifstream filei(fn);
+
+    if (!filei)
+        throw std::logic_error("The file " + fn + " was not found.");
+
+    int linenum = 0;
+    std::vector< epiworld_fast_uint > source_;
+    std::vector< std::vector< epiworld_fast_uint > > target_(entities.size(), {});
+
+    target_.reserve(1e5);
+
+    while (!filei.eof())
+    {
+
+        if (linenum++ < skip)
+            continue;
+
+        filei >> i >> j;
+
+        // Looking for exceptions
+        if (filei.bad())
+            throw std::logic_error(
+                "I/O error while reading the file " +
+                fn
+            );
+
+        if (filei.fail())
+            break;
+
+        if (i >= static_cast<int>(this->size()))
+            throw std::range_error(
+                "The agent["+std::to_string(linenum)+"] = " + std::to_string(i) +
+                " is above the max id " + std::to_string(this->size() - 1)
+                );
+
+        if (j >= static_cast<int>(this->entities.size()))
+            throw std::range_error(
+                "The entity["+std::to_string(linenum)+"] = " + std::to_string(j) +
+                " is above the max id " + std::to_string(this->entities.size() - 1)
+                );
+
+        target_[j].push_back(i);
+
+
+    }
+
+    // Iterating over entities
+    for (size_t e = 0u; e < entities.size(); ++e)
+    {
+
+        // This entity will have individuals assigned to it, so we add it
+        if (target_[e].size() > 0u)
+        {
+
+            // Filling in the gaps
+            prevalence_entity[e] = static_cast<epiworld_double>(target_[e].size());
+            prevalence_entity_as_proportion[e] = false;
+
+            // Generating the assignment function
+            auto who = target_[e];
+            entities_dist_funs[e] =
+                [who](Entity<TSeq> & e, Model<TSeq>* m) -> void {
+
+                    for (auto w : who)
+                        m->population[w].add_entity(e, e.status_init, e.queue_init);
+                    
+                    return;
+                    
+                };
+
+        }
+
+    }
+
+    return;
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::agents_from_adjlist(
     std::string fn,
     int size,
@@ -7597,6 +7696,12 @@ template<typename TSeq>
 inline void Model<TSeq>::set_name(std::string name)
 {
     this->name = name;
+}
+
+template<typename TSeq>
+inline std::string Model<TSeq>::get_name() const 
+{
+    return this->name;
 }
 
 #undef DURCAST

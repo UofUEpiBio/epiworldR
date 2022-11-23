@@ -3,24 +3,12 @@
 \name{ModelSIR}
 \alias{ModelSIR}
 \alias{epiworld_sir}
-\alias{init.epiworld_sir}
-\alias{print.epiworld_sir}
-\alias{agents_smallworld.epiworld_sir}
-\alias{run.epiworld_sir}
 \alias{plot.epiworld_sir}
 \title{SIR model}
 \usage{
 ModelSIR(name, prevalence, infectiousness, recovery)
 
-\method{init}{epiworld_sir}(m, days, seed)
-
-\method{print}{epiworld_sir}(x, ...)
-
-\method{agents_smallworld}{epiworld_sir}(m, n, k, d, p)
-
-\method{run}{epiworld_sir}(m)
-
-\method{plot}{epiworld_sir}(x, ...)
+\method{plot}{epiworld_sir}(x, main = "SIR Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -34,15 +22,9 @@ infection.}
 
 \item{x}{Object of class SIR.}
 
+\item{main}{Title of the plot}
+
 \item{...}{Currently ignore.}
-
-\item{n}{Number of individuals in the population.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 }
 \description{
 SIR model
@@ -67,6 +49,8 @@ run(model_sir)
 model_sir
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},

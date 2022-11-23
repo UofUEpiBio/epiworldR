@@ -46,31 +46,38 @@ virus <- function(
 
 #' @export
 #' @rdname virus
-add_virus <- function(m, v, prevalence) {
+#' @param m An object of class `epiworld-model`.
+#' @param v An object of class `epiworld_virus`
+#' @param prevalence In the case of `add_virus`, a proportion, otherwise, an integer.
+add_virus <- function(m, v, prevalence) UseMethod("add_virus")
+
+#' @export
+add_virus.epiworld_model <- function(m, v, prevalence) {
   
-  if (inherits(m, "epiworld_seirconn"))
-    add_virus_cpp(m, v, prevalence)
-  else
-    stop("No method for object of class ", class(m))
+  add_virus_cpp(m, v, prevalence)
+  invisible(m)
+}
+
+#' @export
+#' @rdname virus
+add_virus_n <- function(m, v, prevalence) UseMethod("add_virus_n")
+
+#' @export
+add_virus_n.epiworld_model <- function(m, v, prevalence) {
+  
+  add_virus_n_cpp(m, v, prevalence)
   
   invisible(m)
 }
 
 #' @export
 #' @rdname virus
-add_virus_n <- function(m, v, prevalence) {
-  
-  if (inherits(m, "epiworld_seirconn"))
-    add_virus_n_cpp(m, v, prevalence)
-  else
-    stop("No method for object of class ", class(m))
-  
-  invisible(m)
-}
-
-#' @export
-#' @rdname virus
+#' @param init,end,removed Statuses after acquiring a virus, removing a virus,
+#' and removing the agent as a result of the virus, respectively.
 virus_set_status <- function(v, init, end, removed) {
+  
+  if (!inherits(v, "epiworld_virus"))
+    stop("-v- must be of class epiworld_virus.")
   
   virus_set_status_cpp(v, init, end, removed)
   invisible(v)

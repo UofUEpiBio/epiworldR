@@ -22,10 +22,6 @@
 #' @param prob_noreinfect Double. Probability of no re-infection.
 #' @param x Object of class SURV. 
 #' @param ... Currently ignore. 
-#' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_surv
@@ -60,8 +56,7 @@
 #' # Running and printing
 #' run(model_surv)
 #' model_surv 
-#' 
-
+#' @seealso epiworld-methods
 ModelSURV <- function(
     name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, 
     prop_vaccinated, prop_vax_redux_transm, prop_vax_redux_infect, 
@@ -73,37 +68,14 @@ ModelSURV <- function(
                   prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
                   prop_vax_redux_infect, surveillance_prob, prob_transmission, 
                   prob_death, prob_noreinfect),
-    class = "epiworld_surv"
+    class = c("epiworld_model", "epiworld_surv")
   )
   
 }
 
 #' @rdname ModelSURV
 #' @export
-init.epiworld_surv <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
-
-#' @rdname ModelSURV
-#' @export
-print.epiworld_surv <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' @rdname ModelSURV
-#' @export
-agents_smallworld.epiworld_surv <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-}
-
-#' @rdname ModelSURV
-#' @export
-run.epiworld_surv <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSURV
-#' @export
-plot.epiworld_surv <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SURV Model", ...)
+#' @param main Title of the plot
+plot.epiworld_surv <- function(x, main = "SURV Model", ...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }

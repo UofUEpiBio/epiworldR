@@ -3,24 +3,12 @@
 \name{ModelSEIR}
 \alias{ModelSEIR}
 \alias{epiworld_seir}
-\alias{init.epiworld_seir}
-\alias{print.epiworld_seir}
-\alias{agents_smallworld.epiworld_seir}
-\alias{run.epiworld_seir}
 \alias{plot.epiworld_seir}
 \title{Susceptible Infected Susceptible model (SEIR)}
 \usage{
 ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 
-\method{init}{epiworld_seir}(m, days, seed)
-
-\method{print}{epiworld_seir}(x, ...)
-
-\method{agents_smallworld}{epiworld_seir}(m, n, k, d, p)
-
-\method{run}{epiworld_seir}(m)
-
-\method{plot}{epiworld_seir}(x, ...)
+\method{plot}{epiworld_seir}(x, main = "SEIR Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -35,23 +23,17 @@ incubation days.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
-\item{m}{to be documented}
-
-\item{days}{to be documented}
-
-\item{seed}{to be documented}
-
 \item{x}{Object of class SEIR.}
+
+\item{main}{Title of the plot}
 
 \item{...}{Currently ignore.}
 
-\item{n}{to be documented}
+\item{m}{Model object.}
 
-\item{k}{to be documented}
+\item{days}{Number of days.}
 
-\item{d}{to be documented}
-
-\item{p}{to be documented}
+\item{seed}{Seed to set for initializing random number generator.}
 }
 \description{
 Susceptible Infected Susceptible model (SEIR)
@@ -76,6 +58,8 @@ run(model_seir)
 model_seir
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSIRCONN}()},

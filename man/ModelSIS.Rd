@@ -3,24 +3,12 @@
 \name{ModelSIS}
 \alias{ModelSIS}
 \alias{epiworld_sis}
-\alias{init.epiworld_sis}
-\alias{print.epiworld_sis}
-\alias{agents_smallworld.epiworld_sis}
-\alias{run.epiworld_sis}
 \alias{plot.epiworld_sis}
 \title{Susceptible Infected Susceptible model (SIS)}
 \usage{
 ModelSIS(name, prevalence, infectiousness, recovery)
 
-\method{init}{epiworld_sis}(m, days, seed)
-
-\method{print}{epiworld_sis}(x, ...)
-
-\method{agents_smallworld}{epiworld_sis}(m, n, k, d, p)
-
-\method{run}{epiworld_sis}(m)
-
-\method{plot}{epiworld_sis}(x, ...)
+\method{plot}{epiworld_sis}(x, main = "SIS Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -32,23 +20,11 @@ infection}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
-\item{m}{Model object.}
-
-\item{days}{Number of days.}
-
-\item{seed}{Seed to set for initializing random number generator.}
-
 \item{x}{Object of class SIS.}
 
+\item{main}{Title of the plot}
+
 \item{...}{Currently ignore.}
-
-\item{n}{Number of individuals in the population.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Susceptible model (SIS)
@@ -73,6 +49,8 @@ run(model_sis)
 model_sis
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},

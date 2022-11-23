@@ -6,10 +6,6 @@
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
 #' @param x Object of class SIR. 
 #' @param ... Currently ignore. 
-#' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_sir
@@ -31,45 +27,22 @@
 #' # Running and printing
 #' run(model_sir)
 #' model_sir
-
+#' @seealso epiworld-methods
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery
 ) {
   
   structure(
     ModelSIR_cpp(name, prevalence, infectiousness, recovery),
-    class = "epiworld_sir"
+    class = c("epiworld_model", "epiworld_sir")
   )
   
 }
 
 #' @rdname ModelSIR
 #' @export
-init.epiworld_sir <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
-
-#' @rdname ModelSIR
-#' @export
-print.epiworld_sir <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' @rdname ModelSIR
-#' @export
-agents_smallworld.epiworld_sir <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-}
-
-#' @rdname ModelSIR
-#' @export
-run.epiworld_sir <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSIR
-#' @export
-plot.epiworld_sir <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIR Model", ...)
+#' @param main Title of the plot
+plot.epiworld_sir <- function(x, main = "SIR Model", ...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }
 

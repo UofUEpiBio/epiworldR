@@ -45,11 +45,9 @@ agents_smallworld(
   d = FALSE,
   p = .01
   )
-#> [1] 0
 
 # Initializing 
 init(sir, days = 100, seed = 1912)
-#> [1] 0
 
 # Running and printing
 queuing_off(sir)
@@ -57,7 +55,6 @@ run(sir)
 #> Running the model...
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
-#> [1] 0
 sir
 #> 
 #> ________________________________________________________________________________
@@ -68,13 +65,8 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-<<<<<<< HEAD
-#> Last run elapsed t  : 322.00ms
-#> Last run speed      : 30.99 million agents x day / second
-=======
-#> Last run elapsed t  : 1.00s
-#> Last run speed      : 7.99 million agents x day / second
->>>>>>> 5429c97a779332f597bd028311af923186353d4f
+#> Last run elapsed t  : 458.00ms
+#> Last run speed      : 21.79 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -88,48 +80,20 @@ sir
 #>  - Prob. of Recovery : 0.3000
 #> 
 #> Distribution of the population at time 100:
-#>  - (0) Susceptible :  99000 -> 34117
-#>  - (1) Infected    :   1000 -> 0
-#>  - (2) Recovered   :      0 -> 65883
+#>  - (0) Susceptible :  99000 -> 2130
+#>  - (1) Infected    :   1000 -> 330
+#>  - (2) Recovered   :      0 -> 97540
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.99  0.01  0.00
-#>  - Infected     0.00  0.71  0.29
+#>  - Susceptible  0.96  0.04  0.00
+#>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
 ```
 
 Visualizing the outputs
 
 ``` r
-x <- get_hist_total(sir)
-x$counts <- x$counts/1000
-x <- x[x$dates < 50,]
-
-with(
-  x[x$status == "Susceptible",],
-  plot(
-    x = dates, y = counts, type = "l", col = "blue", ylim = range(x$counts),
-    ylab = "Population (thousands)", xlab = "days", main = "SIR model")
-  )
-
-with(
-  x[x$status == "Infected",],
-  lines(x = dates, y = counts, col = "red")
-  )
-
-with(
-  x[x$status == "Recovered",],
-  lines(x = dates, y = counts, col = "darkgreen")
-  )
-
-legend(
-  "right",
-  legend = c("Susceptible", "Infected", "Removed"),
-  col    = c("blue", "red", "darkgreen"),
-  lty    = 1,
-  lwd    = 2,
-  bty    = "n"
-  )
+plot(sir)
 ```
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />

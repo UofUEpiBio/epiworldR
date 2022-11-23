@@ -11,11 +11,7 @@
 #' @param days Number of days.
 #' @param seed Seed to set for initializing random number generator.
 #' @param x Object of class SEIR. 
-#' @param ... Currently ignore. 
-#' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
+#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @aliases epiworld_seir
@@ -37,54 +33,21 @@
 #' # Running and printing
 #' run(model_seir)
 #' model_seir
-
+#' @seealso epiworld-methods
 ModelSEIR <- function(
     name, prevalence, infectiousness, incubation_days, recovery
 ) {
   
   structure(
     ModelSEIR_cpp(name, prevalence, infectiousness, incubation_days, recovery),
-    class = "epiworld_seir"
+    class = c("epiworld_model", "epiworld_seir")
   )
   
 }
 
-#' @param m to be documented
-#'
-#' @param days to be documented
-#' @param seed to be documented
-#'
 #' @rdname ModelSEIR
+#' @param main Title of the plot
 #' @export
-init.epiworld_seir <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
-
-#' @rdname ModelSEIR
-#' @export
-print.epiworld_seir <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' @param n to be documented
-#' @param k to be documented
-#' @param d to be documented
-#' @param p to be documented
-#'
-#' @rdname ModelSEIR
-#' @export
-agents_smallworld.epiworld_seir <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-}
-
-#' @rdname ModelSEIR
-#' @export
-run.epiworld_seir <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSEIR
-#' @export
-plot.epiworld_seir <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SEIR Model", counts_scale, ...)
+plot.epiworld_seir <- function(x, main = "SEIR Model", ...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }

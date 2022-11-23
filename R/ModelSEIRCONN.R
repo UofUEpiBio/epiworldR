@@ -12,15 +12,9 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
-#' @param m Model object.
-#' @param days Numeric scalar. Number of days the simulation is to run for. 
-#' @param seed Seed to set for initializing random number generator.
 #' @param x Object of class SEIRCONN. 
 #' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_seirconn
@@ -40,7 +34,7 @@
 #' # Running and printing
 #' run(model_seirconn)
 #' model_seirconn
-
+#' @seealso epiworld-methods
 ModelSEIRCONN <- function(
     name, n, prevalence, reproductive_number, prob_transmission, 
     incubation_days, prob_recovery
@@ -49,37 +43,14 @@ ModelSEIRCONN <- function(
   structure(
     ModelSEIRCONN_cpp(name, n, prevalence, reproductive_number, 
                       prob_transmission, incubation_days, prob_recovery),
-    class = "epiworld_seirconn"
+    class = c("epiworld_model", "epiworld_seirconn")
   )
   
 }
 
 #' @rdname ModelSEIRCONN
 #' @export
-init.epiworld_seirconn <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
-
-#' @rdname ModelSEIRCONN
-#' @export
-print.epiworld_seirconn <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' #' @rdname ModelSEIRCONN
-#' #' @export
-#' agents_smallworld.epiworld_seirconn <- function(m, n, k, d, p) {
-#'   agents_smallworld_cpp(m, n, k, d, p)
-#' }
-
-#' @rdname ModelSEIRCONN
-#' @export
-run.epiworld_seirconn <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSEIRCONN
-#' @export
-plot.epiworld_seirconn <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SEIRCONN Model", ...)
+#' @param main Title of the plot
+plot.epiworld_seirconn <- function(x, main = "SEIRCONN Model", ...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }

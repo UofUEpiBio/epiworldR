@@ -19,6 +19,15 @@ virus_set_status(v, init, end, removed)
 \item{name}{of the virus}
 
 \item{post_immunity, prob_infecting, prob_recovery, prob_death}{to be documented}
+
+\item{m}{An object of class \code{epiworld-model}.}
+
+\item{v}{An object of class \code{epiworld_virus}}
+
+\item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
+
+\item{init, end, removed}{Statuses after acquiring a virus, removing a virus,
+and removing the agent as a result of the virus, respectively.}
 }
 \description{
 Virus

@@ -3,10 +3,6 @@
 \name{ModelSURV}
 \alias{ModelSURV}
 \alias{epiworld_surv}
-\alias{init.epiworld_surv}
-\alias{print.epiworld_surv}
-\alias{agents_smallworld.epiworld_surv}
-\alias{run.epiworld_surv}
 \alias{plot.epiworld_surv}
 \title{Susceptible Infected Susceptible model (SURV)}
 \usage{
@@ -26,15 +22,7 @@ ModelSURV(
   prob_noreinfect
 )
 
-\method{init}{epiworld_surv}(m, days, seed)
-
-\method{print}{epiworld_surv}(x, ...)
-
-\method{agents_smallworld}{epiworld_surv}(m, n, k, d, p)
-
-\method{run}{epiworld_surv}(m)
-
-\method{plot}{epiworld_surv}(x, ...)
+\method{plot}{epiworld_surv}(x, main = "SURV Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -72,15 +60,9 @@ individuals.}
 
 \item{x}{Object of class SURV.}
 
+\item{main}{Title of the plot}
+
 \item{...}{Currently ignore.}
-
-\item{n}{Number of individuals in the population.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 }
 \description{
 Susceptible Infected Susceptible model (SURV)
@@ -116,9 +98,10 @@ init(model_surv, days = 100, seed = 1912)
 # Running and printing
 run(model_surv)
 model_surv 
-
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},

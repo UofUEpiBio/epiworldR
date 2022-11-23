@@ -19,18 +19,31 @@ add_tool(m, t, prevalence)
 add_tool_n(m, t, prevalence)
 }
 \arguments{
+\item{name}{Name of the tool}
+
+\item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
+
+\item{transmission_reduction}{Numeric. Proportion it reduces transmission.}
+
+\item{recovery_enhancer}{Numeric. Proportion it improves recovery.}
+
+\item{death_reduction}{Numeric. Proportion it reduces probability of death.e}
+
 \item{m}{Model}
+
+\item{t}{An object of class \code{epiworld_tool}}
+
+\item{prevalence}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
 }
 \description{
 Tools in epiworld
 }
 \examples{
 epitool <- tool(
-  "Vaccine",
-  .9,
-  .3,
-  .5,
-  .9
+  name = "Vaccine",
+  susceptibility_reduction = .9,
+  transmission_reduction = .5,
+  recovery_enhancer = .5, 
+  death_reduction = .9
 )
-
 }

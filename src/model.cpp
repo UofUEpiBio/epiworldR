@@ -51,3 +51,24 @@ int run_cpp(SEXP m) {
   
 }
 
+[[cpp11::register]]
+int queuing_on_cpp(
+    SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->queuing_on();
+  return 0;
+  
+}
+
+[[cpp11::register]]
+int queuing_off_cpp(
+    SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->queuing_off();
+  return 0;
+  
+}

@@ -6,45 +6,31 @@
 #include <R_ext/Visibility.h>
 
 // db.cpp
-int queuing_on_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_queuing_on_cpp(SEXP model, SEXP model_class) {
+cpp11::data_frame get_hist_total_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(queuing_on_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+    return cpp11::as_sexp(get_hist_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // db.cpp
-int queuing_off_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_queuing_off_cpp(SEXP model, SEXP model_class) {
+doubles get_transition_probability_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(queuing_off_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+    return cpp11::as_sexp(get_transition_probability_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // db.cpp
-data_frame get_hist_total_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model, SEXP model_class) {
+cpp11::strings get_status_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_status_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+    return cpp11::as_sexp(get_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // db.cpp
-doubles get_transition_probability_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model, SEXP model_class) {
+cpp11::data_frame get_reproductive_number_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_transition_probability_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
-  END_CPP11
-}
-// db.cpp
-cpp11::strings get_status_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_get_status_cpp(SEXP model, SEXP model_class) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(get_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
-  END_CPP11
-}
-// db.cpp
-cpp11::data_frame get_reproductive_number_cpp(SEXP model, std::string model_class);
-extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model, SEXP model_class) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(get_reproductive_number_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(model_class)));
+    return cpp11::as_sexp(get_reproductive_number_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // epimodels.cpp
@@ -117,6 +103,20 @@ extern "C" SEXP _epiworldR_run_cpp(SEXP m) {
     return cpp11::as_sexp(run_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
   END_CPP11
 }
+// model.cpp
+int queuing_on_cpp(SEXP model);
+extern "C" SEXP _epiworldR_queuing_on_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(queuing_on_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+int queuing_off_cpp(SEXP model);
+extern "C" SEXP _epiworldR_queuing_off_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(queuing_off_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // tool.cpp
 SEXP tool_cpp(std::string name, double susceptibility_reduction, double transmission_reduction, double recovery_enhancer, double death_reduction);
 extern "C" SEXP _epiworldR_tool_cpp(SEXP name, SEXP susceptibility_reduction, SEXP transmission_reduction, SEXP recovery_enhancer, SEXP death_reduction) {
@@ -180,14 +180,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_virus_cpp",                  (DL_FUNC) &_epiworldR_add_virus_cpp,                   3},
     {"_epiworldR_add_virus_n_cpp",                (DL_FUNC) &_epiworldR_add_virus_n_cpp,                 3},
     {"_epiworldR_agents_smallworld_cpp",          (DL_FUNC) &_epiworldR_agents_smallworld_cpp,           5},
-    {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              2},
-    {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     2},
-    {"_epiworldR_get_status_cpp",                 (DL_FUNC) &_epiworldR_get_status_cpp,                  2},
-    {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  2},
+    {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              1},
+    {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},
+    {"_epiworldR_get_status_cpp",                 (DL_FUNC) &_epiworldR_get_status_cpp,                  1},
+    {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
     {"_epiworldR_init_cpp",                       (DL_FUNC) &_epiworldR_init_cpp,                        3},
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
-    {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 2},
-    {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  2},
+    {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
+    {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  1},
     {"_epiworldR_run_cpp",                        (DL_FUNC) &_epiworldR_run_cpp,                         1},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
     {"_epiworldR_virus_cpp",                      (DL_FUNC) &_epiworldR_virus_cpp,                       5},

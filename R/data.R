@@ -5,22 +5,22 @@
 #' @family Models
 NULL
 
-#' @rdname epiworld-data
 #' @export
-queuing_on <- function(x) invisible(queuing_on_cpp(x, class(x)))
-
 #' @rdname epiworld-data
-#' @export
-queuing_off <- function(x) invisible(queuing_off_cpp(x, class(x)))
+get_hist_total <- function(x) UseMethod("get_hist_total")
 
 #' @export
-#' @rdname epiworld-data
-get_hist_total <- function(x) get_hist_total_cpp(x, class(x))
+get_hist_total.epiworld_model <- function(x)  {
+  get_hist_total_cpp(x)
+}
 
 #' @export
 #' @rdname epiworld-data
-get_transition_probability <- function(x) {
-  res <- get_transition_probability_cpp(x, class(x))
+get_transition_probability <- function(x) UseMethod("get_transition_probability")
+
+#' @export
+get_transition_probability.epiworld_model <- function(x)  {
+  res <- get_transition_probability_cpp(x)
   s   <- get_status(x)
   
   ns <- length(s)
@@ -30,9 +30,15 @@ get_transition_probability <- function(x) {
 
 #' @export
 #' @rdname epiworld-data
-get_status <- function(x) get_status_cpp(x, class(x))
+get_status <- function(x) UseMethod("get_status")
+
+#' @export
+get_status.epiworld_model <- function(x) get_status_cpp(x)
 
 #' @export
 #' @rdname epiworld-data
-get_reproductive_number <- function(x) get_reproductive_number_cpp(x, class(x))
+get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
+
+#' @export
+get_reproductive_number.epiworld_model <- function(x) get_reproductive_number_cpp(x)
 

@@ -8,9 +8,6 @@
 #' @param x Object of class SIRCONN. 
 #' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @family Models
 #' @aliases epiworld_sirconn
@@ -29,7 +26,7 @@
 #' # Running and printing
 #' run(model_sirconn)
 #' model_sirconn
-#' 
+#' @seealso epiworld-methods
 ModelSIRCONN <- function(
     name, n, prevalence, reproductive_number, prob_transmission, prob_recovery
 ) {
@@ -37,31 +34,14 @@ ModelSIRCONN <- function(
   structure(
     ModelSIRCONN_cpp(name, n, prevalence, reproductive_number, 
                      prob_transmission, prob_recovery),
-    class = "epiworld_sirconn"
+    class = c("epiworld_model", "epiworld_sirconn")
   )
   
 }
 
 #' @rdname ModelSIRCONN
 #' @export
-init.epiworld_sirconn <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-}
-
-#' @rdname ModelSIRCONN
-#' @export
-print.epiworld_sirconn <- function(x, ...) {
-  print_cpp(x)
-}
-
-#' @rdname ModelSIRCONN
-#' @export
-run.epiworld_sirconn <- function(m) {
-  run_cpp(m)
-}
-
-#' @rdname ModelSIRCONN
-#' @export
-plot.epiworld_sirconn <- function(x, ...) { # col = NULL
- plot_epi(x, main = "SIRCONN Model", ...)
+#' @param main Title of the plot
+plot.epiworld_sirconn <- function(x, main = "SIRCONN Model", ...) { # col = NULL
+ plot_epi(x, main = main, ...)
 }

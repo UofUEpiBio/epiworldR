@@ -3,9 +3,6 @@
 \name{ModelSEIRCONN}
 \alias{ModelSEIRCONN}
 \alias{epiworld_seirconn}
-\alias{init.epiworld_seirconn}
-\alias{print.epiworld_seirconn}
-\alias{run.epiworld_seirconn}
 \alias{plot.epiworld_seirconn}
 \title{Susceptible Exposed Infected Removed model (SEIR connected)}
 \usage{
@@ -19,13 +16,7 @@ ModelSEIRCONN(
   prob_recovery
 )
 
-\method{init}{epiworld_seirconn}(m, days, seed)
-
-\method{print}{epiworld_seirconn}(x, ...)
-
-\method{run}{epiworld_seirconn}(m)
-
-\method{plot}{epiworld_seirconn}(x, ...)
+\method{plot}{epiworld_seirconn}(x, main = "SEIRCONN Model", ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -44,21 +35,11 @@ incubation days.}
 
 \item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
 
-\item{m}{Model object.}
-
-\item{days}{Numeric scalar. Number of days the simulation is to run for.}
-
-\item{seed}{Seed to set for initializing random number generator.}
-
 \item{x}{Object of class SEIRCONN.}
 
+\item{main}{Title of the plot}
+
 \item{...}{Currently ignore.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.
@@ -82,6 +63,8 @@ run(model_seirconn)
 model_seirconn
 }
 \seealso{
+epiworld-methods
+
 Other Models: 
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
