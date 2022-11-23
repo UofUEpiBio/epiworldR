@@ -7,9 +7,6 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
-#' @param m Model object.
-#' @param days Number of days.
-#' @param seed Seed to set for initializing random number generator.
 #' @param x Object of class SEIR. 
 #' @param ... Currently ignore.
 #' @export

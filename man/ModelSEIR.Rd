@@ -28,12 +28,6 @@ incubation days.}
 \item{main}{Title of the plot}
 
 \item{...}{Currently ignore.}
-
-\item{m}{Model object.}
-
-\item{days}{Number of days.}
-
-\item{seed}{Seed to set for initializing random number generator.}
 }
 \description{
 Susceptible Infected Susceptible model (SEIR)

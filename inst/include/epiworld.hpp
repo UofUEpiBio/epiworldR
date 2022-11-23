@@ -4514,7 +4514,7 @@ inline AdjList rgraph_blocked(
     epiworld_fast_uint n,
     epiworld_fast_uint blocksize,
     epiworld_fast_uint ncons,
-    Model<TSeq> & model
+    Model<TSeq>&
 ) {
 
     std::vector< epiworld_fast_uint > source_;
@@ -5827,7 +5827,7 @@ template<typename TSeq>
 inline void Model<TSeq>::clone_population(
     std::vector< Agent<TSeq> > & p,
     bool & d,
-    Model<TSeq> * model
+    Model<TSeq> *
 ) const {
 
     // Copy and clean
@@ -8242,7 +8242,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_death(epiworld_double * prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return *prob;
         };
@@ -8254,7 +8254,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting(epiworld_double prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return prob;
         };
@@ -8266,7 +8266,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_recovery(epiworld_double prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return prob;
         };
@@ -8278,7 +8278,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_death(epiworld_double prob)
 {
     VirusFun<TSeq> tmpfun = 
-        [prob](Agent<TSeq> * p, Virus<TSeq> & v, Model<TSeq> * m)
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
         {
             return prob;
         };
@@ -8937,7 +8937,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(epiworld_double * prob)
 {
 
     ToolFun<TSeq> tmpfun =
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return *prob;
         };
@@ -8952,7 +8952,7 @@ inline void Tool<TSeq>::set_transmission_reduction(epiworld_double * prob)
 {
     
     ToolFun<TSeq> tmpfun =
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return *prob;
         };
@@ -8967,7 +8967,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(epiworld_double * prob)
 {
 
     ToolFun<TSeq> tmpfun =
-        [prob](Tool<TSeq> & t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return *prob;
         };
@@ -8982,7 +8982,7 @@ inline void Tool<TSeq>::set_death_reduction(epiworld_double * prob)
 {
 
     ToolFun<TSeq> tmpfun =
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return *prob;
         };
@@ -9001,7 +9001,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(
 {
 
     ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return prob;
         };
@@ -9017,7 +9017,7 @@ inline void Tool<TSeq>::set_transmission_reduction(
 {
 
     ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return prob;
         };
@@ -9033,7 +9033,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(
 {
 
     ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &  t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return prob;
         };
@@ -9049,7 +9049,7 @@ inline void Tool<TSeq>::set_death_reduction(
 {
 
     ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> & t, Agent<TSeq> * p, VirusPtr<TSeq> v, Model<TSeq> * m)
+        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>, Model<TSeq> *)
         {
             return prob;
         };
