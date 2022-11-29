@@ -31,17 +31,17 @@ library(epiworldR)
 
 # Creating a SIR model
 sir <- ModelSIR(
-  name = "COVID-19",
-  prevalence = .01,
+  name           = "COVID-19",
+  prevalence     = .01,
   infectiousness = .9,
-  recovery = .3
+  recovery       = .3
   )
 
 # Adding a Small world population 
 agents_smallworld(
   sir,
   n = 100000,
-  k = 5,
+  k = 10,
   d = FALSE,
   p = .01
   )
@@ -65,8 +65,8 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 458.00ms
-#> Last run speed      : 21.79 million agents x day / second
+#> Last run elapsed t  : 477.00ms
+#> Last run speed      : 20.96 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -80,12 +80,12 @@ sir
 #>  - Prob. of Recovery : 0.3000
 #> 
 #> Distribution of the population at time 100:
-#>  - (0) Susceptible :  99000 -> 2130
-#>  - (1) Infected    :   1000 -> 330
-#>  - (2) Recovered   :      0 -> 97540
+#>  - (0) Susceptible :  99000 -> 0
+#>  - (1) Infected    :   1000 -> 0
+#>  - (2) Recovered   :      0 -> 100000
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.96  0.04  0.00
+#>  - Susceptible  0.87  0.13  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
 ```

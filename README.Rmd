@@ -41,17 +41,17 @@ library(epiworldR)
 
 # Creating a SIR model
 sir <- ModelSIR(
-  name = "COVID-19",
-  prevalence = .01,
+  name           = "COVID-19",
+  prevalence     = .01,
   infectiousness = .9,
-  recovery = .3
+  recovery       = .3
   )
 
 # Adding a Small world population 
 agents_smallworld(
   sir,
   n = 100000,
-  k = 5,
+  k = 10,
   d = FALSE,
   p = .01
   )
