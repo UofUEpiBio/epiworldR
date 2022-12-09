@@ -30,13 +30,6 @@ get_transition_probability.epiworld_model <- function(x)  {
 
 #' @export
 #' @rdname epiworld-data
-get_status <- function(x) UseMethod("get_status")
-
-#' @export
-get_status.epiworld_model <- function(x) get_status_cpp(x)
-
-#' @export
-#' @rdname epiworld-data
 get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
 
 #' @export

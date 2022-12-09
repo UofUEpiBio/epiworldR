@@ -8,10 +8,6 @@ get_transition_probability_cpp <- function(model) {
   .Call(`_epiworldR_get_transition_probability_cpp`, model)
 }
 
-get_status_cpp <- function(model) {
-  .Call(`_epiworldR_get_status_cpp`, model)
-}
-
 get_reproductive_number_cpp <- function(model) {
   .Call(`_epiworldR_get_reproductive_number_cpp`, model)
 }
@@ -62,6 +58,26 @@ queuing_on_cpp <- function(model) {
 
 queuing_off_cpp <- function(model) {
   .Call(`_epiworldR_queuing_off_cpp`, model)
+}
+
+get_param_cpp <- function(model, pname) {
+  .Call(`_epiworldR_get_param_cpp`, model, pname)
+}
+
+set_param_cpp <- function(model, pname, val) {
+  .Call(`_epiworldR_set_param_cpp`, model, pname, val)
+}
+
+set_name_cpp <- function(model, mname) {
+  .Call(`_epiworldR_set_name_cpp`, model, mname)
+}
+
+get_name_cpp <- function(model) {
+  .Call(`_epiworldR_get_name_cpp`, model)
+}
+
+get_status_cpp <- function(model) {
+  .Call(`_epiworldR_get_status_cpp`, model)
 }
 
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

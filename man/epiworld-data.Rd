@@ -4,15 +4,12 @@
 \alias{epiworld-data}
 \alias{get_hist_total}
 \alias{get_transition_probability}
-\alias{get_status}
 \alias{get_reproductive_number}
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
 
 get_transition_probability(x)
-
-get_status(x)
 
 get_reproductive_number(x)
 }

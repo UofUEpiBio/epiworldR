@@ -64,5 +64,52 @@ print.epiworld_model <- function(x, ...) {
   invisible(x)
 }
 
+#' @export
+#' @rdname epiworld-methods
+get_status <- function(x) UseMethod("get_status")
 
+#' @export
+get_status.epiworld_model <- function(x) get_status_cpp(x)
+
+#' @export
+#' @param pname String, name of the parameter
+#' @rdname epiworld-methods
+get_param <- function(x, pname) UseMethod("get_param")
+
+#' @export
+get_param.epiworld_model <- function(x, pname) {
+  get_param_cpp(x, pname)
+}
+
+
+#' @export
+#' @param pval Numeric. Value of the parameter
+#' @rdname epiworld-methods
+set_param <- function(x, pname, pval) UseMethod("set_param")
+
+#' @export
+set_param.epiworld_model <- function(x, pname, pval) {
+  invisible(set_param_cpp(x, pname, pval))
+  invisible(x)
+}
+
+#' @export
+#' @param mname String. Name of the model
+#' @rdname epiworld-methods
+set_name <- function(x, mname) UseMethod("set_name")
+
+#' @export
+set_name.epiworld_model <- function(x, mname) {
+  set_name_cpp(x, mname)
+  invisible(x)
+}
+
+#' @export
+#' @rdname epiworld-methods
+get_name <- function(x) UseMethod("get_name")
+
+#' @export
+get_name.epiworld_model <- function(x) {
+  get_name_cpp(x)
+}
 

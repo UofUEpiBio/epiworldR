@@ -7,6 +7,11 @@
 \alias{queuing_off}
 \alias{agents_smallworld}
 \alias{run}
+\alias{get_status}
+\alias{get_param}
+\alias{set_param}
+\alias{set_name}
+\alias{get_name}
 \title{Common methods for predefined models of Epiworld}
 \usage{
 init(m, days, seed)
@@ -18,6 +23,16 @@ queuing_off(x)
 agents_smallworld(m, n, k, d, p)
 
 run(m)
+
+get_status(x)
+
+get_param(x, pname)
+
+set_param(x, pname, pval)
+
+set_name(x, mname)
+
+get_name(x)
 }
 \arguments{
 \item{m}{Model object.}
@@ -35,6 +50,12 @@ run(m)
 \item{d}{Logical scalar. Whether the graph is directed or not.}
 
 \item{p}{Probability of rewiring.}
+
+\item{pname}{String, name of the parameter}
+
+\item{pval}{Numeric. Value of the parameter}
+
+\item{mname}{String. Name of the model}
 }
 \description{
 Common methods for predefined models of Epiworld

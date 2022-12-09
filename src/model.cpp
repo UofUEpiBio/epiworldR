@@ -72,3 +72,43 @@ int queuing_off_cpp(
   return 0;
   
 }
+
+[[cpp11::register]]
+double get_param_cpp(SEXP model, std::string pname) {
+  cpp11::external_pointer<Model<>> ptr(model);
+  return static_cast<double>(ptr->get_param(pname));
+}
+
+[[cpp11::register]]
+int set_param_cpp(SEXP model, std::string pname, double val) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->operator()(pname) = val;
+  
+  return 0;
+}
+
+[[cpp11::register]]
+int set_name_cpp(SEXP model, std::string mname) {
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->set_name(mname);
+  return 0;
+}
+
+[[cpp11::register]]
+std::string get_name_cpp(SEXP model) {
+  cpp11::external_pointer<Model<>> ptr(model);
+  return ptr->get_name();
+}
+
+[[cpp11::register]]
+cpp11::strings get_status_cpp(
+    SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  return cpp11::writable::strings(ptr->get_status());
+  
+}
+
+

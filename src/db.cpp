@@ -42,15 +42,6 @@ doubles get_transition_probability_cpp(
   
 }
 
-[[cpp11::register]]
-cpp11::strings get_status_cpp(
-    SEXP model
-) {
-  
-  cpp11::external_pointer<Model<>> ptr(model);
-  return cpp11::writable::strings(ptr->get_status());
-  
-}
   
 [[cpp11::register]]
 cpp11::data_frame get_reproductive_number_cpp(
