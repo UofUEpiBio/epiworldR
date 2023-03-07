@@ -23,7 +23,7 @@
 #'   )
 #'   
 #' # Running and printing
-#' run(model_sis, ndays = 100, seed = 1912))
+#' run(model_sis, ndays = 100, seed = 1912)
 #' model_sis
 #' @seealso epiworld-methods
 ModelSIS <- function(
