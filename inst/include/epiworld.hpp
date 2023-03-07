@@ -2440,7 +2440,7 @@ template<typename TSeq>
 inline void UserData<TSeq>::print() const
 {
     // File header
-    printf_epiworld("Total records: %i\n", n);
+    printf_epiworld("Total records: %lu\n", n);
     printf_epiworld("date");
 
     for (auto & cn : data_names)
@@ -2735,7 +2735,7 @@ public:
     DataBase() = delete;
     DataBase(Model<TSeq> & m) : model(&m), user_data(m) {};
     DataBase(const DataBase<TSeq> & db);
-    DataBase<TSeq> & operator=(const DataBase<TSeq> & m) = delete;
+    // DataBase<TSeq> & operator=(const DataBase<TSeq> & m);
 
     /**
      * @brief Registering a new variant
@@ -4697,9 +4697,9 @@ inline void rewire_degseq(
 {
 
     #ifdef EPI_DEBUG
-    std::vector< int > _degree0(agents.size(), 0);
+    std::vector< int > _degree0(agents->size(), 0);
     for (size_t i = 0u; i < _degree0.size(); ++i)
-        _degree0[i] = model->population[i].get_neighbors().size();
+        _degree0[i] = model->get_agents()[i].get_neighbors().size();
     #endif
 
     // Identifying individuals with degree > 0
@@ -4776,8 +4776,8 @@ inline void rewire_degseq(
         // end as well, since we are dealing withi an undirected graph
         
         // Finding what neighbour is id0
-        model->population[id0].swap_neighbors(
-            model->population[id1],
+        model->get_agents()[id0].swap_neighbors(
+            model->get_agents()[id1],
             id01,
             id11
             );
@@ -4788,7 +4788,7 @@ inline void rewire_degseq(
     #ifdef EPI_DEBUG
     for (size_t _i = 0u; _i < _degree0.size(); ++_i)
     {
-        if (_degree0[_i] != model->population[_i].n_neighbors)
+        if (_degree0[_i] != static_cast<int>(model->get_agents()[_i].get_n_neighbors()))
             throw std::logic_error("[epi-debug] Degree does not match afted rewire_degseq.");
     }
     #endif
@@ -6567,18 +6567,20 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     for (auto & p : population)
         p.model = this;
 
-    if (population_backup != nullptr)
+    if (population_backup.size() != 0)
         for (auto & p : population_backup)
             p.model = this;
 
     for (auto & e : entities)
         e.model = this;
 
-    if (entities_backup != nullptr)
+    if (entities_backup.size() != 0)
         for (auto & e : entities_backup)
             e.model = this;
 
-    db   = m.db;
+    db = m.db;
+    db.model = this;
+    db.user_data.model = this;
 
     directed = m.directed;
     
@@ -7131,7 +7133,8 @@ inline void Model<TSeq>::add_virus_fun(Virus<TSeq> v, VirusToAgentFun<TSeq> fun)
             );
 
     // Setting the id
-    v.set_id(viruses.size());
+    db.record_variant(v);
+    // v.set_id(viruses.size());
 
     // Adding new virus
     viruses.push_back(std::make_shared< Virus<TSeq> >(v));
@@ -7151,6 +7154,8 @@ inline void Model<TSeq>::add_tool(Tool<TSeq> t, epiworld_double preval)
     if (preval < 0.0)
         throw std::range_error("Prevalence of tool cannot be negative");
 
+    db.record_tool(t);
+
     // Adding the tool to the model (and database.)
     tools.push_back(std::make_shared< Tool<TSeq> >(t));
     prevalence_tool.push_back(preval);
@@ -7162,7 +7167,9 @@ inline void Model<TSeq>::add_tool(Tool<TSeq> t, epiworld_double preval)
 template<typename TSeq>
 inline void Model<TSeq>::add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval)
 {
-    t.id = tools.size();
+    
+    db.record_tool(t);
+
     tools.push_back(std::make_shared<Tool<TSeq> >(t));
     prevalence_tool.push_back(preval);
     prevalence_tool_as_proportion.push_back(false);
@@ -7172,7 +7179,9 @@ inline void Model<TSeq>::add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval)
 template<typename TSeq>
 inline void Model<TSeq>::add_tool_fun(Tool<TSeq> t, ToolToAgentFun<TSeq> fun)
 {
-    t.id = tools.size();
+    
+    db.record_tool(t);
+    
     tools.push_back(std::make_shared<Tool<TSeq> >(t));
     prevalence_tool.push_back(0.0);
     prevalence_tool_as_proportion.push_back(false);
@@ -7843,7 +7852,7 @@ inline void Model<TSeq>::write_edgelist(
         for (const auto & p : wseq)
         {
             for (auto & n : p->neighbors)
-                efile << p->id << " " << n->id << "\n";
+                efile << p->id << " " << n << "\n";
         }
 
     } else {
@@ -7851,8 +7860,8 @@ inline void Model<TSeq>::write_edgelist(
         for (const auto & p : wseq)
         {
             for (auto & n : p->neighbors)
-                if (p->id <= n->id)
-                    efile << p->id << " " << n->id << "\n";
+                if (static_cast<int>(p->id) <= static_cast<int>(n))
+                    efile << p->id << " " << n << "\n";
         }
 
     }
@@ -8198,32 +8207,32 @@ inline void Model<TSeq>::print(bool lite) const
         fmt = "  - (%" + std::to_string(nstatus).length() +
             std::string("d) %-") + std::to_string(nchar) + "s : %i\n";
         
-    printf_epiworld("\nDistribution of the population at time %i:\n", today());
-    for (size_t s = 0u; s < nstatus; ++s)
+    if (today() != 0)
     {
-        if (today() != 0)
+        printf_epiworld("\nDistribution of the population at time %i:\n", today());
+        for (size_t s = 0u; s < nstatus; ++s)
         {
 
-            printf_epiworld(
-                fmt.c_str(),
-                s,
-                status_labels[s].c_str(),
-                db.hist_total_counts[s],
-                db.today_total[ s ]
-                );
+                printf_epiworld(
+                    fmt.c_str(),
+                    s,
+                    status_labels[s].c_str(),
+                    db.hist_total_counts[s],
+                    db.today_total[ s ]
+                    );
 
         }
-        else
-        {
+            // else
+            // {
 
-            printf_epiworld(
-                fmt.c_str(),
-                s,
-                status_labels[s].c_str(),
-                db.today_total[ s ]
-                );
+            //     printf_epiworld(
+            //         fmt.c_str(),
+            //         s,
+            //         status_labels[s].c_str(),
+            //         db.today_total[ s ]
+            //         );
 
-        }
+            // }
     }
 
     if (today() != 0)
