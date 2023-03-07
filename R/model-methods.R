@@ -9,17 +9,6 @@
 #' @param p Probability of rewiring.
 #' @export
 #' @name epiworld-methods
-init <- function(m, days, seed) UseMethod("init")
-
-#' @export
-init.epiworld_model <- function(m, days, seed) {
-  init_cpp(m, days, seed)
-  invisible(m)
-}
-
-
-#' @name epiworld-methods
-#' @export
 queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export
@@ -50,11 +39,11 @@ agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
 
 #' @export
 #' @rdname epiworld-methods
-run <- function(m) UseMethod("run")
+run <- function(m, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
 
 #' @export
-run.epiworld_model <- function(m) {
-  run_cpp(m)
+run.epiworld_model <- function(m, ndays, seed) {
+  run_cpp(m, ndays, seed)
   invisible(m)
 }
 

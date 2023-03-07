@@ -46,15 +46,14 @@ agents_smallworld(
   p = .01
   )
 
-# Initializing 
-init(sir, days = 100, seed = 1912)
 
 # Running and printing
 queuing_off(sir)
-run(sir)
-#> Running the model...
+run(sir, ndays = 100, seed = 1912)
 #> _________________________________________________________________________
+#> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+#>  done.
 sir
 #> 
 #> ________________________________________________________________________________
@@ -63,10 +62,10 @@ sir
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
 #> Number of entitites : 0
-#> Days (duration)     : 100 (of 100)
+#> Days (duration)     : 101 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 477.00ms
-#> Last run speed      : 20.96 million agents x day / second
+#> Last run elapsed t  : 447.00ms
+#> Last run speed      : 22.34 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -79,14 +78,14 @@ sir
 #>  - Infectiousness    : 0.9000
 #>  - Prob. of Recovery : 0.3000
 #> 
-#> Distribution of the population at time 100:
+#> Distribution of the population at time 101:
 #>  - (0) Susceptible :  99000 -> 0
 #>  - (1) Infected    :   1000 -> 0
 #>  - (2) Recovered   :      0 -> 100000
 #> 
 #> Transition Probabilities:
 #>  - Susceptible  0.87  0.13  0.00
-#>  - Infected     0.00  0.70  0.30
+#>  - Infected     0.00  0.69  0.31
 #>  - Recovered    0.00  0.00  1.00
 ```
 

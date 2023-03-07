@@ -25,10 +25,8 @@
 #'   p = .01
 #'   )
 #'   
-#' # Initializing
-#' init(model_seir, days = 100, seed = 1912)
 #' # Running and printing
-#' run(model_seir)
+#' run(model_seir, ndays = 100, seed = 1912)
 #' model_seir
 #' @seealso epiworld-methods
 ModelSEIR <- function(

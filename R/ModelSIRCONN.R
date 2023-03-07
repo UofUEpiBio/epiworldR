@@ -21,10 +21,8 @@
 #'   prob_recovery       = 0.95
 #' )
 #'   
-#' # Initializing
-#' init(model_sirconn, days = 100, seed = 1912)
 #' # Running and printing
-#' run(model_sirconn)
+#' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' @seealso epiworld-methods
 ModelSIRCONN <- function(

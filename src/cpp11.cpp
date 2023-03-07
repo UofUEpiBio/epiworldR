@@ -69,13 +69,6 @@ extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence,
   END_CPP11
 }
 // model.cpp
-int init_cpp(SEXP m, int days, int seed);
-extern "C" SEXP _epiworldR_init_cpp(SEXP m, SEXP days, SEXP seed) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(init_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(days), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
-  END_CPP11
-}
-// model.cpp
 int print_cpp(SEXP m);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m) {
   BEGIN_CPP11
@@ -90,10 +83,10 @@ extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d,
   END_CPP11
 }
 // model.cpp
-int run_cpp(SEXP m);
-extern "C" SEXP _epiworldR_run_cpp(SEXP m) {
+int run_cpp(SEXP m, int ndays, int seed);
+extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   BEGIN_CPP11
-    return cpp11::as_sexp(run_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+    return cpp11::as_sexp(run_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(ndays), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
   END_CPP11
 }
 // model.cpp
@@ -214,11 +207,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},
     {"_epiworldR_get_status_cpp",                 (DL_FUNC) &_epiworldR_get_status_cpp,                  1},
     {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
-    {"_epiworldR_init_cpp",                       (DL_FUNC) &_epiworldR_init_cpp,                        3},
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
     {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
     {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  1},
-    {"_epiworldR_run_cpp",                        (DL_FUNC) &_epiworldR_run_cpp,                         1},
+    {"_epiworldR_run_cpp",                        (DL_FUNC) &_epiworldR_run_cpp,                         3},
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},

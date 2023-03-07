@@ -15,11 +15,9 @@
 #   p = .01
 #   )
 
-# # Initializing
-# init(sir, days = 100, seed = 1912)
 # # Running and printing
 # # queuing_off(sir)
-# run(sir)
+# run(sir, ndays = 100, seed = 1912)
 # sir
 
 

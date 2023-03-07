@@ -36,10 +36,6 @@ ModelSEIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_tra
   .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
 }
 
-init_cpp <- function(m, days, seed) {
-  .Call(`_epiworldR_init_cpp`, m, days, seed)
-}
-
 print_cpp <- function(m) {
   .Call(`_epiworldR_print_cpp`, m)
 }
@@ -48,8 +44,8 @@ agents_smallworld_cpp <- function(m, n, k, d, p) {
   .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
 }
 
-run_cpp <- function(m) {
-  .Call(`_epiworldR_run_cpp`, m)
+run_cpp <- function(m, ndays, seed) {
+  .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
 
 queuing_on_cpp <- function(model) {

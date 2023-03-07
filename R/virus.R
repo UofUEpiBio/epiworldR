@@ -16,10 +16,8 @@
 #' virus_set_status(delta, 1, 3, 3)
 #' 
 #' add_virus(mseirconn, delta, .3)
-#' init(mseirconn, 100, 992)
-#' mseirconn
 #' 
-#' run(mseirconn)
+#' run(mseirconn, ndays = 100, seed = 992)
 #' mseirconn
 #' @export
 #' 

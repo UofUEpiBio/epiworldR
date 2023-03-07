@@ -5,16 +5,6 @@
 using namespace epiworld;
 
 [[cpp11::register]]
-int init_cpp(SEXP m, int days, int seed) {
-  
-  cpp11::external_pointer<Model<>> ptr(m);
-  ptr->init(days, seed);
-  
-  return 0;
-  
-}
-
-[[cpp11::register]]
 int print_cpp(SEXP m) {
   
   cpp11::external_pointer<Model<>> ptr(m);
@@ -42,10 +32,10 @@ int agents_smallworld_cpp(
 }
 
 [[cpp11::register]]
-int run_cpp(SEXP m) {
+int run_cpp(SEXP m, int ndays, int seed) {
   
   cpp11::external_pointer<Model<>> ptr(m);
-  ptr->run();
+  ptr->run(ndays, seed);
   
   return 0;
   

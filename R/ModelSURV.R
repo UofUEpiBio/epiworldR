@@ -51,10 +51,8 @@
 #'   p = .01
 #'   )
 #'   
-#' # Initializing
-#' init(model_surv, days = 100, seed = 1912)
 #' # Running and printing
-#' run(model_surv)
+#' run(model_surv, ndays = 100, seed = 1912)
 #' model_surv 
 #' @seealso epiworld-methods
 ModelSURV <- function(

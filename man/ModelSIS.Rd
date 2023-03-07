@@ -42,10 +42,8 @@ agents_smallworld(
   p = .01
   )
   
-# Initializing
-init(model_sis, days = 100, seed = 1912)
 # Running and printing
-run(model_sis)
+run(model_sis, ndays = 100, seed = 1912))
 model_sis
 }
 \seealso{

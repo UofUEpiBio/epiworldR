@@ -2,7 +2,6 @@
 % Please edit documentation in R/model-methods.R
 \name{epiworld-methods}
 \alias{epiworld-methods}
-\alias{init}
 \alias{queuing_on}
 \alias{queuing_off}
 \alias{agents_smallworld}
@@ -14,15 +13,13 @@
 \alias{get_name}
 \title{Common methods for predefined models of Epiworld}
 \usage{
-init(m, days, seed)
-
 queuing_on(x)
 
 queuing_off(x)
 
 agents_smallworld(m, n, k, d, p)
 
-run(m)
+run(m, ndays, seed = sample.int(10000, 1))
 
 get_status(x)
 
@@ -35,13 +32,9 @@ set_name(x, mname)
 get_name(x)
 }
 \arguments{
-\item{m}{Model object.}
-
-\item{days}{Number of days.}
-
-\item{seed}{Seed to set for initializing random number generator.}
-
 \item{x}{An object of class \code{epiworld_model}.}
+
+\item{m}{Model object.}
 
 \item{n}{Number of individuals in the population.}
 
@@ -51,11 +44,15 @@ get_name(x)
 
 \item{p}{Probability of rewiring.}
 
+\item{seed}{Seed to set for initializing random number generator.}
+
 \item{pname}{String, name of the parameter}
 
 \item{pval}{Numeric. Value of the parameter}
 
 \item{mname}{String. Name of the model}
+
+\item{days}{Number of days.}
 }
 \description{
 Common methods for predefined models of Epiworld
