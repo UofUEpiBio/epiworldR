@@ -5,17 +5,17 @@
 using namespace epiworld;
 
 [[cpp11::register]]
-int print_cpp(SEXP m) {
+SEXP print_cpp(SEXP m) {
   
   cpp11::external_pointer<Model<>> ptr(m);
   ptr->print();
   
-  return 0;
+  return m;
   
 }
 
 [[cpp11::register]]
-int agents_smallworld_cpp(
+SEXP agents_smallworld_cpp(
     SEXP m,
     unsigned int n = 1000,
     unsigned int k = 5,
@@ -27,39 +27,39 @@ int agents_smallworld_cpp(
   cpp11::external_pointer<Model<>> ptr(m);
   ptr->agents_smallworld(n, k, d, p);
   
-  return 0;
+  return m;
   
 }
 
 [[cpp11::register]]
-int run_cpp(SEXP m, int ndays, int seed) {
+SEXP run_cpp(SEXP m, int ndays, int seed) {
   
   cpp11::external_pointer<Model<>> ptr(m);
   ptr->run(ndays, seed);
   
-  return 0;
+  return m;
   
 }
 
 [[cpp11::register]]
-int queuing_on_cpp(
+SEXP queuing_on_cpp(
     SEXP model
 ) {
   
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->queuing_on();
-  return 0;
+  return model;
   
 }
 
 [[cpp11::register]]
-int queuing_off_cpp(
+SEXP queuing_off_cpp(
     SEXP model
 ) {
   
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->queuing_off();
-  return 0;
+  return model;
   
 }
 
@@ -70,19 +70,19 @@ double get_param_cpp(SEXP model, std::string pname) {
 }
 
 [[cpp11::register]]
-int set_param_cpp(SEXP model, std::string pname, double val) {
+SEXP set_param_cpp(SEXP model, std::string pname, double val) {
   
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->operator()(pname) = val;
   
-  return 0;
+  return model;
 }
 
 [[cpp11::register]]
-int set_name_cpp(SEXP model, std::string mname) {
+SEXP set_name_cpp(SEXP model, std::string mname) {
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->set_name(mname);
-  return 0;
+  return model;
 }
 
 [[cpp11::register]]
@@ -92,12 +92,12 @@ std::string get_name_cpp(SEXP model) {
 }
 
 [[cpp11::register]]
-cpp11::strings get_status_cpp(
+cpp11::strings get_state_cpp(
     SEXP model
 ) {
   
   cpp11::external_pointer<Model<>> ptr(model);
-  return cpp11::writable::strings(ptr->get_status());
+  return cpp11::writable::strings(ptr->get_state());
   
 }
 

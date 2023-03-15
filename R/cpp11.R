@@ -72,8 +72,8 @@ get_name_cpp <- function(model) {
   .Call(`_epiworldR_get_name_cpp`, model)
 }
 
-get_status_cpp <- function(model) {
-  .Call(`_epiworldR_get_status_cpp`, model)
+get_state_cpp <- function(model) {
+  .Call(`_epiworldR_get_state_cpp`, model)
 }
 
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
@@ -92,8 +92,8 @@ virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_d
   .Call(`_epiworldR_virus_cpp`, name, post_immunity, prob_infecting, prob_recovery, prob_death)
 }
 
-virus_set_status_cpp <- function(v, init, end, removed) {
-  .Call(`_epiworldR_virus_set_status_cpp`, v, init, end, removed)
+virus_set_state_cpp <- function(v, init, end, removed) {
+  .Call(`_epiworldR_virus_set_state_cpp`, v, init, end, removed)
 }
 
 add_virus_cpp <- function(m, v, preval) {

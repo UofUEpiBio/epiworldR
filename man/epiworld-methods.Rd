@@ -6,7 +6,7 @@
 \alias{queuing_off}
 \alias{agents_smallworld}
 \alias{run}
-\alias{get_status}
+\alias{get_state}
 \alias{get_param}
 \alias{set_param}
 \alias{set_name}
@@ -21,7 +21,7 @@ agents_smallworld(m, n, k, d, p)
 
 run(m, ndays, seed = sample.int(10000, 1))
 
-get_status(x)
+get_state(x)
 
 get_param(x, pname)
 

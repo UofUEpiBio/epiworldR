@@ -35,25 +35,16 @@ sir <- ModelSIR(
   prevalence     = .01,
   infectiousness = .9,
   recovery       = .3
-  )
-
-# Adding a Small world population 
-agents_smallworld(
-  sir,
-  n = 100000,
-  k = 10,
-  d = FALSE,
-  p = .01
-  )
-
-
-# Running and printing
-queuing_off(sir)
-run(sir, ndays = 100, seed = 1912)
+  ) |>
+  # Adding a Small world population 
+  agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
+  # Running the model for 100 days
+  run(ndays = 100, seed = 1912)
 #> _________________________________________________________________________
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+
 sir
 #> 
 #> ________________________________________________________________________________
@@ -64,8 +55,8 @@ sir
 #> Number of entitites : 0
 #> Days (duration)     : 101 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 447.00ms
-#> Last run speed      : 22.34 million agents x day / second
+#> Last run elapsed t  : 290.00ms
+#> Last run speed      : 34.42 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):

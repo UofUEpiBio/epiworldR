@@ -13,7 +13,7 @@
 #' )
 #' 
 #' delta <- virus("Delta Variant", 0, .5, .2, .01)
-#' virus_set_status(delta, 1, 3, 3)
+#' virus_set_state(delta, 1, 3, 3)
 #' 
 #' add_virus(mseirconn, delta, .3)
 #' 
@@ -70,14 +70,14 @@ add_virus_n.epiworld_model <- function(m, v, prevalence) {
 
 #' @export
 #' @rdname virus
-#' @param init,end,removed Statuses after acquiring a virus, removing a virus,
+#' @param init,end,removed states after acquiring a virus, removing a virus,
 #' and removing the agent as a result of the virus, respectively.
-virus_set_status <- function(v, init, end, removed) {
+virus_set_state <- function(v, init, end, removed) {
   
   if (!inherits(v, "epiworld_virus"))
     stop("-v- must be of class epiworld_virus.")
   
-  virus_set_status_cpp(v, init, end, removed)
+  virus_set_state_cpp(v, init, end, removed)
   invisible(v)
   
 }

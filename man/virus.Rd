@@ -4,7 +4,7 @@
 \alias{virus}
 \alias{add_virus}
 \alias{add_virus_n}
-\alias{virus_set_status}
+\alias{virus_set_state}
 \title{Virus}
 \usage{
 virus(name, post_immunity, prob_infecting, prob_recovery, prob_death)
@@ -13,7 +13,7 @@ add_virus(m, v, prevalence)
 
 add_virus_n(m, v, prevalence)
 
-virus_set_status(v, init, end, removed)
+virus_set_state(v, init, end, removed)
 }
 \arguments{
 \item{name}{of the virus}
@@ -26,7 +26,7 @@ virus_set_status(v, init, end, removed)
 
 \item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
-\item{init, end, removed}{Statuses after acquiring a virus, removing a virus,
+\item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
 }
 \description{
@@ -44,7 +44,7 @@ mseirconn <- ModelSEIRCONN(
 )
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
-virus_set_status(delta, 1, 3, 3)
+virus_set_state(delta, 1, 3, 3)
 
 add_virus(mseirconn, delta, .3)
 

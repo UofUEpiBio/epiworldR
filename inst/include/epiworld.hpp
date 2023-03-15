@@ -139,7 +139,7 @@ struct Action {
     VirusPtr<TSeq> virus;
     ToolPtr<TSeq> tool;
     Entity<TSeq> * entity;
-    epiworld_fast_int new_status;
+    epiworld_fast_int new_state;
     epiworld_fast_int queue;
     ActionFun<TSeq> call;
     int idx_agent;
@@ -155,7 +155,7 @@ public:
      * @param tool_ Tool to add
      * @param virus_idx Index of virus to be removed (if needed)
      * @param tool_idx Index of tool to be removed (if needed)
-     * @param new_status_ Next status
+     * @param new_state_ Next state
      * @param queue_ Efect on the queue
      * @param call_ The action call (if needed)
      * @param idx_agent_ Location of agent in object.
@@ -166,13 +166,13 @@ public:
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
         Entity<TSeq> * entity_,
-        epiworld_fast_int new_status_,
+        epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
         ActionFun<TSeq> call_,
         int idx_agent_,
         int idx_object_
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
-        new_status(new_status_),
+        new_state(new_state_),
         queue(queue_), call(call_), idx_agent(idx_agent_), idx_object(idx_object_) {
             return;
         };
@@ -2440,7 +2440,7 @@ template<typename TSeq>
 inline void UserData<TSeq>::print() const
 {
     // File header
-    printf_epiworld("Total records: %lu\n", n);
+    printf_epiworld("Total records: %llu\n", n);
     printf_epiworld("date");
 
     for (auto & cn : data_names)
@@ -2660,10 +2660,10 @@ private:
     std::function<std::vector<int>(const TSeq&)> seq_hasher = default_seq_hasher<TSeq>;
     std::function<std::string(const TSeq &)> seq_writer = default_seq_writer<TSeq>;
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     std::vector< std::vector<int> > today_variant;
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     std::vector< std::vector<int> > today_tool;
 
     // {Susceptible, Infected, etc.}
@@ -2677,19 +2677,19 @@ private:
     // Variants history
     std::vector< int > hist_variant_date;
     std::vector< int > hist_variant_id;
-    std::vector< epiworld_fast_uint > hist_variant_status;
+    std::vector< epiworld_fast_uint > hist_variant_state;
     std::vector< int > hist_variant_counts;
 
     // Tools history
     std::vector< int > hist_tool_date;
     std::vector< int > hist_tool_id;
-    std::vector< epiworld_fast_uint > hist_tool_status;
+    std::vector< epiworld_fast_uint > hist_tool_state;
     std::vector< int > hist_tool_counts;
 
     // Overall hist
     std::vector< int > hist_total_date;
     std::vector< int > hist_total_nvariants_active;
-    std::vector< epiworld_fast_uint > hist_total_status;
+    std::vector< epiworld_fast_uint > hist_total_state;
     std::vector< int > hist_total_counts;
     std::vector< int > hist_transition_matrix;
 
@@ -2705,21 +2705,21 @@ private:
     UserData<TSeq> user_data;
 
     void update_state(
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status,
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state,
         bool undo = false
     );
 
     void update_virus(
         epiworld_fast_uint virus_id,
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state
     );
 
     void update_tool(
         epiworld_fast_uint tool_id,
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state
     );
 
     void record_transition(epiworld_fast_uint from, epiworld_fast_uint to, bool undo);
@@ -2759,7 +2759,7 @@ public:
     /**
      * @name Get recorded information from the model
      * 
-     * @param what std::string, The status, e.g., 0, 1, 2, ...
+     * @param what std::string, The state, e.g., 0, 1, 2, ...
      * @return In `get_today_total`, the current counts of `what`.
      * @return In `get_today_variant`, the current counts of `what` for
      * each variant.
@@ -2772,26 +2772,26 @@ public:
     int get_today_total(std::string what) const;
     int get_today_total(epiworld_fast_uint what) const;
     void get_today_total(
-        std::vector< std::string > * status = nullptr,
+        std::vector< std::string > * state = nullptr,
         std::vector< int > * counts = nullptr
     ) const;
 
     void get_today_variant(
-        std::vector< std::string > & status,
+        std::vector< std::string > & state,
         std::vector< int > & id,
         std::vector< int > & counts
     ) const;
 
     void get_hist_total(
         std::vector< int > * date,
-        std::vector< std::string > * status,
+        std::vector< std::string > * state,
         std::vector< int > * counts
     ) const;
 
     void get_hist_variant(
         std::vector< int > & date,
         std::vector< int > & id,
-        std::vector< std::string > & status,
+        std::vector< std::string > & state,
         std::vector< int > & counts
     ) const;
     ///@}
@@ -2880,7 +2880,7 @@ inline void DataBase<TSeq>::reset()
     today_total.resize(model->nstatus);
     std::fill(today_total.begin(), today_total.end(), 0);
     for (auto & p : model->get_agents())
-        ++today_total[p.get_status()];
+        ++today_total[p.get_state()];
     
     transition_matrix.resize(model->nstatus * model->nstatus);
     std::fill(transition_matrix.begin(), transition_matrix.end(), 0);
@@ -2889,12 +2889,12 @@ inline void DataBase<TSeq>::reset()
 
     hist_variant_date.clear();
     hist_variant_id.clear();
-    hist_variant_status.clear();
+    hist_variant_state.clear();
     hist_variant_counts.clear();
 
     hist_tool_date.clear();
     hist_tool_id.clear();
-    hist_tool_status.clear();
+    hist_tool_state.clear();
     hist_tool_counts.clear();    
 
     today_variant.resize(get_n_variants());
@@ -2904,15 +2904,18 @@ inline void DataBase<TSeq>::reset()
     std::fill(today_tool.begin(), today_tool.begin(), std::vector<int>(model->nstatus, 0));
 
     hist_total_date.clear();
-    hist_total_status.clear();
+    hist_total_state.clear();
     hist_total_nvariants_active.clear();
     hist_total_counts.clear();
+    hist_transition_matrix.clear();
 
     transmission_date.clear();
     transmission_variant.clear();
     transmission_source.clear();
     transmission_target.clear();
     transmission_source_exposure_date.clear();
+
+    
 
     return;
 
@@ -2931,9 +2934,9 @@ inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
     tool_origin_date(db.tool_origin_date),
     seq_hasher(db.seq_hasher),
     seq_writer(db.seq_writer),
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     today_variant(db.today_variant),
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     today_tool(db.today_tool),
     // {Susceptible, Infected, etc.}
     today_total(db.today_total),
@@ -2943,17 +2946,17 @@ inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
     // Variants history
     hist_variant_date(db.hist_variant_date),
     hist_variant_id(db.hist_variant_id),
-    hist_variant_status(db.hist_variant_status),
+    hist_variant_state(db.hist_variant_state),
     hist_variant_counts(db.hist_variant_counts),
     // Tools history
     hist_tool_date(db.hist_tool_date),
     hist_tool_id(db.hist_tool_id),
-    hist_tool_status(db.hist_tool_status),
+    hist_tool_state(db.hist_tool_state),
     hist_tool_counts(db.hist_tool_counts),
     // Overall hist
     hist_total_date(db.hist_total_date),
     hist_total_nvariants_active(db.hist_total_nvariants_active),
-    hist_total_status(db.hist_total_status),
+    hist_total_state(db.hist_total_state),
     hist_total_counts(db.hist_total_counts),
     hist_transition_matrix(db.hist_transition_matrix),
     // Transmission network
@@ -2995,7 +2998,7 @@ inline void DataBase<TSeq>::record()
     // Checking whether the sums correspond
     std::vector< int > _today_total_cp(today_total.size(), 0);
     for (auto & p : model->population)
-        _today_total_cp[p.get_status()]++;
+        _today_total_cp[p.get_state()]++;
     
     EPI_DEBUG_VECTOR_MATCH_INT(
         _today_total_cp, today_total,
@@ -3008,24 +3011,24 @@ inline void DataBase<TSeq>::record()
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_total_date should be of length 0.")
         if (hist_total_nvariants_active.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_total_nvariants_active should be of length 0.")
-        if (hist_total_status.size() != 0)
-            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_total_status should be of length 0.")
+        if (hist_total_state.size() != 0)
+            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_total_state should be of length 0.")
         if (hist_total_counts.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_total_counts should be of length 0.")
         if (hist_variant_date.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_variant_date should be of length 0.")
         if (hist_variant_id.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_variant_id should be of length 0.")
-        if (hist_variant_status.size() != 0)
-            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_variant_status should be of length 0.")
+        if (hist_variant_state.size() != 0)
+            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_variant_state should be of length 0.")
         if (hist_variant_counts.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_variant_counts should be of length 0.")
         if (hist_tool_date.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_tool_date should be of length 0.")
         if (hist_tool_id.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_tool_id should be of length 0.")
-        if (hist_tool_status.size() != 0)
-            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_tool_status should be of length 0.")
+        if (hist_tool_state.size() != 0)
+            EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_tool_state should be of length 0.")
         if (hist_tool_counts.size() != 0)
             EPI_DEBUG_ERROR(std::logic_error, "DataBase::record hist_tool_counts should be of length 0.")
     }
@@ -3045,7 +3048,7 @@ inline void DataBase<TSeq>::record()
 
                 hist_variant_date.push_back(model->today());
                 hist_variant_id.push_back(p.second);
-                hist_variant_status.push_back(s);
+                hist_variant_state.push_back(s);
                 hist_variant_counts.push_back(today_variant[p.second][s]);
 
             }
@@ -3061,7 +3064,7 @@ inline void DataBase<TSeq>::record()
 
                 hist_tool_date.push_back(model->today());
                 hist_tool_id.push_back(p.second);
-                hist_tool_status.push_back(s);
+                hist_tool_state.push_back(s);
                 hist_tool_counts.push_back(today_tool[p.second][s]);
 
             }
@@ -3073,7 +3076,7 @@ inline void DataBase<TSeq>::record()
         {
             hist_total_date.push_back(model->today());
             hist_total_nvariants_active.push_back(today_total_nvariants_active);
-            hist_total_status.push_back(s);
+            hist_total_state.push_back(s);
             hist_total_counts.push_back(today_total[s]);
         }
 
@@ -3188,9 +3191,9 @@ inline void DataBase<TSeq>::record_variant(Virus<TSeq> & v)
         if (v.get_agent() != nullptr)
         {
             // Correcting math
-            epiworld_fast_uint tmp_status = v.get_agent()->get_status();
-            today_variant[old_id][tmp_status]--;
-            today_variant[new_id][tmp_status]++;
+            epiworld_fast_uint tmp_state = v.get_agent()->get_state();
+            today_variant[old_id][tmp_state]--;
+            today_variant[new_id][tmp_state]++;
 
         }
 
@@ -3264,9 +3267,9 @@ inline void DataBase<TSeq>::record_tool(Tool<TSeq> & t)
         if (t.get_agent() != nullptr)
         {
             // Correcting math
-            epiworld_fast_uint tmp_status = t.get_agent()->get_status();
-            today_tool[old_id][tmp_status]--;
-            today_tool[new_id][tmp_status]++;
+            epiworld_fast_uint tmp_state = t.get_agent()->get_state();
+            today_tool[old_id][tmp_state]--;
+            today_tool[new_id][tmp_state]++;
 
         }
 
@@ -3285,25 +3288,25 @@ inline size_t DataBase<TSeq>::size() const
 
 template<typename TSeq>
 inline void DataBase<TSeq>::update_state(
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status,
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state,
         bool undo
 ) {
 
     if (undo)
     {
 
-        today_total[prev_status]++;
-        today_total[new_status]--;
+        today_total[prev_state]++;
+        today_total[new_state]--;
         
     } else {
 
-        today_total[prev_status]--;
-        today_total[new_status]++;
+        today_total[prev_state]--;
+        today_total[new_state]++;
 
     }
 
-    record_transition(prev_status, new_status, undo);
+    record_transition(prev_state, new_state, undo);
     
     return;
 }
@@ -3311,12 +3314,12 @@ inline void DataBase<TSeq>::update_state(
 template<typename TSeq>
 inline void DataBase<TSeq>::update_virus(
         epiworld_fast_uint virus_id,
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state
 ) {
 
-    today_variant[virus_id][prev_status]--;
-    today_variant[virus_id][new_status]++;
+    today_variant[virus_id][prev_state]--;
+    today_variant[virus_id][new_state]++;
 
     return;
     
@@ -3325,13 +3328,13 @@ inline void DataBase<TSeq>::update_virus(
 template<typename TSeq>
 inline void DataBase<TSeq>::update_tool(
         epiworld_fast_uint tool_id,
-        epiworld_fast_uint prev_status,
-        epiworld_fast_uint new_status
+        epiworld_fast_uint prev_state,
+        epiworld_fast_uint new_state
 ) {
 
 
-    today_tool[tool_id][prev_status]--;    
-    today_tool[tool_id][new_status]++;
+    today_tool[tool_id][prev_state]--;    
+    today_tool[tool_id][new_state]++;
 
     return;
 
@@ -3382,12 +3385,12 @@ inline int DataBase<TSeq>::get_today_total(
 
 template<typename TSeq>
 inline void DataBase<TSeq>::get_today_total(
-    std::vector< std::string > * status,
+    std::vector< std::string > * state,
     std::vector< int > * counts
 ) const
 {
-    if (status != nullptr)
-        (*status) = model->status_labels;
+    if (state != nullptr)
+        (*state) = model->status_labels;
 
     if (counts != nullptr)
         *counts = today_total;
@@ -3396,13 +3399,13 @@ inline void DataBase<TSeq>::get_today_total(
 
 template<typename TSeq>
 inline void DataBase<TSeq>::get_today_variant(
-    std::vector< std::string > & status,
+    std::vector< std::string > & state,
     std::vector< int > & id,
     std::vector< int > & counts
     ) const
 {
       
-    status.resize(today_variant.size(), "");
+    state.resize(today_variant.size(), "");
     id.resize(today_variant.size(), 0);
     counts.resize(today_variant.size(),0);
 
@@ -3410,7 +3413,7 @@ inline void DataBase<TSeq>::get_today_variant(
     for (epiworld_fast_uint v = 0u; v < today_variant.size(); ++v)
         for (epiworld_fast_uint s = 0u; s < model->status_labels.size(); ++s)
         {
-            status[n]   = model->status_labels[s];
+            state[n]   = model->status_labels[s];
             id[n]       = static_cast<int>(v);
             counts[n++] = today_variant[v][s];
 
@@ -3421,7 +3424,7 @@ inline void DataBase<TSeq>::get_today_variant(
 template<typename TSeq>
 inline void DataBase<TSeq>::get_hist_total(
     std::vector< int > * date,
-    std::vector< std::string > * status,
+    std::vector< std::string > * state,
     std::vector< int > * counts
 ) const
 {
@@ -3429,11 +3432,11 @@ inline void DataBase<TSeq>::get_hist_total(
     if (date != nullptr)
         *date = hist_total_date;
 
-    if (status != nullptr)
+    if (state != nullptr)
     {
-        status->resize(hist_total_status.size(), "");
-        for (epiworld_fast_uint i = 0u; i < hist_total_status.size(); ++i)
-            status->operator[](i) = model->status_labels[hist_total_status[i]];
+        state->resize(hist_total_state.size(), "");
+        for (epiworld_fast_uint i = 0u; i < hist_total_state.size(); ++i)
+            state->operator[](i) = model->status_labels[hist_total_state[i]];
     }
 
     if (counts != nullptr)
@@ -3447,7 +3450,7 @@ template<typename TSeq>
 inline void DataBase<TSeq>::get_hist_variant(
     std::vector< int > & date,
     std::vector< int > & id,
-    std::vector< std::string > & status,
+    std::vector< std::string > & state,
     std::vector< int > & counts
 ) const {
 
@@ -3456,9 +3459,9 @@ inline void DataBase<TSeq>::get_hist_variant(
     labels = model->status_labels;
     
     id = hist_variant_id;
-    status.resize(hist_variant_status.size(), "");
-    for (epiworld_fast_uint i = 0u; i < hist_variant_status.size(); ++i)
-        status[i] = labels[hist_variant_status[i]];
+    state.resize(hist_variant_state.size(), "");
+    for (epiworld_fast_uint i = 0u; i < hist_variant_state.size(); ++i)
+        state[i] = labels[hist_variant_state[i]];
 
     counts = hist_variant_counts;
 
@@ -3512,9 +3515,9 @@ inline void DataBase<TSeq>::write_data(
         
         file_variant <<
             #ifdef _OPENMP
-            "thread "<< "date " << "id " << "status " << "n\n";
+            "thread "<< "date " << "id " << "state " << "n\n";
             #else
-            "date " << "id " << "status " << "n\n";
+            "date " << "id " << "state " << "n\n";
             #endif
 
         for (epiworld_fast_uint i = 0; i < hist_variant_id.size(); ++i)
@@ -3524,7 +3527,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_variant_date[i] << " " <<
                 hist_variant_id[i] << " " <<
-                model->status_labels[hist_variant_status[i]] << " " <<
+                model->status_labels[hist_variant_state[i]] << " " <<
                 hist_variant_counts[i] << "\n";
     }
 
@@ -3561,7 +3564,7 @@ inline void DataBase<TSeq>::write_data(
             #ifdef _OPENMP
             "thread " << 
             #endif
-            "date " << "id " << "status " << "n\n";
+            "date " << "id " << "state " << "n\n";
 
         for (epiworld_fast_uint i = 0; i < hist_tool_id.size(); ++i)
             file_tool_hist <<
@@ -3570,7 +3573,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_tool_date[i] << " " <<
                 hist_tool_id[i] << " " <<
-                model->status_labels[hist_tool_status[i]] << " " <<
+                model->status_labels[hist_tool_state[i]] << " " <<
                 hist_tool_counts[i] << "\n";
     }
 
@@ -3582,7 +3585,7 @@ inline void DataBase<TSeq>::write_data(
             #ifdef _OPENMP
             "thread " << 
             #endif
-            "date " << "nvariants " << "status " << "counts\n";
+            "date " << "nvariants " << "state " << "counts\n";
 
         for (epiworld_fast_uint i = 0; i < hist_total_date.size(); ++i)
             file_total <<
@@ -3591,7 +3594,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_total_date[i] << " " <<
                 hist_total_nvariants_active[i] << " \"" <<
-                model->status_labels[hist_total_status[i]] << "\" " << 
+                model->status_labels[hist_total_state[i]] << "\" " << 
                 hist_total_counts[i] << "\n";
     }
 
@@ -3789,30 +3792,30 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
     bool print
 ) const {
 
-    auto status_labels = model->get_status();
-    size_t n_status = status_labels.size();
+    auto status_labels = model->get_state();
+    size_t n_state = status_labels.size();
     size_t n_days   = model->get_ndays();
-    std::vector< epiworld_double > res(n_status * n_status, 0.0);
-    std::vector< epiworld_double > days_to_include(n_status, 0.0);
+    std::vector< epiworld_double > res(n_state * n_state, 0.0);
+    std::vector< epiworld_double > days_to_include(n_state, 0.0);
 
     for (size_t t = 1; t < n_days; ++t)
     {
 
-        for (size_t s_i = 0; s_i < n_status; ++s_i)
+        for (size_t s_i = 0; s_i < n_state; ++s_i)
         {
-            epiworld_double daily_total = hist_total_counts[(t - 1) * n_status + s_i];
+            epiworld_double daily_total = hist_total_counts[(t - 1) * n_state + s_i];
 
             if (daily_total == 0)
                 continue;
 
             days_to_include[s_i] += 1.0; 
 
-            for (size_t s_j = 0u; s_j < n_status; ++s_j)
+            for (size_t s_j = 0u; s_j < n_state; ++s_j)
             {
                 #ifdef EPI_DEBUG
                 epiworld_double entry = hist_transition_matrix[
-                    s_i + s_j * n_status +
-                    t * (n_status * n_status)
+                    s_i + s_j * n_state +
+                    t * (n_state * n_state)
                     ];
 
                 if (entry > daily_total)
@@ -3820,12 +3823,12 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
                         "The entry in hist_transition_matrix cannot have more elememnts than the total"
                         );
 
-                res[s_i + s_j * n_status] += (entry / daily_total);
+                res[s_i + s_j * n_state] += (entry / daily_total);
                 #else
-                    res[s_i + s_j * n_status] += (
+                    res[s_i + s_j * n_state] += (
                         hist_transition_matrix[
-                            s_i + s_j * n_status +
-                            t * (n_status * n_status)
+                            s_i + s_j * n_state +
+                            t * (n_state * n_state)
                         ] / daily_total
                     );
                 #endif
@@ -3835,10 +3838,10 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
 
     }
 
-    for (size_t s_i = 0; s_i < n_status; ++s_i)
+    for (size_t s_i = 0; s_i < n_state; ++s_i)
     {
-        for (size_t s_j = 0; s_j < n_status; ++s_j)
-            res[s_i + s_j * n_status] /= days_to_include[s_i];
+        for (size_t s_j = 0; s_j < n_state; ++s_j)
+            res[s_i + s_j * n_state] /= days_to_include[s_i];
     }
 
     if (print)
@@ -3852,16 +3855,16 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
         std::string fmt = " - %-" + std::to_string(nchar) + "s";
         
         printf_epiworld("\nTransition Probabilities:\n");
-        for (size_t s_i = 0u; s_i < n_status; ++s_i)
+        for (size_t s_i = 0u; s_i < n_state; ++s_i)
         {
             printf_epiworld(fmt.c_str(), status_labels[s_i].c_str());
-            for (size_t s_j = 0u; s_j < n_status; ++s_j)
+            for (size_t s_j = 0u; s_j < n_state; ++s_j)
             {
-                if (std::isnan(res[s_i + s_j * n_status]))
+                if (std::isnan(res[s_i + s_j * n_state]))
                 {
                     printf_epiworld("     -");
                 } else {
-                    printf_epiworld(" % 4.2f", res[s_i + s_j * n_status]);
+                    printf_epiworld(" % 4.2f", res[s_i + s_j * n_state]);
                 }
             }
             printf_epiworld("\n");
@@ -3954,9 +3957,9 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
         )
 
     VECT_MATCH(
-        hist_variant_status,
-        other.hist_variant_status,
-        "DataBase:: hist_variant_status[i] don't match"
+        hist_variant_state,
+        other.hist_variant_state,
+        "DataBase:: hist_variant_state[i] don't match"
         )
 
     VECT_MATCH(
@@ -3979,9 +3982,9 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
         )
 
     VECT_MATCH(
-        hist_tool_status,
-        other.hist_tool_status,
-        "DataBase:: hist_tool_status[i] don't match"
+        hist_tool_state,
+        other.hist_tool_state,
+        "DataBase:: hist_tool_state[i] don't match"
         )
 
     VECT_MATCH(
@@ -4004,9 +4007,9 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
         )
 
     VECT_MATCH(
-        hist_total_status,
-        other.hist_total_status,
-        "DataBase:: hist_total_status[i] don't match"
+        hist_total_state,
+        other.hist_total_state,
+        "DataBase:: hist_total_state[i] don't match"
         )
 
     VECT_MATCH(
@@ -4021,7 +4024,7 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
         "DataBase:: hist_transition_matrix[i] don't match"
         )
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     EPI_DEBUG_FAIL_AT_TRUE(
         today_variant.size() != other.today_variant.size(),
         "DataBase:: today_variant don't match."
@@ -4035,7 +4038,7 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
             )
     }
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     if (today_tool.size() != other.today_tool.size())
         return false;
     
@@ -4167,9 +4170,9 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
     )
 
     VECT_MATCH(
-        hist_variant_status,
-        other.hist_variant_status,
-        "DataBase:: hist_variant_status[i] don't match"
+        hist_variant_state,
+        other.hist_variant_state,
+        "DataBase:: hist_variant_state[i] don't match"
     )
 
     VECT_MATCH(
@@ -4192,9 +4195,9 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
     )
 
     VECT_MATCH(
-        hist_tool_status,
-        other.hist_tool_status,
-        "DataBase:: hist_tool_status[i] don't match"
+        hist_tool_state,
+        other.hist_tool_state,
+        "DataBase:: hist_tool_state[i] don't match"
     )
 
     VECT_MATCH(
@@ -4217,9 +4220,9 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
     )
 
     VECT_MATCH(
-        hist_total_status,
-        other.hist_total_status,
-        "DataBase:: hist_total_status[i] don't match"
+        hist_total_state,
+        other.hist_total_state,
+        "DataBase:: hist_total_state[i] don't match"
     )
 
     VECT_MATCH(
@@ -4234,7 +4237,7 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
         "DataBase:: hist_transition_matrix[i] don't match"
     )
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     EPI_DEBUG_FAIL_AT_TRUE(
         today_variant.size() != other.today_variant.size(),
         "DataBase:: today_variant.size() don't match."
@@ -4248,7 +4251,7 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
             )
     }
 
-    // {Variant 1: {Status 1, Status 2, etc.}, Variant 2: {...}, ...}
+    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     EPI_DEBUG_FAIL_AT_TRUE(
         today_tool.size() != other.today_tool.size(),
         "DataBase:: today_tool.size() don't match."
@@ -5550,7 +5553,7 @@ private:
      * @param virus_ Virus pointer included in the action
      * @param tool_ Tool pointer included in the action
      * @param entity_ Entity pointer included in the action
-     * @param new_status_ New state of the agent
+     * @param new_state_ New state of the agent
      * @param call_ Function the action will call
      * @param queue_ Change in the queue
      * @param idx_agent_ Location of agent in object.
@@ -5561,7 +5564,7 @@ private:
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
         Entity<TSeq> * entity_,
-        epiworld_fast_uint new_status_,
+        epiworld_fast_uint new_state_,
         epiworld_fast_int queue_,
         ActionFun<TSeq> call_,
         int idx_agent_,
@@ -5737,7 +5740,7 @@ public:
      * 
      */
     ///@{
-    void update_status();
+    void update_state();
     void mutate_variant();
     void next();
     virtual void run(
@@ -5790,7 +5793,7 @@ public:
      * @param fn_variant_hist Filename. History of the variant.
      * @param fn_tool_info Filename. Information about the tool.
      * @param fn_tool_hist Filename. History of the tool.
-     * @param fn_total_hist   Filename. Aggregated history (status)
+     * @param fn_total_hist   Filename. Aggregated history (state)
      * @param fn_transmission Filename. Transmission history.
      * @param fn_transition   Filename. Markov transition history.
      * @param fn_reproductive_number Filename. Case by case reproductive number
@@ -5846,24 +5849,24 @@ public:
     Model<TSeq> && clone() const;
 
     /**
-     * @name Manage status (states) in the model
+     * @name Manage state (states) in the model
      * 
      * @details
      * 
-     * The functions `get_status` return the current values for the 
-     * statuses included in the model.
+     * The functions `get_state` return the current values for the 
+     * states included in the model.
      * 
-     * @param lab `std::string` Name of the status.
+     * @param lab `std::string` Name of the state.
      * 
-     * @return `add_status*` returns nothing.
-     * @return `get_status_*` returns a vector of pairs with the 
-     * statuses and their labels.
+     * @return `add_state*` returns nothing.
+     * @return `get_state_*` returns a vector of pairs with the 
+     * states and their labels.
      */
     ///@{
-    void add_status(std::string lab, UpdateFun<TSeq> fun = nullptr);
-    const std::vector< std::string > & get_status() const;
-    const std::vector< UpdateFun<TSeq> > & get_status_fun() const;
-    void print_status_codes() const;
+    void add_state(std::string lab, UpdateFun<TSeq> fun = nullptr);
+    const std::vector< std::string > & get_state() const;
+    const std::vector< UpdateFun<TSeq> > & get_state_fun() const;
+    void print_state_codes() const;
     ///@}
 
     /**
@@ -5946,7 +5949,7 @@ public:
 
     void run_global_actions();
 
-    void clear_status_set();
+    void clear_state_set();
 
     /**
      * @name Queuing system
@@ -6168,7 +6171,7 @@ inline void Model<TSeq>::actions_add(
     VirusPtr<TSeq> virus_,
     ToolPtr<TSeq> tool_,
     Entity<TSeq> * entity_,
-    epiworld_fast_uint new_status_,
+    epiworld_fast_uint new_state_,
     epiworld_fast_int queue_,
     ActionFun<TSeq> call_,
     int idx_agent_,
@@ -6195,7 +6198,7 @@ inline void Model<TSeq>::actions_add(
 
         actions.push_back(
             Action<TSeq>(
-                agent_, virus_, tool_, entity_, new_status_, queue_, call_,
+                agent_, virus_, tool_, entity_, new_state_, queue_, call_,
                 idx_agent_, idx_object_
             ));
 
@@ -6209,7 +6212,7 @@ inline void Model<TSeq>::actions_add(
         A.virus      = virus_;
         A.tool       = tool_;
         A.entity     = entity_;
-        A.new_status = new_status_;
+        A.new_state = new_state_;
         A.queue      = queue_;
         A.call       = call_;
         A.idx_agent  = idx_agent_;
@@ -6237,57 +6240,57 @@ inline void Model<TSeq>::actions_run()
             a.call(a, this);
         }
 
-        // Updating status
-        if (static_cast<epiworld_fast_int>(p->status) != a.new_status)
+        // Updating state
+        if (static_cast<epiworld_fast_int>(p->state) != a.new_state)
         {
 
-            if (a.new_status >= static_cast<epiworld_fast_int>(nstatus))
+            if (a.new_state >= static_cast<epiworld_fast_int>(nstatus))
                 throw std::range_error(
-                    "The proposed status " + std::to_string(a.new_status) + " is out of range. " +
-                    "The model currently has " + std::to_string(nstatus - 1) + " statuses.");
+                    "The proposed state " + std::to_string(a.new_state) + " is out of range. " +
+                    "The model currently has " + std::to_string(nstatus - 1) + " states.");
 
             // Figuring out if we need to undo a change
-            // If the agent has made a change in the status recently, then we
+            // If the agent has made a change in the state recently, then we
             // need to undo the accounting, e.g., if A->B was made, we need to
             // undo it and set B->A so that the daily accounting is right.
             if (p->status_last_changed == today())
             {
 
                 // Updating accounting
-                db.update_state(p->status_prev, p->status, true); // Undoing
-                db.update_state(p->status_prev, a.new_status);
+                db.update_state(p->status_prev, p->state, true); // Undoing
+                db.update_state(p->status_prev, a.new_state);
 
                 for (size_t v = 0u; v < p->n_viruses; ++v)
                 {
-                    db.update_virus(p->viruses[v]->id, p->status, p->status_prev); // Undoing
-                    db.update_virus(p->viruses[v]->id, p->status_prev, a.new_status);
+                    db.update_virus(p->viruses[v]->id, p->state, p->status_prev); // Undoing
+                    db.update_virus(p->viruses[v]->id, p->status_prev, a.new_state);
                 }
 
                 for (size_t t = 0u; t < p->n_tools; ++t)
                 {
-                    db.update_tool(p->tools[t]->id, p->status, p->status_prev); // Undoing
-                    db.update_tool(p->tools[t]->id, p->status_prev, a.new_status);
+                    db.update_tool(p->tools[t]->id, p->state, p->status_prev); // Undoing
+                    db.update_tool(p->tools[t]->id, p->status_prev, a.new_state);
                 }
 
-                // Changing to the new status, we won't update the
-                // previous status in case we need to undo the change
-                p->status = a.new_status;
+                // Changing to the new state, we won't update the
+                // previous state in case we need to undo the change
+                p->state = a.new_state;
 
             } else {
 
                 // Updating accounting
-                db.update_state(p->status, a.new_status);
+                db.update_state(p->state, a.new_state);
 
                 for (size_t v = 0u; v < p->n_viruses; ++v)
-                    db.update_virus(p->viruses[v]->id, p->status, a.new_status);
+                    db.update_virus(p->viruses[v]->id, p->state, a.new_state);
 
                 for (size_t t = 0u; t < p->n_tools; ++t)
-                    db.update_tool(p->tools[t]->id, p->status, a.new_status);
+                    db.update_tool(p->tools[t]->id, p->state, a.new_state);
 
 
-                // Saving the last status and setting the new one
-                p->status_prev = p->status;
-                p->status      = a.new_status;
+                // Saving the last state and setting the new one
+                p->status_prev = p->state;
+                p->state      = a.new_state;
 
                 // It used to be a day before, but we still
                 p->status_last_changed = today();
@@ -6297,10 +6300,10 @@ inline void Model<TSeq>::actions_run()
         }
 
         #ifdef EPI_DEBUG
-        if (static_cast<int>(p->status) >= static_cast<int>(nstatus))
+        if (static_cast<int>(p->state) >= static_cast<int>(nstatus))
                 throw std::range_error(
-                    "The new status " + std::to_string(p->status) + " is out of range. " +
-                    "The model currently has " + std::to_string(nstatus - 1) + " statuses.");
+                    "The new state " + std::to_string(p->state) + " is out of range. " +
+                    "The model currently has " + std::to_string(nstatus - 1) + " states.");
         #endif
 
         // Updating queue
@@ -7063,17 +7066,17 @@ inline void Model<TSeq>::add_virus(Virus<TSeq> v, epiworld_double preval)
     if (preval < 0.0)
         throw std::range_error("Prevalence of virus cannot be negative");
 
-    // Checking the status
+    // Checking the state
     epiworld_fast_int init_, post_, rm_;
-    v.get_status(&init_, &post_, &rm_);
+    v.get_state(&init_, &post_, &rm_);
 
     if (init_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -init- status."
+            "The virus \"" + v.get_name() + "\" has no -init- state."
             );
     else if (post_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -post- status."
+            "The virus \"" + v.get_name() + "\" has no -post- state."
             );
     
     // Recording the variant
@@ -7093,15 +7096,15 @@ inline void Model<TSeq>::add_virus_n(Virus<TSeq> v, epiworld_fast_uint preval)
 
     // Checking the ids
     epiworld_fast_int init_, post_, rm_;
-    v.get_status(&init_, &post_, &rm_);
+    v.get_state(&init_, &post_, &rm_);
 
     if (init_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -init- status."
+            "The virus \"" + v.get_name() + "\" has no -init- state."
             );
     else if (post_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -post- status."
+            "The virus \"" + v.get_name() + "\" has no -post- state."
             );
 
     // Setting the id
@@ -7121,15 +7124,15 @@ inline void Model<TSeq>::add_virus_fun(Virus<TSeq> v, VirusToAgentFun<TSeq> fun)
 
     // Checking the ids
     epiworld_fast_int init_, post_, rm_;
-    v.get_status(&init_, &post_, &rm_);
+    v.get_state(&init_, &post_, &rm_);
 
     if (init_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -init- status."
+            "The virus \"" + v.get_name() + "\" has no -init- state."
             );
     else if (post_ == -99)
         throw std::logic_error(
-            "The virus \"" + v.get_name() + "\" has no -post- status."
+            "The virus \"" + v.get_name() + "\" has no -post- state."
             );
 
     // Setting the id
@@ -7380,8 +7383,8 @@ inline void Model<TSeq>::run(
 
     if (nstatus == 0u)
         throw std::logic_error(
-            std::string("No statuses registered in this model. ") +
-            std::string("At least one status should be included. See the function -Model::add_status()-")
+            std::string("No states registered in this model. ") +
+            std::string("At least one state should be included. See the function -Model::add_state()-")
             );
 
     // Setting up the number of steps
@@ -7393,42 +7396,42 @@ inline void Model<TSeq>::run(
     array_double_tmp.resize(size()/2, 0.0);
     array_virus_tmp.resize(size()/2);
 
-    // Checking whether the proposed status in/out/removed
+    // Checking whether the proposed state in/out/removed
     // are valid
     epiworld_fast_int _init, _end, _removed;
     int nstatus_int = static_cast<int>(nstatus);
     for (auto & v : viruses)
     {
-        v->get_status(&_init, &_end, &_removed);
+        v->get_state(&_init, &_end, &_removed);
         
-        // Negative unspecified status
+        // Negative unspecified state
         if (((_init != -99) && (_init < 0)) || (_init >= nstatus_int))
-            throw std::range_error("Statuses must be between 0 and " +
+            throw std::range_error("States must be between 0 and " +
                 std::to_string(nstatus - 1));
 
-        // Negative unspecified status
+        // Negative unspecified state
         if (((_end != -99) && (_end < 0)) || (_end >= nstatus_int))
-            throw std::range_error("Statuses must be between 0 and " +
+            throw std::range_error("States must be between 0 and " +
                 std::to_string(nstatus - 1));
 
         if (((_removed != -99) && (_removed < 0)) || (_removed >= nstatus_int))
-            throw std::range_error("Statuses must be between 0 and " +
+            throw std::range_error("States must be between 0 and " +
                 std::to_string(nstatus - 1));
 
     }
 
     for (auto & t : tools)
     {
-        t->get_status(&_init, &_end);
+        t->get_state(&_init, &_end);
         
-        // Negative unspecified status
+        // Negative unspecified state
         if (((_init != -99) && (_init < 0)) || (_init >= nstatus_int))
-            throw std::range_error("Statuses must be between 0 and " +
+            throw std::range_error("States must be between 0 and " +
                 std::to_string(nstatus - 1));
 
-        // Negative unspecified status
+        // Negative unspecified state
         if (((_end != -99) && (_end < 0)) || (_end >= nstatus_int))
-            throw std::range_error("Statuses must be between 0 and " +
+            throw std::range_error("States must be between 0 and " +
                 std::to_string(nstatus - 1));
 
     }
@@ -7448,7 +7451,7 @@ inline void Model<TSeq>::run(
 
         // We can execute these components in whatever order the
         // user needs.
-        this->update_status();
+        this->update_state();
     
         // We start with the global actions
         this->run_global_actions();
@@ -7596,27 +7599,8 @@ inline void Model<TSeq>::run_multiple(
 
             }
 
-            #ifdef EPI_DEBUG
-            #pragma omp barrier
-            #pragma omp master 
-            {
-                this->print(true);
-
-                for (auto & m: these)
-                {
-
-                    m->print(true);
-
-                    EPI_DEBUG_FAIL_AT_TRUE(
-                        db != m->get_db(),
-                        "Model:: Databases master and child don't match"
-                    )
-                    
-                }
-
-            }
-            #endif        
         }
+        
     }
 
     // Adjusting the number of replicates
@@ -7671,17 +7655,17 @@ inline void Model<TSeq>::run_multiple(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::update_status() {
+inline void Model<TSeq>::update_state() {
 
-    // Next status
+    // Next state
     if (use_queuing)
     {
         int i = -1;
         for (auto & p: population)
             if (queue[++i] > 0)
             {
-                if (status_fun[p.status])
-                    status_fun[p.status](&p, this);
+                if (status_fun[p.state])
+                    status_fun[p.state](&p, this);
             }
 
     }
@@ -7689,8 +7673,8 @@ inline void Model<TSeq>::update_status() {
     {
 
         for (auto & p: population)
-            if (status_fun[p.status])
-                    status_fun[p.status](&p, this);
+            if (status_fun[p.state])
+                    status_fun[p.state](&p, this);
 
     }
 
@@ -8296,7 +8280,7 @@ inline Model<TSeq> && Model<TSeq>::clone() const {
 
 
 template<typename TSeq>
-inline void Model<TSeq>::add_status(
+inline void Model<TSeq>::add_state(
     std::string lab, 
     UpdateFun<TSeq> fun
 )
@@ -8305,7 +8289,7 @@ inline void Model<TSeq>::add_status(
     // Checking it doesn't match
     for (auto & s : status_labels)
         if (s == lab)
-            throw std::logic_error("Status \"" + s + "\" already registered.");
+            throw std::logic_error("state \"" + s + "\" already registered.");
 
     status_labels.push_back(lab);
     status_fun.push_back(fun);
@@ -8316,20 +8300,20 @@ inline void Model<TSeq>::add_status(
 
 template<typename TSeq>
 inline const std::vector< std::string > &
-Model<TSeq>::get_status() const
+Model<TSeq>::get_state() const
 {
     return status_labels;
 }
 
 template<typename TSeq>
 inline const std::vector< UpdateFun<TSeq> > &
-Model<TSeq>::get_status_fun() const
+Model<TSeq>::get_state_fun() const
 {
     return status_fun;
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::print_status_codes() const
+inline void Model<TSeq>::print_state_codes() const
 {
 
     // Horizontal line
@@ -8782,7 +8766,7 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     VECT_MATCH(
         status_labels,
         other.status_labels,
-        "status labels don't match"
+        "state labels don't match"
     )
 
     EPI_DEBUG_FAIL_AT_TRUE(
@@ -9070,13 +9054,13 @@ private:
     std::vector< epiworld_double * > params;
     std::vector< epiworld_double > data;
 
-    epiworld_fast_int status_init    = -99; ///< Change of status when added to agent.
-    epiworld_fast_int status_post    = -99; ///< Change of status when removed from agent.
-    epiworld_fast_int status_removed = -99; ///< Change of status when agent is removed
+    epiworld_fast_int status_init    = -99; ///< Change of state when added to agent.
+    epiworld_fast_int status_post    = -99; ///< Change of state when removed from agent.
+    epiworld_fast_int status_removed = -99; ///< Change of state when agent is removed
 
-    epiworld_fast_int queue_init    = QueueValues::Everyone; ///< Change of status when added to agent.
-    epiworld_fast_int queue_post    = -QueueValues::Everyone; ///< Change of status when removed from agent.
-    epiworld_fast_int queue_removed = -99; ///< Change of status when agent is removed
+    epiworld_fast_int queue_init    = QueueValues::Everyone; ///< Change of state when added to agent.
+    epiworld_fast_int queue_post    = -QueueValues::Everyone; ///< Change of state when removed from agent.
+    epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
 
 public:
     Virus(std::string name = "unknown virus");
@@ -9134,19 +9118,19 @@ public:
     std::vector< epiworld_double > & get_data();
 
     /**
-     * @name Get and set the status and queue
+     * @name Get and set the state and queue
      * 
-     * After applied, viruses can change the status and affect
+     * After applied, viruses can change the state and affect
      * the queue of agents. These function sets the default values,
      * which are retrieved when adding or removing a virus does not
-     * specify a change in status or in queue.
+     * specify a change in state or in queue.
      * 
      * @param init After the virus/tool is added to the agent.
      * @param end After the virus/tool is removed.
      * @param removed After the agent (Agent) is removed.
      */
     ///@{
-    void set_status(
+    void set_state(
         epiworld_fast_int init,
         epiworld_fast_int end,
         epiworld_fast_int removed = -99
@@ -9158,7 +9142,7 @@ public:
         epiworld_fast_int removed = -99
         );
 
-    void get_status(
+    void get_state(
         epiworld_fast_int * init,
         epiworld_fast_int * end,
         epiworld_fast_int * removed = nullptr
@@ -9593,7 +9577,7 @@ inline std::vector< epiworld_double > & Virus<TSeq>::get_data() {
 }
 
 template<typename TSeq>
-inline void Virus<TSeq>::set_status(
+inline void Virus<TSeq>::set_state(
     epiworld_fast_int init,
     epiworld_fast_int end,
     epiworld_fast_int removed
@@ -9619,7 +9603,7 @@ inline void Virus<TSeq>::set_queue(
 }
 
 template<typename TSeq>
-inline void Virus<TSeq>::get_status(
+inline void Virus<TSeq>::get_state(
     epiworld_fast_int * init,
     epiworld_fast_int * end,
     epiworld_fast_int * removed
@@ -10003,8 +9987,8 @@ private:
     epiworld_fast_int status_init = -99;
     epiworld_fast_int status_post = -99;
 
-    epiworld_fast_int queue_init = QueueValues::NoOne; ///< Change of status when added to agent.
-    epiworld_fast_int queue_post = QueueValues::NoOne; ///< Change of status when removed from agent.
+    epiworld_fast_int queue_init = QueueValues::NoOne; ///< Change of state when added to agent.
+    epiworld_fast_int queue_post = QueueValues::NoOne; ///< Change of state when removed from agent.
 
     void set_agent(Agent<TSeq> * p, size_t idx);
 
@@ -10055,9 +10039,9 @@ public:
     void set_date(int d);
     int get_date() const;
 
-    void set_status(epiworld_fast_int init, epiworld_fast_int post);
+    void set_state(epiworld_fast_int init, epiworld_fast_int post);
     void set_queue(epiworld_fast_int init, epiworld_fast_int post);
-    void get_status(epiworld_fast_int * init, epiworld_fast_int * post);
+    void get_state(epiworld_fast_int * init, epiworld_fast_int * post);
     void get_queue(epiworld_fast_int * init, epiworld_fast_int * post);
 
     bool operator==(const Tool<TSeq> & other) const;
@@ -10384,7 +10368,7 @@ inline int Tool<TSeq>::get_date() const
 }
 
 template<typename TSeq>
-inline void Tool<TSeq>::set_status(
+inline void Tool<TSeq>::set_state(
     epiworld_fast_int init,
     epiworld_fast_int end
 )
@@ -10404,7 +10388,7 @@ inline void Tool<TSeq>::set_queue(
 }
 
 template<typename TSeq>
-inline void Tool<TSeq>::get_status(
+inline void Tool<TSeq>::get_state(
     epiworld_fast_int * init,
     epiworld_fast_int * post
 )
@@ -10570,8 +10554,8 @@ private:
     epiworld_fast_int status_init = -99;
     epiworld_fast_int status_post = -99;
 
-    epiworld_fast_int queue_init = 0; ///< Change of status when added to agent.
-    epiworld_fast_int queue_post = 0; ///< Change of status when removed from agent.
+    epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
+    epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
 public:
 
@@ -10600,9 +10584,9 @@ public:
     int get_id() const noexcept;
     const std::string & get_name() const noexcept;
 
-    void set_status(epiworld_fast_int init, epiworld_fast_int post);
+    void set_state(epiworld_fast_int init, epiworld_fast_int post);
     void set_queue(epiworld_fast_int init, epiworld_fast_int post);
-    void get_status(epiworld_fast_int * init, epiworld_fast_int * post);
+    void get_state(epiworld_fast_int * init, epiworld_fast_int * post);
     void get_queue(epiworld_fast_int * init, epiworld_fast_int * post);
 
     void reset();
@@ -10766,7 +10750,7 @@ inline const std::string & Entity<TSeq>::get_name() const noexcept
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::set_status(
+inline void Entity<TSeq>::set_state(
     epiworld_fast_int init,
     epiworld_fast_int end
 )
@@ -10786,7 +10770,7 @@ inline void Entity<TSeq>::set_queue(
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::get_status(
+inline void Entity<TSeq>::get_state(
     epiworld_fast_int * init,
     epiworld_fast_int * post
 )
@@ -11113,14 +11097,14 @@ inline bool Entities_const<TSeq>::operator==(const Entities_const<TSeq> & other)
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
- Start of -include/epiworld/agent-meat-status.hpp-
+ Start of -include/epiworld/agent-meat-state.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
 
 
-#ifndef EPIWORLD_PERSON_MEAT_STATUS_HPP 
-#define EPIWORLD_PERSON_MEAT_STATUS_HPP
+#ifndef EPIWORLD_PERSON_MEAT_STATE_HPP
+#define EPIWORLD_PERSON_MEAT_STATE_HPP
 
 // template<typename TSeq>
 // class Model;
@@ -11130,7 +11114,7 @@ inline bool Entities_const<TSeq>::operator==(const Entities_const<TSeq> & other)
 
 
 /**
- * @file agent-meat-status.hpp
+ * @file agent-meat-state.hpp
  * @author George G. Vega Yon (g.vegayon en gmail)
  * @brief Sampling functions are getting big, so we keep them in a separate file.
  * @version 0.1
@@ -11251,15 +11235,15 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                 if (exclude_agent_bool->size() == 0u)
                 {
 
-                    exclude_agent_bool->resize(m->get_status().size(), false);
+                    exclude_agent_bool->resize(m->get_state().size(), false);
                     for (auto s : *exclude_agent_bool_idx)
                     {
                         if (s >= exclude_agent_bool->size())
                             throw std::logic_error(
-                                std::string("You are trying to exclude a status that is out of range: ") +
+                                std::string("You are trying to exclude a state that is out of range: ") +
                                 std::to_string(s) + std::string(". There are only ") +
                                 std::to_string(exclude_agent_bool->size()) + 
-                                std::string(" statuses in the model.")
+                                std::string(" states in the model.")
                                 );
 
                         exclude_agent_bool->operator[](s) = true;
@@ -11281,8 +11265,8 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                 for (auto & neighbor: p->get_neighbors()) 
                 {
 
-                    // If the status is in the list, exclude it
-                    if (exclude_agent_bool->operator[](neighbor->get_status()))
+                    // If the state is in the list, exclude it
+                    if (exclude_agent_bool->operator[](neighbor->get_state()))
                         continue;
                             
                     for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
@@ -11419,15 +11403,15 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
                 if (exclude_agent_bool->size() == 0u)
                 {
 
-                    exclude_agent_bool->resize(m->get_status().size(), false);
+                    exclude_agent_bool->resize(m->get_state().size(), false);
                     for (auto s : *exclude_agent_bool_idx)
                     {
                         if (s >= exclude_agent_bool->size())
                             throw std::logic_error(
-                                std::string("You are trying to exclude a status that is out of range: ") +
+                                std::string("You are trying to exclude a state that is out of range: ") +
                                 std::to_string(s) + std::string(". There are only ") +
                                 std::to_string(exclude_agent_bool->size()) + 
-                                std::string(" statuses in the model.")
+                                std::string(" states in the model.")
                                 );
 
                         exclude_agent_bool->operator[](s) = true;
@@ -11449,8 +11433,8 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
                 for (auto & neighbor: p->get_neighbors()) 
                 {
 
-                    // If the status is in the list, exclude it
-                    if (exclude_agent_bool->operator[](neighbor->get_status()))
+                    // If the state is in the list, exclude it
+                    if (exclude_agent_bool->operator[](neighbor->get_state()))
                         continue;
                             
                     for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
@@ -11685,7 +11669,7 @@ inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
- End of -include/epiworld/agent-meat-status.hpp-
+ End of -include/epiworld/agent-meat-state.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
@@ -11791,7 +11775,7 @@ private:
     std::vector< size_t > entities_locations;
     size_t n_entities = 0u;
 
-    epiworld_fast_uint status = 0u;
+    epiworld_fast_uint state = 0u;
     epiworld_fast_uint status_prev = 0u; ///< For accounting, if need to undo a change.
     
     int status_last_changed = -1; ///< Last time the agent was updated.
@@ -11833,7 +11817,7 @@ public:
      * 
      * @param tool Tool to add
      * @param virus Virus to add
-     * @param status_new Status after the change
+     * @param status_new state after the change
      * @param queue 
      */
     ///@{
@@ -11977,13 +11961,13 @@ public:
     std::vector< Agent<TSeq> * > get_neighbors();
     size_t get_n_neighbors() const;
 
-    void change_status(
+    void change_state(
         Model<TSeq> * model,
-        epiworld_fast_uint new_status,
+        epiworld_fast_uint new_state,
         epiworld_fast_int queue = 0
         );
 
-    const epiworld_fast_uint & get_status() const;
+    const epiworld_fast_uint & get_state() const;
 
     void reset();
 
@@ -12078,7 +12062,7 @@ inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m)
     Agent<TSeq> *  p = a.agent;
     VirusPtr<TSeq> v = a.virus;
 
-    CHECK_COALESCE_(a.new_status, v->status_init, p->get_status())
+    CHECK_COALESCE_(a.new_state, v->status_init, p->get_state())
     CHECK_COALESCE_(a.queue, v->queue_init, 1)
 
     // Has a agent? If so, we need to register the transmission
@@ -12121,9 +12105,9 @@ inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m)
     p->viruses[n_viruses]->set_date(m->today());
 
     #ifdef EPI_DEBUG
-    m->get_db().today_variant.at(v->get_id()).at(p->status)++;
+    m->get_db().today_variant.at(v->get_id()).at(p->state)++;
     #else
-    m->get_db().today_variant[v->get_id()][p->status]++;
+    m->get_db().today_variant[v->get_id()][p->state]++;
     #endif
 
 }
@@ -12135,7 +12119,7 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
     Agent<TSeq> * p = a.agent;
     ToolPtr<TSeq> t = a.tool;
 
-    CHECK_COALESCE_(a.new_status, t->status_init, p->get_status())
+    CHECK_COALESCE_(a.new_state, t->status_init, p->get_state())
     CHECK_COALESCE_(a.queue, t->queue_init, QueueValues::NoOne)
     
     // Update tool accounting
@@ -12152,7 +12136,7 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
     p->tools[n_tools]->set_date(m->today());
     p->tools[n_tools]->set_agent(p, n_tools);
 
-    m->get_db().today_tool[t->get_id()][p->status]++;
+    m->get_db().today_tool[t->get_id()][p->state]++;
 
 }
 
@@ -12163,7 +12147,7 @@ inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * model)
     Agent<TSeq> * p    = a.agent;    
     VirusPtr<TSeq> & v = a.agent->viruses[a.virus->pos_in_agent];
     
-    CHECK_COALESCE_(a.new_status, v->status_post, p->get_status())
+    CHECK_COALESCE_(a.new_state, v->status_post, p->get_state())
     CHECK_COALESCE_(a.queue, v->queue_post, -QueueValues::Everyone)
 
     if (--p->n_viruses > 0)
@@ -12190,7 +12174,7 @@ inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * /*m*/)
     Agent<TSeq> * p   = a.agent;    
     ToolPtr<TSeq> & t = a.agent->tools[a.tool->pos_in_agent];
 
-    CHECK_COALESCE_(a.new_status, t->status_post, p->get_status())
+    CHECK_COALESCE_(a.new_state, t->status_post, p->get_state())
     CHECK_COALESCE_(a.queue, t->queue_post, QueueValues::NoOne)
 
     if (--p->n_tools > 0)
@@ -12213,7 +12197,7 @@ inline void default_add_entity(Action<TSeq> & a, Model<TSeq> *)
     Agent<TSeq> *  p = a.agent;
     Entity<TSeq> * e = a.entity;
 
-    CHECK_COALESCE_(a.new_status, e->status_post, p->get_status())
+    CHECK_COALESCE_(a.new_state, e->status_post, p->get_state())
     CHECK_COALESCE_(a.queue, e->queue_post, QueueValues::NoOne)
 
     // Checking the agent and the entity are not linked
@@ -12278,7 +12262,7 @@ inline void default_rm_entity(Action<TSeq> & a, Model<TSeq> * m)
     size_t idx_agent_in_entity = a.idx_agent;
     size_t idx_entity_in_agent = a.idx_object;
 
-    CHECK_COALESCE_(a.new_status, e->status_post, p->get_status())
+    CHECK_COALESCE_(a.new_state, e->status_post, p->get_state())
     CHECK_COALESCE_(a.queue, e->queue_post, QueueValues::NoOne)
 
     if (--p->n_entities > 0)
@@ -12350,7 +12334,7 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     entities(std::move(p.entities)),
     entities_locations(std::move(p.entities_locations)),
     n_entities(p.n_entities),
-    status(p.status),
+    state(p.state),
     status_prev(p.status_prev), 
     status_last_changed(p.status_last_changed),
     id(p.id),
@@ -12367,7 +12351,7 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     action_counter(p.action_counter)
 {
 
-    status = p.status;
+    state = p.state;
     id     = p.id;
     
     // Dealing with the virus
@@ -12411,7 +12395,7 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     date_last_build_sample(-99)
 {
 
-    status = p.status;
+    state = p.state;
     id     = p.id;
     
     // Dealing with the virus
@@ -12471,7 +12455,7 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     // entities            = other_agent.entities;
     // entities_locations  = other_agent.entities_locations;
     // n_entities          = other_agent.n_entities;
-    status              = other_agent.status;
+    state              = other_agent.state;
     status_prev         = other_agent.status_prev;
     status_last_changed = other_agent.status_last_changed;
     id                  = other_agent.id;
@@ -12761,7 +12745,7 @@ inline void Agent<TSeq>::rm_agent_by_virus(
 {
 
     if (status_new == -99)
-        status_new = status;
+        status_new = state;
 
     if (virus_idx >= n_viruses)
         throw std::range_error(
@@ -12778,19 +12762,19 @@ inline void Agent<TSeq>::rm_agent_by_virus(
             rm_virus(i, model);
     }
 
-    // Changing status to new_status
+    // Changing state to new_state
     VirusPtr<TSeq> & v = viruses[virus_idx];
-    epiworld_fast_int dead_status, dead_queue;
-    v->get_status(nullptr, nullptr, &dead_status);
+    epiworld_fast_int dead_state, dead_queue;
+    v->get_state(nullptr, nullptr, &dead_state);
     v->get_queue(nullptr, nullptr, &dead_queue);
 
     if (queue != -99)
         dead_queue = queue;
 
-    change_status(
+    change_state(
         model,
-        // Either preserve the current status or apply a new one
-        (dead_status < 0) ? status : static_cast<epiworld_fast_uint>(dead_status),
+        // Either preserve the current state or apply a new one
+        (dead_state < 0) ? state : static_cast<epiworld_fast_uint>(dead_state),
 
         // By default, it will be removed from the queue... unless the user
         // says the contrary!
@@ -13032,15 +13016,15 @@ inline size_t Agent<TSeq>::get_n_neighbors() const
 }
 
 template<typename TSeq>
-inline void Agent<TSeq>::change_status(
+inline void Agent<TSeq>::change_state(
     Model<TSeq> * model,
-    epiworld_fast_uint new_status,
+    epiworld_fast_uint new_state,
     epiworld_fast_int queue
     )
 {
 
     model->actions_add(
-        this, nullptr, nullptr, nullptr, new_status, queue, nullptr, -1, -1
+        this, nullptr, nullptr, nullptr, new_state, queue, nullptr, -1, -1
     );
     
     return;
@@ -13048,8 +13032,8 @@ inline void Agent<TSeq>::change_status(
 }
 
 template<typename TSeq>
-inline const epiworld_fast_uint & Agent<TSeq>::get_status() const {
-    return status;
+inline const epiworld_fast_uint & Agent<TSeq>::get_state() const {
+    return state;
 }
 
 template<typename TSeq>
@@ -13062,7 +13046,7 @@ inline void Agent<TSeq>::reset()
     this->tools.clear();
     n_tools = 0u;
 
-    this->status = 0u;
+    this->state = 0u;
     this->status_prev = 0u;
 
     this->status_last_changed = -1;
@@ -13125,14 +13109,14 @@ inline void Agent<TSeq>::print(
     if (compressed)
     {
         printf_epiworld(
-            "Agent: %i, Status: %s (%lu), Nvirus: %lu, NTools: %lu, NNeigh: %lu\n",
-            id, model->status_labels[status].c_str(), status, n_viruses, n_tools, neighbors.size()
+            "Agent: %i, state: %s (%lu), Nvirus: %lu, NTools: %lu, NNeigh: %lu\n",
+            id, model->status_labels[state].c_str(), state, n_viruses, n_tools, neighbors.size()
         );
     }
     else {
 
         printf_epiworld("Information about agent id %i\n", this->id);
-        printf_epiworld("  Status       : %s (%lu)\n", model->status_labels[status].c_str(), status);
+        printf_epiworld("  state       : %s (%lu)\n", model->status_labels[state].c_str(), state);
         printf_epiworld("  Virus count  : %lu\n", n_viruses);
         printf_epiworld("  Tool count   : %lu\n", n_tools);
         printf_epiworld("  Neigh. count : %lu\n", neighbors.size());
@@ -13178,7 +13162,7 @@ inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[i];
+    return model->entities[entities[i]];
 }
 
 template<typename TSeq>
@@ -13187,7 +13171,7 @@ inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[i];
+    return model->entities[entities[i]];
 }
 
 template<typename TSeq>
@@ -13229,8 +13213,8 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
     }
 
     EPI_DEBUG_FAIL_AT_TRUE(
-        status != other.status,
-        "Agent:: status don't match"
+        state != other.state,
+        "Agent:: state don't match"
         )
         
 
@@ -13721,8 +13705,8 @@ inline ModelSIS<TSeq>::ModelSIS(
     model.set_name("Susceptible-Infected-Susceptible (SIS)");
 
     // Adding statuses
-    model.add_status("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_status("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
 
     // Setting up parameters
     model.add_param(infectiousness, "Infection rate");
@@ -13730,7 +13714,7 @@ inline ModelSIS<TSeq>::ModelSIS(
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(1,0,0);
+    virus.set_state(1,0,0);
     
     virus.set_prob_infecting(&model("Infection rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
@@ -13829,9 +13813,9 @@ inline ModelSIR<TSeq>::ModelSIR(
 {
 
     // Adding statuses
-    model.add_status("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_status("Infected", epiworld::default_update_exposed<TSeq>);
-    model.add_status("Recovered");
+    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Recovered");
 
     // Setting up parameters
     model.add_param(recovery, "Prob. of Recovery");
@@ -13839,7 +13823,7 @@ inline ModelSIR<TSeq>::ModelSIR(
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(1,2,2);
+    virus.set_state(1,2,2);
     
     virus.set_prob_recovery(&model("Prob. of Recovery"));
     virus.set_prob_infecting(&model("Infectiousness"));
@@ -13940,7 +13924,7 @@ public:
     ) -> void {
         // Does the agent become infected?
         if (m->runif() < 1.0/(m->par("Incubation days")))
-            p->change_status(m, ModelSEIR<TSeq>::INFECTED);
+            p->change_state(m, ModelSEIR<TSeq>::INFECTED);
 
         return;    
     };
@@ -13972,10 +13956,10 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 {
 
     // Adding statuses
-    model.add_status("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_status("Exposed", model.update_exposed_seir);
-    model.add_status("Infected", model.update_infected_seir);
-    model.add_status("Removed");
+    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_state("Exposed", model.update_exposed_seir);
+    model.add_state("Infected", model.update_infected_seir);
+    model.add_state("Removed");
 
     // Setting up parameters
     model.add_param(infectiousness, "Infectiousness");
@@ -13984,7 +13968,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
+    virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
     virus.set_prob_infecting(&model("Infectiousness"));
     
@@ -14207,7 +14191,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
         
         epiworld_fast_uint days_since_exposed = m->today() - v->get_date();
-        epiworld_fast_uint status = p->get_status();
+        epiworld_fast_uint status = p->get_state();
 
         // Figuring out latent period
         if (v->get_data().size() == 0u)
@@ -14237,9 +14221,9 @@ inline ModelSURV<TSeq>::ModelSURV(
 
             // Will be symptomatic?
             if (EPI_RUNIF() < m->par("Prob of symptoms"))
-                p->change_status(m, ModelSURV<TSeq>::SYMPTOMATIC);
+                p->change_state(m, ModelSURV<TSeq>::SYMPTOMATIC);
             else
-                p->change_status(m, ModelSURV<TSeq>::ASYMPTOMATIC);
+                p->change_state(m, ModelSURV<TSeq>::ASYMPTOMATIC);
             
             return;
 
@@ -14248,7 +14232,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         // Otherwise, it can be removed
         if (EPI_RUNIF() < p_die)
         {
-            p->change_status(m, ModelSURV<TSeq>::REMOVED, -1);
+            p->change_state(m, ModelSURV<TSeq>::REMOVED, -1);
             return;
         }
         
@@ -14256,7 +14240,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     };
 
-    std::vector< epiworld_fast_uint > exposed_status = {
+    std::vector< epiworld_fast_uint > exposed_state = {
         SYMPTOMATIC,
         SYMPTOMATIC_ISOLATED,
         ASYMPTOMATIC,
@@ -14265,7 +14249,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     };
 
     epiworld::GlobalFun<TSeq> surveillance_program = 
-    [exposed_status](
+    [exposed_state](
         epiworld::Model<TSeq>* m
         ) -> void
     {
@@ -14295,18 +14279,18 @@ inline ModelSURV<TSeq>::ModelSURV(
             epiworld::Agent<TSeq> * p = &pop[i];
             
             // If still exposed for the next term
-            if (epiworld::IN(p->get_status(), exposed_status ))
+            if (epiworld::IN(p->get_state(), exposed_state ))
             {
 
                 ndetected += 1.0;
-                if (p->get_status() == ModelSURV<TSeq>::ASYMPTOMATIC)
+                if (p->get_state() == ModelSURV<TSeq>::ASYMPTOMATIC)
                 {
                     ndetected_asympt += 1.0;
-                    p->change_status(m, ModelSURV<TSeq>::ASYMPTOMATIC_ISOLATED);
+                    p->change_state(m, ModelSURV<TSeq>::ASYMPTOMATIC_ISOLATED);
                 }
                 else 
                 {
-                    p->change_status(m, ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED);
+                    p->change_state(m, ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED);
                 }
 
             }
@@ -14328,14 +14312,14 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     };
 
-    model.add_status("Susceptible", surveillance_update_susceptible);
-    model.add_status("Latent", surveillance_update_exposed);
-    model.add_status("Symptomatic", surveillance_update_exposed);
-    model.add_status("Symptomatic isolated", surveillance_update_exposed);
-    model.add_status("Asymptomatic", surveillance_update_exposed);
-    model.add_status("Asymptomatic isolated", surveillance_update_exposed);
-    model.add_status("Recovered");
-    model.add_status("Removed");
+    model.add_state("Susceptible", surveillance_update_susceptible);
+    model.add_state("Latent", surveillance_update_exposed);
+    model.add_state("Symptomatic", surveillance_update_exposed);
+    model.add_state("Symptomatic isolated", surveillance_update_exposed);
+    model.add_state("Asymptomatic", surveillance_update_exposed);
+    model.add_state("Asymptomatic isolated", surveillance_update_exposed);
+    model.add_state("Recovered");
+    model.add_state("Removed");
 
     // General model parameters
     model.add_param(latent_period, "Latent period");
@@ -14350,7 +14334,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     // Virus ------------------------------------------------------------------
     epiworld::Virus<TSeq> covid("Covid19");
-    covid.set_status(LATENT, RECOVERED, REMOVED);
+    covid.set_state(LATENT, RECOVERED, REMOVED);
     covid.set_post_immunity(&model("Prob. no reinfect"));
     covid.set_prob_death(&model("Prob. death"));
 
@@ -14361,7 +14345,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         ) -> epiworld_double
     {
         // No chance of infecting
-        epiworld_fast_uint  s = p->get_status();
+        epiworld_fast_uint  s = p->get_state();
         if (s == ModelSURV<TSeq>::LATENT)
             return static_cast<epiworld_double>(0.0);
         else if (s == ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED)
@@ -14575,7 +14559,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             /* Listing who is infected */ 
             for (auto & p : m->get_agents())
             {
-                if (p.get_status() == ModelSIRCONN<TSeq>::INFECTED)
+                if (p.get_state() == ModelSIRCONN<TSeq>::INFECTED)
                 {
                 
                     m->tracked_agents_infected.push_back(&p);
@@ -14708,9 +14692,9 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         };
 
     // Status
-    model.add_status("Susceptible", update_susceptible);
-    model.add_status("Infected", update_infected);
-    model.add_status("Recovered");
+    model.add_state("Susceptible", update_susceptible);
+    model.add_state("Infected", update_infected);
+    model.add_state("Recovered");
 
     // Setting up parameters
     model.add_param(reproductive_number, "Beta");
@@ -14720,7 +14704,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(1, 2, 2);
+    virus.set_state(1, 2, 2);
 
     model.add_virus(virus, prevalence);
 
@@ -14906,7 +14890,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
             /* Listing who is infected */ 
             for (auto & p : m->get_agents())
             {
-                if (p.get_status() == ModelSEIRCONN<TSeq>::INFECTED)
+                if (p.get_state() == ModelSEIRCONN<TSeq>::INFECTED)
                 {
                 
                     m->tracked_agents_infected.push_back(&p);
@@ -14964,7 +14948,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                     throw std::logic_error(
                         "[epi-debug] The agent " + std::to_string(which) + " has no "+
                         "virus to share. The agent's status is: " +
-                        std::to_string(_m->tracked_agents_infected[which]->get_status())
+                        std::to_string(_m->tracked_agents_infected[which]->get_state())
                     );
                 }
                 #endif
@@ -14991,7 +14975,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
             tracked_agents_check_init(_m);
 
-            auto status = p->get_status();
+            auto status = p->get_state();
 
             if (status == ModelSEIRCONN<TSeq>::EXPOSED)
             {
@@ -15003,7 +14987,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                     _m->tracked_agents_infected_next.push_back(p);
                     _m->tracked_ninfected_next++;
 
-                    p->change_status(m, ModelSEIRCONN<TSeq>::INFECTED);
+                    p->change_state(m, ModelSEIRCONN<TSeq>::INFECTED);
 
                     return;
 
@@ -15066,15 +15050,15 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     model.add_param(incubation_days, "Avg. Incubation days");
     
     // Status
-    model.add_status("Susceptible", update_susceptible);
-    model.add_status("Exposed", update_infected);
-    model.add_status("Infected", update_infected);
-    model.add_status("Recovered");
+    model.add_state("Susceptible", update_susceptible);
+    model.add_state("Exposed", update_infected);
+    model.add_state("Infected", update_infected);
+    model.add_state("Recovered");
 
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_status(ModelSEIRCONN<TSeq>::EXPOSED, ModelSEIRCONN<TSeq>::RECOVERED, ModelSEIRCONN<TSeq>::RECOVERED);
+    virus.set_state(ModelSEIRCONN<TSeq>::EXPOSED, ModelSEIRCONN<TSeq>::RECOVERED, ModelSEIRCONN<TSeq>::RECOVERED);
     model.add_virus(virus, prevalence);
 
     // Adding updating function

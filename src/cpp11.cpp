@@ -69,35 +69,35 @@ extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence,
   END_CPP11
 }
 // model.cpp
-int print_cpp(SEXP m);
+SEXP print_cpp(SEXP m);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m) {
   BEGIN_CPP11
     return cpp11::as_sexp(print_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
   END_CPP11
 }
 // model.cpp
-int agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+SEXP agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, double p);
 extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
   BEGIN_CPP11
     return cpp11::as_sexp(agents_smallworld_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
   END_CPP11
 }
 // model.cpp
-int run_cpp(SEXP m, int ndays, int seed);
+SEXP run_cpp(SEXP m, int ndays, int seed);
 extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   BEGIN_CPP11
     return cpp11::as_sexp(run_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(ndays), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
   END_CPP11
 }
 // model.cpp
-int queuing_on_cpp(SEXP model);
+SEXP queuing_on_cpp(SEXP model);
 extern "C" SEXP _epiworldR_queuing_on_cpp(SEXP model) {
   BEGIN_CPP11
     return cpp11::as_sexp(queuing_on_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // model.cpp
-int queuing_off_cpp(SEXP model);
+SEXP queuing_off_cpp(SEXP model);
 extern "C" SEXP _epiworldR_queuing_off_cpp(SEXP model) {
   BEGIN_CPP11
     return cpp11::as_sexp(queuing_off_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
@@ -111,14 +111,14 @@ extern "C" SEXP _epiworldR_get_param_cpp(SEXP model, SEXP pname) {
   END_CPP11
 }
 // model.cpp
-int set_param_cpp(SEXP model, std::string pname, double val);
+SEXP set_param_cpp(SEXP model, std::string pname, double val);
 extern "C" SEXP _epiworldR_set_param_cpp(SEXP model, SEXP pname, SEXP val) {
   BEGIN_CPP11
     return cpp11::as_sexp(set_param_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname), cpp11::as_cpp<cpp11::decay_t<double>>(val)));
   END_CPP11
 }
 // model.cpp
-int set_name_cpp(SEXP model, std::string mname);
+SEXP set_name_cpp(SEXP model, std::string mname);
 extern "C" SEXP _epiworldR_set_name_cpp(SEXP model, SEXP mname) {
   BEGIN_CPP11
     return cpp11::as_sexp(set_name_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(mname)));
@@ -132,10 +132,10 @@ extern "C" SEXP _epiworldR_get_name_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
-cpp11::strings get_status_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_status_cpp(SEXP model) {
+cpp11::strings get_state_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_state_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // tool.cpp
@@ -167,10 +167,10 @@ extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP post_immunity, SEXP prob_in
   END_CPP11
 }
 // virus.cpp
-int virus_set_status_cpp(SEXP v, size_t init, size_t end, size_t removed);
-extern "C" SEXP _epiworldR_virus_set_status_cpp(SEXP v, SEXP init, SEXP end, SEXP removed) {
+int virus_set_state_cpp(SEXP v, size_t init, size_t end, size_t removed);
+extern "C" SEXP _epiworldR_virus_set_state_cpp(SEXP v, SEXP init, SEXP end, SEXP removed) {
   BEGIN_CPP11
-    return cpp11::as_sexp(virus_set_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(init), cpp11::as_cpp<cpp11::decay_t<size_t>>(end), cpp11::as_cpp<cpp11::decay_t<size_t>>(removed)));
+    return cpp11::as_sexp(virus_set_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(init), cpp11::as_cpp<cpp11::decay_t<size_t>>(end), cpp11::as_cpp<cpp11::decay_t<size_t>>(removed)));
   END_CPP11
 }
 // virus.cpp
@@ -205,7 +205,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_name_cpp",                   (DL_FUNC) &_epiworldR_get_name_cpp,                    1},
     {"_epiworldR_get_param_cpp",                  (DL_FUNC) &_epiworldR_get_param_cpp,                   2},
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},
-    {"_epiworldR_get_status_cpp",                 (DL_FUNC) &_epiworldR_get_status_cpp,                  1},
+    {"_epiworldR_get_state_cpp",                  (DL_FUNC) &_epiworldR_get_state_cpp,                   1},
     {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
     {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
@@ -215,7 +215,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
     {"_epiworldR_virus_cpp",                      (DL_FUNC) &_epiworldR_virus_cpp,                       5},
-    {"_epiworldR_virus_set_status_cpp",           (DL_FUNC) &_epiworldR_virus_set_status_cpp,            4},
+    {"_epiworldR_virus_set_state_cpp",            (DL_FUNC) &_epiworldR_virus_set_state_cpp,             4},
     {NULL, NULL, 0}
 };
 }

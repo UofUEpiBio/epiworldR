@@ -35,7 +35,7 @@ SEXP virus_cpp(
 }
   
 [[cpp11::register]]
-int virus_set_status_cpp(
+int virus_set_state_cpp(
   SEXP v,
   size_t init,
   size_t end,
@@ -43,7 +43,7 @@ int virus_set_status_cpp(
 ) {
   
   WrapVirus(vptr)(v);
-  vptr->set_status(
+  vptr->set_state(
     init, end, removed
   );
   

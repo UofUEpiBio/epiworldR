@@ -32,7 +32,7 @@ find_scale <- function(x) {
 #' @importFrom graphics legend
 plot_epi <- function(x, main = "", counts_scale, ...) { 
   x <- get_hist_total(x)
-  status_names <- sort(unique(x$status))
+  state_names <- sort(unique(x$state))
   
   # If the user didn't say what scale
   if (missing(counts_scale))
@@ -40,15 +40,15 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
   
   x$counts <- x$counts/counts_scale
   
-  # Initialize date vector of size length for status names
-  date_candidates <- integer(length = length(status_names)) 
-  # Identify max date when the counts stop significantly changing by status
+  # Initialize date vector of size length for state names
+  date_candidates <- integer(length = length(state_names)) 
+  # Identify max date when the counts stop significantly changing by state
   
   benchmark_value <- diff(range(x$counts))/200 # 0.5% of range
   
-  for (i in 1:length(status_names)) {
+  for (i in 1:length(state_names)) {
     date_candidates[i] <- with(
-      x[x$status == status_names[i],], 
+      x[x$state == state_names[i],], 
       sum(abs(diff(counts)) >benchmark_value )
       )
   }
@@ -60,9 +60,9 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
   # Defining range of y values  
   counts_range <- range(x$counts)
 
-  # Plot the first status
+  # Plot the first state
   with(
-    x[x$status == status_names[1],], 
+    x[x$state == state_names[1],], 
     plot(
       x = dates, y = counts, 
       type = 'l', col = 1, ylim = counts_range, 
@@ -76,15 +76,15 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
     )
   )
   
-  # Plot the remaining statuses
-  for (i in 2:length(status_names)) {
+  # Plot the remaining states
+  for (i in 2:length(state_names)) {
     with(
-      x[x$status == status_names[i],],
+      x[x$state == state_names[i],],
       lines(x = dates, y = counts, type = 'l', col = i)
     )
   }
   # Legend
-  legend("right", legend = status_names, col = 1:length(status_names), lty = 1, 
+  legend("right", legend = state_names, col = 1:length(state_names), lty = 1, 
          lwd = 2, bty = "n")
 }
 

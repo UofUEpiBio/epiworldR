@@ -14,17 +14,17 @@ cpp11::data_frame get_hist_total_cpp(
   
   // Making some room
   std::vector< int > dates;
-  std::vector< std::string > status;
+  std::vector< std::string > state;
   std::vector< int > counts;
   
   cpp11::external_pointer<Model<>> ptr(model);
-  ptr->get_db().get_hist_total(&dates, &status, &counts);
+  ptr->get_db().get_hist_total(&dates, &state, &counts);
   
   
   // Preparing the output
   cpp11::writable::data_frame res({
     "dates"_nm = dates,
-    "status"_nm = status,
+    "state"_nm = state,
     "counts"_nm = counts
   });
   

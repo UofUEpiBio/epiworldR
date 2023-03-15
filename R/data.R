@@ -21,7 +21,7 @@ get_transition_probability <- function(x) UseMethod("get_transition_probability"
 #' @export
 get_transition_probability.epiworld_model <- function(x)  {
   res <- get_transition_probability_cpp(x)
-  s   <- get_status(x)
+  s   <- get_state(x)
   
   ns <- length(s)
   
