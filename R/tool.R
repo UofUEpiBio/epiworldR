@@ -56,3 +56,16 @@ add_tool_n.epiworld_model <- function(m, t, prevalence) {
   add_tool_n_cpp(m, t, prevalence)
   invisible(m)
 }
+
+#' @export
+#' @rdname tool
+rm_tool <- function(m, tool_pos) {
+  invisible(rm_tool_cpp(m, tool_pos))
+}
+
+#' @export
+#' @rdname tool
+rm_tool <- function(m, tool_pos) {
+  invisible(rm_tool_cpp(m, tool_pos))
+}
+

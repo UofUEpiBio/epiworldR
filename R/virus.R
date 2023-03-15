@@ -81,3 +81,10 @@ virus_set_state <- function(v, init, end, removed) {
   invisible(v)
   
 }
+
+#' @export
+#' @rdname virus
+rm_virus <- function(m, virus_pos) {
+  invisible(rm_virus_cpp(m, virus_pos))
+}
+

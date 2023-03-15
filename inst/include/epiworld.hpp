@@ -5685,8 +5685,10 @@ public:
     void add_tool(Tool<TSeq> t, epiworld_double preval);
     void add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval);
     void add_tool_fun(Tool<TSeq> t, ToolToAgentFun<TSeq> fun);
-    
     void add_entity(Entity<TSeq> e);
+    void rm_virus(size_t virus_pos);
+    void rm_tool(size_t tool_pos);
+    void rm_entity(size_t entity_pos);
     ///@}
 
     /**
@@ -7203,6 +7205,65 @@ inline void Model<TSeq>::add_entity(Entity<TSeq> e)
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::rm_virus(size_t virus_pos)
+{
+
+    if (viruses.size() <= virus_pos)
+        throw std::range_error(
+            std::string("The specified virus (") +
+            std::to_string(virus_pos) +
+            std::string(") is out of range. ") +
+            std::string("There are only ") +
+            std::to_string(viruses.size()) +
+            std::string(" viruses.")
+            );
+
+    // Flipping with the last one
+    std::swap(viruses[virus_pos], viruses[viruses.size() - 1]);
+    std::swap(viruses_dist_funs[virus_pos], viruses_dist_funs[viruses.size() - 1]);
+    std::swap(prevalence_virus[virus_pos], prevalence_virus[viruses.size() - 1]);
+    std::swap(prevalence_virus_as_proportion[virus_pos], prevalence_virus_as_proportion[viruses.size() - 1]);
+
+    viruses.pop_back();
+    viruses_dist_funs.pop_back();
+    prevalence_virus.pop_back();
+    prevalence_virus_as_proportion.pop_back();
+
+    return;
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::rm_tool(size_t tool_pos)
+{
+
+    if (tools.size() <= tool_pos)
+        throw std::range_error(
+            std::string("The specified tool (") +
+            std::to_string(tool_pos) +
+            std::string(") is out of range. ") +
+            std::string("There are only ") +
+            std::to_string(tools.size()) +
+            std::string(" tools.")
+            );
+
+    // Flipping with the last one
+    std::swap(tools[tool_pos], tools[tools.size() - 1]);
+    std::swap(tools_dist_funs[tool_pos], tools_dist_funs[tools.size() - 1]);
+    std::swap(prevalence_tool[tool_pos], prevalence_tool[tools.size() - 1]);
+    std::swap(prevalence_tool_as_proportion[tool_pos], prevalence_tool_as_proportion[tools.size() - 1]);
+
+
+    tools.pop_back();
+    tools_dist_funs.pop_back();
+    prevalence_tool.pop_back();
+    prevalence_tool_as_proportion.pop_back();
+
+    return;
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::load_agents_entities_ties(
     std::string fn,
     int skip
@@ -7364,10 +7425,6 @@ inline void Model<TSeq>::next() {
     if ((this->current_date >= 1) && verbose)
         pb.next();
 
-    #ifdef EPI_DEBUG
-    // A possible check here
-    #endif
-
     return ;
 }
 
@@ -7467,6 +7524,10 @@ inline void Model<TSeq>::run(
         this->mutate_variant();
 
     }
+
+    // The last reaches the end...
+    this->current_date--;
+
     chrono_end();
 
 }

@@ -5,6 +5,7 @@
 \alias{add_virus}
 \alias{add_virus_n}
 \alias{virus_set_state}
+\alias{rm_virus}
 \title{Virus}
 \usage{
 virus(name, post_immunity, prob_infecting, prob_recovery, prob_death)
@@ -14,6 +15,8 @@ add_virus(m, v, prevalence)
 add_virus_n(m, v, prevalence)
 
 virus_set_state(v, init, end, removed)
+
+rm_virus(m, virus_pos)
 }
 \arguments{
 \item{name}{of the virus}

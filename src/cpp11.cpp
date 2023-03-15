@@ -159,6 +159,13 @@ extern "C" SEXP _epiworldR_add_tool_n_cpp(SEXP m, SEXP t, SEXP preval) {
     return cpp11::as_sexp(add_tool_n_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(t), cpp11::as_cpp<cpp11::decay_t<size_t>>(preval)));
   END_CPP11
 }
+// tool.cpp
+SEXP rm_tool_cpp(SEXP m, size_t tool_pos);
+extern "C" SEXP _epiworldR_rm_tool_cpp(SEXP m, SEXP tool_pos) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(rm_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<size_t>>(tool_pos)));
+  END_CPP11
+}
 // virus.cpp
 SEXP virus_cpp(std::string name, double post_immunity, double prob_infecting, double prob_recovery, double prob_death);
 extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP post_immunity, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death) {
@@ -187,6 +194,13 @@ extern "C" SEXP _epiworldR_add_virus_n_cpp(SEXP m, SEXP v, SEXP preval) {
     return cpp11::as_sexp(add_virus_n_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(preval)));
   END_CPP11
 }
+// virus.cpp
+SEXP rm_virus_cpp(SEXP m, size_t virus_pos);
+extern "C" SEXP _epiworldR_rm_virus_cpp(SEXP m, SEXP virus_pos) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(rm_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<size_t>>(virus_pos)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -210,6 +224,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
     {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
     {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  1},
+    {"_epiworldR_rm_tool_cpp",                    (DL_FUNC) &_epiworldR_rm_tool_cpp,                     2},
+    {"_epiworldR_rm_virus_cpp",                   (DL_FUNC) &_epiworldR_rm_virus_cpp,                    2},
     {"_epiworldR_run_cpp",                        (DL_FUNC) &_epiworldR_run_cpp,                         3},
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},

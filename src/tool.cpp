@@ -62,4 +62,10 @@ int add_tool_n_cpp(SEXP m, SEXP t, size_t preval) {
   return 0;
 }
   
+[[cpp11::register]]
+SEXP rm_tool_cpp(SEXP m, size_t tool_pos) {
+  cpp11::external_pointer<epiworld::Model<>>(m)->rm_tool(tool_pos);
+  return m;
+}
+  
 #undef WrapTool

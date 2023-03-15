@@ -88,6 +88,10 @@ add_tool_n_cpp <- function(m, t, preval) {
   .Call(`_epiworldR_add_tool_n_cpp`, m, t, preval)
 }
 
+rm_tool_cpp <- function(m, tool_pos) {
+  .Call(`_epiworldR_rm_tool_cpp`, m, tool_pos)
+}
+
 virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_death) {
   .Call(`_epiworldR_virus_cpp`, name, post_immunity, prob_infecting, prob_recovery, prob_death)
 }
@@ -102,4 +106,8 @@ add_virus_cpp <- function(m, v, preval) {
 
 add_virus_n_cpp <- function(m, v, preval) {
   .Call(`_epiworldR_add_virus_n_cpp`, m, v, preval)
+}
+
+rm_virus_cpp <- function(m, virus_pos) {
+  .Call(`_epiworldR_rm_virus_cpp`, m, virus_pos)
 }

@@ -72,5 +72,12 @@ int add_virus_n_cpp(SEXP m, SEXP v, size_t preval) {
   
   return 0;
 }
-  
+
+[[cpp11::register]]
+SEXP rm_virus_cpp(SEXP m, size_t virus_pos) {
+  cpp11::external_pointer<epiworld::Model<>>(m)->rm_virus(virus_pos);
+  return m;
+}
+
+    
 #undef WrapVirus

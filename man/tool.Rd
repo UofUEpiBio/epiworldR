@@ -4,6 +4,7 @@
 \alias{tool}
 \alias{add_tool}
 \alias{add_tool_n}
+\alias{rm_tool}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -17,6 +18,10 @@ tool(
 add_tool(m, t, prevalence)
 
 add_tool_n(m, t, prevalence)
+
+rm_tool(m, tool_pos)
+
+rm_tool(m, tool_pos)
 }
 \arguments{
 \item{name}{Name of the tool}
