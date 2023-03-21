@@ -59,7 +59,7 @@ jobs:
           error-on: '"error"'
           
       - name: Print logs
-        if: always() & ${{ RUNNER_OS }} != "windows"
+        if: (${{ runner.os }} != "windows")
         run: |
           cat check/epiworldR.Rcheck/00install.out || echo "There's no 00install.out"
           cat check/epiworldR.Rcheck/00check.log || echo "There's no 00check.out"
