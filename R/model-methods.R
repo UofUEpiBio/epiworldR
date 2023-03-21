@@ -42,7 +42,7 @@ agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
 run <- function(m, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
 
 #' @export
-run.epiworld_model <- function(m, ndays, seed) {
+run.epiworld_model <- function(m, ndays, seed = sample.int(1e4, 1)) {
   run_cpp(m, ndays, seed)
   invisible(m)
 }
