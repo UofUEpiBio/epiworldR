@@ -6,6 +6,7 @@
 \alias{queuing_off}
 \alias{agents_smallworld}
 \alias{run}
+\alias{run_multiple}
 \alias{get_state}
 \alias{get_param}
 \alias{set_param}
@@ -20,6 +21,17 @@ queuing_off(x)
 agents_smallworld(m, n, k, d, p)
 
 run(m, ndays, seed = sample.int(10000, 1))
+
+run_multiple(
+  m,
+  ndays,
+  nsims,
+  seed = sample.int(10000, 1),
+  saver = make_saver(),
+  reset = TRUE,
+  verbose = TRUE,
+  nthreads = 1L
+)
 
 get_state(x)
 

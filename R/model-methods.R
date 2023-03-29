@@ -48,6 +48,42 @@ run.epiworld_model <- function(m, ndays, seed) {
 }
 
 #' @export
+#' @rdname epiworld-methods
+run_multiple <- function(
+  m, ndays, nsims,
+  seed = sample.int(1e4, 1),
+  saver = make_saver(),
+  reset = TRUE,
+  verbose = TRUE,
+  nthreads = 1L
+) UseMethod("run_multiple")
+
+#' @export
+run_multiple.epiworld_model <- function(
+  m, ndays, nsims,
+  seed,
+  saver,
+  reset,
+  verbose,
+  nthreads
+  ) {
+  
+  run_multiple_cpp(
+    m,
+    ndays,
+    nsims,
+    seed,
+    saver,
+    reset,
+    verbose,
+    nthreads
+  )
+  
+  invisible(m)
+  
+}
+
+#' @export
 print.epiworld_model <- function(x, ...) {
   print_cpp(x)
   invisible(x)

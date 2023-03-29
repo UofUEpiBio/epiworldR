@@ -2804,7 +2804,8 @@ public:
         std::string fn_total_hist,
         std::string fn_transmission,
         std::string fn_transition,
-        std::string fn_reproductive_number
+        std::string fn_reproductive_number,
+        std::string fn_generation_time
         ) const;
     
     void record_transmission(int i, int j, int variant, int i_expo_date);
@@ -2846,6 +2847,23 @@ public:
 
     bool operator==(const DataBase<TSeq> & other) const;
     bool operator!=(const DataBase<TSeq> & other) const {return !operator==(other);};
+
+    /**
+     * Calculates the generating time
+     * @param agent_id,virus_id,time,gentime vectors where to save the values agent_id
+    */
+   ///@{
+    void generation_time(
+        std::vector< int > & agent_id,
+        std::vector< int > & virus_id,
+        std::vector< int > & time,
+        std::vector< int > & gentime
+    ) const;
+
+    void generation_time(
+        std::string fn
+    ) const;
+    ///@}
 
 };
 
@@ -3478,7 +3496,8 @@ inline void DataBase<TSeq>::write_data(
     std::string fn_total_hist,
     std::string fn_transmission,
     std::string fn_transition,
-    std::string fn_reproductive_number
+    std::string fn_reproductive_number,
+    std::string fn_generation_time
 ) const
 {
 
@@ -3603,7 +3622,7 @@ inline void DataBase<TSeq>::write_data(
         std::ofstream file_transmission(fn_transmission, std::ios_base::out);
         file_transmission <<
             #ifdef _OPENMP
-            EPI_GET_THREAD_ID() << " " <<
+            "thread " << 
             #endif
             "date " << "variant " << "source_exposure_date " << "source " << "target\n";
 
@@ -3651,6 +3670,9 @@ inline void DataBase<TSeq>::write_data(
 
     if (fn_reproductive_number != "")
         reproductive_number(fn_reproductive_number);
+
+    if (fn_generation_time != "")
+        generation_time(fn_generation_time);
 
 }
 
@@ -4315,6 +4337,94 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
     )
 
     return true;
+
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::generation_time(
+    std::vector< int > & agent_id,
+    std::vector< int > & virus_id,
+    std::vector< int > & time,
+    std::vector< int > & gentime
+) const {
+    
+    size_t nevents = transmission_date.size();
+
+    agent_id.reserve(nevents);
+    virus_id.reserve(nevents);
+    time.reserve(nevents);
+    gentime.reserve(nevents);
+
+    // Iterating through the individuals
+    for (size_t i = 0u; i < nevents; ++i)
+    {
+        int agent_id_i = transmission_target[i];
+        agent_id.push_back(agent_id_i);
+        virus_id.push_back(transmission_variant[i]);
+        time.push_back(transmission_date[i]);
+
+        bool found = false;
+        for (size_t j = i; j < nevents; ++j)
+        {
+
+            if (transmission_source[j] == agent_id_i)
+            {
+                gentime.push_back(transmission_date[j] - time[i]);
+                found = true;
+                break;
+            }
+
+        }
+
+        // If there's no transmission, we set the generation time to
+        // minus 1;
+        if (!found)
+            gentime.push_back(-1);
+
+    }
+
+    agent_id.shrink_to_fit();
+    virus_id.shrink_to_fit();
+    time.shrink_to_fit();
+    gentime.shrink_to_fit();
+
+    return;
+
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::generation_time(
+    std::string fn
+) const
+{
+
+    std::vector< int > agent_id;
+    std::vector< int > virus_id;
+    std::vector< int > time;
+    std::vector< int > gentime;
+
+    generation_time(agent_id, virus_id, time, gentime);
+
+    std::ofstream fn_file(fn, std::ios_base::out);
+
+    fn_file << 
+        #ifdef _OPENMP
+        "thread " <<
+        #endif
+        "variant source source_exposure_date gentime\n";
+
+    size_t n = agent_id.size();
+    for (size_t i = 0u; i < n; ++i)
+        fn_file <<
+            #ifdef _OPENMP
+            EPI_GET_THREAD_ID() << " " <<
+            #endif
+            virus_id[i] << " " <<
+            agent_id[i] << " " <<
+            time[i] << " " <<
+            gentime[i] << "\n";
+
+    return;
 
 }
 
@@ -5808,7 +5918,8 @@ public:
         std::string fn_total_hist,
         std::string fn_transmission,
         std::string fn_transition,
-        std::string fn_reproductive_number
+        std::string fn_reproductive_number,
+        std::string fn_generation_time
         ) const;
 
     /**
@@ -6061,7 +6172,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     bool tool_hist,
     bool transmission,
     bool transition,
-    bool reproductive
+    bool reproductive,
+    bool generation
     )
 {
 
@@ -6083,7 +6195,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         total_hist,
         transmission,
         transition,
-        reproductive
+        reproductive,
+        generation
     };
 
     std::function<void(size_t,Model<TSeq>*)> saver = [fmt,what_to_save](
@@ -6098,6 +6211,7 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         std::string transmission = "";
         std::string transition = "";
         std::string reproductive = "";
+        std::string generation = "";
 
         char buff[128];
         if (what_to_save[0u])
@@ -6150,6 +6264,15 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             reproductive = buff;
 
         }
+        if (what_to_save[8u])
+        {
+
+            generation = fmt + std::string("_generation.csv");
+            snprintf(buff, sizeof(buff), generation.c_str(), niter);
+            generation = buff;
+
+        }
+        
     
         m->write_data(
             variant_info,
@@ -6159,7 +6282,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             total_hist,
             transmission,
             transition,
-            reproductive
+            reproductive,
+            generation
         );
 
     };
@@ -7865,7 +7989,8 @@ inline void Model<TSeq>::write_data(
     std::string fn_total_hist,
     std::string fn_transmission,
     std::string fn_transition,
-    std::string fn_reproductive_number
+    std::string fn_reproductive_number,
+    std::string fn_generation_time
     ) const
 {
 
@@ -7873,7 +7998,7 @@ inline void Model<TSeq>::write_data(
         fn_variant_info, fn_variant_hist,
         fn_tool_info, fn_tool_hist,
         fn_total_hist, fn_transmission, fn_transition,
-        fn_reproductive_number
+        fn_reproductive_number, fn_generation_time
         );
 
 }

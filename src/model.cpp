@@ -41,6 +41,70 @@ SEXP run_cpp(SEXP m, int ndays, int seed) {
   
 }
 
+typedef std::function<void(size_t,Model<>*)> funptr;
+
+[[cpp11::register]]
+SEXP make_saver_cpp(
+  std::string fn,
+  bool total_hist,
+  bool variant_info,
+  bool variant_hist,
+  bool tool_info,
+  bool tool_hist,
+  bool transmission,
+  bool transition,
+  bool reproductive,
+  bool generation
+) {
+  
+  funptr* saver = new funptr(make_save_run<>(
+    fn,
+    total_hist,
+    variant_info,
+    variant_hist,
+    tool_info,
+    tool_hist,
+    transmission,
+    transition,
+    reproductive, 
+    generation
+  ));
+  
+  cpp11::external_pointer<funptr> sav_ptr(saver);
+  
+  return sav_ptr;
+  
+}
+
+[[cpp11::register]]
+SEXP run_multiple_cpp(
+    SEXP m,
+    int ndays,
+    int nsims,
+    int seed,
+    SEXP saver,
+    bool reset,
+    bool verbose,
+    int nthreads
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(m);
+  cpp11::external_pointer<funptr> sav_ptr(saver);
+  
+  ptr->run_multiple(
+    static_cast< epiworld_fast_uint >(ndays),
+    static_cast< epiworld_fast_uint >(nsims),
+    seed,
+    *sav_ptr,
+    reset,
+    verbose,
+    nthreads
+  );
+  
+  return m;
+  
+}
+
 [[cpp11::register]]
 SEXP queuing_on_cpp(
     SEXP model

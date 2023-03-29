@@ -48,6 +48,14 @@ run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
 
+make_saver_cpp <- function(fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation) {
+  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation)
+}
+
+run_multiple_cpp <- function(m, ndays, nsims, seed, saver, reset, verbose, nthreads) {
+  .Call(`_epiworldR_run_multiple_cpp`, m, ndays, nsims, seed, saver, reset, verbose, nthreads)
+}
+
 queuing_on_cpp <- function(model) {
   .Call(`_epiworldR_queuing_on_cpp`, model)
 }

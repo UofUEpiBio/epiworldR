@@ -90,6 +90,20 @@ extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   END_CPP11
 }
 // model.cpp
+SEXP make_saver_cpp(std::string fn, bool total_hist, bool variant_info, bool variant_hist, bool tool_info, bool tool_hist, bool transmission, bool transition, bool reproductive, bool generation);
+extern "C" SEXP _epiworldR_make_saver_cpp(SEXP fn, SEXP total_hist, SEXP variant_info, SEXP variant_hist, SEXP tool_info, SEXP tool_hist, SEXP transmission, SEXP transition, SEXP reproductive, SEXP generation) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(make_saver_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(fn), cpp11::as_cpp<cpp11::decay_t<bool>>(total_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(variant_info), cpp11::as_cpp<cpp11::decay_t<bool>>(variant_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_info), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(transmission), cpp11::as_cpp<cpp11::decay_t<bool>>(transition), cpp11::as_cpp<cpp11::decay_t<bool>>(reproductive), cpp11::as_cpp<cpp11::decay_t<bool>>(generation)));
+  END_CPP11
+}
+// model.cpp
+SEXP run_multiple_cpp(SEXP m, int ndays, int nsims, int seed, SEXP saver, bool reset, bool verbose, int nthreads);
+extern "C" SEXP _epiworldR_run_multiple_cpp(SEXP m, SEXP ndays, SEXP nsims, SEXP seed, SEXP saver, SEXP reset, SEXP verbose, SEXP nthreads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(run_multiple_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<int>>(ndays), cpp11::as_cpp<cpp11::decay_t<int>>(nsims), cpp11::as_cpp<cpp11::decay_t<int>>(seed), cpp11::as_cpp<cpp11::decay_t<SEXP>>(saver), cpp11::as_cpp<cpp11::decay_t<bool>>(reset), cpp11::as_cpp<cpp11::decay_t<bool>>(verbose), cpp11::as_cpp<cpp11::decay_t<int>>(nthreads)));
+  END_CPP11
+}
+// model.cpp
 SEXP queuing_on_cpp(SEXP model);
 extern "C" SEXP _epiworldR_queuing_on_cpp(SEXP model) {
   BEGIN_CPP11
@@ -221,12 +235,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},
     {"_epiworldR_get_state_cpp",                  (DL_FUNC) &_epiworldR_get_state_cpp,                   1},
     {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
+    {"_epiworldR_make_saver_cpp",                 (DL_FUNC) &_epiworldR_make_saver_cpp,                 10},
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
     {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
     {"_epiworldR_queuing_on_cpp",                 (DL_FUNC) &_epiworldR_queuing_on_cpp,                  1},
     {"_epiworldR_rm_tool_cpp",                    (DL_FUNC) &_epiworldR_rm_tool_cpp,                     2},
     {"_epiworldR_rm_virus_cpp",                   (DL_FUNC) &_epiworldR_rm_virus_cpp,                    2},
     {"_epiworldR_run_cpp",                        (DL_FUNC) &_epiworldR_run_cpp,                         3},
+    {"_epiworldR_run_multiple_cpp",               (DL_FUNC) &_epiworldR_run_multiple_cpp,                8},
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
