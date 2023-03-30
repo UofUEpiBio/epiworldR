@@ -9,3 +9,4 @@
 *.docx
 .DS_Store
 world-epi
+src/Makevars
