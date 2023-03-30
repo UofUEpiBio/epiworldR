@@ -2,8 +2,9 @@
 % Please edit documentation in R/make_saver.R
 \name{run_multiple}
 \alias{run_multiple}
-\alias{read_multiple_runs}
+\alias{run_multiple_get_results}
 \alias{make_saver}
+\alias{epiworld_saver}
 \title{Run multiple simulations at once}
 \usage{
 run_multiple(
@@ -17,9 +18,9 @@ run_multiple(
   nthreads = 1L
 )
 
-read_multiple_runs(saver)
+run_multiple_get_results(m)
 
-make_saver(what = c("total_hist"), fn = "")
+make_saver(..., fn = "")
 }
 \arguments{
 \item{m, ndays, seed}{See \link{run}.}
@@ -28,16 +29,20 @@ make_saver(what = c("total_hist"), fn = "")
 
 \item{saver}{An object of class \link{epiworld_saver}.}
 
-\item{nthreads}{Currently ignored}
+\item{reset}{When \code{TRUE} (default,) resets the simulation.}
 
-\item{what}{Character vector with the things to save (see details)}
+\item{verbose}{When \code{TRUE} (default,) prints a progress bar.}
+
+\item{nthreads}{Integer. Number of threads (parallel computing.)}
+
+\item{...}{List of strings (characters) specifying what to save (see details).}
 
 \item{fn}{A file name pattern.}
 }
 \value{
 In the case of \code{make_saver}, an list of class \code{epiworld_saver}.
 The function \code{run_multiple} returns a list of the same class as \code{m}; usually
-an \code{epiworld_modwel} object..
+an \code{epiworld_modwel} object.
 }
 \description{
 Run multiple simulations at once
@@ -45,14 +50,40 @@ Run multiple simulations at once
 \details{
 Currently, the following elements can be saved:
 \itemize{
-\item \code{total_hist}
-\item \code{variant_info}
-\item \code{variant_hist}
-\item \code{tool_info}
-\item \code{tool_hist}
-\item \code{transmission}
-\item \code{transition}
-\item \code{reproductive}
-\item \code{generation}
+\item \code{total_hist} History of the model (total numbers per time).
+\item \code{variant_info} Information about \code{variants}.
+\item \code{variant_hist} Changes in \code{variants}.
+\item \code{tool_info} Information about \code{tools}.
+\item \code{tool_hist} Changes in \code{tools}.
+\item \code{transmission} Transmission events.
+\item \code{transition} Transition matrices.
+\item \code{reproductive} Reproductive number.
+\item \code{generation} Estimation of generation time.
 }
+}
+\examples{
+model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
+                      infectiousness = 0.9, recovery = 0.1)
+
+# Adding a small world population
+agents_smallworld(
+  model_sir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+)
+
+# Generating a saver
+saver <- make_saver("total_hist", "reproductive")
+
+# Running and printing
+run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver)
+
+# Retrieving the results
+ans <- run_multiple_get_results(model_sir)
+
+head(ans$total_hist)
+head(ans$reproductive)
+
 }

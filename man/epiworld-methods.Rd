@@ -44,6 +44,8 @@ get_name(x)
 
 \item{p}{Probability of rewiring.}
 
+\item{ndays}{Number of days (steps) of the simulation.}
+
 \item{seed}{Seed to set for initializing random number generator.}
 
 \item{pname}{String, name of the parameter}
@@ -51,8 +53,6 @@ get_name(x)
 \item{pval}{Numeric. Value of the parameter}
 
 \item{mname}{String. Name of the model}
-
-\item{days}{Number of days.}
 }
 \description{
 Common methods for predefined models of Epiworld

@@ -31,6 +31,8 @@ rm_virus(m, virus_pos)
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
+
+\item{virus_pos}{Positive integer. Index of the virus's position in the model.}
 }
 \description{
 Virus

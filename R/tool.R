@@ -5,6 +5,7 @@
 #' @param transmission_reduction Numeric. Proportion it reduces transmission.
 #' @param recovery_enhancer Numeric. Proportion it improves recovery.
 #' @param death_reduction Numeric. Proportion it reduces probability of death.e
+#' @param tool_pos Positive integer. Index of the tool's position in the model.
 #' @examples 
 #' epitool <- tool(
 #'   name = "Vaccine",

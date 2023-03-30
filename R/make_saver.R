@@ -3,27 +3,55 @@
 #' @param m,ndays,seed See [run].
 #' @param saver An object of class [epiworld_saver].
 #' @param nsims Integer. Number of replicats
-#' @param what Character vector with the things to save (see details)
+#' @param ... List of strings (characters) specifying what to save (see details).
 #' @param fn A file name pattern.
-#' @param nthreads Currently ignored
+#' @param nthreads Integer. Number of threads (parallel computing.)
+#' @param reset When `TRUE` (default,) resets the simulation.
+#' @param verbose When `TRUE` (default,) prints a progress bar.
 #' 
 #' @details
 #' Currently, the following elements can be saved:
 #' 
-#' - `total_hist` 
-#' - `variant_info` 
-#' - `variant_hist` 
-#' - `tool_info` 
-#' - `tool_hist` 
-#' - `transmission` 
-#' - `transition` 
-#' - `reproductive` 
-#' - `generation` 
+#' - `total_hist` History of the model (total numbers per time).
+#' - `variant_info` Information about `variants`.
+#' - `variant_hist` Changes in `variants`.
+#' - `tool_info` Information about `tools`.
+#' - `tool_hist` Changes in `tools`.
+#' - `transmission` Transmission events.
+#' - `transition` Transition matrices.
+#' - `reproductive` Reproductive number.
+#' - `generation` Estimation of generation time.
 #' 
 #' @returns
 #' In the case of `make_saver`, an list of class `epiworld_saver`.
 #' The function `run_multiple` returns a list of the same class as `m`; usually
-#' an `epiworld_modwel` object..
+#' an `epiworld_modwel` object.
+#' 
+#' @examples
+#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
+#'                       infectiousness = 0.9, recovery = 0.1)
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_sir,
+#'   n = 1000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#' )
+#' 
+#' # Generating a saver
+#' saver <- make_saver("total_hist", "reproductive")
+#' 
+#' # Running and printing
+#' run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
+#' 
+#' # Retrieving the results
+#' ans <- run_multiple_get_results(model_sir)
+#' 
+#' head(ans$total_hist)
+#' head(ans$reproductive)
+#' 
 #' @export
 run_multiple <- function(
     m, ndays, nsims,
@@ -37,12 +65,15 @@ run_multiple <- function(
 #' @export
 run_multiple.epiworld_model <- function(
     m, ndays, nsims,
-    seed = sample.int(1e4, 1),
-    saver = make_saver(),
-    reset = TRUE,
-    verbose = TRUE,
+    seed     = sample.int(1e4, 1),
+    saver    = make_saver(),
+    reset    = TRUE,
+    verbose  = TRUE,
     nthreads = 1L
 ) {
+  
+  if (!inherits(saver, "epiworld_saver"))
+    stop("-saver- should be of class \"epiworld_saver\"")
   
   run_multiple_cpp(
     m,
@@ -55,18 +86,26 @@ run_multiple.epiworld_model <- function(
     nthreads
   )
   
+  attr(m, "saver") <- saver
+  
   invisible(m)
   
 }
 
 #' @export
 #' @rdname run_multiple
-read_multiple_runs <- function(saver) {
+#' @importFrom utils read.table
+run_multiple_get_results <- function(m) {
   
-  if (!inherits(saver, "epiworld_saver"))
-    stop("-saver- must be of class `epiworld_saver`.")
+  if (!inherits(m, "epiworld_model"))
+    stop("-m- must be of class `epiworld_model`.")
   
   # Get the filepath
+  saver <- attr(m, "saver")
+  
+  if (!length(saver)) 
+    stop("No -saver- found. -run_multiple_get_results- can only be used after using -run_multiple-.")
+  
   pattern <- gsub("%[0-9]*lu", "*", saver$fn)
   
   output <- vector("list", length(saver$what))
@@ -77,12 +116,12 @@ read_multiple_runs <- function(saver) {
     # Listing the files
     fnames <- list.files(
       path    = dirname(pattern),
-      pattern = sprintf(basename(pattern)),
+      pattern = sprintf("%s\\.csv", i),
       full.names = TRUE
     )
     
     # Reading the files
-    output[[i]] <- lapply(fnames, read.table, sep = " ", header = TRUE)
+    output[[i]] <- lapply(fnames, utils::read.table, sep = " ", header = TRUE)
     
     # Getting number of simulation
     output[[i]] <- lapply(seq_along(fnames), function(j) {
@@ -100,10 +139,13 @@ read_multiple_runs <- function(saver) {
 
 #' @export
 #' @rdname run_multiple
+#' @aliases epiworld_saver
 make_saver <- function(
-    what = c("total_hist"),
+    ...,
     fn = ""
     ) {
+  
+  what <- list(...)
   
   # Any missmatch?
   available <- c(

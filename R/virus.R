@@ -1,6 +1,7 @@
 #' Virus
 #' @param name of the virus
 #' @param post_immunity,prob_infecting,prob_recovery,prob_death to be documented
+#' @param virus_pos Positive integer. Index of the virus's position in the model.
 #' @examples 
 #' mseirconn <- ModelSEIRCONN(
 #'   name                = "COVID-19",

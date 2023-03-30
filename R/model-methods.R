@@ -1,6 +1,6 @@
 #' Common methods for predefined models of Epiworld
 #' @param x An object of class `epiworld_model`.
-#' @param days Number of days.
+#' @param ndays Number of days (steps) of the simulation.
 #' @param seed Seed to set for initializing random number generator.
 #' @param m Model object.
 #' @param n Number of individuals in the population.

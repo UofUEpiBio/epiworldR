@@ -39,6 +39,8 @@ rm_tool(m, tool_pos)
 \item{t}{An object of class \code{epiworld_tool}}
 
 \item{prevalence}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
+
+\item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 }
 \description{
 Tools in epiworld

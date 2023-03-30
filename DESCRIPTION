@@ -18,3 +18,5 @@ Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
 SystemRequirements: C++11
 Suggests: tinytest
+Imports: 
+    utils
