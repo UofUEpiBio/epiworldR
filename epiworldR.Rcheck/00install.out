@@ -1,0 +1,187 @@
+* installing *source* package ‘epiworldR’ ...
+** using staged installation
+** libs
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c cpp11.cpp -o cpp11.o
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c db.cpp -o db.o
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_seir.cpp -o model_seir.o
+In file included from model_seir.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_seir.cpp:53:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_seirconn.cpp -o model_seirconn.o
+In file included from model_seirconn.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_seirconn.cpp:56:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_sir.cpp -o model_sir.o
+In file included from model_sir.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_sir.cpp:46:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_sirconn.cpp -o model_sirconn.o
+In file included from model_sirconn.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_sirconn.cpp:55:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_sis.cpp -o model_sis.o
+In file included from model_sis.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_sis.cpp:51:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -I"/Library/Frameworks/R.framework/Resources/include" -DNDEBUG  -I'/Library/Frameworks/R.framework/Versions/4.1/Resources/library/cpp11/include' -I/usr/local/include  -I../inst/include/  -fPIC  -Wall -g -O2  -c model_surv.cpp -o model_surv.o
+In file included from model_surv.cpp:4:
+In file included from ./epiworld-common.h:5:
+../inst/include/epiworld.hpp:6897:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+model_surv.cpp:69:8: note: in instantiation of member function 'epiworld::Model<>::print' requested here
+  ptr->print();
+       ^
+../inst/include/epiworld.hpp:6897:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6901:28: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                  ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6901:28: note: use array indexing to silence this warning
+            fmt = "  - (%" + std::to_string(nstatus).length() +
+                           ^
+                  &        [                                 ]
+../inst/include/epiworld.hpp:6906:24: warning: adding 'std::basic_string<char>::size_type' (aka 'unsigned long') to a string does not append to the string [-Wstring-plus-int]
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+              ~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../inst/include/epiworld.hpp:6906:24: note: use array indexing to silence this warning
+        fmt = "  - (%" + std::to_string(nstatus).length() +
+                       ^
+              &        [                                 ]
+3 warnings generated.
+clang++ -mmacosx-version-min=10.13 -std=gnu++14 -dynamiclib -Wl,-headerpad_max_install_names -undefined dynamic_lookup -single_module -multiply_defined suppress -L/Library/Frameworks/R.framework/Resources/lib -L/usr/local/lib -o epiworldR.so cpp11.o db.o model_seir.o model_seirconn.o model_sir.o model_sirconn.o model_sis.o model_surv.o -F/Library/Frameworks/R.framework/.. -framework R -Wl,-framework -Wl,CoreFoundation
+installing to /Users/derekmeyer37/Desktop/Research/epiworldR/epiworldR.Rcheck/00LOCK-epiworldR/00new/epiworldR/libs
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+*** copying figures
+** building package indices
+** testing if installed package can be loaded from temporary location
+** checking absolute paths in shared objects and dynamic libraries
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (epiworldR)

@@ -1,0 +1,97 @@
+* using log directory ‘/Users/derekmeyer37/Desktop/Research/epiworldR/epiworldR.Rcheck’
+* using R version 4.1.2 (2021-11-01)
+* using platform: x86_64-apple-darwin17.0 (64-bit)
+* using session charset: UTF-8
+* checking for file ‘epiworldR/DESCRIPTION’ ... OK
+* checking extension type ... Package
+* this is package ‘epiworldR’ version ‘0.0-1’
+* package encoding: UTF-8
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... NOTE
+Found the following non-portable file paths:
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/league-gothic/league-gothic.woff
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-italic.eot
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-italic.ttf
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-italic.woff
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-regular.eot
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-regular.ttf
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-regular.woff
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibold.eot
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibold.ttf
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibold.woff
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.eot
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.ttf
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.woff
+  epiworldR/epiworld_presentation_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro.css
+  epiworldR/test_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.eot
+  epiworldR/test_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.ttf
+  epiworldR/test_files/libs/revealjs/dist/theme/fonts/source-sans-pro/source-sans-pro-semibolditalic.woff
+
+Tarballs are only required to store paths of up to 100 bytes and cannot
+store those of more than 256 bytes, with restrictions including to 100
+bytes for the final component.
+See section ‘Package structure’ in the ‘Writing R Extensions’ manual.
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘epiworldR’ can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... NOTE
+plot.epiworld_seir: no visible global function definition for ‘legend’
+Undefined global functions or variables:
+  legend
+Consider adding
+  importFrom("graphics", "legend")
+to your NAMESPACE file.
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking line endings in Makefiles ... OK
+* checking compilation flags in Makevars ... OK
+* checking for GNU extensions in Makefiles ... OK
+* checking for portable use of $(BLAS_LIBS) and $(LAPACK_LIBS) ... OK
+* checking use of PKG_*FLAGS in Makefiles ... OK
+* checking compiled code ... NOTE
+File ‘epiworldR/libs/epiworldR.so’:
+  Found ‘___stdoutp’, possibly from ‘stdout’ (C)
+    Objects: ‘db.o’, ‘model_seir.o’, ‘model_seirconn.o’, ‘model_sir.o’,
+      ‘model_sirconn.o’, ‘model_sis.o’, ‘model_surv.o’
+
+Compiled code should not call entry points which might terminate R nor
+write to stdout/stderr instead of to the console, nor use Fortran I/O
+nor system RNGs.
+
+See ‘Writing portable packages’ in the ‘Writing R Extensions’ manual.
+* checking examples ... NONE
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘tinytest.R’
+* checking PDF version of manual ... OK
+* DONE
+Status: 3 NOTEs

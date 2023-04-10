@@ -1,0 +1,12 @@
+ModelSEIR               Susceptible Infected Susceptible model (SEIR)
+ModelSEIRCONN           Susceptible Exposed Infected Removed model
+                        (SEIR connected)
+ModelSIR                SIR model
+ModelSIRCONN            Susceptible Infected Removed model (SIR
+                        connected)
+ModelSIS                Susceptible Infected Susceptible model (SIS)
+ModelSURV               Susceptible Infected Susceptible model (SURV)
+epiworld-data           Accessing the database of 'epiworld'
+epiworld-methods        Common methods for predefined models of
+                        Epiworld
+epiworldR-package       epiworldR

@@ -1,0 +1,26 @@
+Package: epiworldR
+Type: Package
+Title: Fast Epi Simulations in R
+Version: 0.0-1
+Date: 2022-07-20
+Authors@R: c(
+         person("Derek", "Meyer", role=c("aut","cre"), email="derekmeyer37@gmail.com"),
+         person("George", "Vega Yon", role=c("aut"),
+         email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844"))
+         )
+Description: Epidemiological simulations using the epiworld C++ template library.
+  It provides a fast way to prototype models involving social networks, multiple dieases,
+  and arbitrary policy strategies.
+License: MIT + file LICENSE
+RoxygenNote: 7.2.1
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+LinkingTo: cpp11
+SystemRequirements: C++11
+Suggests: tinytest
+NeedsCompilation: yes
+Packaged: 2022-10-19 17:49:00 UTC; derekmeyer37
+Author: Derek Meyer [aut, cre],
+  George Vega Yon [aut] (<https://orcid.org/0000-0002-3171-0844>)
+Maintainer: Derek Meyer <derekmeyer37@gmail.com>
+Built: R 4.1.2; x86_64-apple-darwin17.0; 2022-10-19 17:49:09 UTC; unix
