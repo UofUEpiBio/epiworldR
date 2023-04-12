@@ -15,4 +15,5 @@ src/Makevars
 *.pdf
 *.html
 *.Rcheck/
+*.tar.gz
 

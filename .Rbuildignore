@@ -16,4 +16,5 @@ test\.pdf
 ^tests
 .*\.DS_Store
 world-epi
+playground/
 
