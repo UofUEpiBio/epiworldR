@@ -4,6 +4,8 @@
 \alias{epiworld-methods}
 \alias{queuing_on}
 \alias{queuing_off}
+\alias{verbose_off}
+\alias{verbose_on}
 \alias{agents_smallworld}
 \alias{run}
 \alias{get_state}
@@ -16,6 +18,10 @@
 queuing_on(x)
 
 queuing_off(x)
+
+verbose_off(x)
+
+verbose_on(x)
 
 agents_smallworld(m, n, k, d, p)
 
@@ -56,4 +62,8 @@ get_name(x)
 }
 \description{
 Common methods for predefined models of Epiworld
+}
+\details{
+The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing
+progress on screen, respectively. Both functions return the model (\code{x}) invisibly.
 }
