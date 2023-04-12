@@ -28,6 +28,21 @@ queuing_off.epiworld_model <- function(x) {
 }
 
 #' @export
+#' @details
+#' The `verbose_on` and `verbose_off` functions activate and deactivate printing
+#' progress on screen, respectively. Both functions return the model (`x`) invisibly.
+verbose_off.epiworld_model <- function(x) {
+  verbose_off_cpp(x)
+  invisible(x)
+}
+
+#' @export
+verbose_on.epiworld_model <- function(x) {
+  verbose_on_cpp(x)
+  invisible(x)
+}
+
+#' @export
 #' @rdname epiworld-methods
 agents_smallworld <- function(m, n, k, d, p) UseMethod("agents_smallworld")
 

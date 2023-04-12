@@ -1,34 +1,0 @@
-
-R version 4.1.2 (2021-11-01) -- "Bird Hippie"
-Copyright (C) 2021 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.0 (64-bit)
-
-R is free software and comes with ABSOLUTELY NO WARRANTY.
-You are welcome to redistribute it under certain conditions.
-Type 'license()' or 'licence()' for distribution details.
-
-R is a collaborative project with many contributors.
-Type 'contributors()' for more information and
-'citation()' on how to cite R or R packages in publications.
-
-Type 'demo()' for some demos, 'help()' for on-line help, or
-'help.start()' for an HTML browser interface to help.
-Type 'q()' to quit R.
-
-> 
-> if ( requireNamespace("tinytest", quietly=TRUE) ){
-+   tinytest::test_package("epiworldR")
-+ }
-test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    Running the model...
-_________________________________________________________________________
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
-test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    Running the model...
-_________________________________________________________________________
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
-test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    0 tests    test-sir.R....................    1 tests [0;32mOK[0m test-sir.R....................    2 tests [0;32mOK[0m test-sir.R....................    3 tests [0;32mOK[0m [0;34m0.4s[0m
-All ok, 3 results (0.4s)
-> 
-> 
-> proc.time()
-   user  system elapsed 
-  0.522   0.086   0.593 

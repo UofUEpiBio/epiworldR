@@ -152,6 +152,20 @@ extern "C" SEXP _epiworldR_get_state_cpp(SEXP model) {
     return cpp11::as_sexp(get_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// model.cpp
+SEXP verbose_on_cpp(SEXP model);
+extern "C" SEXP _epiworldR_verbose_on_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(verbose_on_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+SEXP verbose_off_cpp(SEXP model);
+extern "C" SEXP _epiworldR_verbose_off_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(verbose_off_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // tool.cpp
 SEXP tool_cpp(std::string name, double susceptibility_reduction, double transmission_reduction, double recovery_enhancer, double death_reduction);
 extern "C" SEXP _epiworldR_tool_cpp(SEXP name, SEXP susceptibility_reduction, SEXP transmission_reduction, SEXP recovery_enhancer, SEXP death_reduction) {
@@ -246,6 +260,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
+    {"_epiworldR_verbose_off_cpp",                (DL_FUNC) &_epiworldR_verbose_off_cpp,                 1},
+    {"_epiworldR_verbose_on_cpp",                 (DL_FUNC) &_epiworldR_verbose_on_cpp,                  1},
     {"_epiworldR_virus_cpp",                      (DL_FUNC) &_epiworldR_virus_cpp,                       5},
     {"_epiworldR_virus_set_state_cpp",            (DL_FUNC) &_epiworldR_virus_set_state_cpp,             4},
     {NULL, NULL, 0}

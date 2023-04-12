@@ -165,4 +165,17 @@ cpp11::strings get_state_cpp(
   
 }
 
+[[cpp11::register]]
+SEXP verbose_on_cpp(SEXP model) {
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->verbose_on(); 
+  return model;
+}
+
+[[cpp11::register]]
+SEXP verbose_off_cpp(SEXP model) {
+  cpp11::external_pointer<Model<>> ptr(model);
+  ptr->verbose_off(); 
+  return model;
+}
 

@@ -84,6 +84,14 @@ get_state_cpp <- function(model) {
   .Call(`_epiworldR_get_state_cpp`, model)
 }
 
+verbose_on_cpp <- function(model) {
+  .Call(`_epiworldR_verbose_on_cpp`, model)
+}
+
+verbose_off_cpp <- function(model) {
+  .Call(`_epiworldR_verbose_off_cpp`, model)
+}
+
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
   .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
 }
