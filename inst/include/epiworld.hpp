@@ -3644,7 +3644,7 @@ inline void DataBase<TSeq>::write_data(
         std::ofstream file_transition(fn_transition, std::ios_base::out);
         file_transition <<
             #ifdef _OPENMP
-            EPI_GET_THREAD_ID() << " " <<
+            "thread " << 
             #endif
             "date " << "from " << "to " << "counts\n";
 
@@ -5619,7 +5619,7 @@ protected:
     epiworld_double rewire_prop = 0.0;
         
     std::map<std::string, epiworld_double > parameters;
-    epiworld_fast_uint ndays;
+    epiworld_fast_uint ndays = 0;
     Progress pb;
 
     std::vector< UpdateFun<TSeq> >    status_fun = {};
@@ -7536,6 +7536,10 @@ inline bool Model<TSeq>::is_directed() const
 
 template<typename TSeq>
 inline int Model<TSeq>::today() const {
+
+    if (ndays == 0)
+      return 0;
+
     return this->current_date;
 }
 

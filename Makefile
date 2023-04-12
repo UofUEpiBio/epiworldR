@@ -4,7 +4,7 @@ build:
 		R CMD build .
 
 debug: clean
-	EPI_CONFIG=-DEPI_DEBUG R CMD INSTALL .
+	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
 install: build
 	R CMD INSTALL epiworldR_*tar.gz
