@@ -17,3 +17,4 @@ src/Makevars
 *.Rcheck/
 *.tar.gz
 
+images
