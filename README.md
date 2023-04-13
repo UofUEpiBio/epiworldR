@@ -6,6 +6,7 @@
 # epiworldR
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -53,10 +54,10 @@ sir
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
 #> Number of entitites : 0
-#> Days (duration)     : 101 (of 100)
+#> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 290.00ms
-#> Last run speed      : 34.42 million agents x day / second
+#> Last run elapsed t  : 308.00ms
+#> Last run speed      : 32.46 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -69,7 +70,7 @@ sir
 #>  - Infectiousness    : 0.9000
 #>  - Prob. of Recovery : 0.3000
 #> 
-#> Distribution of the population at time 101:
+#> Distribution of the population at time 100:
 #>  - (0) Susceptible :  99000 -> 0
 #>  - (1) Infected    :   1000 -> 0
 #>  - (2) Recovered   :      0 -> 100000

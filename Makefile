@@ -1,4 +1,4 @@
-build: 
+build: clean
 	Rscript -e 'Rcpp::compileAttributes()' && \
 		Rscript -e 'roxygen2::roxygenize()' && \
 		R CMD build .
@@ -7,7 +7,7 @@ debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
 install: build
-	R CMD INSTALL epiworldR_*tar.gz
+	EPI_CONFIG="-Wall -pedantic -g" R CMD INSTALL epiworldR_*tar.gz
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
