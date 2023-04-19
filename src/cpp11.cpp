@@ -20,6 +20,13 @@ extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model) {
   END_CPP11
 }
 // db.cpp
+cpp11::data_frame get_hist_transition_matrix(SEXP model, bool skip_zeros);
+extern "C" SEXP _epiworldR_get_hist_transition_matrix(SEXP model, SEXP skip_zeros) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_hist_transition_matrix(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_zeros)));
+  END_CPP11
+}
+// db.cpp
 cpp11::data_frame get_reproductive_number_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model) {
   BEGIN_CPP11
@@ -252,6 +259,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_from_edgelist_cpp",       (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,        5},
     {"_epiworldR_agents_smallworld_cpp",          (DL_FUNC) &_epiworldR_agents_smallworld_cpp,           5},
     {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              1},
+    {"_epiworldR_get_hist_transition_matrix",     (DL_FUNC) &_epiworldR_get_hist_transition_matrix,      2},
     {"_epiworldR_get_name_cpp",                   (DL_FUNC) &_epiworldR_get_name_cpp,                    1},
     {"_epiworldR_get_param_cpp",                  (DL_FUNC) &_epiworldR_get_param_cpp,                   2},
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},

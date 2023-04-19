@@ -20,6 +20,23 @@ any model.}
 \description{
 Accessing the database of \code{epiworld}
 }
+\examples{
+# SEIR Connected
+seirconn <- ModelSEIRCONN(
+  "Disease",
+  10000,
+  .1,
+  2, 
+  .8,
+  7,
+  .3
+)
+
+set.seed(937)
+run(seirconn, 50)
+
+get_transition_probability(seirconn) 
+}
 \seealso{
 Other Models: 
 \code{\link{ModelSEIRCONN}()},

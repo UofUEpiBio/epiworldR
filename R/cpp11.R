@@ -8,6 +8,10 @@ get_transition_probability_cpp <- function(model) {
   .Call(`_epiworldR_get_transition_probability_cpp`, model)
 }
 
+get_hist_transition_matrix <- function(model, skip_zeros) {
+  .Call(`_epiworldR_get_hist_transition_matrix`, model, skip_zeros)
+}
+
 get_reproductive_number_cpp <- function(model) {
   .Call(`_epiworldR_get_reproductive_number_cpp`, model)
 }

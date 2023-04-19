@@ -2794,6 +2794,14 @@ public:
         std::vector< std::string > & state,
         std::vector< int > & counts
     ) const;
+
+    void get_hist_transition_matrix(
+        std::vector< std::string > & state_from,
+        std::vector< std::string > & state_to,
+        std::vector< int > & date,
+        std::vector< int > & counts,
+        bool skip_zeros
+    ) const;
     ///@}
 
     void write_data(
@@ -3484,6 +3492,59 @@ inline void DataBase<TSeq>::get_hist_variant(
     counts = hist_variant_counts;
 
     return;
+
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::get_hist_transition_matrix(
+    std::vector< std::string > & state_from,
+    std::vector< std::string > & state_to,
+    std::vector< int > & date,
+    std::vector< int > & counts,
+    bool skip_zeros
+) const
+{
+
+    size_t n = this->hist_transition_matrix.size();
+    
+    state_from.reserve(n);
+    state_to.reserve(n);
+    date.reserve(n);
+    counts.reserve(n);
+
+    size_t n_status = model->nstatus;
+    size_t n_steps  = hist_total_date.size();
+
+    for (size_t step = 0u; step < n_steps; ++step)
+    {
+        for (size_t j = 0u; j < n_status; ++j) // Column major storage
+        {
+            for (size_t i = 0u; i < n_status; ++i)
+            {
+                // Retrieving the value of the day
+                int v = hist_transition_matrix[
+                    step * n_status * n_status + // Day of the data
+                    j * n_status +               // Column (to)
+                    i                            // Row (from)
+                    ];
+
+                // If we are skipping the zeros and it is zero, then don't save
+                if (skip_zeros && v == 0)
+                    continue;
+
+                                
+                state_from.push_back(model->status_labels[i]);
+                state_to.push_back(model->status_labels[j]);
+                date.push_back(hist_total_date[step]);
+                counts.push_back(v);
+
+            }
+
+        }
+    }
+
+    return;
+
 
 }
 

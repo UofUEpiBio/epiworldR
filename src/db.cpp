@@ -42,6 +42,31 @@ doubles get_transition_probability_cpp(
   
 }
 
+[[cpp11::register]]
+cpp11::data_frame get_hist_transition_matrix(
+  SEXP model,
+  bool skip_zeros
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector< std::string > state_from;
+  std::vector< std::string > state_to;
+  std::vector< int > date;
+  std::vector< int > counts;
+  
+  ptr->get_db().get_hist_transition_matrix(
+    state_from, state_to, date, counts, skip_zeros
+  );
+  
+  return cpp11::writable::data_frame({
+    "state_from"_nm = state_from, 
+    "state_to"_nm   = state_to,
+    "date"_nm       = date,
+    "counts"_nm     = counts,
+  });
+  
+}
   
 [[cpp11::register]]
 cpp11::data_frame get_reproductive_number_cpp(
