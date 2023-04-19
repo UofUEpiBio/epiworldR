@@ -1,10 +1,10 @@
 ---
-title: "epiworld R"
+title: "SEIRD Model of COVID-19"
 author: "George Vega Yon & Derek Meyer "
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{SEIRD Model of COVID-19}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

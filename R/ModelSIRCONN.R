@@ -1,7 +1,7 @@
 #' Susceptible Infected Removed model (SIR connected)
 #' @param name String. Name of the virus
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param reproductive_number Numeric scalar. Reproductive number.
+#' @param contact_rate Numeric scalar. Average number of contacts per step.
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
 #' transmission.
 #' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
@@ -16,7 +16,7 @@
 #'   name                = "COVID-19",
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
-#'   reproductive_number = 5,
+#'   contact_rate = 5,
 #'   prob_transmission   = 0.4,
 #'   prob_recovery       = 0.95
 #' )
@@ -26,11 +26,11 @@
 #' model_sirconn
 #' @seealso epiworld-methods
 ModelSIRCONN <- function(
-    name, n, prevalence, reproductive_number, prob_transmission, prob_recovery
+    name, n, prevalence, contact_rate, prob_transmission, prob_recovery
 ) {
   
   structure(
-    ModelSIRCONN_cpp(name, n, prevalence, reproductive_number, 
+    ModelSIRCONN_cpp(name, n, prevalence, contact_rate, 
                      prob_transmission, prob_recovery),
     class = c("epiworld_model", "epiworld_sirconn")
   )

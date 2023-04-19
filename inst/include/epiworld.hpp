@@ -4455,7 +4455,7 @@ inline void DataBase<TSeq>::generation_time(
 class AdjList {
 private:
 
-    std::vector<std::map<epiworld_fast_uint, epiworld_fast_uint>> dat;
+    std::vector<std::map<int, int>> dat;
     bool directed;
     epiworld_fast_uint N = 0;
     epiworld_fast_uint E = 0;
@@ -4476,8 +4476,8 @@ public:
      * @param directed Bool true if the network is directed
      */
     AdjList(
-        const std::vector< epiworld_fast_uint > & source,
-        const std::vector< epiworld_fast_uint > & target,
+        const std::vector< int > & source,
+        const std::vector< int > & target,
         int size,
         bool directed
         );
@@ -4504,7 +4504,7 @@ public:
         bool directed = true
         );
 
-    std::map<epiworld_fast_uint, epiworld_fast_uint> operator()(
+    std::map<int, int> operator()(
         epiworld_fast_uint i
         ) const;
         
@@ -4512,7 +4512,7 @@ public:
     size_t vcount() const; ///< Number of vertices/nodes in the network.
     size_t ecount() const; ///< Number of edges/arcs/ties in the network.
     
-    std::vector<std::map<epiworld_fast_uint,epiworld_fast_uint>> & get_dat() {
+    std::vector<std::map<int,int>> & get_dat() {
         return dat;
     };
 
@@ -4545,18 +4545,18 @@ public:
 #define EPIWORLD_ADJLIST_MEAT_HPP
 
 inline AdjList::AdjList(
-    const std::vector< epiworld_fast_uint > & source,
-    const std::vector< epiworld_fast_uint > & target,
+    const std::vector< int > & source,
+    const std::vector< int > & target,
     int size,
     bool directed
 ) : directed(directed) {
 
 
-    dat.resize(size, std::map<epiworld_fast_uint,epiworld_fast_uint>({}));
+    dat.resize(size, std::map<int,int>({}));
     int max_id = size - 1;
 
     int i,j;
-    for (epiworld_fast_uint m = 0; m < source.size(); ++m)
+    for (int m = 0; m < static_cast<int>(source.size()); ++m)
     {
 
         i = source[m];
@@ -4576,7 +4576,7 @@ inline AdjList::AdjList(
 
         // Adding nodes
         if (dat[i].find(j) == dat[i].end())
-            dat[i].insert(std::pair<epiworld_fast_uint, epiworld_fast_uint>(j, 1u));
+            dat[i].insert(std::pair<int, int>(j, 1u));
         else
             dat[i][j]++; 
         
@@ -4584,7 +4584,7 @@ inline AdjList::AdjList(
         {
 
             if (dat[j].find(i) == dat[j].end())
-                dat[j].insert(std::pair<epiworld_fast_uint, epiworld_fast_uint>(i, 1u));
+                dat[j].insert(std::pair<int, int>(i, 1u));
             else
                 dat[j][i]++;
 
@@ -4646,8 +4646,8 @@ inline void AdjList::read_edgelist(
         throw std::logic_error("The file " + fn + " was not found.");
 
     int linenum = 0;
-    std::vector< epiworld_fast_uint > source_;
-    std::vector< epiworld_fast_uint > target_;
+    std::vector< int > source_;
+    std::vector< int > target_;
 
     source_.reserve(1e5);
     target_.reserve(1e5);
@@ -4696,7 +4696,7 @@ inline void AdjList::read_edgelist(
 
 }
 
-inline std::map<epiworld_fast_uint,epiworld_fast_uint> AdjList::operator()(
+inline std::map<int,int> AdjList::operator()(
     epiworld_fast_uint i
     ) const {
 
@@ -5008,8 +5008,8 @@ inline void rewire_degseq(
         if (id1 >= static_cast<int>(N))
             id1 = 0;
 
-        std::map<epiworld_fast_uint,epiworld_fast_uint> & p0 = agents->get_dat()[non_isolates[id0]];
-        std::map<epiworld_fast_uint,epiworld_fast_uint> & p1 = agents->get_dat()[non_isolates[id1]];
+        std::map<int,int> & p0 = agents->get_dat()[non_isolates[id0]];
+        std::map<int,int> & p1 = agents->get_dat()[non_isolates[id1]];
 
         // Picking alters (relative location in their lists)
         // In this case, these are uniformly distributed within the list
@@ -5035,8 +5035,8 @@ inline void rewire_degseq(
         if (!agents->is_directed())
         {
 
-            std::map<epiworld_fast_uint,epiworld_fast_uint> & p01 = agents->get_dat()[id01];
-            std::map<epiworld_fast_uint,epiworld_fast_uint> & p11 = agents->get_dat()[id11];
+            std::map<int,int> & p01 = agents->get_dat()[id01];
+            std::map<int,int> & p11 = agents->get_dat()[id11];
 
             std::swap(p01[id0], p11[id1]);
             
@@ -5074,8 +5074,8 @@ inline AdjList rgraph_bernoulli(
     Model<TSeq> & model
 ) {
 
-    std::vector< epiworld_fast_uint > source;
-    std::vector< epiworld_fast_uint > target;
+    std::vector< int > source;
+    std::vector< int > target;
 
     // Checking the density (how many)
     std::binomial_distribution<> d(
@@ -5105,8 +5105,8 @@ inline AdjList rgraph_bernoulli(
                 b = 0u;
         }
 
-        source[i] = a;
-        target[i] = b;
+        source[i] = static_cast<int>(a);
+        target[i] = static_cast<int>(b);
 
     }
 
@@ -5175,20 +5175,20 @@ inline AdjList rgraph_ring_lattice(
     if ((n - 1u) < k)
         throw std::logic_error("k can be at most n - 1.");
 
-    std::vector< epiworld_fast_uint > source;
-    std::vector< epiworld_fast_uint > target;
+    std::vector< int > source;
+    std::vector< int > target;
 
     if (!directed)
-        if (k > 1u) k = static_cast< epiworld_fast_uint >(floor(k / 2.0));
+        if (k > 1u) k = static_cast< size_t >(floor(k / 2.0));
 
-    for (epiworld_fast_uint i = 0; i < n; ++i)
+    for (size_t i = 0; i < n; ++i)
     {
 
-        for (epiworld_fast_uint j = 1u; j <= k; ++j)
+        for (size_t j = 1u; j <= k; ++j)
         {
 
             // Next neighbor
-            epiworld_fast_uint l = i + j;
+            size_t l = i + j;
             if (l >= n) l = l - n;
 
             source.push_back(i);
@@ -5829,10 +5829,22 @@ public:
         int skip = 0,
         bool directed = false
         );
+
+    void agents_from_edgelist(
+        const std::vector< int > & source,
+        const std::vector< int > & target,
+        int size,
+        bool directed
+    );
+
     void agents_from_adjlist(AdjList al);
+
     bool is_directed() const;
+
     std::vector< Agent<TSeq> > & get_agents();
+
     std::vector< Entity<TSeq> > & get_entities();
+
     void agents_smallworld(
         epiworld_fast_uint n = 1000,
         epiworld_fast_uint k = 5,
@@ -7489,6 +7501,19 @@ inline void Model<TSeq>::agents_from_adjlist(
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::agents_from_edgelist(
+    const std::vector< int > & source,
+    const std::vector< int > & target,
+    int size,
+    bool directed
+) {
+
+    AdjList al(source, target, size, directed);
+    agents_from_adjlist(al);
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
 
     // Resizing the people
@@ -8192,7 +8217,7 @@ inline void Model<TSeq>::print(bool lite) const
 
     printf_epiworld("Name of the model   : %s\n", (this->name == "") ? std::string("(none)").c_str() : name.c_str());
     printf_epiworld("Population size     : %i\n", static_cast<int>(size()));
-    printf_epiworld("Number of entitites : %i\n", static_cast<int>(entities.size()));
+    printf_epiworld("Number of entities  : %i\n", static_cast<int>(entities.size()));
     printf_epiworld("Days (duration)     : %i (of %i)\n", today(), static_cast<int>(ndays));
     printf_epiworld("Number of variants  : %i\n", static_cast<int>(db.get_n_variants()));
     if (n_replicates > 0u)
@@ -14652,7 +14677,7 @@ public:
         std::string vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double reproductive_number,
+        epiworld_double contact_rate,
         epiworld_double prob_transmission,
         epiworld_double prob_recovery
     );
@@ -14661,7 +14686,7 @@ public:
         std::string vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double reproductive_number,
+        epiworld_double contact_rate,
         epiworld_double prob_transmission,
         epiworld_double prob_recovery
     );
@@ -14721,7 +14746,7 @@ inline Model<TSeq> * ModelSIRCONN<TSeq>::clone_ptr()
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
- * @param reproductive_number Reproductive number (beta)
+ * @param contact_rate Average number of contacts (interactions) per step.
  * @param prob_transmission Probability of transmission
  * @param prob_recovery Probability of recovery
  */
@@ -14731,7 +14756,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     std::string vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double reproductive_number,
+    epiworld_double contact_rate,
     epiworld_double prob_transmission,
     epiworld_double prob_recovery
     // epiworld_double prob_reinfection
@@ -14770,7 +14795,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
             // Computing infection probability
             m->tracked_current_infect_prob =  1.0 - std::pow(
-                1.0 - (m->par("Beta")) * (m->par("Prob. Transmission")) / m->size(),
+                1.0 - (m->par("Contact rate")) * (m->par("Prob. Transmission")) / m->size(),
                 m->tracked_ninfected
             );
              
@@ -14804,6 +14829,17 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                 epiworld_fast_uint which = static_cast<epiworld_fast_uint>(
                     std::floor(_m->tracked_ninfected * m->runif())
                 );
+
+
+                /* There is a bug in which runif() returns 1.0. It is rare, but
+                 * we saw it here. See the Notes section in the C++ manual
+                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
+                 * And the reported bug in GCC:
+                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
+                 * 
+                 */
+                if (which == static_cast<epiworld_fast_uint>(_m->tracked_ninfected))
+                    --which;
 
                 // Infecting the individual
                 p->add_virus(
@@ -14877,7 +14913,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             _m->tracked_ninfected_next = 0;
 
             _m->tracked_current_infect_prob = 1.0 - std::pow(
-                1.0 - (m->par("Beta")) * (m->par("Prob. Transmission")) / m->size(),
+                1.0 - (m->par("Contact rate")) * (m->par("Prob. Transmission")) / m->size(),
                 _m->tracked_ninfected
                 );
 
@@ -14889,7 +14925,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     model.add_state("Recovered");
 
     // Setting up parameters
-    model.add_param(reproductive_number, "Beta");
+    model.add_param(contact_rate, "Contact rate");
     model.add_param(prob_transmission, "Prob. Transmission");
     model.add_param(prob_recovery, "Prob. Recovery");
     // model.add_param(prob_reinfection, "Prob. Reinfection");
@@ -14918,7 +14954,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     std::string vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double reproductive_number,
+    epiworld_double contact_rate,
     epiworld_double prob_transmission,
     epiworld_double prob_recovery
     )
@@ -14929,7 +14965,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         vname,
         n,
         prevalence,
-        reproductive_number,
+        contact_rate,
         prob_transmission,
         prob_recovery
     );
@@ -14984,7 +15020,7 @@ public:
         std::string vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double reproductive_number,
+        epiworld_double contact_rate,
         epiworld_double prob_transmission,
         epiworld_double incubation_days,
         epiworld_double prob_recovery
@@ -14994,7 +15030,7 @@ public:
         std::string vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double reproductive_number,
+        epiworld_double contact_rate,
         epiworld_double prob_transmission,
         epiworld_double incubation_days,
         epiworld_double prob_recovery
@@ -15053,7 +15089,7 @@ inline Model<TSeq> * ModelSEIRCONN<TSeq>::clone_ptr()
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
- * @param reproductive_number Reproductive number (beta)
+ * @param contact_rate Average number of contacts (interactions) per step.
  * @param prob_transmission Probability of transmission
  * @param prob_recovery Probability of recovery
  */
@@ -15063,7 +15099,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     std::string vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double reproductive_number,
+    epiworld_double contact_rate,
     epiworld_double prob_transmission,
     epiworld_double incubation_days,
     epiworld_double prob_recovery
@@ -15117,7 +15153,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
             // Computing probability of contagion
             // P(infected) = 1 - (1 - beta/Pop * ptransmit) ^ ninfected
             epiworld_double prob_infect = 1.0 - std::pow(
-                1.0 - (m->par("Beta")) * (m->par("Prob. Transmission")) / m->size(),
+                1.0 - (m->par("Contact rate")) * (m->par("Prob. Transmission")) / m->size(),
                 _m->tracked_ninfected
                 );
 
@@ -15128,6 +15164,16 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                 epiworld_fast_uint which = static_cast<epiworld_fast_uint>(
                     std::floor(_m->tracked_ninfected * m->runif())
                 );
+
+                /* There is a bug in which runif() returns 1.0. It is rare, but
+                 * we saw it here. See the Notes section in the C++ manual
+                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
+                 * And the reported bug in GCC:
+                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
+                 * 
+                 */
+                if (which == static_cast<epiworld_fast_uint>(_m->tracked_ninfected))
+                    --which;
 
                 // Infecting the individual
                 #ifdef EPI_DEBUG
@@ -15236,7 +15282,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
         };
 
     // Setting up parameters
-    model.add_param(reproductive_number, "Beta");
+    model.add_param(contact_rate, "Contact rate");
     model.add_param(prob_transmission, "Prob. Transmission");
     model.add_param(prob_recovery, "Prob. Recovery");
     model.add_param(incubation_days, "Avg. Incubation days");
@@ -15272,7 +15318,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     std::string vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double reproductive_number,
+    epiworld_double contact_rate,
     epiworld_double prob_transmission,
     epiworld_double incubation_days,
     epiworld_double prob_recovery
@@ -15284,7 +15330,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
         vname,
         n,
         prevalence,
-        reproductive_number,
+        contact_rate,
         prob_transmission,
         incubation_days,
         prob_recovery

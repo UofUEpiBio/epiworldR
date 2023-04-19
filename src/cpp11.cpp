@@ -48,10 +48,10 @@ extern "C" SEXP _epiworldR_ModelSIS_cpp(SEXP name, SEXP prevalence, SEXP infecti
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double reproductive_number, double prob_transmission, double prob_recovery);
-extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP prob_recovery) {
+SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double prob_transmission, double prob_recovery);
+extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP prob_transmission, SEXP prob_recovery) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+    return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
   END_CPP11
 }
 // epimodels.cpp
@@ -62,10 +62,10 @@ extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP infecti
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double reproductive_number, double prob_transmission, double incubation_days, double prob_recovery);
-extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP reproductive_number, SEXP prob_transmission, SEXP incubation_days, SEXP prob_recovery) {
+SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double prob_transmission, double incubation_days, double prob_recovery);
+extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP prob_transmission, SEXP incubation_days, SEXP prob_recovery) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(reproductive_number), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+    return cpp11::as_sexp(ModelSEIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
   END_CPP11
 }
 // model.cpp
@@ -80,6 +80,13 @@ SEXP agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, doubl
 extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
   BEGIN_CPP11
     return cpp11::as_sexp(agents_smallworld_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// model.cpp
+SEXP agents_from_edgelist_cpp(SEXP m, const std::vector<int> & source, const std::vector<int> & target, int size, bool directed);
+extern "C" SEXP _epiworldR_agents_from_edgelist_cpp(SEXP m, SEXP source, SEXP target, SEXP size, SEXP directed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_from_edgelist_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(source), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(target), cpp11::as_cpp<cpp11::decay_t<int>>(size), cpp11::as_cpp<cpp11::decay_t<bool>>(directed)));
   END_CPP11
 }
 // model.cpp
@@ -242,6 +249,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_tool_n_cpp",                 (DL_FUNC) &_epiworldR_add_tool_n_cpp,                  3},
     {"_epiworldR_add_virus_cpp",                  (DL_FUNC) &_epiworldR_add_virus_cpp,                   3},
     {"_epiworldR_add_virus_n_cpp",                (DL_FUNC) &_epiworldR_add_virus_n_cpp,                 3},
+    {"_epiworldR_agents_from_edgelist_cpp",       (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,        5},
     {"_epiworldR_agents_smallworld_cpp",          (DL_FUNC) &_epiworldR_agents_smallworld_cpp,           5},
     {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              1},
     {"_epiworldR_get_name_cpp",                   (DL_FUNC) &_epiworldR_get_name_cpp,                    1},

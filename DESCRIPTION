@@ -17,6 +17,10 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
 SystemRequirements: C++11
-Suggests: tinytest
+Suggests: 
+    knitr,
+    rmarkdown,
+    tinytest
 Imports: 
     utils
+VignetteBuilder: knitr

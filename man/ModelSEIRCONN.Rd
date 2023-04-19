@@ -10,7 +10,7 @@ ModelSEIRCONN(
   name,
   n,
   prevalence,
-  reproductive_number,
+  contact_rate,
   prob_transmission,
   incubation_days,
   prob_recovery
@@ -25,7 +25,7 @@ ModelSEIRCONN(
 
 \item{prevalence}{Initial proportion of individuals with the virus.}
 
-\item{reproductive_number}{Numeric scalar. Reproductive number.}
+\item{contact_rate}{Numeric scalar. Average number of contacts per step.}
 
 \item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
 transmission.}
@@ -50,7 +50,7 @@ model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
   prevalence          = 0.01, 
   n                   = 10000,
-  reproductive_number = 4, 
+  contact_rate = 4, 
   incubation_days     = 7, 
   prob_transmission   = 0.5,
   prob_recovery       = 0.99

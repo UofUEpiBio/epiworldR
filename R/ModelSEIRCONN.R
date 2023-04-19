@@ -6,7 +6,7 @@
 #' @param name String. Name of the virus
 #' @param n Integer greater than zero. Population size.
 #' @param prevalence Initial proportion of individuals with the virus.
-#' @param reproductive_number Numeric scalar. Reproductive number.
+#' @param contact_rate Numeric scalar. Average number of contacts per step.
 #' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
 #' transmission.
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
@@ -23,7 +23,7 @@
 #'   name                = "COVID-19",
 #'   prevalence          = 0.01, 
 #'   n                   = 10000,
-#'   reproductive_number = 4, 
+#'   contact_rate = 4, 
 #'   incubation_days     = 7, 
 #'   prob_transmission   = 0.5,
 #'   prob_recovery       = 0.99
@@ -34,12 +34,12 @@
 #' model_seirconn
 #' @seealso epiworld-methods
 ModelSEIRCONN <- function(
-    name, n, prevalence, reproductive_number, prob_transmission, 
+    name, n, prevalence, contact_rate, prob_transmission, 
     incubation_days, prob_recovery
 ) {
   
   structure(
-    ModelSEIRCONN_cpp(name, n, prevalence, reproductive_number, 
+    ModelSEIRCONN_cpp(name, n, prevalence, contact_rate, 
                       prob_transmission, incubation_days, prob_recovery),
     class = c("epiworld_model", "epiworld_seirconn")
   )

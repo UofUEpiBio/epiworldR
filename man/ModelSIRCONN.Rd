@@ -10,7 +10,7 @@ ModelSIRCONN(
   name,
   n,
   prevalence,
-  reproductive_number,
+  contact_rate,
   prob_transmission,
   prob_recovery
 )
@@ -24,7 +24,7 @@ ModelSIRCONN(
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{reproductive_number}{Numeric scalar. Reproductive number.}
+\item{contact_rate}{Numeric scalar. Average number of contacts per step.}
 
 \item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
 transmission.}
@@ -45,7 +45,7 @@ model_sirconn <- ModelSIRCONN(
   name                = "COVID-19",
   n                   = 10000,
   prevalence          = 0.01,
-  reproductive_number = 5,
+  contact_rate = 5,
   prob_transmission   = 0.4,
   prob_recovery       = 0.95
 )

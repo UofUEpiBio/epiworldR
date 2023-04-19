@@ -3,10 +3,6 @@
 #' @param ndays Number of days (steps) of the simulation.
 #' @param seed Seed to set for initializing random number generator.
 #' @param m Model object.
-#' @param n Number of individuals in the population.
-#' @param k Number of ties in the small world network.
-#' @param d Logical scalar. Whether the graph is directed or not.
-#' @param p Probability of rewiring.
 #' @export
 #' @name epiworld-methods
 queuing_on <- function(x) UseMethod("queuing_on")
@@ -48,16 +44,6 @@ verbose_on <- function(x) UseMethod("verbose_on")
 verbose_on.epiworld_model <- function(x) {
   verbose_on_cpp(x)
   invisible(x)
-}
-
-#' @export
-#' @rdname epiworld-methods
-agents_smallworld <- function(m, n, k, d, p) UseMethod("agents_smallworld")
-
-#' @export
-agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-  invisible(m)
 }
 
 #' @export

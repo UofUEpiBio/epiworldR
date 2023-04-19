@@ -42,7 +42,7 @@ mseirconn <- ModelSEIRCONN(
   name                = "COVID-19",
   prevalence          = 0.01, 
   n                   = 10000,
-  reproductive_number = 4, 
+  contact_rate        = 4, 
   incubation_days     = 7, 
   prob_transmission   = 0.5,
   prob_recovery       = 0.99

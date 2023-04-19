@@ -32,6 +32,22 @@ SEXP agents_smallworld_cpp(
 }
 
 [[cpp11::register]]
+SEXP agents_from_edgelist_cpp(
+  SEXP m,
+  const std::vector<int> & source,
+  const std::vector<int> & target,
+  int size,
+  bool directed
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(m);
+  ptr->agents_from_edgelist(source, target, size, directed); 
+  
+  return m;
+  
+}
+
+[[cpp11::register]]
 SEXP run_cpp(SEXP m, int ndays, int seed) {
   
   cpp11::external_pointer<Model<>> ptr(m);

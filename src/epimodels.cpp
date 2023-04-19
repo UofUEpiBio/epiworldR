@@ -121,7 +121,7 @@ SEXP ModelSIRCONN_cpp(
     unsigned int n,
     
     double prevalence,
-    double reproductive_number,
+    double contact_rate,
     double prob_transmission, 
     double prob_recovery
 ) {
@@ -132,7 +132,7 @@ SEXP ModelSIRCONN_cpp(
           name,
           n,
           prevalence,
-          reproductive_number,
+          contact_rate,
           prob_transmission,
           prob_recovery
       )
@@ -179,7 +179,7 @@ SEXP ModelSEIRCONN_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double reproductive_number,
+    double contact_rate,
     double prob_transmission,
     double incubation_days,
     double prob_recovery
@@ -191,7 +191,7 @@ SEXP ModelSEIRCONN_cpp(
           name,
           n,
           prevalence,
-          reproductive_number,
+          contact_rate,
           prob_transmission,
           incubation_days,
           prob_recovery

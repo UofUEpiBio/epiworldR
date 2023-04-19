@@ -6,7 +6,6 @@
 \alias{queuing_off}
 \alias{verbose_off}
 \alias{verbose_on}
-\alias{agents_smallworld}
 \alias{run}
 \alias{get_state}
 \alias{get_param}
@@ -22,8 +21,6 @@ queuing_off(x)
 verbose_off(x)
 
 verbose_on(x)
-
-agents_smallworld(m, n, k, d, p)
 
 run(m, ndays, seed = sample.int(10000, 1))
 
@@ -41,14 +38,6 @@ get_name(x)
 \item{x}{An object of class \code{epiworld_model}.}
 
 \item{m}{Model object.}
-
-\item{n}{Number of individuals in the population.}
-
-\item{k}{Number of ties in the small world network.}
-
-\item{d}{Logical scalar. Whether the graph is directed or not.}
-
-\item{p}{Probability of rewiring.}
 
 \item{ndays}{Number of days (steps) of the simulation.}
 

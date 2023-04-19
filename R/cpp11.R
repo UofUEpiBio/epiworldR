@@ -24,16 +24,16 @@ ModelSIS_cpp <- function(name, prevalence, infectiousness, recovery) {
   .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, infectiousness, recovery)
 }
 
-ModelSIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, prob_recovery) {
-  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, prob_recovery)
+ModelSIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmission, prob_recovery) {
+  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, prob_recovery)
 }
 
 ModelSIR_cpp <- function(name, prevalence, infectiousness, recovery) {
   .Call(`_epiworldR_ModelSIR_cpp`, name, prevalence, infectiousness, recovery)
 }
 
-ModelSEIRCONN_cpp <- function(name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery) {
-  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, reproductive_number, prob_transmission, incubation_days, prob_recovery)
+ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery) {
+  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery)
 }
 
 print_cpp <- function(m) {
@@ -42,6 +42,10 @@ print_cpp <- function(m) {
 
 agents_smallworld_cpp <- function(m, n, k, d, p) {
   .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
+}
+
+agents_from_edgelist_cpp <- function(m, source, target, size, directed) {
+  .Call(`_epiworldR_agents_from_edgelist_cpp`, m, source, target, size, directed)
 }
 
 run_cpp <- function(m, ndays, seed) {
