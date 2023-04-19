@@ -11,6 +11,11 @@
 This R package is a wrapper of the C++ library
 [epiworld](https://github.com/UofUEpi/epiworld). It provides a general
 framework for modeling disease transmission using Agent-Based Models.
+Some of the main features include:
+
+- Fast simulation with an average of 30 million agents/day per second.
+- One model can include multiple diseases.
+- Policies (tools) can be multiple and user-defined.
 
 ## Installation
 
@@ -24,9 +29,18 @@ devtools::install_github("UofUEpi/epiworldR")
 
 # Examples
 
+This R package comes shipped with a handful of popular epidemiological
+models, including SIS, SIR, and SEIR using either a fully connected
+graph (similar to a compartmental model) or a user-defined network. Here
+are some examples:
+
 ## SIR model using a random graph
 
-This is a basic example which shows you how to solve a common problem:
+This Susceptible-Infected-Recovered model features a population of
+100,000 agents simulated in a small-world network. Each agent is
+connected to ten other agents. One percent of the population has the
+virus, which can be transmitted with a 70% chance. Infected individuals
+recover at a 0.3 rate:
 
 ``` r
 library(epiworldR)
@@ -57,8 +71,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 177.00ms
-#> Last run speed      : 28.18 million agents x day / second
+#> Last run elapsed t  : 180.00ms
+#> Last run speed      : 27.65 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -119,8 +133,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 26.00ms
-#> Last run speed      : 38.27 million agents x day / second
+#> Last run elapsed t  : 29.00ms
+#> Last run speed      : 33.97 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
