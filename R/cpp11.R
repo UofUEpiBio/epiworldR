@@ -8,8 +8,8 @@ get_transition_probability_cpp <- function(model) {
   .Call(`_epiworldR_get_transition_probability_cpp`, model)
 }
 
-get_hist_transition_matrix <- function(model, skip_zeros) {
-  .Call(`_epiworldR_get_hist_transition_matrix`, model, skip_zeros)
+get_hist_transition_matrix_cpp <- function(model, skip_zeros) {
+  .Call(`_epiworldR_get_hist_transition_matrix_cpp`, model, skip_zeros)
 }
 
 get_reproductive_number_cpp <- function(model) {
@@ -98,6 +98,22 @@ verbose_on_cpp <- function(model) {
 
 verbose_off_cpp <- function(model) {
   .Call(`_epiworldR_verbose_off_cpp`, model)
+}
+
+get_n_variants_cpp <- function(model) {
+  .Call(`_epiworldR_get_n_variants_cpp`, model)
+}
+
+get_n_tools_cpp <- function(model) {
+  .Call(`_epiworldR_get_n_tools_cpp`, model)
+}
+
+get_ndays_cpp <- function(model) {
+  .Call(`_epiworldR_get_ndays_cpp`, model)
+}
+
+get_n_replicates_cpp <- function(model) {
+  .Call(`_epiworldR_get_n_replicates_cpp`, model)
 }
 
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

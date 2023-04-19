@@ -43,7 +43,7 @@ doubles get_transition_probability_cpp(
 }
 
 [[cpp11::register]]
-cpp11::data_frame get_hist_transition_matrix(
+cpp11::data_frame get_hist_transition_matrix_cpp(
   SEXP model,
   bool skip_zeros
 ) {

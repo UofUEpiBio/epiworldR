@@ -32,7 +32,9 @@ You can install the development version of epiworldR from [GitHub](https://githu
 devtools::install_github("UofUEpi/epiworldR")
 ```
 
-## Example
+# Examples
+
+## SIR model using a random graph
 
 This is a basic example which shows you how to solve a common problem:
 
@@ -43,7 +45,7 @@ library(epiworldR)
 sir <- ModelSIR(
   name           = "COVID-19",
   prevalence     = .01,
-  infectiousness = .9,
+  infectiousness = .7,
   recovery       = .3
   ) |>
   # Adding a Small world population 
@@ -58,5 +60,32 @@ Visualizing the outputs
 
 ```{r}
 plot(sir)
+```
+
+## SEIR Model with a fully connected graph
+
+```{r}
+model_seirconn <- ModelSEIRCONN(
+  name                = "COVID-19",
+  prevalence          = 0.01, 
+  n                   = 10000,
+  contact_rate        = 4, 
+  incubation_days     = 7, 
+  prob_transmission   = 0.6,
+  prob_recovery       = 0.5
+)
+
+set.seed(132)
+run(model_seirconn, ndays = 100)
+model_seirconn
+```
+
+Computing some key statistics
+
+```{r}
+plot(model_seirconn)
+
+repnum <- get_reproductive_number(model_seirconn)
+plot(repnum, type = "b")
 ```
 

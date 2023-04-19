@@ -3513,9 +3513,9 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
     counts.reserve(n);
 
     size_t n_status = model->nstatus;
-    size_t n_steps  = hist_total_date.size();
+    size_t n_steps  = model->get_ndays();
 
-    for (size_t step = 0u; step < n_steps; ++step)
+    for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
     {
         for (size_t j = 0u; j < n_status; ++j) // Column major storage
         {
@@ -3531,11 +3531,10 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
                 // If we are skipping the zeros and it is zero, then don't save
                 if (skip_zeros && v == 0)
                     continue;
-
                                 
                 state_from.push_back(model->status_labels[i]);
                 state_to.push_back(model->status_labels[j]);
-                date.push_back(hist_total_date[step]);
+                date.push_back(hist_total_date[step * n_status]);
                 counts.push_back(v);
 
             }

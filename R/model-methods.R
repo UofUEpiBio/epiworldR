@@ -111,3 +111,34 @@ get_name.epiworld_model <- function(x) {
   get_name_cpp(x)
 }
 
+#' @export 
+#' @rdname epiworld-methods
+get_n_variants <- function(x) UseMethod("get_n_variants")
+
+#' @export
+get_n_variants.epiworld_model <- function(x) get_n_variants_cpp(x)
+
+
+#' @export 
+#' @rdname epiworld-methods
+get_n_tools <- function(x) UseMethod("get_n_tools")
+
+#' @export
+get_n_tools.epiworld_model <- function(x) get_n_tools_cpp(x)
+
+
+#' @export 
+#' @rdname epiworld-methods
+get_ndays <- function(x) UseMethod("get_ndays")
+
+#' @export
+get_ndays.epiworld_model <- function(x) get_ndays_cpp(x)
+
+
+#' @export 
+#' @rdname epiworld-methods
+get_n_replicates <- function(x) UseMethod("get_n_replicates")
+
+#' @export
+get_n_replicates.epiworld_model <- function(x) get_n_replicates_cpp(x)
+

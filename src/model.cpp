@@ -183,15 +183,51 @@ cpp11::strings get_state_cpp(
 
 [[cpp11::register]]
 SEXP verbose_on_cpp(SEXP model) {
+  
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->verbose_on(); 
   return model;
+  
 }
 
 [[cpp11::register]]
 SEXP verbose_off_cpp(SEXP model) {
+  
   cpp11::external_pointer<Model<>> ptr(model);
   ptr->verbose_off(); 
   return model;
+  
+}
+
+[[cpp11::register]]
+int get_n_variants_cpp(SEXP model) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->get_n_variants());
+  
+}
+
+[[cpp11::register]]
+int get_n_tools_cpp(SEXP model) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->get_n_tools());
+  
+}
+
+[[cpp11::register]]
+int get_ndays_cpp(SEXP model) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->get_ndays());
+  
+}
+
+[[cpp11::register]]
+int get_n_replicates_cpp(SEXP model) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->get_n_replicates());
+  
 }
 

@@ -12,6 +12,10 @@
 \alias{set_param}
 \alias{set_name}
 \alias{get_name}
+\alias{get_n_variants}
+\alias{get_n_tools}
+\alias{get_ndays}
+\alias{get_n_replicates}
 \title{Common methods for predefined models of Epiworld}
 \usage{
 queuing_on(x)
@@ -33,6 +37,14 @@ set_param(x, pname, pval)
 set_name(x, mname)
 
 get_name(x)
+
+get_n_variants(x)
+
+get_n_tools(x)
+
+get_ndays(x)
+
+get_n_replicates(x)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}

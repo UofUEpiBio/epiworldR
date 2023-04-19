@@ -5,6 +5,9 @@
 \alias{get_hist_total}
 \alias{get_transition_probability}
 \alias{get_reproductive_number}
+\alias{plot.epiworld_repnum}
+\alias{get_hist_transition_matrix}
+\alias{as.array.epiworld_hist_transition}
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
@@ -12,10 +15,34 @@ get_hist_total(x)
 get_transition_probability(x)
 
 get_reproductive_number(x)
+
+\method{plot}{epiworld_repnum}(
+  x,
+  y = NULL,
+  ylab = "Average Rep. Number",
+  xlab = "Day (step)",
+  main = "Daily Average Reproductive Number",
+  ...
+)
+
+get_hist_transition_matrix(x, skip_zeros = FALSE)
+
+\method{as.array}{epiworld_hist_transition}(x, ...)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 any model.}
+
+\item{skip_zeros}{Logical scalar. When \code{FALSE} it will return all the
+entries in the transition matrix.}
+}
+\value{
+In the case of \code{get_hist_transition_matrix}, a \link{data.frame} with four columns:
+"state_from", "state_to", "date", and "counts." It will be
+
+The \code{as.array} method for \code{epiworld_hist_transition} objects turns the \code{data.frame}
+returned by \code{get_hist_transition_matrix} into an array of \verb{nstates x nstates x (ndays + 1)}
+entries, where the first entry is the initial state.
 }
 \description{
 Accessing the database of \code{epiworld}
@@ -23,19 +50,29 @@ Accessing the database of \code{epiworld}
 \examples{
 # SEIR Connected
 seirconn <- ModelSEIRCONN(
-  "Disease",
-  10000,
-  .1,
-  2, 
-  .8,
-  7,
-  .3
+  name              = "Disease",
+  n                 = 10000,
+  prevalence        = 0.1,
+  contact_rate      = 2.0, 
+  prob_transmission = 0.8,
+  incubation_days   = 7.0,
+  prob_recovery     = 0.3
 )
 
+# Running the simulation for 50 steps (days)
 set.seed(937)
 run(seirconn, 50)
 
+# Retrieving the transition probability
 get_transition_probability(seirconn) 
+
+# We can go further and get all the history
+t_hist <- get_hist_transition_matrix(seirconn)
+
+head(t_hist)
+
+# And turn it into an array
+as.array(t_hist)[,,1:3]
 }
 \seealso{
 Other Models: 
