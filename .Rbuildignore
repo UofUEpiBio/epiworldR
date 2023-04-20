@@ -19,3 +19,7 @@ world-epi
 playground/
 
 src/Makefile
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
