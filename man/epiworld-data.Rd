@@ -33,6 +33,9 @@ get_hist_transition_matrix(x, skip_zeros = FALSE)
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 any model.}
 
+\item{...}{In the case of \code{plot.epiworld_repnum}, further arguments passed to
+\link[graphics:plot.default]{graphics::plot}.}
+
 \item{skip_zeros}{Logical scalar. When \code{FALSE} it will return all the
 entries in the transition matrix.}
 }

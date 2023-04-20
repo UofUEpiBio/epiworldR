@@ -11,7 +11,7 @@
 world-epi
 src/Makevars
 *_files/
-*.R
+
 *.pdf
 *.html
 *.Rcheck/

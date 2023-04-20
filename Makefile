@@ -1,7 +1,5 @@
-build: clean
-	Rscript -e 'Rcpp::compileAttributes()' && \
-		Rscript -e 'roxygen2::roxygenize()' && \
-		R CMD build .
+build: clean docs
+	R CMD build .
 
 debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
@@ -24,4 +22,7 @@ check: build
 clean: 
 	Rscript --vanilla -e 'devtools::clean_dll()'
 
-.PHONY: build update check clean
+docs:
+	Rscript --vanilla -e 'roxygen2::roxygenize()'
+
+.PHONY: build update check clean docs
