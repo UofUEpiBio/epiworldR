@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2022 Derek Meyer
+Copyright (c) 2023 George G. Vega Yon
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

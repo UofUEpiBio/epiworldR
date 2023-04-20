@@ -31,7 +31,8 @@
 #' run(sir, 50)
 #' 
 #' plot(sir)
-agents_smallworld <- function(m, n, k, d, p) UseMethod("agents_smallworld")
+agents_smallworld <- function(m, n, k, d, p)
+  UseMethod("agents_smallworld")
 
 #' @export
 agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
@@ -41,8 +42,9 @@ agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
 
 #' @export
 #' @rdname agents_smallworld
-agents_from_edgelist <- function(m, source, target, size, directed)
-  UseMethod("agents_from_edgelist")
+agents_from_edgelist <- function(
+  m, source, target, size, directed
+  ) UseMethod("agents_from_edgelist")
 
 #' @export
 agents_from_edgelist.epiworld_model <- function(

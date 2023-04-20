@@ -3507,6 +3507,7 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     size_t n = this->hist_transition_matrix.size();
     
+    // Reserving space
     state_from.reserve(n);
     state_to.reserve(n);
     date.reserve(n);
@@ -5184,8 +5185,8 @@ inline AdjList rgraph_bernoulli2(
     Model<TSeq> & model
 ) {
 
-    std::vector< epiworld_fast_uint > source;
-    std::vector< epiworld_fast_uint > target;
+    std::vector< int > source;
+    std::vector< int > target;
 
     // Checking the density (how many)
     std::binomial_distribution<> d(
@@ -7837,8 +7838,8 @@ inline void Model<TSeq>::run_multiple(
 
     }
 
-    #pragma omp parallel shared(these, nreplicates, nreplicates_csum, seeds_n) \
-        firstprivate(nexperiments, nthreads, fun, reset, verbose, pb_multiple, stdout, ndays) \
+    #pragma omp parallel shared(these, nreplicates, nreplicates_csum, seeds_n, stdout) \
+        firstprivate(nexperiments, nthreads, fun, reset, verbose, pb_multiple, ndays) \
         default(none)
     {
 
