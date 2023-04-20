@@ -2795,6 +2795,13 @@ public:
         std::vector< int > & counts
     ) const;
 
+    void get_hist_tool(
+        std::vector< int > & date,
+        std::vector< int > & id,
+        std::vector< std::string > & state,
+        std::vector< int > & counts
+    ) const;
+
     void get_hist_transition_matrix(
         std::vector< std::string > & state_from,
         std::vector< std::string > & state_to,
@@ -3490,6 +3497,30 @@ inline void DataBase<TSeq>::get_hist_variant(
         state[i] = labels[hist_variant_state[i]];
 
     counts = hist_variant_counts;
+
+    return;
+
+}
+
+
+template<typename TSeq>
+inline void DataBase<TSeq>::get_hist_tool(
+    std::vector< int > & date,
+    std::vector< int > & id,
+    std::vector< std::string > & state,
+    std::vector< int > & counts
+) const {
+
+    date = hist_tool_date;
+    std::vector< std::string > labels;
+    labels = model->status_labels;
+    
+    id = hist_tool_id;
+    state.resize(hist_tool_state.size(), "");
+    for (size_t i = 0u; i < hist_tool_state.size(); ++i)
+        state[i] = labels[hist_tool_state[i]];
+
+    counts = hist_tool_counts;
 
     return;
 

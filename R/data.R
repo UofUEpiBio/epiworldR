@@ -46,6 +46,24 @@ get_hist_total.epiworld_model <- function(x)  {
 
 #' @export
 #' @rdname epiworld-data
+get_hist_variant <- function(x) UseMethod("get_hist_variant")
+
+#' @export
+get_hist_variant.epiworld_model <- function(x)  {
+  get_hist_variant_cpp(x)
+}
+
+#' @export
+#' @rdname epiworld-data
+get_hist_tool <- function(x) UseMethod("get_hist_tool")
+
+#' @export
+get_hist_tool.epiworld_model <- function(x)  {
+  get_hist_tool_cpp(x)
+}
+
+#' @export
+#' @rdname epiworld-data
 get_transition_probability <- function(x) {
   UseMethod("get_transition_probability")
 }

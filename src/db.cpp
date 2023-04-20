@@ -33,6 +33,56 @@ cpp11::data_frame get_hist_total_cpp(
 }
 
 [[cpp11::register]]
+cpp11::data_frame get_hist_variant_cpp(
+  SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector<int> date;
+  std::vector<int> id;
+  std::vector<std::string> state;
+  std::vector<int> counts;
+  
+  ptr->get_db().get_hist_variant(
+    date, id, state, counts
+  );
+  
+  return cpp11::writable::data_frame({
+    "date"_nm   = date, 
+    "id"_nm     = id,
+    "state"_nm  = state,
+    "counts"_nm = counts,
+  });
+  
+}
+
+[[cpp11::register]]
+cpp11::data_frame get_hist_tool_cpp(
+    SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector<int> date;
+  std::vector<int> id;
+  std::vector<std::string> state;
+  std::vector<int> counts;
+  
+  ptr->get_db().get_hist_tool(
+      date, id, state, counts
+  );
+  
+  return cpp11::writable::data_frame({
+    "date"_nm   = date, 
+      "id"_nm     = id,
+      "state"_nm  = state,
+      "counts"_nm = counts,
+  });
+  
+}
+
+[[cpp11::register]]
 doubles get_transition_probability_cpp(
     SEXP model
 ) {

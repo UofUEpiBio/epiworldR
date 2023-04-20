@@ -4,6 +4,14 @@ get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
 
+get_hist_variant_cpp <- function(model) {
+  .Call(`_epiworldR_get_hist_variant_cpp`, model)
+}
+
+get_hist_tool_cpp <- function(model) {
+  .Call(`_epiworldR_get_hist_tool_cpp`, model)
+}
+
 get_transition_probability_cpp <- function(model) {
   .Call(`_epiworldR_get_transition_probability_cpp`, model)
 }

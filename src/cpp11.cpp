@@ -13,6 +13,20 @@ extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
   END_CPP11
 }
 // db.cpp
+cpp11::data_frame get_hist_variant_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_hist_variant_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_hist_variant_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// db.cpp
+cpp11::data_frame get_hist_tool_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_hist_tool_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_hist_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// db.cpp
 doubles get_transition_probability_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model) {
   BEGIN_CPP11
@@ -286,8 +300,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_virus_n_cpp",                (DL_FUNC) &_epiworldR_add_virus_n_cpp,                 3},
     {"_epiworldR_agents_from_edgelist_cpp",       (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,        5},
     {"_epiworldR_agents_smallworld_cpp",          (DL_FUNC) &_epiworldR_agents_smallworld_cpp,           5},
+    {"_epiworldR_get_hist_tool_cpp",              (DL_FUNC) &_epiworldR_get_hist_tool_cpp,               1},
     {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              1},
     {"_epiworldR_get_hist_transition_matrix_cpp", (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,  2},
+    {"_epiworldR_get_hist_variant_cpp",           (DL_FUNC) &_epiworldR_get_hist_variant_cpp,            1},
     {"_epiworldR_get_n_replicates_cpp",           (DL_FUNC) &_epiworldR_get_n_replicates_cpp,            1},
     {"_epiworldR_get_n_tools_cpp",                (DL_FUNC) &_epiworldR_get_n_tools_cpp,                 1},
     {"_epiworldR_get_n_variants_cpp",             (DL_FUNC) &_epiworldR_get_n_variants_cpp,              1},

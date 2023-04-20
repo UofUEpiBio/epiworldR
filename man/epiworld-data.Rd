@@ -3,6 +3,8 @@
 \name{epiworld-data}
 \alias{epiworld-data}
 \alias{get_hist_total}
+\alias{get_hist_variant}
+\alias{get_hist_tool}
 \alias{get_transition_probability}
 \alias{get_reproductive_number}
 \alias{plot.epiworld_repnum}
@@ -11,6 +13,10 @@
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
+
+get_hist_variant(x)
+
+get_hist_tool(x)
 
 get_transition_probability(x)
 
