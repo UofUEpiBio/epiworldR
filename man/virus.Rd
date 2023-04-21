@@ -8,7 +8,13 @@
 \alias{rm_virus}
 \title{Virus}
 \usage{
-virus(name, post_immunity, prob_infecting, prob_recovery, prob_death)
+virus(
+  name,
+  prob_infecting,
+  prob_recovery = 0.5,
+  prob_death = 0,
+  post_immunity = 1
+)
 
 add_virus(m, v, prevalence)
 

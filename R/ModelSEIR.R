@@ -35,7 +35,7 @@ ModelSEIR <- function(
   
   structure(
     ModelSEIR_cpp(name, prevalence, infectiousness, incubation_days, recovery),
-    class = c("epiworld_model", "epiworld_seir")
+    class = c("epiworld_seir", "epiworld_model")
   )
   
 }

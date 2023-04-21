@@ -15,21 +15,21 @@ using namespace cpp11;
 [[cpp11::register]]
 SEXP virus_cpp(
     std::string name,
-    double post_immunity,
     double prob_infecting,
     double prob_recovery,
-    double prob_death
+    double prob_death,
+    double post_immunity
     ) {
   
   WrapVirus(virus)(new epiworld::Virus<int>(name));
   
-  if (post_immunity > 0.0)
-    virus->set_post_immunity(post_immunity);
-  
   virus->set_prob_infecting(prob_infecting);
   virus->set_prob_recovery(prob_recovery);
   virus->set_prob_death(prob_death);
-
+  
+  if (post_immunity > 0.0)
+    virus->set_post_immunity(post_immunity);
+  
   return virus;
   
 }

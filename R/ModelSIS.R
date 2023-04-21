@@ -31,7 +31,7 @@ ModelSIS <- function(
   
   structure(
     ModelSIS_cpp(name, prevalence, infectiousness, recovery),
-    class = c("epiworld_model", "epiworld_sis")
+    class = c("epiworld_sis", "epiworld_model")
   )
   
 }

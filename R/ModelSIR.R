@@ -32,7 +32,7 @@ ModelSIR <- function(
   
   structure(
     ModelSIR_cpp(name, prevalence, infectiousness, recovery),
-    class = c("epiworld_model", "epiworld_sir")
+    class = c("epiworld_sir", "epiworld_model")
   )
   
 }

@@ -45,7 +45,7 @@ model_sirconn <- ModelSIRCONN(
   name                = "COVID-19",
   n                   = 10000,
   prevalence          = 0.01,
-  contact_rate = 5,
+  contact_rate        = 5,
   prob_transmission   = 0.4,
   prob_recovery       = 0.95
 )

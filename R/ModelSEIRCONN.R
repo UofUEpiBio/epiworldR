@@ -41,7 +41,7 @@ ModelSEIRCONN <- function(
   structure(
     ModelSEIRCONN_cpp(name, n, prevalence, contact_rate, 
                       prob_transmission, incubation_days, prob_recovery),
-    class = c("epiworld_model", "epiworld_seirconn")
+    class = c("epiworld_seirconn", "epiworld_model")
   )
   
 }

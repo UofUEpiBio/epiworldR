@@ -16,7 +16,7 @@
 #'   name                = "COVID-19",
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
-#'   contact_rate = 5,
+#'   contact_rate        = 5,
 #'   prob_transmission   = 0.4,
 #'   prob_recovery       = 0.95
 #' )
@@ -32,7 +32,7 @@ ModelSIRCONN <- function(
   structure(
     ModelSIRCONN_cpp(name, n, prevalence, contact_rate, 
                      prob_transmission, prob_recovery),
-    class = c("epiworld_model", "epiworld_sirconn")
+    class = c("epiworld_sirconn", "epiworld_model")
   )
   
 }

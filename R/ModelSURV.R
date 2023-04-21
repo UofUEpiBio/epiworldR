@@ -66,7 +66,7 @@ ModelSURV <- function(
                   prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
                   prop_vax_redux_infect, surveillance_prob, prob_transmission, 
                   prob_death, prob_noreinfect),
-    class = c("epiworld_model", "epiworld_surv")
+    class = c("epiworld_surv", "epiworld_model")
   )
   
 }

@@ -24,19 +24,19 @@
 #' 
 virus <- function(
     name,
-    post_immunity,
     prob_infecting,
-    prob_recovery,
-    prob_death
+    prob_recovery = 0.5,
+    prob_death    = 0.0,
+    post_immunity = 1.0
     ) {
   
   structure(
     virus_cpp(
       name,
-      post_immunity,
       prob_infecting,
       prob_recovery,
-      prob_death
+      prob_death,
+      post_immunity
       ),
     class = "epiworld_virus"
   )
@@ -55,6 +55,37 @@ add_virus.epiworld_model <- function(m, v, prevalence) {
   
   add_virus_cpp(m, v, prevalence)
   invisible(m)
+  
+}
+
+#' @export
+add_virus.epiworld_sir <- function(m, v, prevalence) {
+  
+  virus_set_state(v, init = 1, end = 2, removed = 2)
+  add_virus_cpp(m, v, prevalence)
+  invisible(m)
+  
+}
+
+#' @export
+add_virus.epiworld_sirconn <- function(m, v, prevalence) {
+  
+  add_virus.epiworld_sir(m, v, prevalence)
+  
+}
+
+#' @export
+add_virus.epiworld_seir <- function(m, v, prevalence) {
+  
+  add_virus.epiworld_sir(m, v, prevalence)
+  
+}
+
+#' @export
+add_virus.epiworld_seirconn <- function(m, v, prevalence) {
+  
+  add_virus.epiworld_sir(m, v, prevalence)
+  
 }
 
 #' @export
@@ -94,3 +125,4 @@ rm_virus <- function(m, virus_pos) {
 print.epiworld_virus <- function(x, ...) {
   print_virus_cpp(x)
 }
+

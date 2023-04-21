@@ -251,10 +251,10 @@ extern "C" SEXP _epiworldR_rm_tool_cpp(SEXP m, SEXP tool_pos) {
   END_CPP11
 }
 // virus.cpp
-SEXP virus_cpp(std::string name, double post_immunity, double prob_infecting, double prob_recovery, double prob_death);
-extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP post_immunity, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death) {
+SEXP virus_cpp(std::string name, double prob_infecting, double prob_recovery, double prob_death, double post_immunity);
+extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death, SEXP post_immunity) {
   BEGIN_CPP11
-    return cpp11::as_sexp(virus_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(post_immunity), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infecting), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death)));
+    return cpp11::as_sexp(virus_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infecting), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(post_immunity)));
   END_CPP11
 }
 // virus.cpp

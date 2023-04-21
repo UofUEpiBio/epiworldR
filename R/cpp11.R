@@ -140,8 +140,8 @@ rm_tool_cpp <- function(m, tool_pos) {
   .Call(`_epiworldR_rm_tool_cpp`, m, tool_pos)
 }
 
-virus_cpp <- function(name, post_immunity, prob_infecting, prob_recovery, prob_death) {
-  .Call(`_epiworldR_virus_cpp`, name, post_immunity, prob_infecting, prob_recovery, prob_death)
+virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity) {
+  .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity)
 }
 
 virus_set_state_cpp <- function(v, init, end, removed) {

@@ -1,8 +1,8 @@
 ---
 title: "Getting started with epiworldR"
 author:
-  - George Vega Yon
   - Derek Meyer
+  - George Vega Yon
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -63,7 +63,7 @@ number of individuals in your population (n), (k), (d), and (p). Lastly, run
 the SIR model for a specfied number of days (ndays) with an optional seed 
 for reproducibility.  
 
-## Extracting information: Visualizing
+## Extracting information
 
 ... epiworld_model has many methods...
 
@@ -105,15 +105,7 @@ epiworldR supporst muti-variant model, here is how we do it:
 
 ```{r design-and-add}
 # Building the virus
-flu <- virus(
-  name = "Flu",
-  post_immunity  = 0.0,
-  prob_infecting = 1.0,
-  prob_recovery  = 0.0,
-  prob_death     = 0.0
-  )
-
-virus_set_state(flu, init = 1, end = 2, removed = 2)
+flu <- virus(name = "Flu", prob_infecting = 1.0)
 
 # Adding the virus to the model
 add_virus(model_sir, flu, .01)
