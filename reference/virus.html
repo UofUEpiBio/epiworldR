@@ -24,7 +24,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/vignette.html">Getting started with epiworldR</a>
+    <a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -48,7 +48,13 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">virus</span><span class="op">(</span><span class="va">name</span>, <span class="va">post_immunity</span>, <span class="va">prob_infecting</span>, <span class="va">prob_recovery</span>, <span class="va">prob_death</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">virus</span><span class="op">(</span></span>
+<span>  <span class="va">name</span>,</span>
+<span>  <span class="va">prob_infecting</span>,</span>
+<span>  prob_recovery <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  prob_death <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  post_immunity <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">add_virus</span><span class="op">(</span><span class="va">m</span>, <span class="va">v</span>, <span class="va">prevalence</span><span class="op">)</span></span>
 <span></span>
@@ -111,8 +117,8 @@ and removing the agent as a result of the virus, respectively.</p></dd>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">mseirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">992</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ||</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> The Virus you want to remove is out of range. This Agent only has 0 viruses.</span>
 <span class="r-in"><span><span class="va">mseirconn</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
@@ -121,10 +127,9 @@ and removing the agent as a result of the virus, respectively.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 3 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 40.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 24.98 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
@@ -140,17 +145,17 @@ and removing the agent as a result of the virus, respectively.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery       : 0.9900</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission   : 0.5000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - (0) Susceptible :  6900 -&gt; 1205</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - (1) Exposed     :  3100 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - (2) Infected    :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - (3) Recovered   :     0 -&gt; 8795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 3:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - (0) Susceptible :  6900 -&gt; 6327</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - (1) Exposed     :  3100 -&gt; 2855</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - (2) Infected    :     0 -&gt; 791</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - (3) Recovered   :     0 -&gt; 27</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.98  0.02  0.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed      0.00  0.84  0.16  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.00  0.01  0.99</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  0.00  1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  164557184.00  159050464.00  175008032.00  130714144.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed      89.15  76.47  53.98  58.79</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     132281824.00  85932168.00  168970624.00  149906016.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    89.51  144.21  144.16  174.34</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
