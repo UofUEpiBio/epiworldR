@@ -159,3 +159,7 @@ add_virus_n_cpp <- function(m, v, preval) {
 rm_virus_cpp <- function(m, virus_pos) {
   .Call(`_epiworldR_rm_virus_cpp`, m, virus_pos)
 }
+
+print_virus_cpp <- function(v) {
+  .Call(`_epiworldR_print_virus_cpp`, v)
+}

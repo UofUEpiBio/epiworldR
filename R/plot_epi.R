@@ -30,45 +30,56 @@ find_scale <- function(x) {
 
 #' @noRd
 #' @importFrom graphics legend
-plot_epi <- function(x, main = "", counts_scale, ...) { 
-  x <- get_hist_total(x)
-  state_names <- sort(unique(x$state))
+plot_epi <- function(
+    x, main = "",
+    counts_scale,
+    ...
+    ) { 
+  
+  curves <- get_hist_total(x)
+  state_names <- sort(unique(curves$state))
   
   # If the user didn't say what scale
   if (missing(counts_scale))
-    counts_scale <- find_scale(max(x$counts))
+    counts_scale <- find_scale(max(curves$counts))
   
-  x$counts <- x$counts/counts_scale
+  curves$counts <- curves$counts/counts_scale
   
   # Initialize date vector of size length for state names
   date_candidates <- integer(length = length(state_names)) 
   # Identify max date when the counts stop significantly changing by state
   
-  benchmark_value <- diff(range(x$counts))/200 # 0.5% of range
+  benchmark_value <- diff(range(curves$counts))/200 # 0.5% of range
   
-  for (i in 1:length(state_names)) {
+  for (i in 1L:length(state_names)) {
     date_candidates[i] <- with(
-      x[x$state == state_names[i],], 
-      sum(abs(diff(counts)) >benchmark_value )
+      curves[curves$state == state_names[i],], 
+      sum(abs(diff(counts)) > benchmark_value )
       )
   }
   # Round the maximum date up to the nearest 10th 
-  max_date <- ceiling(max(date_candidates) / 10) * 10
+  max_date <- min(
+    diff(range(curves$dates)),
+    max(ceiling(max(date_candidates) / 10L) * 10L, 10L)
+  )
   
   # Defining range of x values by max date as the max
-  x <- x[x$dates < max_date,]
+  curves <- curves[curves$dates < max_date,]
   # Defining range of y values  
-  counts_range <- range(x$counts)
+  counts_range <- range(curves$counts)
 
   # Plot the first state
   with(
-    x[x$state == state_names[1],], 
-    plot(
-      x = dates, y = counts, 
-      type = 'l', col = 1, ylim = counts_range, 
-      xlab = "Days", 
+    curves[curves$state == state_names[1L],], 
+    graphics::plot(
+      x    = dates,
+      y    = counts, 
+      type = 'l', 
+      col  = 1,
+      ylim = counts_range, 
+      xlab = "Day (step)", 
       ylab = ifelse(
-        counts_scale == 1,
+        counts_scale == 1L,
         "Population",
         paste("Population (", counts_scale, "'s)", sep = "")
         ), 
@@ -77,15 +88,29 @@ plot_epi <- function(x, main = "", counts_scale, ...) {
   )
   
   # Plot the remaining states
-  for (i in 2:length(state_names)) {
+  for (i in 2L:length(state_names)) {
+    
     with(
-      x[x$state == state_names[i],],
-      lines(x = dates, y = counts, type = 'l', col = i)
+      curves[curves$state == state_names[i],],
+      graphics::lines(
+        x    = dates,
+        y    = counts,
+        type = 'l',
+        col  = i
+        )
     )
+    
   }
+  
   # Legend
-  legend("right", legend = state_names, col = 1:length(state_names), lty = 1, 
-         lwd = 2, bty = "n")
+  graphics::legend(
+    "right",
+    legend = state_names,
+    col    = 1L:length(state_names),
+    lty    = 1L, 
+    lwd    = 2L,
+    bty    = "n"
+    )
 }
 
 # plot_epi(sir, main = "SIR Model")

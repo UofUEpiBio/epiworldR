@@ -89,3 +89,8 @@ rm_virus <- function(m, virus_pos) {
   invisible(rm_virus_cpp(m, virus_pos))
 }
 
+
+#' @export
+print.epiworld_virus <- function(x, ...) {
+  print_virus_cpp(x)
+}

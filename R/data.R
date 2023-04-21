@@ -99,20 +99,82 @@ plot.epiworld_repnum <- function(
     main = "Daily Average Reproductive Number",
     ...) {
   
-  res <- tapply(
-    X     = x[, "counts"],
-    INDEX = x[, "source_exposure_dates"],
-    FUN   = mean
-    )
   
-  graphics::plot(
-    x = sort(as.integer(names(res))),
-    y = res,
-    xlab = xlab,
-    ylab = ylab,
-    main = main,
-    ...
+  # Nvariants
+  vlabs     <- sort(unique(x[, "variant"]))
+  nvariants <- length(vlabs)
+  
+  res <- vector("list", nvariants)
+  names(res) <- vlabs
+  for (i in seq_along(vlabs)) {
+    
+    x_tmp <- x[x[, "variant"] == vlabs[i], ]
+    
+    res[[i]] <- tapply(
+      X     = x_tmp[, "counts"],
+      INDEX = x_tmp[, "source_exposure_dates"],
+      FUN   = mean
     )
+    
+    # Preparing the data frame
+    res[[i]] <- data.frame(
+      variant = vlabs[i],
+      step = as.integer(names(res[[i]])),
+      avg  = unname(res[[i]])
+    )
+    
+  }
+  
+  # Figuring out the range
+  res_all <- do.call(rbind, res)
+  
+  yran <- range(res_all[["avg"]])
+  xran <- range(res_all[["step"]])
+  
+  # Plotting -------------------------------------------------------------------
+  for (i in seq_along(vlabs)) {
+    
+    if (i == 1L) {
+      
+      graphics::plot(
+        x = res[[i]][["step"]],
+        y = res[[i]][["avg"]],
+        pch  = (i - 1),
+        col  = i,
+        xlab = xlab,
+        ylab = ylab,
+        main = main,
+        ...
+      )
+      next
+    }
+    
+    graphics::points(
+      x = res[[i]][["step"]],
+      y = res[[i]][["avg"]],
+      pch  = (i - 1),
+      col  = i,
+      ...
+    )
+    
+  }
+  
+  if (nvariants > 1L) {
+    
+    graphics::legend(
+      "topright",
+      legend = vlabs,
+      pch    = 0L:(nvariants - 1L),
+      col    = 1L:nvariants,
+      title  = "Variants",
+      bty    = "n"
+    )
+    
+  }
+  
+  res <- do.call(rbind, res)
+  rownames(res) <- NULL
+  invisible(res)
   
 }
 

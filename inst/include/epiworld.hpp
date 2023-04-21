@@ -6995,7 +6995,7 @@ inline void Model<TSeq>::dist_virus()
     int n_left = n;
     std::iota(idx.begin(), idx.end(), 0);
 
-    for (epiworld_fast_uint v = 0; v < viruses.size(); ++v)
+    for (size_t v = 0u; v < viruses.size(); ++v)
     {
 
         if (viruses_dist_funs[v])
@@ -9467,6 +9467,8 @@ public:
     bool operator==(const Virus<TSeq> & other) const;
     bool operator!=(const Virus<TSeq> & other) const {return !operator==(other);};
 
+    void print() const;
+
 };
 
 #endif
@@ -10055,6 +10057,20 @@ inline bool Virus<TSeq>::operator==(const Virus<TSeq> & other) const
     )
 
     return true;
+
+}
+
+template<typename TSeq>
+inline void Virus<TSeq>::print() const
+{
+
+    printf_epiworld("Virus          : %s\n", virus_name->c_str());
+    printf_epiworld("status_init    : %i\n", status_init);
+    printf_epiworld("status_post    : %i\n", status_post);
+    printf_epiworld("status_removed : %i\n", status_removed);
+    printf_epiworld("queue_init     : %i\n", queue_init);
+    printf_epiworld("queue_post     : %i\n", queue_post);
+    printf_epiworld("queue_removed  : %i\n", queue_removed);
 
 }
 

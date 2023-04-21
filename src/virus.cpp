@@ -79,5 +79,12 @@ SEXP rm_virus_cpp(SEXP m, size_t virus_pos) {
   return m;
 }
 
+[[cpp11::register]]
+SEXP print_virus_cpp(SEXP v) {
+  
+  WrapVirus(vptr)(v);
+  vptr->print();
+  return v;
+}
     
 #undef WrapVirus
