@@ -7484,10 +7484,18 @@ inline void Model<TSeq>::rm_tool(size_t tool_pos)
     
     /* There's an error on windows:
     https://github.com/UofUEpiBio/epiworldR/actions/runs/4801482395/jobs/8543744180#step:6:84
+
+    More clear here:
+    https://stackoverflow.com/questions/58660207/why-doesnt-stdswap-work-on-vectorbool-elements-under-clang-win
     */
-    auto old = prevalence_tool_as_proportion[tool_pos];
-    prevalence_tool_as_proportion[tool_pos] = prevalence_tool_as_proportion[tools.size() - 1];
-    prevalence_tool_as_proportion[tools.size() - 1] = old;
+    std::vector<bool>::swap(
+        prevalence_tool_as_proportion[tool_pos],
+        prevalence_tool_as_proportion[tools.size() - 1]
+    );
+
+    // auto old = prevalence_tool_as_proportion[tool_pos];
+    // prevalence_tool_as_proportion[tool_pos] = prevalence_tool_as_proportion[tools.size() - 1];
+    // prevalence_tool_as_proportion[tools.size() - 1] = old;
     
 
     tools.pop_back();
