@@ -36,7 +36,7 @@ This example implements a social network with parameters listed within the
 ModelSIRCONN function. The disease name is specified (COVID-19), 100000 agents 
 are initialized, disease prevalence of 0.001 is declared, each agent will 
 contact two others (contact_rate), probability of transmitting the disease for 
-any given agent is 0.3, and probability of recovery is set to $\frac_{1}{3}$.
+any given agent is 0.3, and probability of recovery is set to $\frac{1}{3}$.
 To create this model on epiworldR, simply use the ModelSIRCONN function. 
 From here, the example will take you through the basic features of epiworldR.
 
@@ -96,22 +96,9 @@ susceptible state to the recovered state; that agent must pass through the
 infected state in order to then progress to the recovered state. The same logic
 applies with moving backwards; an agent cannot become susceptible again after 
 being infected. 
-
-
-
-Begin by specifying the disease name, prevalence, infectiousness, and recovery
-using the ModelSIR function. This function collects information about the 
-disease which will be spreading through the population. Next, specify the 
-number of individuals in your population (n), number of ties in the small world 
-network (k), whether the graph is directed or not (d), and probability of 
-rewiring (p). Lastly, run the SIR model for a specified number of days (ndays) 
-with an optional seed for reproducibility.  
   
 ## Plot
 =======
-number of individuals in your population (n), (k), (d), and (p). Lastly, run 
-the SIR model for a specfied number of days (ndays) with an optional seed 
-for reproducibility.  
 
 ## Extracting information
 
@@ -160,7 +147,13 @@ x <- plot(repnum, type="b")
 
 ## Adding more viruses/variants
 
-epiworldR supports multi-variant models, here is how we do it:
+epiworldR supports multi-variant models, the below code gives instructions on 
+how to implement this. Using the "virus" function, give a name to the new 
+virus/variant with its corresponding probability of infecting any given agent. 
+In this example, prob_infecting is set to 1.0 as the flu is very contagious. 
+In order to officially add this new virus to the model, use the "add_virus" 
+function by calling the original epiworldR model object, the new virus, and 
+the new virus' prevalence (which is set to 0.01 in this example).
 
 ```{r design-and-add}
 # Building the virus
@@ -170,10 +163,18 @@ flu <- virus(name = "Flu", prob_infecting = 1.0)
 add_virus(model_sir, flu, .01)
 ```
 
+After running the updated model with the new virus included for 50 days, the
+output below describes the simulation. To confirm that the flu is included, 
+notice the presence of "Flu" in the Virus(es) section of the output. All other
+output is interpretable as specified in previous sections. 
+
 ```{r}
 run(model_sir, ndays = 50, seed = 1912)
 model_sir
 ```
+Plotting the previous model (including the flu) yields the following. Notice 
+the presence of two reproductive numbers plotted over time. Variant 0 refers 
+to COVID-19 and variant 1 refers to the flu. 
 
 ```{r, fig.height=10}
 repnum2 <- get_reproductive_number(model_sir)
@@ -184,5 +185,40 @@ plot(repnum2, type="b")
 par(op)
 ```
 
-Running the previous model yields the following
+## Tools
+
+Now, the implementation of tools to combat any viruses and variants in the model 
+will be demonstrated. First, for the sake of simplicity, remove the flu virus 
+from the SIR model object (keep in  mind the index for the flu virus in the 
+model object is 1). Next, provide parameters for the new tool using the "tool"
+function. These parameters include the name of the tool, any reduction in 
+probabilities for the SIR model parameters, and increased probability of 
+recovery option. In order to add the tool to the SIR model, use the "add_tool"
+function with the SIR model object, new tool, and prevalence of the tool. 
+In this example, assume that 85% of the population will have received the 
+vaccination. 
+
+```{r}
+# Removing the flu virus from the model
+rm_virus(model_sir, 1)
+
+vaccine <- tool(
+  name = "Vaccine",
+  susceptibility_reduction = .9,
+  transmission_reduction = .5,
+  recovery_enhancer = .5, 
+  death_reduction = .9
+)
+
+add_tool(model_sir, vaccine, 0.85)
+```
+
+```{r}
+repnum3 <- get_reproductive_number(model_sir)
+
+op <- par(mfrow = c(2,1))
+plot(model_sir)
+plot(repnum3, type="b")
+par(op)
+```
 
