@@ -118,8 +118,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 180.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 27.65 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 186.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 26.75 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -176,8 +176,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 29.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 33.97 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 37.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 26.55 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -212,6 +212,71 @@
 <span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-2.png" width="100%"></p>
+</div>
+<div class="section level2">
+<h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
+</h2>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
+<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100000</span></span>
+<span></span>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
+<span>  Intercept <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  Female    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">coef_infect</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="va">coef_recover</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">model_logit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIRLogit.html">ModelSIRLogit</a></span><span class="op">(</span></span>
+<span>  <span class="st">"covid2"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">X</span>,</span>
+<span>  coefs_infect      <span class="op">=</span> <span class="va">coef_infect</span>,</span>
+<span>  coefs_recover     <span class="op">=</span> <span class="va">coef_recover</span>, </span>
+<span>  coef_infect_cols  <span class="op">=</span> <span class="fl">1L</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
+<span>  coef_recover_cols <span class="op">=</span> <span class="fl">1L</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span>
+<span>  prob_infection <span class="op">=</span> <span class="fl">.8</span>,</span>
+<span>  prob_recovery <span class="op">=</span> <span class="fl">.3</span>,</span>
+<span>  prevalence <span class="op">=</span> <span class="fl">.01</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span><span class="va">model_logit</span>, <span class="va">n</span>, <span class="fl">8</span>, <span class="cn">FALSE</span>, <span class="fl">.01</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_logit</span>, <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co">#&gt; _________________________________________________________________________</span></span>
+<span><span class="co">#&gt; |Running the model...</span></span>
+<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
+<span><span class="co">#&gt; | done.</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Females are supposed to be more likely to become infected</span></span>
+<span><span class="va">rn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
+<span></span>
+<span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span>
+<span>  <span class="va">X</span><span class="op">[</span>, <span class="st">"Female"</span><span class="op">]</span>,</span>
+<span>  <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">rn</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span></span>
+<span><span class="co">#&gt;       0       1 </span></span>
+<span><span class="co">#&gt; 0.12984 0.14201</span></span>
+<span></span>
+<span><span class="co"># Looking into the agents</span></span>
+<span><span class="fu"><a href="reference/get_agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span></span>
+<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; ... 99990 more agents ...</span></span></code></pre></div>
 </div>
 </div>
 
