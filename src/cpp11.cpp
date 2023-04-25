@@ -5,6 +5,27 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// agents.cpp
+SEXP get_agents_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_agents_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_agents_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// agents.cpp
+SEXP get_agent_cpp(SEXP agents, size_t i);
+extern "C" SEXP _epiworldR_get_agent_cpp(SEXP agents, SEXP i) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agents), cpp11::as_cpp<cpp11::decay_t<size_t>>(i)));
+  END_CPP11
+}
+// agents.cpp
+SEXP print_agent_cpp(SEXP agent, SEXP model, bool compressed);
+extern "C" SEXP _epiworldR_print_agent_cpp(SEXP agent, SEXP model, SEXP compressed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(print_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(compressed)));
+  END_CPP11
+}
 // db.cpp
 cpp11::data_frame get_hist_total_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
@@ -229,6 +250,13 @@ extern "C" SEXP _epiworldR_get_n_replicates_cpp(SEXP model) {
     return cpp11::as_sexp(get_n_replicates_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// model.cpp
+int size_cpp(SEXP model);
+extern "C" SEXP _epiworldR_size_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(size_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // tool.cpp
 SEXP tool_cpp(std::string name, double susceptibility_reduction, double transmission_reduction, double recovery_enhancer, double death_reduction);
 extern "C" SEXP _epiworldR_tool_cpp(SEXP name, SEXP susceptibility_reduction, SEXP transmission_reduction, SEXP recovery_enhancer, SEXP death_reduction) {
@@ -315,6 +343,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_virus_n_cpp",                (DL_FUNC) &_epiworldR_add_virus_n_cpp,                 3},
     {"_epiworldR_agents_from_edgelist_cpp",       (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,        5},
     {"_epiworldR_agents_smallworld_cpp",          (DL_FUNC) &_epiworldR_agents_smallworld_cpp,           5},
+    {"_epiworldR_get_agent_cpp",                  (DL_FUNC) &_epiworldR_get_agent_cpp,                   2},
+    {"_epiworldR_get_agents_cpp",                 (DL_FUNC) &_epiworldR_get_agents_cpp,                  1},
     {"_epiworldR_get_hist_tool_cpp",              (DL_FUNC) &_epiworldR_get_hist_tool_cpp,               1},
     {"_epiworldR_get_hist_total_cpp",             (DL_FUNC) &_epiworldR_get_hist_total_cpp,              1},
     {"_epiworldR_get_hist_transition_matrix_cpp", (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,  2},
@@ -329,6 +359,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_state_cpp",                  (DL_FUNC) &_epiworldR_get_state_cpp,                   1},
     {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
     {"_epiworldR_make_saver_cpp",                 (DL_FUNC) &_epiworldR_make_saver_cpp,                 10},
+    {"_epiworldR_print_agent_cpp",                (DL_FUNC) &_epiworldR_print_agent_cpp,                 3},
     {"_epiworldR_print_cpp",                      (DL_FUNC) &_epiworldR_print_cpp,                       1},
     {"_epiworldR_print_virus_cpp",                (DL_FUNC) &_epiworldR_print_virus_cpp,                 1},
     {"_epiworldR_queuing_off_cpp",                (DL_FUNC) &_epiworldR_queuing_off_cpp,                 1},
@@ -339,6 +370,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_multiple_cpp",               (DL_FUNC) &_epiworldR_run_multiple_cpp,                8},
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
+    {"_epiworldR_size_cpp",                       (DL_FUNC) &_epiworldR_size_cpp,                        1},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
     {"_epiworldR_verbose_off_cpp",                (DL_FUNC) &_epiworldR_verbose_off_cpp,                 1},
     {"_epiworldR_verbose_on_cpp",                 (DL_FUNC) &_epiworldR_verbose_on_cpp,                  1},

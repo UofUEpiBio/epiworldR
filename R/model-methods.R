@@ -103,6 +103,8 @@ set_name.epiworld_model <- function(x, mname) {
 }
 
 #' @export
+#' @returns
+#' - `get_name` returns the name of the model.
 #' @rdname epiworld-methods
 get_name <- function(x) UseMethod("get_name")
 
@@ -113,6 +115,8 @@ get_name.epiworld_model <- function(x) {
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_n_variants` returns the number of variants of the model.
 get_n_variants <- function(x) UseMethod("get_n_variants")
 
 #' @export
@@ -121,6 +125,8 @@ get_n_variants.epiworld_model <- function(x) get_n_variants_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_n_tools` returns the number of tools of the model.
 get_n_tools <- function(x) UseMethod("get_n_tools")
 
 #' @export
@@ -129,6 +135,8 @@ get_n_tools.epiworld_model <- function(x) get_n_tools_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_ndays` returns the number of days of the model.
 get_ndays <- function(x) UseMethod("get_ndays")
 
 #' @export
@@ -137,8 +145,21 @@ get_ndays.epiworld_model <- function(x) get_ndays_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns 
+#' - `get_n_replicates` returns the number of replicates of the model.
 get_n_replicates <- function(x) UseMethod("get_n_replicates")
 
 #' @export
 get_n_replicates.epiworld_model <- function(x) get_n_replicates_cpp(x)
+
+
+#' @export
+#' @rdname epiworld-methods
+#' @returns 
+#' - `size.epiworld_model` returns the number of agents in the model.
+#' 
+size <- function(x) UseMethod("size")
+
+#' @export
+size.epiworld_model <- function(x) size_cpp(x)
 

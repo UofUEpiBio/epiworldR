@@ -231,3 +231,7 @@ int get_n_replicates_cpp(SEXP model) {
   
 }
 
+[[cpp11::register]]
+int size_cpp(SEXP model) {
+  return cpp11::external_pointer<Model<>>(model)->size();
+}

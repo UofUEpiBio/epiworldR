@@ -3406,9 +3406,9 @@ inline int DataBase<TSeq>::get_today_total(
 ) const
 {
 
-    for (auto i = 0u; i < model->status_labels.size(); ++i)
+    for (auto i = 0u; i < model->states_labels.size(); ++i)
     {
-        if (model->status_labels[i] == what)
+        if (model->states_labels[i] == what)
             return today_total[i];
     }
 
@@ -3423,7 +3423,7 @@ inline void DataBase<TSeq>::get_today_total(
 ) const
 {
     if (state != nullptr)
-        (*state) = model->status_labels;
+        (*state) = model->states_labels;
 
     if (counts != nullptr)
         *counts = today_total;
@@ -3444,9 +3444,9 @@ inline void DataBase<TSeq>::get_today_variant(
 
     int n = 0u;
     for (epiworld_fast_uint v = 0u; v < today_variant.size(); ++v)
-        for (epiworld_fast_uint s = 0u; s < model->status_labels.size(); ++s)
+        for (epiworld_fast_uint s = 0u; s < model->states_labels.size(); ++s)
         {
-            state[n]   = model->status_labels[s];
+            state[n]   = model->states_labels[s];
             id[n]       = static_cast<int>(v);
             counts[n++] = today_variant[v][s];
 
@@ -3469,7 +3469,7 @@ inline void DataBase<TSeq>::get_hist_total(
     {
         state->resize(hist_total_state.size(), "");
         for (epiworld_fast_uint i = 0u; i < hist_total_state.size(); ++i)
-            state->operator[](i) = model->status_labels[hist_total_state[i]];
+            state->operator[](i) = model->states_labels[hist_total_state[i]];
     }
 
     if (counts != nullptr)
@@ -3489,7 +3489,7 @@ inline void DataBase<TSeq>::get_hist_variant(
 
     date = hist_variant_date;
     std::vector< std::string > labels;
-    labels = model->status_labels;
+    labels = model->states_labels;
     
     id = hist_variant_id;
     state.resize(hist_variant_state.size(), "");
@@ -3513,7 +3513,7 @@ inline void DataBase<TSeq>::get_hist_tool(
 
     date = hist_tool_date;
     std::vector< std::string > labels;
-    labels = model->status_labels;
+    labels = model->states_labels;
     
     id = hist_tool_id;
     state.resize(hist_tool_state.size(), "");
@@ -3564,8 +3564,8 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
                 if (skip_zeros && v == 0)
                     continue;
                                 
-                state_from.push_back(model->status_labels[i]);
-                state_to.push_back(model->status_labels[j]);
+                state_from.push_back(model->states_labels[i]);
+                state_to.push_back(model->states_labels[j]);
                 date.push_back(hist_total_date[step * n_status]);
                 counts.push_back(v);
 
@@ -3638,7 +3638,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_variant_date[i] << " " <<
                 hist_variant_id[i] << " " <<
-                model->status_labels[hist_variant_state[i]] << " " <<
+                model->states_labels[hist_variant_state[i]] << " " <<
                 hist_variant_counts[i] << "\n";
     }
 
@@ -3684,7 +3684,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_tool_date[i] << " " <<
                 hist_tool_id[i] << " " <<
-                model->status_labels[hist_tool_state[i]] << " " <<
+                model->states_labels[hist_tool_state[i]] << " " <<
                 hist_tool_counts[i] << "\n";
     }
 
@@ -3705,7 +3705,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_total_date[i] << " " <<
                 hist_total_nvariants_active[i] << " \"" <<
-                model->status_labels[hist_total_state[i]] << "\" " << 
+                model->states_labels[hist_total_state[i]] << "\" " << 
                 hist_total_counts[i] << "\n";
     }
 
@@ -3752,8 +3752,8 @@ inline void DataBase<TSeq>::write_data(
                         EPI_GET_THREAD_ID() << " " <<
                         #endif
                         i << " " <<
-                        model->status_labels[from] << " " <<
-                        model->status_labels[to] << " " <<
+                        model->states_labels[from] << " " <<
+                        model->states_labels[to] << " " <<
                         hist_transition_matrix[i * (ns * ns) + to * ns + from] << "\n";
                 
         }
@@ -3906,8 +3906,8 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
     bool print
 ) const {
 
-    auto status_labels = model->get_state();
-    size_t n_state = status_labels.size();
+    auto states_labels = model->get_state();
+    size_t n_state = states_labels.size();
     size_t n_days   = model->get_ndays();
     std::vector< epiworld_double > res(n_state * n_state, 0.0);
     std::vector< epiworld_double > days_to_include(n_state, 0.0);
@@ -3962,7 +3962,7 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
     {   
 
         size_t nchar = 0u;
-        for (auto & l : status_labels)
+        for (auto & l : states_labels)
             if (l.length() > nchar)
                 nchar = l.length();
 
@@ -3971,7 +3971,7 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
         printf_epiworld("\nTransition Probabilities:\n");
         for (size_t s_i = 0u; s_i < n_state; ++s_i)
         {
-            printf_epiworld(fmt.c_str(), status_labels[s_i].c_str());
+            printf_epiworld(fmt.c_str(), states_labels[s_i].c_str());
             for (size_t s_j = 0u; s_j < n_state; ++s_j)
             {
                 if (std::isnan(res[s_i + s_j * n_state]))
@@ -5715,7 +5715,7 @@ protected:
     Progress pb;
 
     std::vector< UpdateFun<TSeq> >    status_fun = {};
-    std::vector< std::string >        status_labels = {};
+    std::vector< std::string >        states_labels = {};
     epiworld_fast_uint nstatus = 0u;
     
     bool verbose     = true;
@@ -6682,7 +6682,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     ndays(model.ndays),
     pb(model.pb),
     status_fun(model.status_fun),
-    status_labels(model.status_labels),
+    states_labels(model.states_labels),
     nstatus(model.nstatus),
     verbose(model.verbose),
     current_date(model.current_date),
@@ -6771,7 +6771,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     ndays(model.ndays),
     pb(std::move(model.pb)),
     status_fun(std::move(model.status_fun)),
-    status_labels(std::move(model.status_labels)),
+    states_labels(std::move(model.states_labels)),
     nstatus(model.nstatus),
     verbose(model.verbose),
     current_date(std::move(model.current_date)),
@@ -6843,7 +6843,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     pb         = m.pb;
 
     status_fun    = m.status_fun;
-    status_labels = m.status_labels;
+    states_labels = m.states_labels;
     nstatus       = m.nstatus;
 
     verbose     = m.verbose;
@@ -8256,7 +8256,7 @@ inline void Model<TSeq>::print(bool lite) const
         size_t nchar = 0u;
         std::string fmt = " - %-" + std::to_string(nchar + 1) + "s: ";
 
-        for (auto & p : status_labels)
+        for (auto & p : states_labels)
             if (p.length() > nchar)
                 nchar = p.length();
 
@@ -8277,7 +8277,7 @@ inline void Model<TSeq>::print(bool lite) const
                 printf_epiworld(
                     fmt.c_str(),
                     s,
-                    status_labels[s].c_str(),
+                    states_labels[s].c_str(),
                     db.hist_total_counts[s],
                     db.today_total[ s ]
                     );
@@ -8289,7 +8289,7 @@ inline void Model<TSeq>::print(bool lite) const
                 printf_epiworld(
                     fmt.c_str(),
                     s,
-                    status_labels[s].c_str(),
+                    states_labels[s].c_str(),
                     db.today_total[ s ]
                     );
 
@@ -8488,7 +8488,7 @@ inline void Model<TSeq>::print(bool lite) const
     }
 
     nchar = 0u;
-    for (auto & p : status_labels)
+    for (auto & p : states_labels)
         if (p.length() > nchar)
             nchar = p.length();
 
@@ -8511,7 +8511,7 @@ inline void Model<TSeq>::print(bool lite) const
                 printf_epiworld(
                     fmt.c_str(),
                     s,
-                    status_labels[s].c_str(),
+                    states_labels[s].c_str(),
                     db.hist_total_counts[s],
                     db.today_total[ s ]
                     );
@@ -8523,7 +8523,7 @@ inline void Model<TSeq>::print(bool lite) const
             //     printf_epiworld(
             //         fmt.c_str(),
             //         s,
-            //         status_labels[s].c_str(),
+            //         states_labels[s].c_str(),
             //         db.today_total[ s ]
             //         );
 
@@ -8598,11 +8598,11 @@ inline void Model<TSeq>::add_state(
 {
 
     // Checking it doesn't match
-    for (auto & s : status_labels)
+    for (auto & s : states_labels)
         if (s == lab)
             throw std::logic_error("state \"" + s + "\" already registered.");
 
-    status_labels.push_back(lab);
+    states_labels.push_back(lab);
     status_fun.push_back(fun);
     nstatus++;
 
@@ -8613,7 +8613,7 @@ template<typename TSeq>
 inline const std::vector< std::string > &
 Model<TSeq>::get_state() const
 {
-    return status_labels;
+    return states_labels;
 }
 
 template<typename TSeq>
@@ -8635,7 +8635,7 @@ inline void Model<TSeq>::print_state_codes() const
     printf_epiworld("\n%s\nSTATUS CODES\n\n", line.c_str());
 
     epiworld_fast_uint nchar = 0u;
-    for (auto & p : status_labels)
+    for (auto & p : states_labels)
         if (p.length() > nchar)
             nchar = p.length();
     
@@ -8646,7 +8646,7 @@ inline void Model<TSeq>::print_state_codes() const
         printf_epiworld(
             fmt.c_str(),
             i,
-            (status_labels[i] + " (S)").c_str()
+            (states_labels[i] + " (S)").c_str()
         );
 
     }
@@ -9086,8 +9086,8 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     )
     
     VECT_MATCH(
-        status_labels,
-        other.status_labels,
+        states_labels,
+        other.states_labels,
         "state labels don't match"
     )
 
@@ -12332,8 +12332,10 @@ public:
      * @return double& 
      */
     ///@{
-    // double & operator()(size_t j);
-    // double & operator[](size_t j);
+    double & operator()(size_t j);
+    double & operator[](size_t j);
+    double operator()(size_t j) const;
+    double operator[](size_t j) const;
     ///@}
 
     Entities<TSeq> get_entities();
@@ -13448,16 +13450,39 @@ inline void Agent<TSeq>::print(
     {
         printf_epiworld(
             "Agent: %i, state: %s (%lu), Nvirus: %lu, NTools: %lu, NNeigh: %lu\n",
-            id, model->status_labels[state].c_str(), state, n_viruses, n_tools, neighbors.size()
+            id, model->states_labels[state].c_str(), state, n_viruses, n_tools, neighbors.size()
         );
     }
     else {
 
         printf_epiworld("Information about agent id %i\n", this->id);
-        printf_epiworld("  state       : %s (%lu)\n", model->status_labels[state].c_str(), state);
+        printf_epiworld("  State        : %s (%lu)\n", model->states_labels[state].c_str(), state);
         printf_epiworld("  Virus count  : %lu\n", n_viruses);
         printf_epiworld("  Tool count   : %lu\n", n_tools);
         printf_epiworld("  Neigh. count : %lu\n", neighbors.size());
+
+        size_t nfeats = model->get_agents_data_ncols();
+        if (nfeats > 0)
+        {
+
+            printf_epiworld("This model includes features (%lu): [ ", nfeats);
+
+            int max_to_show = static_cast<int>((nfeats > 10)? 10 : nfeats);
+
+            for (int k = 0; k < max_to_show; ++k)
+            {
+                printf_epiworld("%.2f", this->operator[](k));
+
+                if (k != (max_to_show - 1))
+                {
+                    printf_epiworld(", ");
+                } else {
+                    printf_epiworld(" ]\n");
+                }
+
+            }
+            
+        }
 
     }
 
@@ -13465,22 +13490,39 @@ inline void Agent<TSeq>::print(
 
 }
 
-// template<typename TSeq>
-// inline double & Agent<TSeq>::operator()(size_t j)
-// {
+template<typename TSeq>
+inline double & Agent<TSeq>::operator()(size_t j)
+{
 
-//     if (model->agents_data_ncols <= j)
-//         throw std::logic_error("The requested feature of the agent is out of range.");
+    if (model->agents_data_ncols <= j)
+        throw std::logic_error("The requested feature of the agent is out of range.");
 
-//     return *(model->agents_data + j * model->size() + id);
+    return *(model->agents_data + j * model->size() + id);
 
-// }
+}
 
-// template<typename TSeq>
-// inline double & Agent<TSeq>::operator[](size_t j)
-// {
-//     return *(model->agents_data + j * model->size() + id);
-// }
+template<typename TSeq>
+inline double & Agent<TSeq>::operator[](size_t j)
+{
+    return *(model->agents_data + j * model->size() + id);
+}
+
+template<typename TSeq>
+inline double Agent<TSeq>::operator()(size_t j) const
+{
+
+    if (model->agents_data_ncols <= j)
+        throw std::logic_error("The requested feature of the agent is out of range.");
+
+    return *(model->agents_data + j * model->size() + id);
+
+}
+
+template<typename TSeq>
+inline double Agent<TSeq>::operator[](size_t j) const
+{
+    return *(model->agents_data + j * model->size() + id);
+}
 
 template<typename TSeq>
 inline Entities<TSeq> Agent<TSeq>::get_entities()
@@ -16148,6 +16190,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
         ModelSIRLogit<TSeq>::RECOVERED,
         ModelSIRLogit<TSeq>::RECOVERED
         );
+
+    // virus.set_prob
 
     model.add_virus(virus, prevalence);
 

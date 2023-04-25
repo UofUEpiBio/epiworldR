@@ -16,6 +16,7 @@
 \alias{get_n_tools}
 \alias{get_ndays}
 \alias{get_n_replicates}
+\alias{size}
 \title{Common methods for predefined models of Epiworld}
 \usage{
 queuing_on(x)
@@ -45,6 +46,8 @@ get_n_tools(x)
 get_ndays(x)
 
 get_n_replicates(x)
+
+size(x)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -60,6 +63,31 @@ get_n_replicates(x)
 \item{pval}{Numeric. Value of the parameter}
 
 \item{mname}{String. Name of the model}
+}
+\value{
+\itemize{
+\item \code{get_name} returns the name of the model.
+}
+
+\itemize{
+\item \code{get_n_variants} returns the number of variants of the model.
+}
+
+\itemize{
+\item \code{get_n_tools} returns the number of tools of the model.
+}
+
+\itemize{
+\item \code{get_ndays} returns the number of days of the model.
+}
+
+\itemize{
+\item \code{get_n_replicates} returns the number of replicates of the model.
+}
+
+\itemize{
+\item \code{size.epiworld_model} returns the number of agents in the model.
+}
 }
 \description{
 Common methods for predefined models of Epiworld
