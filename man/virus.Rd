@@ -55,7 +55,6 @@ mseirconn <- ModelSEIRCONN(
 )
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
-virus_set_state(delta, 1, 3, 3)
 
 add_virus(mseirconn, delta, .3)
 

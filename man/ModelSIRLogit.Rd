@@ -17,19 +17,23 @@ ModelSIRLogit(
 )
 }
 \arguments{
-\item{vname}{}
+\item{vname}{Name of the virus}
 
-\item{data}{}
+\item{data}{A numeric matrix with \code{n} rows.}
 
-\item{coefs_infect}{}
+\item{coefs_infect}{Numeric vector. Coefficients associated to infect.}
 
-\item{coefs_recover}{}
+\item{coefs_recover}{Numeric vector. Coefficients associated to recover.}
 
-\item{coef_infect_cols}{}
+\item{coef_infect_cols}{Integer vector. Columns in the coeficient.}
 
-\item{coef_recover_cols}{}
+\item{coef_recover_cols}{Integer vector. Columns in the coeficient.}
 
-\item{prevalence}{}
+\item{prob_infection}{Numeric scalar. Baseline probability of infection.}
+
+\item{prob_recovery}{Numeric scalar. Baseline probability of recovery.}
+
+\item{prevalence}{Numeric scalar. Prevalence (initial state) in proportion.}
 }
 \description{
 SIR Logistic model

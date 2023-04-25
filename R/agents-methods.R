@@ -3,6 +3,7 @@
 #' @param x An object of class [epiworld_agents].
 #' @seealso agents
 #' @export
+#' @aliases epiworld_agents
 get_agents <- function(model) {
   
   res <- get_agents_cpp(model)
@@ -32,6 +33,7 @@ get_agents <- function(model) {
 #' @export
 #' @param compressed Logical scalar. When FALSE, it prints detailed information
 #' about the agent.
+#' @param ... Ignored
 #' @rdname get_agents
 print.epiworld_agent <- function(x, compressed = FALSE, ...) {
   
@@ -40,6 +42,7 @@ print.epiworld_agent <- function(x, compressed = FALSE, ...) {
 }
 
 #' @export
+#' @param max_print Integer scalar. Maximum number of agents to print.
 #' @rdname get_agents
 print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
   

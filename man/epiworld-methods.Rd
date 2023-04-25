@@ -3,6 +3,7 @@
 \name{epiworld-methods}
 \alias{epiworld-methods}
 \alias{queuing_on}
+\alias{epiworld_model}
 \alias{queuing_off}
 \alias{verbose_off}
 \alias{verbose_on}

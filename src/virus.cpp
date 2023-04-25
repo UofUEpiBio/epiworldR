@@ -35,7 +35,7 @@ SEXP virus_cpp(
 }
   
 [[cpp11::register]]
-int virus_set_state_cpp(
+SEXP virus_set_state_cpp(
   SEXP v,
   size_t init,
   size_t end,
@@ -47,30 +47,30 @@ int virus_set_state_cpp(
     init, end, removed
   );
   
-  return 0;
+  return v;
   
 }
 
 [[cpp11::register]]
-int add_virus_cpp(SEXP m, SEXP v, double preval) {
+SEXP add_virus_cpp(SEXP m, SEXP v, double preval) {
   
   cpp11::external_pointer<epiworld::Model<>>(m)->add_virus(
     *cpp11::external_pointer<epiworld::Virus<>>(v),
     preval
   );
   
-  return 0;
+  return m;
 }
 
 [[cpp11::register]]
-int add_virus_n_cpp(SEXP m, SEXP v, size_t preval) {
+SEXP add_virus_n_cpp(SEXP m, SEXP v, size_t preval) {
   
   cpp11::external_pointer<epiworld::Model<>>(m)->add_virus_n(
       *cpp11::external_pointer<epiworld::Virus<>>(v),
       preval
   );
   
-  return 0;
+  return m;
 }
 
 [[cpp11::register]]

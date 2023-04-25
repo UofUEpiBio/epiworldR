@@ -5,6 +5,7 @@
 #' @param m Model object.
 #' @export
 #' @name epiworld-methods
+#' @aliases epiworld_model
 queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export

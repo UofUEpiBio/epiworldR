@@ -1,11 +1,13 @@
 #' SIR Logistic model 
-#' @param vname 
-#' @param data 
-#' @param coefs_infect 
-#' @param coefs_recover 
-#' @param coef_infect_cols 
-#' @param coef_recover_cols 
-#' @param prevalence 
+#' @param vname Name of the virus
+#' @param data A numeric matrix with `n` rows.
+#' @param coefs_infect Numeric vector. Coefficients associated to infect.
+#' @param coefs_recover Numeric vector. Coefficients associated to recover.
+#' @param coef_infect_cols Integer vector. Columns in the coeficient.
+#' @param coef_recover_cols Integer vector. Columns in the coeficient.
+#' @param prob_infection Numeric scalar. Baseline probability of infection.
+#' @param prob_recovery  Numeric scalar. Baseline probability of recovery.
+#' @param prevalence Numeric scalar. Prevalence (initial state) in proportion.
 #'
 #' @export
 #' @family Models

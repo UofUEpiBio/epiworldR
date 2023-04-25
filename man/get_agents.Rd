@@ -2,6 +2,7 @@
 % Please edit documentation in R/agents-methods.R
 \name{get_agents}
 \alias{get_agents}
+\alias{epiworld_agents}
 \alias{[.epiworld_agents}
 \alias{print.epiworld_agent}
 \alias{print.epiworld_agents}
@@ -27,6 +28,10 @@ get_state(x)
 
 \item{compressed}{Logical scalar. When FALSE, it prints detailed information
 about the agent.}
+
+\item{...}{Ignored}
+
+\item{max_print}{Integer scalar. Maximum number of agents to print.}
 }
 \description{
 Agents in epiworldR

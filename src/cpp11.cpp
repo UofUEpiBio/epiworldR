@@ -300,21 +300,21 @@ extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_r
   END_CPP11
 }
 // virus.cpp
-int virus_set_state_cpp(SEXP v, size_t init, size_t end, size_t removed);
+SEXP virus_set_state_cpp(SEXP v, size_t init, size_t end, size_t removed);
 extern "C" SEXP _epiworldR_virus_set_state_cpp(SEXP v, SEXP init, SEXP end, SEXP removed) {
   BEGIN_CPP11
     return cpp11::as_sexp(virus_set_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(init), cpp11::as_cpp<cpp11::decay_t<size_t>>(end), cpp11::as_cpp<cpp11::decay_t<size_t>>(removed)));
   END_CPP11
 }
 // virus.cpp
-int add_virus_cpp(SEXP m, SEXP v, double preval);
+SEXP add_virus_cpp(SEXP m, SEXP v, double preval);
 extern "C" SEXP _epiworldR_add_virus_cpp(SEXP m, SEXP v, SEXP preval) {
   BEGIN_CPP11
     return cpp11::as_sexp(add_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<double>>(preval)));
   END_CPP11
 }
 // virus.cpp
-int add_virus_n_cpp(SEXP m, SEXP v, size_t preval);
+SEXP add_virus_n_cpp(SEXP m, SEXP v, size_t preval);
 extern "C" SEXP _epiworldR_add_virus_n_cpp(SEXP m, SEXP v, SEXP preval) {
   BEGIN_CPP11
     return cpp11::as_sexp(add_virus_n_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<SEXP>>(v), cpp11::as_cpp<cpp11::decay_t<size_t>>(preval)));
