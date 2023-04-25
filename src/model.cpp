@@ -172,12 +172,12 @@ std::string get_name_cpp(SEXP model) {
 }
 
 [[cpp11::register]]
-cpp11::strings get_state_cpp(
+cpp11::strings get_states_cpp(
     SEXP model
 ) {
   
   cpp11::external_pointer<Model<>> ptr(model);
-  return cpp11::writable::strings(ptr->get_state());
+  return cpp11::writable::strings(ptr->get_states());
   
 }
 

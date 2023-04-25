@@ -7,7 +7,7 @@
 \alias{verbose_off}
 \alias{verbose_on}
 \alias{run}
-\alias{get_state}
+\alias{get_states}
 \alias{get_param}
 \alias{set_param}
 \alias{set_name}
@@ -29,7 +29,7 @@ verbose_on(x)
 
 run(m, ndays, seed = sample.int(10000, 1))
 
-get_state(x)
+get_states(x)
 
 get_param(x, pname)
 

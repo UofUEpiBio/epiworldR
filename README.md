@@ -71,8 +71,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 180.00ms
-#> Last run speed      : 27.65 million agents x day / second
+#> Last run elapsed t  : 186.00ms
+#> Last run speed      : 26.75 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -133,8 +133,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 29.00ms
-#> Last run speed      : 33.97 million agents x day / second
+#> Last run elapsed t  : 37.00ms
+#> Last run speed      : 26.55 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -177,3 +177,71 @@ plot(repnum, type = "b")
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
+
+## SIR Logit
+
+``` r
+
+set.seed(2223)
+n <- 100000
+
+X <- cbind(
+  Intercept = 1,
+  Female    = sample.int(2, n, replace = TRUE) - 1
+  )
+
+coef_infect  <- c(.1, -2, 2)
+coef_recover <- rnorm(2)
+
+model_logit <- ModelSIRLogit(
+  "covid2",
+  data = X,
+  coefs_infect      = coef_infect,
+  coefs_recover     = coef_recover, 
+  coef_infect_cols  = 1L:ncol(X),
+  coef_recover_cols = 1L:ncol(X),
+  prob_infection = .8,
+  prob_recovery = .3,
+  prevalence = .01
+)
+
+agents_smallworld(model_logit, n, 8, FALSE, .01)
+
+run(model_logit, 50)
+#> _________________________________________________________________________
+#> |Running the model...
+#> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+#> | done.
+
+plot(model_logit)
+```
+
+<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+
+``` r
+
+# Females are supposed to be more likely to become infected
+rn <- get_reproductive_number(model_logit)
+
+(table(
+  X[, "Female"],
+  (1:n %in% rn$source)
+) |> prop.table())[,2]
+#>       0       1 
+#> 0.12984 0.14201
+
+# Looking into the agents
+get_agents(model_logit)
+#> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
+#> Agent: 0, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 1, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 2, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 3, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 4, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 5, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 6, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 7, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 8, state: Susceptible (0), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> ... 99990 more agents ...
+```

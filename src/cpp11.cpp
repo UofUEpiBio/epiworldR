@@ -26,6 +26,13 @@ extern "C" SEXP _epiworldR_print_agent_cpp(SEXP agent, SEXP model, SEXP compress
     return cpp11::as_sexp(print_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(compressed)));
   END_CPP11
 }
+// agents.cpp
+int get_state_agent_cpp(SEXP agent);
+extern "C" SEXP _epiworldR_get_state_agent_cpp(SEXP agent) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_state_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent)));
+  END_CPP11
+}
 // db.cpp
 cpp11::data_frame get_hist_total_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
@@ -111,10 +118,10 @@ extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence,
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIRLogit_cpp(std::string vname, SEXP data, int ncols, std::vector< double > coefs_infect, std::vector< double > coefs_recover, std::vector< int > coef_infect_cols, std::vector< int > coef_recover_cols, double prevalence);
-extern "C" SEXP _epiworldR_ModelSIRLogit_cpp(SEXP vname, SEXP data, SEXP ncols, SEXP coefs_infect, SEXP coefs_recover, SEXP coef_infect_cols, SEXP coef_recover_cols, SEXP prevalence) {
+SEXP ModelSIRLogit_cpp(std::string vname, SEXP data, int ncols, std::vector< double > coefs_infect, std::vector< double > coefs_recover, std::vector< int > coef_infect_cols, std::vector< int > coef_recover_cols, double prob_infection, double prob_recovery, double prevalence);
+extern "C" SEXP _epiworldR_ModelSIRLogit_cpp(SEXP vname, SEXP data, SEXP ncols, SEXP coefs_infect, SEXP coefs_recover, SEXP coef_infect_cols, SEXP coef_recover_cols, SEXP prob_infection, SEXP prob_recovery, SEXP prevalence) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIRLogit_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(vname), cpp11::as_cpp<cpp11::decay_t<SEXP>>(data), cpp11::as_cpp<cpp11::decay_t<int>>(ncols), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_infect), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_recover), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_infect_cols), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_recover_cols), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence)));
+    return cpp11::as_sexp(ModelSIRLogit_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(vname), cpp11::as_cpp<cpp11::decay_t<SEXP>>(data), cpp11::as_cpp<cpp11::decay_t<int>>(ncols), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_infect), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_recover), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_infect_cols), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_recover_cols), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infection), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence)));
   END_CPP11
 }
 // model.cpp
@@ -202,10 +209,10 @@ extern "C" SEXP _epiworldR_get_name_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
-cpp11::strings get_state_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_state_cpp(SEXP model) {
+cpp11::strings get_states_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_states_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_states_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // model.cpp
@@ -333,7 +340,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSEIRCONN_cpp",              (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,               7},
     {"_epiworldR_ModelSEIR_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                   5},
     {"_epiworldR_ModelSIRCONN_cpp",               (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                6},
-    {"_epiworldR_ModelSIRLogit_cpp",              (DL_FUNC) &_epiworldR_ModelSIRLogit_cpp,               8},
+    {"_epiworldR_ModelSIRLogit_cpp",              (DL_FUNC) &_epiworldR_ModelSIRLogit_cpp,              10},
     {"_epiworldR_ModelSIR_cpp",                   (DL_FUNC) &_epiworldR_ModelSIR_cpp,                    4},
     {"_epiworldR_ModelSIS_cpp",                   (DL_FUNC) &_epiworldR_ModelSIS_cpp,                    4},
     {"_epiworldR_ModelSURV_cpp",                  (DL_FUNC) &_epiworldR_ModelSURV_cpp,                  13},
@@ -356,7 +363,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_ndays_cpp",                  (DL_FUNC) &_epiworldR_get_ndays_cpp,                   1},
     {"_epiworldR_get_param_cpp",                  (DL_FUNC) &_epiworldR_get_param_cpp,                   2},
     {"_epiworldR_get_reproductive_number_cpp",    (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,     1},
-    {"_epiworldR_get_state_cpp",                  (DL_FUNC) &_epiworldR_get_state_cpp,                   1},
+    {"_epiworldR_get_state_agent_cpp",            (DL_FUNC) &_epiworldR_get_state_agent_cpp,             1},
+    {"_epiworldR_get_states_cpp",                 (DL_FUNC) &_epiworldR_get_states_cpp,                  1},
     {"_epiworldR_get_transition_probability_cpp", (DL_FUNC) &_epiworldR_get_transition_probability_cpp,  1},
     {"_epiworldR_make_saver_cpp",                 (DL_FUNC) &_epiworldR_make_saver_cpp,                 10},
     {"_epiworldR_print_agent_cpp",                (DL_FUNC) &_epiworldR_print_agent_cpp,                 3},

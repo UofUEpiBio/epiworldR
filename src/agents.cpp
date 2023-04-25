@@ -57,3 +57,8 @@ SEXP print_agent_cpp(
   
 }
 
+[[cpp11::register]]
+int get_state_agent_cpp(SEXP agent) {
+  return cpp11::external_pointer<Agent<>>(agent)->get_state();
+}
+

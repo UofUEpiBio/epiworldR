@@ -11,6 +11,8 @@ ModelSIRLogit(
   coefs_recover,
   coef_infect_cols,
   coef_recover_cols,
+  prob_infection,
+  prob_recovery,
   prevalence
 )
 }

@@ -64,10 +64,10 @@ print.epiworld_model <- function(x, ...) {
 
 #' @export
 #' @rdname epiworld-methods
-get_state <- function(x) UseMethod("get_state")
+get_states <- function(x) UseMethod("get_states")
 
 #' @export
-get_state.epiworld_model <- function(x) get_state_cpp(x)
+get_states.epiworld_model <- function(x) get_states_cpp(x)
 
 #' @export
 #' @param pname String, name of the parameter

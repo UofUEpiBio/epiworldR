@@ -5,6 +5,7 @@
 \alias{[.epiworld_agents}
 \alias{print.epiworld_agent}
 \alias{print.epiworld_agents}
+\alias{get_state}
 \title{Agents in epiworldR}
 \usage{
 get_agents(model)
@@ -13,7 +14,9 @@ get_agents(model)
 
 \method{print}{epiworld_agent}(x, compressed = FALSE, ...)
 
-\method{print}{epiworld_agents}(x, compressed = TRUE, max_print = 20, ...)
+\method{print}{epiworld_agents}(x, compressed = TRUE, max_print = 10, ...)
+
+get_state(x)
 }
 \arguments{
 \item{model}{An object of class \link{epiworld_model}.}

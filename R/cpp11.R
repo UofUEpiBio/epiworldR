@@ -12,6 +12,10 @@ print_agent_cpp <- function(agent, model, compressed) {
   .Call(`_epiworldR_print_agent_cpp`, agent, model, compressed)
 }
 
+get_state_agent_cpp <- function(agent) {
+  .Call(`_epiworldR_get_state_agent_cpp`, agent)
+}
+
 get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
@@ -60,8 +64,8 @@ ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmissi
   .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery)
 }
 
-ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prevalence) {
-  .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prevalence)
+ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, prob_recovery, prevalence) {
+  .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, prob_recovery, prevalence)
 }
 
 print_cpp <- function(m) {
@@ -112,8 +116,8 @@ get_name_cpp <- function(model) {
   .Call(`_epiworldR_get_name_cpp`, model)
 }
 
-get_state_cpp <- function(model) {
-  .Call(`_epiworldR_get_state_cpp`, model)
+get_states_cpp <- function(model) {
+  .Call(`_epiworldR_get_states_cpp`, model)
 }
 
 verbose_on_cpp <- function(model) {

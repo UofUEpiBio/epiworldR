@@ -16,6 +16,8 @@ ModelSIRLogit <- function(
   coefs_recover,
   coef_infect_cols,
   coef_recover_cols,
+  prob_infection,
+  prob_recovery,
   prevalence
 ) {
   
@@ -28,6 +30,8 @@ ModelSIRLogit <- function(
       coefs_recover,
       coef_infect_cols - 1L,
       coef_recover_cols - 1L,
+      prob_infection,
+      prob_recovery,
       prevalence
     ),
     class = c("epiworld_sir", "epiworld_model")

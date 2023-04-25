@@ -59,3 +59,8 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
   
 }
 
+#' @export
+#' @rdname get_agents
+get_state <- function(x) {
+  get_state_agent_cpp(x)
+}
