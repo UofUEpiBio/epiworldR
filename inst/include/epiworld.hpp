@@ -7481,8 +7481,14 @@ inline void Model<TSeq>::rm_tool(size_t tool_pos)
     std::swap(tools[tool_pos], tools[tools.size() - 1]);
     std::swap(tools_dist_funs[tool_pos], tools_dist_funs[tools.size() - 1]);
     std::swap(prevalence_tool[tool_pos], prevalence_tool[tools.size() - 1]);
-    std::swap(prevalence_tool_as_proportion[tool_pos], prevalence_tool_as_proportion[tools.size() - 1]);
-
+    
+    /* There's an error on windows:
+    https://github.com/UofUEpiBio/epiworldR/actions/runs/4801482395/jobs/8543744180#step:6:84
+    */
+    auto old = prevalence_tool_as_proportion[tool_pos];
+    prevalence_tool_as_proportion[tool_pos] = prevalence_tool_as_proportion[tools.size() - 1];
+    prevalence_tool_as_proportion[tools.size() - 1] = old;
+    
 
     tools.pop_back();
     tools_dist_funs.pop_back();
