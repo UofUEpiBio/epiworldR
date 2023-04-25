@@ -97,7 +97,7 @@ within the ModelSIRCONN function. The disease name is specified
 (COVID-19), 100000 agents are initialized, disease prevalence of 0.001
 is declared, each agent will contact two others (contact_rate),
 probability of transmitting the disease for any given agent is 0.3, and
-probability of recovery is set to <span class="math inline">\(\frac_{1}{3}\)</span>. To create this model on
+probability of recovery is set to <span class="math inline">\(\frac{1}{3}\)</span>. To create this model on
 epiworldR, simply use the ModelSIRCONN function. From here, the example
 will take you through the basic features of epiworldR.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -166,8 +166,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 323.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 15.45 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 371.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 13.44 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -209,22 +209,11 @@ recovered state; that agent must pass through the infected state in
 order to then progress to the recovered state. The same logic applies
 with moving backwards; an agent cannot become susceptible again after
 being infected.</p>
-<p>Begin by specifying the disease name, prevalence, infectiousness, and
-recovery using the ModelSIR function. This function collects information
-about the disease which will be spreading through the population. Next,
-specify the number of individuals in your population (n), number of ties
-in the small world network (k), whether the graph is directed or not
-(d), and probability of rewiring (p). Lastly, run the SIR model for a
-specified number of days (ndays) with an optional seed for
-reproducibility.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="plot">## Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
 </h2>
-<p>number of individuals in your population (n), (k), (d), and (p).
-Lastly, run the SIR model for a specfied number of days (ndays) with an
-optional seed for reproducibility.</p>
 <div class="section level3">
 <h3 id="extracting-information">Extracting information<a class="anchor" aria-label="anchor" href="#extracting-information"></a>
 </h3>
@@ -292,13 +281,25 @@ the virus to roughly 1.7 other individuals.</p>
 <div class="section level3">
 <h3 id="adding-more-virusesvariants">Adding more viruses/variants<a class="anchor" aria-label="anchor" href="#adding-more-virusesvariants"></a>
 </h3>
-<p>epiworldR supports multi-variant models, here is how we do it:</p>
+<p>epiworldR supports multi-variant models, the below code gives
+instructions on how to implement this. Using the “virus” function, give
+a name to the new virus/variant with its corresponding probability of
+infecting any given agent. In this example, prob_infecting is set to 1.0
+as the flu is very contagious. In order to officially add this new virus
+to the model, use the “add_virus” function by calling the original
+epiworldR model object, the new virus, and the new virus’ prevalence
+(which is set to 0.01 in this example).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Building the virus</span></span>
 <span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/virus.html">virus</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Adding the virus to the model</span></span>
 <span><span class="fu"><a href="../reference/virus.html">add_virus</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="va">flu</span>, <span class="fl">.01</span><span class="op">)</span></span></code></pre></div>
+<p>After running the updated model with the new virus included for 50
+days, the output below describes the simulation. To confirm that the flu
+is included, notice the presence of “Flu” in the Virus(es) section of
+the output. All other output is interpretable as specified in previous
+sections.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
@@ -315,10 +316,10 @@ the virus to roughly 1.7 other individuals.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 350.00ms</span></span>
-<span><span class="co">#&gt; Total elapsed t     : 673.00ms (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 14.28 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 14.84 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 403.00ms</span></span>
+<span><span class="co">#&gt; Total elapsed t     : 775.00ms (2 runs)</span></span>
+<span><span class="co">#&gt; Last run speed      : 12.39 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 12.89 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -342,6 +343,9 @@ the virus to roughly 1.7 other individuals.</p>
 <span><span class="co">#&gt;  - Susceptible  0.97  0.03  0.00</span></span>
 <span><span class="co">#&gt;  - Infected     0.00  0.67  0.33</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
+<p>Plotting the previous model (including the flu) yields the following.
+Notice the presence of two reproductive numbers plotted over time.
+Variant 0 refers to COVID-19 and variant 1 refers to the flu.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
@@ -351,7 +355,43 @@ the virus to roughly 1.7 other individuals.</p>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
-<p>Running the previous model yields the following</p>
+</div>
+<div class="section level3">
+<h3 id="tools">Tools<a class="anchor" aria-label="anchor" href="#tools"></a>
+</h3>
+<p>Now, the implementation of tools to combat any viruses and variants
+in the model will be demonstrated. First, for the sake of simplicity,
+remove the flu virus from the SIR model object (keep in mind the index
+for the flu virus in the model object is 1). Next, provide parameters
+for the new tool using the “tool” function. These parameters include the
+name of the tool, any reduction in probabilities for the SIR model
+parameters, and increased probability of recovery option. In order to
+add the tool to the SIR model, use the “add_tool” function with the SIR
+model object, new tool, and prevalence of the tool. In this example,
+assume that 85% of the population will have received the
+vaccination.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Removing the flu virus from the model</span></span>
+<span><span class="fu"><a href="../reference/virus.html">rm_virus</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">vaccine</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tool.html">tool</a></span><span class="op">(</span></span>
+<span>  name <span class="op">=</span> <span class="st">"Vaccine"</span>,</span>
+<span>  susceptibility_reduction <span class="op">=</span> <span class="fl">.9</span>,</span>
+<span>  transmission_reduction <span class="op">=</span> <span class="fl">.5</span>,</span>
+<span>  recovery_enhancer <span class="op">=</span> <span class="fl">.5</span>, </span>
+<span>  death_reduction <span class="op">=</span> <span class="fl">.9</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/tool.html">add_tool</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="va">vaccine</span>, <span class="fl">0.85</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">repnum3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum3</span>, type<span class="op">=</span><span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="getting-started_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
