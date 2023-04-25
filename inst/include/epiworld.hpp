@@ -5680,8 +5680,8 @@ protected:
      * 
      */
     ///@{
-    double * population_data = nullptr;
-    size_t population_data_n_features = 0u;
+    double * agents_data = nullptr;
+    size_t agents_data_ncols = 0u;
     ///@}
 
     bool directed = false;
@@ -6210,6 +6210,8 @@ public:
      * 
      */
     void set_agents_data(double * data_, size_t ncols_);
+    double * get_agents_data();
+    size_t get_agents_data_ncols();
 
     /**
      * @brief Set the name object
@@ -6717,8 +6719,8 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     if (use_queuing)
         queue.model = this;
 
-    population_data = model.population_data;
-    population_data_n_features = model.population_data_n_features;
+    agents_data = model.agents_data;
+    agents_data_ncols = model.agents_data_ncols;
 
     // Finally, seeds are resetted automatically based on the original
     // engine
@@ -6735,8 +6737,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     name(std::move(model.name)),
     db(std::move(model.db)),
     population(std::move(model.population)),
-    population_data(std::move(model.population_data)),
-    population_data_n_features(std::move(model.population_data_n_features)),
+    agents_data(std::move(model.agents_data)),
+    agents_data_ncols(std::move(model.agents_data_ncols)),
     directed(std::move(model.directed)),
     // Virus
     viruses(std::move(model.viruses)),
@@ -6859,8 +6861,8 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     db.model = this;
     db.user_data.model = this;
 
-    population_data            = m.population_data;
-    population_data_n_features = m.population_data_n_features;
+    agents_data            = m.agents_data;
+    agents_data_ncols = m.agents_data_ncols;
 
     // Figure out the queuing
     if (use_queuing)
@@ -8906,9 +8908,20 @@ const std::vector< ToolPtr<TSeq> > & Model<TSeq>::get_tools() const
 template<typename TSeq>
 inline void Model<TSeq>::set_agents_data(double * data_, size_t ncols_)
 {
-    population_data = data_;
-    population_data_n_features = ncols_;
+    agents_data = data_;
+    agents_data_ncols = ncols_;
 }
+
+template<typename TSeq>
+inline double * Model<TSeq>::get_agents_data() {
+    return this->agents_data;
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_agents_data_ncols()  {
+    return this->agents_data_ncols;
+}
+
 
 template<typename TSeq>
 inline void Model<TSeq>::set_name(std::string name)
@@ -8958,13 +8971,13 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     }
 
     EPI_DEBUG_FAIL_AT_TRUE(
-        population_data != other.population_data,
-        "Model:: population_data don't match"
+        agents_data != other.agents_data,
+        "Model:: agents_data don't match"
     )
 
     EPI_DEBUG_FAIL_AT_TRUE(
-        population_data_n_features != other.population_data_n_features,
-        "Model:: population_data_n_features don't match"
+        agents_data_ncols != other.agents_data_ncols,
+        "Model:: agents_data_ncols don't match"
     )
 
     EPI_DEBUG_FAIL_AT_TRUE(
@@ -13456,17 +13469,17 @@ inline void Agent<TSeq>::print(
 // inline double & Agent<TSeq>::operator()(size_t j)
 // {
 
-//     if (model->population_data_n_features <= j)
+//     if (model->agents_data_ncols <= j)
 //         throw std::logic_error("The requested feature of the agent is out of range.");
 
-//     return *(model->population_data + j * model->size() + id);
+//     return *(model->agents_data + j * model->size() + id);
 
 // }
 
 // template<typename TSeq>
 // inline double & Agent<TSeq>::operator[](size_t j)
 // {
-//     return *(model->population_data + j * model->size() + id);
+//     return *(model->agents_data + j * model->size() + id);
 // }
 
 template<typename TSeq>
@@ -13972,6 +13985,7 @@ inline void AgentsSample<TSeq>::sample_n(size_t n)
 #define EPIWORLD_MODELS_HPP
 
 namespace epimodels {
+
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -14802,6 +14816,8 @@ public:
     // Tracking who is infected and who is not
     std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected = {};
     std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected_next = {};
+    std::vector< epiworld_double >        tracked_agents_weight        = {};
+    std::vector< epiworld_double >        tracked_agents_weight_next   = {};
 
     bool tracked_started = false;
     int tracked_ninfected = 0;
@@ -15821,6 +15837,365 @@ inline void ModelSEIRD<TSeq>::contact(Model<TSeq> * m)
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/sirlogit.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+// #include "../epiworld.hpp"
+
+#ifndef EPIWORLD_MODELS_SIRLOGIT_HPP 
+#define EPIWORLD_MODELS_SIRLOGIT_HPP
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ModelSIRLogit : public epiworld::Model<TSeq>
+{
+private:
+    static const int SUSCEPTIBLE = 0;
+    static const int INFECTED    = 1;
+    static const int RECOVERED   = 2;
+
+public:
+
+    ModelSIRLogit() {};
+
+    /**
+      * @param vname Name of the virus.
+      * @param coefs_infect Double ptr. Infection coefficients.
+      * @param coefs_recover Double ptr. Recovery coefficients.
+      * @param ncoef_infect Unsigned int. Number of infection coefficients.
+      * @param ncoef_recover Unsigned int. Number of recovery coefficients.
+      * @param coef_infect_cols Vector<unsigned int>. Ids of infection vars.
+      * @param coef_recover_cols Vector<unsigned int>. Ids of recover vars.
+    */
+    ModelSIRLogit(
+        ModelSIRLogit<TSeq> & model,
+        std::string vname,
+        double * data,
+        size_t ncols,
+        std::vector< double > coefs_infect,
+        std::vector< double > coefs_recover,
+        std::vector< size_t > coef_infect_cols,
+        std::vector< size_t > coef_recover_cols,
+        epiworld_double prevalence
+    );
+
+    ModelSIRLogit(
+        std::string vname,
+        double * data,
+        size_t ncols,
+        std::vector< double > coefs_infect,
+        std::vector< double > coefs_recover,
+        std::vector< size_t > coef_infect_cols,
+        std::vector< size_t > coef_recover_cols,
+        epiworld_double prevalence
+    );
+
+    void run(
+        epiworld_fast_uint ndays,
+        int seed = -1
+    );
+
+    Model<TSeq> * clone_ptr();
+
+    bool tracked_started = false;
+    
+    std::vector< double > coefs_infect;
+    std::vector< double > coefs_recover;
+    std::vector< size_t > coef_infect_cols;
+    std::vector< size_t > coef_recover_cols;
+
+};
+
+
+
+template<typename TSeq>
+inline void ModelSIRLogit<TSeq>::run(
+    epiworld_fast_uint ndays,
+    int seed
+)
+{
+
+    Model<TSeq>::run(ndays, seed);
+
+}
+
+template<typename TSeq>
+inline Model<TSeq> * ModelSIRLogit<TSeq>::clone_ptr()
+{
+    
+    ModelSIRLogit<TSeq> * ptr = new ModelSIRLogit<TSeq>(
+        *dynamic_cast<const ModelSIRLogit<TSeq>*>(this)
+        );
+
+    return dynamic_cast< Model<TSeq> *>(ptr);
+
+}
+
+/**
+ * @brief Template for a Susceptible-Infected-Removed (SIR) model
+ * 
+ * @param model A Model<TSeq> object where to set up the SIR.
+ * @param vname std::string Name of the virus
+ * @param prevalence Initial prevalence (proportion)
+ * @param contact_rate Average number of contacts (interactions) per step.
+ * @param prob_transmission Probability of transmission
+ * @param prob_recovery Probability of recovery
+ */
+template<typename TSeq>
+inline ModelSIRLogit<TSeq>::ModelSIRLogit(
+    ModelSIRLogit<TSeq> & model,
+    std::string vname,
+    double * data,
+    size_t ncols,
+    std::vector< double > coefs_infect,
+    std::vector< double > coefs_recover,
+    std::vector< size_t > coef_infect_cols,
+    std::vector< size_t > coef_recover_cols,
+    epiworld_double prevalence
+    )
+{
+
+    if (coef_infect_cols.size() == 0u)
+        throw std::logic_error("No columns specified for coef_infect_cols.");
+
+    if (coef_recover_cols.size() == 0u)
+        throw std::logic_error("No columns specified for coef_recover_cols.");
+
+    // Saving the variables
+    model.set_agents_data(
+        data, ncols
+    );
+
+    model.coefs_infect = coefs_infect;
+    model.coefs_recover = coefs_recover;
+    model.coef_infect_cols = coef_infect_cols;
+    model.coef_recover_cols = coef_recover_cols;
+
+    std::function<void(ModelSIRLogit<TSeq> * m)> check_init = [](
+        ModelSIRLogit<TSeq> * m
+        ) -> void
+        {
+
+            /* Checking first if it hasn't  */ 
+            if (m->tracked_started)
+                return;
+
+            /* Checking specified columns in the model */
+            for (const auto & c : m->coef_infect_cols)
+            {
+                if (c >= m->agents_data_ncols)
+                    throw std::range_error("Columns specified in coef_infect_cols out of range.");
+            }
+
+            for (const auto & c : m->coef_recover_cols)
+            {
+                if (c >= m->agents_data_ncols)
+                    throw std::range_error("Columns specified in coef_recover_cols out of range.");
+            }
+    
+            /* Checking attributes */ 
+            if (m->coefs_infect.size() != (m->coef_infect_cols.size() + 1u))
+                throw std::logic_error(
+                    "The number of coefficients (infection) doesn't match the number of features. It must be as many features of the agents plus 1 (exposure.)"
+                    );
+
+            if (m->coefs_recover.size() != m->coef_recover_cols.size())
+                throw std::logic_error(
+                    "The number of coefficients (recovery) doesn't match the number of features. It must be as many features of the agents."
+                    );
+            
+            m->tracked_started = true;            
+
+        };
+
+    epiworld::UpdateFun<TSeq> update_susceptible = [
+        check_init
+    ](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void
+        {
+
+            // Getting the right type
+            ModelSIRLogit<TSeq> * _m = dynamic_cast<ModelSIRLogit<TSeq>*>(m);
+
+            check_init(_m);
+
+            // Exposure coefficient
+            const double coef_exposure = _m->coefs_infect[0u];
+
+            // This computes the prob of getting any neighbor variant
+            size_t nvariants_tmp = 0u;
+
+            size_t id      = p->get_id();
+            size_t nagents = m->size();
+
+            double baseline = 0.0;
+            for (size_t k = 0u; k < _m->coef_infect_cols.size(); ++k)
+            {
+                baseline += (*(
+                        m->get_agents_data() +
+                        /* data is stored column-major */
+                        (_m->coef_infect_cols[k] * nagents + id)
+                    )) * _m->coefs_infect[k + 1u];
+            }
+
+            for (auto & neighbor: p->get_neighbors()) 
+            {
+                
+                for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
+                { 
+
+                    #ifdef EPI_DEBUG
+                    if (nvariants_tmp >= m->array_virus_tmp.size())
+                        throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                    #endif
+                        
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nvariants_tmp] =
+                        baseline +
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor->get_transmission_reduction(v, m))  *
+                        coef_exposure
+                        ; 
+
+                    // Applying the plogis function
+                    m->array_double_tmp[nvariants_tmp] = 1.0/
+                        (1.0 + std::exp(-m->array_double_tmp[nvariants_tmp]));
+                
+                    m->array_virus_tmp[nvariants_tmp++] = &(*v);
+
+                }
+
+            }
+
+            // No virus to compute
+            if (nvariants_tmp == 0u)
+                return;
+
+            // Running the roulette
+            int which = roulette(nvariants_tmp, m);
+
+            if (which < 0)
+                return;
+
+            p->add_virus(*m->array_virus_tmp[which], m);
+
+            return;
+
+        };
+
+    epiworld::UpdateFun<TSeq> update_infected = [
+        check_init
+    ](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void
+        {
+
+            // Getting the right type
+            ModelSIRLogit<TSeq> * _m = dynamic_cast<ModelSIRLogit<TSeq>*>(m);
+
+            check_init(_m);
+
+            // Computing recovery probability once
+            double prob    = 0.0;
+            size_t id      = p->get_id();
+            size_t nagents = m->size();
+            #pragma omp simd reduction(+:prob)
+            for (size_t i = 0u; i < _m->coefs_recover.size(); ++i)
+            {
+                prob +=
+                    (*(
+                        m->get_agents_data() +
+                        /* data is stored column-major */
+                        (_m->coef_recover_cols[i] * nagents + id)
+                    )) * _m->coefs_recover[i];
+
+            }
+
+            // Computing logis
+            prob = 1.0/(1.0 + std::exp(-prob));
+
+            if (prob > m->runif())
+                p->rm_virus(0, m);
+            
+            return;
+
+        };
+
+    // Status
+    model.add_state("Susceptible", update_susceptible);
+    model.add_state("Infected", update_infected);
+    model.add_state("Recovered");
+
+    // Setting up parameters
+    // model.add_param(contact_rate, "Contact rate");
+    // model.add_param(prob_transmission, "Prob. Transmission");
+    // model.add_param(prob_recovery, "Prob. Recovery");
+    // model.add_param(prob_reinfection, "Prob. Reinfection");
+    
+    // Preparing the virus -------------------------------------------
+    epiworld::Virus<TSeq> virus(vname);
+    virus.set_state(
+        ModelSIRLogit<TSeq>::INFECTED,
+        ModelSIRLogit<TSeq>::RECOVERED,
+        ModelSIRLogit<TSeq>::RECOVERED
+        );
+
+    model.add_virus(virus, prevalence);
+
+    model.set_name("Susceptible-Infected-Removed (SIR) (logit)");
+
+    return;
+
+}
+
+template<typename TSeq>
+inline ModelSIRLogit<TSeq>::ModelSIRLogit(
+    std::string vname,
+    double * data,
+    size_t ncols,
+    std::vector< double > coefs_infect,
+    std::vector< double > coefs_recover,
+    std::vector< size_t > coef_infect_cols,
+    std::vector< size_t > coef_recover_cols,
+    epiworld_double prevalence
+    )
+{
+
+    ModelSIRLogit(
+        *this,
+        vname,
+        data,
+        ncols,
+        coefs_infect,
+        coefs_recover,
+        coef_infect_cols,
+        coef_recover_cols,
+        prevalence
+    );
+
+    return;
+
+}
+
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/sirlogit.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 
 
 }

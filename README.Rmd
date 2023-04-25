@@ -94,3 +94,44 @@ repnum <- get_reproductive_number(model_seirconn)
 plot(repnum, type = "b")
 ```
 
+
+## SIR Logit
+
+```{r}
+
+set.seed(2223)
+n <- 100000
+
+X <- cbind(
+  Intercept = 1,
+  Female    = sample.int(2, n, replace = TRUE) - 1
+  )
+
+coef_infect  <- c(.1, -2, 2)
+coef_recover <- rnorm(2)
+
+model_logit <- ModelSIRLogit(
+  "covid2",
+  data = X,
+  coefs_infect      = coef_infect,
+  coefs_recover     = coef_recover, 
+  coef_infect_cols  = 1L:ncol(X),
+  coef_recover_cols = 1L:ncol(X), 
+  prevalence = .01
+)
+
+agents_smallworld(model_logit, n, 8, FALSE, .01)
+
+run(model_logit, 50)
+
+plot(model_logit)
+
+# Females are supposed to be more likely to become infected
+rn <- get_reproductive_number(model_logit)
+
+(table(
+  X[, "Female"],
+  (1:n %in% rn$source)
+) |> prop.table())[,2]
+```
+

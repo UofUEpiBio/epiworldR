@@ -1,6 +1,7 @@
 
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
+#include "cpp11/matrix.hpp"
 #include "epiworld-common.h"
 
 using namespace cpp11;
@@ -203,3 +204,41 @@ SEXP ModelSEIRCONN_cpp(
   
   
 #undef WrapSEIRCONN
+  
+[[cpp11::register]]
+SEXP ModelSIRLogit_cpp(
+  std::string vname,
+  SEXP data,
+  int ncols,
+  std::vector< double > coefs_infect,
+  std::vector< double > coefs_recover,
+  std::vector< int > coef_infect_cols,
+  std::vector< int > coef_recover_cols,
+  double prevalence
+) {
+  
+  std::vector< size_t > cinfect;
+  std::vector< size_t > crecover;
+  
+  for (auto i : coef_infect_cols)
+    cinfect.push_back(static_cast<size_t>(i));
+  
+  for (auto i : coef_recover_cols)
+    crecover.push_back(static_cast<size_t>(i));
+  
+  cpp11::external_pointer<epiworld::epimodels::ModelSIRLogit<>> ptr(
+    new epiworld::epimodels::ModelSIRLogit<>(
+        vname,
+        REAL(data),
+        static_cast<size_t>(ncols),
+        coefs_infect,
+        coefs_recover,
+        cinfect,
+        crecover,
+        prevalence
+    )
+  );
+  
+  return ptr;
+  
+}

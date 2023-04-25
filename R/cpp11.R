@@ -48,6 +48,10 @@ ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmissi
   .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery)
 }
 
+ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prevalence) {
+  .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prevalence)
+}
+
 print_cpp <- function(m) {
   .Call(`_epiworldR_print_cpp`, m)
 }
