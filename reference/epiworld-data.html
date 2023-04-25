@@ -81,6 +81,14 @@
 any model.</p></dd>
 
 
+<dt>y</dt>
+<dd><p>Ignored.</p></dd>
+
+
+<dt>ylab, xlab, main</dt>
+<dd><p>Further parameters passed to <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">graphics::plot()</a></code></p></dd>
+
+
 <dt>...</dt>
 <dd><p>In the case of <code>plot.epiworld_repnum</code>, further arguments passed to
 <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">graphics::plot</a>.</p></dd>
@@ -142,9 +150,11 @@ entries in the transition matrix.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving the transition probability</span></span></span>
 <span class="r-in"><span><span class="fu">get_transition_probability</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span> </span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>data length differs from size of matrix: [16 != 1 x 1]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>            -475909872</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -475909872  0.8997312</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible   Exposed  Infected Recovered</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible   0.8997312 0.1002688 0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed       0.0000000 0.8582575 0.1417426 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Infected      0.0000000 0.0000000 0.6964839 0.3035161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Recovered     0.0000000 0.0000000 0.0000000 1.0000000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># We can go further and get all the history</span></span></span>
 <span class="r-in"><span><span class="va">t_hist</span> <span class="op">&lt;-</span> <span class="fu">get_hist_transition_matrix</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
@@ -160,7 +170,30 @@ entries in the transition matrix.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># And turn it into an array</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">t_hist</span><span class="op">)</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in `[&lt;-`(`*tmp*`, cbind(x[, 1], x[, 2], x[, 3]), value = x[, 4]):</span> subscript out of bounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible Exposed Infected Recovered</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible        9000    1000        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed               0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Infected              0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Recovered             0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible Exposed Infected Recovered</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible        9000       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed               0     861      139         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Infected              0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Recovered             0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible Exposed Infected Recovered</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible        8820     180        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed               0     737      124         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Infected              0       0       91        48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Recovered             0       0        0         0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
