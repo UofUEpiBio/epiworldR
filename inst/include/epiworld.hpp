@@ -7452,7 +7452,10 @@ inline void Model<TSeq>::rm_virus(size_t virus_pos)
     std::swap(viruses[virus_pos], viruses[viruses.size() - 1]);
     std::swap(viruses_dist_funs[virus_pos], viruses_dist_funs[viruses.size() - 1]);
     std::swap(prevalence_virus[virus_pos], prevalence_virus[viruses.size() - 1]);
-    std::swap(prevalence_virus_as_proportion[virus_pos], prevalence_virus_as_proportion[viruses.size() - 1]);
+    std::vector<bool>::swap(
+        prevalence_virus_as_proportion[virus_pos],
+        prevalence_virus_as_proportion[viruses.size() - 1]
+        );
 
     viruses.pop_back();
     viruses_dist_funs.pop_back();
