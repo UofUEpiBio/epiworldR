@@ -14,19 +14,31 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5, fig.align = "center"
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5, 
+  fig.align = "center"
 )
 ```
 
 # Introduction
 
-Despite significant medical advances, infectious diseases continue to prevail worldwide, accounting for over 17 million deaths yearly (WHO). epiworldR is an R package that provides a fast (C++ backend) and highly-customizable framework for building network-based transmission/diffusion agent-based models [ABM]. This package provides valuable information that may aid in making informed, evidence-based policy decisions for the general population and performing complex simulation studies. epiworldR delivers a flexible tool that can capture transmission/diffusion dynamics complexity resulting from agents’ heterogeneity, network structure, transmission dynamics, environmental factors (e.g., policies,) and many other elements. Some key features of epiworldR are the ability to construct multi-disease models (e.g., models of competing multi-pathogens/multi-rumor,) design mutating pathogens, architect population-level interventions, and build models with an arbitrary number of compartments/states (beyond SIR/SEIR.) Moreover, epiworldR is really fast; for example, simulating a SIR model with 100,000 agents for 100 days takes less than $\frac{1}{3}$ of a second.
+epiworldR is an R package that provides a fast (C++ backend) and highly-
+customizable framework for building network-based transmission/diffusion agent-
+based models [ABM]. Some key features of epiworldR are the ability to construct 
+multi-disease models (e.g., models of competing multi-pathogens/multi-rumor,) 
+design mutating pathogens, architect population-level interventions, and build 
+models with an arbitrary number of compartments/states (beyond SIR/SEIR.) 
 
 # Example 1: Simulating an SIR model
 
 ## Setup and running the model
 
-In the following .... describe the type of simulation, what we mean with SIR connected
+This example implements a social network with parameters listed within the 
+ModelSIRCONN function. The disease name is specified (COVID-19), 100000 agents 
+are initialized, disease prevalence of 0.001 is declared, each agent will 
+contact two others (contact_rate), probability of transmitting the disease for 
+any given agent is 0.3, and probability of recovery is set to $\frac_{1}{3}$.
+To create this model on epiworldR, simply use the ModelSIRCONN function. 
+From here, the example will take you through the basic features of epiworldR.
 
 ```{r sirconn-setup}
 library(epiworldR)
@@ -40,46 +52,89 @@ model_sir <- ModelSIRCONN(
   )
 ```
 
-Printing the model shows us some information, in particular: ... describe each part of the printing: 
+Printing the model shows us some information. First, the name of the model, 
+population size, number of entities (think of these as public spaces in which 
+agents can make social contact with one another), the duration in days, number 
+of variants, amount of time the last replicate took to run (last run elapsed t), 
+and rewiring 
+status (on or off). The next piece of information you will see is a list of the 
+viruses used in the model. In this case, COVID-19 was the only disease used. 
+Note that epiworldR has the capability to include more than one virus in a 
+model. Tool(s) lists any tools that agents have to fight the virus. Examples of
+this may include masking, vaccines, social distancing, etc. In this model, no 
+tools are specified. Lastly, the model parameters are listed, which originate 
+from the parameters specified in the model. 
+
 
 ```{r}
 model_sir
 ```
   
-To execture the model, we use the run function...
+To execute the model, use the run function with the SIR model object, number of 
+simulation days, and an optional seed for reproducibility. Next, print out the 
+results from the simulated model using model_sir. 
   
 ```{r}  
 run(model_sir, ndays = 50, seed = 1912)
 model_sir
 ```
 
-... explain what changed from the previous print...
+There are two additional sections in the model summary after running the model 
+object, the first being the distribution of the population at time 50. This 
+section describes the flow of agents from each state (SIR) after 50 days. In the 
+example, you'll see the number of agents in the susceptible state decreased
+from 99900 to 26456, the number of agents in the infected state increased from
+100 to 501, and the number of recovered agents increased to 73043 after 50 days. 
+The counts for these states will of course, change based on model parameters or 
+simulation run-time. The transmission probabilities section outputs a 3x3 matrix
+that describes the probability of moving from one state to another. For example, 
+in the susceptible row, each agent has a 0.97 probability of remaining in the 
+susceptible state with a 0.03 probability of moving from the susceptible state 
+to the infected state. Notice in all cases, there is a probability of 0 to skip 
+states. In other words, it is impossible for an agent to jump from the 
+susceptible state to the recovered state; that agent must pass through the 
+infected state in order to then progress to the recovered state. The same logic
+applies with moving backwards; an agent cannot become susceptible again after 
+being infected. 
+
 
 
 Begin by specifying the disease name, prevalence, infectiousness, and recovery
 using the ModelSIR function. This function collects information about the 
 disease which will be spreading through the population. Next, specify the 
+number of individuals in your population (n), number of ties in the small world 
+network (k), whether the graph is directed or not (d), and probability of 
+rewiring (p). Lastly, run the SIR model for a specified number of days (ndays) 
+with an optional seed for reproducibility.  
+  
+## Plot
+=======
 number of individuals in your population (n), (k), (d), and (p). Lastly, run 
 the SIR model for a specfied number of days (ndays) with an optional seed 
 for reproducibility.  
 
 ## Extracting information
 
-... epiworld_model has many methods...
+After running the epiworldR model, below is a list of all the functions that can 
+be called using the epiworld model object. 
 
 ```{r showing-methods}
 methods(class = "epiworld_model")
 ```
 
-Let's start from the basic: plot and get_hist_total
+To demonstrate, start with the basic plot and get_hist_total functions. 
 
-```{r, fig.show='hold'}
+```{r}
 plot(model_sir)
 ```
+  
+=======
 
 As evident from the above plot, the SIR model constructed from epiworldR 
 displays the changes in susceptible, infected, and recovered case counts over 
-time (days). After roughly 70 days, the curves flatten.  
+time (days). Notice after a certain amount of time, the curves flatten. Below, 
+a table representation of the above plot is printed, complete with each state 
+within the SIR model, dates, and agent counts. 
 
 ```{r get-hist-total}
 head(get_hist_total(model_sir))
@@ -92,7 +147,11 @@ repnum <- get_reproductive_number(model_sir)
 head(repnum)
 ```
 
-We have a method to automatically plot it
+epiworldR has a method to automatically plot the reproductive number. This
+function takes the average of values in the above table for each date and 
+repeats until all dates have been accounted for. For example, on average, 
+individuals who acquired the virus on the 10th day transmit the virus to roughly 
+1.7 other individuals. 
 
 ```{r}
 x <- plot(repnum, type="b")
@@ -101,7 +160,7 @@ x <- plot(repnum, type="b")
 
 ## Adding more viruses/variants
 
-epiworldR supporst muti-variant model, here is how we do it:
+epiworldR supports multi-variant models, here is how we do it:
 
 ```{r design-and-add}
 # Building the virus
