@@ -78,23 +78,13 @@ Yon</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Despite significant medical advances, infectious diseases continue to
-prevail worldwide, accounting for over 17 million deaths yearly (WHO).
-epiworldR is an R package that provides a fast (C++ backend) and
-highly-customizable framework for building network-based
-transmission/diffusion agent-based models [ABM]. This package provides
-valuable information that may aid in making informed, evidence-based
-policy decisions for the general population and performing complex
-simulation studies. epiworldR delivers a flexible tool that can capture
-transmission/diffusion dynamics complexity resulting from agents’
-heterogeneity, network structure, transmission dynamics, environmental
-factors (e.g., policies,) and many other elements. Some key features of
+<p>epiworldR is an R package that provides a fast (C++ backend) and
+highly- customizable framework for building network-based
+transmission/diffusion agent- based models [ABM]. Some key features of
 epiworldR are the ability to construct multi-disease models (e.g.,
 models of competing multi-pathogens/multi-rumor,) design mutating
 pathogens, architect population-level interventions, and build models
-with an arbitrary number of compartments/states (beyond SIR/SEIR.)
-Moreover, epiworldR is really fast; for example, simulating a SIR model
-with 100,000 agents for 100 days takes less than <span class="math inline">\(\frac{1}{3}\)</span> of a second.</p>
+with an arbitrary number of compartments/states (beyond SIR/SEIR.)</p>
 </div>
 <div class="section level2">
 <h2 id="example-1-simulating-an-sir-model">Example 1: Simulating an SIR model<a class="anchor" aria-label="anchor" href="#example-1-simulating-an-sir-model"></a>
@@ -102,8 +92,14 @@ with 100,000 agents for 100 days takes less than <span class="math inline">\(\fr
 <div class="section level3">
 <h3 id="setup-and-running-the-model">Setup and running the model<a class="anchor" aria-label="anchor" href="#setup-and-running-the-model"></a>
 </h3>
-<p>In the following …. describe the type of simulation, what we mean
-with SIR connected</p>
+<p>This example implements a social network with parameters listed
+within the ModelSIRCONN function. The disease name is specified
+(COVID-19), 100000 agents are initialized, disease prevalence of 0.001
+is declared, each agent will contact two others (contact_rate),
+probability of transmitting the disease for any given agent is 0.3, and
+probability of recovery is set to <span class="math inline">\(\frac_{1}{3}\)</span>. To create this model on
+epiworldR, simply use the ModelSIRCONN function. From here, the example
+will take you through the basic features of epiworldR.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">epiworldR</span><span class="op">)</span></span>
 <span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ModelSIRCONN.html">ModelSIRCONN</a></span><span class="op">(</span></span>
@@ -114,8 +110,18 @@ with SIR connected</p>
 <span>  prob_transmission <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  prob_recovery     <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p>Printing the model shows us some information, in particular: …
-describe each part of the printing:</p>
+<p>Printing the model shows us some information. First, the name of the
+model, population size, number of entities (think of these as public
+spaces in which agents can make social contact with one another), the
+duration in days, number of variants, amount of time the last replicate
+took to run (last run elapsed t), and rewiring status (on or off). The
+next piece of information you will see is a list of the viruses used in
+the model. In this case, COVID-19 was the only disease used. Note that
+epiworldR has the capability to include more than one virus in a model.
+Tool(s) lists any tools that agents have to fight the virus. Examples of
+this may include masking, vaccines, social distancing, etc. In this
+model, no tools are specified. Lastly, the model parameters are listed,
+which originate from the parameters specified in the model.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_sir</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -140,7 +146,10 @@ describe each part of the printing:</p>
 <span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
 <span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
 <span><span class="co">#&gt;  - Prob. Transmission : 0.3000</span></span></code></pre></div>
-<p>To execture the model, we use the run function…</p>
+<p>To execute the model, use the run function with the SIR model object,
+number of simulation days, and an optional seed for reproducibility.
+Next, print out the results from the simulated model using
+model_sir.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
@@ -157,8 +166,8 @@ describe each part of the printing:</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 253.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 19.74 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 323.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 15.45 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -181,18 +190,46 @@ describe each part of the printing:</p>
 <span><span class="co">#&gt;  - Susceptible  0.97  0.03  0.00</span></span>
 <span><span class="co">#&gt;  - Infected     0.00  0.67  0.33</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
-<p>… explain what changed from the previous print…</p>
+<p>There are two additional sections in the model summary after running
+the model object, the first being the distribution of the population at
+time 50. This section describes the flow of agents from each state (SIR)
+after 50 days. In the example, you’ll see the number of agents in the
+susceptible state decreased from 99900 to 26456, the number of agents in
+the infected state increased from 100 to 501, and the number of
+recovered agents increased to 73043 after 50 days. The counts for these
+states will of course, change based on model parameters or simulation
+run-time. The transmission probabilities section outputs a 3x3 matrix
+that describes the probability of moving from one state to another. For
+example, in the susceptible row, each agent has a 0.97 probability of
+remaining in the susceptible state with a 0.03 probability of moving
+from the susceptible state to the infected state. Notice in all cases,
+there is a probability of 0 to skip states. In other words, it is
+impossible for an agent to jump from the susceptible state to the
+recovered state; that agent must pass through the infected state in
+order to then progress to the recovered state. The same logic applies
+with moving backwards; an agent cannot become susceptible again after
+being infected.</p>
 <p>Begin by specifying the disease name, prevalence, infectiousness, and
 recovery using the ModelSIR function. This function collects information
 about the disease which will be spreading through the population. Next,
-specify the number of individuals in your population (n), (k), (d), and
-(p). Lastly, run the SIR model for a specfied number of days (ndays)
-with an optional seed for reproducibility.</p>
+specify the number of individuals in your population (n), number of ties
+in the small world network (k), whether the graph is directed or not
+(d), and probability of rewiring (p). Lastly, run the SIR model for a
+specified number of days (ndays) with an optional seed for
+reproducibility.</p>
 </div>
+</div>
+<div class="section level2">
+<h2 id="plot">## Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
+</h2>
+<p>number of individuals in your population (n), (k), (d), and (p).
+Lastly, run the SIR model for a specfied number of days (ndays) with an
+optional seed for reproducibility.</p>
 <div class="section level3">
 <h3 id="extracting-information">Extracting information<a class="anchor" aria-label="anchor" href="#extracting-information"></a>
 </h3>
-<p>… epiworld_model has many methods…</p>
+<p>After running the epiworldR model, below is a list of all the
+functions that can be called using the epiworld model object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/methods.html" class="external-link">methods</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"epiworld_model"</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] add_tool_n                 add_tool                  </span></span>
@@ -210,14 +247,18 @@ with an optional seed for reproducibility.</p>
 <span><span class="co">#&gt; [25] set_name                   set_param                 </span></span>
 <span><span class="co">#&gt; [27] verbose_off                verbose_on                </span></span>
 <span><span class="co">#&gt; see '?methods' for accessing help and source code</span></span></code></pre></div>
-<p>Let’s start from the basic: plot and get_hist_total</p>
+<p>To demonstrate, start with the basic plot and get_hist_total
+functions.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></code></pre></div>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p>=======</p>
 <p>As evident from the above plot, the SIR model constructed from
 epiworldR displays the changes in susceptible, infected, and recovered
-case counts over time (days). After roughly 70 days, the curves
-flatten.</p>
+case counts over time (days). Notice after a certain amount of time, the
+curves flatten. Below, a table representation of the above plot is
+printed, complete with each state within the SIR model, dates, and agent
+counts.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/epiworld-data.html">get_hist_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   dates       state counts</span></span>
@@ -239,7 +280,11 @@ number</p>
 <span><span class="co">#&gt; 4       0  12533                    50      0</span></span>
 <span><span class="co">#&gt; 5       0  12803                    50      0</span></span>
 <span><span class="co">#&gt; 6       0  12810                    50      0</span></span></code></pre></div>
-<p>We have a method to automatically plot it</p>
+<p>epiworldR has a method to automatically plot the reproductive number.
+This function takes the average of values in the above table for each
+date and repeats until all dates have been accounted for. For example,
+on average, individuals who acquired the virus on the 10th day transmit
+the virus to roughly 1.7 other individuals.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span>, type<span class="op">=</span><span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-4-1.png" width="80%" style="display: block; margin: auto;"></p>
@@ -247,7 +292,7 @@ number</p>
 <div class="section level3">
 <h3 id="adding-more-virusesvariants">Adding more viruses/variants<a class="anchor" aria-label="anchor" href="#adding-more-virusesvariants"></a>
 </h3>
-<p>epiworldR supporst muti-variant model, here is how we do it:</p>
+<p>epiworldR supports multi-variant models, here is how we do it:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Building the virus</span></span>
 <span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/virus.html">virus</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
@@ -270,10 +315,10 @@ number</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 293.00ms</span></span>
-<span><span class="co">#&gt; Total elapsed t     : 547.00ms (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 17.02 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 18.28 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 350.00ms</span></span>
+<span><span class="co">#&gt; Total elapsed t     : 673.00ms (2 runs)</span></span>
+<span><span class="co">#&gt; Last run speed      : 14.28 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 14.84 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
