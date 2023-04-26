@@ -83,6 +83,24 @@ stopifnot_vfun <- function(vfun) {
   }
 }
 
+#' @export
+#' @details
+#' The name of the `epiworld_virus` object can be manipulated with the functions
+#' [set_name_virus()] and [get_name_virus()].
+#' 
+#' @rdname virus
+set_name_virus <- function(virus, name) {
+  stopifnot_virus(virus)
+  invisible(set_name_virus_cpp(virus, name))
+}
+
+#' @export
+#' @rdname virus
+get_name_virus <- function(virus) {
+  stopifnot_virus(virus)
+  get_name_virus(virus)
+}
+  
 # Virus add --------------------------------------------------------------------
 
 #' @export
@@ -217,6 +235,40 @@ rm_virus <- function(model, virus_pos) {
 #' @param coefs Numeric vector. Of the same length of `vars`, is a vector of
 #' coefficients associated to the logit probability.
 #' @rdname virus
+#' @examples
+#' # Using the logit function --------------
+#' sir <- ModelSIR(
+#'   name = "COVID-19", prevalence = 0.01, 
+#'   infectiousness = 0.9, recovery = 0.1
+#'   )
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   sir,
+#'   n = 10000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#' )
+#' 
+#' # And adding features
+#' X <- matrix(
+#'   female = sample.int(2, 1000, replace = TRUE) - 1,
+#'   age    = sample(5:70, 10000, replace = TRUE)
+#' )
+#' 
+#' set_agents_data(sir, X)
+#' 
+#' # Creating the logit function
+#' vfun <- virus_fun_logit(
+#'   vars  = c(0, 1),
+#'   coefs = c(-1, 1),
+#'   model = sir
+#' )
+#' 
+#' set_prob_infecting_fun(, sir, vfun)
+#' 
+#' 
 virus_fun_logit <- function(vars, coefs, model) {
   
   stopifnot_model(model)
@@ -350,3 +402,5 @@ set_prob_death_fun <- function(virus, model, vfun) {
   set_prob_death_fun_cpp(virus, model, vfun)
   
 }
+
+

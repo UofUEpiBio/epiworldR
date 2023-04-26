@@ -171,3 +171,47 @@ size <- function(x) UseMethod("size")
 #' @export
 size.epiworld_model <- function(x) size_cpp(x)
 
+
+#' @export
+#' @rdname epiworld-methods
+set_agents_data <- function(model, data) {
+  
+  if (!inherits(data, "matrix") | mode(data) != "numeric")
+    stop("-data- must be a numeric (mode) matrix (class).")
+  
+  if (size(model) != nrow(data))
+    stop(
+      "The number of rows in -data- (", nrow(data),
+      ") doesn't match the number of agents in the model (",
+      size(model), ")."
+      )
+  
+  invisible(set_agents_data_cpp(model = model, data = data, ncols = ncol(data)))
+  
+}
+
+#' @export
+#' @rdname epiworld-methods
+get_agents_data_ncols <- function(model) {
+  
+  get_agents_data_ncols_cpp(model)
+  
+}
+
+#' @export
+#' @rdname epiworld-methods
+get_virus <- function(model, virus_pos) {
+  structure(
+    get_virus_model_cpp(model, virus_pos),
+    class = c("epiworld_virus")
+  )
+}
+
+#' @export
+#' @rdname epiworld-methods
+get_tool <- function(model, tool_pos) {
+  structure(
+    get_tool_model_cpp(model, tool_pos),
+    class = "epiworld_tool"
+  )
+}

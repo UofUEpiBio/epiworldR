@@ -6197,6 +6197,8 @@ public:
 
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
+    Virus<TSeq> & get_virus(size_t id);
+    Tool<TSeq> & get_tool(size_t id);
 
     /**
      * @brief Set the agents data object
@@ -8921,6 +8923,29 @@ const std::vector< ToolPtr<TSeq> > & Model<TSeq>::get_tools() const
 {
     return tools;
 }
+
+template<typename TSeq>
+inline Virus<TSeq> & Model<TSeq>::get_virus(size_t id)
+{
+
+    if (viruses.size() <= id)
+        throw std::length_error("The specified id for the virus is out of range");
+
+    return *viruses[id];
+
+}
+
+template<typename TSeq>
+inline Tool<TSeq> & Model<TSeq>::get_tool(size_t id)
+{
+
+    if (tools.size() <= id)
+        throw std::length_error("The specified id for the tools is out of range");
+
+    return *tools[id];
+
+}
+
 
 template<typename TSeq>
 inline void Model<TSeq>::set_agents_data(double * data_, size_t ncols_)

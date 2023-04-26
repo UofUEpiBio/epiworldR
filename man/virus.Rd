@@ -2,6 +2,8 @@
 % Please edit documentation in R/virus.R
 \name{virus}
 \alias{virus}
+\alias{set_name_virus}
+\alias{get_name_virus}
 \alias{add_virus}
 \alias{add_virus_n}
 \alias{virus_set_state}
@@ -25,6 +27,10 @@ virus(
   prob_death = 0,
   post_immunity = 1
 )
+
+set_name_virus(virus, name)
+
+get_name_virus(virus)
 
 add_virus(model, virus, prevalence)
 
@@ -65,9 +71,9 @@ set_prob_death_fun(virus, model, vfun)
 
 \item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
 
-\item{model}{An object of class \code{epiworld-model}.}
-
 \item{virus}{An object of class \code{epiworld_virus}}
+
+\item{model}{An object of class \code{epiworld-model}.}
 
 \item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
@@ -100,6 +106,9 @@ The function \code{\link[=virus_fun_logit]{virus_fun_logit()}} creates a "virus 
 evaluated for transmission, recovery, and death. As the name sugests, it
 computes those probabilities using a logit function (see examples).
 
+The name of the \code{epiworld_virus} object can be manipulated with the functions
+\code{\link[=set_name_virus]{set_name_virus()}} and \code{\link[=get_name_virus]{get_name_virus()}}.
+
 In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
 \code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
 the virus. The implication of using pointers is that the values will be
@@ -122,4 +131,37 @@ add_virus(mseirconn, delta, .3)
 
 run(mseirconn, ndays = 100, seed = 992)
 mseirconn
+# Using the logit function --------------
+sir <- ModelSIR(
+  name = "COVID-19", prevalence = 0.01, 
+  infectiousness = 0.9, recovery = 0.1
+  )
+
+# Adding a small world population
+agents_smallworld(
+  sir,
+  n = 10000,
+  k = 5,
+  d = FALSE,
+  p = .01
+)
+
+# And adding features
+X <- matrix(
+  female = sample.int(2, 1000, replace = TRUE) - 1,
+  age    = sample(5:70, 10000, replace = TRUE)
+)
+
+set_agents_data(sir, X)
+
+# Creating the logit function
+vfun <- virus_fun_logit(
+  vars  = c(0, 1),
+  coefs = c(-1, 1),
+  model = sir
+)
+
+set_prob_infecting_fun(, sir, vfun)
+
+
 }

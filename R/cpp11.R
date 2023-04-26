@@ -148,6 +148,22 @@ size_cpp <- function(model) {
   .Call(`_epiworldR_size_cpp`, model)
 }
 
+set_agents_data_cpp <- function(model, data, ncols) {
+  .Call(`_epiworldR_set_agents_data_cpp`, model, data, ncols)
+}
+
+get_agents_data_ncols_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_data_ncols_cpp`, model)
+}
+
+get_virus_model_cpp <- function(model, virus_pos) {
+  .Call(`_epiworldR_get_virus_model_cpp`, model, virus_pos)
+}
+
+get_tool_model_cpp <- function(model, tool_pos) {
+  .Call(`_epiworldR_get_tool_model_cpp`, model, tool_pos)
+}
+
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
   .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
 }
@@ -226,4 +242,12 @@ set_prob_death_ptr_cpp <- function(virus, model, param) {
 
 set_prob_death_fun_cpp <- function(virus, model, vfun) {
   .Call(`_epiworldR_set_prob_death_fun_cpp`, virus, model, vfun)
+}
+
+get_name_virus_cpp <- function(virus) {
+  .Call(`_epiworldR_get_name_virus_cpp`, virus)
+}
+
+set_name_virus_cpp <- function(virus, name) {
+  .Call(`_epiworldR_set_name_virus_cpp`, virus, name)
 }

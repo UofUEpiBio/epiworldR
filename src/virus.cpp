@@ -10,8 +10,7 @@ using namespace epiworld;
 // Model definitions:
 // https://github.com/UofUEpi/epiworld/tree/master/include/epiworld/models
 
-#define WrapVirus(a) \
- external_pointer<epiworld::Virus<>> (a)
+#define WrapVirus(a) external_pointer<Virus<>> (a)
 
 [[cpp11::register]]
 SEXP virus_cpp(
@@ -34,7 +33,7 @@ SEXP virus_cpp(
   return virus;
   
 }
-  
+
 [[cpp11::register]]
 SEXP virus_set_state_cpp(
   SEXP v,
@@ -222,9 +221,20 @@ SEXP set_prob_death_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
  external_pointer<VirusFun<>> vfunptr(vfun);
  
  vptr->set_prob_death_fun(*vfunptr);
- 
+
  return virus;
  
+}
+
+[[cpp11::register]]
+std::string get_name_virus_cpp(SEXP virus) {
+  return external_pointer<Virus<>>(virus)->get_name();
+}
+
+[[cpp11::register]]
+SEXP set_name_virus_cpp(SEXP virus, std::string name) {
+  external_pointer<Virus<>>(virus)->set_name(name);
+  return virus;
 }
     
 #undef WrapVirus

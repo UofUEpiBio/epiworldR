@@ -18,6 +18,10 @@
 \alias{get_ndays}
 \alias{get_n_replicates}
 \alias{size}
+\alias{set_agents_data}
+\alias{get_agents_data_ncols}
+\alias{get_virus}
+\alias{get_tool}
 \title{Common methods for predefined models of Epiworld}
 \usage{
 queuing_on(x)
@@ -49,6 +53,14 @@ get_ndays(x)
 get_n_replicates(x)
 
 size(x)
+
+set_agents_data(model, data)
+
+get_agents_data_ncols(model)
+
+get_virus(model, virus_pos)
+
+get_tool(model, tool_pos)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
