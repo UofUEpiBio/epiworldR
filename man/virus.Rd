@@ -146,22 +146,37 @@ agents_smallworld(
   p = .01
 )
 
+run(sir, ndays = 50, seed = 11)
+plot(sir)
+
 # And adding features
-X <- matrix(
-  female = sample.int(2, 1000, replace = TRUE) - 1,
-  age    = sample(5:70, 10000, replace = TRUE)
+dat <- cbind(
+  female = sample.int(2, 10000, replace = TRUE) - 1,
+  x      = rnorm(10000)
 )
 
-set_agents_data(sir, X)
+set_agents_data(sir, dat)
 
 # Creating the logit function
 vfun <- virus_fun_logit(
-  vars  = c(0, 1),
+  vars  = c(0L, 1L),
   coefs = c(-1, 1),
   model = sir
 )
 
-set_prob_infecting_fun(, sir, vfun)
+# The infection prob is lower
+hist(plogis(dat \%*\% rbind(-1,1)))
+
+vfun # printing
+
+set_prob_infecting_fun(
+  virus = get_virus(sir, 0),
+  model = sir,
+  vfun  = vfun
+  )
+  
+run(sir, ndays = 50, seed = 11)
+plot(sir)
 
 
 }

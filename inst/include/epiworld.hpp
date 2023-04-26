@@ -10527,6 +10527,82 @@ public:
 #ifndef EPIWORLD_TOOLS_MEAT_HPP
 #define EPIWORLD_TOOLS_MEAT_HPP
 
+/**
+ * @brief Factory function of ToolFun base on logit
+ * 
+ * @tparam TSeq 
+ * @param vars Vector indicating the position of the variables to use.
+ * @param coefs Vector of coefficients.
+ * @return ToolFun<TSeq> 
+ */
+template<typename TSeq>
+inline ToolFun<TSeq> tool_fun_logit(
+    std::vector< int > vars,
+    std::vector< double > coefs,
+    Model<TSeq> * model
+) {
+
+    // Checking that there are features
+    if (coefs.size() == 0u)
+        throw std::logic_error(
+            "The -coefs- argument should feature at least one element."
+            );
+
+    if (coefs.size() != vars.size())
+        throw std::length_error(
+            std::string("The length of -coef- (") +
+            std::to_string(coefs.size()) + 
+            std::string(") and -vars- (") +
+            std::to_string(vars.size()) +
+            std::string(") should match. ")            
+            );
+
+    // Checking that there are variables in the model
+    if (model != nullptr)
+    {
+
+        size_t K = model->get_agents_data_ncols();
+        for (const auto & var: vars)
+        {
+            if ((var >= static_cast<int>(K)) | (var < 0))
+                throw std::range_error(
+                    std::string("The variable ") +
+                    std::to_string(var) +
+                    std::string(" is out of range.") +
+                    std::string(" The agents only feature ") +
+                    std::to_string(K) + 
+                    std::string("variables (features).")
+                );
+        }
+        
+    }
+
+    std::vector< epiworld_double > coefs_f;
+    for (auto c: coefs)
+        coefs_f.push_back(static_cast<epiworld_double>(c));
+
+    ToolFun<TSeq> fun_ = [coefs_f,vars](
+        Tool<TSeq>& tool,
+        Agent<TSeq> * agent,
+        VirusPtr<TSeq> virus,
+        Model<TSeq> * model
+        ) -> epiworld_double {
+
+        size_t K = coefs_f.size();
+        epiworld_double res = 0.0;
+
+        #pragma omp simd reduction(+:res)
+        for (size_t i = 0u; i < K; ++i)
+            res += agent->operator[](vars.at(i)) * coefs_f.at(i);
+
+        return 1.0/(1.0 + std::exp(-res));
+
+    };
+
+    return fun_;
+
+}
+
 template<typename TSeq>
 inline Tool<TSeq>::Tool(std::string name)
 {

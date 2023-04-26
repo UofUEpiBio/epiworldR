@@ -101,7 +101,6 @@ SEXP virus_fun_logit_cpp(
   external_pointer<Model<>> mptr(model);  
   
   external_pointer<VirusFun<>> res(
-      nullptr, 
       new VirusFun<>(
           virus_fun_logit(
             as_cpp<std::vector<int>>(vars),

@@ -74,9 +74,9 @@ stopifnot_virus <- function(virus) {
 }
 
 stopifnot_vfun <- function(vfun) {
-  if (!inherits(vfun, "epiworld_virus_function")) {
+  if (!inherits(vfun, "epiworld_virus_fun")) {
     stop(
-      "The -vfun- object must be of class \"epiworld_virus_function\". ",
+      "The -vfun- object must be of class \"epiworld_virus_fun\". ",
       "The object passed to the function is of class(es): ", 
       paste(class(vfun), collapse = ", ")
     )
@@ -217,15 +217,10 @@ virus_set_state <- function(virus, init, end, removed) {
 #' @rdname virus
 rm_virus <- function(model, virus_pos) {
   
-  stopifnot_virus(virus)
   stopifnot_model(model)
-  
   invisible(rm_virus_cpp(model, virus_pos))
   
 }
-
-
-
 
 # Virus functions --------------------------------------------------------------
 
@@ -251,22 +246,37 @@ rm_virus <- function(model, virus_pos) {
 #'   p = .01
 #' )
 #' 
+#' run(sir, ndays = 50, seed = 11)
+#' plot(sir)
+#' 
 #' # And adding features
-#' X <- matrix(
-#'   female = sample.int(2, 1000, replace = TRUE) - 1,
-#'   age    = sample(5:70, 10000, replace = TRUE)
+#' dat <- cbind(
+#'   female = sample.int(2, 10000, replace = TRUE) - 1,
+#'   x      = rnorm(10000)
 #' )
 #' 
-#' set_agents_data(sir, X)
+#' set_agents_data(sir, dat)
 #' 
 #' # Creating the logit function
 #' vfun <- virus_fun_logit(
-#'   vars  = c(0, 1),
+#'   vars  = c(0L, 1L),
 #'   coefs = c(-1, 1),
 #'   model = sir
 #' )
 #' 
-#' set_prob_infecting_fun(, sir, vfun)
+#' # The infection prob is lower
+#' hist(plogis(dat %*% rbind(-1,1)))
+#' 
+#' vfun # printing
+#' 
+#' set_prob_infecting_fun(
+#'   virus = get_virus(sir, 0),
+#'   model = sir,
+#'   vfun  = vfun
+#'   )
+#'   
+#' run(sir, ndays = 50, seed = 11)
+#' plot(sir)
 #' 
 #' 
 virus_fun_logit <- function(vars, coefs, model) {
@@ -288,12 +298,12 @@ virus_fun_logit <- function(vars, coefs, model) {
 print.epiworld_virus_fun <- function(x, ...) {
   
   cat("An epiworld_virus_function object.\n")
-  cat("(model: ", get_name(attr(x, "model")), "\n)")
+  cat("(model: ", get_name(attr(x, "model")), ")\n", sep = "")
   cat("This function was built using -virus_fun_logit()-. and it features ")
   cat("the following coefficients:\n")
   cat(
     paste(sprintf(
-      " % 2i: %.2f",
+      " % 2i: %5.2f",
       attr(x, "vars"),
       attr(x, "coefs")
       ), collapse = "\n"
