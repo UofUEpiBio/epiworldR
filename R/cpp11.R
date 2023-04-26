@@ -187,3 +187,43 @@ rm_virus_cpp <- function(m, virus_pos) {
 print_virus_cpp <- function(v) {
   .Call(`_epiworldR_print_virus_cpp`, v)
 }
+
+virus_fun_logit_cpp <- function(vars, coefs, model) {
+  .Call(`_epiworldR_virus_fun_logit_cpp`, vars, coefs, model)
+}
+
+set_prob_infecting_cpp <- function(virus, prob) {
+  .Call(`_epiworldR_set_prob_infecting_cpp`, virus, prob)
+}
+
+set_prob_infecting_ptr_cpp <- function(virus, model, param) {
+  .Call(`_epiworldR_set_prob_infecting_ptr_cpp`, virus, model, param)
+}
+
+set_prob_infecting_fun_cpp <- function(virus, model, vfun) {
+  .Call(`_epiworldR_set_prob_infecting_fun_cpp`, virus, model, vfun)
+}
+
+set_prob_recovery_cpp <- function(virus, prob) {
+  .Call(`_epiworldR_set_prob_recovery_cpp`, virus, prob)
+}
+
+set_prob_recovery_ptr_cpp <- function(virus, model, param) {
+  .Call(`_epiworldR_set_prob_recovery_ptr_cpp`, virus, model, param)
+}
+
+set_prob_recovery_fun_cpp <- function(virus, model, vfun) {
+  .Call(`_epiworldR_set_prob_recovery_fun_cpp`, virus, model, vfun)
+}
+
+set_prob_death_cpp <- function(virus, prob) {
+  .Call(`_epiworldR_set_prob_death_cpp`, virus, prob)
+}
+
+set_prob_death_ptr_cpp <- function(virus, model, param) {
+  .Call(`_epiworldR_set_prob_death_ptr_cpp`, virus, model, param)
+}
+
+set_prob_death_fun_cpp <- function(virus, model, vfun) {
+  .Call(`_epiworldR_set_prob_death_fun_cpp`, virus, model, vfun)
+}

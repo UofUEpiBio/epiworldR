@@ -1,3 +1,13 @@
+stopifnot_model <- function(model) {
+  if (!inherits(model, "epiworld_model")) {
+    stop(
+      "The -model- object must be of class \"epiworld_model\". ",
+      "The object passed to the function is of class(es): ", 
+      paste(class(model), collapse = ", ")
+    )
+  }
+}
+
 #' Common methods for predefined models of Epiworld
 #' @param x An object of class `epiworld_model`.
 #' @param ndays Number of days (steps) of the simulation.
@@ -10,8 +20,7 @@ queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export
 queuing_on.epiworld_model <- function(x) {
-  queuing_on_cpp(x)
-  invisible(x)
+  invisible(queuing_on_cpp(x))
 }
 
 #' @name epiworld-methods
@@ -20,8 +29,7 @@ queuing_off <- function(x) UseMethod("queuing_off")
 
 #' @export
 queuing_off.epiworld_model <- function(x) {
-  queuing_off_cpp(x)
-  invisible(x)
+  invisible(queuing_off_cpp(x))
 }
 
 #' @name epiworld-methods
@@ -33,8 +41,7 @@ verbose_off <- function(x) UseMethod("verbose_off")
 
 #' @export
 verbose_off.epiworld_model <- function(x) {
-  verbose_off_cpp(x)
-  invisible(x)
+  invisible(verbose_off_cpp(x))
 }
 
 #' @name epiworld-methods

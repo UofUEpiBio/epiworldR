@@ -334,6 +334,76 @@ extern "C" SEXP _epiworldR_print_virus_cpp(SEXP v) {
     return cpp11::as_sexp(print_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(v)));
   END_CPP11
 }
+// virus.cpp
+SEXP virus_fun_logit_cpp(integers vars, doubles coefs, SEXP model);
+extern "C" SEXP _epiworldR_virus_fun_logit_cpp(SEXP vars, SEXP coefs, SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(virus_fun_logit_cpp(cpp11::as_cpp<cpp11::decay_t<integers>>(vars), cpp11::as_cpp<cpp11::decay_t<doubles>>(coefs), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_infecting_cpp(SEXP virus, double prob);
+extern "C" SEXP _epiworldR_set_prob_infecting_cpp(SEXP virus, SEXP prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_infecting_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<double>>(prob)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_infecting_ptr_cpp(SEXP virus, SEXP model, std::string param);
+extern "C" SEXP _epiworldR_set_prob_infecting_ptr_cpp(SEXP virus, SEXP model, SEXP param) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_infecting_ptr_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(param)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_infecting_fun_cpp(SEXP virus, SEXP model, SEXP vfun);
+extern "C" SEXP _epiworldR_set_prob_infecting_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_infecting_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(vfun)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_recovery_cpp(SEXP virus, double prob);
+extern "C" SEXP _epiworldR_set_prob_recovery_cpp(SEXP virus, SEXP prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_recovery_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<double>>(prob)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_recovery_ptr_cpp(SEXP virus, SEXP model, std::string param);
+extern "C" SEXP _epiworldR_set_prob_recovery_ptr_cpp(SEXP virus, SEXP model, SEXP param) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_recovery_ptr_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(param)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_recovery_fun_cpp(SEXP virus, SEXP model, SEXP vfun);
+extern "C" SEXP _epiworldR_set_prob_recovery_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_recovery_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(vfun)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_death_cpp(SEXP virus, double prob);
+extern "C" SEXP _epiworldR_set_prob_death_cpp(SEXP virus, SEXP prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_death_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<double>>(prob)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_death_ptr_cpp(SEXP virus, SEXP model, std::string param);
+extern "C" SEXP _epiworldR_set_prob_death_ptr_cpp(SEXP virus, SEXP model, SEXP param) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_death_ptr_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(param)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_prob_death_fun_cpp(SEXP virus, SEXP model, SEXP vfun);
+extern "C" SEXP _epiworldR_set_prob_death_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_prob_death_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(vfun)));
+  END_CPP11
+}
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
@@ -378,11 +448,21 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_multiple_cpp",               (DL_FUNC) &_epiworldR_run_multiple_cpp,                8},
     {"_epiworldR_set_name_cpp",                   (DL_FUNC) &_epiworldR_set_name_cpp,                    2},
     {"_epiworldR_set_param_cpp",                  (DL_FUNC) &_epiworldR_set_param_cpp,                   3},
+    {"_epiworldR_set_prob_death_cpp",             (DL_FUNC) &_epiworldR_set_prob_death_cpp,              2},
+    {"_epiworldR_set_prob_death_fun_cpp",         (DL_FUNC) &_epiworldR_set_prob_death_fun_cpp,          3},
+    {"_epiworldR_set_prob_death_ptr_cpp",         (DL_FUNC) &_epiworldR_set_prob_death_ptr_cpp,          3},
+    {"_epiworldR_set_prob_infecting_cpp",         (DL_FUNC) &_epiworldR_set_prob_infecting_cpp,          2},
+    {"_epiworldR_set_prob_infecting_fun_cpp",     (DL_FUNC) &_epiworldR_set_prob_infecting_fun_cpp,      3},
+    {"_epiworldR_set_prob_infecting_ptr_cpp",     (DL_FUNC) &_epiworldR_set_prob_infecting_ptr_cpp,      3},
+    {"_epiworldR_set_prob_recovery_cpp",          (DL_FUNC) &_epiworldR_set_prob_recovery_cpp,           2},
+    {"_epiworldR_set_prob_recovery_fun_cpp",      (DL_FUNC) &_epiworldR_set_prob_recovery_fun_cpp,       3},
+    {"_epiworldR_set_prob_recovery_ptr_cpp",      (DL_FUNC) &_epiworldR_set_prob_recovery_ptr_cpp,       3},
     {"_epiworldR_size_cpp",                       (DL_FUNC) &_epiworldR_size_cpp,                        1},
     {"_epiworldR_tool_cpp",                       (DL_FUNC) &_epiworldR_tool_cpp,                        5},
     {"_epiworldR_verbose_off_cpp",                (DL_FUNC) &_epiworldR_verbose_off_cpp,                 1},
     {"_epiworldR_verbose_on_cpp",                 (DL_FUNC) &_epiworldR_verbose_on_cpp,                  1},
     {"_epiworldR_virus_cpp",                      (DL_FUNC) &_epiworldR_virus_cpp,                       5},
+    {"_epiworldR_virus_fun_logit_cpp",            (DL_FUNC) &_epiworldR_virus_fun_logit_cpp,             3},
     {"_epiworldR_virus_set_state_cpp",            (DL_FUNC) &_epiworldR_virus_set_state_cpp,             4},
     {NULL, NULL, 0}
 };

@@ -6,7 +6,17 @@
 \alias{add_virus_n}
 \alias{virus_set_state}
 \alias{rm_virus}
-\title{Virus}
+\alias{virus_fun_logit}
+\alias{set_prob_infecting}
+\alias{set_prob_infecting_ptr}
+\alias{set_prob_infecting_fun}
+\alias{set_prob_recovery}
+\alias{set_prob_recovery_ptr}
+\alias{set_prob_recovery_fun}
+\alias{set_prob_death}
+\alias{set_prob_death_ptr}
+\alias{set_prob_death_fun}
+\title{Virus design}
 \usage{
 virus(
   name,
@@ -16,22 +26,48 @@ virus(
   post_immunity = 1
 )
 
-add_virus(m, v, prevalence)
+add_virus(model, virus, prevalence)
 
-add_virus_n(m, v, prevalence)
+add_virus_n(model, virus, prevalence)
 
-virus_set_state(v, init, end, removed)
+virus_set_state(virus, init, end, removed)
 
-rm_virus(m, virus_pos)
+rm_virus(model, virus_pos)
+
+virus_fun_logit(vars, coefs, model)
+
+set_prob_infecting(virus, prob)
+
+set_prob_infecting_ptr(virus, model, param)
+
+set_prob_infecting_fun(virus, model, vfun)
+
+set_prob_recovery(virus, prob)
+
+set_prob_recovery_ptr(virus, model, param)
+
+set_prob_recovery_fun(virus, model, vfun)
+
+set_prob_death(virus, prob)
+
+set_prob_death_ptr(virus, model, param)
+
+set_prob_death_fun(virus, model, vfun)
 }
 \arguments{
 \item{name}{of the virus}
 
-\item{post_immunity, prob_infecting, prob_recovery, prob_death}{to be documented}
+\item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
-\item{m}{An object of class \code{epiworld-model}.}
+\item{prob_recovery}{Numeric scalar. Probability of recovery.}
 
-\item{v}{An object of class \code{epiworld_virus}}
+\item{prob_death}{Numeric scalar. Probability of death.}
+
+\item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
+
+\item{model}{An object of class \code{epiworld-model}.}
+
+\item{virus}{An object of class \code{epiworld_virus}}
 
 \item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
@@ -39,9 +75,35 @@ rm_virus(m, virus_pos)
 and removing the agent as a result of the virus, respectively.}
 
 \item{virus_pos}{Positive integer. Index of the virus's position in the model.}
+
+\item{vars}{Integer vector. Indices (starting from 0) of the positions of the
+variables used to compute the logit probability.}
+
+\item{coefs}{Numeric vector. Of the same length of \code{vars}, is a vector of
+coefficients associated to the logit probability.}
+
+\item{prob}{Numeric scalar. A probability (between zero and one).}
+
+\item{param}{Character scalar. Name of the parameter featured in \code{model} that
+will be added to the virus (see details.)}
 }
 \description{
-Virus
+Viruses can be considered to be anything that can be transmitted (e.g.,
+diseases, as well as ideas.) Most models in epiworldR can feature multiple
+viruses.
+}
+\details{
+The \code{\link[=virus]{virus()}} function can be used to initialize a virus. Virus features can
+then be modified using the functions \verb{set_prob_*}.
+
+The function \code{\link[=virus_fun_logit]{virus_fun_logit()}} creates a "virus function" that can be
+evaluated for transmission, recovery, and death. As the name sugests, it
+computes those probabilities using a logit function (see examples).
+
+In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
+\code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
+the virus. The implication of using pointers is that the values will be
+read directly from the \code{model} object, so changes will be reflected.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(
