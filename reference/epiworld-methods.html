@@ -56,7 +56,7 @@
 <span></span>
 <span><span class="fu">verbose_on</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">run</span><span class="op">(</span><span class="va">m</span>, <span class="va">ndays</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">run</span><span class="op">(</span><span class="va">model</span>, <span class="va">ndays</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_states</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
@@ -76,7 +76,15 @@
 <span></span>
 <span><span class="fu">get_n_replicates</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">size</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">size</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_agents_data</span><span class="op">(</span><span class="va">model</span>, <span class="va">data</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_agents_data_ncols</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_virus</span><span class="op">(</span><span class="va">model</span>, <span class="va">virus_pos</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool_pos</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,7 +93,7 @@
 <dd><p>An object of class <code>epiworld_model</code>.</p></dd>
 
 
-<dt>m</dt>
+<dt>model</dt>
 <dd><p>Model object.</p></dd>
 
 
@@ -107,6 +115,20 @@
 
 <dt>mname</dt>
 <dd><p>String. Name of the model</p></dd>
+
+
+<dt>data</dt>
+<dd><p>A numeric matrix.</p></dd>
+
+
+<dt>virus_pos</dt>
+<dd><p>Integer. Relative location (starting from 0) of the virus
+in the model</p></dd>
+
+
+<dt>tool_pos</dt>
+<dd><p>Integer. Relative location (starting from 0) of the tool
+in the model</p></dd>
 
 </dl></div>
     <div class="section level2">

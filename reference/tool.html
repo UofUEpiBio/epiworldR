@@ -56,13 +56,43 @@
 <span>  <span class="va">death_reduction</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_tool</span><span class="op">(</span><span class="va">m</span>, <span class="va">t</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">set_name_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">name</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_tool_n</span><span class="op">(</span><span class="va">m</span>, <span class="va">t</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">get_name_tool</span><span class="op">(</span><span class="va">tool</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">m</span>, <span class="va">tool_pos</span><span class="op">)</span></span>
+<span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">prevalence</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">m</span>, <span class="va">tool_pos</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">add_tool_n</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool_pos</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool_pos</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tool_fun_logit</span><span class="op">(</span><span class="va">vars</span>, <span class="va">coefs</span>, <span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_susceptibility_reduction</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_susceptibility_reduction_ptr</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_susceptibility_reduction_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_transmission_reduction</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_transmission_reduction_ptr</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_transmission_reduction_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_recovery_enhancer</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_recovery_enhancer_ptr</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_recovery_enhancer_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_death_reduction</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_death_reduction_ptr</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_death_reduction_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -87,12 +117,12 @@
 <dd><p>Numeric. Proportion it reduces probability of death.e</p></dd>
 
 
-<dt>m</dt>
-<dd><p>Model</p></dd>
-
-
-<dt>t</dt>
+<dt>tool</dt>
 <dd><p>An object of class <code>epiworld_tool</code></p></dd>
+
+
+<dt>model</dt>
+<dd><p>Model</p></dd>
 
 
 <dt>prevalence</dt>
@@ -102,7 +132,40 @@
 <dt>tool_pos</dt>
 <dd><p>Positive integer. Index of the tool's position in the model.</p></dd>
 
+
+<dt>vars</dt>
+<dd><p>Integer vector. Indices (starting from 0) of the positions of the
+variables used to compute the logit probability.</p></dd>
+
+
+<dt>coefs</dt>
+<dd><p>Numeric vector. Of the same length of <code>vars</code>, is a vector of
+coefficients associated to the logit probability.</p></dd>
+
+
+<dt>prob</dt>
+<dd><p>Numeric scalar. A probability (between zero and one).</p></dd>
+
+
+<dt>param</dt>
+<dd><p>Character scalar. Name of the parameter featured in <code>model</code> that
+will be added to the tool (see details.)</p></dd>
+
+
+<dt>tfun</dt>
+<dd><p>An object of class <code>epiworld_tool_fun</code>.</p></dd>
+
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The name of the <code>epiworld_tool</code> object can be manipulated with the functions
+<code>set_name_tool()</code> and <code>get_name_tool()</code>.</p>
+<p>In the case of <code>set_susceptibility_reduction_ptr</code>, <code>set_transmission_reduction_ptr</code>,
+<code>set_recovery_enhancer</code>, and
+<code>set_death_reduction_ptr</code>, the corresponding parameters is passed as a pointer to
+the tool. The implication of using pointers is that the values will be
+read directly from the <code>model</code> object, so changes will be reflected.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -113,6 +176,87 @@
 <span class="r-in"><span>  recovery_enhancer <span class="op">=</span> <span class="fl">.5</span>, </span></span>
 <span class="r-in"><span>  death_reduction <span class="op">=</span> <span class="fl">.9</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
+<span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
+<span class="r-in"><span>  infectiousness <span class="op">=</span> <span class="fl">0.9</span>, recovery <span class="op">=</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">sir</span>,</span></span>
+<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">10000</span>,</span></span>
+<span class="r-in"><span>  k <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  d <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>  p <span class="op">=</span> <span class="fl">.01</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creating a tool</span></span></span>
+<span class="r-in"><span><span class="va">mask_wearing</span> <span class="op">&lt;-</span> <span class="fu">tool</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"Mask"</span>,</span></span>
+<span class="r-in"><span>  susceptibility_reduction <span class="op">=</span> <span class="fl">0.0</span>,</span></span>
+<span class="r-in"><span>  transmission_reduction   <span class="op">=</span> <span class="fl">0.3</span>, <span class="co"># Only transmission</span></span></span>
+<span class="r-in"><span>  recovery_enhancer        <span class="op">=</span> <span class="fl">0.0</span>,</span></span>
+<span class="r-in"><span>  death_reduction          <span class="op">=</span> <span class="fl">0.0</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">add_tool</span><span class="op">(</span><span class="va">sir</span>, <span class="va">mask_wearing</span>, <span class="fl">.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
+<span class="r-in"><span><span class="va">hist_0</span> <span class="op">&lt;-</span> <span class="fu"><a href="epiworld-data.html">get_hist_total</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># And adding features</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  female <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10000</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>  x      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">set_agents_data</a></span><span class="op">(</span><span class="va">sir</span>, <span class="va">dat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Creating the logit function</span></span></span>
+<span class="r-in"><span><span class="va">tfun</span> <span class="op">&lt;-</span> <span class="fu">tool_fun_logit</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  vars  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fl">1L</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  coefs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="va">sir</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The infection prob is lower</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">dat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fl">.5</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tool-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">tfun</span> <span class="co"># printing</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An epiworld_tool_function object.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> (model: Susceptible-Infected-Recovered (SIR))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> This function was built using -tool_fun_logit()-. and it features the following coefficients:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   0: -1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  1.00 </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">set_susceptibility_reduction_fun</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  tool  <span class="op">=</span> <span class="fu"><a href="epiworld-methods.html">get_tool</a></span><span class="op">(</span><span class="va">sir</span>, <span class="fl">0</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  model <span class="op">=</span> <span class="va">sir</span>,</span></span>
+<span class="r-in"><span>  tfun  <span class="op">=</span> <span class="va">tfun</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
+<span class="r-in"><span><span class="va">hist_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="epiworld-data.html">get_hist_total</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_0</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="tool-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
