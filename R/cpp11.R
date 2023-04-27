@@ -180,6 +180,66 @@ rm_tool_cpp <- function(m, tool_pos) {
   .Call(`_epiworldR_rm_tool_cpp`, m, tool_pos)
 }
 
+tool_fun_logit_cpp <- function(vars, coefs, model) {
+  .Call(`_epiworldR_tool_fun_logit_cpp`, vars, coefs, model)
+}
+
+set_transmission_reduction_cpp <- function(tool, prob) {
+  .Call(`_epiworldR_set_transmission_reduction_cpp`, tool, prob)
+}
+
+set_transmission_reduction_ptr_cpp <- function(tool, model, param) {
+  .Call(`_epiworldR_set_transmission_reduction_ptr_cpp`, tool, model, param)
+}
+
+set_transmission_reduction_fun_cpp <- function(tool, model, tfun) {
+  .Call(`_epiworldR_set_transmission_reduction_fun_cpp`, tool, model, tfun)
+}
+
+set_susceptibility_reduction_cpp <- function(tool, prob) {
+  .Call(`_epiworldR_set_susceptibility_reduction_cpp`, tool, prob)
+}
+
+set_susceptibility_reduction_ptr_cpp <- function(tool, model, param) {
+  .Call(`_epiworldR_set_susceptibility_reduction_ptr_cpp`, tool, model, param)
+}
+
+set_susceptibility_reduction_fun_cpp <- function(tool, model, tfun) {
+  .Call(`_epiworldR_set_susceptibility_reduction_fun_cpp`, tool, model, tfun)
+}
+
+set_recovery_enhancer_cpp <- function(tool, prob) {
+  .Call(`_epiworldR_set_recovery_enhancer_cpp`, tool, prob)
+}
+
+set_recovery_enhancer_ptr_cpp <- function(tool, model, param) {
+  .Call(`_epiworldR_set_recovery_enhancer_ptr_cpp`, tool, model, param)
+}
+
+set_recovery_enhancer_fun_cpp <- function(tool, model, tfun) {
+  .Call(`_epiworldR_set_recovery_enhancer_fun_cpp`, tool, model, tfun)
+}
+
+set_death_reduction_cpp <- function(tool, prob) {
+  .Call(`_epiworldR_set_death_reduction_cpp`, tool, prob)
+}
+
+set_death_reduction_ptr_cpp <- function(tool, model, param) {
+  .Call(`_epiworldR_set_death_reduction_ptr_cpp`, tool, model, param)
+}
+
+set_death_reduction_fun_cpp <- function(tool, model, tfun) {
+  .Call(`_epiworldR_set_death_reduction_fun_cpp`, tool, model, tfun)
+}
+
+get_name_tool_cpp <- function(tool) {
+  .Call(`_epiworldR_get_name_tool_cpp`, tool)
+}
+
+set_name_tool_cpp <- function(tool, name) {
+  .Call(`_epiworldR_set_name_tool_cpp`, tool, name)
+}
+
 virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity) {
   .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity)
 }

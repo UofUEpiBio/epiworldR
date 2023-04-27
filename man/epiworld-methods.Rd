@@ -32,7 +32,7 @@ verbose_off(x)
 
 verbose_on(x)
 
-run(m, ndays, seed = sample.int(10000, 1))
+run(model, ndays, seed = sample.int(10000, 1))
 
 get_states(x)
 
@@ -65,7 +65,7 @@ get_tool(model, tool_pos)
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
 
-\item{m}{Model object.}
+\item{model}{Model object.}
 
 \item{ndays}{Number of days (steps) of the simulation.}
 
@@ -76,6 +76,14 @@ get_tool(model, tool_pos)
 \item{pval}{Numeric. Value of the parameter}
 
 \item{mname}{String. Name of the model}
+
+\item{data}{A numeric matrix.}
+
+\item{virus_pos}{Integer. Relative location (starting from 0) of the virus
+in the model}
+
+\item{tool_pos}{Integer. Relative location (starting from 0) of the tool
+in the model}
 }
 \value{
 \itemize{

@@ -92,6 +92,8 @@ coefficients associated to the logit probability.}
 
 \item{param}{Character scalar. Name of the parameter featured in \code{model} that
 will be added to the virus (see details.)}
+
+\item{vfun}{An object of class \code{epiworld_virus_fun}.}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,

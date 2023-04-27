@@ -154,7 +154,7 @@ SEXP set_susceptibility_reduction_ptr_cpp(SEXP tool, SEXP model, std::string par
 }
 
 [[cpp11::register]]
-SEXP set_susceptibility_reduction_cpp(SEXP tool, SEXP model, SEXP tfun) {
+SEXP set_susceptibility_reduction_fun_cpp(SEXP tool, SEXP model, SEXP tfun) {
   
   WrapTool(toolptr)(tool);
   external_pointer<Model<>> mptr(model);

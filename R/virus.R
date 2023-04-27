@@ -344,6 +344,7 @@ set_prob_infecting_ptr <- function(virus, model, param) {
 }
 
 #' @export
+#' @param vfun An object of class `epiworld_virus_fun`.
 #' @rdname virus
 set_prob_infecting_fun <- function(virus, model, vfun) {
   

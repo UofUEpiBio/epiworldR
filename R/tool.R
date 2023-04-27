@@ -1,5 +1,5 @@
 #' Tools in epiworld
-#' @param m Model
+#' @param model Model
 #' @param name Name of the tool
 #' @param susceptibility_reduction Numeric. Proportion it reduces susceptibility.
 #' @param transmission_reduction Numeric. Proportion it reduces transmission.
@@ -57,37 +57,55 @@ stopifnot_tfun <- function(tfun) {
 }
 
 #' @export
-#' @param t An object of class `epiworld_tool`
+#' @details
+#' The name of the `epiworld_tool` object can be manipulated with the functions
+#' [set_name_tool()] and [get_name_tool()].
+#' 
+#' @rdname tool
+set_name_tool <- function(tool, name) {
+  stopifnot_tool(tool)
+  invisible(set_name_tool_cpp(tool, name))
+}
+
+#' @export
+#' @rdname tool
+get_name_tool <- function(tool) {
+  stopifnot_tool(tool)
+  get_name_tool(tool)
+}
+
+#' @export
+#' @param tool An object of class `epiworld_tool`
 #' @param prevalence In the case of `add_tool`, a proportion, otherwise, an integer.
 #' @rdname tool
-add_tool <- function(m, t, prevalence) UseMethod("add_tool")
+add_tool <- function(model, tool, prevalence) UseMethod("add_tool")
 
 #' @export
-add_tool.epiworld_model <- function(m, t, prevalence) {
-  add_tool_cpp(m, t, prevalence)
-  invisible(m)
+add_tool.epiworld_model <- function(model, tool, prevalence) {
+  add_tool_cpp(model, tool, prevalence)
+  invisible(model)
 }
 
 #' @export
 #' @rdname tool
-add_tool_n <- function(m, t, prevalence) UseMethod("add_tool_n")
+add_tool_n <- function(model, tool, prevalence) UseMethod("add_tool_n")
 
 #' @export
-add_tool_n.epiworld_model <- function(m, t, prevalence) {
-  add_tool_n_cpp(m, t, prevalence)
-  invisible(m)
+add_tool_n.epiworld_model <- function(model, tool, prevalence) {
+  add_tool_n_cpp(model, tool, prevalence)
+  invisible(model)
 }
 
 #' @export
 #' @rdname tool
-rm_tool <- function(m, tool_pos) {
-  invisible(rm_tool_cpp(m, tool_pos))
+rm_tool <- function(model, tool_pos) {
+  invisible(rm_tool_cpp(model, tool_pos))
 }
 
 #' @export
 #' @rdname tool
-rm_tool <- function(m, tool_pos) {
-  invisible(rm_tool_cpp(m, tool_pos))
+rm_tool <- function(model, tool_pos) {
+  invisible(rm_tool_cpp(model, tool_pos))
 }
 
 # Tool functions ---------------------------------------------------------------
@@ -99,6 +117,7 @@ rm_tool <- function(m, tool_pos) {
 #' coefficients associated to the logit probability.
 #' @rdname tool
 #' @examples
+#' 
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", prevalence = 0.01, 
@@ -114,8 +133,19 @@ rm_tool <- function(m, tool_pos) {
 #'   p = .01
 #' )
 #' 
+#' # Creating a tool
+#' mask_wearing <- tool(
+#'   name = "Mask",
+#'   susceptibility_reduction = 0.0,
+#'   transmission_reduction   = 0.3, # Only transmission
+#'   recovery_enhancer        = 0.0,
+#'   death_reduction          = 0.0
+#' )
+#' 
+#' add_tool(sir, mask_wearing, .5)
+#' 
 #' run(sir, ndays = 50, seed = 11)
-#' plot(sir)
+#' hist_0 <- get_hist_total(sir)
 #' 
 #' # And adding features
 #' dat <- cbind(
@@ -126,25 +156,31 @@ rm_tool <- function(m, tool_pos) {
 #' set_agents_data(sir, dat)
 #' 
 #' # Creating the logit function
-#' vfun <- virus_fun_logit(
+#' tfun <- tool_fun_logit(
 #'   vars  = c(0L, 1L),
 #'   coefs = c(-1, 1),
 #'   model = sir
 #' )
 #' 
 #' # The infection prob is lower
-#' hist(plogis(dat %*% rbind(-1,1)))
+#' hist(plogis(dat %*% rbind(.5,1)))
 #' 
-#' vfun # printing
+#' tfun # printing
 #' 
-#' set_susceptibility_reductionfun(
-#'   virus = get_virus(sir, 0),
+#' 
+#' set_susceptibility_reduction_fun(
+#'   tool  = get_tool(sir, 0),
 #'   model = sir,
-#'   vfun  = vfun
+#'   tfun  = tfun
 #'   )
 #'   
 #' run(sir, ndays = 50, seed = 11)
-#' plot(sir)
+#' hist_1 <- get_hist_total(sir)
+#' 
+#' op <- par(mfrow = c(1, 2))
+#' plot(hist_0); abline(v = 30)
+#' plot(hist_1); abline(v = 30)
+#' par(op)
 #' 
 #' 
 tool_fun_logit <- function(vars, coefs, model) {
@@ -182,24 +218,27 @@ print.epiworld_tool_fun <- function(x, ...) {
   
 }
 
+# Susceptibility reduction -----------------------------------------------------
+
 
 #' @export
 #' @param prob Numeric scalar. A probability (between zero and one).
 #' @rdname tool
 set_susceptibility_reduction <- function(tool, prob) {
   
-  stopifnot_virus(tool)
+  stopifnot_tool(tool)
   set_susceptibility_reduction_cpp(tool, prob)
   
 }
 
 #' @export
 #' @param param Character scalar. Name of the parameter featured in `model` that
-#' will be added to the virus (see details.)
+#' will be added to the tool (see details.)
 #' @details
-#' In the case of `set_susceptibility_reductionptr`, `set_transmission_reduction_ptr`, and
-#' `set_prob_death_ptr`, the corresponding parameters is passed as a pointer to
-#' the virus. The implication of using pointers is that the values will be
+#' In the case of `set_susceptibility_reduction_ptr`, `set_transmission_reduction_ptr`, 
+#' `set_recovery_enhancer`, and
+#' `set_death_reduction_ptr`, the corresponding parameters is passed as a pointer to
+#' the tool. The implication of using pointers is that the values will be
 #' read directly from the `model` object, so changes will be reflected.
 #' 
 #' @rdname tool
@@ -212,72 +251,110 @@ set_susceptibility_reduction_ptr <- function(tool, model, param) {
 }
 
 #' @export
+#' @param tfun An object of class `epiworld_tool_fun`.
 #' @rdname tool
 set_susceptibility_reduction_fun <- function(tool, model, tfun) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
   stopifnot_tfun(tfun)
-  invisible(set_susceptibility_reductionfun_cpp(tool, model, tfun))
+  invisible(set_susceptibility_reduction_fun_cpp(tool, model, tfun))
+  
+}
+
+# Transmission reduction -------------------------------------------------------
+
+#' @export
+#' @rdname tool
+set_transmission_reduction <- function(tool, prob) {
+  
+  stopifnot_tool(tool)
+  set_transmission_reduction_cpp(tool, prob)
   
 }
 
 #' @export
 #' @rdname tool
-set_transmission_reduction <- function(virus, prob) {
-  
-  stopifnot_tool(tool)
-  set_transmission_reduction_cpp(virus, prob)
-  
-}
-
-#' @export
-#' @rdname virus
-set_transmission_reduction_ptr <- function(virus, model, param) {
+set_transmission_reduction_ptr <- function(tool, model, param) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  set_transmission_reduction_ptr_cpp(virus, model, param)
+  set_transmission_reduction_ptr_cpp(tool, model, param)
   
 }
 
 #' @export
-#' @rdname virus
-set_transmission_reduction_fun <- function(virus, model, vfun) {
+#' @rdname tool
+set_transmission_reduction_fun <- function(tool, model, tfun) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  stopifnot_tfun(vfun)
-  set_transmission_reduction_fun_cpp(virus, model, vfun)
+  stopifnot_tfun(tfun)
+  set_transmission_reduction_fun_cpp(tool, model, tfun)
 }
 
+# Recovery enhancer ------------------------------------------------------------
+
 #' @export
-#' @rdname virus
-set_prob_death <- function(virus, prob) {
+#' @rdname tool
+set_recovery_enhancer <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_prob_death_cpp(virus, prob)
+  set_recovery_enhancer_cpp(tool, prob)
   
 }
 
 #' @export
-#' @rdname virus
-set_prob_death_ptr <- function(virus, model, param) {
-  
-  stopifnot_tool(tool)
-  stopifnot_model(model)
-  set_prob_death_ptr_cpp(virus, model, param)
-  
-}
-
-#' @export
-#' @rdname virus
-set_prob_death_fun <- function(virus, model, vfun) {
+#' @rdname tool
+set_recovery_enhancer_ptr <- function(tool, model, param) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  stopifnot_tfun(vfun)
-  set_prob_death_fun_cpp(virus, model, vfun)
+  set_recovery_enhancer_ptr_cpp(tool, model, param)
   
 }
+
+#' @export
+#' @rdname tool
+set_recovery_enhancer_fun <- function(tool, model, tfun) {
+  
+  stopifnot_tool(tool)
+  stopifnot_model(model)
+  stopifnot_tfun(tfun)
+  set_recovery_enhancer_fun_cpp(tool, model, tfun)
+  
+}
+
+# Death reduction --------------------------------------------------------------
+
+#' @export
+#' @rdname tool
+set_death_reduction <- function(tool, prob) {
+  
+  stopifnot_tool(tool)
+  set_death_reduction_cpp(tool, prob)
+  
+}
+
+#' @export
+#' @rdname tool
+set_death_reduction_ptr <- function(tool, model, param) {
+  
+  stopifnot_tool(tool)
+  stopifnot_model(model)
+  set_death_reduction_ptr_cpp(tool, model, param)
+  
+}
+
+#' @export
+#' @rdname tool
+set_death_reduction_fun <- function(tool, model, tfun) {
+  
+  stopifnot_tool(tool)
+  stopifnot_model(model)
+  stopifnot_tfun(tfun)
+  set_death_reduction_fun_cpp(tool, model, tfun)
+  
+}
+
 

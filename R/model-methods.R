@@ -12,7 +12,7 @@ stopifnot_model <- function(model) {
 #' @param x An object of class `epiworld_model`.
 #' @param ndays Number of days (steps) of the simulation.
 #' @param seed Seed to set for initializing random number generator.
-#' @param m Model object.
+#' @param model Model object.
 #' @export
 #' @name epiworld-methods
 #' @aliases epiworld_model
@@ -56,12 +56,12 @@ verbose_on.epiworld_model <- function(x) {
 
 #' @export
 #' @rdname epiworld-methods
-run <- function(m, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
+run <- function(model, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
 
 #' @export
-run.epiworld_model <- function(m, ndays, seed = sample.int(1e4, 1)) {
-  run_cpp(m, ndays, seed)
-  invisible(m)
+run.epiworld_model <- function(model, ndays, seed = sample.int(1e4, 1)) {
+  run_cpp(model, ndays, seed)
+  invisible(model)
 }
 
 #' @export
@@ -173,6 +173,7 @@ size.epiworld_model <- function(x) size_cpp(x)
 
 
 #' @export
+#' @param data A numeric matrix.
 #' @rdname epiworld-methods
 set_agents_data <- function(model, data) {
   
@@ -199,6 +200,8 @@ get_agents_data_ncols <- function(model) {
 }
 
 #' @export
+#' @param virus_pos Integer. Relative location (starting from 0) of the virus
+#' in the model
 #' @rdname epiworld-methods
 get_virus <- function(model, virus_pos) {
   structure(
@@ -208,6 +211,8 @@ get_virus <- function(model, virus_pos) {
 }
 
 #' @export
+#' @param tool_pos Integer. Relative location (starting from 0) of the tool
+#' in the model
 #' @rdname epiworld-methods
 get_tool <- function(model, tool_pos) {
   structure(

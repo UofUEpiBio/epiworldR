@@ -71,8 +71,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 186.00ms
-#> Last run speed      : 26.75 million agents x day / second
+#> Last run elapsed t  : 286.00ms
+#> Last run speed      : 17.48 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -133,8 +133,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 37.00ms
-#> Last run speed      : 26.55 million agents x day / second
+#> Last run elapsed t  : 58.00ms
+#> Last run speed      : 17.14 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):

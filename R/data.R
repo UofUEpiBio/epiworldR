@@ -41,7 +41,21 @@ get_hist_total <- function(x) UseMethod("get_hist_total")
 
 #' @export
 get_hist_total.epiworld_model <- function(x)  {
-  get_hist_total_cpp(x)
+  
+  res <- get_hist_total_cpp(x)
+  structure(
+    res,
+    class  = c("epiworld_hist_total", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
+  
+}
+
+#' @
+
+#' @export
+plot.epiworld_hist <- function(x, y, ...) {
+  plot_epi(x, ...)
 }
 
 #' @export
@@ -50,7 +64,13 @@ get_hist_variant <- function(x) UseMethod("get_hist_variant")
 
 #' @export
 get_hist_variant.epiworld_model <- function(x)  {
-  get_hist_variant_cpp(x)
+  res <- get_hist_variant_cpp(x)
+  
+  structure(
+    res,
+    class  = c("epiworld_hist_variant", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
 }
 
 #' @export
@@ -59,7 +79,12 @@ get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
 #' @export
 get_hist_tool.epiworld_model <- function(x)  {
-  get_hist_tool_cpp(x)
+  res <- get_hist_tool_cpp(x)
+  structure(
+    res,
+    class  = c("epiworld_hist_tool", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
 }
 
 #' @export
