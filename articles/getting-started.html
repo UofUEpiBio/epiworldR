@@ -105,8 +105,8 @@ will take you through the basic features of epiworldR.</p>
 <span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ModelSIRCONN.html">ModelSIRCONN</a></span><span class="op">(</span></span>
 <span>  name              <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
 <span>  n                 <span class="op">=</span> <span class="fl">100000</span>, </span>
-<span>  prevalence        <span class="op">=</span> <span class="fl">0.001</span>, </span>
-<span>  contact_rate      <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  prevalence        <span class="op">=</span> <span class="fl">0.0001</span>, </span>
+<span>  contact_rate      <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  prob_transmission <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  prob_recovery     <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
@@ -137,13 +137,13 @@ which originate from the parameters specified in the model.</p>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
-<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.10%)</span></span>
+<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.01%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Tool(s):</span></span>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
+<span><span class="co">#&gt;  - Contact rate       : 1.0000</span></span>
 <span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
 <span><span class="co">#&gt;  - Prob. Transmission : 0.3000</span></span></code></pre></div>
 <p>To execute the model, use the run function with the SIR model object,
@@ -166,29 +166,29 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 351.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 14.24 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
+<span><span class="co">#&gt; Last run speed      : 4.14 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
-<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.10%)</span></span>
+<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.01%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Tool(s):</span></span>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
+<span><span class="co">#&gt;  - Contact rate       : 1.0000</span></span>
 <span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
 <span><span class="co">#&gt;  - Prob. Transmission : 0.3000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;  - (0) Susceptible :  99900 -&gt; 26438</span></span>
-<span><span class="co">#&gt;  - (1) Infected    :    100 -&gt; 516</span></span>
-<span><span class="co">#&gt;  - (2) Recovered   :      0 -&gt; 73046</span></span>
+<span><span class="co">#&gt;  - (0) Susceptible :  99990 -&gt; 6091</span></span>
+<span><span class="co">#&gt;  - (1) Infected    :     10 -&gt; 2</span></span>
+<span><span class="co">#&gt;  - (2) Recovered   :      0 -&gt; 93907</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.97  0.03  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.67  0.33</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.95  0.05  0.00</span></span>
+<span><span class="co">#&gt;  - Infected     0.00  0.66  0.34</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <p>There are two additional sections in the model summary after running
 the model object, the first being the distribution of the population at
@@ -252,24 +252,24 @@ counts.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/epiworld-data.html">get_hist_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   dates       state counts</span></span>
-<span><span class="co">#&gt; 1     0 Susceptible  99900</span></span>
-<span><span class="co">#&gt; 2     0    Infected    100</span></span>
+<span><span class="co">#&gt; 1     0 Susceptible  99990</span></span>
+<span><span class="co">#&gt; 2     0    Infected     10</span></span>
 <span><span class="co">#&gt; 3     0   Recovered      0</span></span>
-<span><span class="co">#&gt; 4     1 Susceptible  99837</span></span>
-<span><span class="co">#&gt; 5     1    Infected    127</span></span>
-<span><span class="co">#&gt; 6     1   Recovered     36</span></span></code></pre></div>
+<span><span class="co">#&gt; 4     1 Susceptible  99982</span></span>
+<span><span class="co">#&gt; 5     1    Infected     15</span></span>
+<span><span class="co">#&gt; 6     1   Recovered      3</span></span></code></pre></div>
 <p>An important statistic in epidemiological models is the reproductive
 number</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   variant source source_exposure_dates counts</span></span>
-<span><span class="co">#&gt; 1       0    468                    50      0</span></span>
-<span><span class="co">#&gt; 2       0   2945                    50      0</span></span>
-<span><span class="co">#&gt; 3       0   6973                    50      0</span></span>
-<span><span class="co">#&gt; 4       0  12533                    50      0</span></span>
-<span><span class="co">#&gt; 5       0  12803                    50      0</span></span>
-<span><span class="co">#&gt; 6       0  12810                    50      0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       0  75110                    48      0</span></span>
+<span><span class="co">#&gt; 2       0  82803                    22      1</span></span>
+<span><span class="co">#&gt; 3       0  36733                    43      0</span></span>
+<span><span class="co">#&gt; 4       0  54562                    39      1</span></span>
+<span><span class="co">#&gt; 5       0  58555                    42      0</span></span>
+<span><span class="co">#&gt; 6       0  54562                    19      1</span></span></code></pre></div>
 <p>epiworldR has a method to automatically plot the reproductive number.
 This function takes the average of values in the above table for each
 date and repeats until all dates have been accounted for. For example,
@@ -292,10 +292,10 @@ epiworldR model object, the new virus, and the new virus’ prevalence
 (which is set to 0.01 in this example).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Building the virus</span></span>
-<span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/virus.html">virus</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/virus.html">virus</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Adding the virus to the model</span></span>
-<span><span class="fu"><a href="../reference/virus.html">add_virus</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="va">flu</span>, <span class="fl">.01</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/virus.html">add_virus</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="va">flu</span>, <span class="fl">.0001</span><span class="op">)</span></span></code></pre></div>
 <p>After running the updated model with the new virus included for 50
 days, the output below describes the simulation. To confirm that the flu
 is included, notice the presence of “Flu” in the Virus(es) section of
@@ -317,32 +317,32 @@ sections.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 402.00ms</span></span>
-<span><span class="co">#&gt; Total elapsed t     : 753.00ms (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 12.42 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 13.27 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
+<span><span class="co">#&gt; Total elapsed t     : 2.00s (2 runs)</span></span>
+<span><span class="co">#&gt; Last run speed      : 3.68 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 3.90 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
-<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.10%)</span></span>
-<span><span class="co">#&gt;  - Flu (baseline prevalence: 1.00%)</span></span>
+<span><span class="co">#&gt;  - COVID-19 (baseline prevalence: 0.01%)</span></span>
+<span><span class="co">#&gt;  - Flu (baseline prevalence: 0.01%)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Tool(s):</span></span>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
+<span><span class="co">#&gt;  - Contact rate       : 1.0000</span></span>
 <span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
 <span><span class="co">#&gt;  - Prob. Transmission : 0.3000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;  - (0) Susceptible :  98900 -&gt; 26286</span></span>
-<span><span class="co">#&gt;  - (1) Infected    :   1100 -&gt; 73</span></span>
-<span><span class="co">#&gt;  - (2) Recovered   :      0 -&gt; 73641</span></span>
+<span><span class="co">#&gt;  - (0) Susceptible :  99980 -&gt; 6147</span></span>
+<span><span class="co">#&gt;  - (1) Infected    :     20 -&gt; 1</span></span>
+<span><span class="co">#&gt;  - (2) Recovered   :      0 -&gt; 93852</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.97  0.03  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.67  0.33</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.95  0.05  0.00</span></span>
+<span><span class="co">#&gt;  - Infected     0.00  0.65  0.35</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <p>Plotting the previous model (including the flu) yields the following.
 Notice the presence of two reproductive numbers plotted over time.
