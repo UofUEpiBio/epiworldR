@@ -98,7 +98,6 @@ applies with moving backwards; an agent cannot become susceptible again after
 being infected. 
   
 ## Plot
-=======
 
 ## Extracting information
 
@@ -114,8 +113,6 @@ To demonstrate, start with the basic plot and get_hist_total functions.
 ```{r}
 plot(model_sir)
 ```
-  
-=======
 
 As evident from the above plot, the SIR model constructed from epiworldR 
 displays the changes in susceptible, infected, and recovered case counts over 
@@ -213,7 +210,7 @@ vaccine <- tool(
 add_tool(model_sir, vaccine, 0.85)
 ```
 
-```{r}
+```{r curves-including-vaccine, fig.height=10}
 repnum3 <- get_reproductive_number(model_sir)
 
 op <- par(mfrow = c(2,1))
