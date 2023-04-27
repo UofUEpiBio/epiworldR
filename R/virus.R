@@ -42,7 +42,7 @@ virus <- function(
     prob_infecting,
     prob_recovery = 0.5,
     prob_death    = 0.0,
-    post_immunity = 1.0
+    post_immunity = -1.0
     ) {
   
   structure(

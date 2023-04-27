@@ -25,7 +25,7 @@ virus(
   prob_infecting,
   prob_recovery = 0.5,
   prob_death = 0,
-  post_immunity = 1
+  post_immunity = -1
 )
 
 set_name_virus(virus, name)

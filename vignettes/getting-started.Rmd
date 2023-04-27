@@ -45,8 +45,8 @@ library(epiworldR)
 model_sir <- ModelSIRCONN(
   name              = "COVID-19",
   n                 = 100000, 
-  prevalence        = 0.001, 
-  contact_rate      = 2,
+  prevalence        = 0.0001, 
+  contact_rate      = 1,
   prob_transmission = 0.3,
   prob_recovery     = 1/3
   )
@@ -157,10 +157,10 @@ the new virus' prevalence (which is set to 0.01 in this example).
 
 ```{r design-and-add}
 # Building the virus
-flu <- virus(name = "Flu", prob_infecting = 1.0)
+flu <- virus(name = "Flu", prob_infecting = .5)
 
 # Adding the virus to the model
-add_virus(model_sir, flu, .01)
+add_virus(model_sir, flu, .0001)
 ```
 
 After running the updated model with the new virus included for 50 days, the
