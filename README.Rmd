@@ -116,7 +116,9 @@ model_logit <- ModelSIRLogit(
   coefs_infect      = coef_infect,
   coefs_recover     = coef_recover, 
   coef_infect_cols  = 1L:ncol(X),
-  coef_recover_cols = 1L:ncol(X), 
+  coef_recover_cols = 1L:ncol(X),
+  prob_infection = .8,
+  prob_recovery = .3,
   prevalence = .01
 )
 
@@ -133,5 +135,8 @@ rn <- get_reproductive_number(model_logit)
   X[, "Female"],
   (1:n %in% rn$source)
 ) |> prop.table())[,2]
+
+# Looking into the agents
+get_agents(model_logit)
 ```
 

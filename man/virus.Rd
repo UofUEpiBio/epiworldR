@@ -2,36 +2,78 @@
 % Please edit documentation in R/virus.R
 \name{virus}
 \alias{virus}
+\alias{set_name_virus}
+\alias{get_name_virus}
 \alias{add_virus}
 \alias{add_virus_n}
 \alias{virus_set_state}
 \alias{rm_virus}
-\title{Virus}
+\alias{virus_fun_logit}
+\alias{set_prob_infecting}
+\alias{set_prob_infecting_ptr}
+\alias{set_prob_infecting_fun}
+\alias{set_prob_recovery}
+\alias{set_prob_recovery_ptr}
+\alias{set_prob_recovery_fun}
+\alias{set_prob_death}
+\alias{set_prob_death_ptr}
+\alias{set_prob_death_fun}
+\title{Virus design}
 \usage{
 virus(
   name,
   prob_infecting,
   prob_recovery = 0.5,
   prob_death = 0,
-  post_immunity = 1
+  post_immunity = -1
 )
 
-add_virus(m, v, prevalence)
+set_name_virus(virus, name)
 
-add_virus_n(m, v, prevalence)
+get_name_virus(virus)
 
-virus_set_state(v, init, end, removed)
+add_virus(model, virus, prevalence)
 
-rm_virus(m, virus_pos)
+add_virus_n(model, virus, prevalence)
+
+virus_set_state(virus, init, end, removed)
+
+rm_virus(model, virus_pos)
+
+virus_fun_logit(vars, coefs, model)
+
+set_prob_infecting(virus, prob)
+
+set_prob_infecting_ptr(virus, model, param)
+
+set_prob_infecting_fun(virus, model, vfun)
+
+set_prob_recovery(virus, prob)
+
+set_prob_recovery_ptr(virus, model, param)
+
+set_prob_recovery_fun(virus, model, vfun)
+
+set_prob_death(virus, prob)
+
+set_prob_death_ptr(virus, model, param)
+
+set_prob_death_fun(virus, model, vfun)
 }
 \arguments{
 \item{name}{of the virus}
 
-\item{post_immunity, prob_infecting, prob_recovery, prob_death}{to be documented}
+\item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
-\item{m}{An object of class \code{epiworld-model}.}
+\item{prob_recovery}{Numeric scalar. Probability of recovery.}
 
-\item{v}{An object of class \code{epiworld_virus}}
+\item{prob_death}{Numeric scalar. Probability of death.}
+
+\item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
+
+\item{virus}{An object of class \code{epiworld_virus}}
+
+\item{model}{An object of class \code{epiworld-model}.}
 
 \item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
@@ -39,9 +81,40 @@ rm_virus(m, virus_pos)
 and removing the agent as a result of the virus, respectively.}
 
 \item{virus_pos}{Positive integer. Index of the virus's position in the model.}
+
+\item{vars}{Integer vector. Indices (starting from 0) of the positions of the
+variables used to compute the logit probability.}
+
+\item{coefs}{Numeric vector. Of the same length of \code{vars}, is a vector of
+coefficients associated to the logit probability.}
+
+\item{prob}{Numeric scalar. A probability (between zero and one).}
+
+\item{param}{Character scalar. Name of the parameter featured in \code{model} that
+will be added to the virus (see details.)}
+
+\item{vfun}{An object of class \code{epiworld_virus_fun}.}
 }
 \description{
-Virus
+Viruses can be considered to be anything that can be transmitted (e.g.,
+diseases, as well as ideas.) Most models in epiworldR can feature multiple
+viruses.
+}
+\details{
+The \code{\link[=virus]{virus()}} function can be used to initialize a virus. Virus features can
+then be modified using the functions \verb{set_prob_*}.
+
+The function \code{\link[=virus_fun_logit]{virus_fun_logit()}} creates a "virus function" that can be
+evaluated for transmission, recovery, and death. As the name sugests, it
+computes those probabilities using a logit function (see examples).
+
+The name of the \code{epiworld_virus} object can be manipulated with the functions
+\code{\link[=set_name_virus]{set_name_virus()}} and \code{\link[=get_name_virus]{get_name_virus()}}.
+
+In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
+\code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
+the virus. The implication of using pointers is that the values will be
+read directly from the \code{model} object, so changes will be reflected.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(
@@ -55,10 +128,57 @@ mseirconn <- ModelSEIRCONN(
 )
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
-virus_set_state(delta, 1, 3, 3)
 
 add_virus(mseirconn, delta, .3)
 
 run(mseirconn, ndays = 100, seed = 992)
 mseirconn
+# Using the logit function --------------
+sir <- ModelSIR(
+  name = "COVID-19", prevalence = 0.01, 
+  infectiousness = 0.9, recovery = 0.1
+  )
+
+# Adding a small world population
+agents_smallworld(
+  sir,
+  n = 10000,
+  k = 5,
+  d = FALSE,
+  p = .01
+)
+
+run(sir, ndays = 50, seed = 11)
+plot(sir)
+
+# And adding features
+dat <- cbind(
+  female = sample.int(2, 10000, replace = TRUE) - 1,
+  x      = rnorm(10000)
+)
+
+set_agents_data(sir, dat)
+
+# Creating the logit function
+vfun <- virus_fun_logit(
+  vars  = c(0L, 1L),
+  coefs = c(-1, 1),
+  model = sir
+)
+
+# The infection prob is lower
+hist(plogis(dat \%*\% rbind(-1,1)))
+
+vfun # printing
+
+set_prob_infecting_fun(
+  virus = get_virus(sir, 0),
+  model = sir,
+  vfun  = vfun
+  )
+  
+run(sir, ndays = 50, seed = 11)
+plot(sir)
+
+
 }

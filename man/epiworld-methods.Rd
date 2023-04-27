@@ -3,11 +3,12 @@
 \name{epiworld-methods}
 \alias{epiworld-methods}
 \alias{queuing_on}
+\alias{epiworld_model}
 \alias{queuing_off}
 \alias{verbose_off}
 \alias{verbose_on}
 \alias{run}
-\alias{get_state}
+\alias{get_states}
 \alias{get_param}
 \alias{set_param}
 \alias{set_name}
@@ -16,6 +17,11 @@
 \alias{get_n_tools}
 \alias{get_ndays}
 \alias{get_n_replicates}
+\alias{size}
+\alias{set_agents_data}
+\alias{get_agents_data_ncols}
+\alias{get_virus}
+\alias{get_tool}
 \title{Common methods for predefined models of Epiworld}
 \usage{
 queuing_on(x)
@@ -26,9 +32,9 @@ verbose_off(x)
 
 verbose_on(x)
 
-run(m, ndays, seed = sample.int(10000, 1))
+run(model, ndays, seed = sample.int(10000, 1))
 
-get_state(x)
+get_states(x)
 
 get_param(x, pname)
 
@@ -45,11 +51,21 @@ get_n_tools(x)
 get_ndays(x)
 
 get_n_replicates(x)
+
+size(x)
+
+set_agents_data(model, data)
+
+get_agents_data_ncols(model)
+
+get_virus(model, virus_pos)
+
+get_tool(model, tool_pos)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
 
-\item{m}{Model object.}
+\item{model}{Model object.}
 
 \item{ndays}{Number of days (steps) of the simulation.}
 
@@ -60,6 +76,39 @@ get_n_replicates(x)
 \item{pval}{Numeric. Value of the parameter}
 
 \item{mname}{String. Name of the model}
+
+\item{data}{A numeric matrix.}
+
+\item{virus_pos}{Integer. Relative location (starting from 0) of the virus
+in the model}
+
+\item{tool_pos}{Integer. Relative location (starting from 0) of the tool
+in the model}
+}
+\value{
+\itemize{
+\item \code{get_name} returns the name of the model.
+}
+
+\itemize{
+\item \code{get_n_variants} returns the number of variants of the model.
+}
+
+\itemize{
+\item \code{get_n_tools} returns the number of tools of the model.
+}
+
+\itemize{
+\item \code{get_ndays} returns the number of days of the model.
+}
+
+\itemize{
+\item \code{get_n_replicates} returns the number of replicates of the model.
+}
+
+\itemize{
+\item \code{size.epiworld_model} returns the number of agents in the model.
+}
 }
 \description{
 Common methods for predefined models of Epiworld

@@ -2,9 +2,24 @@
 % Please edit documentation in R/tool.R
 \name{tool}
 \alias{tool}
+\alias{set_name_tool}
+\alias{get_name_tool}
 \alias{add_tool}
 \alias{add_tool_n}
 \alias{rm_tool}
+\alias{tool_fun_logit}
+\alias{set_susceptibility_reduction}
+\alias{set_susceptibility_reduction_ptr}
+\alias{set_susceptibility_reduction_fun}
+\alias{set_transmission_reduction}
+\alias{set_transmission_reduction_ptr}
+\alias{set_transmission_reduction_fun}
+\alias{set_recovery_enhancer}
+\alias{set_recovery_enhancer_ptr}
+\alias{set_recovery_enhancer_fun}
+\alias{set_death_reduction}
+\alias{set_death_reduction_ptr}
+\alias{set_death_reduction_fun}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -15,13 +30,43 @@ tool(
   death_reduction
 )
 
-add_tool(m, t, prevalence)
+set_name_tool(tool, name)
 
-add_tool_n(m, t, prevalence)
+get_name_tool(tool)
 
-rm_tool(m, tool_pos)
+add_tool(model, tool, prevalence)
 
-rm_tool(m, tool_pos)
+add_tool_n(model, tool, prevalence)
+
+rm_tool(model, tool_pos)
+
+rm_tool(model, tool_pos)
+
+tool_fun_logit(vars, coefs, model)
+
+set_susceptibility_reduction(tool, prob)
+
+set_susceptibility_reduction_ptr(tool, model, param)
+
+set_susceptibility_reduction_fun(tool, model, tfun)
+
+set_transmission_reduction(tool, prob)
+
+set_transmission_reduction_ptr(tool, model, param)
+
+set_transmission_reduction_fun(tool, model, tfun)
+
+set_recovery_enhancer(tool, prob)
+
+set_recovery_enhancer_ptr(tool, model, param)
+
+set_recovery_enhancer_fun(tool, model, tfun)
+
+set_death_reduction(tool, prob)
+
+set_death_reduction_ptr(tool, model, param)
+
+set_death_reduction_fun(tool, model, tfun)
 }
 \arguments{
 \item{name}{Name of the tool}
@@ -34,16 +79,39 @@ rm_tool(m, tool_pos)
 
 \item{death_reduction}{Numeric. Proportion it reduces probability of death.e}
 
-\item{m}{Model}
+\item{tool}{An object of class \code{epiworld_tool}}
 
-\item{t}{An object of class \code{epiworld_tool}}
+\item{model}{Model}
 
 \item{prevalence}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
+
+\item{vars}{Integer vector. Indices (starting from 0) of the positions of the
+variables used to compute the logit probability.}
+
+\item{coefs}{Numeric vector. Of the same length of \code{vars}, is a vector of
+coefficients associated to the logit probability.}
+
+\item{prob}{Numeric scalar. A probability (between zero and one).}
+
+\item{param}{Character scalar. Name of the parameter featured in \code{model} that
+will be added to the tool (see details.)}
+
+\item{tfun}{An object of class \code{epiworld_tool_fun}.}
 }
 \description{
 Tools in epiworld
+}
+\details{
+The name of the \code{epiworld_tool} object can be manipulated with the functions
+\code{\link[=set_name_tool]{set_name_tool()}} and \code{\link[=get_name_tool]{get_name_tool()}}.
+
+In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_reduction_ptr},
+\code{set_recovery_enhancer}, and
+\code{set_death_reduction_ptr}, the corresponding parameters is passed as a pointer to
+the tool. The implication of using pointers is that the values will be
+read directly from the \code{model} object, so changes will be reflected.
 }
 \examples{
 epitool <- tool(
@@ -53,4 +121,70 @@ epitool <- tool(
   recovery_enhancer = .5, 
   death_reduction = .9
 )
+
+# Using the logit function --------------
+sir <- ModelSIR(
+  name = "COVID-19", prevalence = 0.01, 
+  infectiousness = 0.9, recovery = 0.1
+  )
+
+# Adding a small world population
+agents_smallworld(
+  sir,
+  n = 10000,
+  k = 5,
+  d = FALSE,
+  p = .01
+)
+
+# Creating a tool
+mask_wearing <- tool(
+  name = "Mask",
+  susceptibility_reduction = 0.0,
+  transmission_reduction   = 0.3, # Only transmission
+  recovery_enhancer        = 0.0,
+  death_reduction          = 0.0
+)
+
+add_tool(sir, mask_wearing, .5)
+
+run(sir, ndays = 50, seed = 11)
+hist_0 <- get_hist_total(sir)
+
+# And adding features
+dat <- cbind(
+  female = sample.int(2, 10000, replace = TRUE) - 1,
+  x      = rnorm(10000)
+)
+
+set_agents_data(sir, dat)
+
+# Creating the logit function
+tfun <- tool_fun_logit(
+  vars  = c(0L, 1L),
+  coefs = c(-1, 1),
+  model = sir
+)
+
+# The infection prob is lower
+hist(plogis(dat \%*\% rbind(.5,1)))
+
+tfun # printing
+
+
+set_susceptibility_reduction_fun(
+  tool  = get_tool(sir, 0),
+  model = sir,
+  tfun  = tfun
+  )
+  
+run(sir, ndays = 50, seed = 11)
+hist_1 <- get_hist_total(sir)
+
+op <- par(mfrow = c(1, 2))
+plot(hist_0); abline(v = 30)
+plot(hist_1); abline(v = 30)
+par(op)
+
+
 }

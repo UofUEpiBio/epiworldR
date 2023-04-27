@@ -214,6 +214,8 @@ SEXP ModelSIRLogit_cpp(
   std::vector< double > coefs_recover,
   std::vector< int > coef_infect_cols,
   std::vector< int > coef_recover_cols,
+  double prob_infection,
+  double prob_recovery,
   double prevalence
 ) {
   
@@ -235,6 +237,8 @@ SEXP ModelSIRLogit_cpp(
         coefs_recover,
         cinfect,
         crecover,
+        prob_infection,
+        prob_recovery,
         prevalence
     )
   );

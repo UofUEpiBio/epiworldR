@@ -41,7 +41,21 @@ get_hist_total <- function(x) UseMethod("get_hist_total")
 
 #' @export
 get_hist_total.epiworld_model <- function(x)  {
-  get_hist_total_cpp(x)
+  
+  res <- get_hist_total_cpp(x)
+  structure(
+    res,
+    class  = c("epiworld_hist_total", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
+  
+}
+
+#' @
+
+#' @export
+plot.epiworld_hist <- function(x, y, ...) {
+  plot_epi(x, ...)
 }
 
 #' @export
@@ -50,7 +64,13 @@ get_hist_variant <- function(x) UseMethod("get_hist_variant")
 
 #' @export
 get_hist_variant.epiworld_model <- function(x)  {
-  get_hist_variant_cpp(x)
+  res <- get_hist_variant_cpp(x)
+  
+  structure(
+    res,
+    class  = c("epiworld_hist_variant", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
 }
 
 #' @export
@@ -59,7 +79,12 @@ get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
 #' @export
 get_hist_tool.epiworld_model <- function(x)  {
-  get_hist_tool_cpp(x)
+  res <- get_hist_tool_cpp(x)
+  structure(
+    res,
+    class  = c("epiworld_hist_tool", "epiworld_hist", "data.frame"),
+    states = sort(unique(res$state))
+  )
 }
 
 #' @export
@@ -71,7 +96,7 @@ get_transition_probability <- function(x) {
 #' @export
 get_transition_probability.epiworld_model <- function(x)  {
   res <- get_transition_probability_cpp(x)
-  s   <- get_state(x)
+  s   <- get_states(x)
   
   ns <- length(s)
   
@@ -90,6 +115,8 @@ get_reproductive_number.epiworld_model <- function(x) {
 }
 
 #' @rdname epiworld-data
+#' @param y Ignored.
+#' @param ylab,xlab,main Further parameters passed to [graphics::plot()]
 #' @export
 plot.epiworld_repnum <- function(
     x,
@@ -192,7 +219,7 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
   res <- get_hist_transition_matrix_cpp(x, skip_zeros)
   class(res) <- c(class(res), "epiworld_hist_transition")
   
-  attr(res, "states") <- get_state(x)
+  attr(res, "states") <- get_states(x)
   attr(res, "nsteps") <- get_ndays(x)
   
   res

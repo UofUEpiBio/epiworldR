@@ -30,14 +30,31 @@ find_scale <- function(x) {
 
 #' @noRd
 #' @importFrom graphics legend
-plot_epi <- function(
+plot_epi <- function(x, main = "", counts_scale, ...) UseMethod("plot_epi")
+
+plot_epi.epiworld_model <- function(
+    x, main = "",
+    counts_scale,
+    ...
+) {
+  
+  plot_epi(
+    x = get_hist_total(x),
+    main = main,
+    counts_scale = counts_scale,
+    ...
+  )
+  
+}
+
+plot_epi.epiworld_hist <- function(
     x, main = "",
     counts_scale,
     ...
     ) { 
   
-  curves <- get_hist_total(x)
-  state_names <- sort(unique(curves$state))
+  curves      <- x
+  state_names <- attr(curves, "states")
   
   # If the user didn't say what scale
   if (missing(counts_scale))

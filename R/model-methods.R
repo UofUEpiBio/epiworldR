@@ -1,16 +1,26 @@
+stopifnot_model <- function(model) {
+  if (!inherits(model, "epiworld_model")) {
+    stop(
+      "The -model- object must be of class \"epiworld_model\". ",
+      "The object passed to the function is of class(es): ", 
+      paste(class(model), collapse = ", ")
+    )
+  }
+}
+
 #' Common methods for predefined models of Epiworld
 #' @param x An object of class `epiworld_model`.
 #' @param ndays Number of days (steps) of the simulation.
 #' @param seed Seed to set for initializing random number generator.
-#' @param m Model object.
+#' @param model Model object.
 #' @export
 #' @name epiworld-methods
+#' @aliases epiworld_model
 queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export
 queuing_on.epiworld_model <- function(x) {
-  queuing_on_cpp(x)
-  invisible(x)
+  invisible(queuing_on_cpp(x))
 }
 
 #' @name epiworld-methods
@@ -19,8 +29,7 @@ queuing_off <- function(x) UseMethod("queuing_off")
 
 #' @export
 queuing_off.epiworld_model <- function(x) {
-  queuing_off_cpp(x)
-  invisible(x)
+  invisible(queuing_off_cpp(x))
 }
 
 #' @name epiworld-methods
@@ -32,8 +41,7 @@ verbose_off <- function(x) UseMethod("verbose_off")
 
 #' @export
 verbose_off.epiworld_model <- function(x) {
-  verbose_off_cpp(x)
-  invisible(x)
+  invisible(verbose_off_cpp(x))
 }
 
 #' @name epiworld-methods
@@ -48,12 +56,12 @@ verbose_on.epiworld_model <- function(x) {
 
 #' @export
 #' @rdname epiworld-methods
-run <- function(m, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
+run <- function(model, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
 
 #' @export
-run.epiworld_model <- function(m, ndays, seed = sample.int(1e4, 1)) {
-  run_cpp(m, ndays, seed)
-  invisible(m)
+run.epiworld_model <- function(model, ndays, seed = sample.int(1e4, 1)) {
+  run_cpp(model, ndays, seed)
+  invisible(model)
 }
 
 #' @export
@@ -64,10 +72,10 @@ print.epiworld_model <- function(x, ...) {
 
 #' @export
 #' @rdname epiworld-methods
-get_state <- function(x) UseMethod("get_state")
+get_states <- function(x) UseMethod("get_states")
 
 #' @export
-get_state.epiworld_model <- function(x) get_state_cpp(x)
+get_states.epiworld_model <- function(x) get_states_cpp(x)
 
 #' @export
 #' @param pname String, name of the parameter
@@ -103,6 +111,8 @@ set_name.epiworld_model <- function(x, mname) {
 }
 
 #' @export
+#' @returns
+#' - `get_name` returns the name of the model.
 #' @rdname epiworld-methods
 get_name <- function(x) UseMethod("get_name")
 
@@ -113,6 +123,8 @@ get_name.epiworld_model <- function(x) {
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_n_variants` returns the number of variants of the model.
 get_n_variants <- function(x) UseMethod("get_n_variants")
 
 #' @export
@@ -121,6 +133,8 @@ get_n_variants.epiworld_model <- function(x) get_n_variants_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_n_tools` returns the number of tools of the model.
 get_n_tools <- function(x) UseMethod("get_n_tools")
 
 #' @export
@@ -129,6 +143,8 @@ get_n_tools.epiworld_model <- function(x) get_n_tools_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns
+#' - `get_ndays` returns the number of days of the model.
 get_ndays <- function(x) UseMethod("get_ndays")
 
 #' @export
@@ -137,8 +153,70 @@ get_ndays.epiworld_model <- function(x) get_ndays_cpp(x)
 
 #' @export 
 #' @rdname epiworld-methods
+#' @returns 
+#' - `get_n_replicates` returns the number of replicates of the model.
 get_n_replicates <- function(x) UseMethod("get_n_replicates")
 
 #' @export
 get_n_replicates.epiworld_model <- function(x) get_n_replicates_cpp(x)
 
+
+#' @export
+#' @rdname epiworld-methods
+#' @returns 
+#' - `size.epiworld_model` returns the number of agents in the model.
+#' 
+size <- function(x) UseMethod("size")
+
+#' @export
+size.epiworld_model <- function(x) size_cpp(x)
+
+
+#' @export
+#' @param data A numeric matrix.
+#' @rdname epiworld-methods
+set_agents_data <- function(model, data) {
+  
+  if (!inherits(data, "matrix") | mode(data) != "numeric")
+    stop("-data- must be a numeric (mode) matrix (class).")
+  
+  if (size(model) != nrow(data))
+    stop(
+      "The number of rows in -data- (", nrow(data),
+      ") doesn't match the number of agents in the model (",
+      size(model), ")."
+      )
+  
+  invisible(set_agents_data_cpp(model = model, data = data, ncols = ncol(data)))
+  
+}
+
+#' @export
+#' @rdname epiworld-methods
+get_agents_data_ncols <- function(model) {
+  
+  get_agents_data_ncols_cpp(model)
+  
+}
+
+#' @export
+#' @param virus_pos Integer. Relative location (starting from 0) of the virus
+#' in the model
+#' @rdname epiworld-methods
+get_virus <- function(model, virus_pos) {
+  structure(
+    get_virus_model_cpp(model, virus_pos),
+    class = c("epiworld_virus")
+  )
+}
+
+#' @export
+#' @param tool_pos Integer. Relative location (starting from 0) of the tool
+#' in the model
+#' @rdname epiworld-methods
+get_tool <- function(model, tool_pos) {
+  structure(
+    get_tool_model_cpp(model, tool_pos),
+    class = "epiworld_tool"
+  )
+}

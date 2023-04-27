@@ -39,6 +39,10 @@ get_hist_transition_matrix(x, skip_zeros = FALSE)
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 any model.}
 
+\item{y}{Ignored.}
+
+\item{ylab, xlab, main}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+
 \item{...}{In the case of \code{plot.epiworld_repnum}, further arguments passed to
 \link[graphics:plot.default]{graphics::plot}.}
 
