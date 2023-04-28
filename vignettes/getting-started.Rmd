@@ -121,7 +121,7 @@ As evident from the above plot, the SIR model constructed from epiworldR
 displays the changes in susceptible, infected, and recovered case counts over 
 time (days). Notice after a certain amount of time, the curves flatten. Below, 
 a table representation of the above plot is printed, complete with each state 
-within the SIR model, dates, and agent counts. 
+within the SIR model, date, and agent counts. 
 
 ```{r get-hist-total}
 head(get_hist_total(model_sir))
@@ -136,7 +136,7 @@ head(repnum)
 
 epiworldR has a method to automatically plot the reproductive number. This
 function takes the average of values in the above table for each date and 
-repeats until all dates have been accounted for. For example, on average, 
+repeats until all date have been accounted for. For example, on average, 
 individuals who acquired the virus on the 10th day transmit the virus to roughly 
 1.7 other individuals. 
 

@@ -251,5 +251,14 @@ SEXP set_name_tool_cpp(SEXP tool, std::string name) {
   external_pointer<Tool<>>(tool)->set_name(name);
   return tool;
 }
+
+[[cpp11::register]]
+SEXP print_tool_cpp(SEXP t) {
+  
+  WrapTool(tptr)(t);
+  tptr->print();
+  return t;
+  
+}
   
 #undef WrapTool

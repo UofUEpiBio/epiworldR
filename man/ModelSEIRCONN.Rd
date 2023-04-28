@@ -46,19 +46,32 @@ The SEIR connected model implements a model where all agents are connected.
 This is equivalent to a compartmental model.
 }
 \examples{
+# An example with COVID-19
 model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
   prevalence          = 0.01, 
   n                   = 10000,
-  contact_rate = 4, 
+  contact_rate        = 2, 
   incubation_days     = 7, 
   prob_transmission   = 0.5,
-  prob_recovery       = 0.99
+  prob_recovery       = 0.3
 )
   
 # Running and printing
 run(model_seirconn, ndays = 100, seed = 1912)
 model_seirconn
+
+plot(model_seirconn)
+
+# Adding the flu
+flu <- virus("Flu", .9, 1/7)
+add_virus(model_seirconn, flu, .001)
+
+#' # Running and printing
+run(model_seirconn, ndays = 100, seed = 1912)
+model_seirconn
+
+plot(model_seirconn)
 }
 \seealso{
 epiworld-methods
