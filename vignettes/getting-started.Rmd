@@ -46,8 +46,8 @@ model_sir <- ModelSIRCONN(
   name              = "COVID-19",
   n                 = 100000, 
   prevalence        = 0.0001, 
-  contact_rate      = 1,
-  prob_transmission = 0.3,
+  contact_rate      = 2,
+  prob_transmission = 0.5,
   prob_recovery     = 1/3
   )
 ```
@@ -157,7 +157,7 @@ the new virus' prevalence (which is set to 0.01 in this example).
 
 ```{r design-and-add}
 # Building the virus
-flu <- virus(name = "Flu", prob_infecting = .5)
+flu <- virus(name = "Flu", prob_infecting = .3)
 
 # Adding the virus to the model
 add_virus(model_sir, flu, .0001)
@@ -210,7 +210,8 @@ vaccine <- tool(
   death_reduction = .9
 )
 
-add_tool(model_sir, vaccine, 0.85)
+add_tool(model_sir, vaccine, 0.5)
+run(model_sir, ndays = 50, seed = 1231)
 ```
 
 ```{r}
