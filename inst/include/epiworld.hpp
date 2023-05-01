@@ -15213,7 +15213,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             {
                 // Now selecting who is transmitting the disease
                 int which = static_cast<int>(
-                    std::floor(_m->size() * m->runif())
+                    std::floor(m->size() * m->runif())
                 );
 
                 /* There is a bug in which runif() returns 1.0. It is rare, but
@@ -15223,7 +15223,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                  * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
                  * 
                  */
-                if (which == static_cast<int>(_m->size()))
+                if (which == static_cast<int>(m->size()))
                     --which;
 
                 // Can't sample itself
