@@ -60,7 +60,7 @@ virus <- function(
 
 #' @export
 print.epiworld_virus <- function(x, ...) {
-  print_virus_cpp(x)
+  invisible(print_virus_cpp(x))
 }
 
 stopifnot_virus <- function(virus) {

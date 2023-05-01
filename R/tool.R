@@ -7,6 +7,20 @@
 #' @param death_reduction Numeric. Proportion it reduces probability of death.e
 #' @param tool_pos Positive integer. Index of the tool's position in the model.
 #' @examples 
+#' # Simple model
+#' model_sirconn <- ModelSIRCONN(
+#'   name                = "COVID-19",
+#'   n                   = 10000,
+#'   prevalence          = 0.01,
+#'   contact_rate        = 5,
+#'   prob_transmission   = 0.4,
+#'   prob_recovery       = 0.95
+#' )
+#' 
+#' # Running and printing
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' plot(model_sirconn)
+#' 
 #' epitool <- tool(
 #'   name = "Vaccine",
 #'   susceptibility_reduction = .9,
@@ -14,6 +28,15 @@
 #'   recovery_enhancer = .5, 
 #'   death_reduction = .9
 #' )
+#' 
+#' epitool
+#' 
+#' add_tool(model_sirconn, epitool, .5)
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' model_sirconn
+#' plot(model_sirconn)
+#' 
+#' 
 #' @export
 tool <- function(
     name,
@@ -35,6 +58,12 @@ tool <- function(
   )
     
 }
+
+#' @export
+print.epiworld_tool <- function(x, ...) {
+  invisible(print_tool_cpp(x))
+}
+
 
 stopifnot_tool <- function(tool) {
   if (!inherits(tool, "epiworld_tool")) {

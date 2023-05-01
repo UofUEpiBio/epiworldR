@@ -71,8 +71,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 286.00ms
-#> Last run speed      : 17.48 million agents x day / second
+#> Last run elapsed t  : 188.00ms
+#> Last run speed      : 26.46 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -86,9 +86,9 @@ sir
 #>  - Prob. of Recovery : 0.3000
 #> 
 #> Distribution of the population at time 50:
-#>  - (0) Susceptible :  99000 -> 822
-#>  - (1) Infected    :   1000 -> 415
-#>  - (2) Recovered   :      0 -> 98763
+#>   - (0) Susceptible :  99000 -> 822
+#>   - (1) Infected    :   1000 -> 415
+#>   - (2) Recovered   :      0 -> 98763
 #> 
 #> Transition Probabilities:
 #>  - Susceptible  0.91  0.09  0.00
@@ -133,8 +133,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 58.00ms
-#> Last run speed      : 17.14 million agents x day / second
+#> Last run elapsed t  : 55.00ms
+#> Last run speed      : 18.00 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -150,14 +150,14 @@ model_seirconn
 #>  - Prob. Transmission   : 0.6000
 #> 
 #> Distribution of the population at time 100:
-#>  - (0) Susceptible :  9900 -> 98
-#>  - (1) Exposed     :   100 -> 0
-#>  - (2) Infected    :     0 -> 0
-#>  - (3) Recovered   :     0 -> 9902
+#>   - (0) Susceptible :  9900 -> 91
+#>   - (1) Exposed     :   100 -> 0
+#>   - (2) Infected    :     0 -> 0
+#>   - (3) Recovered   :     0 -> 9909
 #> 
 #> Transition Probabilities:
 #>  - Susceptible  0.96  0.04  0.00  0.00
-#>  - Exposed      0.00  0.87  0.13  0.00
+#>  - Exposed      0.00  0.85  0.15  0.00
 #>  - Infected     0.00  0.00  0.49  0.51
 #>  - Recovered    0.00  0.00  0.00  1.00
 ```

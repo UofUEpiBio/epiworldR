@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction
+
 
 epiworldR is an R package that provides a fast (C++ backend) and highly-
 customizable framework for building network-based transmission/diffusion agent-
@@ -46,8 +46,8 @@ model_sir <- ModelSIRCONN(
   name              = "COVID-19",
   n                 = 100000, 
   prevalence        = 0.0001, 
-  contact_rate      = 1,
-  prob_transmission = 0.3,
+  contact_rate      = 2,
+  prob_transmission = 0.5,
   prob_recovery     = 1/3
   )
 ```
@@ -118,7 +118,7 @@ As evident from the above plot, the SIR model constructed from epiworldR
 displays the changes in susceptible, infected, and recovered case counts over 
 time (days). Notice after a certain amount of time, the curves flatten. Below, 
 a table representation of the above plot is printed, complete with each state 
-within the SIR model, dates, and agent counts. 
+within the SIR model, date, and agent counts. 
 
 ```{r get-hist-total}
 head(get_hist_total(model_sir))
@@ -133,7 +133,7 @@ head(repnum)
 
 epiworldR has a method to automatically plot the reproductive number. This
 function takes the average of values in the above table for each date and 
-repeats until all dates have been accounted for. For example, on average, 
+repeats until all date have been accounted for. For example, on average, 
 individuals who acquired the virus on the 10th day transmit the virus to roughly 
 1.7 other individuals. 
 
@@ -154,7 +154,7 @@ the new virus' prevalence (which is set to 0.01 in this example).
 
 ```{r design-and-add}
 # Building the virus
-flu <- virus(name = "Flu", prob_infecting = .5)
+flu <- virus(name = "Flu", prob_infecting = .3)
 
 # Adding the virus to the model
 add_virus(model_sir, flu, .0001)
@@ -207,7 +207,8 @@ vaccine <- tool(
   death_reduction = .9
 )
 
-add_tool(model_sir, vaccine, 0.85)
+add_tool(model_sir, vaccine, 0.5)
+run(model_sir, ndays = 50, seed = 1231)
 ```
 
 ```{r curves-including-vaccine, fig.height=10}

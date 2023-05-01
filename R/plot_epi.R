@@ -47,6 +47,21 @@ plot_epi.epiworld_model <- function(
   
 }
 
+plot_epi.epiworld_hist_variant <- function(
+    x, main = "",
+    counts_scale,
+    ...
+) {
+  
+  res <- lapply(sort(unique(x$id)), function(i) x[x$id == i,])
+  
+  lapply(res, function(r) {
+    plot_epi.epiworld_hist(r, main = paste0("Variant id ", r$id[1]))
+    })
+  invisible(x)
+  
+}
+
 plot_epi.epiworld_hist <- function(
     x, main = "",
     counts_scale,
@@ -76,12 +91,12 @@ plot_epi.epiworld_hist <- function(
   }
   # Round the maximum date up to the nearest 10th 
   max_date <- min(
-    diff(range(curves$dates)),
+    diff(range(curves$date)),
     max(ceiling(max(date_candidates) / 10L) * 10L, 10L)
   )
   
   # Defining range of x values by max date as the max
-  curves <- curves[curves$dates < max_date,]
+  curves <- curves[curves$date < max_date,]
   # Defining range of y values  
   counts_range <- range(curves$counts)
 
@@ -89,7 +104,7 @@ plot_epi.epiworld_hist <- function(
   with(
     curves[curves$state == state_names[1L],], 
     graphics::plot(
-      x    = dates,
+      x    = date,
       y    = counts, 
       type = 'l', 
       col  = 1,
@@ -110,7 +125,7 @@ plot_epi.epiworld_hist <- function(
     with(
       curves[curves$state == state_names[i],],
       graphics::lines(
-        x    = dates,
+        x    = date,
         y    = counts,
         type = 'l',
         col  = i

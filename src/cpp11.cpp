@@ -425,6 +425,13 @@ extern "C" SEXP _epiworldR_set_name_tool_cpp(SEXP tool, SEXP name) {
     return cpp11::as_sexp(set_name_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<std::string>>(name)));
   END_CPP11
 }
+// tool.cpp
+SEXP print_tool_cpp(SEXP t);
+extern "C" SEXP _epiworldR_print_tool_cpp(SEXP t) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(print_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(t)));
+  END_CPP11
+}
 // virus.cpp
 SEXP virus_cpp(std::string name, double prob_infecting, double prob_recovery, double prob_death, double post_immunity);
 extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death, SEXP post_immunity) {
@@ -591,6 +598,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             1},
+    {"_epiworldR_print_tool_cpp",                       (DL_FUNC) &_epiworldR_print_tool_cpp,                        1},
     {"_epiworldR_print_virus_cpp",                      (DL_FUNC) &_epiworldR_print_virus_cpp,                       1},
     {"_epiworldR_queuing_off_cpp",                      (DL_FUNC) &_epiworldR_queuing_off_cpp,                       1},
     {"_epiworldR_queuing_on_cpp",                       (DL_FUNC) &_epiworldR_queuing_on_cpp,                        1},

@@ -114,6 +114,20 @@ the tool. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
 }
 \examples{
+# Simple model
+model_sirconn <- ModelSIRCONN(
+  name                = "COVID-19",
+  n                   = 10000,
+  prevalence          = 0.01,
+  contact_rate        = 5,
+  prob_transmission   = 0.4,
+  prob_recovery       = 0.95
+)
+
+# Running and printing
+run(model_sirconn, ndays = 100, seed = 1912)
+plot(model_sirconn)
+
 epitool <- tool(
   name = "Vaccine",
   susceptibility_reduction = .9,
@@ -121,6 +135,15 @@ epitool <- tool(
   recovery_enhancer = .5, 
   death_reduction = .9
 )
+
+epitool
+
+add_tool(model_sirconn, epitool, .5)
+run(model_sirconn, ndays = 100, seed = 1912)
+model_sirconn
+plot(model_sirconn)
+
+
 
 # Using the logit function --------------
 sir <- ModelSIR(

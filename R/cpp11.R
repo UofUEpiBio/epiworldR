@@ -240,6 +240,10 @@ set_name_tool_cpp <- function(tool, name) {
   .Call(`_epiworldR_set_name_tool_cpp`, tool, name)
 }
 
+print_tool_cpp <- function(t) {
+  .Call(`_epiworldR_print_tool_cpp`, t)
+}
+
 virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity) {
   .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity)
 }
