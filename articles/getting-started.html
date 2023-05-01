@@ -75,9 +75,6 @@ Yon</h4>
 
     
     
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
 <p>epiworldR is an R package that provides a fast (C++ backend) and
 highly- customizable framework for building network-based
 transmission/diffusion agent- based models [ABM]. Some key features of
@@ -85,7 +82,6 @@ epiworldR are the ability to construct multi-disease models (e.g.,
 models of competing multi-pathogens/multi-rumor,) design mutating
 pathogens, architect population-level interventions, and build models
 with an arbitrary number of compartments/states (beyond SIR/SEIR.)</p>
-</div>
 <div class="section level2">
 <h2 id="example-1-simulating-an-sir-model">Example 1: Simulating an SIR model<a class="anchor" aria-label="anchor" href="#example-1-simulating-an-sir-model"></a>
 </h2>
@@ -166,8 +162,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
-<span><span class="co">#&gt; Last run speed      : 2.69 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 2.00s</span></span>
+<span><span class="co">#&gt; Last run speed      : 2.42 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -210,10 +206,10 @@ order to then progress to the recovered state. The same logic applies
 with moving backwards; an agent cannot become susceptible again after
 being infected.</p>
 </div>
+<div class="section level3">
+<h3 id="plot">Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
+</h3>
 </div>
-<div class="section level2">
-<h2 id="plot">## Plot<a class="anchor" aria-label="anchor" href="#plot"></a>
-</h2>
 <div class="section level3">
 <h3 id="extracting-information">Extracting information<a class="anchor" aria-label="anchor" href="#extracting-information"></a>
 </h3>
@@ -242,7 +238,6 @@ functions.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></code></pre></div>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;"></p>
-<p>=======</p>
 <p>As evident from the above plot, the SIR model constructed from
 epiworldR displays the changes in susceptible, infected, and recovered
 case counts over time (days). Notice after a certain amount of time, the
@@ -317,10 +312,10 @@ sections.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
-<span><span class="co">#&gt; Total elapsed t     : 3.00s (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 2.60 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 2.64 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 2.00s</span></span>
+<span><span class="co">#&gt; Total elapsed t     : 4.00s (2 runs)</span></span>
+<span><span class="co">#&gt; Last run speed      : 2.33 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 2.38 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -395,7 +390,7 @@ vaccination.</p>
 <span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum3</span>, type<span class="op">=</span><span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="getting-started_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;"></p>
+<p><img src="getting-started_files/figure-html/curves-including-vaccine-1.png" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></code></pre></div>
 </div>
