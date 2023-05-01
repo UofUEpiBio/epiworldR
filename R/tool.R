@@ -61,7 +61,7 @@ tool <- function(
 
 #' @export
 print.epiworld_tool <- function(x, ...) {
-  print_tool_cpp(x)
+  invisible(print_tool_cpp(x))
 }
 
 
