@@ -125,7 +125,10 @@ run_multiple_get_results <- function(m) {
     
     # Getting number of simulation
     output[[i]] <- lapply(seq_along(fnames), function(j) {
-      cbind(sim_num = j, output[[i]][[j]])
+      if (nrow(output[[i]][[j]]) > 0)
+        cbind(sim_num = j, output[[i]][[j]])
+      else
+        NULL
     })
     
     # Putting all together
