@@ -87,8 +87,8 @@ represents the observed values from each of the 50 simulations for each date.
 seirconn_50 <- run_multiple_get_results(model_seirconn)$total_hist
 seirconn_50 <- seirconn_50[seirconn_50$date <= 20,]
 
-par(mfrow = c(length(unique(seirconn_50$state))/2,
-              length(unique(seirconn_50$state))/2))
+par(mfrow = c(2,
+              floor(length(unique(seirconn_50$state))/2)))
 
 for (cat in unique(seirconn_50$state)) {
 boxplot(counts ~ date, data = seirconn_50,
