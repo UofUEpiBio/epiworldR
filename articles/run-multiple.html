@@ -68,7 +68,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2023-05-02</h4>
+            <h4 data-toc-skip class="date">2023-05-03</h4>
       
       
       <div class="d-none name"><code>run-multiple.Rmd</code></div>
@@ -138,15 +138,15 @@ simulations.</p>
 <span><span class="co">#&gt; 3       1      0    0         1    Infected      0</span></span>
 <span><span class="co">#&gt; 4       1      0    0         1   Recovered      0</span></span>
 <span><span class="co">#&gt; 5       1      0    1         1 Susceptible   9999</span></span>
-<span><span class="co">#&gt; 6       1      0    1         1     Exposed      1</span></span>
+<span><span class="co">#&gt; 6       1      0    1         1     Exposed      0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num thread variant source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1       2      0       0     13                   50  0</span></span>
-<span><span class="co">#&gt; 2       2      0       0    152                   50  0</span></span>
-<span><span class="co">#&gt; 3       2      0       0    353                   50  0</span></span>
-<span><span class="co">#&gt; 4       2      0       0    403                   50  0</span></span>
-<span><span class="co">#&gt; 5       2      0       0    476                   50  0</span></span>
-<span><span class="co">#&gt; 6       2      0       0    529                   50  0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       1      0       0      7                   50  0</span></span>
+<span><span class="co">#&gt; 2       1      0       0    127                   50  0</span></span>
+<span><span class="co">#&gt; 3       1      0       0    243                   50  0</span></span>
+<span><span class="co">#&gt; 4       1      0       0    270                   50  0</span></span>
+<span><span class="co">#&gt; 5       1      0       0    336                   50  0</span></span>
+<span><span class="co">#&gt; 6       1      0       0    376                   50  0</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
@@ -161,8 +161,8 @@ values from each of the 50 simulations for each date.</p>
 <code class="sourceCode R"><span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span>
 <span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">seirconn_50</span><span class="op">[</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>,<span class="op">]</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>,</span>
-<span>              <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,</span>
+<span>              <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">cat</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">state</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html" class="external-link">boxplot</a></span><span class="op">(</span><span class="va">counts</span> <span class="op">~</span> <span class="va">date</span>, data <span class="op">=</span> <span class="va">seirconn_50</span>,</span>
