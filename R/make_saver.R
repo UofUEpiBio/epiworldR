@@ -134,10 +134,52 @@ run_multiple_get_results <- function(m) {
     # Putting all together
     output[[i]] <- do.call(rbind, output[[i]])
     
+    # runif
+    # 
+    # runif(10, min=2, max=4)
+    # do.call(runif, list(10, 2, 4))
+    # 
+    # rbind(output[[i]][[1]], output[[i]][[2]], ...)
+    
+    class(output[[i]]) <- c("epiworld_multiple_save_i", class(output[[i]]))
+    attr(output[[i]], "what") <- i
+      
+    
   }
   
-  output
+  structure(output, class = c("epiworld_multiple_save", class(output)))
   
+}
+
+#' @export
+plot.epiworld_multiple_save <-function(x, y = NULL, ...) {
+  # what <- attr(x, "what")
+  lapply(x, plot)
+}
+
+#' @export
+plot.epiworld_multiple_save_i <-function(x, y = NULL, ...) {
+  what <- attr(x, "what")
+  par(mfrow = c(2, floor(length(unique(x$state))/2)))
+  for (what in unique(x$state)) {
+    boxplot(counts ~ date, data = x,
+            main = what,
+            xlab = "Date",
+            ylab = "Counts",
+            border = "black",
+            las = 2,
+            subset = state == what)
+  }
+}
+
+#' @export
+plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
+  boxplot(rt ~ source_exposure_date, data = x,
+          main = "Reproductive Number",
+          xlab = "Source Exposure Date",
+          ylab = "rt",
+          border = "black",
+          las = 2)
 }
 
 #' @export

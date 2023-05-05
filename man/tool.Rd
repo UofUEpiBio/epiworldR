@@ -138,11 +138,14 @@ epitool <- tool(
 
 epitool
 
+set_name_tool(epitool, 'Pfizer') # assigning name to tool
 add_tool(model_sirconn, epitool, .5)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
 
+# Removing epitool from model. Indexing begins at 0.
+rm_tool(model_sirconn, 0) 
 
 
 # Using the logit function --------------

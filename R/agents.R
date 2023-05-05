@@ -9,6 +9,20 @@
 #' @export
 #' @aliases agents
 #' @examples
+#' 
+#' # Initializing SIR model with agents_smallworld
+#' sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, 
+#'                 recovery = 0.1)
+#' agents_smallworld(
+#'    sir,
+#'    n = 1000, 
+#'    k = 5,
+#'    d = FALSE,
+#'    p = .01
+#'  )
+#' run(sir, ndays = 100, seed = 1912)
+#' sir
+#' 
 #' # Simulating a bernoulli graph
 #' set.seed(333)
 #' n <- 1000

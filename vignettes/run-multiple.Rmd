@@ -86,19 +86,7 @@ represents the observed values from each of the 50 simulations for each date.
 ```{r plotting seirconn epicurves}
 seirconn_50 <- run_multiple_get_results(model_seirconn)$total_hist
 seirconn_50 <- seirconn_50[seirconn_50$date <= 20,]
-
-par(mfrow = c(2,
-              floor(length(unique(seirconn_50$state))/2)))
-
-for (cat in unique(seirconn_50$state)) {
-boxplot(counts ~ date, data = seirconn_50,
-        main = cat,
-        xlab = "Date",
-        ylab = "Counts",
-        border = "black",
-        las = 2,
-        subset = state == cat)
-}
+plot(seirconn_50)
 ```
   
 To view the a plot of the reproductive number over all 50 days for each of the 
@@ -110,12 +98,13 @@ number on average, decreases over time.
 
 ```{r reproductive number plot}
 seirconn_50_r <- run_multiple_get_results(model_seirconn)$reproductive
-boxplot(rt ~ source_exposure_date, data = seirconn_50_r,
-        main = "Reproductive Number",
-        xlab = "Source Exposure Date",
-        ylab = "rt",
-        border = "black",
-        las = 2)
+plot(seirconn_50_r)
+# boxplot(rt ~ source_exposure_date, data = seirconn_50_r,
+#         main = "Reproductive Number",
+#         xlab = "Source Exposure Date",
+#         ylab = "rt",
+#         border = "black",
+#         las = 2)
 
 ```
 
