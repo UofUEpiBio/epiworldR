@@ -79,6 +79,18 @@ run(seirconn, 50)
 # Retrieving the transition probability
 get_transition_probability(seirconn) 
 
+# Retrieving date, state, and counts dataframe including any added tools 
+get_hist_tool(seirconn)
+
+# Retrieving overall date, state, and counts dataframe 
+get_hist_total(seirconn)
+
+# Retrieving date, state, and counts dataframe by variant
+get_hist_variant(seirconn)
+
+# Retrieving the reproductive number
+get_reproductive_number(seirconn)
+
 # We can go further and get all the history
 t_hist <- get_hist_transition_matrix(seirconn)
 
