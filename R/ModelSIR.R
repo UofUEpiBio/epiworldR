@@ -25,6 +25,9 @@
 #' # Running and printing
 #' run(model_sir, ndays = 100, seed = 1912)
 #' model_sir
+#' 
+#' # Plotting
+#' plot(model_sir, main = "SIR Model", ...)
 #' @seealso epiworld-methods
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery

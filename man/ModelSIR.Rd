@@ -45,13 +45,15 @@ agents_smallworld(
 # Running and printing
 run(model_sir, ndays = 100, seed = 1912)
 model_sir
+
+# Plotting
+plot(model_sir, main = "SIR Model", ...)
 }
 \seealso{
 epiworld-methods
 
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
-\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIS}()},

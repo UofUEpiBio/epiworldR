@@ -53,13 +53,14 @@ model_sirconn <- ModelSIRCONN(
 # Running and printing
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
+
+plot(model_sirconn,  main = "SIRCONN Model", ...)
 }
 \seealso{
 epiworld-methods
 
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
-\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIS}()},
