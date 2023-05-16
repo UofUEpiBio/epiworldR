@@ -67,9 +67,9 @@ viruses.</p>
 <span></span>
 <span><span class="fu">get_name_virus</span><span class="op">(</span><span class="va">virus</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_virus</span><span class="op">(</span><span class="va">model</span>, <span class="va">virus</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">add_virus</span><span class="op">(</span><span class="va">model</span>, <span class="va">virus</span>, <span class="va">proportion</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_virus_n</span><span class="op">(</span><span class="va">model</span>, <span class="va">virus</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">add_virus_n</span><span class="op">(</span><span class="va">model</span>, <span class="va">virus</span>, <span class="va">n</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">virus_set_state</span><span class="op">(</span><span class="va">virus</span>, <span class="va">init</span>, <span class="va">end</span>, <span class="va">removed</span><span class="op">)</span></span>
 <span></span>
@@ -126,8 +126,12 @@ viruses.</p>
 <dd><p>An object of class <code>epiworld-model</code>.</p></dd>
 
 
-<dt>prevalence</dt>
+<dt>proportion</dt>
 <dd><p>In the case of <code>add_virus</code>, a proportion, otherwise, an integer.</p></dd>
+
+
+<dt>n</dt>
+<dd><p>A positive integer. Initial count of agents to have the virus</p></dd>
 
 
 <dt>init, end, removed</dt>
@@ -179,129 +183,7 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">mseirconn</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSEIRCONN.html">ModelSEIRCONN</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  name                <span class="op">=</span> <span class="st">"COVID-19"</span>,</span></span>
-<span class="r-in"><span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
-<span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
-<span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">4</span>, </span></span>
-<span class="r-in"><span>  incubation_days     <span class="op">=</span> <span class="fl">7</span>, </span></span>
-<span class="r-in"><span>  prob_transmission   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
-<span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.99</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">delta</span> <span class="op">&lt;-</span> <span class="fu">virus</span><span class="op">(</span><span class="st">"Delta Variant"</span>, <span class="fl">0</span>, <span class="fl">.5</span>, <span class="fl">.2</span>, <span class="fl">.01</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">add_virus</span><span class="op">(</span><span class="va">mseirconn</span>, <span class="va">delta</span>, <span class="fl">.3</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">mseirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">992</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
-<span class="r-in"><span><span class="va">mseirconn</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SIMULATION STUDY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 208.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.79 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Delta Variant (baseline prevalence: 30.00%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tool(s):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  (none)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Avg. Incubation days : 7.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate         : 4.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery       : 0.9900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission   : 0.5000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  6900 -&gt; 3774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Exposed     :  3100 -&gt; 102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Infected    :     0 -&gt; 18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (3) Recovered   :     0 -&gt; 6106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.99  0.01  0.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed      0.00  0.86  0.14  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.00  0.13  0.87</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  0.00  1.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
-<span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
-<span class="r-in"><span>  infectiousness <span class="op">=</span> <span class="fl">0.9</span>, recovery <span class="op">=</span> <span class="fl">0.1</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="va">sir</span>,</span></span>
-<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">10000</span>,</span></span>
-<span class="r-in"><span>  k <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  d <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>  p <span class="op">=</span> <span class="fl">.01</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="virus-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># And adding features</span></span></span>
-<span class="r-in"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  female <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10000</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span>,</span></span>
-<span class="r-in"><span>  x      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">10000</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">set_agents_data</a></span><span class="op">(</span><span class="va">sir</span>, <span class="va">dat</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Creating the logit function</span></span></span>
-<span class="r-in"><span><span class="va">vfun</span> <span class="op">&lt;-</span> <span class="fu">virus_fun_logit</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  vars  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0L</span>, <span class="fl">1L</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  coefs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  model <span class="op">=</span> <span class="va">sir</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># The infection prob is lower</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">dat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="virus-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">vfun</span> <span class="co"># printing</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> An epiworld_virus_function object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> (model: Susceptible-Infected-Recovered (SIR))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> This function was built using -virus_fun_logit()-. and it features the following coefficients:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   0: -1.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   1:  1.00 </span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">set_prob_infecting_fun</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  virus <span class="op">=</span> <span class="fu"><a href="epiworld-methods.html">get_virus</a></span><span class="op">(</span><span class="va">sir</span>, <span class="fl">0</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  model <span class="op">=</span> <span class="va">sir</span>,</span></span>
-<span class="r-in"><span>  vfun  <span class="op">=</span> <span class="va">vfun</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span>  </span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="virus-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
+    
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>

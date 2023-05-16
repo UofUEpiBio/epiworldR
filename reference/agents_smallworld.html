@@ -84,7 +84,58 @@ in the edgelist.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Simulating a bernoulli graph</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Initializing SIR model with agents_smallworld</span></span></span>
+<span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, infectiousness <span class="op">=</span> <span class="fl">0.9</span>, </span></span>
+<span class="r-in"><span>                recovery <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">agents_smallworld</span><span class="op">(</span></span></span>
+<span class="r-in"><span>   <span class="va">sir</span>,</span></span>
+<span class="r-in"><span>   n <span class="op">=</span> <span class="fl">1000</span>, </span></span>
+<span class="r-in"><span>   k <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>   d <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>   p <span class="op">=</span> <span class="fl">.01</span></span></span>
+<span class="r-in"><span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-in"><span><span class="va">sir</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SIMULATION STUDY</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Infected-Recovered (SIR)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 2.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 35.69 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tool(s):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  (none)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infectiousness    : 0.9000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. of Recovery : 0.1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  990 -&gt; 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Infected    :   10 -&gt; 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Recovered   :    0 -&gt; 991</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.92  0.08  0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.90  0.10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Simulating a bernoulli graph</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">333</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span></span>
 <span class="r-in"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span> <span class="op">^</span> <span class="fl">2</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">.01</span>, nrow <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span></span>

@@ -61,9 +61,9 @@
 <span></span>
 <span><span class="fu">get_name_tool</span><span class="op">(</span><span class="va">tool</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">proportion</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_tool_n</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">prevalence</span><span class="op">)</span></span>
+<span><span class="fu">add_tool_n</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool</span>, <span class="va">n</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool_pos</span><span class="op">)</span></span>
 <span></span>
@@ -126,8 +126,12 @@
 <dd><p>Model</p></dd>
 
 
-<dt>prevalence</dt>
+<dt>proportion</dt>
 <dd><p>In the case of <code>add_tool</code>, a proportion, otherwise, an integer.</p></dd>
+
+
+<dt>n</dt>
+<dd><p>A positive integer</p></dd>
 
 
 <dt>tool_pos</dt>
@@ -204,6 +208,9 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : 0</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">set_name_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="st">'Pfizer'</span><span class="op">)</span> <span class="co"># Assigning name to the tool</span></span></span>
+<span class="r-in"><span><span class="fu">get_name_tool</span><span class="op">(</span><span class="va">epitool</span><span class="op">)</span> <span class="co"># Returning the name of the tool</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Pfizer"</span>
 <span class="r-in"><span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">epitool</span>, <span class="fl">.5</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
@@ -222,15 +229,15 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 1.00s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 1.00s (2 runs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 0.86 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 1.42 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 0.67 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 1.10 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tool(s):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Vaccine (baseline prevalence: 50.00%)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Pfizer (baseline prevalence: 50.00%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate       : 5.0000</span>
@@ -250,6 +257,45 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="tool-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># To declare a certain number of individuals with the tool</span></span></span>
+<span class="r-in"><span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># Removing epitool from the model</span></span></span>
+<span class="r-in"><span><span class="fu">add_tool_n</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">epitool</span>, <span class="fl">5500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Adjusting probabilities due to tool</span></span></span>
+<span class="r-in"><span><span class="fu">set_susceptibility_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="co"># Susceptibility reduction </span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tool           : Pfizer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : 0</span>
+<span class="r-in"><span><span class="fu">set_transmission_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.2</span><span class="op">)</span> <span class="co"># Transmission reduction</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tool           : Pfizer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : 0</span>
+<span class="r-in"><span><span class="fu">set_recovery_enhancer</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.15</span><span class="op">)</span> <span class="co"># Probability increase of recovery</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tool           : Pfizer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : 0</span>
+<span class="r-in"><span><span class="fu">set_death_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.05</span><span class="op">)</span> <span class="co"># Probability reduction of death</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Tool           : Pfizer</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : -99</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : 0</span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span> <span class="co"># Run model to view changes</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
