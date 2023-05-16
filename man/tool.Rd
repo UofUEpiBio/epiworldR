@@ -139,6 +139,7 @@ epitool <- tool(
 epitool
 
 set_name_tool(epitool, 'Pfizer') # assigning name to tool
+get_name_tool(epitool)
 add_tool(model_sirconn, epitool, .5)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
