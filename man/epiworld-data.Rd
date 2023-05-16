@@ -102,6 +102,7 @@ as.array(t_hist)[,,1:3]
 \seealso{
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},

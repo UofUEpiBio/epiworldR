@@ -31,15 +31,24 @@
 #' 
 #' epitool
 #' 
-#' set_name_tool(epitool, 'Pfizer') # assigning name to tool
-#' get_name_tool(epitool)
+#' set_name_tool(epitool, 'Pfizer') # Assigning name to the tool
+#' get_name_tool(epitool) # Returning the name of the tool
 #' add_tool(model_sirconn, epitool, .5)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' plot(model_sirconn)
 #' 
-#' # Removing epitool from model. Indexing begins at 0.
-#' rm_tool(model_sirconn, 0) 
+#' # To declare a certain number of individuals with the tool
+#' rm_tool(model_sirconn, 0) # Removing epitool from the model
+#' add_tool_n(model_sirconn, epitool, 5500)
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' 
+#' # Adjusting probabilities due to tool
+#' set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction 
+#' set_transmission_reduction(epitool, 0.2) # Transmission reduction
+#' set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
+#' set_death_reduction(epitool, 0.05) # Probability reduction of death
+#' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #' 
 #' @export
 tool <- function(
@@ -109,23 +118,24 @@ get_name_tool <- function(tool) {
 
 #' @export
 #' @param tool An object of class `epiworld_tool`
-#' @param prevalence In the case of `add_tool`, a proportion, otherwise, an integer.
+#' @param proportion In the case of `add_tool`, a proportion, otherwise, an integer.
 #' @rdname tool
-add_tool <- function(model, tool, prevalence) UseMethod("add_tool")
+add_tool <- function(model, tool, proportion) UseMethod("add_tool")
 
 #' @export
-add_tool.epiworld_model <- function(model, tool, prevalence) {
-  add_tool_cpp(model, tool, prevalence)
+add_tool.epiworld_model <- function(model, tool, proportion) {
+  add_tool_cpp(model, tool, proportion)
   invisible(model)
 }
 
 #' @export
 #' @rdname tool
-add_tool_n <- function(model, tool, prevalence) UseMethod("add_tool_n")
+#' @param n A positive integer
+add_tool_n <- function(model, tool, n) UseMethod("add_tool_n")
 
 #' @export
-add_tool_n.epiworld_model <- function(model, tool, prevalence) {
-  add_tool_n_cpp(model, tool, prevalence)
+add_tool_n.epiworld_model <- function(model, tool, n) {
+  add_tool_n_cpp(model, tool, n)
   invisible(model)
 }
 

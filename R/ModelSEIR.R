@@ -29,7 +29,7 @@
 #' run(model_seir, ndays = 100, seed = 1912)
 #' model_seir
 #' @seealso epiworld-methods
-?ModelSEIR <- function(
+ModelSEIR <- function(
     name, prevalence, infectiousness, incubation_days, recovery
 ) {
   

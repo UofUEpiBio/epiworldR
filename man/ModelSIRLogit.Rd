@@ -41,6 +41,7 @@ SIR Logistic model
 \seealso{
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIS}()},

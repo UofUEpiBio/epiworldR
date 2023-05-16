@@ -25,6 +25,10 @@
 #' # Running and printing
 #' run(model_sis, ndays = 100, seed = 1912)
 #' model_sis
+#' 
+#' # Plotting
+#' plot(model_sis, main = "SIS Model", ...)
+#' 
 #' @seealso epiworld-methods
 ModelSIS <- function(
     name, prevalence, infectiousness, recovery) {

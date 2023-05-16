@@ -31,10 +31,24 @@
 #' 
 #' delta <- virus("Delta Variant", 0, .5, .2, .01)
 #' 
+#' # Adding virus and setting/getting virus name
 #' add_virus(mseirconn, delta, .3)
+#' set_name_virus(delta, "COVID-19 Strain")
+#' get_name_virus(delta)
 #' 
 #' run(mseirconn, ndays = 100, seed = 992)
 #' mseirconn
+#' 
+#' rm virus(mseirconn, 0) # Removing the first virus from the model object
+#' add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus 
+#'                                    # to n = 100
+#' # Setting parameters for the delta virus manually                                   
+#' set_prob_infecting(delta, 0.5)                                 
+#' set_prob_recovery(delta, 0.9)
+#' set_prob_death(delta, 0.01)
+#' run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
+#' 
+#' virus_set_state(virus, init, end, removed)                                 
 #' @export
 #' 
 virus <- function(
@@ -107,96 +121,97 @@ get_name_virus <- function(virus) {
 #' @rdname virus
 #' @param model An object of class `epiworld-model`.
 #' @param virus An object of class `epiworld_virus`
-#' @param prevalence In the case of `add_virus`, a proportion, otherwise, an integer.
-add_virus <- function(model, virus, prevalence) UseMethod("add_virus")
+#' @param proportion In the case of `add_virus`, a proportion, otherwise, an integer.
+add_virus <- function(model, virus, proportion) UseMethod("add_virus")
 
 #' @export
-add_virus.epiworld_model <- function(model, virus, prevalence) {
+add_virus.epiworld_model <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   
-  add_virus_cpp(model, virus, prevalence)
+  add_virus_cpp(model, virus, proportion)
   invisible(model)
   
 }
 
 #' @export
-add_virus.epiworld_sir <- function(model, virus, prevalence) {
+add_virus.epiworld_sir <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 2)
-  invisible(add_virus_cpp(model, virus, prevalence))
+  invisible(add_virus_cpp(model, virus, proportion))
   
 }
 
 #' @export
-add_virus.epiworld_sirconn <- function(model, virus, prevalence) {
+add_virus.epiworld_sirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_sir(model, virus, prevalence)
+  add_virus.epiworld_sir(model, virus, proportion)
   
 }
 
 #' @export
-add_virus.epiworld_seir <- function(model, virus, prevalence) {
+add_virus.epiworld_seir <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 3)
-  invisible(add_virus_cpp(model, virus, prevalence))
+  invisible(add_virus_cpp(model, virus, proportion))
   
 }
 
 #' @export
-add_virus.epiworld_seirconn <- function(model, virus, prevalence) {
+add_virus.epiworld_seirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_seir(model, virus, prevalence)
+  add_virus.epiworld_seir(model, virus, proportion)
   
 }
 
 #' @export
 #' @rdname virus
-add_virus_n <- function(model, virus, prevalence) UseMethod("add_virus_n")
+#' @param n A positive integer. Initial count of agents to have the virus
+add_virus_n <- function(model, virus, n) UseMethod("add_virus_n")
 
 #' @export
-add_virus_n.epiworld_model <- function(model, virus, prevalence) {
+add_virus_n.epiworld_model <- function(model, virus, n) {
   
   stopifnot_virus(virus)
-  invisible(add_virus_n_cpp(model, virus, prevalence))
+  invisible(add_virus_n_cpp(model, virus, n))
   
 }
 
 #' @export
-add_virus_n.epiworld_sir <- function(model, virus, prevalence) {
+add_virus_n.epiworld_sir <- function(model, virus, n) {
   
   stopifnot_virus(virus)
   virus_set_state(model, init = 1, end = 2, removed = 2)
-  invisible(add_virus_n_cpp(model, virus, prevalence))
+  invisible(add_virus_n_cpp(model, virus, n))
   
 }
 
 #' @export
-add_virus_n.epiworld_sirconn <- function(model, virus, prevalence) {
+add_virus_n.epiworld_sirconn <- function(model, virus, n) {
   
   stopifnot_virus(virus)
-  add_virus_n.epiworld_sir(model, virus, prevalence)
+  add_virus_n.epiworld_sir(model, virus, n)
   
 }
 
 #' @export
-add_virus_n.epiworld_seir <- function(model, virus, prevalence) {
+add_virus_n.epiworld_seir <- function(model, virus, n) {
   
   stopifnot_virus(virus)
   virus_set_state(model, init = 1, end = 3, removed = 3)
-  invisible(add_virus_n_cpp(model, virus, prevalence))
+  invisible(add_virus_n_cpp(model, virus, n))
   
 }
 
 #' @export
-add_virus_n.epiworld_seirconn <- function(model, virus, prevalence) {
+add_virus_n.epiworld_seirconn <- function(model, virus, n) {
   
   stopifnot_virus(virus)
-  add_virus_n.epiworld_seir(model, virus, prevalence)
+  add_virus_n.epiworld_seir(model, virus, n)
   
 }
 

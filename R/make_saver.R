@@ -25,7 +25,7 @@
 #' @returns
 #' In the case of `make_saver`, an list of class `epiworld_saver`.
 #' The function `run_multiple` returns a list of the same class as `m`; usually
-#' an `epiworld_modwel` object.
+#' an `epiworld_model` object.
 #' 
 #' @examples
 #' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
@@ -51,6 +51,11 @@
 #' 
 #' head(ans$total_hist)
 #' head(ans$reproductive)
+#' 
+#' # Plotting
+#' multi_seirconn <- run_multiple_get_results(model_seirconn)$total_hist
+#' multi_seirconn <- multi_seirconn[multi_seirconn$date <= 20,]
+#' plot(multi_seirconn)
 #' 
 #' @export
 run_multiple <- function(

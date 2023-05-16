@@ -54,6 +54,7 @@ epiworld-methods
 
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIS}()},

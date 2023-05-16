@@ -32,9 +32,9 @@ set_name_virus(virus, name)
 
 get_name_virus(virus)
 
-add_virus(model, virus, prevalence)
+add_virus(model, virus, proportion)
 
-add_virus_n(model, virus, prevalence)
+add_virus_n(model, virus, n)
 
 virus_set_state(virus, init, end, removed)
 
@@ -75,7 +75,9 @@ set_prob_death_fun(virus, model, vfun)
 
 \item{model}{An object of class \code{epiworld-model}.}
 
-\item{prevalence}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
+\item{proportion}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
+
+\item{n}{A positive integer. Initial count of agents to have the virus}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
@@ -129,10 +131,24 @@ mseirconn <- ModelSEIRCONN(
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
 
+# Adding virus and setting/getting virus name
 add_virus(mseirconn, delta, .3)
+set_name_virus(delta, "COVID-19 Strain")
+get_name_virus(delta)
 
 run(mseirconn, ndays = 100, seed = 992)
 mseirconn
+
+rm virus(mseirconn, 0) # Removing the first virus from the model object
+add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus 
+                                   # to n = 100
+# Setting parameters for the delta virus manually                                   
+set_prob_infecting(delta, 0.5)                                 
+set_prob_recovery(delta, 0.9)
+set_prob_death(delta, 0.01)
+run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
+
+virus_set_state(virus, init, end, removed)                                 
 # Using the logit function --------------
 sir <- ModelSIR(
   name = "COVID-19", prevalence = 0.01, 

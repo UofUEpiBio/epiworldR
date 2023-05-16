@@ -96,12 +96,17 @@ agents_smallworld(
 # Running and printing
 run(model_surv, ndays = 100, seed = 1912)
 model_surv 
+
+# Plotting
+plot(model_surv, main = "SURV Model", ...)
+
 }
 \seealso{
 epiworld-methods
 
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},

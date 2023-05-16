@@ -34,9 +34,9 @@ set_name_tool(tool, name)
 
 get_name_tool(tool)
 
-add_tool(model, tool, prevalence)
+add_tool(model, tool, proportion)
 
-add_tool_n(model, tool, prevalence)
+add_tool_n(model, tool, n)
 
 rm_tool(model, tool_pos)
 
@@ -83,7 +83,9 @@ set_death_reduction_fun(tool, model, tfun)
 
 \item{model}{Model}
 
-\item{prevalence}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
+\item{proportion}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
+
+\item{n}{A positive integer}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 
@@ -138,15 +140,24 @@ epitool <- tool(
 
 epitool
 
-set_name_tool(epitool, 'Pfizer') # assigning name to tool
-get_name_tool(epitool)
+set_name_tool(epitool, 'Pfizer') # Assigning name to the tool
+get_name_tool(epitool) # Returning the name of the tool
 add_tool(model_sirconn, epitool, .5)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
 
-# Removing epitool from model. Indexing begins at 0.
-rm_tool(model_sirconn, 0) 
+# To declare a certain number of individuals with the tool
+rm_tool(model_sirconn, 0) # Removing epitool from the model
+add_tool_n(model_sirconn, epitool, 5500)
+run(model_sirconn, ndays = 100, seed = 1912)
+
+# Adjusting probabilities due to tool
+set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction 
+set_transmission_reduction(epitool, 0.2) # Transmission reduction
+set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
+set_death_reduction(epitool, 0.05) # Probability reduction of death
+run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 
 
 # Using the logit function --------------
