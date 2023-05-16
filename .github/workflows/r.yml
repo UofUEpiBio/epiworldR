@@ -10,7 +10,7 @@ on:
   pull_request:
     branches: [main, master]
 
-name: R-CMD-check
+name: R-CMD-check-final
 
 jobs:
   R-CMD-check:
@@ -23,9 +23,9 @@ jobs:
       matrix:
         config:
           - {os: macOS-latest,   r: 'release'}
-
           - {os: windows-latest, r: 'release'}
-
+          - {os: macOS-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: windows-latest, r: 'devel', http-user-agent: 'release'}
           # Use older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
@@ -58,9 +58,4 @@ jobs:
           check-dir: '"check"'
           error-on: '"error"'
           
-      - name: Print logs
-        if: runner.os != 'Windows'
-        run: |
-          cat check/epiworldR.Rcheck/00install.out || echo "There's no 00install.out"
-          cat check/epiworldR.Rcheck/00check.log || echo "There's no 00check.out"
-          cat check/epiworldR.Rcheck/tests/tinytest.Rout || echo "There's no tinytest.Rout"
+

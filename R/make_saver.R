@@ -165,16 +165,28 @@ plot.epiworld_multiple_save <-function(x, y = NULL, ...) {
 #' @export
 plot.epiworld_multiple_save_i <-function(x, y = NULL, ...) {
   what <- attr(x, "what")
-  par(mfrow = c(2, floor(length(unique(x$state))/2)))
-  for (what in unique(x$state)) {
-    boxplot(counts ~ date, data = x,
-            main = what,
-            xlab = "Date",
-            ylab = "Counts",
-            border = "black",
-            las = 2,
-            subset = state == what)
+  
+  # If it is not reproductive number, then...
+  if (what != "reproductive") {
+    
+    oldpar <- graphics::par(
+      mfrow = c(2, floor(length(unique(x$state))/2))
+      )
+    on.exit(graphics::par(oldpar))
+    
+    for (what in unique(x$state)) {
+      boxplot(counts ~ date, data = x,
+              main = what,
+              xlab = "Date",
+              ylab = "Counts",
+              border = "black",
+              las = 2,
+              subset = state == what)
+    }
+    
   }
+  
+  
 }
 
 #' @export
