@@ -170,7 +170,7 @@ add_virus.epiworld_seirconn <- function(model, virus, proportion) {
 
 #' @export
 #' @rdname virus
-#' @param n A positive integer. Initial count of agents to have the virus
+#' @param n A positive integer. Initial count of agents to have the virus.
 add_virus_n <- function(model, virus, n) UseMethod("add_virus_n")
 
 #' @export

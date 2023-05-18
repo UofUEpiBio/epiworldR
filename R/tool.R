@@ -130,7 +130,7 @@ add_tool.epiworld_model <- function(model, tool, proportion) {
 
 #' @export
 #' @rdname tool
-#' @param n A positive integer
+#' @param n A positive integer. Number of agents to initially have the tool.
 add_tool_n <- function(model, tool, n) UseMethod("add_tool_n")
 
 #' @export
