@@ -26,3 +26,7 @@ docs:
 	Rscript --vanilla -e 'roxygen2::roxygenize()'
 
 .PHONY: build update check clean docs
+
+checkv: build
+	R CMD check --as-cran --use-valgrind epiworldR*.tar.gz
+	
