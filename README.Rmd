@@ -140,3 +140,29 @@ rn <- get_reproductive_number(model_logit)
 get_agents(model_logit)
 ```
 
+## Transmission network
+
+```{r transmission-net}
+# Creating a SIR model
+sir <- ModelSIR(
+  name           = "COVID-19",
+  prevalence     = .01,
+  infectiousness = .5,
+  recovery       = .5
+  ) |>
+    # Adding a Small world population 
+    agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
+    # Running the model for 50 days
+    run(ndays = 50, seed = 1912)
+
+# Transmission network
+net <- get_transmissions(sir)
+
+# Plotting
+library(netplot)
+library(igraph)
+x <- graph_from_edgelist(as.matrix(net[,2:3]) + 1)
+
+nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
+```
+
