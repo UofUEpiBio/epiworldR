@@ -119,8 +119,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 188.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 26.46 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 524.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 9.53 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -177,8 +177,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 55.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 18.00 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 178.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 5.61 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -278,6 +278,49 @@
 <span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
 <span><span class="co">#&gt; Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
 <span><span class="co">#&gt; ... 99990 more agents ...</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="transmission-network">Transmission network<a class="anchor" aria-label="anchor" href="#transmission-network"></a>
+</h2>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Creating a SIR model</span></span>
+<span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
+<span>  name           <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
+<span>  prevalence     <span class="op">=</span> <span class="fl">.01</span>,</span>
+<span>  infectiousness <span class="op">=</span> <span class="fl">.5</span>,</span>
+<span>  recovery       <span class="op">=</span> <span class="fl">.5</span></span>
+<span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="co"># Adding a Small world population </span></span>
+<span>    <span class="fu"><a href="reference/agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">500</span>, k <span class="op">=</span> <span class="fl">10</span>, d <span class="op">=</span> <span class="cn">FALSE</span>, p <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="co"># Running the model for 50 days</span></span>
+<span>    <span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span>ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span>
+<span><span class="co">#&gt; _________________________________________________________________________</span></span>
+<span><span class="co">#&gt; |Running the model...</span></span>
+<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
+<span><span class="co">#&gt; | done.</span></span>
+<span></span>
+<span><span class="co"># Transmission network</span></span>
+<span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_transmissions</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plotting</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: grid</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'igraph'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:netplot':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     ego</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     decompose, spectrum</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     union</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">graph_from_edgelist</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-transmission-net-1.png" width="100%"></p>
 </div>
 </div>
 
