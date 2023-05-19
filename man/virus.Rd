@@ -77,7 +77,7 @@ set_prob_death_fun(virus, model, vfun)
 
 \item{proportion}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
-\item{n}{A positive integer. Initial count of agents to have the virus}
+\item{n}{A positive integer. Initial count of agents to have the virus.}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}

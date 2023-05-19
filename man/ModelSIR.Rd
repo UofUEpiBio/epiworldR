@@ -47,7 +47,7 @@ run(model_sir, ndays = 100, seed = 1912)
 model_sir
 
 # Plotting
-plot(model_sir, main = "SIR Model", ...)
+plot(model_sir)
 }
 \seealso{
 epiworld-methods

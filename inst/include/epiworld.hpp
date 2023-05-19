@@ -413,13 +413,6 @@ public:
     epiworld::GlobalFun<tseq> funname = \
     [](epiworld::Model<tseq>* m) -> void
 
-class QueueValues {
-public:
-    static const int NoOne    = 0;
-    static const int OnlySelf = 1;
-    static const int Everyone = 2;
-};
-
 
 #endif
 /*//////////////////////////////////////////////////////////////////////////////
@@ -2811,6 +2804,33 @@ public:
     ) const;
     ///@}
 
+    /**
+     * @brief Get the transmissions object
+     * 
+     * @param date 
+     * @param source 
+     * @param target 
+     * @param variant 
+     * @param source_exposure_date 
+     */
+    ///@{
+    void get_transmissions(
+        std::vector<int> & date,
+        std::vector<int> & source,
+        std::vector<int> & target,
+        std::vector<int> & variant,
+        std::vector<int> & source_exposure_date
+    ) const;
+
+    void get_transmissions(
+        int * date,
+        int * source,
+        int * target,
+        int * variant,
+        int * source_exposure_date
+    ) const;
+    ///@}
+
     void write_data(
         std::string fn_variant_info,
         std::string fn_variant_hist,
@@ -3576,6 +3596,59 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     return;
 
+
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::get_transmissions(
+    std::vector<int> & date,
+    std::vector<int> & source,
+    std::vector<int> & target,
+    std::vector<int> & variant,
+    std::vector<int> & source_exposure_date
+) const 
+{
+
+    size_t nevents = transmission_date.size();
+
+    date.resize(nevents);
+    source.resize(nevents);
+    target.resize(nevents);
+    variant.resize(nevents);
+    source_exposure_date.resize(nevents);
+
+    get_transmissions(
+        &date[0u],
+        &source[0u],
+        &target[0u],
+        &variant[0u],
+        &source_exposure_date[0u]
+    );
+
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::get_transmissions(
+    int * date,
+    int * source,
+    int * target,
+    int * variant,
+    int * source_exposure_date
+) const 
+{
+
+    size_t nevents = transmission_date.size();
+
+    for (size_t i = 0u; i < nevents; ++i)
+    {
+
+        *(date + i) = transmission_date.at(i);
+        *(source + i) = transmission_source.at(i);
+        *(target + i) = transmission_target.at(i);
+        *(variant + i) = transmission_variant.at(i);
+        *(source_exposure_date + i) = transmission_source_exposure_date.at(i);
+
+    }
 
 }
 
@@ -5466,6 +5539,10 @@ public:
     bool operator==(const Queue<TSeq> & other) const;
     bool operator!=(const Queue<TSeq> & other) const {return !operator==(other);};
 
+    static const int NoOne    = 0;
+    static const int OnlySelf = 1;
+    static const int Everyone = 2;
+
 };
 
 template<typename TSeq>
@@ -6554,15 +6631,15 @@ inline void Model<TSeq>::actions_run()
         if (use_queuing)
         {
 
-            if (a.queue == QueueValues::Everyone)
+            if (a.queue == Queue<TSeq>::Everyone)
                 queue += p;
-            else if (a.queue == -QueueValues::Everyone)
+            else if (a.queue == -Queue<TSeq>::Everyone)
                 queue -= p;
-            else if (a.queue == QueueValues::OnlySelf)
+            else if (a.queue == Queue<TSeq>::OnlySelf)
                 queue[p->get_id()]++;
-            else if (a.queue == -QueueValues::OnlySelf)
+            else if (a.queue == -Queue<TSeq>::OnlySelf)
                 queue[p->get_id()]--;
-            else if (a.queue != QueueValues::NoOne)
+            else if (a.queue != Queue<TSeq>::NoOne)
                 throw std::logic_error(
                     "The proposed queue change is not valid. Queue values can be {-2, -1, 0, 1, 2}."
                     );
@@ -9468,8 +9545,8 @@ private:
     epiworld_fast_int status_post    = -99; ///< Change of state when removed from agent.
     epiworld_fast_int status_removed = -99; ///< Change of state when agent is removed
 
-    epiworld_fast_int queue_init    = QueueValues::Everyone; ///< Change of state when added to agent.
-    epiworld_fast_int queue_post    = -QueueValues::Everyone; ///< Change of state when removed from agent.
+    epiworld_fast_int queue_init    = Queue<TSeq>::Everyone; ///< Change of state when added to agent.
+    epiworld_fast_int queue_post    = -Queue<TSeq>::Everyone; ///< Change of state when removed from agent.
     epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
 
 public:
@@ -9606,7 +9683,8 @@ template<typename TSeq>
 inline VirusFun<TSeq> virus_fun_logit(
     std::vector< int > vars,
     std::vector< double > coefs,
-    Model<TSeq> * model
+    Model<TSeq> * model,
+    bool logit = true
 ) {
 
     // Checking that there are features
@@ -9648,7 +9726,7 @@ inline VirusFun<TSeq> virus_fun_logit(
     for (auto c: coefs)
         coefs_f.push_back(static_cast<epiworld_double>(c));
 
-    VirusFun<TSeq> fun_infect = [coefs_f,vars](
+    VirusFun<TSeq> fun_infect = [coefs_f,vars,logit](
         Agent<TSeq> * agent,
         Virus<TSeq> & virus,
         Model<TSeq> * model
@@ -10488,8 +10566,8 @@ private:
     epiworld_fast_int status_init = -99;
     epiworld_fast_int status_post = -99;
 
-    epiworld_fast_int queue_init = QueueValues::NoOne; ///< Change of state when added to agent.
-    epiworld_fast_int queue_post = QueueValues::NoOne; ///< Change of state when removed from agent.
+    epiworld_fast_int queue_init = Queue<TSeq>::NoOne; ///< Change of state when added to agent.
+    epiworld_fast_int queue_post = Queue<TSeq>::NoOne; ///< Change of state when removed from agent.
 
     void set_agent(Agent<TSeq> * p, size_t idx);
 
@@ -12713,7 +12791,7 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
     ToolPtr<TSeq> t = a.tool;
 
     CHECK_COALESCE_(a.new_state, t->status_init, p->get_state())
-    CHECK_COALESCE_(a.queue, t->queue_init, QueueValues::NoOne)
+    CHECK_COALESCE_(a.queue, t->queue_init, Queue<TSeq>::NoOne)
     
     // Update tool accounting
     p->n_tools++;
@@ -12741,7 +12819,7 @@ inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * model)
     VirusPtr<TSeq> & v = a.agent->viruses[a.virus->pos_in_agent];
     
     CHECK_COALESCE_(a.new_state, v->status_post, p->get_state())
-    CHECK_COALESCE_(a.queue, v->queue_post, -QueueValues::Everyone)
+    CHECK_COALESCE_(a.queue, v->queue_post, -Queue<TSeq>::Everyone)
 
     if (--p->n_viruses > 0)
     {
@@ -12768,7 +12846,7 @@ inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * /*m*/)
     ToolPtr<TSeq> & t = a.agent->tools[a.tool->pos_in_agent];
 
     CHECK_COALESCE_(a.new_state, t->status_post, p->get_state())
-    CHECK_COALESCE_(a.queue, t->queue_post, QueueValues::NoOne)
+    CHECK_COALESCE_(a.queue, t->queue_post, Queue<TSeq>::NoOne)
 
     if (--p->n_tools > 0)
     {
@@ -12791,7 +12869,7 @@ inline void default_add_entity(Action<TSeq> & a, Model<TSeq> *)
     Entity<TSeq> * e = a.entity;
 
     CHECK_COALESCE_(a.new_state, e->status_post, p->get_state())
-    CHECK_COALESCE_(a.queue, e->queue_post, QueueValues::NoOne)
+    CHECK_COALESCE_(a.queue, e->queue_post, Queue<TSeq>::NoOne)
 
     // Checking the agent and the entity are not linked
     if ((p->get_n_entities() > 0) && (e->size() > 0))
@@ -12856,7 +12934,7 @@ inline void default_rm_entity(Action<TSeq> & a, Model<TSeq> * m)
     size_t idx_entity_in_agent = a.idx_object;
 
     CHECK_COALESCE_(a.new_state, e->status_post, p->get_state())
-    CHECK_COALESCE_(a.queue, e->queue_post, QueueValues::NoOne)
+    CHECK_COALESCE_(a.queue, e->queue_post, Queue<TSeq>::NoOne)
 
     if (--p->n_entities > 0)
     {
@@ -13371,7 +13449,7 @@ inline void Agent<TSeq>::rm_agent_by_virus(
 
         // By default, it will be removed from the queue... unless the user
         // says the contrary!
-        (dead_queue == -99) ? QueueValues::NoOne : dead_queue
+        (dead_queue == -99) ? Queue<TSeq>::NoOne : dead_queue
     );
 
 }
@@ -15237,7 +15315,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                     continue;
 
                 // If the neighbor is infected, then proceed
-                auto neighbor = m->get_agents()[which];
+                auto & neighbor = m->get_agents()[which];
                 if (neighbor.get_state() == ModelSIRCONN<TSeq>::INFECTED)
                 {
 
@@ -15882,7 +15960,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     Virus<TSeq> virus(vname);
     virus.set_prob_infecting(&model("Infectiousness"));
     virus.set_state(S::Exposed, S::Recovered);
-    virus.set_queue(QueueValues::OnlySelf, -99LL);
+    virus.set_queue(Queue<TSeq>::OnlySelf, -99LL);
     virus.get_data() = {0.0, 0.0F};
 
     model.add_virus_n(virus, model("Prevalence"));
@@ -15981,7 +16059,7 @@ inline void ModelSEIRD<TSeq>::update_exposed(
 
     } else if (m->today() >= v->get_data()[0u])
     {
-        p->change_state(m, S::Infected, epiworld::QueueValues::Everyone);
+        p->change_state(m, S::Infected, epiworld::Queue<TSeq>::Everyone);
         return;
     }
 
@@ -16005,7 +16083,7 @@ inline void ModelSEIRD<TSeq>::update_infected(
     if (v->get_data()[2u] < 0)
     {
         
-        p->rm_virus(v, m, S::Recovered, -epiworld::QueueValues::Everyone);
+        p->rm_virus(v, m, S::Recovered, -epiworld::Queue<TSeq>::Everyone);
         return;
 
     }
@@ -16013,7 +16091,7 @@ inline void ModelSEIRD<TSeq>::update_infected(
     {
 
         // Individual goes hospitalized
-        p->change_state(m, S::Hospitalized, -epiworld::QueueValues::Everyone);
+        p->change_state(m, S::Hospitalized, -epiworld::Queue<TSeq>::Everyone);
         return;
 
     }
@@ -16042,12 +16120,12 @@ inline void ModelSEIRD<TSeq>::update_hospitalized(
 
     if (which == 0) // Then it recovered
     {
-        p->rm_virus(v, m, S::Recovered, epiworld::QueueValues::NoOne);
+        p->rm_virus(v, m, S::Recovered, epiworld::Queue<TSeq>::NoOne);
         return;
     }
 
     // Individual dies
-    p->rm_virus(v, m, S::Deceased, epiworld::QueueValues::NoOne);
+    p->rm_virus(v, m, S::Deceased, epiworld::Queue<TSeq>::NoOne);
 
     return;
 
@@ -16092,7 +16170,7 @@ inline void ModelSEIRD<TSeq>::contact(Model<TSeq> * m)
                 *(m->array_virus_tmp[which]), // Viruse.
                 m, 
                 S::Exposed,                   // New state.
-                QueueValues::OnlySelf         // Change on the queue.
+                Queue<TSeq>::OnlySelf         // Change on the queue.
                 ); 
 
         }

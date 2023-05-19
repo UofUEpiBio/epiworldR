@@ -263,3 +263,17 @@ as.array.epiworld_hist_transition <- function(x, ...) {
 
 }
 
+#' @export
+#' @rdname epiworld-data
+#' @return The function `get_transmissions` returns a `data.frame` with the following
+#' columns: `date`, `source`, `target`, `variant`, and `source_exposure_date`.
+get_transmissions <- function(x) {
+  
+  stopifnot_model(x)
+  res <- get_transmissions_cpp(x)
+  structure(
+    res,
+    class = c("epiworld_transmissions", class(res))
+  )
+  
+}

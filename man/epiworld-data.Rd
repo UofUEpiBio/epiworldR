@@ -10,6 +10,7 @@
 \alias{plot.epiworld_repnum}
 \alias{get_hist_transition_matrix}
 \alias{as.array.epiworld_hist_transition}
+\alias{get_transmissions}
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
@@ -34,6 +35,8 @@ get_reproductive_number(x)
 get_hist_transition_matrix(x, skip_zeros = FALSE)
 
 \method{as.array}{epiworld_hist_transition}(x, ...)
+
+get_transmissions(x)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
@@ -56,6 +59,9 @@ In the case of \code{get_hist_transition_matrix}, a \link{data.frame} with four 
 The \code{as.array} method for \code{epiworld_hist_transition} objects turns the \code{data.frame}
 returned by \code{get_hist_transition_matrix} into an array of \verb{nstates x nstates x (ndays + 1)}
 entries, where the first entry is the initial state.
+
+The function \code{get_transmissions} returns a \code{data.frame} with the following
+columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{source_exposure_date}.
 }
 \description{
 Accessing the database of \code{epiworld}

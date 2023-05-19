@@ -152,3 +152,33 @@ cpp11::data_frame get_reproductive_number_cpp(
   
 }
 
+[[cpp11::register]]
+cpp11::data_frame get_transmissions_cpp(
+  SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector<int> date;
+  std::vector<int> source;
+  std::vector<int> target;
+  std::vector<int> variant;
+  std::vector<int> source_exposure_date;
+  
+  ptr->get_db().get_transmissions(
+    date,
+    source,
+    target,
+    variant,
+    source_exposure_date
+  );
+  
+  return cpp11::writable::data_frame({
+    "date"_nm                 = date,
+    "source"_nm               = source,
+    "target"_nm               = target,
+    "variant"_nm              = variant,
+    "source_exposure_date"_nm = source_exposure_date,
+  });
+  
+}
