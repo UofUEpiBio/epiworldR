@@ -87,8 +87,8 @@ head(ans$total_hist)
 head(ans$reproductive)
 
 # Plotting
-multi_seirconn <- run_multiple_get_results(model_seirconn)$total_hist
-multi_seirconn <- multi_seirconn[multi_seirconn$date <= 20,]
-plot(multi_seirconn)
+multi_sir <- run_multiple_get_results(model_sir)$total_hist
+multi_sir <- multi_sir[multi_sir$date <= 20,]
+plot(multi_sir)
 
 }

@@ -53,9 +53,9 @@
 #' head(ans$reproductive)
 #' 
 #' # Plotting
-#' multi_seirconn <- run_multiple_get_results(model_seirconn)$total_hist
-#' multi_seirconn <- multi_seirconn[multi_seirconn$date <= 20,]
-#' plot(multi_seirconn)
+#' multi_sir <- run_multiple_get_results(model_sir)$total_hist
+#' multi_sir <- multi_sir[multi_sir$date <= 20,]
+#' plot(multi_sir)
 #' 
 #' @export
 run_multiple <- function(
@@ -157,13 +157,16 @@ run_multiple_get_results <- function(m) {
 }
 
 #' @export
-plot.epiworld_multiple_save <-function(x, y = NULL, ...) {
+plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
+
   # what <- attr(x, "what")
   lapply(x, plot)
+
 }
 
 #' @export
-plot.epiworld_multiple_save_i <-function(x, y = NULL, ...) {
+plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
+
   what <- attr(x, "what")
   
   # If it is not reproductive number, then...
@@ -175,13 +178,17 @@ plot.epiworld_multiple_save_i <-function(x, y = NULL, ...) {
     on.exit(graphics::par(oldpar))
     
     for (what in unique(x$state)) {
-      boxplot(counts ~ date, data = x,
-              main = what,
-              xlab = "Date",
-              ylab = "Counts",
-              border = "black",
-              las = 2,
-              subset = state == what)
+
+      graphics::boxplot(
+        counts ~ date,
+        data = x[x$state == what,,drop=FALSE],
+        main = what,
+        xlab = "Date",
+        ylab = "Counts",
+        border = "black",
+        las = 2
+        )
+        
     }
     
   }
