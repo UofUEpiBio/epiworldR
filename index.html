@@ -67,7 +67,7 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpi/epiworld" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using Agent-Based Models. Some of the main features include:</p>
+<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpi/epiworld" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using agent-based models <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" class="external-link">wiki</a>. Some of the main features include:</p>
 <ul>
 <li>Fast simulation with an average of 30 million agents/day per second.</li>
 <li>One model can include multiple diseases.</li>
@@ -85,11 +85,11 @@
 <div class="section level1">
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
-<p>This R package comes shipped with a handful of popular epidemiological models, including SIS, SIR, and SEIR using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
+<p>This R package includes several popular epidemiological models including SIS (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" class="external-link">wiki</a>), SIR (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" class="external-link">wiki</a>), and SEIR (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" class="external-link">wiki</a>) using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
 <div class="section level2">
 <h2 id="sir-model-using-a-random-graph">SIR model using a random graph<a class="anchor" aria-label="anchor" href="#sir-model-using-a-random-graph"></a>
 </h2>
-<p>This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, which can be transmitted with a 70% chance. Infected individuals recover at a 0.3 rate:</p>
+<p>This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of tranmission. Infected individuals recover at a 0.3 rate:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">epiworldR</span><span class="op">)</span></span>
 <span></span>
@@ -119,8 +119,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 181.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 27.62 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 2.00s</span></span>
+<span><span class="co">#&gt; Last run speed      : 1.91 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -148,7 +148,7 @@
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
 </div>
 <div class="section level2">
-<h2 id="seir-model-with-a-fully-connected-graph">SEIR Model with a fully connected graph<a class="anchor" aria-label="anchor" href="#seir-model-with-a-fully-connected-graph"></a>
+<h2 id="seir-model-with-a-fully-connected-graph">SEIR model with a fully connected graph<a class="anchor" aria-label="anchor" href="#seir-model-with-a-fully-connected-graph"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_seirconn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSEIRCONN.html">ModelSEIRCONN</a></span><span class="op">(</span></span>
@@ -177,8 +177,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 68.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 14.63 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 594.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 1.68 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -209,8 +209,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span>, type <span class="op">=</span> <span class="st">"b"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-2.png" width="100%"></p>
 </div>
@@ -218,8 +217,7 @@
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
 </h2>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100000</span></span>
 <span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
@@ -253,8 +251,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># Females are supposed to be more likely to become infected</span></span>
+<code class="sourceCode R"><span><span class="co"># Females are supposed to be more likely to become infected</span></span>
 <span><span class="va">rn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span>
@@ -304,7 +301,6 @@
 <span></span>
 <span><span class="co"># Plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: grid</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Attaching package: 'igraph'</span></span>
