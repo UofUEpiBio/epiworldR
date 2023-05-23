@@ -25,7 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a>
-    <a class="dropdown-item" href="../articles/run-multiple.html">Run-Multiple</a>
+    <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -65,7 +65,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>vname</dt>
-<dd><p>Name of the virus</p></dd>
+<dd><p>Name of the virus.</p></dd>
 
 
 <dt>data</dt>
@@ -126,7 +126,7 @@
 <span class="r-in"><span>  Female    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Declare coefficients for each sex regarding infectiousness and recovery</span></span></span>
+<span class="r-in"><span><span class="co"># Declare coefficients for each sex regarding infectiousness and recovery.</span></span></span>
 <span class="r-in"><span><span class="va">coef_infect</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">coef_recover</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -154,10 +154,10 @@
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelSIRLogit-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Females are supposed to be more likely to become infected</span></span></span>
+<span class="r-in"><span><span class="co"># Females are supposed to be more likely to become infected.</span></span></span>
 <span class="r-in"><span><span class="va">rn</span> <span class="op">&lt;-</span> <span class="fu"><a href="epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Probability of infection for males and females </span></span></span>
+<span class="r-in"><span><span class="co"># Probability of infection for males and females. </span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="va">X</span><span class="op">[</span>, <span class="st">"Female"</span><span class="op">]</span>,</span></span>
 <span class="r-in"><span>  <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">rn</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span></span>
@@ -165,7 +165,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>       0       1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0.12984 0.14201 </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Looking into the agents</span></span></span>
+<span class="r-in"><span><span class="co"># Looking into the individual agents.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="get_agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 0, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span>

@@ -25,7 +25,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a>
-    <a class="dropdown-item" href="../articles/run-multiple.html">Run-Multiple</a>
+    <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -153,17 +153,17 @@ an <code>epiworld_model</code> object.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       1      0    0         1 Susceptible    990</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       1      0    0         1    Infected     10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3       1      0    0         1   Recovered      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1      0    1         1 Susceptible    952</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1      0    1         1    Infected     47</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1      0    1         1 Susceptible    953</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1      0    1         1    Infected     46</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6       1      0    1         1   Recovered      1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num thread variant source source_exposure_date rt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1      0       0    100                   85  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1      0       0    101                   85  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1      0       0     96                   84  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1      0       0     99                   84  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1      0       0     95                   82  1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1      0       0     92                   81  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1      0       0    163                   52  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1      0       0    166                   51  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1      0       0    158                   49  2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1      0       0    169                   49  1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1      0       0    155                   48  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1      0       0    156                   48  2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
 <span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span></span>
