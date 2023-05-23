@@ -85,7 +85,7 @@ set_death_reduction_fun(tool, model, tfun)
 
 \item{proportion}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
 
-\item{n}{A positive integer}
+\item{n}{A positive integer. Number of agents to initially have the tool.}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 

@@ -71,8 +71,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 188.00ms
-#> Last run speed      : 26.46 million agents x day / second
+#> Last run elapsed t  : 524.00ms
+#> Last run speed      : 9.53 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -133,8 +133,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 55.00ms
-#> Last run speed      : 18.00 million agents x day / second
+#> Last run elapsed t  : 178.00ms
+#> Last run speed      : 5.61 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -245,3 +245,47 @@ get_agents(model_logit)
 #> Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
 #> ... 99990 more agents ...
 ```
+
+## Transmission network
+
+``` r
+# Creating a SIR model
+sir <- ModelSIR(
+  name           = "COVID-19",
+  prevalence     = .01,
+  infectiousness = .5,
+  recovery       = .5
+  ) |>
+    # Adding a Small world population 
+    agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
+    # Running the model for 50 days
+    run(ndays = 50, seed = 1912)
+#> _________________________________________________________________________
+#> |Running the model...
+#> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+#> | done.
+
+# Transmission network
+net <- get_transmissions(sir)
+
+# Plotting
+library(netplot)
+#> Loading required package: grid
+library(igraph)
+#> 
+#> Attaching package: 'igraph'
+#> The following object is masked from 'package:netplot':
+#> 
+#>     ego
+#> The following objects are masked from 'package:stats':
+#> 
+#>     decompose, spectrum
+#> The following object is masked from 'package:base':
+#> 
+#>     union
+x <- graph_from_edgelist(as.matrix(net[,2:3]) + 1)
+
+nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
+```
+
+<img src="man/figures/README-transmission-net-1.png" width="100%" />

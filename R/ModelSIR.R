@@ -27,7 +27,7 @@
 #' model_sir
 #' 
 #' # Plotting
-#' plot(model_sir, main = "SIR Model", ...)
+#' plot(model_sir)
 #' @seealso epiworld-methods
 ModelSIR <- function(
     name, prevalence, infectiousness, recovery
