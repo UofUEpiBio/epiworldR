@@ -1,5 +1,12 @@
 #' SIR model
+<<<<<<< HEAD
 #' @param name String. Name of the virus.
+=======
+#' 
+#' Susceptible-Infected-Recovered model ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model)).
+#' 
+#' @param name String. Name of the virus
+>>>>>>> 7d26c9e30c02cbb292a7962c8eae1a81cb2fd4db
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.

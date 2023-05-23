@@ -27,7 +27,7 @@ infection.}
 \item{...}{Currently ignore.}
 }
 \description{
-SIR model
+Susceptible-Infected-Recovered model (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model}{wiki}).
 }
 \examples{
 model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
