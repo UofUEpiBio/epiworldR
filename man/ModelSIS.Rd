@@ -4,30 +4,30 @@
 \alias{ModelSIS}
 \alias{epiworld_sis}
 \alias{plot.epiworld_sis}
-\title{Susceptible Infected Susceptible model (SIS)}
+\title{SIS model}
 \usage{
 ModelSIS(name, prevalence, infectiousness, recovery)
 
 \method{plot}{epiworld_sis}(x, main = "SIS Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus}
+\item{name}{String. Name of the virus.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
 \item{infectiousness}{Numeric scalar between 0 and 1. Virus's rate of
-infection}
+infection.}
 
 \item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
 \item{x}{Object of class SIS.}
 
-\item{main}{Title of the plot}
+\item{main}{Title of the plot.}
 
 \item{...}{Currently ignore.}
 }
 \description{
-Susceptible Infected Susceptible model (SIS)
+Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model}{wiki})
 }
 \examples{
 model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01, 

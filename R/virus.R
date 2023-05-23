@@ -348,7 +348,7 @@ set_prob_infecting <- function(virus, prob) {
 
 #' @export
 #' @param param Character scalar. Name of the parameter featured in `model` that
-#' will be added to the virus (see details.)
+#' will be added to the virus (see details).
 #' @details
 #' In the case of `set_prob_infecting_ptr`, `set_prob_recovery_ptr`, and
 #' `set_prob_death_ptr`, the corresponding parameters is passed as a pointer to

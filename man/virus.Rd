@@ -93,7 +93,7 @@ coefficients associated to the logit probability.}
 \item{prob}{Numeric scalar. A probability (between zero and one).}
 
 \item{param}{Character scalar. Name of the parameter featured in \code{model} that
-will be added to the virus (see details.)}
+will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
 }

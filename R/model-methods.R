@@ -16,6 +16,83 @@ stopifnot_model <- function(model) {
 #' @export
 #' @name epiworld-methods
 #' @aliases epiworld_model
+#' @examples
+#' 
+#' model_sirconn <- ModelSIRCONN(
+#' name                = "COVID-19",
+#' n                   = 10000,
+#' prevalence          = 0.01,
+#' contact_rate        = 5,
+#' prob_transmission   = 0.4,
+#' prob_recovery       = 0.95
+#' )
+#' 
+#' # Queuing - If you wish to implement the queuing function, declare whether 
+#' # you would like it "on" or "off", if any. 
+#' queuing_on(model_sirconn)
+#' queuing_off(model_sirconn)
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' 
+#' # Verbose - "on" prints the progress bar on the screen while "off" 
+#' # deactivates the progress bar. Declare which function you want to implement, 
+#' # if any. 
+#' verbose_on(model_sirconn)
+#' verbose_off(model_sirconn)
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' 
+#' get_states(model_sirconn) # Returns all unique states found within the model.
+#' 
+#' get_param(model_sirconn, 'Contact rate') # Returns the value of the selected 
+#'                                          # parameter within the model object.
+#'                                          # In order to view the parameters, 
+#'                                          # run the model object and find the 
+#'                                          # "Model parameters" section. 
+#' 
+#' set_param(model_sirconn, 'Contact rate', 2) # Allows for adjustment of model 
+#'                                             # parameters within the model 
+#'                                             # object. In this example, the 
+#'                                             # Contact rate parameter is 
+#'                                             # changed to 2. You can now rerun 
+#'                                             # the model to observe any 
+#'                                             # differences.
+#'                                             
+#' set_name(model_sirconn, 'My Epi-Model') # This function allows for setting 
+#'                                         # a name for the model. Running the 
+#'                                         # model object, the name of the model
+#'                                         # is now reflected next to "Name of 
+#'                                         # the model". 
+#'                                         
+#' get_name(model_sirconn) # Returns the set name of the model. 
+#' 
+#' get_n_variants(model_sirconn) # Returns the number of variants in the model. 
+#'                               # In this case, there is only one variant:
+#'                               # "COVID-19". 
+#'                               
+#' get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
+#'                            # this case, there are zero tools.  
+#'                            
+#' get_ndays(model_sirconn) # Returns the length of the simulation in days. This
+#'                          # will match "ndays" within the "run" function. 
+#'                          
+#' get_n_replicates(model_sirconn) # Returns the number of replicates of the 
+#'                                 # model. 
+#'                                 
+#' size(model_sirconn) # Returns the population size in the model. In this case, 
+#'                     # there are 10,000 agents in the model. 
+#' # Set Agents Data
+#' # First, your data matrix must have the same number of rows as agents in the 
+#' # model. Below is a generated matrix which will be passed into the 
+#' # "set_agents_data" function. 
+#' data <- matrix(data=runif(20000, min=0, max=100), nrow=10000, ncol=2)                   
+#' set_agents_data(model_sirconn, data)
+#' get_agents_data_ncols(model_sirconn) # Returns number of columns 
+#' 
+#' get_virus(model_sirconn, 0) # Returns information about the first virus in 
+#'                             # the model (index begins at 0).
+#'                             
+#' get_tool(model_sirconn, 0) # Returns information about the first tool in the 
+#'                            # model. In this case, there are no tools so an 
+#'                            # error message will occur. 
 queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export
@@ -78,7 +155,7 @@ get_states <- function(x) UseMethod("get_states")
 get_states.epiworld_model <- function(x) get_states_cpp(x)
 
 #' @export
-#' @param pname String, name of the parameter
+#' @param pname String. Name of the parameter.
 #' @rdname epiworld-methods
 get_param <- function(x, pname) UseMethod("get_param")
 
@@ -89,7 +166,7 @@ get_param.epiworld_model <- function(x, pname) {
 
 
 #' @export
-#' @param pval Numeric. Value of the parameter
+#' @param pval Numeric. Value of the parameter.
 #' @rdname epiworld-methods
 set_param <- function(x, pname, pval) UseMethod("set_param")
 
@@ -100,7 +177,7 @@ set_param.epiworld_model <- function(x, pname, pval) {
 }
 
 #' @export
-#' @param mname String. Name of the model
+#' @param mname String. Name of the model.
 #' @rdname epiworld-methods
 set_name <- function(x, mname) UseMethod("set_name")
 
@@ -221,80 +298,5 @@ get_tool <- function(model, tool_pos) {
   )
 }
 
-#' @examples
-#' 
-#' model_sirconn <- ModelSIRCONN(
-#' name                = "COVID-19",
-#' n                   = 10000,
-#' prevalence          = 0.01,
-#' contact_rate        = 5,
-#' prob_transmission   = 0.4,
-#' prob_recovery       = 0.95
-#' )
-#' 
-#' # Queuing - If you wish to implement the queuing function, declare whether 
-#' # you would like it "on" or "off", if any. 
-#' queuing_on(model_sirconn)
-#' queuing_off(model_sirconn)
-#' run(model_sirconn, ndays = 100, seed = 1912)
-#' 
-#' # Verbose - "on" prints the progress bar on the screen while "off" 
-#' # deactivates the progress bar. Declare which function you want to implement, 
-#' # if any. 
-#' verbose_on(model_sirconn)
-#' verbose_off(model_sirconn)
-#' run(model_sirconn, ndays = 100, seed = 1912)
-#' 
-#' get_states(model_sirconn) # Returns all unique states found within the model.
-#' 
-#' get_param(model_sirconn, 'Contact rate') # Returns the value of the selected 
-#'                                          # parameter within the model object.
-#'                                          # In order to view the parameters, 
-#'                                          # run the model object and find the 
-#'                                          # "Model parameters" section. 
-#' 
-#' set_param(model_sirconn, 'Contact rate', 2) # Allows for adjustment of model 
-#'                                             # parameters within the model 
-#'                                             # object. In this example, the 
-#'                                             # Contact rate parameter is 
-#'                                             # changed to 2. You can now rerun 
-#'                                             # the model to observe any 
-#'                                             # differences.
-#'                                             
-#' set_name(model_sirconn, 'My Epi-Model') # This function allows for setting 
-#'                                         # a name for the model. Running the 
-#'                                         # model object, the name of the model
-#'                                         # is now reflected next to "Name of 
-#'                                         # the model". 
-#'                                         
-#' get_name(model_sirconn) # Returns the set name of the model. 
-#' 
-#' get_n_variants(model_sirconn) # Returns the number of variants in the model. 
-#'                               # In this case, there is only one variant:
-#'                               # "COVID-19". 
-#'                               
-#' get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
-#'                            # this case, there are zero tools.  
-#'                            
-#' get_ndays(model_sirconn) # Returns the length of the simulation in days. This
-#'                          # will match "ndays" within the "run" function. 
-#'                          
-#' get_n_replicates(model_sirconn) # Returns the number of replicates of the 
-#'                                 # model. 
-#'                                 
-#' size(model_sirconn) # Returns the population size in the model. In this case, 
-#'                     # there are 10,000 agents in the model. 
-#' # Set Agents Data
-#' # First, your data matrix must have the same number of rows as agents in the 
-#' # model. Below is a generated matrix which will be passed into the 
-#' # "set_agents_data" function. 
-#' data <- matrix(data=runif(20000, min=0, max=100), nrow=10000, ncol=2)                   
-#' set_agents_data(model_sirconn, data)
-#' get_agents_data_ncols(model_sirconn) # Returns number of columns 
-#' 
-#' get_virus(model_sirconn, 0) # Returns information about the first virus in 
-#'                             # the model (index begins at 0).
-#'                             
-#' get_tool(model_sirconn, 0) # Returns information about the first tool in the 
-#'                            # model. In this case, there are no tools so an 
-#'                            # error message will occur. 
+
+

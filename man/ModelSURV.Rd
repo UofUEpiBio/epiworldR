@@ -25,11 +25,11 @@ ModelSURV(
 \method{plot}{epiworld_surv}(x, main = "SURV Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus}
+\item{name}{String. Name of the virus.}
 
 \item{prevalence}{Initial number of individuals with the virus.}
 
-\item{efficacy_vax}{Double. Efficacy of the vaccine
+\item{efficacy_vax}{Double. Efficacy of the vaccine.
 (1 - P(acquire the disease)).}
 
 \item{latent_period}{Double. Shape parameter of a 'Gamma(latent_period, 1)'
@@ -60,7 +60,7 @@ individuals.}
 
 \item{x}{Object of class SURV.}
 
-\item{main}{Title of the plot}
+\item{main}{Title of the plot.}
 
 \item{...}{Currently ignore.}
 }

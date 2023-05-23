@@ -11,7 +11,7 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \method{plot}{epiworld_sir}(x, main = "SIR Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus.}
+\item{name}{String. Name of the virus}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -27,7 +27,7 @@ infection.}
 \item{...}{Currently ignore.}
 }
 \description{
-Susceptible-Infected-Recovered model (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model}{wiki}).
+SIR model
 }
 \examples{
 model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 

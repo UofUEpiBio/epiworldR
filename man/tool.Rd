@@ -98,7 +98,7 @@ coefficients associated to the logit probability.}
 \item{prob}{Numeric scalar. A probability (between zero and one).}
 
 \item{param}{Character scalar. Name of the parameter featured in \code{model} that
-will be added to the tool (see details.)}
+will be added to the tool (see details).}
 
 \item{tfun}{An object of class \code{epiworld_tool_fun}.}
 }
@@ -111,7 +111,7 @@ The name of the \code{epiworld_tool} object can be manipulated with the function
 
 In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_reduction_ptr},
 \code{set_recovery_enhancer}, and
-\code{set_death_reduction_ptr}, the corresponding parameters is passed as a pointer to
+\code{set_death_reduction_ptr}, the corresponding parameters are passed as a pointer to
 the tool. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
 }

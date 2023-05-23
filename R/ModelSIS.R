@@ -1,8 +1,11 @@
-#' Susceptible Infected Susceptible model (SIS)
-#' @param name String. Name of the virus
+#' SIS model
+#' 
+#' Susceptible-Infected-Susceptible model (SIS) ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model))
+#'
+#' @param name String. Name of the virus.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
-#' infection 
+#' infection.
 #' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
 #' @param x Object of class SIS. 
 #' @param ... Currently ignore. 
@@ -43,7 +46,7 @@ ModelSIS <- function(
 
 #' @rdname ModelSIS
 #' @export
-#' @param main Title of the plot
+#' @param main Title of the plot.
 plot.epiworld_sis <- function(x, main = "SIS Model",...) { # col = NULL
  plot_epi(x, main = main, ...)
 }

@@ -1,5 +1,5 @@
 #' SIR Logistic model 
-#' @param vname Name of the virus
+#' @param vname Name of the virus.
 #' @param data A numeric matrix with `n` rows.
 #' @param coefs_infect Numeric vector. Coefficients associated to infect.
 #' @param coefs_recover Numeric vector. Coefficients associated to recover.
@@ -23,7 +23,7 @@
 #'   Female    = sample.int(2, n, replace = TRUE) - 1
 #' )
 #' 
-#' # Declare coefficients for each sex regarding infectiousness and recovery
+#' # Declare coefficients for each sex regarding infectiousness and recovery.
 #' coef_infect  <- c(.1, -2, 2)
 #' coef_recover <- rnorm(2)
 #' 
@@ -46,16 +46,16 @@
 #' 
 #' plot(model_logit)
 #' 
-#' # Females are supposed to be more likely to become infected
+#' # Females are supposed to be more likely to become infected.
 #' rn <- get_reproductive_number(model_logit)
 #' 
-#' # Probability of infection for males and females 
+#' # Probability of infection for males and females. 
 #' (table(
 #'   X[, "Female"],
 #'   (1:n %in% rn$source)
 #' ) |> prop.table())[,2]
 #' 
-#' # Looking into the agents
+#' # Looking into the individual agents.
 #' get_agents(model_logit)
 
 #' @family Models

@@ -1,8 +1,8 @@
 #' Susceptible Infected Susceptible model (SURV)
 #'
-#' @param name String. Name of the virus
+#' @param name String. Name of the virus.
 #' @param prevalence Initial number of individuals with the virus.
-#' @param efficacy_vax Double. Efficacy of the vaccine 
+#' @param efficacy_vax Double. Efficacy of the vaccine.
 #' (1 - P(acquire the disease)).
 #' @param latent_period Double. Shape parameter of a 'Gamma(latent_period, 1)'
 #' distribution. This coincides with the expected number of latent days.
@@ -77,7 +77,7 @@ ModelSURV <- function(
 
 #' @rdname ModelSURV
 #' @export
-#' @param main Title of the plot
+#' @param main Title of the plot.
 plot.epiworld_surv <- function(x, main = "SURV Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)
 }

@@ -1,7 +1,7 @@
 #' Susceptible Exposed Infected Removed model (SEIR connected)
 #' 
 #' The SEIR connected model implements a model where all agents are connected.
-#' This is equivalent to a compartmental model [wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model).
+#' This is equivalent to a compartmental model ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model)).
 #' 
 #' @param name String. Name of the virus.
 #' @param n Integer greater than zero. Population size.

@@ -276,11 +276,11 @@ set_susceptibility_reduction <- function(tool, prob) {
 
 #' @export
 #' @param param Character scalar. Name of the parameter featured in `model` that
-#' will be added to the tool (see details.)
+#' will be added to the tool (see details).
 #' @details
 #' In the case of `set_susceptibility_reduction_ptr`, `set_transmission_reduction_ptr`, 
 #' `set_recovery_enhancer`, and
-#' `set_death_reduction_ptr`, the corresponding parameters is passed as a pointer to
+#' `set_death_reduction_ptr`, the corresponding parameters are passed as a pointer to
 #' the tool. The implication of using pointers is that the values will be
 #' read directly from the `model` object, so changes will be reflected.
 #' 

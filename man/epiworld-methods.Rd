@@ -71,11 +71,11 @@ get_tool(model, tool_pos)
 
 \item{seed}{Seed to set for initializing random number generator.}
 
-\item{pname}{String, name of the parameter}
+\item{pname}{String. Name of the parameter.}
 
-\item{pval}{Numeric. Value of the parameter}
+\item{pval}{Numeric. Value of the parameter.}
 
-\item{mname}{String. Name of the model}
+\item{mname}{String. Name of the model.}
 
 \item{data}{A numeric matrix.}
 
@@ -116,4 +116,82 @@ Common methods for predefined models of Epiworld
 \details{
 The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing
 progress on screen, respectively. Both functions return the model (\code{x}) invisibly.
+}
+\examples{
+
+model_sirconn <- ModelSIRCONN(
+name                = "COVID-19",
+n                   = 10000,
+prevalence          = 0.01,
+contact_rate        = 5,
+prob_transmission   = 0.4,
+prob_recovery       = 0.95
+)
+
+# Queuing - If you wish to implement the queuing function, declare whether 
+# you would like it "on" or "off", if any. 
+queuing_on(model_sirconn)
+queuing_off(model_sirconn)
+run(model_sirconn, ndays = 100, seed = 1912)
+
+# Verbose - "on" prints the progress bar on the screen while "off" 
+# deactivates the progress bar. Declare which function you want to implement, 
+# if any. 
+verbose_on(model_sirconn)
+verbose_off(model_sirconn)
+run(model_sirconn, ndays = 100, seed = 1912)
+
+get_states(model_sirconn) # Returns all unique states found within the model.
+
+get_param(model_sirconn, 'Contact rate') # Returns the value of the selected 
+                                         # parameter within the model object.
+                                         # In order to view the parameters, 
+                                         # run the model object and find the 
+                                         # "Model parameters" section. 
+
+set_param(model_sirconn, 'Contact rate', 2) # Allows for adjustment of model 
+                                            # parameters within the model 
+                                            # object. In this example, the 
+                                            # Contact rate parameter is 
+                                            # changed to 2. You can now rerun 
+                                            # the model to observe any 
+                                            # differences.
+                                            
+set_name(model_sirconn, 'My Epi-Model') # This function allows for setting 
+                                        # a name for the model. Running the 
+                                        # model object, the name of the model
+                                        # is now reflected next to "Name of 
+                                        # the model". 
+                                        
+get_name(model_sirconn) # Returns the set name of the model. 
+
+get_n_variants(model_sirconn) # Returns the number of variants in the model. 
+                              # In this case, there is only one variant:
+                              # "COVID-19". 
+                              
+get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
+                           # this case, there are zero tools.  
+                           
+get_ndays(model_sirconn) # Returns the length of the simulation in days. This
+                         # will match "ndays" within the "run" function. 
+                         
+get_n_replicates(model_sirconn) # Returns the number of replicates of the 
+                                # model. 
+                                
+size(model_sirconn) # Returns the population size in the model. In this case, 
+                    # there are 10,000 agents in the model. 
+# Set Agents Data
+# First, your data matrix must have the same number of rows as agents in the 
+# model. Below is a generated matrix which will be passed into the 
+# "set_agents_data" function. 
+data <- matrix(data=runif(20000, min=0, max=100), nrow=10000, ncol=2)                   
+set_agents_data(model_sirconn, data)
+get_agents_data_ncols(model_sirconn) # Returns number of columns 
+
+get_virus(model_sirconn, 0) # Returns information about the first virus in 
+                            # the model (index begins at 0).
+                            
+get_tool(model_sirconn, 0) # Returns information about the first tool in the 
+                           # model. In this case, there are no tools so an 
+                           # error message will occur. 
 }

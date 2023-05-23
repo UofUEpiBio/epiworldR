@@ -37,7 +37,7 @@ devtools::install_github("UofUEpi/epiworldR")
 
 # Examples
 
-This R package includes several popular epidemiological models including SIS [wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model), SIR [wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model), and SEIR [wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model) using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:
+This R package includes several popular epidemiological models including SIS ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model)), SIR ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model)), and SEIR ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model)) using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:
 
 ## SIR model using a random graph
 

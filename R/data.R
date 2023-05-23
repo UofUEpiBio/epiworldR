@@ -30,10 +30,10 @@
 #' get_hist_tool(seirconn)
 #' 
 #' # Retrieving overall date, state, and counts dataframe 
-#' get_hist_total(seirconn)
+#' head(get_hist_total(seirconn))
 #' 
 #' # Retrieving date, state, and counts dataframe by variant
-#' get_hist_variant(seirconn)
+#' head(get_hist_variant(seirconn))
 #' 
 #' # Retrieving the reproductive number
 #' get_reproductive_number(seirconn)
