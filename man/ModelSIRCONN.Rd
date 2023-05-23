@@ -54,7 +54,7 @@ model_sirconn <- ModelSIRCONN(
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 
-plot(model_sirconn,  main = "SIRCONN Model", ...)
+plot(model_sirconn,  main = "SIRCONN Model")
 }
 \seealso{
 epiworld-methods

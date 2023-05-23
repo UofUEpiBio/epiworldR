@@ -1,5 +1,5 @@
 #                                               -*- Autoconf -*-
-# netdiffuseR configure.ac
+# epiworldR configure.ac
 # (with some code borrowed from RcppArmadillo configure.ac
 # and ARTP2 configure.ac)
 #

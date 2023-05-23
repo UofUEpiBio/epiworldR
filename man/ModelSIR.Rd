@@ -11,7 +11,7 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 \method{plot}{epiworld_sir}(x, main = "SIR Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus}
+\item{name}{String. Name of the virus.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 

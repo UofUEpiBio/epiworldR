@@ -56,7 +56,7 @@
 #' model_surv 
 #' 
 #' # Plotting
-#' plot(model_surv, main = "SURV Model", ...)
+#' plot(model_surv, main = "SURV Model")
 #' 
 #' @seealso epiworld-methods
 ModelSURV <- function(

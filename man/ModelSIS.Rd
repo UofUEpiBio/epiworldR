@@ -47,7 +47,7 @@ run(model_sis, ndays = 100, seed = 1912)
 model_sis
 
 # Plotting
-plot(model_sis, main = "SIS Model", ...)
+plot(model_sis, main = "SIS Model")
 
 }
 \seealso{

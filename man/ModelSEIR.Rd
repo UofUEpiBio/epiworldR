@@ -4,14 +4,14 @@
 \alias{ModelSEIR}
 \alias{epiworld_seir}
 \alias{plot.epiworld_seir}
-\title{Susceptible Infected Susceptible model (SEIR)}
+\title{Susceptible Exposed Infected Recovered model (SEIR)}
 \usage{
 ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 
 \method{plot}{epiworld_seir}(x, main = "SEIR Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus}
+\item{name}{String. Name of the virus.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -30,7 +30,7 @@ incubation days.}
 \item{...}{Currently ignore.}
 }
 \description{
-Susceptible Infected Susceptible model (SEIR)
+Susceptible Exposed Infected Recovered model (SEIR)
 }
 \examples{
 model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
@@ -48,6 +48,8 @@ agents_smallworld(
 # Running and printing
 run(model_seir, ndays = 100, seed = 1912)
 model_seir
+
+plot(model_seir, main = "SEIR Model")
 }
 \seealso{
 epiworld-methods

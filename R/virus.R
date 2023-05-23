@@ -39,16 +39,22 @@
 #' run(mseirconn, ndays = 100, seed = 992)
 #' mseirconn
 #' 
-#' rm virus(mseirconn, 0) # Removing the first virus from the model object
-#' add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus 
+#' rm_virus(mseirconn, 0) # Removing the first virus from the model object
+#' add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus
 #'                                    # to n = 100
-#' # Setting parameters for the delta virus manually                                   
-#' set_prob_infecting(delta, 0.5)                                 
+#' 
+#' # Setting parameters for the delta virus manually
+#' set_prob_infecting(delta, 0.5)
 #' set_prob_recovery(delta, 0.9)
 #' set_prob_death(delta, 0.01)
 #' run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
 #' 
-#' virus_set_state(virus, init, end, removed)                                 
+#' # If the states were (for example):
+#' # 1: Infected
+#' # 2: Recovered
+#' # 3: Dead
+#' delta2 <- virus("Delta Variant 2", 0, .5, .2, .01)
+#' virus_set_state(delta2, 1, 2, 3)
 #' @export
 #' 
 virus <- function(
@@ -112,7 +118,7 @@ set_name_virus <- function(virus, name) {
 #' @rdname virus
 get_name_virus <- function(virus) {
   stopifnot_virus(virus)
-  get_name_virus(virus)
+  get_name_virus_cpp(virus)
 }
   
 # Virus add --------------------------------------------------------------------
@@ -185,7 +191,7 @@ add_virus_n.epiworld_model <- function(model, virus, n) {
 add_virus_n.epiworld_sir <- function(model, virus, n) {
   
   stopifnot_virus(virus)
-  virus_set_state(model, init = 1, end = 2, removed = 2)
+  virus_set_state(virus, init = 1, end = 2, removed = 2)
   invisible(add_virus_n_cpp(model, virus, n))
   
 }
@@ -202,7 +208,7 @@ add_virus_n.epiworld_sirconn <- function(model, virus, n) {
 add_virus_n.epiworld_seir <- function(model, virus, n) {
   
   stopifnot_virus(virus)
-  virus_set_state(model, init = 1, end = 3, removed = 3)
+  virus_set_state(virus, init = 1, end = 3, removed = 3)
   invisible(add_virus_n_cpp(model, virus, n))
   
 }

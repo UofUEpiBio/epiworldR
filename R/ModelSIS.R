@@ -27,7 +27,7 @@
 #' model_sis
 #' 
 #' # Plotting
-#' plot(model_sis, main = "SIS Model", ...)
+#' plot(model_sis, main = "SIS Model")
 #' 
 #' @seealso epiworld-methods
 ModelSIS <- function(

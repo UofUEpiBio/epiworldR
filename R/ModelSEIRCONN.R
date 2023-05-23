@@ -1,9 +1,9 @@
 #' Susceptible Exposed Infected Removed model (SEIR connected)
 #' 
 #' The SEIR connected model implements a model where all agents are connected.
-#' This is equivalent to a compartmental model.
+#' This is equivalent to a compartmental model [wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model).
 #' 
-#' @param name String. Name of the virus
+#' @param name String. Name of the virus.
 #' @param n Integer greater than zero. Population size.
 #' @param prevalence Initial proportion of individuals with the virus.
 #' @param contact_rate Numeric scalar. Average number of contacts per step.
@@ -61,7 +61,7 @@ ModelSEIRCONN <- function(
 
 #' @rdname ModelSEIRCONN
 #' @export
-#' @param main Title of the plot
+#' @param main Title of the plot.
 plot.epiworld_seirconn <- function(x, main = "SEIRCONN Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)
 }

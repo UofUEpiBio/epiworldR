@@ -23,6 +23,7 @@ clean:
 	Rscript --vanilla -e 'devtools::clean_dll()'
 
 docs:
+	Rscript --vanilla -e 'cpp11::cpp_register()'
 	Rscript --vanilla -e 'roxygen2::roxygenize()'
 
 .PHONY: build update check clean docs

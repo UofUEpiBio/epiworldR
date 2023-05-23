@@ -19,7 +19,7 @@ ModelSEIRCONN(
 \method{plot}{epiworld_seirconn}(x, main = "SEIRCONN Model", ...)
 }
 \arguments{
-\item{name}{String. Name of the virus}
+\item{name}{String. Name of the virus.}
 
 \item{n}{Number of individuals in the population.}
 
@@ -37,13 +37,13 @@ incubation days.}
 
 \item{x}{Object of class SEIRCONN.}
 
-\item{main}{Title of the plot}
+\item{main}{Title of the plot.}
 
 \item{...}{Currently ignore.}
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.
-This is equivalent to a compartmental model.
+This is equivalent to a compartmental model \href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model}{wiki}.
 }
 \examples{
 # An example with COVID-19

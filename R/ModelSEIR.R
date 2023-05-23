@@ -1,6 +1,6 @@
-#' Susceptible Infected Susceptible model (SEIR)
+#' Susceptible Exposed Infected Recovered model (SEIR)
 #'
-#' @param name String. Name of the virus
+#' @param name String. Name of the virus.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.
@@ -28,6 +28,8 @@
 #' # Running and printing
 #' run(model_seir, ndays = 100, seed = 1912)
 #' model_seir
+#' 
+#' plot(model_seir, main = "SEIR Model")
 #' @seealso epiworld-methods
 ModelSEIR <- function(
     name, prevalence, infectiousness, incubation_days, recovery

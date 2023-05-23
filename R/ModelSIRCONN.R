@@ -25,7 +25,7 @@
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' 
-#' plot(model_sirconn,  main = "SIRCONN Model", ...)
+#' plot(model_sirconn,  main = "SIRCONN Model")
 #' @seealso epiworld-methods
 ModelSIRCONN <- function(
     name, n, prevalence, contact_rate, prob_transmission, prob_recovery

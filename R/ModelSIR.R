@@ -1,5 +1,5 @@
 #' SIR model
-#' @param name String. Name of the virus
+#' @param name String. Name of the virus.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.

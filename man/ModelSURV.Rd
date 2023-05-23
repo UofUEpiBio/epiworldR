@@ -98,7 +98,7 @@ run(model_surv, ndays = 100, seed = 1912)
 model_surv 
 
 # Plotting
-plot(model_surv, main = "SURV Model", ...)
+plot(model_surv, main = "SURV Model")
 
 }
 \seealso{
