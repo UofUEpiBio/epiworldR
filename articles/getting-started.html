@@ -68,7 +68,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2023-05-23</h4>
+            <h4 data-toc-skip class="date">2023-05-24</h4>
       
       
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -163,8 +163,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 857.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 5.83 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 676.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 7.39 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -259,13 +259,13 @@ number</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   variant source source_exposure_dates counts</span></span>
-<span><span class="co">#&gt; 1       0  58843                    49      0</span></span>
-<span><span class="co">#&gt; 2       0  37567                    46      1</span></span>
-<span><span class="co">#&gt; 3       0   4457                    45      0</span></span>
-<span><span class="co">#&gt; 4       0  34389                    45      1</span></span>
-<span><span class="co">#&gt; 5       0  62631                    44      0</span></span>
-<span><span class="co">#&gt; 6       0  77784                    43      0</span></span></code></pre></div>
+<span><span class="co">#&gt;   variant source source_exposure_date rt</span></span>
+<span><span class="co">#&gt; 1       0  58843                   49  0</span></span>
+<span><span class="co">#&gt; 2       0  37567                   46  1</span></span>
+<span><span class="co">#&gt; 3       0   4457                   45  0</span></span>
+<span><span class="co">#&gt; 4       0  34389                   45  1</span></span>
+<span><span class="co">#&gt; 5       0  62631                   44  0</span></span>
+<span><span class="co">#&gt; 6       0  77784                   43  0</span></span></code></pre></div>
 <p>epiworldR has a method to automatically plot the reproductive number.
 This function takes the average of values in the above table for each
 date and repeats until all date have been accounted for. For example, on
@@ -315,8 +315,8 @@ sections.</p>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : 0.00s</span></span>
 <span><span class="co">#&gt; Total elapsed t     : 1.00s (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 5.51 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 5.67 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run speed      : 7.08 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 7.23 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -404,7 +404,7 @@ vaccination.</p>
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Derek Meyer, George Vega Yon.</p>
+<p>Developed by Derek Meyer, George Vega Yon, Centers for Disease Control and Prevention.</p>
 </div>
 
 <div class="pkgdown-footer-right">
