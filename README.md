@@ -96,8 +96,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 230.00ms
-#> Last run speed      : 21.68 million agents x day / second
+#> Last run elapsed t  : 327.00ms
+#> Last run speed      : 15.28 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -164,8 +164,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 79.00ms
-#> Last run speed      : 12.51 million agents x day / second
+#> Last run elapsed t  : 130.00ms
+#> Last run speed      : 7.69 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -214,7 +214,13 @@ plot(repnum, type = "b")
 This model provides a more complex transmission and recovery pattern
 based on agents’ features. With it, we can reflect co-morbidities that
 could change the probability of infection and recovery. Here, we
-simulate a population of
+simulate a population including a dataset with two features: an
+intercept and a binary variable `Female`. The probability of infection
+and recovery are functions of the intercept and the `Female` variables.
+The following code simulates a population of 100,000 agents in a
+small-world network. Each agent is connected to eight other agents. One
+percent of the population has the virus, with an 80% chance of
+transmission. Infected individuals recover at a 0.3 rate:
 
 ``` r
 # Simulating a population of 100,000 agents

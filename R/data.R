@@ -128,6 +128,8 @@ get_reproductive_number.epiworld_model <- function(x) {
 
 #' @rdname epiworld-data
 #' @param y Ignored.
+#' @param plot Logical scalar. If `TRUE` (default), the function will plot the
+#' average reproductive number over time.
 #' @param ylab,xlab,main Further parameters passed to [graphics::plot()]
 #' @export
 plot.epiworld_repnum <- function(

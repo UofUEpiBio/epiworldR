@@ -47,6 +47,9 @@ any model.}
 
 \item{ylab, xlab, main}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
 
+\item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
+average reproductive number over time.}
+
 \item{...}{In the case of \code{plot.epiworld_repnum}, further arguments passed to
 \link[graphics:plot.default]{graphics::plot}.}
 
