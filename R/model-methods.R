@@ -298,6 +298,3 @@ get_tool <- function(model, tool_pos) {
     class = "epiworld_tool"
   )
 }
-
-
-

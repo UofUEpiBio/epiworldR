@@ -3670,6 +3670,16 @@ inline void DataBase<TSeq>::write_data(
     {
         std::ofstream file_variant_info(fn_variant_info, std::ios_base::out);
 
+        // Check if the file exists and throw an error if it doesn't
+        if (!file_variant_info)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_variant_info +
+                "\" for writing.")
+                ;
+        }
+
+
         file_variant_info <<
         #ifdef EPI_DEBUG
             "thread" << "id " << "variant_name " << "variant_sequence " << "date_recorded " << "parent\n";
@@ -3697,6 +3707,15 @@ inline void DataBase<TSeq>::write_data(
     {
         std::ofstream file_variant(fn_variant_hist, std::ios_base::out);
         
+        // Repeat the same error if the file doesn't exists
+        if (!file_variant)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_variant_hist +
+                "\" for writing.")
+                ;
+        }
+
         file_variant <<
             #ifdef _OPENMP
             "thread "<< "date " << "id " << "state " << "n\n";
@@ -3718,6 +3737,15 @@ inline void DataBase<TSeq>::write_data(
     if (fn_tool_info != "")
     {
         std::ofstream file_tool_info(fn_tool_info, std::ios_base::out);
+
+        // Repeat the same error if the file doesn't exists
+        if (!file_tool_info)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_tool_info +
+                "\" for writing.")
+                ;
+        }
 
         file_tool_info <<
             #ifdef _OPENMP
@@ -3743,6 +3771,15 @@ inline void DataBase<TSeq>::write_data(
     if (fn_tool_hist != "")
     {
         std::ofstream file_tool_hist(fn_tool_hist, std::ios_base::out);
+
+        // Repeat the same error if the file doesn't exists
+        if (!file_tool_hist)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_tool_hist +
+                "\" for writing.")
+                ;
+        }
         
         file_tool_hist <<
             #ifdef _OPENMP
@@ -3765,6 +3802,15 @@ inline void DataBase<TSeq>::write_data(
     {
         std::ofstream file_total(fn_total_hist, std::ios_base::out);
 
+        // Repeat the same error if the file doesn't exists
+        if (!file_total)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_total_hist +
+                "\" for writing.")
+                ;
+        }
+
         file_total <<
             #ifdef _OPENMP
             "thread " << 
@@ -3785,6 +3831,16 @@ inline void DataBase<TSeq>::write_data(
     if (fn_transmission != "")
     {
         std::ofstream file_transmission(fn_transmission, std::ios_base::out);
+
+        // Repeat the same error if the file doesn't exists
+        if (!file_transmission)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_transmission +
+                "\" for writing.")
+                ;
+        }
+
         file_transmission <<
             #ifdef _OPENMP
             "thread " << 
@@ -3807,6 +3863,16 @@ inline void DataBase<TSeq>::write_data(
     if (fn_transition != "")
     {
         std::ofstream file_transition(fn_transition, std::ios_base::out);
+
+        // Repeat the same error if the file doesn't exists
+        if (!file_transition)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_transition +
+                "\" for writing.")
+                ;
+        }
+
         file_transition <<
             #ifdef _OPENMP
             "thread " << 
@@ -3953,6 +4019,15 @@ inline void DataBase<TSeq>::reproductive_number(
     auto map = reproductive_number();
 
     std::ofstream fn_file(fn, std::ios_base::out);
+
+    // Repeat the same error if the file doesn't exists
+    if (!fn_file)
+    {
+        throw std::runtime_error(
+            "Could not open file \"" + fn +
+            "\" for writing.")
+            ;
+    }
 
     fn_file << 
         #ifdef _OPENMP
@@ -4571,6 +4646,17 @@ inline void DataBase<TSeq>::generation_time(
     generation_time(agent_id, virus_id, time, gentime);
 
     std::ofstream fn_file(fn, std::ios_base::out);
+
+    // Throw an error if the file doesn't exists using throw
+    if (!fn_file)
+    {
+        throw std::runtime_error(
+            "DataBase::generation_time: "
+            "Cannot open file " + fn + "."
+        );
+    }
+
+
 
     fn_file << 
         #ifdef _OPENMP
@@ -10319,6 +10405,7 @@ inline void Virus<TSeq>::print() const
 {
 
     printf_epiworld("Virus          : %s\n", virus_name->c_str());
+    printf_epiworld("Id             : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
     printf_epiworld("status_init    : %i\n", status_init);
     printf_epiworld("status_post    : %i\n", status_post);
     printf_epiworld("status_removed : %i\n", status_removed);
@@ -11138,6 +11225,7 @@ inline void Tool<TSeq>::print() const
 {
 
     printf_epiworld("Tool           : %s\n", tool_name->c_str());
+    printf_epiworld("Id             : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
     printf_epiworld("status_init    : %i\n", status_init);
     printf_epiworld("status_post    : %i\n", status_post);
     printf_epiworld("queue_init     : %i\n", queue_init);
@@ -12642,8 +12730,10 @@ public:
 
     bool has_tool(epiworld_fast_uint t) const;
     bool has_tool(std::string name) const;
+    bool has_tool(const Tool<TSeq> & t) const;
     bool has_virus(epiworld_fast_uint t) const;
     bool has_virus(std::string name) const;
+    bool has_virus(const Virus<TSeq> & v) const;
 
     void print(Model<TSeq> * model, bool compressed = false) const;
 
@@ -13729,7 +13819,7 @@ inline bool Agent<TSeq>::has_tool(epiworld_fast_uint t) const
 {
 
     for (auto & tool : tools)
-        if (tool->get_id() == t)
+        if (tool->get_id() == static_cast<int>(t))
             return true;
 
     return false;
@@ -13749,10 +13839,18 @@ inline bool Agent<TSeq>::has_tool(std::string name) const
 }
 
 template<typename TSeq>
+inline bool Agent<TSeq>::has_tool(const Tool<TSeq> & tool) const
+{
+
+    return has_tool(tool.get_id());
+
+}
+
+template<typename TSeq>
 inline bool Agent<TSeq>::has_virus(epiworld_fast_uint t) const
 {
     for (auto & v : viruses)
-        if (v->get_id() == t)
+        if (v->get_id() == static_cast<int>(t))
             return true;
 
     return false;
@@ -13767,6 +13865,14 @@ inline bool Agent<TSeq>::has_virus(std::string name) const
             return true;
 
     return false;
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_virus(const Virus<TSeq> & virus) const
+{
+
+    return has_virus(virus.get_id());
 
 }
 
@@ -16057,7 +16163,9 @@ inline void ModelSEIRD<TSeq>::update_exposed(
             ) ? 100.0 : -100.0;
 
 
-    } else if (m->today() >= v->get_data()[0u])
+    } 
+    
+    if (m->today() >= v->get_data()[0u])
     {
         p->change_state(m, S::Infected, epiworld::Queue<TSeq>::Everyone);
         return;
@@ -16541,6 +16649,129 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 ////////////////////////////////////////////////////////////////////////////////
 
  End of -include/epiworld/models/models.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+
+    // Including additional modules
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld/globalactions-meat.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef GLOBALACTIONS_MEAT_HPP
+#define GLOBALACTIONS_MEAT_HPP
+
+
+// This function creates a global action that distributes a tool
+// to agents with probability p.
+/**
+ * @brief Global action that distributes a tool to agents with probability p.
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param p Probability of distributing the tool.
+ * @param tool Tool function.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_tool(
+    Tool<TSeq> tool,
+    double p
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [p,tool](
+        Model<TSeq> * model
+        ) -> void {
+
+        for (auto & agent : model->get_agents())
+        {
+
+            // Check if the agent has the tool
+            if (agent.has_tool(tool))
+                continue;
+
+            // Adding the tool
+            if (model->runif() < p)
+                agent.add_tool(tool, model);
+            
+        
+        }
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+
+// Same function as above, but p is now a function of a vector of coefficients
+// and a vector of variables.
+/**
+ * @brief Global action that distributes a tool to agents with probability
+ * p = 1 / (1 + exp(-\sum_i coef_i * agent(vars_i))).
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param coefs Vector of coefficients.
+ * @param vars Vector of variables.
+ * @param tool_fun Tool function.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
+    Tool<TSeq> tool,
+    std::vector< size_t > vars,
+    std::vector< double > coefs
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [coefs,vars,tool](
+        Model<TSeq> * model
+        ) -> void {
+
+        for (auto & agent : model->get_agents())
+        {
+
+            // Check if the agent has the tool
+            if (agent.has_tool(tool))
+                continue;
+
+            // Computing the probability using a logit. Uses OpenMP reduction
+            // to sum the coefficients.
+            double p = 0.0;
+            #pragma omp parallel for reduction(+:p)
+            for (size_t i = 0u; i < coefs.size(); ++i)
+                p += coefs.at(i) * agent(vars[i]);
+
+            p = 1.0 / (1.0 + std::exp(-p));
+
+            // Adding the tool
+            if (model->runif() < p)
+                agent.add_tool(tool, model);
+            
+        
+        }
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld/globalactions-meat.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/

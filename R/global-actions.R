@@ -1,0 +1,94 @@
+
+#' Global Actions
+#' 
+#' Global actions are functions that are executed at each time step of the
+#' simulation. They are useful for implementing interventions, such as
+#' vaccination, isolation, and social distancing by means of tools.
+#' 
+#' @export
+#' @param prob Numeric. A probability.
+#' @param tool A tool.
+#' @name global-actions
+#' @examples 
+#' # Simple model
+#' model_sirconn <- ModelSIRCONN(
+#'   name                = "COVID-19",
+#'   n                   = 10000,
+#'   prevalence          = 0.01,
+#'   contact_rate        = 5,
+#'   prob_transmission   = 0.4,
+#'   prob_recovery       = 0.95
+#' )
+#' 
+#' # Creating a tool
+#' epitool <- tool(
+#'   name = "Vaccine",
+#'   susceptibility_reduction = .9,
+#'   transmission_reduction = .5,
+#'   recovery_enhancer = .5, 
+#'   death_reduction = .9
+#' )
+#' 
+#' 
+#' # Adding a global action
+#' vaccine_day_20 <- globalaction_tool(epitool, .2)
+#' add_global_action(model_sirconn, vaccine_day_20, 20)
+#' 
+#' # Running and printing
+#' run(model_sirconn, ndays = 100, seed = 1912)
+#' model_sirconn
+#' plot(model_sirconn)
+globalaction_tool <- function(tool, prob) {
+  structure(
+    globalaction_tool_cpp(tool, prob),
+    class = c("epiworld_globalaction_tool", "epiworld_globalaction"),
+    tool = tool,
+    call = match.call()
+  )
+}
+
+#' @export
+#' @rdname global-actions
+#' @details The function `globalaction_tool_logit` allows to specify a logistic
+#' regression model for the probability of using a tool. The model is specified
+#' by the vector of coefficients `coefs` and the vector of variables `vars`.
+#' `vars` is an integer vector indicating the position of the variables in the
+#' model.
+globalaction_tool_logit <- function(tool, vars, coefs) {
+  structure(
+    globalaction_tool_logit_cpp(tool, vars, coefs),
+    class = c("epiworld_globalaction_tool_logit", "epiworld_globalaction"),
+    tool = tool,
+    call = match.call()
+  )
+}
+
+#' @export
+print.epiworld_globalaction <- function(x, ...) {
+  cat("Global action\n")
+  cat("-------------\n")
+  cat("Call: ", deparse(attr(x, "call")), "\n")
+  if (length(attr(x, "tool")))
+    cat("Tool: ", get_name_tool(attr(x, "tool")), "\n")
+  invisible(x)
+}
+
+#' @export
+#' @param action A global action.
+#' @param date Integer. The date at which the action is executed (see details).
+#' @rdname global-actions
+#' @seealso epiworld-model
+#' @details The function `add_global_action` adds a global action to a model.
+#' The model checks for actions to be executed at each time step. If the added
+#' action matches the current time step, the action is executed. When `date` is
+#' negative, the action is executed at each time step. When `date` is positive,
+#' the action is executed at the specified time step.
+add_global_action <- function(model, action, date = -99) {
+  
+  if (length(attr(action, "tool")))
+    add_tool_n(model, attr(action, "tool"), 0)
+
+  invisible(add_global_action_cpp(model, action, date))
+  
+}
+

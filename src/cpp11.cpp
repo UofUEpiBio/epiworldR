@@ -5,6 +5,27 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// actions.cpp
+SEXP globalaction_tool_logit_cpp(SEXP tool, std::vector< int > vars, std::vector< double > coefs);
+extern "C" SEXP _epiworldR_globalaction_tool_logit_cpp(SEXP tool, SEXP vars, SEXP coefs) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(globalaction_tool_logit_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(vars), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs)));
+  END_CPP11
+}
+// actions.cpp
+SEXP globalaction_tool_cpp(SEXP tool, double prob);
+extern "C" SEXP _epiworldR_globalaction_tool_cpp(SEXP tool, SEXP prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(globalaction_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<double>>(prob)));
+  END_CPP11
+}
+// actions.cpp
+SEXP add_global_action_cpp(SEXP model, SEXP action, int date);
+extern "C" SEXP _epiworldR_add_global_action_cpp(SEXP model, SEXP action, SEXP date) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_global_action_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(action), cpp11::as_cpp<cpp11::decay_t<int>>(date)));
+  END_CPP11
+}
 // agents.cpp
 SEXP get_agents_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_agents_cpp(SEXP model) {
@@ -575,6 +596,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSIR_cpp",                         (DL_FUNC) &_epiworldR_ModelSIR_cpp,                          4},
     {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
+    {"_epiworldR_add_global_action_cpp",                (DL_FUNC) &_epiworldR_add_global_action_cpp,                 3},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          3},
     {"_epiworldR_add_tool_n_cpp",                       (DL_FUNC) &_epiworldR_add_tool_n_cpp,                        3},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         3},
@@ -603,6 +625,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
+    {"_epiworldR_globalaction_tool_cpp",                (DL_FUNC) &_epiworldR_globalaction_tool_cpp,                 2},
+    {"_epiworldR_globalaction_tool_logit_cpp",          (DL_FUNC) &_epiworldR_globalaction_tool_logit_cpp,           3},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             1},
