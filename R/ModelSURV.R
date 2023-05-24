@@ -1,4 +1,5 @@
-#' Susceptible Infected Susceptible model (SURV)
+#' SURV model
+#' 
 #'
 #' @param name String. Name of the virus.
 #' @param prevalence Initial number of individuals with the virus.

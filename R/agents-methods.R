@@ -4,7 +4,8 @@
 #' @seealso agents
 #' @export
 #' @aliases epiworld_agents
-#' @examples 
+#' @examples
+#'  
 #' model_sirconn <- ModelSIRCONN(
 #' name                = "COVID-19",
 #' n                   = 10000,
@@ -27,7 +28,6 @@
 #'                                         
 #' x[0] # Print information about the first agent. Substitute the agent of 
 #'      # interest's position where '0' is. 
-
 get_agents <- function(model) {
   
   res <- get_agents_cpp(model)
