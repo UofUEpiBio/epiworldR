@@ -14,9 +14,9 @@ framework for modeling disease transmission using agent-based models
 [wiki](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802).
 Some of the main features include:
 
--   Fast simulation with an average of 30 million agents/day per second.
--   One model can include multiple diseases.
--   Policies (tools) can be multiple and user-defined.
+- Fast simulation with an average of 30 million agents/day per second.
+- One model can include multiple diseases.
+- Policies (tools) can be multiple and user-defined.
 
 ## Installation
 
@@ -77,8 +77,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 2.00s
-#> Last run speed      : 1.91 million agents x day / second
+#> Last run elapsed t  : 219.00ms
+#> Last run speed      : 22.80 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -139,8 +139,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 594.00ms
-#> Last run speed      : 1.68 million agents x day / second
+#> Last run elapsed t  : 77.00ms
+#> Last run speed      : 12.95 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Virus(es):
@@ -177,6 +177,7 @@ plot(model_seirconn)
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 ``` r
+
 repnum <- get_reproductive_number(model_seirconn)
 plot(repnum, type = "b")
 ```
@@ -186,6 +187,7 @@ plot(repnum, type = "b")
 ## SIR Logit
 
 ``` r
+
 set.seed(2223)
 n <- 100000
 
@@ -223,6 +225,7 @@ plot(model_logit)
 <img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
 
 ``` r
+
 # Females are supposed to be more likely to become infected
 rn <- get_reproductive_number(model_logit)
 
@@ -273,6 +276,7 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(netplot)
+#> Loading required package: grid
 library(igraph)
 #> 
 #> Attaching package: 'igraph'
@@ -291,3 +295,50 @@ nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
 ```
 
 <img src="man/figures/README-transmission-net-1.png" width="100%" />
+
+## Multiple simulations
+
+``` r
+model_sir <- ModelSIRCONN(
+  name = "COVID-19",
+  prevalence = 0.01,
+  n = 1000,
+  contact_rate = 2,
+  prob_transmission = 0.9, prob_recovery = 0.1
+  )
+
+# Generating a saver
+saver <- make_saver("total_hist", "reproductive")
+
+# Running and printing
+run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
+#> Starting multiple runs (50) using 2 thread(s)
+#> _________________________________________________________________________
+#> _________________________________________________________________________
+#> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
+#>  done.
+
+# Retrieving the results
+ans <- run_multiple_get_results(model_sir)
+
+head(ans$total_hist)
+#>   sim_num thread date nvariants       state counts
+#> 1       1      0    0         1 Susceptible    990
+#> 2       1      0    0         1    Infected     10
+#> 3       1      0    0         1   Recovered      0
+#> 4       1      0    1         1 Susceptible    974
+#> 5       1      0    1         1    Infected     25
+#> 6       1      0    1         1   Recovered      1
+head(ans$reproductive)
+#>   sim_num thread variant source source_exposure_date rt
+#> 1       1      0       0    767                   11  0
+#> 2       1      0       0    835                   10  0
+#> 3       1      0       0    466                    9  0
+#> 4       1      0       0    612                    9  0
+#> 5       1      0       0    793                    9  0
+#> 6       1      0       0     20                    8  0
+
+plot(ans$reproductive)
+```
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />

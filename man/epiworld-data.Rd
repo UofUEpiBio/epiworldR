@@ -29,6 +29,7 @@ get_reproductive_number(x)
   ylab = "Average Rep. Number",
   xlab = "Day (step)",
   main = "Daily Average Reproductive Number",
+  plot = TRUE,
   ...
 )
 

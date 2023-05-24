@@ -28,17 +28,13 @@
 #' an `epiworld_model` object.
 #' 
 #' @examples
-#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
-#'                       infectiousness = 0.9, recovery = 0.1)
-#' 
-#' # Adding a small world population
-#' agents_smallworld(
-#'   model_sir,
+#' model_sir <- ModelSIRCONN(
+#'   name = "COVID-19",
+#'   prevalence = 0.01,
 #'   n = 1000,
-#'   k = 5,
-#'   d = FALSE,
-#'   p = .01
-#' )
+#'   contact_rate = 2,
+#'   prob_transmission = 0.9, prob_recovery = 0.1
+#'   )
 #' 
 #' # Generating a saver
 #' saver <- make_saver("total_hist", "reproductive")
@@ -191,6 +187,10 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
         
     }
     
+  } else {
+    
+    plot.epiworld_multiple_save_reproductive_number(x, ...)
+
   }
   
   
@@ -198,12 +198,36 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 
 #' @export
 plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
-  boxplot(rt ~ source_exposure_date, data = x,
-          main = "Reproductive Number",
-          xlab = "Source Exposure Date",
-          ylab = "rt",
-          border = "black",
-          las = 2)
+
+  # Identifying sims
+  sims <- sort(unique(x[["sim_num"]]))
+  
+  totals <- NULL
+  for (s in sims) {
+    
+    # Subsetting the data
+    x_tmp <- x[x[["sim_num"]] == s,, drop = FALSE]
+    
+    # Computing daily values
+    totals <- rbind(
+      totals,
+      plot.epiworld_repnum(x_tmp, plot = FALSE)
+    )
+    
+  }
+  
+  graphics::boxplot(
+    avg ~ step,
+    data = totals,
+    main = "Reproductive Number",
+    xlab = "Source Exposure Date",
+    ylab = "rt",
+    border = "black",
+    las = 2
+    )
+  
+  invisible(totals)
+  
 }
 
 #' @export
