@@ -20,11 +20,18 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-This R package is a wrapper of the C++ library [epiworld](https://github.com/UofUEpi/epiworld). It provides a general framework for modeling disease transmission using agent-based models [wiki](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802). Some of the main features include:
+This R package is a wrapper of the C++ library [epiworld](https://github.com/UofUEpi/epiworld){target="_blank"}. It provides a general framework for modeling disease transmission using [agent-based models](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802){target="_blank"}. Some of the main features include:
+
 
 - Fast simulation with an average of 30 million agents/day per second.
 - One model can include multiple diseases.
 - Policies (tools) can be multiple and user-defined.
+- Transmission can be a function of agents' features.
+- Out-of-the-box parallelization for multiple simulations.
+
+From the package's description:
+
+> A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents’ features, providing great complexity for the model dynamics. Furthermore, epiworldR is ideal for simulation studies featuring large populations.
 
 ## Installation
 
@@ -37,11 +44,14 @@ devtools::install_github("UofUEpi/epiworldR")
 
 # Examples
 
-This R package includes several popular epidemiological models including SIS ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model)), SIR ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model)), and SEIR ([wiki](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model)) using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:
+This R package includes several popular epidemiological models including
+[SIS](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model){target="_blank"},
+[SIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model){target="_blank"}, and
+[SEIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model){target="_blank"} using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:
 
 ## SIR model using a random graph
 
-This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of tranmission. Infected individuals recover at a 0.3 rate:
+This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of transmission. Infected individuals recover at a 0.3 rate:
 
 ```{r example}
 library(epiworldR)
@@ -68,6 +78,8 @@ plot(sir)
 ```
 
 ## SEIR model with a fully connected graph
+
+The SEIR model is similar to the SIR model but includes an exposed state. Here, we simulate a population of 10,000 agents with a 0.01 prevalence, a 0.6 transmission rate, a 0.5 recovery rate, and 7 days-incubation period. The population is fully connected, meaning agents can transmit the disease to any other agent:
 
 ```{r}
 model_seirconn <- ModelSEIRCONN(
@@ -97,11 +109,16 @@ plot(repnum, type = "b")
 
 ## SIR Logit
 
-```{r}
+This model provides a more complex transmission and recovery pattern based 
+on agents' features. With it, we can reflect co-morbidities that could change
+the probability of infection and recovery. Here, we simulate a population of
 
+```{r}
+# Simulating a population of 100,000 agents
 set.seed(2223)
 n <- 100000
 
+# Agents' features
 X <- cbind(
   Intercept = 1,
   Female    = sample.int(2, n, replace = TRUE) - 1
@@ -110,6 +127,7 @@ X <- cbind(
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
 
+# Creating the model
 model_logit <- ModelSIRLogit(
   "covid2",
   data = X,
@@ -122,10 +140,11 @@ model_logit <- ModelSIRLogit(
   prevalence = .01
 )
 
+# Adding a small-world population
 agents_smallworld(model_logit, n, 8, FALSE, .01)
 
+# Running the model
 run(model_logit, 50)
-
 plot(model_logit)
 
 # Females are supposed to be more likely to become infected
@@ -141,6 +160,8 @@ get_agents(model_logit)
 ```
 
 ## Transmission network
+
+This example shows how we can draw a transmission network from a simulation. The following code simulates a population of 500 agents in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 50% chance of transmission. Infected individuals recover at a 0.5 rate:
 
 ```{r transmission-net}
 # Creating a SIR model
@@ -168,6 +189,8 @@ nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
 
 ## Multiple simulations
 
+`epiworldR` supports running multiple simulations using the `run_multiple` function. The following code simulates 50 SIR models with 1000 agents each. Each agent is connected to ten other agents. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a `data.frame`:
+
 ```{r}
 model_sir <- ModelSIRCONN(
   name = "COVID-19",
@@ -181,6 +204,7 @@ model_sir <- ModelSIRCONN(
 saver <- make_saver("total_hist", "reproductive")
 
 # Running and printing
+# Notice the use of nthread = 2 to run the simulations in parallel
 run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 
 # Retrieving the results
@@ -193,3 +217,10 @@ plot(ans$reproductive)
 ```
 
 
+# Other ABM R packages
+
+You may want to check out other R packages for agent-based modeling: [`ABM`](https://cran.r-project.org/package=ABM){target="_blank"},
+[`abmR`](https://cran.r-project.org/package=abmR){target="_blank"},
+[`cystiSim`](https://cran.r-project.org/package=cystiSim){target="_blank"},
+[`villager`](https://cran.r-project.org/package=villager){target="_blank"}, and
+[`RNetLogo`](https://cran.r-project.org/package=RNetLogo){target="_blank"}.

@@ -97,6 +97,18 @@ stopifnot_model <- function(model) {
 queuing_on <- function(x) UseMethod("queuing_on")
 
 #' @export
+queuing_on.epiworld_sirconn <- function(x) {
+  warning("SIR Connected models do not have queue.")
+  invisible(x)
+}
+
+#' @export
+queuing_on.epiworld_seirconn <- function(x) {
+  warning("SEIR Connected models do not have queue.")
+  invisible(x)
+}
+
+#' @export
 queuing_on.epiworld_model <- function(x) {
   invisible(queuing_on_cpp(x))
 }
