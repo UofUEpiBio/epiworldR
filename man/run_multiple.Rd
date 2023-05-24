@@ -62,17 +62,13 @@ Currently, the following elements can be saved:
 }
 }
 \examples{
-model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
-                      infectiousness = 0.9, recovery = 0.1)
-
-# Adding a small world population
-agents_smallworld(
-  model_sir,
+model_sir <- ModelSIRCONN(
+  name = "COVID-19",
+  prevalence = 0.01,
   n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+  contact_rate = 2,
+  prob_transmission = 0.9, prob_recovery = 0.1
+  )
 
 # Generating a saver
 saver <- make_saver("total_hist", "reproductive")

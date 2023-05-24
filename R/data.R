@@ -136,6 +136,7 @@ plot.epiworld_repnum <- function(
     ylab = "Average Rep. Number",
     xlab = "Day (step)",
     main = "Daily Average Reproductive Number",
+    plot = TRUE,
     ...) {
   
   
@@ -150,8 +151,8 @@ plot.epiworld_repnum <- function(
     x_tmp <- x[x[, "variant"] == vlabs[i], ]
     
     res[[i]] <- tapply(
-      X     = x_tmp[, "counts"],
-      INDEX = x_tmp[, "source_exposure_dates"],
+      X     = x_tmp[, "rt"],
+      INDEX = x_tmp[, "source_exposure_date"],
       FUN   = mean
     )
     
@@ -171,44 +172,47 @@ plot.epiworld_repnum <- function(
   xran <- range(res_all[["step"]])
   
   # Plotting -------------------------------------------------------------------
-  for (i in seq_along(vlabs)) {
-    
-    if (i == 1L) {
+  if (plot) {
+    for (i in seq_along(vlabs)) {
       
-      graphics::plot(
+      if (i == 1L) {
+        
+        graphics::plot(
+          x = res[[i]][["step"]],
+          y = res[[i]][["avg"]],
+          pch  = (i - 1),
+          col  = i,
+          xlab = xlab,
+          ylab = ylab,
+          main = main,
+          ...
+        )
+        next
+      }
+      
+      graphics::points(
         x = res[[i]][["step"]],
         y = res[[i]][["avg"]],
         pch  = (i - 1),
         col  = i,
-        xlab = xlab,
-        ylab = ylab,
-        main = main,
         ...
       )
-      next
+      
     }
-    
-    graphics::points(
-      x = res[[i]][["step"]],
-      y = res[[i]][["avg"]],
-      pch  = (i - 1),
-      col  = i,
-      ...
-    )
-    
-  }
-  
-  if (nvariants > 1L) {
-    
-    graphics::legend(
-      "topright",
-      legend = vlabs,
-      pch    = 0L:(nvariants - 1L),
-      col    = 1L:nvariants,
-      title  = "Variants",
-      bty    = "n"
-    )
-    
+
+    if (nvariants > 1L) {
+      
+      graphics::legend(
+        "topright",
+        legend = vlabs,
+        pch    = 0L:(nvariants - 1L),
+        col    = 1L:nvariants,
+        title  = "Variants",
+        bty    = "n"
+      )
+      
+    }
+
   }
   
   res <- do.call(rbind, res)

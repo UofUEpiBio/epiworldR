@@ -2,15 +2,23 @@ Package: epiworldR
 Type: Package
 Title: Fast Epi Simulations in R
 Version: 0.0-1
-Date: 2022-07-20
+Date: 2023-05-23
 Authors@R: c(
-         person("Derek", "Meyer", role=c("aut","cre"), email="derekmeyer37@gmail.com"),
-         person("George", "Vega Yon", role=c("aut"),
-         email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844"))
-         )
-Description: Epidemiological simulations using the epiworld C++ template library.
-  It provides a fast way to prototype models involving social networks, multiple dieases,
-  and arbitrary policy strategies.
+  person("Derek", "Meyer", role=c("aut","cre"), email="derekmeyer37@gmail.com"),
+  person("George", "Vega Yon", role=c("aut"),
+  email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
+  person("Centers for Disease Control and Prevention", role="fnd", comment = "Award number 1U01CK000585; 75D30121F00003"
+  ))
+Description: A flexible framework for Agent-Based Models (ABM), the epiworldR
+  package provides a fast method for prototyping disease outbreaks and 
+  transmission models. It supports multiple epidemiological models like the 
+  Susceptible-Infected-Susceptible (SIS,) Susceptible-Infected-Removed (SIR,) 
+  Susceptible-Exposed-Infected-Removed (SEIR,) and others, involving arbitrary 
+  mitigation policies and multiple-disease models. Users can specify 
+  infectiousness/susceptibility rates as a function of agents' features, 
+  providing great complexity for the model dynamics. epiworldR uses a C++ 
+  backend, which makes it very fast. Furthermore, epiworldR is ideal for 
+  simulation studies featuring large populations.
 License: MIT + file LICENSE
 RoxygenNote: 7.2.3
 Encoding: UTF-8

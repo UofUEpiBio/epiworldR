@@ -6,7 +6,7 @@
 \alias{epiworldR-package}
 \title{epiworldR}
 \description{
-Epidemiological simulations using the epiworld C++ template library. It provides a fast way to prototype models involving social networks, multiple dieases, and arbitrary policy strategies.
+A flexible framework for Agent-Based Models (ABM), the epiworldR package provides a fast method for prototyping disease outbreaks and transmission models. It supports multiple epidemiological models like the Susceptible-Infected-Susceptible (SIS,) Susceptible-Infected-Removed (SIR,) Susceptible-Exposed-Infected-Removed (SEIR,) and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents' features, providing great complexity for the model dynamics. epiworldR uses a C++ backend, which makes it very fast. Furthermore, epiworldR is ideal for simulation studies featuring large populations.
 }
 \author{
 \strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com}
@@ -14,6 +14,11 @@ Epidemiological simulations using the epiworld C++ template library. It provides
 Authors:
 \itemize{
   \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Centers for Disease Control and Prevention (Award number 1U01CK000585; 75D30121F00003) [funder]
 }
 
 }

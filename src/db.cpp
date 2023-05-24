@@ -126,7 +126,7 @@ cpp11::data_frame get_reproductive_number_cpp(
   // Making some room
   std::vector< int > variant;
   std::vector< int > source;
-  std::vector< int > source_exposure_dates;
+  std::vector< int > source_exposure_date;
   std::vector< int > counts;
   
   // Getting the right class
@@ -139,15 +139,15 @@ cpp11::data_frame get_reproductive_number_cpp(
   {
     variant.push_back(m.first[0u]);
     source.push_back(m.first[1u]);
-    source_exposure_dates.push_back(m.first[2u]);
+    source_exposure_date.push_back(m.first[2u]);
     counts.push_back(m.second);
   }
   
   return cpp11::writable::data_frame({
     "variant"_nm                = variant,
       "source"_nm                = source,
-      "source_exposure_dates"_nm = source_exposure_dates,
-      "counts"_nm                = counts
+      "source_exposure_date"_nm = source_exposure_date,
+      "rt"_nm                = counts
   });
   
 }

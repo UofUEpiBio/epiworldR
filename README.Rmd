@@ -166,3 +166,30 @@ x <- graph_from_edgelist(as.matrix(net[,2:3]) + 1)
 nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
 ```
 
+## Multiple simulations
+
+```{r}
+model_sir <- ModelSIRCONN(
+  name = "COVID-19",
+  prevalence = 0.01,
+  n = 1000,
+  contact_rate = 2,
+  prob_transmission = 0.9, prob_recovery = 0.1
+  )
+
+# Generating a saver
+saver <- make_saver("total_hist", "reproductive")
+
+# Running and printing
+run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
+
+# Retrieving the results
+ans <- run_multiple_get_results(model_sir)
+
+head(ans$total_hist)
+head(ans$reproductive)
+
+plot(ans$reproductive)
+```
+
+
