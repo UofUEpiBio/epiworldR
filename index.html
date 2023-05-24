@@ -5,32 +5,14 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR
-  package provides a fast method for prototyping disease outbreaks and 
-  transmission models. It supports multiple epidemiological models like the 
-  Susceptible-Infected-Susceptible (SIS,) Susceptible-Infected-Removed (SIR,) 
-  Susceptible-Exposed-Infected-Removed (SEIR,) and others, involving arbitrary 
-  mitigation policies and multiple-disease models. Users can specify 
-  infectiousness/susceptibility rates as a function of agents' features, 
-  providing great complexity for the model dynamics. epiworldR uses a C++ 
-  backend, which makes it very fast. Furthermore, epiworldR is ideal for 
-  simulation studies featuring large populations.">
+<meta name="description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents’ features, providing great complexity for the model dynamics. Furthermore, epiworldR is ideal for simulation studies featuring large populations.">
 <title>Fast Epi Simulations in R • epiworldR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Fast Epi Simulations in R">
-<meta property="og:description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR
-  package provides a fast method for prototyping disease outbreaks and 
-  transmission models. It supports multiple epidemiological models like the 
-  Susceptible-Infected-Susceptible (SIS,) Susceptible-Infected-Removed (SIR,) 
-  Susceptible-Exposed-Infected-Removed (SEIR,) and others, involving arbitrary 
-  mitigation policies and multiple-disease models. Users can specify 
-  infectiousness/susceptibility rates as a function of agents' features, 
-  providing great complexity for the model dynamics. epiworldR uses a C++ 
-  backend, which makes it very fast. Furthermore, epiworldR is ideal for 
-  simulation studies featuring large populations.">
+<meta property="og:description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents’ features, providing great complexity for the model dynamics. Furthermore, epiworldR is ideal for simulation studies featuring large populations.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -68,7 +50,14 @@
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
 </form>
 
-      <ul class="navbar-nav"></ul>
+      <ul class="navbar-nav">
+<li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/UofUEpiBio/epiworldR/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 
     
@@ -81,12 +70,18 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpi/epiworld" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using agent-based models <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" class="external-link">wiki</a>. Some of the main features include:</p>
+<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpi/epiworld" target="_blank" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" target="_blank" class="external-link">agent-based models</a>. Some of the main features include:</p>
 <ul>
 <li>Fast simulation with an average of 30 million agents/day per second.</li>
 <li>One model can include multiple diseases.</li>
 <li>Policies (tools) can be multiple and user-defined.</li>
+<li>Transmission can be a function of agents’ features.</li>
+<li>Out-of-the-box parallelization for multiple simulations.</li>
 </ul>
+<p>From the package’s description:</p>
+<blockquote>
+<p>A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents’ features, providing great complexity for the model dynamics. Furthermore, epiworldR is ideal for simulation studies featuring large populations.</p>
+</blockquote>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -99,13 +94,13 @@
 <div class="section level1">
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
-<p>This R package includes several popular epidemiological models including SIS (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" class="external-link">wiki</a>), SIR (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" class="external-link">wiki</a>), and SEIR (<a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" class="external-link">wiki</a>) using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
+<p>This R package includes several popular epidemiological models including <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" target="_blank" class="external-link">SIS</a>, <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" target="_blank" class="external-link">SIR</a>, and <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" target="_blank" class="external-link">SEIR</a> using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
 <div class="section level2">
 <h2 id="sir-model-using-a-random-graph">SIR model using a random graph<a class="anchor" aria-label="anchor" href="#sir-model-using-a-random-graph"></a>
 </h2>
-<p>This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of tranmission. Infected individuals recover at a 0.3 rate:</p>
+<p>This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of transmission. Infected individuals recover at a 0.3 rate:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">epiworldR</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Creating a SIR model</span></span>
 <span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
@@ -133,8 +128,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 219.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 22.80 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 230.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 21.68 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -164,6 +159,7 @@
 <div class="section level2">
 <h2 id="seir-model-with-a-fully-connected-graph">SEIR model with a fully connected graph<a class="anchor" aria-label="anchor" href="#seir-model-with-a-fully-connected-graph"></a>
 </h2>
+<p>The SEIR model is similar to the SIR model but includes an exposed state. Here, we simulate a population of 10,000 agents with a 0.01 prevalence, a 0.6 transmission rate, a 0.5 recovery rate, and 7 days-incubation period. The population is fully connected, meaning agents can transmit the disease to any other agent:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_seirconn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSEIRCONN.html">ModelSEIRCONN</a></span><span class="op">(</span></span>
 <span>  name                <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
@@ -191,8 +187,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 77.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 12.95 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 79.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 12.51 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -231,11 +227,13 @@
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
 </h2>
+<p>This model provides a more complex transmission and recovery pattern based on agents’ features. With it, we can reflect co-morbidities that could change the probability of infection and recovery. Here, we simulate a population of</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<code class="sourceCode R"><span><span class="co"># Simulating a population of 100,000 agents</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100000</span></span>
 <span></span>
+<span><span class="co"># Agents' features</span></span>
 <span><span class="va">X</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span></span>
 <span>  Intercept <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  Female    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span>
@@ -244,6 +242,7 @@
 <span><span class="va">coef_infect</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">coef_recover</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Creating the model</span></span>
 <span><span class="va">model_logit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIRLogit.html">ModelSIRLogit</a></span><span class="op">(</span></span>
 <span>  <span class="st">"covid2"</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">X</span>,</span>
@@ -256,14 +255,15 @@
 <span>  prevalence <span class="op">=</span> <span class="fl">.01</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Adding a small-world population</span></span>
 <span><span class="fu"><a href="reference/agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span><span class="va">model_logit</span>, <span class="va">n</span>, <span class="fl">8</span>, <span class="cn">FALSE</span>, <span class="fl">.01</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># Running the model</span></span>
 <span><span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_logit</span>, <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
 <span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
 <span><span class="co">#&gt; | done.</span></span>
-<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-5-1.png" width="100%"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
@@ -296,6 +296,7 @@
 <div class="section level2">
 <h2 id="transmission-network">Transmission network<a class="anchor" aria-label="anchor" href="#transmission-network"></a>
 </h2>
+<p>This example shows how we can draw a transmission network from a simulation. The following code simulates a population of 500 agents in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 50% chance of transmission. Infected individuals recover at a 0.5 rate:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating a SIR model</span></span>
 <span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
@@ -331,14 +332,15 @@
 <span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;     union</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">graph_from_edgelist</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/netplot/man/nplot.html" class="external-link">nplot</a></span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-transmission-net-1.png" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="multiple-simulations">Multiple simulations<a class="anchor" aria-label="anchor" href="#multiple-simulations"></a>
 </h2>
+<p><code>epiworldR</code> supports running multiple simulations using the <code>run_multiple</code> function. The following code simulates 50 SIR models with 1000 agents each. Each agent is connected to ten other agents. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a <code>data.frame</code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIRCONN.html">ModelSIRCONN</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
@@ -352,6 +354,7 @@
 <span><span class="va">saver</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_multiple.html">make_saver</a></span><span class="op">(</span><span class="st">"total_hist"</span>, <span class="st">"reproductive"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Running and printing</span></span>
+<span><span class="co"># Notice the use of nthread = 2 to run the simulations in parallel</span></span>
 <span><span class="fu"><a href="reference/run_multiple.html">run_multiple</a></span><span class="op">(</span><span class="va">model_sir</span>, ndays <span class="op">=</span> <span class="fl">100</span>, nsims <span class="op">=</span> <span class="fl">50</span>, saver <span class="op">=</span> <span class="va">saver</span>, nthread <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Starting multiple runs (50) using 2 thread(s)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
@@ -383,8 +386,21 @@
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 </div>
 </div>
+<div class="section level1">
+<h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
+</h1>
+<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" target="_blank" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" target="_blank" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" target="_blank" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" target="_blank" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" target="_blank" class="external-link"><code>RNetLogo</code></a>.</p>
+</div>
 
-  </main><aside class="col-md-3"><div class="license">
+  </main><aside class="col-md-3"><div class="links">
+<h2 data-toc-skip>Links</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/UofUEpiBio/epiworldR/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/UofUEpiBio/epiworldR/issues" class="external-link">Report a bug</a></li>
+</ul>
+</div>
+
+<div class="license">
 <h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>

@@ -31,7 +31,13 @@
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
-      <ul class="navbar-nav"></ul></div>
+      <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://github.com/UofUEpiBio/epiworldR/" aria-label="github">
+    <span class="fab fa fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul></div>
 
     
   </div>
@@ -39,7 +45,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Common methods for predefined models of Epiworld</h1>
-      
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/model-methods.R" class="external-link"><code>R/model-methods.R</code></a></small>
       <div class="d-none name"><code>epiworld-methods.Rd</code></div>
     </div>
 
@@ -164,6 +170,7 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <span class="r-in"><span><span class="co"># Queuing - If you wish to implement the queuing function, declare whether </span></span></span>
 <span class="r-in"><span><span class="co"># you would like it "on" or "off", if any. </span></span></span>
 <span class="r-in"><span><span class="fu">queuing_on</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>SIR Connected models do not have queue.</span>
 <span class="r-in"><span><span class="fu">queuing_off</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">run</span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
