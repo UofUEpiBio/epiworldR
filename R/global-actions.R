@@ -38,6 +38,24 @@
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' plot(model_sirconn)
+#' 
+#' # Example 2: Changing the contact rate -------------------------------------
+#' model_sirconn2 <- ModelSIRCONN(
+#'   name                = "COVID-19",
+#'   n                   = 10000,
+#'   prevalence          = 0.01,
+#'   contact_rate        = 5,
+#'   prob_transmission   = 0.4,
+#'   prob_recovery       = 0.95
+#' )
+#' 
+#' closure_day_10 <- globalaction_set_params("Contact rate", 0)
+#' add_global_action(model_sirconn2, closure_day_10, 10)
+#' 
+#' # Running and printing
+#' run(model_sirconn2, ndays = 100, seed = 1912)
+#' model_sirconn2
+#' plot(model_sirconn2)
 globalaction_tool <- function(tool, prob) {
   structure(
     globalaction_tool_cpp(tool, prob),
@@ -63,13 +81,33 @@ globalaction_tool_logit <- function(tool, vars, coefs) {
   )
 }
 
+#' @export 
+#' @param param String. The name of the parameter to be set.
+#' @param value Numeric. The value of the parameter.
+#' @rdname global-actions
+#' @details The function `globalaction_set_param` allows to set a parameter of
+#' the model. The parameter is specified by its name `param` and the value by
+#' `value`.
+globalaction_set_params <- function(param, value) {
+  structure(
+    globalaction_set_param_cpp(param, value),
+    class = c("epiworld_globalaction_set_param", "epiworld_globalaction"),
+    param = param,
+    value = value
+  )
+}
+
 #' @export
 print.epiworld_globalaction <- function(x, ...) {
   cat("Global action\n")
   cat("-------------\n")
   cat("Call: ", deparse(attr(x, "call")), "\n")
-  if (length(attr(x, "tool")))
+  if (length(attr(x, "tool"))) {
     cat("Tool: ", get_name_tool(attr(x, "tool")), "\n")
+  } else if (inherits(x, "epiworld_globalaction_set_param")) {
+    cat("Parameter: ", attr(x, "param"), "\n")
+    cat("Value: ", attr(x, "value"), "\n")
+  }
   invisible(x)
 }
 
@@ -89,6 +127,6 @@ add_global_action <- function(model, action, date = -99) {
     add_tool_n(model, attr(action, "tool"), 0)
 
   invisible(add_global_action_cpp(model, action, date))
-  
+
 }
 

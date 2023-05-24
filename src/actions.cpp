@@ -46,6 +46,24 @@ SEXP globalaction_tool_cpp(
 }
 
 [[cpp11::register]]
+SEXP globalaction_set_param_cpp(
+    std::string param,
+    double value
+) {
+    
+    cpp11::external_pointer<GlobalFun<int>> ptr(
+        new GlobalFun<int>(globalaction_set_param<int>(
+            param,
+            value
+        ))
+    );
+    
+    return ptr;
+
+}
+
+
+[[cpp11::register]]
 SEXP add_global_action_cpp(
     SEXP model,
     SEXP action,

@@ -4,6 +4,7 @@
 \alias{global-actions}
 \alias{globalaction_tool}
 \alias{globalaction_tool_logit}
+\alias{globalaction_set_params}
 \alias{add_global_action}
 \title{Global Actions}
 \usage{
@@ -11,12 +12,18 @@ globalaction_tool(tool, prob)
 
 globalaction_tool_logit(tool, vars, coefs)
 
+globalaction_set_params(param, value)
+
 add_global_action(model, action, date = -99)
 }
 \arguments{
 \item{tool}{A tool.}
 
 \item{prob}{Numeric. A probability.}
+
+\item{param}{String. The name of the parameter to be set.}
+
+\item{value}{Numeric. The value of the parameter.}
 
 \item{action}{A global action.}
 
@@ -33,6 +40,10 @@ regression model for the probability of using a tool. The model is specified
 by the vector of coefficients \code{coefs} and the vector of variables \code{vars}.
 \code{vars} is an integer vector indicating the position of the variables in the
 model.
+
+The function \code{globalaction_set_param} allows to set a parameter of
+the model. The parameter is specified by its name \code{param} and the value by
+\code{value}.
 
 The function \code{add_global_action} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
@@ -69,6 +80,24 @@ add_global_action(model_sirconn, vaccine_day_20, 20)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
+
+# Example 2: Changing the contact rate -------------------------------------
+model_sirconn2 <- ModelSIRCONN(
+  name                = "COVID-19",
+  n                   = 10000,
+  prevalence          = 0.01,
+  contact_rate        = 5,
+  prob_transmission   = 0.4,
+  prob_recovery       = 0.95
+)
+
+closure_day_10 <- globalaction_set_params("Contact rate", 0)
+add_global_action(model_sirconn2, closure_day_10, 10)
+
+# Running and printing
+run(model_sirconn2, ndays = 100, seed = 1912)
+model_sirconn2
+plot(model_sirconn2)
 }
 \seealso{
 epiworld-model

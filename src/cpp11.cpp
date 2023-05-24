@@ -20,6 +20,13 @@ extern "C" SEXP _epiworldR_globalaction_tool_cpp(SEXP tool, SEXP prob) {
   END_CPP11
 }
 // actions.cpp
+SEXP globalaction_set_param_cpp(std::string param, double value);
+extern "C" SEXP _epiworldR_globalaction_set_param_cpp(SEXP param, SEXP value) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(globalaction_set_param_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(param), cpp11::as_cpp<cpp11::decay_t<double>>(value)));
+  END_CPP11
+}
+// actions.cpp
 SEXP add_global_action_cpp(SEXP model, SEXP action, int date);
 extern "C" SEXP _epiworldR_add_global_action_cpp(SEXP model, SEXP action, SEXP date) {
   BEGIN_CPP11
@@ -625,6 +632,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
+    {"_epiworldR_globalaction_set_param_cpp",           (DL_FUNC) &_epiworldR_globalaction_set_param_cpp,            2},
     {"_epiworldR_globalaction_tool_cpp",                (DL_FUNC) &_epiworldR_globalaction_tool_cpp,                 2},
     {"_epiworldR_globalaction_tool_logit_cpp",          (DL_FUNC) &_epiworldR_globalaction_tool_logit_cpp,           3},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},

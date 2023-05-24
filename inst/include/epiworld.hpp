@@ -6054,12 +6054,12 @@ public:
      * indicating number of individuals.
      */
     ///@{
-    void add_virus(Virus<TSeq> v, epiworld_double preval);
-    void add_virus_n(Virus<TSeq> v, epiworld_fast_uint preval);
-    void add_virus_fun(Virus<TSeq> v, VirusToAgentFun<TSeq> fun);
-    void add_tool(Tool<TSeq> t, epiworld_double preval);
-    void add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval);
-    void add_tool_fun(Tool<TSeq> t, ToolToAgentFun<TSeq> fun);
+    void add_virus(Virus<TSeq> & v, epiworld_double preval);
+    void add_virus_n(Virus<TSeq> & v, epiworld_fast_uint preval);
+    void add_virus_fun(Virus<TSeq> & v, VirusToAgentFun<TSeq> fun);
+    void add_tool(Tool<TSeq> & t, epiworld_double preval);
+    void add_tool_n(Tool<TSeq> & t, epiworld_fast_uint preval);
+    void add_tool_fun(Tool<TSeq> & t, ToolToAgentFun<TSeq> fun);
     void add_entity(Entity<TSeq> e);
     void rm_virus(size_t virus_pos);
     void rm_tool(size_t tool_pos);
@@ -6298,7 +6298,9 @@ public:
     void read_params(std::string fn);
     epiworld_double get_param(epiworld_fast_uint k);
     epiworld_double get_param(std::string pname);
-    epiworld_double par(epiworld_fast_uint k);
+    // void set_param(size_t k, epiworld_double val);
+    void set_param(std::string pname, epiworld_double val);
+    // epiworld_double par(epiworld_fast_uint k);
     epiworld_double par(std::string pname);
     ///@}
 
@@ -7484,7 +7486,7 @@ inline void Model<TSeq>::seed(size_t s) {
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_virus(Virus<TSeq> v, epiworld_double preval)
+inline void Model<TSeq>::add_virus(Virus<TSeq> & v, epiworld_double preval)
 {
 
     if (preval > 1.0)
@@ -7518,7 +7520,7 @@ inline void Model<TSeq>::add_virus(Virus<TSeq> v, epiworld_double preval)
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_virus_n(Virus<TSeq> v, epiworld_fast_uint preval)
+inline void Model<TSeq>::add_virus_n(Virus<TSeq> & v, epiworld_fast_uint preval)
 {
 
     // Checking the ids
@@ -7546,7 +7548,7 @@ inline void Model<TSeq>::add_virus_n(Virus<TSeq> v, epiworld_fast_uint preval)
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_virus_fun(Virus<TSeq> v, VirusToAgentFun<TSeq> fun)
+inline void Model<TSeq>::add_virus_fun(Virus<TSeq> & v, VirusToAgentFun<TSeq> fun)
 {
 
     // Checking the ids
@@ -7575,7 +7577,7 @@ inline void Model<TSeq>::add_virus_fun(Virus<TSeq> v, VirusToAgentFun<TSeq> fun)
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_tool(Tool<TSeq> t, epiworld_double preval)
+inline void Model<TSeq>::add_tool(Tool<TSeq> & t, epiworld_double preval)
 {
 
     if (preval > 1.0)
@@ -7595,7 +7597,7 @@ inline void Model<TSeq>::add_tool(Tool<TSeq> t, epiworld_double preval)
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval)
+inline void Model<TSeq>::add_tool_n(Tool<TSeq> & t, epiworld_fast_uint preval)
 {
     
     db.record_tool(t);
@@ -7604,10 +7606,11 @@ inline void Model<TSeq>::add_tool_n(Tool<TSeq> t, epiworld_fast_uint preval)
     prevalence_tool.push_back(preval);
     prevalence_tool_as_proportion.push_back(false);
     tools_dist_funs.push_back(nullptr);
+
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_tool_fun(Tool<TSeq> t, ToolToAgentFun<TSeq> fun)
+inline void Model<TSeq>::add_tool_fun(Tool<TSeq> & t, ToolToAgentFun<TSeq> fun)
 {
     
     db.record_tool(t);
@@ -8950,6 +8953,33 @@ inline epiworld_double Model<TSeq>::get_param(std::string pname)
 
     return parameters[pname];
 }
+
+template<typename TSeq>
+inline void Model<TSeq>::set_param(std::string pname, epiworld_double value)
+{
+    if (parameters.find(pname) == parameters.end())
+        throw std::logic_error("The parameter " + pname + " does not exists.");
+
+    parameters[pname] = value;
+
+    return;
+
+}
+
+// // Same as before but using the size_t method
+// template<typename TSeq>
+// inline void Model<TSeq>::set_param(size_t k, epiworld_double value)
+// {
+//     if (k >= parameters.size())
+//         throw std::logic_error("The parameter index " + std::to_string(k) + " does not exists.");
+
+//     // Access the k-th element of the std::unordered_map parameters
+
+
+//     *(parameters.begin() + k) = value;
+
+//     return;
+// }
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::par(std::string pname)
@@ -15338,12 +15368,12 @@ inline void ModelSIRCONN<TSeq>::reset()
 
     Model<TSeq>::reset();
 
-    Model<TSeq>::set_rand_binom(
-        Model<TSeq>::size(),
-        static_cast<double>(
-            Model<TSeq>::par("Contact rate"))/
-            static_cast<double>(Model<TSeq>::size())
-        );
+    // Model<TSeq>::set_rand_binom(
+    //     Model<TSeq>::size(),
+    //     static_cast<double>(
+    //         Model<TSeq>::par("Contact rate"))/
+    //         static_cast<double>(Model<TSeq>::size())
+    //     );
 
     return;
 
@@ -15392,6 +15422,13 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         {
 
             // Sampling how many individuals
+            m->set_rand_binom(
+                m->size(),
+                static_cast<double>(
+                    m->par("Contact rate"))/
+                    static_cast<double>(m->size())
+            );
+
             int ndraw = m->rbinom();
 
             if (ndraw == 0)
@@ -16681,11 +16718,11 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
  */
 template<typename TSeq>
 inline std::function<void(Model<TSeq>*)> globalaction_tool(
-    Tool<TSeq> tool,
+    Tool<TSeq> & tool,
     double p
 ) {
 
-    std::function<void(Model<TSeq>*)> fun = [p,tool](
+    std::function<void(Model<TSeq>*)> fun = [p,&tool](
         Model<TSeq> * model
         ) -> void {
 
@@ -16702,6 +16739,10 @@ inline std::function<void(Model<TSeq>*)> globalaction_tool(
             
         
         }
+
+        #ifdef EPIWORLD_DEBUG
+        tool.print();
+        #endif
 
         return;
             
@@ -16726,12 +16767,12 @@ inline std::function<void(Model<TSeq>*)> globalaction_tool(
  */
 template<typename TSeq>
 inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
-    Tool<TSeq> tool,
+    Tool<TSeq> & tool,
     std::vector< size_t > vars,
     std::vector< double > coefs
 ) {
 
-    std::function<void(Model<TSeq>*)> fun = [coefs,vars,tool](
+    std::function<void(Model<TSeq>*)> fun = [coefs,vars,&tool](
         Model<TSeq> * model
         ) -> void {
 
@@ -16758,6 +16799,10 @@ inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
         
         }
 
+        #ifdef EPIWORLD_DEBUG
+        tool.print();
+        #endif
+
         return;
             
 
@@ -16766,6 +16811,37 @@ inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
     return fun;
 
 }
+
+// A global action that updates a parameter in the model.
+/**
+ * @brief Global action that updates a parameter in the model.
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param param Parameter to update.
+ * @param value Value to update the parameter to.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_set_param(
+    std::string param,
+    double value
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [value,param](
+        Model<TSeq> * model
+        ) -> void {
+
+        model->set_param(param, value);
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+
 
 #endif
 /*//////////////////////////////////////////////////////////////////////////////

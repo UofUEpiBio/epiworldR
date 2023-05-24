@@ -8,6 +8,10 @@ globalaction_tool_cpp <- function(tool, prob) {
   .Call(`_epiworldR_globalaction_tool_cpp`, tool, prob)
 }
 
+globalaction_set_param_cpp <- function(param, value) {
+  .Call(`_epiworldR_globalaction_set_param_cpp`, param, value)
+}
+
 add_global_action_cpp <- function(model, action, date) {
   .Call(`_epiworldR_add_global_action_cpp`, model, action, date)
 }
