@@ -128,8 +128,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 230.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 21.68 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 327.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 15.28 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -187,8 +187,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 79.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 12.51 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 130.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 7.69 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -227,7 +227,7 @@
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
 </h2>
-<p>This model provides a more complex transmission and recovery pattern based on agents’ features. With it, we can reflect co-morbidities that could change the probability of infection and recovery. Here, we simulate a population of</p>
+<p>This model provides a more complex transmission and recovery pattern based on agents’ features. With it, we can reflect co-morbidities that could change the probability of infection and recovery. Here, we simulate a population including a dataset with two features: an intercept and a binary variable <code>Female</code>. The probability of infection and recovery are functions of the intercept and the <code>Female</code> variables. The following code simulates a population of 100,000 agents in a small-world network. Each agent is connected to eight other agents. One percent of the population has the virus, with an 80% chance of transmission. Infected individuals recover at a 0.3 rate:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulating a population of 100,000 agents</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
