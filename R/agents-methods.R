@@ -20,7 +20,7 @@
 #' x <- get_agents(model_sirconn) # Storing all agent information into object of 
 #'                                # class epiworld_agents
 #'                              
-#' print(x, compressed = F, max_print = 5) # Displaying detailed information of 
+#' print(x, compressed = FALSE, max_print = 5) # Displaying detailed information of 
 #'                                         # the first 5 agents using 
 #'                                         # compressed=F. Using compressed=T
 #'                                         # results in less-detailed 

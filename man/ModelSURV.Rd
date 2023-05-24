@@ -4,7 +4,7 @@
 \alias{ModelSURV}
 \alias{epiworld_surv}
 \alias{plot.epiworld_surv}
-\title{Susceptible Infected Susceptible model (SURV)}
+\title{SURV model}
 \usage{
 ModelSURV(
   name,
@@ -65,7 +65,7 @@ individuals.}
 \item{...}{Currently ignore.}
 }
 \description{
-Susceptible Infected Susceptible model (SURV)
+SURV model
 }
 \examples{
 model_surv <- ModelSURV(
