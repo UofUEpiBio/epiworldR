@@ -4,14 +4,14 @@ build: docs clean
 debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
-install: docs clean
+install: 
 	R CMD INSTALL .
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
 
 update:
-	wget https://raw.githubusercontent.com/UofUEpi/epiworld/master/epiworld.hpp && \
+	wget https://raw.githubusercontent.com/UofUEpiBioepiworld/master/epiworld.hpp && \
 		mv epiworld.hpp inst/include/epiworld.hpp 
 local-update:
 	rsync -avz ../epiworld/epiworld.hpp inst/include/epiworld.hpp

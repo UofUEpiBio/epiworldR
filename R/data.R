@@ -3,7 +3,7 @@
 #' any model.
 #' @param skip_zeros Logical scalar. When `FALSE` it will return all the
 #' entries in the transition matrix.
-#' @param ... In the case of `plot.epiworld_repnum`, further arguments passed to
+#' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
 #' @name epiworld-data
 #' @family Models
@@ -62,8 +62,6 @@ get_hist_total.epiworld_model <- function(x)  {
   )
   
 }
-
-#' @
 
 #' @export
 plot.epiworld_hist <- function(x, y, ...) {
@@ -235,7 +233,7 @@ get_hist_transition_matrix <- function(x, skip_zeros = FALSE)
 get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
   
   res <- get_hist_transition_matrix_cpp(x, skip_zeros)
-  class(res) <- c(class(res), "epiworld_hist_transition")
+  class(res) <- c("epiworld_hist_transition", class(res))
   
   attr(res, "states") <- get_states(x)
   attr(res, "nsteps") <- get_ndays(x)
@@ -266,6 +264,107 @@ as.array.epiworld_hist_transition <- function(x, ...) {
   res[cbind(x[,1], x[,2], x[,3])] <- x[,4]
   
   res
+
+}
+
+#' @export
+#' @rdname epiworld-data
+#' @details The `plot_incidence` function is a wrapper between
+#' [get_hist_transition] and it's plot method.
+plot_incidence <- function(x, ...) {
+  plot(get_hist_transition_matrix(x), ...)
+}
+
+#' @export 
+#' @rdname epiworld-data
+#' @details The plot method for the `epiworld_hist_transition` class plots the
+#' daily incidence of each state. The function returns the data frame used for
+#' plotting.
+plot.epiworld_hist_transition <- function(
+  x,
+  type = "l",
+  xlab = "Day (step)",
+  ylab = "Counts",
+  main = "Daily incidence",
+  ...
+  ) {
+  
+  if (!inherits(x, "epiworld_hist_transition")) {
+    stop("The object must be of class 'epiworld_hist_transition'")
+  }
+  
+  states <- attr(x, "states")
+  n_states <- length(states)
+  n_steps  <- attr(x, "nsteps")
+
+  # Agregating the data
+  x <- x[x[, "state_from"] != x[, "state_to"], , drop = FALSE]
+  res <- tapply(x[["counts"]], INDEX = list(x[, "state_to"], x[, "date"]), FUN = sum)
+  res <- as.data.frame(t(res))
+
+  # Checking if any of the columns is all zeros
+  is_not_zero <- which(colSums(res) != 0)
+  res <- res[, is_not_zero, drop = FALSE]
+  states <- colnames(res)
+  n_states <- length(states)
+
+  # Plotting each column. We start by taking the total
+  # range
+  yran <- range(res)
+  xran <- range(0:n_steps)
+  for (i in seq_along(states)) {
+    
+    col <- states[i]
+
+    if (i == 1L) {
+        
+        graphics::plot(
+          x = as.integer(rownames(res)),
+          y = res[[col]],
+          col = i,
+          lwd = 2, 
+          lty = i,
+          type = type,
+          xlab = xlab,
+          ylab = ylab,
+          main = main,
+          ylim = yran,
+          xlim = xran,
+          ...
+        )
+
+        next
+
+    }
+
+    graphics::points(
+      x = as.integer(rownames(res)),
+      y = res[[col]],
+      type = type,
+      col = i,
+      lwd = 2,
+      lty = i,
+      ...
+    )
+
+  }
+
+  # Creating a legend
+  if (n_states > 1L) {
+    
+    graphics::legend(
+      "topright",
+      legend = states,
+      col    = 1L:n_states,
+      lwd    = 2,
+      lty    = 1L:n_states,
+      title  = "States",
+      bty    = "n"
+    )
+    
+  }
+  
+  invisible(res)
 
 }
 

@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![R-CMD-check](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpi/epiworldR/actions/workflows/r.yml)
+[![R-CMD-check](https://github.com/UofUEpiBioepiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBioepiworldR/actions/workflows/r.yml)
 
 # epiworldR
 
@@ -9,7 +9,7 @@
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
-<a href="https://github.com/UofUEpi/epiworld"
+<a href="https://github.com/UofUEpiBioepiworld"
 target="_blank">epiworld</a>. It provides a general framework for
 modeling disease transmission using <a
 href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
@@ -43,7 +43,7 @@ You can install the development version of epiworldR from
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("UofUEpi/epiworldR")
+devtools::install_github("UofUEpiBioepiworldR")
 ```
 
 # Examples

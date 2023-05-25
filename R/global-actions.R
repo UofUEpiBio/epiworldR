@@ -31,13 +31,13 @@
 #' 
 #' 
 #' # Adding a global action
-#' vaccine_day_20 <- globalaction_tool(epitool, .2)
-#' add_global_action(model_sirconn, vaccine_day_20, 20)
+#' vaccine_day_20 <- globalaction_tool(epitool, .2, day = 20)
+#' add_global_action(model_sirconn, vaccine_day_20)
 #' 
 #' # Running and printing
-#' run(model_sirconn, ndays = 100, seed = 1912)
+#' run(model_sirconn, ndays = 40, seed = 1912)
 #' model_sirconn
-#' plot(model_sirconn)
+#' plot_incidence(model_sirconn)
 #' 
 #' # Example 2: Changing the contact rate -------------------------------------
 #' model_sirconn2 <- ModelSIRCONN(
@@ -49,13 +49,13 @@
 #'   prob_recovery       = 0.95
 #' )
 #' 
-#' closure_day_10 <- globalaction_set_params("Contact rate", 0)
-#' add_global_action(model_sirconn2, closure_day_10, 10)
+#' closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)
+#' add_global_action(model_sirconn2, closure_day_10)
 #' 
 #' # Running and printing
-#' run(model_sirconn2, ndays = 100, seed = 1912)
+#' run(model_sirconn2, ndays = 40, seed = 1912)
 #' model_sirconn2
-#' plot(model_sirconn2)
+#' plot_incidence(model_sirconn2)
 globalaction_tool <- function(
   tool, prob,
   name = get_name_tool(tool), day = -99

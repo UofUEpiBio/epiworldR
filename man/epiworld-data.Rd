@@ -10,6 +10,8 @@
 \alias{plot.epiworld_repnum}
 \alias{get_hist_transition_matrix}
 \alias{as.array.epiworld_hist_transition}
+\alias{plot_incidence}
+\alias{plot.epiworld_hist_transition}
 \alias{get_transmissions}
 \title{Accessing the database of \code{epiworld}}
 \usage{
@@ -37,6 +39,17 @@ get_hist_transition_matrix(x, skip_zeros = FALSE)
 
 \method{as.array}{epiworld_hist_transition}(x, ...)
 
+plot_incidence(x, ...)
+
+\method{plot}{epiworld_hist_transition}(
+  x,
+  type = "l",
+  xlab = "Day (step)",
+  ylab = "Counts",
+  main = "Daily incidence",
+  ...
+)
+
 get_transmissions(x)
 }
 \arguments{
@@ -50,7 +63,7 @@ any model.}
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 average reproductive number over time.}
 
-\item{...}{In the case of \code{plot.epiworld_repnum}, further arguments passed to
+\item{...}{In the case of plot methods, further arguments passed to
 \link[graphics:plot.default]{graphics::plot}.}
 
 \item{skip_zeros}{Logical scalar. When \code{FALSE} it will return all the
@@ -69,6 +82,14 @@ columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{so
 }
 \description{
 Accessing the database of \code{epiworld}
+}
+\details{
+The \code{plot_incidence} function is a wrapper between
+\link{get_hist_transition} and it's plot method.
+
+The plot method for the \code{epiworld_hist_transition} class plots the
+daily incidence of each state. The function returns the data frame used for
+plotting.
 }
 \examples{
 # SEIR Connected
