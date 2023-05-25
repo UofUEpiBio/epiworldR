@@ -23,3 +23,5 @@ src/Makefile
 ^docs$
 ^pkgdown$
 ^\.github$
+README\.html
+

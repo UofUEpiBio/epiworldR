@@ -8,22 +8,41 @@
 \alias{add_global_action}
 \title{Global Actions}
 \usage{
-globalaction_tool(tool, prob)
+globalaction_tool(tool, prob, name = get_name_tool(tool), day = -99)
 
-globalaction_tool_logit(tool, vars, coefs)
+globalaction_tool_logit(
+  tool,
+  vars,
+  coefs,
+  name = get_name_tool(tool),
+  day = -99
+)
 
-globalaction_set_params(param, value)
+globalaction_set_params(
+  param,
+  value,
+  name = paste0("Set ", param, " to ", value),
+  day = -99
+)
 
-add_global_action(model, action, date = -99)
+add_global_action(model, action)
 }
 \arguments{
-\item{tool}{A tool.}
+\item{tool}{An object of class \link{tool}.}
 
-\item{prob}{Numeric. A probability.}
+\item{prob}{Numeric scalar. A probability between 0 and 1.}
 
-\item{param}{String. The name of the parameter to be set.}
+\item{name}{Character scalar. The name of the action.}
 
-\item{value}{Numeric. The value of the parameter.}
+\item{vars}{Integer vector. The position of the variables in the model.}
+
+\item{coefs}{Numeric vector. The coefficients of the logistic regression.}
+
+\item{param}{Character scalar. The name of the parameter to be set.}
+
+\item{value}{Numeric scalar. The value of the parameter.}
+
+\item{model}{An object of class \link{epiworld_model}.}
 
 \item{action}{A global action.}
 
