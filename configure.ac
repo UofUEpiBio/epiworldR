@@ -53,8 +53,21 @@ dnl this the meat of R's m4/openmp.m4
 	OPENMP_[]_AC_LANG_PREFIX[]FLAGS=$ac_cv_prog_[]_AC_LANG_ABBREV[]_openmp ;;
     esac
   fi
+  ## Check for C++17 support
+  AC_CACHE_CHECK([for C++17 support],
+    [ac_cv_prog_[]_AC_LANG_ABBREV[]_cxx17],
+    [AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[int x = 0;]])],
+      [ac_cv_prog_[]_AC_LANG_ABBREV[]_cxx17=yes],
+      [ac_cv_prog_[]_AC_LANG_ABBREV[]_cxx17=no])])
+  if test "$ac_cv_prog_[]_AC_LANG_ABBREV[]_cxx17" = yes; then
+    CXX_STD_FLAG="CXX17"
+  else
+    CXX_STD_FLAG="CXX11"
+  fi
+
 
 AC_SUBST(OPENMP_CXXFLAGS)
+AC_SUBST(CXX_STD_FLAG)
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
 

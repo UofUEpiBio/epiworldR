@@ -8,7 +8,7 @@ using namespace epiworld;
 
 
 // Model definitions:
-// https://github.com/UofUEpi/epiworld/tree/master/include/epiworld/models
+// https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/models
 
 #define WrapVirus(a) external_pointer<Virus<>> (a)
 

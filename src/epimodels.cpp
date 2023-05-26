@@ -8,7 +8,7 @@ using namespace cpp11;
 
 
 // Model definitions:
-// https://github.com/UofUEpi/epiworld/tree/master/include/epiworld/models
+// https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/models
 
 #define WrapSURV(a) \
   cpp11::external_pointer<epiworld::epimodels::ModelSURV<>> (a)

@@ -3558,6 +3558,12 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     size_t n = this->hist_transition_matrix.size();
     
+    // Clearing the previous vectors
+    state_from.clear();
+    state_to.clear();
+    date.clear();
+    counts.clear();
+
     // Reserving space
     state_from.reserve(n);
     state_to.reserve(n);
@@ -3566,6 +3572,10 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     size_t n_status = model->nstatus;
     size_t n_steps  = model->get_ndays();
+
+    // If n is zero, then we are done
+    if (n == 0u)
+        return;
 
     for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
     {
@@ -5716,6 +5726,158 @@ inline bool Queue<TSeq>::operator==(const Queue<TSeq> & other) const
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+ Start of -include/epiworld/globalactions-bones.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_GLOBALACTIONS_BONES_HPP
+#define EPIWORLD_GLOBALACTIONS_BONES_HPP
+
+// template<typename TSeq = EPI_DEFAULT_TSEQ>
+// using GlobalFun = std::function<void(Model<TSeq>*)>;
+
+/**
+ * @brief Template for a Global Action
+ * @details Global actions are functions that Model<TSeq> executes
+ * at the end of a day.
+ * 
+ */
+template<typename TSeq>
+class GlobalAction
+{
+private:
+    GlobalFun<TSeq> fun = nullptr;
+    std::string name = "A global action";
+    int day = -99;
+public:
+
+    GlobalAction() {};
+
+    /**
+     * @brief Construct a new Global Action object
+     * 
+     * @param fun A function that takes a Model<TSeq> * as argument and returns void.
+     * @param name A descriptive name for the action.
+     * @param day The day when the action will be executed. If negative, it will be executed every day.
+     */
+    GlobalAction(GlobalFun<TSeq> fun, std::string name, int day = -99);
+    
+    ~GlobalAction() {};
+
+    void operator()(Model<TSeq> * m, int day);
+
+    void set_name(std::string name);
+    std::string get_name() const;
+
+    void set_day(int day);
+    int get_day() const;
+    
+    void print() const;
+
+};
+
+
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld/globalactions-bones.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld/globalactions-meat.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_GLOBALACTIONS_MEAT_HPP
+#define EPIWORLD_GLOBALACTIONS_MEAT_HPP
+
+template<typename TSeq>
+inline GlobalAction<TSeq>::GlobalAction(
+    GlobalFun<TSeq> fun,
+    std::string name,
+    int day
+    )
+{
+    this->fun = fun;
+    this->name = name;
+    this->day = day;
+};
+
+template<typename TSeq>
+inline void GlobalAction<TSeq>::operator()(Model<TSeq> * m, int day)
+{   
+    
+    if (this->fun == nullptr)
+        return;
+
+    // Actions apply if day is negative or if day is equal to the day of the action
+    if (this->day < 0 || this->day == day)
+        this->fun(m);
+    
+    return;
+
+};
+
+template<typename TSeq>
+inline void GlobalAction<TSeq>::set_name(std::string name)
+{
+    this->name = name;
+};
+
+template<typename TSeq>
+inline std::string GlobalAction<TSeq>::get_name() const
+{
+    return this->name;
+};
+
+template<typename TSeq>
+inline void GlobalAction<TSeq>::set_day(int day)
+{
+    this->day = day;
+};
+
+template<typename TSeq>
+inline int GlobalAction<TSeq>::get_day() const
+{
+    return this->day;
+};
+
+template<typename TSeq>
+inline void GlobalAction<TSeq>::print() const
+{
+    printf_epiworld(
+        "Global action: %s\n"
+        "  - Day: %i\n",
+        this->name.c_str(),
+        this->day
+        );
+};
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld/globalactions-meat.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
  Start of -include/epiworld/model-bones.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -5747,6 +5909,9 @@ class Queue;
 
 template<typename TSeq>
 struct Action;
+
+template<typename TSeq>
+class GlobalAction;
 
 template<typename TSeq>
 inline epiworld_double susceptibility_reduction_mixer_default(
@@ -5905,8 +6070,7 @@ protected:
     void chrono_start();
     void chrono_end();
 
-    std::vector<std::function<void(Model<TSeq>*)>> global_action_functions;
-    std::vector< int > global_action_dates;
+    std::vector<GlobalAction<TSeq>> global_actions;
 
     Queue<TSeq> queue;
     bool use_queuing   = true;
@@ -6328,6 +6492,7 @@ public:
      * @brief Set a global action
      * 
      * @param fun A function to be called on the prescribed date
+     * @param name Name of the action.
      * @param date Integer indicating when the function is called (see details)
      * 
      * @details When date is less than zero, then the function is called
@@ -6336,8 +6501,19 @@ public:
      */
     void add_global_action(
         std::function<void(Model<TSeq>*)> fun,
+        std::string name = "A global action",
         int date = -99
         );
+
+    void add_global_action(
+        GlobalAction<TSeq> action
+    );
+
+    GlobalAction<TSeq> & get_global_action(std::string name); ///< Retrieve a global action by name
+    GlobalAction<TSeq> & get_global_action(size_t i); ///< Retrieve a global action by index
+
+    void rm_global_action(std::string name); ///< Remove a global action by name
+    void rm_global_action(size_t i); ///< Remove a global action by index
 
     void run_global_actions();
 
@@ -6863,8 +7039,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     nstatus(model.nstatus),
     verbose(model.verbose),
     current_date(model.current_date),
-    global_action_functions(model.global_action_functions),
-    global_action_dates(model.global_action_dates),
+    global_actions(model.global_actions),
     queue(model.queue),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
@@ -6952,8 +7127,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     nstatus(model.nstatus),
     verbose(model.verbose),
     current_date(std::move(model.current_date)),
-    global_action_functions(std::move(model.global_action_functions)),
-    global_action_dates(std::move(model.global_action_dates)),
+    global_actions(std::move(model.global_actions)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
@@ -7027,8 +7201,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     current_date = m.current_date;
 
-    global_action_functions = m.global_action_functions;
-    global_action_dates     = m.global_action_dates;
+    global_actions = m.global_actions;
 
     queue       = m.queue;
     use_queuing = m.use_queuing;
@@ -8577,8 +8750,24 @@ inline void Model<TSeq>::print(bool lite) const
         printf_epiworld("Rewiring            : off\n\n");
     }
     
+    // Printing global actions
+    printf_epiworld("Global actions:\n");
+    for (auto & a : global_actions)
+    {
+        if (a.get_day() < 0)
+        {
+            printf_epiworld(" - %s (runs daily)\n", a.get_name().c_str());
+        } else {
+            printf_epiworld(" - %s (day %i)\n", a.get_name().c_str(), a.get_day());
+        }
+    }
 
-    printf_epiworld("Virus(es):\n");
+    if (global_actions.size() == 0u)
+    {
+        printf_epiworld(" (none)\n");
+    }
+
+    printf_epiworld("\nVirus(es):\n");
     size_t n_variants_model = viruses.size();
     for (size_t i = 0u; i < n_variants_model; ++i)
     {    
@@ -9092,12 +9281,87 @@ inline UserData<TSeq> & Model<TSeq>::get_user_data()
 template<typename TSeq>
 inline void Model<TSeq>::add_global_action(
     std::function<void(Model<TSeq>*)> fun,
+    std::string name,
     int date
 )
 {
 
-    global_action_functions.push_back(fun);
-    global_action_dates.push_back(date);
+    global_actions.push_back(
+        GlobalAction<TSeq>(
+            fun,
+            name,
+            date
+            )
+    );
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::add_global_action(
+    GlobalAction<TSeq> action
+)
+{
+    global_actions.push_back(action);
+}
+
+template<typename TSeq>
+GlobalAction<TSeq> & Model<TSeq>::get_global_action(
+    std::string name
+)
+{
+
+    for (auto & a : global_actions)
+        if (a.name == name)
+            return a;
+
+    throw std::logic_error("The global action " + name + " was not found.");
+
+}
+
+template<typename TSeq>
+GlobalAction<TSeq> & Model<TSeq>::get_global_action(
+    size_t index
+)
+{
+
+    if (index >= global_actions.size())
+        throw std::range_error("The index " + std::to_string(index) + " is out of range.");
+
+    return global_actions[index];
+
+}
+
+// Remove implementation
+template<typename TSeq>
+inline void Model<TSeq>::rm_global_action(
+    std::string name
+)
+{
+
+    for (auto it = global_actions.begin(); it != global_actions.end(); ++it)
+    {
+        if (it->get_name() == name)
+        {
+            global_actions.erase(it);
+            return;
+        }
+    }
+
+    throw std::logic_error("The global action " + name + " was not found.");
+
+}
+
+// Same as above, but the index implementation
+template<typename TSeq>
+inline void Model<TSeq>::rm_global_action(
+    size_t index
+)
+{
+
+    if (index >= global_actions.size())
+        throw std::range_error("The index " + std::to_string(index) + " is out of range.");
+
+    global_actions.erase(global_actions.begin() + index);
 
 }
 
@@ -9105,24 +9369,10 @@ template<typename TSeq>
 inline void Model<TSeq>::run_global_actions()
 {
 
-    for (epiworld_fast_uint i = 0u; i < global_action_dates.size(); ++i)
+    for (auto & action: global_actions)
     {
-
-        if (global_action_dates[i] < 0)
-        {
-
-            global_action_functions[i](this);
-
-        }
-        else if (global_action_dates[i] == today())
-        {
-
-            global_action_functions[i](this);
-
-        }
-
+        action(this, today());
         actions_run();
-
     }
 
 }
@@ -9387,7 +9637,7 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         "Model:: current_date don't match"
     )
 
-    VECT_MATCH(global_action_dates, other.global_action_dates, "global action date don't match");
+    VECT_MATCH(global_actions, other.global_actions, "global action don't match");
 
     EPI_DEBUG_FAIL_AT_TRUE(
         queue != other.queue,
@@ -14494,6 +14744,164 @@ inline void AgentsSample<TSeq>::sample_n(size_t n)
 #define EPIWORLD_MODELS_HPP
 
 namespace epimodels {
+    
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/globalactions.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_GLOBALACTIONS_HPP
+#define EPIWORLD_GLOBALACTIONS_HPP
+
+// This function creates a global action that distributes a tool
+// to agents with probability p.
+/**
+ * @brief Global action that distributes a tool to agents with probability p.
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param p Probability of distributing the tool.
+ * @param tool Tool function.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_tool(
+    Tool<TSeq> & tool,
+    double p
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [p,&tool](
+        Model<TSeq> * model
+        ) -> void {
+
+        for (auto & agent : model->get_agents())
+        {
+
+            // Check if the agent has the tool
+            if (agent.has_tool(tool))
+                continue;
+
+            // Adding the tool
+            if (model->runif() < p)
+                agent.add_tool(tool, model);
+            
+        
+        }
+
+        #ifdef EPIWORLD_DEBUG
+        tool.print();
+        #endif
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+
+// Same function as above, but p is now a function of a vector of coefficients
+// and a vector of variables.
+/**
+ * @brief Global action that distributes a tool to agents with probability
+ * p = 1 / (1 + exp(-\sum_i coef_i * agent(vars_i))).
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param coefs Vector of coefficients.
+ * @param vars Vector of variables.
+ * @param tool_fun Tool function.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
+    Tool<TSeq> & tool,
+    std::vector< size_t > vars,
+    std::vector< double > coefs
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [coefs,vars,&tool](
+        Model<TSeq> * model
+        ) -> void {
+
+        for (auto & agent : model->get_agents())
+        {
+
+            // Check if the agent has the tool
+            if (agent.has_tool(tool))
+                continue;
+
+            // Computing the probability using a logit. Uses OpenMP reduction
+            // to sum the coefficients.
+            double p = 0.0;
+            #pragma omp parallel for reduction(+:p)
+            for (size_t i = 0u; i < coefs.size(); ++i)
+                p += coefs.at(i) * agent(vars[i]);
+
+            p = 1.0 / (1.0 + std::exp(-p));
+
+            // Adding the tool
+            if (model->runif() < p)
+                agent.add_tool(tool, model);
+            
+        
+        }
+
+        #ifdef EPIWORLD_DEBUG
+        tool.print();
+        #endif
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+
+// A global action that updates a parameter in the model.
+/**
+ * @brief Global action that updates a parameter in the model.
+ * 
+ * @tparam TSeq Sequence type (should match `TSeq` across the model)
+ * @param param Parameter to update.
+ * @param value Value to update the parameter to.
+ * @return std::function<void(Model<TSeq>*)> 
+ */
+template<typename TSeq>
+inline std::function<void(Model<TSeq>*)> globalaction_set_param(
+    std::string param,
+    double value
+) {
+
+    std::function<void(Model<TSeq>*)> fun = [value,param](
+        Model<TSeq> * model
+        ) -> void {
+
+        model->set_param(param, value);
+
+        return;
+            
+
+    };
+
+    return fun;
+
+}
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/globalactions.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
 
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -15210,7 +15618,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_virus_n(covid, prevalence);
 
     model.set_user_data({"nsampled", "ndetected", "ndetected_asympt", "nasymptomatic"});
-    model.add_global_action(surveillance_program,-1);
+    model.add_global_action(surveillance_program, "Surveilance program", -1);
    
     // Vaccine tool -----------------------------------------------------------
     epiworld::Tool<TSeq> vax("Vaccine");
@@ -15574,9 +15982,6 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     virus.set_prob_recovery(&model("Prob. Recovery"));
 
     model.add_virus(virus, prevalence);
-
-    // // Adding updating function
-    // model.add_global_action(global_accounting, -1);
 
     model.queuing_off(); // No queuing need
 
@@ -16116,7 +16521,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     }
 
     // This will act through the global
-    model.add_global_action(contact, -99);
+    model.add_global_action(contact, "Transmission (contact)", -99);
 
     model.set_name("Susceptible-Exposed-Infected-Recovered-Deceased (SEIRD)");
 
@@ -16692,167 +17097,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
 
 
-    // Including additional modules
-/*//////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
- Start of -include/epiworld/globalactions-meat.hpp-
-
-////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////*/
-
-
-#ifndef GLOBALACTIONS_MEAT_HPP
-#define GLOBALACTIONS_MEAT_HPP
-
-
-// This function creates a global action that distributes a tool
-// to agents with probability p.
-/**
- * @brief Global action that distributes a tool to agents with probability p.
- * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
- * @param p Probability of distributing the tool.
- * @param tool Tool function.
- * @return std::function<void(Model<TSeq>*)> 
- */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalaction_tool(
-    Tool<TSeq> & tool,
-    double p
-) {
-
-    std::function<void(Model<TSeq>*)> fun = [p,&tool](
-        Model<TSeq> * model
-        ) -> void {
-
-        for (auto & agent : model->get_agents())
-        {
-
-            // Check if the agent has the tool
-            if (agent.has_tool(tool))
-                continue;
-
-            // Adding the tool
-            if (model->runif() < p)
-                agent.add_tool(tool, model);
-            
-        
-        }
-
-        #ifdef EPIWORLD_DEBUG
-        tool.print();
-        #endif
-
-        return;
-            
-
-    };
-
-    return fun;
-
-}
-
-// Same function as above, but p is now a function of a vector of coefficients
-// and a vector of variables.
-/**
- * @brief Global action that distributes a tool to agents with probability
- * p = 1 / (1 + exp(-\sum_i coef_i * agent(vars_i))).
- * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
- * @param coefs Vector of coefficients.
- * @param vars Vector of variables.
- * @param tool_fun Tool function.
- * @return std::function<void(Model<TSeq>*)> 
- */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
-    Tool<TSeq> & tool,
-    std::vector< size_t > vars,
-    std::vector< double > coefs
-) {
-
-    std::function<void(Model<TSeq>*)> fun = [coefs,vars,&tool](
-        Model<TSeq> * model
-        ) -> void {
-
-        for (auto & agent : model->get_agents())
-        {
-
-            // Check if the agent has the tool
-            if (agent.has_tool(tool))
-                continue;
-
-            // Computing the probability using a logit. Uses OpenMP reduction
-            // to sum the coefficients.
-            double p = 0.0;
-            #pragma omp parallel for reduction(+:p)
-            for (size_t i = 0u; i < coefs.size(); ++i)
-                p += coefs.at(i) * agent(vars[i]);
-
-            p = 1.0 / (1.0 + std::exp(-p));
-
-            // Adding the tool
-            if (model->runif() < p)
-                agent.add_tool(tool, model);
-            
-        
-        }
-
-        #ifdef EPIWORLD_DEBUG
-        tool.print();
-        #endif
-
-        return;
-            
-
-    };
-
-    return fun;
-
-}
-
-// A global action that updates a parameter in the model.
-/**
- * @brief Global action that updates a parameter in the model.
- * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
- * @param param Parameter to update.
- * @param value Value to update the parameter to.
- * @return std::function<void(Model<TSeq>*)> 
- */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalaction_set_param(
-    std::string param,
-    double value
-) {
-
-    std::function<void(Model<TSeq>*)> fun = [value,param](
-        Model<TSeq> * model
-        ) -> void {
-
-        model->set_param(param, value);
-
-        return;
-            
-
-    };
-
-    return fun;
-
-}
-
-
-#endif
-/*//////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
- End of -include/epiworld/globalactions-meat.hpp-
-
-////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////*/
-
-
+    
 
 }
 

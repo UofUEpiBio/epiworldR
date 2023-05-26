@@ -131,24 +131,31 @@ repnum <- get_reproductive_number(model_sir)
 head(repnum)
 ```
 
-epiworldR has a method to automatically plot the reproductive number. This
-function takes the average of values in the above table for each date and 
-repeats until all date have been accounted for. For example, on average, 
-individuals who acquired the virus on the 10th day transmit the virus to roughly 
-1.7 other individuals. 
+epiworldR has a method to plot the reproductive number automatically. 
+The function takes the average of values in the above table for each date and 
+repeats until all data have been accounted for. For example, on average, 
+individuals who acquired the virus on the 10th day transmit the virus to roughly 1.7 other individuals. 
 
 ```{r}
-x <- plot(repnum, type="b")
+x <- plot(repnum, type = "b")
 ```
 
+Another typical piece of information is the daily incidence. This is the number of new
+cases per day. In epiworldR, we can get the incidence by looking at the daily
+transitions between states. Although the function `get_hist_transition_matrix` provides the desired data, the function `plot_incidence` is a nice wrapper for visualizing the data:
+
+```{r}
+plot_incidence(model_sir)
+```
+```
 
 ## Adding more viruses/variants
 
-epiworldR supports multi-variant models, the below code gives instructions on 
+epiworldR supports multi-variant models. The below code gives instructions on 
 how to implement this. Using the "virus" function, give a name to the new 
 virus/variant with its corresponding probability of infecting any given agent. 
-In this example, prob_infecting is set to 1.0 as the flu is very contagious. 
-In order to officially add this new virus to the model, use the "add_virus" 
+In this example, `prob_infecting` is set to 1.0, making it highly contagious. 
+To officially add this new virus to the model, use the `add_virus` 
 function by calling the original epiworldR model object, the new virus, and 
 the new virus' prevalence (which is set to 0.01 in this example).
 
@@ -169,9 +176,10 @@ output is interpretable as specified in previous sections.
 run(model_sir, ndays = 50, seed = 1912)
 model_sir
 ```
+
 Plotting the previous model (including the flu) yields the following. Notice 
 the presence of two reproductive numbers plotted over time. Variant 0 refers 
-to COVID-19 and variant 1 refers to the flu. 
+to COVID-19, and variant 1 refers to the flu. 
 
 ```{r, fig.height=10}
 repnum2 <- get_reproductive_number(model_sir)

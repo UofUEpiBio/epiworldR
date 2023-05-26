@@ -8,26 +8,45 @@
 \alias{add_global_action}
 \title{Global Actions}
 \usage{
-globalaction_tool(tool, prob)
+globalaction_tool(tool, prob, name = get_name_tool(tool), day = -99)
 
-globalaction_tool_logit(tool, vars, coefs)
+globalaction_tool_logit(
+  tool,
+  vars,
+  coefs,
+  name = get_name_tool(tool),
+  day = -99
+)
 
-globalaction_set_params(param, value)
+globalaction_set_params(
+  param,
+  value,
+  name = paste0("Set ", param, " to ", value),
+  day = -99
+)
 
-add_global_action(model, action, date = -99)
+add_global_action(model, action)
 }
 \arguments{
-\item{tool}{A tool.}
+\item{tool}{An object of class \link{tool}.}
 
-\item{prob}{Numeric. A probability.}
+\item{prob}{Numeric scalar. A probability between 0 and 1.}
 
-\item{param}{String. The name of the parameter to be set.}
+\item{name}{Character scalar. The name of the action.}
 
-\item{value}{Numeric. The value of the parameter.}
+\item{day}{Integer. The day (step) at which the action is executed (see details).}
+
+\item{vars}{Integer vector. The position of the variables in the model.}
+
+\item{coefs}{Numeric vector. The coefficients of the logistic regression.}
+
+\item{param}{Character scalar. The name of the parameter to be set.}
+
+\item{value}{Numeric scalar. The value of the parameter.}
+
+\item{model}{An object of class \link{epiworld_model}.}
 
 \item{action}{A global action.}
-
-\item{date}{Integer. The date at which the action is executed (see details).}
 }
 \description{
 Global actions are functions that are executed at each time step of the
@@ -47,8 +66,8 @@ the model. The parameter is specified by its name \code{param} and the value by
 
 The function \code{add_global_action} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
-action matches the current time step, the action is executed. When \code{date} is
-negative, the action is executed at each time step. When \code{date} is positive,
+action matches the current time step, the action is executed. When \code{day} is
+negative, the action is executed at each time step. When \code{day} is positive,
 the action is executed at the specified time step.
 }
 \examples{
@@ -73,13 +92,13 @@ epitool <- tool(
 
 
 # Adding a global action
-vaccine_day_20 <- globalaction_tool(epitool, .2)
-add_global_action(model_sirconn, vaccine_day_20, 20)
+vaccine_day_20 <- globalaction_tool(epitool, .2, day = 20)
+add_global_action(model_sirconn, vaccine_day_20)
 
 # Running and printing
-run(model_sirconn, ndays = 100, seed = 1912)
+run(model_sirconn, ndays = 40, seed = 1912)
 model_sirconn
-plot(model_sirconn)
+plot_incidence(model_sirconn)
 
 # Example 2: Changing the contact rate -------------------------------------
 model_sirconn2 <- ModelSIRCONN(
@@ -91,13 +110,13 @@ model_sirconn2 <- ModelSIRCONN(
   prob_recovery       = 0.95
 )
 
-closure_day_10 <- globalaction_set_params("Contact rate", 0)
-add_global_action(model_sirconn2, closure_day_10, 10)
+closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)
+add_global_action(model_sirconn2, closure_day_10)
 
 # Running and printing
-run(model_sirconn2, ndays = 100, seed = 1912)
+run(model_sirconn2, ndays = 40, seed = 1912)
 model_sirconn2
-plot(model_sirconn2)
+plot_incidence(model_sirconn2)
 }
 \seealso{
 epiworld-model
