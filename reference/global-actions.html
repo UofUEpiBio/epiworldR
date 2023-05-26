@@ -61,39 +61,66 @@ vaccination, isolation, and social distancing by means of tools.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span>, name <span class="op">=</span> <span class="fu"><a href="tool.html">get_name_tool</a></span><span class="op">(</span><span class="va">tool</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">globalaction_tool_logit</span><span class="op">(</span><span class="va">tool</span>, <span class="va">vars</span>, <span class="va">coefs</span><span class="op">)</span></span>
+<span><span class="fu">globalaction_tool_logit</span><span class="op">(</span></span>
+<span>  <span class="va">tool</span>,</span>
+<span>  <span class="va">vars</span>,</span>
+<span>  <span class="va">coefs</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu"><a href="tool.html">get_name_tool</a></span><span class="op">(</span><span class="va">tool</span><span class="op">)</span>,</span>
+<span>  day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">globalaction_set_params</span><span class="op">(</span><span class="va">param</span>, <span class="va">value</span><span class="op">)</span></span>
+<span><span class="fu">globalaction_set_params</span><span class="op">(</span></span>
+<span>  <span class="va">param</span>,</span>
+<span>  <span class="va">value</span>,</span>
+<span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Set "</span>, <span class="va">param</span>, <span class="st">" to "</span>, <span class="va">value</span><span class="op">)</span>,</span>
+<span>  day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
+<span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model</span>, <span class="va">action</span>, date <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model</span>, <span class="va">action</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>tool</dt>
-<dd><p>A tool.</p></dd>
+<dd><p>An object of class <a href="tool.html">tool</a>.</p></dd>
 
 
 <dt>prob</dt>
-<dd><p>Numeric. A probability.</p></dd>
+<dd><p>Numeric scalar. A probability between 0 and 1.</p></dd>
+
+
+<dt>name</dt>
+<dd><p>Character scalar. The name of the action.</p></dd>
+
+
+<dt>day</dt>
+<dd><p>Integer. The day (step) at which the action is executed (see details).</p></dd>
+
+
+<dt>vars</dt>
+<dd><p>Integer vector. The position of the variables in the model.</p></dd>
+
+
+<dt>coefs</dt>
+<dd><p>Numeric vector. The coefficients of the logistic regression.</p></dd>
 
 
 <dt>param</dt>
-<dd><p>String. The name of the parameter to be set.</p></dd>
+<dd><p>Character scalar. The name of the parameter to be set.</p></dd>
 
 
 <dt>value</dt>
-<dd><p>Numeric. The value of the parameter.</p></dd>
+<dd><p>Numeric scalar. The value of the parameter.</p></dd>
+
+
+<dt>model</dt>
+<dd><p>An object of class <a href="epiworld-methods.html">epiworld_model</a>.</p></dd>
 
 
 <dt>action</dt>
 <dd><p>A global action.</p></dd>
-
-
-<dt>date</dt>
-<dd><p>Integer. The date at which the action is executed (see details).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -108,8 +135,8 @@ the model. The parameter is specified by its name <code>param</code> and the val
 <code>value</code>.</p>
 <p>The function <code>add_global_action</code> adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
-action matches the current time step, the action is executed. When <code>date</code> is
-negative, the action is executed at each time step. When <code>date</code> is positive,
+action matches the current time step, the action is executed. When <code>day</code> is
+negative, the action is executed at each time step. When <code>day</code> is positive,
 the action is executed at the specified time step.</p>
     </div>
     <div class="section level2">
@@ -140,15 +167,15 @@ the action is executed at the specified time step.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a global action</span></span></span>
-<span class="r-in"><span><span class="va">vaccine_day_20</span> <span class="op">&lt;-</span> <span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">.2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">vaccine_day_20</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vaccine_day_20</span> <span class="op">&lt;-</span> <span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">.2</span>, day <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">vaccine_day_20</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">40</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
 <span class="r-in"><span><span class="va">model_sirconn</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
@@ -157,11 +184,14 @@ the action is executed at the specified time step.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Infected-Removed (SIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 40 (of 40)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 155.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 6.43 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 72.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 5.49 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Vaccine (day 20)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
@@ -174,17 +204,17 @@ the action is executed at the specified time step.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery     : 0.9500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission : 0.4000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 40:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9900 -&gt; 2000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Infected    :   100 -&gt; 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Recovered   :     0 -&gt; 8000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.99  0.01  0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.96  0.04  0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.04  0.96</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="global-actions-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 2: Changing the contact rate -------------------------------------</span></span></span>
@@ -197,15 +227,15 @@ the action is executed at the specified time step.</p>
 <span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.95</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">closure_day_10</span> <span class="op">&lt;-</span> <span class="fu">globalaction_set_params</span><span class="op">(</span><span class="st">"Contact rate"</span>, <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn2</span>, <span class="va">closure_day_10</span>, <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">closure_day_10</span> <span class="op">&lt;-</span> <span class="fu">globalaction_set_params</span><span class="op">(</span><span class="st">"Contact rate"</span>, <span class="fl">0</span>, day <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn2</span>, <span class="va">closure_day_10</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn2</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn2</span>, ndays <span class="op">=</span> <span class="fl">40</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
 <span class="r-in"><span><span class="va">model_sirconn2</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
@@ -214,11 +244,14 @@ the action is executed at the specified time step.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Infected-Removed (SIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 40 (of 40)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 73.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 13.56 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 47.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 8.35 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Set Contact rate to 0 (day 10)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
@@ -231,17 +264,17 @@ the action is executed at the specified time step.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery     : 0.9500</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission : 0.4000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 40:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9900 -&gt; 2127</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Infected    :   100 -&gt; 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Recovered   :     0 -&gt; 7873</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.99  0.01  0.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.96  0.04  0.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.04  0.96</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sirconn2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">model_sirconn2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="global-actions-2.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
