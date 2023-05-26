@@ -3,7 +3,8 @@ PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS) $(SHLIB_OPENMP_CXXFLAGS)
 CXX_STD = @CXX_STD_FLAG@
 
 # This is necesary since ARMADILLO now supports OpenMP
-PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/
+PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/ \
+    -Dprintf_epiworld=Rprintf
 
 # For testing
 #PKG_CXXFLAGS=-Wall

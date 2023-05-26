@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![R-CMD-check](https://github.com/UofUEpiBioepiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBioepiworldR/actions/workflows/r.yml)
+[![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 
 # epiworldR
 
@@ -9,7 +9,7 @@
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
-<a href="https://github.com/UofUEpiBioepiworld"
+<a href="https://github.com/UofUEpiBio/epiworld"
 target="_blank">epiworld</a>. It provides a general framework for
 modeling disease transmission using <a
 href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
@@ -96,8 +96,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 216.00ms
-#> Last run speed      : 23.07 million agents x day / second
+#> Last run elapsed t  : 702.00ms
+#> Last run speed      : 7.12 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -167,8 +167,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 1
-#> Last run elapsed t  : 83.00ms
-#> Last run speed      : 11.98 million agents x day / second
+#> Last run elapsed t  : 321.00ms
+#> Last run speed      : 3.11 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:

@@ -142,7 +142,7 @@ x <- plot(repnum, type = "b")
 
 Another typical piece of information is the daily incidence. This is the number of new
 cases per day. In epiworldR, we can get the incidence by looking at the daily
-transitions between states. Although the function `get_hist_transitions` provides the desired data, the function `plot_incidence` is a nice wrapper for visualizing the data:
+transitions between states. Although the function `get_hist_transition_matrix` provides the desired data, the function `plot_incidence` is a nice wrapper for visualizing the data:
 
 ```{r}
 plot_incidence(model_sir)

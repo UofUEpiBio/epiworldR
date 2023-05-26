@@ -270,7 +270,7 @@ as.array.epiworld_hist_transition <- function(x, ...) {
 #' @export
 #' @rdname epiworld-data
 #' @details The `plot_incidence` function is a wrapper between
-#' [get_hist_transition] and it's plot method.
+#' [get_hist_transition_matrix] and it's plot method.
 plot_incidence <- function(x, ...) {
   plot(get_hist_transition_matrix(x), ...)
 }

@@ -85,7 +85,7 @@ Accessing the database of \code{epiworld}
 }
 \details{
 The \code{plot_incidence} function is a wrapper between
-\link{get_hist_transition} and it's plot method.
+\link{get_hist_transition_matrix} and it's plot method.
 
 The plot method for the \code{epiworld_hist_transition} class plots the
 daily incidence of each state. The function returns the data frame used for

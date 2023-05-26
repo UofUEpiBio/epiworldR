@@ -3558,6 +3558,12 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     size_t n = this->hist_transition_matrix.size();
     
+    // Clearing the previous vectors
+    state_from.clear();
+    state_to.clear();
+    date.clear();
+    counts.clear();
+
     // Reserving space
     state_from.reserve(n);
     state_to.reserve(n);
@@ -3566,6 +3572,10 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     size_t n_status = model->nstatus;
     size_t n_steps  = model->get_ndays();
+
+    // If n is zero, then we are done
+    if (n == 0u)
+        return;
 
     for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
     {
