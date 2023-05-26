@@ -58,7 +58,7 @@ any model.}
 
 \item{y}{Ignored.}
 
-\item{ylab, xlab, main}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 average reproductive number over time.}

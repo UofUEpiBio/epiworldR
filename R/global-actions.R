@@ -130,15 +130,15 @@ print.epiworld_globalaction <- function(x, ...) {
 
 #' @export
 #' @param action A global action.
-#' @param date Integer. The date at which the action is executed (see details).
+#' @param day Integer. The day (step) at which the action is executed (see details).
 #' @param model An object of class [epiworld_model].
 #' @param name Character scalar. The name of the action.
 #' @rdname global-actions
 #' @seealso epiworld-model
 #' @details The function `add_global_action` adds a global action to a model.
 #' The model checks for actions to be executed at each time step. If the added
-#' action matches the current time step, the action is executed. When `date` is
-#' negative, the action is executed at each time step. When `date` is positive,
+#' action matches the current time step, the action is executed. When `day` is
+#' negative, the action is executed at each time step. When `day` is positive,
 #' the action is executed at the specified time step.
 add_global_action <- function(model, action) {
   

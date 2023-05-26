@@ -614,6 +614,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+CXX_STD_FLAG
 OPENMP_CXXFLAGS
 CXXCPP
 OBJEXT
@@ -2940,6 +2941,42 @@ printf "%s\n" "$ac_cv_prog_cxx_openmp" >&6; }
 	OPENMP_CXXFLAGS=$ac_cv_prog_cxx_openmp ;;
     esac
   fi
+  ## Check for C++17 support
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for C++17 support" >&5
+printf %s "checking for C++17 support... " >&6; }
+if test ${ac_cv_prog_cxx_cxx17+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+int x = 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+  ac_cv_prog_cxx_cxx17=yes
+else $as_nop
+  ac_cv_prog_cxx_cxx17=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_prog_cxx_cxx17" >&5
+printf "%s\n" "$ac_cv_prog_cxx_cxx17" >&6; }
+  if test "$ac_cv_prog_cxx_cxx17" = yes; then
+    CXX_STD_FLAG="CXX17"
+  else
+    CXX_STD_FLAG="CXX11"
+  fi
+
+
 
 
 ac_config_files="$ac_config_files src/Makevars"

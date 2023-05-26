@@ -34,6 +34,8 @@ add_global_action(model, action)
 
 \item{name}{Character scalar. The name of the action.}
 
+\item{day}{Integer. The day (step) at which the action is executed (see details).}
+
 \item{vars}{Integer vector. The position of the variables in the model.}
 
 \item{coefs}{Numeric vector. The coefficients of the logistic regression.}
@@ -45,8 +47,6 @@ add_global_action(model, action)
 \item{model}{An object of class \link{epiworld_model}.}
 
 \item{action}{A global action.}
-
-\item{date}{Integer. The date at which the action is executed (see details).}
 }
 \description{
 Global actions are functions that are executed at each time step of the
@@ -66,8 +66,8 @@ the model. The parameter is specified by its name \code{param} and the value by
 
 The function \code{add_global_action} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
-action matches the current time step, the action is executed. When \code{date} is
-negative, the action is executed at each time step. When \code{date} is positive,
+action matches the current time step, the action is executed. When \code{day} is
+negative, the action is executed at each time step. When \code{day} is positive,
 the action is executed at the specified time step.
 }
 \examples{
