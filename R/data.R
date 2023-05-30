@@ -48,6 +48,9 @@
 NULL
 
 #' @export
+#' @returns 
+#' - The `get_hist_total` function returns an object of class 
+#' [epiworld_hist_total].
 #' @rdname epiworld-data
 get_hist_total <- function(x) UseMethod("get_hist_total")
 
@@ -69,6 +72,9 @@ plot.epiworld_hist <- function(x, y, ...) {
 }
 
 #' @export
+#' @returns 
+#' - The `get_hist_variant` function returns an object of class 
+#' [epiworld_hist_variant].
 #' @rdname epiworld-data
 get_hist_variant <- function(x) UseMethod("get_hist_variant")
 
@@ -84,6 +90,8 @@ get_hist_variant.epiworld_model <- function(x)  {
 }
 
 #' @export
+#' @returns 
+#' - The `get_hist_tool` function returns an object of [epiworld_hist_variant].
 #' @rdname epiworld-data
 get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
@@ -98,6 +106,9 @@ get_hist_tool.epiworld_model <- function(x)  {
 }
 
 #' @export
+#' @returns 
+#' - The `get_transition_probability` function returns an object of class 
+#' `matrix`. 
 #' @rdname epiworld-data
 get_transition_probability <- function(x) {
   UseMethod("get_transition_probability")
@@ -114,6 +125,9 @@ get_transition_probability.epiworld_model <- function(x)  {
 }
 
 #' @export
+#' @returns 
+#' - The `get_reproductive_number` function returns an object of class
+#' [epiworld_repnum].
 #' @rdname epiworld-data
 get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
 
@@ -129,6 +143,8 @@ get_reproductive_number.epiworld_model <- function(x) {
 #' @param plot Logical scalar. If `TRUE` (default), the function will plot the
 #' average reproductive number over time.
 #' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
+#' @returns 
+#' - The `plot` function returns a plot of the reproductive number over time. 
 #' @export
 plot.epiworld_repnum <- function(
     x,
@@ -269,6 +285,9 @@ as.array.epiworld_hist_transition <- function(x, ...) {
 
 #' @export
 #' @rdname epiworld-data
+#' @returns 
+#' - The `plot_incidence` function returns a plot originating from the object 
+#' `get_hist_transition_matrix`.
 #' @details The `plot_incidence` function is a wrapper between
 #' [get_hist_transition_matrix] and it's plot method.
 plot_incidence <- function(x, ...) {
@@ -276,6 +295,9 @@ plot_incidence <- function(x, ...) {
 }
 
 #' @export 
+#' @returns
+#' - The `plot` function returns a plot which originates from the 
+#' `epiworld_hist_transition` object.
 #' @rdname epiworld-data
 #' @details The plot method for the `epiworld_hist_transition` class plots the
 #' daily incidence of each state. The function returns the data frame used for

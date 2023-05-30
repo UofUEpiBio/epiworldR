@@ -18,6 +18,8 @@
 #' @export
 #' @family Models
 #' @aliases epiworld_seirconn
+#' @returns
+#' - The `ModelSEIRCONN`function returns a model of class [epiworld_model].
 #' @examples 
 #' # An example with COVID-19
 #' model_seirconn <- ModelSEIRCONN(
@@ -61,6 +63,8 @@ ModelSEIRCONN <- function(
 
 #' @rdname ModelSEIRCONN
 #' @export
+#' @returns The `plot` function returns a plot of the SEIRCONN model of class 
+#' [epiworld_model].
 #' @param main Title of the plot.
 plot.epiworld_seirconn <- function(x, main = "SEIRCONN Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)

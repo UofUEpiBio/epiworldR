@@ -11,6 +11,8 @@
 #' @param ... Currently ignore. 
 #' @export
 #' @family Models
+#' @returns 
+#' - The `ModelSIS` function returns a model of class [epiworld_model].
 #' @aliases epiworld_sis
 #' @examples 
 #' model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01, 
@@ -46,6 +48,9 @@ ModelSIS <- function(
 
 #' @rdname ModelSIS
 #' @export
+#' @returns 
+#' - The `plot` function returns a plot of the SIS model of class 
+#' [epiworld_model].
 #' @param main Title of the plot.
 plot.epiworld_sis <- function(x, main = "SIS Model",...) { # col = NULL
  plot_epi(x, main = main, ...)

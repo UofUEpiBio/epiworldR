@@ -8,7 +8,8 @@
 #' @param p Probability of rewiring.
 #' @export
 #' @aliases agents
-#' @return The model with the agents loaded.
+#' @return The 'agents_smallworld' function returns a model with the agents 
+#' loaded.
 #' @examples
 #' 
 #' # Initializing SIR model with agents_smallworld
@@ -56,6 +57,8 @@ agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
 }
 
 #' @export
+#' @return The `agents_from_edgelist` function returns an empty model of class
+#' `epiworld_model`. 
 #' @rdname agents_smallworld
 agents_from_edgelist <- function(
   m, source, target, size, directed
