@@ -1,6 +1,6 @@
 Package: epiworldR
 Type: Package
-Title: Fast Epi Simulations in R
+Title: Fast Agent-Based Epi Models
 Version: 0.0-1
 Date: 2023-05-23
 Authors@R: c(
@@ -9,16 +9,16 @@ Authors@R: c(
   email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
   person("Centers for Disease Control and Prevention", role="fnd", comment = "Award number 1U01CK000585; 75D30121F00003"
   ))
-Description: A flexible framework for Agent-Based Models (ABM), the epiworldR 
+Description: A flexible framework for Agent-Based Models (ABM), the 'epiworldR' 
     package provides methods for prototyping disease outbreaks and transmission 
-    models using a C++ backend, making it very fast. It supports multiple 
+    models using a 'C++' backend, making it very fast. It supports multiple 
     epidemiological models, including the Susceptible-Infected-Susceptible 
     (SIS), Susceptible-Infected-Removed (SIR), 
     Susceptible-Exposed-Infected-Removed (SEIR), and others, involving 
     arbitrary mitigation policies and multiple-disease models. Users can 
     specify infectiousness/susceptibility rates as a function of agents’ 
     features, providing great complexity for the model dynamics. Furthermore, 
-    epiworldR is ideal for simulation studies featuring large populations.
+    'epiworldR' is ideal for simulation studies featuring large populations.
 URL: https://github.com/UofUEpiBio/epiworldR,
     https://uofuepibio.github.io/epiworldR/ 
 BugReports: https://github.com/UofUEpiBio/epiworldR/issues
