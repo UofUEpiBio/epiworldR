@@ -33,6 +33,11 @@ about the agent.}
 
 \item{max_print}{Integer scalar. Maximum number of agents to print.}
 }
+\value{
+An object of class \link{epiworld_agents}.
+
+The \code{[} method returns an object of class \link{epiworld_agent}.
+}
 \description{
 Agents in epiworldR
 }

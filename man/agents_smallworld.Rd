@@ -24,6 +24,9 @@ agents_from_edgelist(m, source, target, size, directed)
 \item{source, target}{Integer vectors describing the source and target of
 in the edgelist.}
 }
+\value{
+The model with the agents loaded.
+}
 \description{
 Load agents to a model
 }

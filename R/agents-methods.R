@@ -4,6 +4,7 @@
 #' @seealso agents
 #' @export
 #' @aliases epiworld_agents
+#' @return The `get_agents` function returns an object of class [epiworld_agents].
 #' @examples
 #'  
 #' model_sirconn <- ModelSIRCONN(
@@ -44,6 +45,16 @@ get_agents <- function(model) {
 #' @param i Index (id) of the agent (from 0 to `n-1`)
 #' @export
 #' @rdname get_agents
+#' @return The `[` method returns an object of class [epiworld_agent].
+`[.epiworld_agents` <- function(x, i) {
+  
+  structure(
+    get_agent_cpp(x, i),
+    class = "epiworld_agent",
+    model = attr(x, "model")
+  )
+  
+}
 `[.epiworld_agents` <- function(x, i) {
   
   structure(

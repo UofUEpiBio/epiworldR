@@ -8,6 +8,7 @@
 #' @param p Probability of rewiring.
 #' @export
 #' @aliases agents
+#' @return The model with the agents loaded.
 #' @examples
 #' 
 #' # Initializing SIR model with agents_smallworld
