@@ -26,6 +26,8 @@
 #' @export
 #' @family Models
 #' @aliases epiworld_surv
+#' @returns
+#' - The `ModelSURV`function returns a model of class [epiworld_model].
 #' @examples
 #' model_surv <- ModelSURV(
 #'   name                  = "COVID-19",
@@ -78,6 +80,8 @@ ModelSURV <- function(
 
 #' @rdname ModelSURV
 #' @export
+#' @returns The `plot` function returns a plot of the SURV model of class 
+#' [epiworld_model].
 #' @param main Title of the plot.
 plot.epiworld_surv <- function(x, main = "SURV Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)

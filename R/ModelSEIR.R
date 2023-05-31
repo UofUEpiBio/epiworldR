@@ -12,6 +12,8 @@
 #' @export
 #' @family Models
 #' @aliases epiworld_seir
+#' @returns
+#' - The `ModelSEIR`function returns a model of class [epiworld_model].
 #' @examples 
 #' model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
 #' infectiousness = 0.9, recovery = 0.1, incubation_days = 4)
@@ -44,6 +46,8 @@ ModelSEIR <- function(
 
 #' @rdname ModelSEIR
 #' @param main Title of the plot
+#' @returns The `plot` function returns a plot of the SEIR model of class 
+#' [epiworld_model].
 #' @export
 plot.epiworld_seir <- function(x, main = "SEIR Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)
