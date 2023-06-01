@@ -37,6 +37,15 @@ about the agent.}
 The \code{get_agents} function returns an object of class \link{epiworld_agents}.
 
 The \code{[} method returns an object of class \link{epiworld_agent}.
+
+\itemize{
+\item The \code{print} function returns information about each individual agent of
+class \link{epiworld_agent}.
+}
+
+\itemize{
+\item The \code{get_state} function returns the state of the \link{epiworld_agents} object.
+}
 }
 \description{
 Agents in epiworldR

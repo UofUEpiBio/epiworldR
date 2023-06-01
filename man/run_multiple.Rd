@@ -43,6 +43,14 @@ make_saver(..., fn = "")
 In the case of \code{make_saver}, an list of class \code{epiworld_saver}.
 The function \code{run_multiple} returns a list of the same class as \code{m}; usually
 an \code{epiworld_model} object.
+
+\itemize{
+\item The \code{run_multiple} function runs a specified number of simulations and
+returns a model object of class \link{epiworld_model}.
+}
+
+The \code{run_multiple_get_results} function returns epidemiological information
+regarding the multiple-simulated model.
 }
 \description{
 Run multiple simulations at once

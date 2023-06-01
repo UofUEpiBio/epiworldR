@@ -29,6 +29,14 @@ incubation days.}
 
 \item{...}{Currently ignore.}
 }
+\value{
+\itemize{
+\item The \code{ModelSEIR}function returns a model of class \link{epiworld_model}.
+}
+
+The \code{plot} function returns a plot of the SEIR model of class
+\link{epiworld_model}.
+}
 \description{
 Susceptible Exposed Infected Recovered model (SEIR)
 }

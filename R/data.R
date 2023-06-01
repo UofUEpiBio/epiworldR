@@ -35,8 +35,9 @@
 #' # Retrieving date, state, and counts dataframe by variant
 #' head(get_hist_variant(seirconn))
 #' 
-#' # Retrieving the reproductive number
-#' get_reproductive_number(seirconn)
+#' # Retrieving (and plotting) the reproductive number
+#' rp <- get_reproductive_number(seirconn)
+#' plot(rp) # Also equivalent to plot_reproductive_number(seirconn)
 #' 
 #' # We can go further and get all the history
 #' t_hist <- get_hist_transition_matrix(seirconn)
@@ -45,6 +46,12 @@
 #' 
 #' # And turn it into an array
 #' as.array(t_hist)[,,1:3]
+#' 
+#' # We cam also get (and plot) the incidence, as well as
+#' # the generation time
+#' inci <- plot_incidence(seirconn)
+#' gent <- plot_generation_time(seirconn)
+#' 
 NULL
 
 #' @export
@@ -151,66 +158,78 @@ plot.epiworld_repnum <- function(
     y = NULL,
     ylab = "Average Rep. Number",
     xlab = "Day (step)",
-    main = "Daily Average Reproductive Number",
+    main = "Reproductive Number",
+    type = "b",
     plot = TRUE,
     ...) {
   
   
+  # Computing stats
+  # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
+  repnum <- stats::aggregate(
+    x[["rt"]],
+    by = list(
+      variant = x[["variant"]],
+      date    = x[["source_exposure_date"]]
+      ),
+    FUN = function(x) {
+      ci <- stats::quantile(x, c(0.025, 0.975), na.rm = TRUE)
+
+      data.frame(
+        avg  = mean(x, na.rm = TRUE),
+        n    = sum(!is.na(x)),
+        sd   = sd(x, na.rm = TRUE),
+        lb   = ci[1],
+        ub   = ci[2]
+        )
+    },
+    simplify = FALSE
+    )
+
+  repnum <- cbind(repnum[, -3, drop = FALSE], do.call(rbind, repnum[, 3]))
+  repnum <- repnum[order(repnum[["variant"]], repnum[["date"]]), , drop = FALSE]
+  rownames(repnum) <- NULL
+
   # Nvariants
   vlabs     <- sort(unique(x[, "variant"]))
   nvariants <- length(vlabs)
-  
-  res <- vector("list", nvariants)
-  names(res) <- vlabs
-  for (i in seq_along(vlabs)) {
     
-    x_tmp <- x[x[, "variant"] == vlabs[i], ]
-    
-    res[[i]] <- tapply(
-      X     = x_tmp[, "rt"],
-      INDEX = x_tmp[, "source_exposure_date"],
-      FUN   = mean
-    )
-    
-    # Preparing the data frame
-    res[[i]] <- data.frame(
-      variant = vlabs[i],
-      step    = as.integer(names(res[[i]])),
-      avg     = unname(res[[i]])
-    )
-    
-  }
-  
-  # Figuring out the range
-  res_all <- do.call(rbind, res)
-  
-  yran <- range(res_all[["avg"]])
-  xran <- range(res_all[["step"]])
+  # # Figuring out the range
+  yran <- range(repnum[["avg"]])
+  xran <- range(repnum[["date"]])
   
   # Plotting -------------------------------------------------------------------
   if (plot) {
     for (i in seq_along(vlabs)) {
+
+      tmp <- repnum[repnum[["variant"]] == vlabs[i], ]
       
       if (i == 1L) {
         
         graphics::plot(
-          x = res[[i]][["step"]],
-          y = res[[i]][["avg"]],
-          pch  = (i - 1),
+          x = tmp[["date"]],
+          y = tmp[["avg"]],
+          pch  = i,
           col  = i,
+          lwd  = 2,
+          lty  = i,
           xlab = xlab,
           ylab = ylab,
           main = main,
+          type = type,
           ...
         )
         next
       }
       
-      graphics::points(
-        x = res[[i]][["step"]],
-        y = res[[i]][["avg"]],
-        pch  = (i - 1),
+      graphics::lines(
+        x = tmp[["date"]],
+        y = tmp[["avg"]],
+        pch  = i,
         col  = i,
+        lwd  = 2,
+        lty  = i,
+        type = type,
         ...
       )
       
@@ -221,8 +240,9 @@ plot.epiworld_repnum <- function(
       graphics::legend(
         "topright",
         legend = vlabs,
-        pch    = 0L:(nvariants - 1L),
+        pch    = 1L:nvariants,
         col    = 1L:nvariants,
+        lwd    = 2,
         title  = "Variants",
         bty    = "n"
       )
@@ -230,10 +250,7 @@ plot.epiworld_repnum <- function(
     }
 
   }
-  
-  res <- do.call(rbind, res)
-  rownames(res) <- NULL
-  invisible(res)
+  invisible(repnum)
   
 }
 
@@ -314,7 +331,7 @@ plot_incidence <- function(x, ...) {
 #' plotting.
 plot.epiworld_hist_transition <- function(
   x,
-  type = "l",
+  type = "b",
   xlab = "Day (step)",
   ylab = "Counts",
   main = "Daily incidence",
@@ -443,10 +460,10 @@ get_generation_time <- function(x) {
 #' @rdname epiworld-data
 plot.epiworld_generation_time <- function(
   x,
-  type = "l",
+  type = "b",
   xlab = "Day (step)",
-  ylab = "Counts",
-  main = "Daily incidence",
+  ylab = "Avg. Generation Time",
+  main = "Generation Time",
   plot = TRUE,
   ...
   ) {
@@ -455,55 +472,76 @@ plot.epiworld_generation_time <- function(
     stop("The object must be of class 'epiworld_generation_time'")
   }
 
-  # Agregating the data
-  gt_avg <- tapply(
-    x[["gentime"]], INDEX = list(x[, "date"], x[, "virus_id"]), FUN = mean,
-    na.rm = TRUE
+  gt <- stats::aggregate(
+    x[["gentime"]], by = list(
+      date    = x[["date"]],
+      variant = x[["virus_id"]]
+      ),
+    FUN = function(x) {
+      ci <- stats::quantile(
+        x, probs = c(0.025, 0.975), na.rm = TRUE
+        )
+      
+      data.frame(
+        avg = mean(x, na.rm = TRUE),
+        n   = sum(!is.na(x)),
+        sd  = sd(x, na.rm = TRUE),
+        ci_lower = ci[1L],
+        ci_upper = ci[2L]
+      )
+    },
+    simplify = FALSE
     )
 
-  gt_sd <- tapply(
-    x[["gentime"]], INDEX = list(x[, "date"], x[, "virus_id"]), FUN = sd,
-    na.rm = TRUE
-    )
+  gt <- cbind(gt[, -3, drop = FALSE], do.call(rbind, gt[, 3]))
+  gt <- gt[order(gt[["variant"]], gt[["date"]]), , drop = FALSE]
+  rownames(gt) <- NULL
 
-  gt_avg <- as.data.frame(gt_avg)
-  gt_sd  <- as.data.frame(gt_sd)
+  # Replacing NaNs with NAs
+  gt <- as.data.frame(lapply(gt, function(x) {
+    x[is.nan(x)] <- NA
+    x
+  })) 
 
   if (plot) {
     # Number of viruses
-    n_viruses <- ncol(gt_avg)
+    variants <- sort(unique(gt[["variant"]]))
+    n_viruses <- length(variants)
 
     for (i in 1L:n_viruses) {
-        
-        if (i == 1L) {
-    
-          graphics::plot(
-            x = as.integer(rownames(gt_avg)),
-            y = gt_avg[[i]],
-            col = i,
-            lwd = 2,
-            lty = i,
-            type = type,
-            xlab = xlab,
-            ylab = ylab,
-            main = main,
-            ylim = range(gt_avg, na.rm = TRUE),
-            ...
-          )
-    
-          next
-    
-        }
-    
-        graphics::points(
-          x = as.integer(rownames(gt_avg)),
-          y = gt_avg[[i]],
+
+      gt_i <- gt[gt[["variant"]] == variants[i], , drop = FALSE]
+      
+      if (i == 1L) {
+  
+        graphics::plot(
+          x = gt_i[["date"]],
+          y = gt_i[["avg"]],
           col = i,
           lwd = 2,
           lty = i,
           type = type,
+          xlab = xlab,
+          ylab = ylab,
+          main = main,
+          ylim = range(gt[["avg"]], na.rm = TRUE),
+          xlim = range(gt[["date"]], na.rm = TRUE),
           ...
         )
+  
+        next
+  
+      }
+  
+      graphics::points(
+        x = gt_i[["date"]],
+        y = gt_i[["avg"]],
+        col = i,
+        lwd = 2,
+        lty = i,
+        type = type,
+        ...
+      )
     }
 
     # Creating a legend
@@ -511,8 +549,8 @@ plot.epiworld_generation_time <- function(
       
       graphics::legend(
         "topright",
-        legend = colnames(gt_avg),
-        col    = 1L:n_viruses,
+        legend = variants,
+        col    = 1:n_viruses,
         lwd    = 2,
         lty    = 1L:n_viruses,
         title  = "Viruses",
@@ -523,56 +561,7 @@ plot.epiworld_generation_time <- function(
 
   }
 
-  res <- data.frame(date = 0:attr(x, "n_steps"))
-  
-
-  # Changing the database to a long format
-  gt_avg <- lapply(colnames(gt_avg), function(i) {
-
-    tmp <- data.frame(
-      date = as.integer(rownames(gt_avg)),
-      virus_id = i,
-      gentime = gt_avg[[i]]
-    )
-
-    tmp <- merge(res, tmp, by = c("date"), all.x = TRUE)
-    tmp[["virus_id"]][is.na(tmp[["virus_id"]])] <- i
-    tmp 
-
-  })
-
-  gt_avg <- do.call(rbind, gt_avg)
-
-  # Same for gt_sd
-  gt_sd <- lapply(colnames(gt_sd), function(i) {
-    
-    tmp <- data.frame(
-      date = as.integer(rownames(gt_sd)),
-      virus_id = i,
-      gentime = gt_sd[[i]]
-    )
-
-    tmp <- merge(res, tmp, by = c("date"), all.x = TRUE)
-    tmp[["virus_id"]][is.na(tmp[["virus_id"]])] <- i
-    tmp
-
-  })
-
-  gt_sd <- do.call(rbind, gt_sd)
-
-  # Merging the results
-
-  res <- merge(
-    gt_avg, gt_sd, by = c("date", "virus_id"),
-    suffixes = c("_avg", "_sd"),
-    all.x = TRUE
-    )
-
-  # Sort res by virus_id and date
-  res <- res[order(res[["virus_id"]], res[["date"]]), ]
-  rownames(res) <- NULL
-
-  invisible(res)
+  invisible(gt)
     
   
 }

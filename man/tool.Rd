@@ -102,12 +102,61 @@ will be added to the tool (see details).}
 
 \item{tfun}{An object of class \code{epiworld_tool_fun}.}
 }
+\value{
+\itemize{
+\item The \code{tool} function creates a tool of class \link{epiworld_tool}.
+}
+
+\itemize{
+\item The \code{set_name_tool} function assigns a name to the tool of class
+\link{epiworld_tool} and returns the tool.
+}
+
+\link{set_name_tool}
+
+\itemize{
+\item The \code{add_tool_n} function adds the specified tool to the model of class
+\link{epiworld_model} with specified count n.
+}
+
+\itemize{
+\item The \code{rm_tool} function removes the specified tool from a model.
+}
+
+\itemize{
+\item The \code{set_susceptibility_reduction} function assigns a probability reduction
+to the specified tool of class \link{epiworld_tool}.
+}
+
+\itemize{
+\item The \code{set_transmission_reduction} function assigns a probability reduction
+to the specified tool of class \link{epiworld_tool}.
+}
+
+\itemize{
+\item The \code{set_recovery_enhancer} function assigns a probability increase
+to the specified tool of class \link{epiworld_tool}.
+}
+
+\itemize{
+\item The \code{set_death_reduction} function assigns a probability decrease
+to the specified tool of class \link{epiworld_tool}.
+}
+}
 \description{
-Tools in epiworld
+Tools are functions that affect how agents react to the virus. They can be
+used to simulate the effects of vaccination, isolation, and social
+distancing.
 }
 \details{
 The name of the \code{epiworld_tool} object can be manipulated with the functions
 \code{\link[=set_name_tool]{set_name_tool()}} and \code{\link[=get_name_tool]{get_name_tool()}}.
+
+The \code{get_name_tool} function returns the name of the tool of class
+\link{epiworld_tool}.
+
+The \code{add_tool} function adds the specified tool to the model of class
+\link{epiworld_model} with specified proportion.
 
 In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_reduction_ptr},
 \code{set_recovery_enhancer}, and

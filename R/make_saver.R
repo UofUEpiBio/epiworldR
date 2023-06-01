@@ -228,7 +228,7 @@ plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
   }
   
   graphics::boxplot(
-    avg ~ step,
+    avg ~ date,
     data = totals,
     main = "Reproductive Number",
     xlab = "Source Exposure Date",

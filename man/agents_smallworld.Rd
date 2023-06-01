@@ -25,7 +25,11 @@ agents_from_edgelist(m, source, target, size, directed)
 in the edgelist.}
 }
 \value{
-The model with the agents loaded.
+The 'agents_smallworld' function returns a model with the agents
+loaded.
+
+The \code{agents_from_edgelist} function returns an empty model of class
+\code{epiworld_model}.
 }
 \description{
 Load agents to a model

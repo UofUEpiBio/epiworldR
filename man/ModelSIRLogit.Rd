@@ -35,6 +35,11 @@ ModelSIRLogit(
 
 \item{prevalence}{Numeric scalar. Prevalence (initial state) in proportion.}
 }
+\value{
+\itemize{
+\item The \code{ModelSIRLogit} function returns a model of class \link{epiworld_model}.
+}
+}
 \description{
 SIR Logistic model
 }

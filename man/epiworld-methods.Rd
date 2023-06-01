@@ -87,6 +87,34 @@ in the model}
 }
 \value{
 \itemize{
+\item The \code{verbose_on} and \code{verbose_off} functions return the same model, however
+\code{verbose_off} returns the model with no progress bar.
+}
+
+\itemize{
+\item The \code{run} function returns the simulated model of class \code{epiworld_model}.
+}
+
+\itemize{
+\item The \code{get_states} function returns the unique states found in a model.
+}
+
+\itemize{
+\item The \code{get_param} function returns a selected parameter from the model object
+of class \code{epiworld_model}.
+}
+
+\itemize{
+\item The \code{set_param} function does not return a value but instead alters a
+parameter value.
+}
+
+\itemize{
+\item The \code{set_name} function does not return a value but instead alters an object
+of \code{epiworld_model}.
+}
+
+\itemize{
 \item \code{get_name} returns the name of the model.
 }
 
@@ -108,6 +136,22 @@ in the model}
 
 \itemize{
 \item \code{size.epiworld_model} returns the number of agents in the model.
+}
+
+\itemize{
+\item The 'set_agents_data' function returns an object of class DataFrame.
+}
+
+\itemize{
+\item 'get_agents_data_ncols' returns the number of columns in the model dataframe.
+}
+
+\itemize{
+\item 'get_virus' returns a \link{virus}.
+}
+
+\itemize{
+\item \code{get_tool} returns a \link{tool}.
 }
 }
 \description{

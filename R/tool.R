@@ -1,4 +1,9 @@
 #' Tools in epiworld
+#' 
+#' Tools are functions that affect how agents react to the virus. They can be
+#' used to simulate the effects of vaccination, isolation, and social
+#' distancing.
+#' 
 #' @param model Model
 #' @param name Name of the tool
 #' @param susceptibility_reduction Numeric. Proportion it reduces susceptibility.
@@ -75,8 +80,6 @@ tool <- function(
 }
 
 #' @export
-#' @returns 
-#' - The `print` function returns information about the specified tool.
 print.epiworld_tool <- function(x, ...) {
   invisible(print_tool_cpp(x))
 }
@@ -108,15 +111,17 @@ stopifnot_tfun <- function(tfun) {
 #' [set_name_tool()] and [get_name_tool()].
 #' @returns 
 #' - The `set_name_tool` function assigns a name to the tool of class 
-#' [epiworld_tool].
+#' [epiworld_tool] and returns the tool.
 #' @rdname tool
 set_name_tool <- function(tool, name) {
   stopifnot_tool(tool)
   invisible(set_name_tool_cpp(tool, name))
 }
 
-#' @export
-#' - The `get_name_tool` function returns the name of the tool of class 
+#' @returns [set_name_tool]
+
+#' @details
+#' The `get_name_tool` function returns the name of the tool of class 
 #' [epiworld_tool].
 #' @rdname tool
 get_name_tool <- function(tool) {

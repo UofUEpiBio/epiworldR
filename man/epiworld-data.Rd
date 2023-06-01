@@ -34,7 +34,8 @@ get_reproductive_number(x)
   y = NULL,
   ylab = "Average Rep. Number",
   xlab = "Day (step)",
-  main = "Daily Average Reproductive Number",
+  main = "Reproductive Number",
+  type = "b",
   plot = TRUE,
   ...
 )
@@ -49,7 +50,7 @@ plot_incidence(x, ...)
 
 \method{plot}{epiworld_hist_transition}(
   x,
-  type = "l",
+  type = "b",
   xlab = "Day (step)",
   ylab = "Counts",
   main = "Daily incidence",
@@ -63,10 +64,10 @@ get_generation_time(x)
 
 \method{plot}{epiworld_generation_time}(
   x,
-  type = "l",
+  type = "b",
   xlab = "Day (step)",
-  ylab = "Counts",
-  main = "Daily incidence",
+  ylab = "Avg. Generation Time",
+  main = "Generation Time",
   plot = TRUE,
   ...
 )
@@ -91,12 +92,50 @@ desired statistic.}
 entries in the transition matrix.}
 }
 \value{
+\itemize{
+\item The \code{get_hist_total} function returns an object of class
+\link{epiworld_hist_total}.
+}
+
+\itemize{
+\item The \code{get_hist_variant} function returns an object of class
+\link{epiworld_hist_variant}.
+}
+
+\itemize{
+\item The \code{get_hist_tool} function returns an object of \link{epiworld_hist_variant}.
+}
+
+\itemize{
+\item The \code{get_transition_probability} function returns an object of class
+\code{matrix}.
+}
+
+\itemize{
+\item The \code{get_reproductive_number} function returns an object of class
+\link{epiworld_repnum}.
+}
+
+\itemize{
+\item The \code{plot} function returns a plot of the reproductive number over time.
+}
+
 In the case of \code{get_hist_transition_matrix}, a \link{data.frame} with four columns:
 "state_from", "state_to", "date", and "counts." It will be
 
 The \code{as.array} method for \code{epiworld_hist_transition} objects turns the \code{data.frame}
 returned by \code{get_hist_transition_matrix} into an array of \verb{nstates x nstates x (ndays + 1)}
 entries, where the first entry is the initial state.
+
+\itemize{
+\item The \code{plot_incidence} function returns a plot originating from the object
+\code{get_hist_transition_matrix}.
+}
+
+\itemize{
+\item The \code{plot} function returns a plot which originates from the
+\code{epiworld_hist_transition} object.
+}
 
 The function \code{get_transmissions} returns a \code{data.frame} with the following
 columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{source_exposure_date}.
@@ -149,8 +188,9 @@ head(get_hist_total(seirconn))
 # Retrieving date, state, and counts dataframe by variant
 head(get_hist_variant(seirconn))
 
-# Retrieving the reproductive number
-get_reproductive_number(seirconn)
+# Retrieving (and plotting) the reproductive number
+rp <- get_reproductive_number(seirconn)
+plot(rp) # Also equivalent to plot_reproductive_number(seirconn)
 
 # We can go further and get all the history
 t_hist <- get_hist_transition_matrix(seirconn)
@@ -159,6 +199,12 @@ head(t_hist)
 
 # And turn it into an array
 as.array(t_hist)[,,1:3]
+
+# We cam also get (and plot) the incidence, as well as
+# the generation time
+inci <- plot_incidence(seirconn)
+gent <- plot_generation_time(seirconn)
+
 }
 \seealso{
 Other Models: 

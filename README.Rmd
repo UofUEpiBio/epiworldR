@@ -90,7 +90,7 @@ model_seirconn <- ModelSEIRCONN(
   incubation_days     = 7, 
   prob_transmission   = 0.6,
   prob_recovery       = 0.5
-)
+) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
 
 set.seed(132)
 run(model_seirconn, ndays = 100)
@@ -103,7 +103,11 @@ Computing some key statistics
 plot(model_seirconn)
 
 repnum <- get_reproductive_number(model_seirconn)
-plot(repnum, type = "b")
+
+head(plot(repnum))
+
+plot_incidence(model_seirconn)
+head(plot_generation_time(model_seirconn))
 ```
 
 

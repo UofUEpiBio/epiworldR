@@ -73,7 +73,7 @@ set_prob_death_fun(virus, model, vfun)
 
 \item{virus}{An object of class \code{epiworld_virus}}
 
-\item{model}{An object of class \code{epiworld-model}.}
+\item{model}{An object of class \code{epiworld_model}.}
 
 \item{proportion}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
 
@@ -96,6 +96,56 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
+}
+\value{
+\itemize{
+\item The \code{set_name_virus} function does not return a value, but merely assigns
+a name to the virus of choice.
+}
+
+\itemize{
+\item The \code{get_name_virus} function returns the name of the virus of class
+\link{epiworld_virus}.
+}
+
+\itemize{
+\item The \code{add_virus} function does not return a value, instead it adds the
+virus of choice to the model object of class \link{epiworld_model}.
+}
+
+\itemize{
+\item The \code{add_virus_n} function does not return a value, but instead adds a
+specified number of agents with the virus of choice to the model object
+of class \link{epiworld_model}.
+}
+
+\itemize{
+\item The \code{virus_set_state} function does not return a value but assigns
+epidemiological properties to the specified virus of class \link{epiworld_virus}.
+}
+
+\itemize{
+\item The \code{rm_virus} function does not return a value, but instead removes
+a specified virus from the model of class \link{epiworld_model}.
+}
+
+\itemize{
+\item The \code{set_prob_infecting} function does not return a value, but instead
+assigns a probability to infection for the specified virus of class
+\link{epiworld_virus}.
+}
+
+\itemize{
+\item The \code{set_prob_recovery} function does not return a value, but instead
+assigns a probability to recovery for the specified virus of class
+\link{epiworld_virus}.
+}
+
+\itemize{
+\item The \code{set_prob_death} function does not return a value, but instead
+assigns a probability to death for the specified virus of class
+\link{epiworld_virus}.
+}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,

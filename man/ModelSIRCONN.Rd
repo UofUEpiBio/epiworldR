@@ -37,6 +37,14 @@ transmission.}
 
 \item{...}{Currently ignore.}
 }
+\value{
+\itemize{
+\item The \code{ModelSIRCONN}function returns a model of class \link{epiworld_model}.
+}
+
+The \code{plot} function returns a plot of the SIRCONN model of class
+\link{epiworld_model}.
+}
 \description{
 Susceptible Infected Removed model (SIR connected)
 }

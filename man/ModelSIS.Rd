@@ -26,6 +26,16 @@ infection.}
 
 \item{...}{Currently ignore.}
 }
+\value{
+\itemize{
+\item The \code{ModelSIS} function returns a model of class \link{epiworld_model}.
+}
+
+\itemize{
+\item The \code{plot} function returns a plot of the SIS model of class
+\link{epiworld_model}.
+}
+}
 \description{
 Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model}{wiki})
 }

@@ -96,8 +96,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 702.00ms
-#> Last run speed      : 7.12 million agents x day / second
+#> Last run elapsed t  : 211.00ms
+#> Last run speed      : 23.68 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -149,7 +149,7 @@ model_seirconn <- ModelSEIRCONN(
   incubation_days     = 7, 
   prob_transmission   = 0.6,
   prob_recovery       = 0.5
-)
+) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
 
 set.seed(132)
 run(model_seirconn, ndays = 100)
@@ -166,9 +166,9 @@ model_seirconn
 #> Population size     : 10000
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
-#> Number of variants  : 1
-#> Last run elapsed t  : 321.00ms
-#> Last run speed      : 3.11 million agents x day / second
+#> Number of variants  : 2
+#> Last run elapsed t  : 62.00ms
+#> Last run speed      : 15.99 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -176,6 +176,7 @@ model_seirconn
 #> 
 #> Virus(es):
 #>  - COVID-19 (baseline prevalence: 1.00%)
+#>  - COVID-19 (baseline prevalence: 50.00%)
 #> 
 #> Tool(s):
 #>  (none)
@@ -187,15 +188,15 @@ model_seirconn
 #>  - Prob. Transmission   : 0.6000
 #> 
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  9900 -> 91
-#>   - (1) Exposed     :   100 -> 0
-#>   - (2) Infected    :     0 -> 0
-#>   - (3) Recovered   :     0 -> 9909
+#>   - (0) Susceptible :  4900 -> 608
+#>   - (1) Exposed     :  5100 -> 4
+#>   - (2) Infected    :     0 -> 2
+#>   - (3) Recovered   :     0 -> 9386
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.96  0.04  0.00  0.00
-#>  - Exposed      0.00  0.85  0.15  0.00
-#>  - Infected     0.00  0.00  0.49  0.51
+#>  - Susceptible  0.98  0.02  0.00  0.00
+#>  - Exposed      0.00  0.86  0.14  0.00
+#>  - Infected     0.00  0.00  0.48  0.52
 #>  - Recovered    0.00  0.00  0.00  1.00
 ```
 
@@ -210,10 +211,37 @@ plot(model_seirconn)
 ``` r
 
 repnum <- get_reproductive_number(model_seirconn)
-plot(repnum, type = "b")
+
+head(plot(repnum))
 ```
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
+
+    #>   variant date      avg  n       sd lb    ub
+    #> 1       0    0 2.858974 78 2.592318  1  7.30
+    #> 2       0    2 1.964286 28 1.914509  0  5.65
+    #> 3       0    3 2.761905 21 2.321740  0  7.00
+    #> 4       0    4 2.000000 33 1.887459  0  6.40
+    #> 5       0    5 1.864865 37 2.225636  0  9.10
+    #> 6       0    6 2.104167 48 2.667692  0 10.65
+
+    plot_incidence(model_seirconn)
+
+<img src="man/figures/README-unnamed-chunk-4-3.png" width="100%" />
+
+``` r
+head(plot_generation_time(model_seirconn))
+```
+
+<img src="man/figures/README-unnamed-chunk-4-4.png" width="100%" />
+
+    #>   date variant      avg  n       sd ci_lower ci_upper
+    #> 1    2       0 5.714286 21 4.681270        2    17.00
+    #> 2    3       0 7.444444 18 4.501271        2    15.45
+    #> 3    4       0 7.192308 26 5.578668        2    20.75
+    #> 4    5       0 7.111111 27 4.236593        2    15.70
+    #> 5    6       0 7.575000 40 7.249713        2    30.20
+    #> 6    7       0 6.303030 33 4.531038        2    18.00
 
 ## SIR Logit
 

@@ -41,6 +41,14 @@ incubation days.}
 
 \item{...}{Currently ignore.}
 }
+\value{
+\itemize{
+\item The \code{ModelSEIRCONN}function returns a model of class \link{epiworld_model}.
+}
+
+The \code{plot} function returns a plot of the SEIRCONN model of class
+\link{epiworld_model}.
+}
 \description{
 The SEIR connected model implements a model where all agents are connected.
 This is equivalent to a compartmental model (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model}{wiki}).

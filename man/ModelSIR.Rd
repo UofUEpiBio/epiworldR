@@ -26,6 +26,16 @@ infection.}
 
 \item{...}{Currently ignore.}
 }
+\value{
+\itemize{
+\item The \code{ModelSIR} function returns a model of class \link{epiworld_model}.
+}
+
+\itemize{
+\item The \code{plot} function returns a plot of the SIR model of class
+\link{epiworld_model}.
+}
+}
 \description{
 SIR model
 }
