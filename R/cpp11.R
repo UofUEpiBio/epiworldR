@@ -68,6 +68,10 @@ get_transmissions_cpp <- function(model) {
   .Call(`_epiworldR_get_transmissions_cpp`, model)
 }
 
+get_generation_time_cpp <- function(model) {
+  .Call(`_epiworldR_get_generation_time_cpp`, model)
+}
+
 ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect) {
   .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect)
 }

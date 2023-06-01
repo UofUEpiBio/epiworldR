@@ -182,3 +182,31 @@ cpp11::data_frame get_transmissions_cpp(
   });
   
 }
+
+[[cpp11::register]]
+cpp11::data_frame get_generation_time_cpp(
+  SEXP model
+) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector<int> agent_id;
+  std::vector<int> virus_id;
+  std::vector<int> date;
+  std::vector<int> gentime;
+  
+  ptr->get_db().generation_time(
+    agent_id,
+    virus_id,
+    date,
+    gentime
+  );
+  
+  return cpp11::writable::data_frame({
+    "agent"_nm    = agent_id,
+    "virus_id"_nm = virus_id,
+    "date"_nm     = date,
+    "gentime"_nm  = gentime
+  });
+  
+}

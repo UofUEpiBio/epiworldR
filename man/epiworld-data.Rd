@@ -13,6 +13,9 @@
 \alias{plot_incidence}
 \alias{plot.epiworld_hist_transition}
 \alias{get_transmissions}
+\alias{get_generation_time}
+\alias{plot.epiworld_generation_time}
+\alias{plot_generation_time}
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
@@ -47,10 +50,25 @@ plot_incidence(x, ...)
   xlab = "Day (step)",
   ylab = "Counts",
   main = "Daily incidence",
+  plot = TRUE,
   ...
 )
 
 get_transmissions(x)
+
+get_generation_time(x)
+
+\method{plot}{epiworld_generation_time}(
+  x,
+  type = "l",
+  xlab = "Day (step)",
+  ylab = "Counts",
+  main = "Daily incidence",
+  plot = TRUE,
+  ...
+)
+
+plot_generation_time(x, ...)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
@@ -79,6 +97,12 @@ entries, where the first entry is the initial state.
 
 The function \code{get_transmissions} returns a \code{data.frame} with the following
 columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{source_exposure_date}.
+
+The function \code{get_generation_time} returns a \code{data.frame} with
+the following columns: agent, virus_id, date, and gentime.
+
+The function \code{plot_generation_time} is a wrapper for \link{plot} and
+\link{get_generation_time}.
 }
 \description{
 Accessing the database of \code{epiworld}

@@ -124,6 +124,13 @@ extern "C" SEXP _epiworldR_get_transmissions_cpp(SEXP model) {
     return cpp11::as_sexp(get_transmissions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// db.cpp
+cpp11::data_frame get_generation_time_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_generation_time_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_generation_time_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // epimodels.cpp
 SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double prob_transmission, double prob_death, double prob_noreinfect);
 extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP prob_transmission, SEXP prob_death, SEXP prob_noreinfect) {
@@ -627,6 +634,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
+    {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               1},
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
     {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    1},
     {"_epiworldR_get_hist_transition_matrix_cpp",       (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,        2},

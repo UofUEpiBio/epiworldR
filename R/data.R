@@ -286,6 +286,7 @@ plot.epiworld_hist_transition <- function(
   xlab = "Day (step)",
   ylab = "Counts",
   main = "Daily incidence",
+  plot = TRUE,
   ...
   ) {
   
@@ -310,58 +311,60 @@ plot.epiworld_hist_transition <- function(
 
   # Plotting each column. We start by taking the total
   # range
-  yran <- range(res)
-  xran <- range(0:n_steps)
-  for (i in seq_along(states)) {
-    
-    col <- states[i]
+  if (plot) {
+    yran <- range(res)
+    xran <- range(0:n_steps)
+    for (i in seq_along(states)) {
+      
+      col <- states[i]
 
-    if (i == 1L) {
-        
-        graphics::plot(
-          x = as.integer(rownames(res)),
-          y = res[[col]],
-          col = i,
-          lwd = 2, 
-          lty = i,
-          type = type,
-          xlab = xlab,
-          ylab = ylab,
-          main = main,
-          ylim = yran,
-          xlim = xran,
-          ...
-        )
+      if (i == 1L) {
+          
+          graphics::plot(
+            x = as.integer(rownames(res)),
+            y = res[[col]],
+            col = i,
+            lwd = 2, 
+            lty = i,
+            type = type,
+            xlab = xlab,
+            ylab = ylab,
+            main = main,
+            ylim = yran,
+            xlim = xran,
+            ...
+          )
 
-        next
+          next
+
+      }
+
+      graphics::points(
+        x = as.integer(rownames(res)),
+        y = res[[col]],
+        type = type,
+        col = i,
+        lwd = 2,
+        lty = i,
+        ...
+      )
 
     }
 
-    graphics::points(
-      x = as.integer(rownames(res)),
-      y = res[[col]],
-      type = type,
-      col = i,
-      lwd = 2,
-      lty = i,
-      ...
-    )
-
-  }
-
-  # Creating a legend
-  if (n_states > 1L) {
-    
-    graphics::legend(
-      "topright",
-      legend = states,
-      col    = 1L:n_states,
-      lwd    = 2,
-      lty    = 1L:n_states,
-      title  = "States",
-      bty    = "n"
-    )
-    
+    # Creating a legend
+    if (n_states > 1L) {
+      
+      graphics::legend(
+        "topright",
+        legend = states,
+        col    = 1L:n_states,
+        lwd    = 2,
+        lty    = 1L:n_states,
+        title  = "States",
+        bty    = "n"
+      )
+      
+    }
   }
   
   invisible(res)
@@ -381,4 +384,153 @@ get_transmissions <- function(x) {
     class = c("epiworld_transmissions", class(res))
   )
   
+}
+
+#' @export
+#' @rdname epiworld-data
+#' @return The function `get_generation_time` returns a `data.frame` with
+#' the following columns: agent, virus_id, date, and gentime.
+#' 
+get_generation_time <- function(x) {
+    
+    stopifnot_model(x)
+    res <- get_generation_time_cpp(x)
+
+    # Replacing -1 with NAs
+    res[["gentime"]][res[["gentime"]] == -1] <- NA_integer_
+
+    structure(
+      res,
+      class = c("epiworld_generation_time", class(res))
+    )
+    
+}
+
+#' @export
+#' @rdname epiworld-data
+plot.epiworld_generation_time <- function(
+  x,
+  type = "l",
+  xlab = "Day (step)",
+  ylab = "Counts",
+  main = "Daily incidence",
+  plot = TRUE,
+  ...
+  ) {
+  
+  if (!inherits(x, "epiworld_generation_time")) {
+    stop("The object must be of class 'epiworld_generation_time'")
+  }
+
+  # Agregating the data
+  gt_avg <- tapply(
+    x[["gentime"]], INDEX = list(x[, "date"], x[, "virus_id"]), FUN = mean,
+    na.rm = TRUE
+    )
+
+  gt_sd <- tapply(
+    x[["gentime"]], INDEX = list(x[, "date"], x[, "virus_id"]), FUN = sd,
+    na.rm = TRUE
+    )
+
+  gt_avg <- as.data.frame(gt_avg)
+  gt_sd  <- as.data.frame(gt_sd)
+
+  if (plot) {
+    # Number of viruses
+    n_viruses <- ncol(gt_avg)
+
+    for (i in 1L:n_viruses) {
+        
+        if (i == 1L) {
+    
+          graphics::plot(
+            x = as.integer(rownames(gt_avg)),
+            y = gt_avg[[i]],
+            col = i,
+            lwd = 2,
+            lty = i,
+            type = type,
+            xlab = xlab,
+            ylab = ylab,
+            main = main,
+            ylim = range(gt_avg, na.rm = TRUE),
+            ...
+          )
+    
+          next
+    
+        }
+    
+        graphics::points(
+          x = as.integer(rownames(gt_avg)),
+          y = gt_avg[[i]],
+          col = i,
+          lwd = 2,
+          lty = i,
+          type = type,
+          ...
+        )
+    }
+
+    # Creating a legend
+    if (n_viruses > 1L) {
+      
+      graphics::legend(
+        "topright",
+        legend = colnames(gt_avg),
+        col    = 1L:n_viruses,
+        lwd    = 2,
+        lty    = 1L:n_viruses,
+        title  = "Viruses",
+        bty    = "n"
+      )
+      
+    }
+
+  }
+
+  # Changing the database to a long format
+  gt_avg <- lapply(colnames(gt_avg), function(i) {
+    data.frame(
+      date = as.integer(rownames(gt_avg)),
+      virus_id = i,
+      gentime = gt_avg[[i]]
+    )
+  })
+
+  gt_avg <- do.call(rbind, gt_avg)
+
+  # Same for gt_sd
+  gt_sd <- lapply(colnames(gt_sd), function(i) {
+    data.frame(
+      date = as.integer(rownames(gt_sd)),
+      virus_id = i,
+      gentime = gt_sd[[i]]
+    )
+  })
+
+  gt_sd <- do.call(rbind, gt_sd)
+
+  # Merging the results
+  res <- merge(
+    gt_avg, gt_sd, by = c("date", "virus_id"),
+    suffixes = c("_avg", "_sd")
+    )
+
+  # Sort res by virus_id and date
+  res <- res[order(res[["virus_id"]], res[["date"]]), ]
+  rownames(res) <- NULL
+
+  invisible(res)
+    
+  
+}
+
+#' @export 
+#' @rdname epiworld-data
+#' @return The function `plot_generation_time` is a wrapper for [plot] and
+#' [get_generation_time].
+plot_generation_time <- function(x, ...) {
+  plot(get_generation_time(x), ...)
 }
