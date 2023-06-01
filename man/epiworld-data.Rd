@@ -3,6 +3,7 @@
 \name{epiworld-data}
 \alias{epiworld-data}
 \alias{get_hist_total}
+\alias{epiworld_hist_total}
 \alias{get_hist_variant}
 \alias{epiworld_hist_variant}
 \alias{get_hist_tool}

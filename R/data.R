@@ -59,10 +59,10 @@ NULL
 #' - The `get_hist_total` function returns an object of class 
 #' [epiworld_hist_total].
 #' @rdname epiworld-data
+#' @aliases epiworld_hist_total
 get_hist_total <- function(x) UseMethod("get_hist_total")
 
 #' @export
-#' @aliases epiworld_hist_total
 get_hist_total.epiworld_model <- function(x)  {
   
   res <- get_hist_total_cpp(x)
