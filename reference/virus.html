@@ -129,7 +129,7 @@ viruses.</p>
 
 
 <dt>model</dt>
-<dd><p>An object of class <code>epiworld-model</code>.</p></dd>
+<dd><p>An object of class <code>epiworld_model</code>.</p></dd>
 
 
 <dt>proportion</dt>
@@ -172,6 +172,33 @@ will be added to the virus (see details).</p></dd>
 <dd><p>An object of class <code>epiworld_virus_fun</code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
+    
+
+<ul><li><p>The <code>set_name_virus</code> function does not return a value, but merely assigns
+a name to the virus of choice.</p></li>
+</ul><ul><li><p>The <code>get_name_virus</code> function returns the name of the virus of class
+epiworld_virus.</p></li>
+</ul><ul><li><p>The <code>add_virus</code> function does not return a value, instead it adds the
+virus of choice to the model object of class <a href="epiworld-methods.html">epiworld_model</a>.</p></li>
+</ul><ul><li><p>The <code>add_virus_n</code> function does not return a value, but instead adds a
+specified number of agents with the virus of choice to the model object
+of class <a href="epiworld-methods.html">epiworld_model</a>.</p></li>
+</ul><ul><li><p>The <code>virus_set_state</code> function does not return a value but assigns
+epidemiological properties to the specified virus of class epiworld_virus.</p></li>
+</ul><ul><li><p>The <code>rm_virus</code> function does not return a value, but instead removes
+a specified virus from the model of class <a href="epiworld-methods.html">epiworld_model</a>.</p></li>
+</ul><ul><li><p>The <code>set_prob_infecting</code> function does not return a value, but instead
+assigns a probability to infection for the specified virus of class
+epiworld_virus.</p></li>
+</ul><ul><li><p>The <code>set_prob_recovery</code> function does not return a value, but instead
+assigns a probability to recovery for the specified virus of class
+epiworld_virus.</p></li>
+</ul><ul><li><p>The <code>set_prob_death</code> function does not return a value, but instead
+assigns a probability to death for the specified virus of class
+epiworld_virus.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>virus()</code> function can be used to initialize a virus. Virus features can
@@ -222,8 +249,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 211.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.73 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 203.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.92 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>

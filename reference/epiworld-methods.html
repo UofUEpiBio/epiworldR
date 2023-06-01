@@ -142,12 +142,26 @@ in the model</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<ul><li><p><code>get_name</code> returns the name of the model.</p></li>
+<ul><li><p>The <code>verbose_on</code> and <code>verbose_off</code> functions return the same model, however
+<code>verbose_off</code> returns the model with no progress bar.</p></li>
+</ul><ul><li><p>The <code>run</code> function returns the simulated model of class <code>epiworld_model</code>.</p></li>
+</ul><ul><li><p>The <code>get_states</code> function returns the unique states found in a model.</p></li>
+</ul><ul><li><p>The <code>get_param</code> function returns a selected parameter from the model object
+of class <code>epiworld_model</code>.</p></li>
+</ul><ul><li><p>The <code>set_param</code> function does not return a value but instead alters a
+parameter value.</p></li>
+</ul><ul><li><p>The <code>set_name</code> function does not return a value but instead alters an object
+of <code>epiworld_model</code>.</p></li>
+</ul><ul><li><p><code>get_name</code> returns the name of the model.</p></li>
 </ul><ul><li><p><code>get_n_variants</code> returns the number of variants of the model.</p></li>
 </ul><ul><li><p><code>get_n_tools</code> returns the number of tools of the model.</p></li>
 </ul><ul><li><p><code>get_ndays</code> returns the number of days of the model.</p></li>
 </ul><ul><li><p><code>get_n_replicates</code> returns the number of replicates of the model.</p></li>
 </ul><ul><li><p><code>size.epiworld_model</code> returns the number of agents in the model.</p></li>
+</ul><ul><li><p>The 'set_agents_data' function returns an object of class DataFrame.</p></li>
+</ul><ul><li><p>'get_agents_data_ncols' returns the number of columns in the model dataframe.</p></li>
+</ul><ul><li><p>'get_virus' returns a <a href="virus.html">virus</a>.</p></li>
+</ul><ul><li><p><code>get_tool</code> returns a <a href="tool.html">tool</a>.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
