@@ -401,7 +401,8 @@ get_generation_time <- function(x) {
 
     structure(
       res,
-      class = c("epiworld_generation_time", class(res))
+      class = c("epiworld_generation_time", class(res)),
+      n_steps = get_ndays(x)
     )
     
 }
@@ -490,32 +491,49 @@ plot.epiworld_generation_time <- function(
 
   }
 
+  res <- data.frame(date = 0:attr(x, "n_steps"))
+  
+
   # Changing the database to a long format
   gt_avg <- lapply(colnames(gt_avg), function(i) {
-    data.frame(
+
+    tmp <- data.frame(
       date = as.integer(rownames(gt_avg)),
       virus_id = i,
       gentime = gt_avg[[i]]
     )
+
+    tmp <- merge(res, tmp, by = c("date"), all.x = TRUE)
+    tmp[["virus_id"]][is.na(tmp[["virus_id"]])] <- i
+    tmp 
+
   })
 
   gt_avg <- do.call(rbind, gt_avg)
 
   # Same for gt_sd
   gt_sd <- lapply(colnames(gt_sd), function(i) {
-    data.frame(
+    
+    tmp <- data.frame(
       date = as.integer(rownames(gt_sd)),
       virus_id = i,
       gentime = gt_sd[[i]]
     )
+
+    tmp <- merge(res, tmp, by = c("date"), all.x = TRUE)
+    tmp[["virus_id"]][is.na(tmp[["virus_id"]])] <- i
+    tmp
+
   })
 
   gt_sd <- do.call(rbind, gt_sd)
 
   # Merging the results
+
   res <- merge(
     gt_avg, gt_sd, by = c("date", "virus_id"),
-    suffixes = c("_avg", "_sd")
+    suffixes = c("_avg", "_sd"),
+    all.x = TRUE
     )
 
   # Sort res by virus_id and date
