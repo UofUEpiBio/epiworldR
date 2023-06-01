@@ -62,6 +62,7 @@ NULL
 get_hist_total <- function(x) UseMethod("get_hist_total")
 
 #' @export
+#' @aliases epiworld_hist_total
 get_hist_total.epiworld_model <- function(x)  {
   
   res <- get_hist_total_cpp(x)
@@ -83,6 +84,7 @@ plot.epiworld_hist <- function(x, y, ...) {
 #' - The `get_hist_variant` function returns an object of class 
 #' [epiworld_hist_variant].
 #' @rdname epiworld-data
+#' @aliases epiworld_hist_variant
 get_hist_variant <- function(x) UseMethod("get_hist_variant")
 
 #' @export
@@ -136,6 +138,7 @@ get_transition_probability.epiworld_model <- function(x)  {
 #' - The `get_reproductive_number` function returns an object of class
 #' [epiworld_repnum].
 #' @rdname epiworld-data
+#' @aliases epiworld_repnum
 get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
 
 #' @export
@@ -153,6 +156,7 @@ get_reproductive_number.epiworld_model <- function(x) {
 #' @returns 
 #' - The `plot` function returns a plot of the reproductive number over time. 
 #' @export
+#' @importFrom stats sd quantile aggregate
 plot.epiworld_repnum <- function(
     x,
     y = NULL,
@@ -178,7 +182,7 @@ plot.epiworld_repnum <- function(
       data.frame(
         avg  = mean(x, na.rm = TRUE),
         n    = sum(!is.na(x)),
-        sd   = sd(x, na.rm = TRUE),
+        sd   = stats::sd(x, na.rm = TRUE),
         lb   = ci[1],
         ub   = ci[2]
         )

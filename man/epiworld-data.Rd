@@ -4,9 +4,11 @@
 \alias{epiworld-data}
 \alias{get_hist_total}
 \alias{get_hist_variant}
+\alias{epiworld_hist_variant}
 \alias{get_hist_tool}
 \alias{get_transition_probability}
 \alias{get_reproductive_number}
+\alias{epiworld_repnum}
 \alias{plot.epiworld_repnum}
 \alias{plot_reproductive_number}
 \alias{get_hist_transition_matrix}

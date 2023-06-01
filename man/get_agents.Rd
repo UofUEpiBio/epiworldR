@@ -4,6 +4,7 @@
 \alias{get_agents}
 \alias{epiworld_agents}
 \alias{[.epiworld_agents}
+\alias{epiworld_agent}
 \alias{print.epiworld_agent}
 \alias{print.epiworld_agents}
 \alias{get_state}

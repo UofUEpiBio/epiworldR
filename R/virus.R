@@ -56,7 +56,7 @@
 #' delta2 <- virus("Delta Variant 2", 0, .5, .2, .01)
 #' virus_set_state(delta2, 1, 2, 3)
 #' @export
-#' 
+#' @aliases epiworld_virus
 virus <- function(
     name,
     prob_infecting,

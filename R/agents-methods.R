@@ -46,6 +46,7 @@ get_agents <- function(model) {
 #' @export
 #' @rdname get_agents
 #' @return The `[` method returns an object of class [epiworld_agent].
+#' @aliases epiworld_agent
 `[.epiworld_agents` <- function(x, i) {
   
   structure(

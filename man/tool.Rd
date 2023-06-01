@@ -2,6 +2,7 @@
 % Please edit documentation in R/tool.R
 \name{tool}
 \alias{tool}
+\alias{epiworld_tool}
 \alias{set_name_tool}
 \alias{get_name_tool}
 \alias{add_tool}

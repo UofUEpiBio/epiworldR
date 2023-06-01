@@ -58,6 +58,7 @@
 #' @export
 #' @returns 
 #' - The `tool` function creates a tool of class [epiworld_tool].
+#' @aliases epiworld_tool
 tool <- function(
     name,
     susceptibility_reduction,

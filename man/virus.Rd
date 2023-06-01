@@ -2,6 +2,7 @@
 % Please edit documentation in R/virus.R
 \name{virus}
 \alias{virus}
+\alias{epiworld_virus}
 \alias{set_name_virus}
 \alias{get_name_virus}
 \alias{add_virus}
