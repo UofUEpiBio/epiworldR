@@ -126,8 +126,8 @@ get_reproductive_number.epiworld_model <- function(x) {
 
 #' @rdname epiworld-data
 #' @param y Ignored.
-#' @param plot Logical scalar. If `TRUE` (default), the function will plot the
-#' average reproductive number over time.
+#' @param plot Logical scalar. If `TRUE` (default), the function will the
+#' desired statistic.
 #' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
 #' @export
 plot.epiworld_repnum <- function(
@@ -159,8 +159,8 @@ plot.epiworld_repnum <- function(
     # Preparing the data frame
     res[[i]] <- data.frame(
       variant = vlabs[i],
-      step = as.integer(names(res[[i]])),
-      avg  = unname(res[[i]])
+      step    = as.integer(names(res[[i]])),
+      avg     = unname(res[[i]])
     )
     
   }
@@ -220,6 +220,16 @@ plot.epiworld_repnum <- function(
   invisible(res)
   
 }
+
+#' @export
+#' @rdname epiworld-data
+#' @details The `plot_reproductive_number` function is a wrapper around
+#' [get_reproductive_number] that plots the result.
+plot_reproductive_number <- function(x, ...) {
+  plot(get_reproductive_number(x), ...)
+}
+
+
 
 #' @export
 #' @rdname epiworld-data
@@ -305,7 +315,7 @@ plot.epiworld_hist_transition <- function(
 
   # Checking if any of the columns is all zeros
   is_not_zero <- which(colSums(res) != 0)
-  res <- res[, is_not_zero, drop = FALSE]
+  # res <- res[, is_not_zero, drop = FALSE]
   states <- colnames(res)
   n_states <- length(states)
 
@@ -314,7 +324,7 @@ plot.epiworld_hist_transition <- function(
   if (plot) {
     yran <- range(res)
     xran <- range(0:n_steps)
-    for (i in seq_along(states)) {
+    for (i in is_not_zero) {
       
       col <- states[i]
 

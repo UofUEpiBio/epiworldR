@@ -5,6 +5,7 @@ debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
 install: 
+	which R
 	R CMD INSTALL .
 
 README.md: README.Rmd

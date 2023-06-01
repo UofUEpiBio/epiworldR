@@ -8,6 +8,7 @@
 \alias{get_transition_probability}
 \alias{get_reproductive_number}
 \alias{plot.epiworld_repnum}
+\alias{plot_reproductive_number}
 \alias{get_hist_transition_matrix}
 \alias{as.array.epiworld_hist_transition}
 \alias{plot_incidence}
@@ -37,6 +38,8 @@ get_reproductive_number(x)
   plot = TRUE,
   ...
 )
+
+plot_reproductive_number(x, ...)
 
 get_hist_transition_matrix(x, skip_zeros = FALSE)
 
@@ -78,8 +81,8 @@ any model.}
 
 \item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
 
-\item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
-average reproductive number over time.}
+\item{plot}{Logical scalar. If \code{TRUE} (default), the function will the
+desired statistic.}
 
 \item{...}{In the case of plot methods, further arguments passed to
 \link[graphics:plot.default]{graphics::plot}.}
@@ -108,6 +111,9 @@ The function \code{plot_generation_time} is a wrapper for \link{plot} and
 Accessing the database of \code{epiworld}
 }
 \details{
+The \code{plot_reproductive_number} function is a wrapper around
+\link{get_reproductive_number} that plots the result.
+
 The \code{plot_incidence} function is a wrapper between
 \link{get_hist_transition_matrix} and it's plot method.
 
