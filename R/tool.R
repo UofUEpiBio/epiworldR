@@ -118,12 +118,12 @@ set_name_tool <- function(tool, name) {
   invisible(set_name_tool_cpp(tool, name))
 }
 
-#' @returns [set_name_tool]
 
-#' @details
+#' @returns
 #' The `get_name_tool` function returns the name of the tool of class 
 #' [epiworld_tool].
 #' @rdname tool
+#' @export
 get_name_tool <- function(tool) {
   stopifnot_tool(tool)
   get_name_tool_cpp(tool)

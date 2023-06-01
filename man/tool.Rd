@@ -112,7 +112,8 @@ will be added to the tool (see details).}
 \link{epiworld_tool} and returns the tool.
 }
 
-\link{set_name_tool}
+The \code{get_name_tool} function returns the name of the tool of class
+\link{epiworld_tool}.
 
 \itemize{
 \item The \code{add_tool_n} function adds the specified tool to the model of class
@@ -151,9 +152,6 @@ distancing.
 \details{
 The name of the \code{epiworld_tool} object can be manipulated with the functions
 \code{\link[=set_name_tool]{set_name_tool()}} and \code{\link[=get_name_tool]{get_name_tool()}}.
-
-The \code{get_name_tool} function returns the name of the tool of class
-\link{epiworld_tool}.
 
 The \code{add_tool} function adds the specified tool to the model of class
 \link{epiworld_model} with specified proportion.
