@@ -76,6 +76,8 @@
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">plot_reproductive_number</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">get_hist_transition_matrix</span><span class="op">(</span><span class="va">x</span>, skip_zeros <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for epiworld_hist_transition</span></span>
@@ -90,10 +92,26 @@
 <span>  xlab <span class="op">=</span> <span class="st">"Day (step)"</span>,</span>
 <span>  ylab <span class="op">=</span> <span class="st">"Counts"</span>,</span>
 <span>  main <span class="op">=</span> <span class="st">"Daily incidence"</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_transmissions</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_transmissions</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_generation_time</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for epiworld_generation_time</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  type <span class="op">=</span> <span class="st">"l"</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"Day (step)"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Counts"</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Daily incidence"</span>,</span>
+<span>  plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plot_generation_time</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -112,8 +130,8 @@ any model.</p></dd>
 
 
 <dt>plot</dt>
-<dd><p>Logical scalar. If <code>TRUE</code> (default), the function will plot the
-average reproductive number over time.</p></dd>
+<dd><p>Logical scalar. If <code>TRUE</code> (default), the function will the
+desired statistic.</p></dd>
 
 
 <dt>...</dt>
@@ -145,10 +163,20 @@ entries in the transition matrix.</p></dd>
 
 <p>The function <code>get_transmissions</code> returns a <code>data.frame</code> with the following
 columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>variant</code>, and <code>source_exposure_date</code>.</p>
+
+
+<p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
+the following columns: agent, virus_id, date, and gentime.</p>
+
+
+<p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
+get_generation_time.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The <code>plot_incidence</code> function is a wrapper between
+    <p>The <code>plot_reproductive_number</code> function is a wrapper around
+get_reproductive_number that plots the result.</p>
+<p>The <code>plot_incidence</code> function is a wrapper between
 get_hist_transition_matrix and it's plot method.</p>
 <p>The plot method for the <code>epiworld_hist_transition</code> class plots the
 daily incidence of each state. The function returns the data frame used for
