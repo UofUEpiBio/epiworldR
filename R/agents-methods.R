@@ -69,6 +69,9 @@ get_agents <- function(model) {
 #' @param compressed Logical scalar. When FALSE, it prints detailed information
 #' about the agent.
 #' @param ... Ignored
+#' @returns 
+#' - The `print` function returns information about each individual agent of 
+#' class [epiworld_agent].
 #' @rdname get_agents
 print.epiworld_agent <- function(x, compressed = FALSE, ...) {
   
@@ -98,6 +101,8 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
 }
 
 #' @export
+#' @returns 
+#' - The `get_state` function returns the state of the [epiworld_agents] object.
 #' @rdname get_agents
 get_state <- function(x) {
   get_state_agent_cpp(x)

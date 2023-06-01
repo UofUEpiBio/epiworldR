@@ -124,6 +124,9 @@ queuing_off.epiworld_model <- function(x) {
 
 #' @name epiworld-methods
 #' @export
+#' @returns 
+#' - The `verbose_on` and `verbose_off` functions return the same model, however 
+#' `verbose_off` returns the model with no progress bar. 
 #' @details
 #' The `verbose_on` and `verbose_off` functions activate and deactivate printing
 #' progress on screen, respectively. Both functions return the model (`x`) invisibly.
@@ -145,6 +148,8 @@ verbose_on.epiworld_model <- function(x) {
 }
 
 #' @export
+#' @returns 
+#' - The `run` function returns the simulated model of class `epiworld_model`. 
 #' @rdname epiworld-methods
 run <- function(model, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
 
@@ -161,6 +166,8 @@ print.epiworld_model <- function(x, ...) {
 }
 
 #' @export
+#' @returns
+#' - The `get_states` function returns the unique states found in a model. 
 #' @rdname epiworld-methods
 get_states <- function(x) UseMethod("get_states")
 
@@ -169,6 +176,9 @@ get_states.epiworld_model <- function(x) get_states_cpp(x)
 
 #' @export
 #' @param pname String. Name of the parameter.
+#' @returns 
+#' - The `get_param` function returns a selected parameter from the model object 
+#' of class `epiworld_model`.
 #' @rdname epiworld-methods
 get_param <- function(x, pname) UseMethod("get_param")
 
@@ -180,6 +190,9 @@ get_param.epiworld_model <- function(x, pname) {
 
 #' @export
 #' @param pval Numeric. Value of the parameter.
+#' @returns 
+#' - The `set_param` function does not return a value but instead alters a
+#'  parameter value. 
 #' @rdname epiworld-methods
 set_param <- function(x, pname, pval) UseMethod("set_param")
 
@@ -191,6 +204,9 @@ set_param.epiworld_model <- function(x, pname, pval) {
 
 #' @export
 #' @param mname String. Name of the model.
+#' @returns 
+#' - The `set_name` function does not return a value but instead alters an object 
+#' of `epiworld_model`.
 #' @rdname epiworld-methods
 set_name <- function(x, mname) UseMethod("set_name")
 
@@ -264,6 +280,8 @@ size.epiworld_model <- function(x) size_cpp(x)
 
 #' @export
 #' @param data A numeric matrix.
+#' @returns
+#' - The 'set_agents_data' function returns an object of class DataFrame. 
 #' @rdname epiworld-methods
 set_agents_data <- function(model, data) {
   
@@ -282,6 +300,8 @@ set_agents_data <- function(model, data) {
 }
 
 #' @export
+#' @returns 
+#' - 'get_agents_data_ncols' returns the number of columns in the model dataframe. 
 #' @rdname epiworld-methods
 get_agents_data_ncols <- function(model) {
   
@@ -292,6 +312,8 @@ get_agents_data_ncols <- function(model) {
 #' @export
 #' @param virus_pos Integer. Relative location (starting from 0) of the virus
 #' in the model
+#' @returns 
+#' - 'get_virus' returns a [virus].
 #' @rdname epiworld-methods
 get_virus <- function(model, virus_pos) {
   structure(
@@ -303,6 +325,8 @@ get_virus <- function(model, virus_pos) {
 #' @export
 #' @param tool_pos Integer. Relative location (starting from 0) of the tool
 #' in the model
+#' @returns 
+#' - `get_tool` returns a [tool].
 #' @rdname epiworld-methods
 get_tool <- function(model, tool_pos) {
   structure(

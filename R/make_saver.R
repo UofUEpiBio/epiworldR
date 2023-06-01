@@ -54,6 +54,9 @@
 #' plot(multi_sir)
 #' 
 #' @export
+#' @returns 
+#' - The `run_multiple` function runs a specified number of simulations and 
+#' returns a model object of class [epiworld_model].
 run_multiple <- function(
     m, ndays, nsims,
     seed = sample.int(1e4, 1),
@@ -95,6 +98,9 @@ run_multiple.epiworld_model <- function(
 
 #' @export
 #' @rdname run_multiple
+#' @returns 
+#' The `run_multiple_get_results` function returns epidemiological information 
+#' regarding the multiple-simulated model.
 #' @importFrom utils read.table
 run_multiple_get_results <- function(m) {
   
@@ -153,6 +159,8 @@ run_multiple_get_results <- function(m) {
 }
 
 #' @export
+#' @returns 
+#' - The `plot` function returns a plot of the [epiworld_model] object.
 plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
 
   # what <- attr(x, "what")
@@ -197,6 +205,9 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 }
 
 #' @export
+#' @returns 
+#' - The `plot` function returns a plot of the [epiworld_model] object's
+#' reproductive number.
 plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
 
   # Identifying sims
@@ -290,6 +301,8 @@ make_saver <- function(
 }
 
 #' @export
+#' @returns 
+#' The `print` function returns information egarding the selected saver.
 print.epiworld_saver <- function(x, ...) {
   
   cat("A saver for -run_multiple-\n")

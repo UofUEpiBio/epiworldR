@@ -10,6 +10,8 @@
 #' @param prevalence Numeric scalar. Prevalence (initial state) in proportion.
 #'
 #' @export
+#' @returns 
+#' - The `ModelSIRLogit` function returns a model of class [epiworld_model].
 #' @examples 
 #' set.seed(2223)
 #' n <- 100000

@@ -14,6 +14,8 @@
 #' @export
 #' @family Models
 #' @aliases epiworld_sir
+#' @returns
+#' - The `ModelSIR` function returns a model of class [epiworld_model].
 #' @examples 
 #' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
 #'                       infectiousness = 0.9, recovery = 0.1)
@@ -47,6 +49,9 @@ ModelSIR <- function(
 
 #' @rdname ModelSIR
 #' @export
+#' @returns 
+#' - The `plot` function returns a plot of the SIR model of class 
+#' [epiworld_model].
 #' @param main Title of the plot
 plot.epiworld_sir <- function(x, main = "SIR Model", ...) { # col = NULL
  plot_epi(x, main = main, ...)

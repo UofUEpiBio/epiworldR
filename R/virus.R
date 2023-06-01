@@ -107,7 +107,9 @@ stopifnot_vfun <- function(vfun) {
 #' @details
 #' The name of the `epiworld_virus` object can be manipulated with the functions
 #' [set_name_virus()] and [get_name_virus()].
-#' 
+#' @returns 
+#' - The `set_name_virus` function does not return a value, but merely assigns 
+#' a name to the virus of choice. 
 #' @rdname virus
 set_name_virus <- function(virus, name) {
   stopifnot_virus(virus)
@@ -115,6 +117,9 @@ set_name_virus <- function(virus, name) {
 }
 
 #' @export
+#' @returns 
+#' - The `get_name_virus` function returns the name of the virus of class 
+#' [epiworld_virus].
 #' @rdname virus
 get_name_virus <- function(virus) {
   stopifnot_virus(virus)
@@ -125,9 +130,12 @@ get_name_virus <- function(virus) {
 
 #' @export
 #' @rdname virus
-#' @param model An object of class `epiworld-model`.
+#' @param model An object of class `epiworld_model`.
 #' @param virus An object of class `epiworld_virus`
 #' @param proportion In the case of `add_virus`, a proportion, otherwise, an integer.
+#' @returns 
+#' - The `add_virus` function does not return a value, instead it adds the 
+#' virus of choice to the model object of class [epiworld_model].
 add_virus <- function(model, virus, proportion) UseMethod("add_virus")
 
 #' @export
@@ -176,6 +184,10 @@ add_virus.epiworld_seirconn <- function(model, virus, proportion) {
 
 #' @export
 #' @rdname virus
+#' @returns 
+#' - The `add_virus_n` function does not return a value, but instead adds a 
+#' specified number of agents with the virus of choice to the model object 
+#' of class [epiworld_model].
 #' @param n A positive integer. Initial count of agents to have the virus.
 add_virus_n <- function(model, virus, n) UseMethod("add_virus_n")
 
@@ -227,6 +239,9 @@ add_virus_n.epiworld_seirconn <- function(model, virus, n) {
 #' @rdname virus
 #' @param init,end,removed states after acquiring a virus, removing a virus,
 #' and removing the agent as a result of the virus, respectively.
+#' @returns 
+#' - The `virus_set_state` function does not return a value but assigns 
+#' epidemiological properties to the specified virus of class [epiworld_virus].
 virus_set_state <- function(virus, init, end, removed) {
   
   stopifnot_virus(virus)
@@ -235,6 +250,9 @@ virus_set_state <- function(virus, init, end, removed) {
 }
 
 #' @export
+#' @returns 
+#' - The `rm_virus` function does not return a value, but instead removes 
+#' a specified virus from the model of class [epiworld_model].
 #' @rdname virus
 rm_virus <- function(model, virus_pos) {
   
@@ -338,6 +356,10 @@ print.epiworld_virus_fun <- function(x, ...) {
 
 #' @export
 #' @param prob Numeric scalar. A probability (between zero and one).
+#' @returns 
+#' - The `set_prob_infecting` function does not return a value, but instead 
+#' assigns a probability to infection for the specified virus of class 
+#' [epiworld_virus].
 #' @rdname virus
 set_prob_infecting <- function(virus, prob) {
   
@@ -354,7 +376,6 @@ set_prob_infecting <- function(virus, prob) {
 #' `set_prob_death_ptr`, the corresponding parameters is passed as a pointer to
 #' the virus. The implication of using pointers is that the values will be
 #' read directly from the `model` object, so changes will be reflected.
-#' 
 #' @rdname virus
 set_prob_infecting_ptr <- function(virus, model, param) {
   
@@ -377,6 +398,10 @@ set_prob_infecting_fun <- function(virus, model, vfun) {
 }
 
 #' @export
+#' @returns 
+#' - The `set_prob_recovery` function does not return a value, but instead 
+#' assigns a probability to recovery for the specified virus of class 
+#' [epiworld_virus].
 #' @rdname virus
 set_prob_recovery <- function(virus, prob) {
   
@@ -406,6 +431,10 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
 }
 
 #' @export
+#' @returns 
+#' - The `set_prob_death` function does not return a value, but instead 
+#' assigns a probability to death for the specified virus of class 
+#' [epiworld_virus].
 #' @rdname virus
 set_prob_death <- function(virus, prob) {
   

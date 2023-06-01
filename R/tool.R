@@ -51,6 +51,8 @@
 #' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #' 
 #' @export
+#' @returns 
+#' - The `tool` function creates a tool of class [epiworld_tool].
 tool <- function(
     name,
     susceptibility_reduction,
@@ -73,6 +75,8 @@ tool <- function(
 }
 
 #' @export
+#' @returns 
+#' - The `print` function returns information about the specified tool.
 print.epiworld_tool <- function(x, ...) {
   invisible(print_tool_cpp(x))
 }
@@ -102,7 +106,9 @@ stopifnot_tfun <- function(tfun) {
 #' @details
 #' The name of the `epiworld_tool` object can be manipulated with the functions
 #' [set_name_tool()] and [get_name_tool()].
-#' 
+#' @returns 
+#' - The `set_name_tool` function assigns a name to the tool of class 
+#' [epiworld_tool].
 #' @rdname tool
 set_name_tool <- function(tool, name) {
   stopifnot_tool(tool)
@@ -110,6 +116,8 @@ set_name_tool <- function(tool, name) {
 }
 
 #' @export
+#' - The `get_name_tool` function returns the name of the tool of class 
+#' [epiworld_tool].
 #' @rdname tool
 get_name_tool <- function(tool) {
   stopifnot_tool(tool)
@@ -119,6 +127,9 @@ get_name_tool <- function(tool) {
 #' @export
 #' @param tool An object of class `epiworld_tool`
 #' @param proportion In the case of `add_tool`, a proportion, otherwise, an integer.
+#' @details 
+#' The `add_tool` function adds the specified tool to the model of class 
+#' [epiworld_model] with specified proportion.
 #' @rdname tool
 add_tool <- function(model, tool, proportion) UseMethod("add_tool")
 
@@ -130,6 +141,9 @@ add_tool.epiworld_model <- function(model, tool, proportion) {
 
 #' @export
 #' @rdname tool
+#' @returns 
+#' - The `add_tool_n` function adds the specified tool to the model of class 
+#' [epiworld_model] with specified count n.
 #' @param n A positive integer. Number of agents to initially have the tool.
 add_tool_n <- function(model, tool, n) UseMethod("add_tool_n")
 
@@ -140,6 +154,8 @@ add_tool_n.epiworld_model <- function(model, tool, n) {
 }
 
 #' @export
+#' @returns 
+#' - The `rm_tool` function removes the specified tool from a model.
 #' @rdname tool
 rm_tool <- function(model, tool_pos) {
   invisible(rm_tool_cpp(model, tool_pos))
@@ -266,6 +282,9 @@ print.epiworld_tool_fun <- function(x, ...) {
 
 #' @export
 #' @param prob Numeric scalar. A probability (between zero and one).
+#' @returns
+#' - The `set_susceptibility_reduction` function assigns a probability reduction 
+#' to the specified tool of class [epiworld_tool]. 
 #' @rdname tool
 set_susceptibility_reduction <- function(tool, prob) {
   
@@ -308,6 +327,9 @@ set_susceptibility_reduction_fun <- function(tool, model, tfun) {
 # Transmission reduction -------------------------------------------------------
 
 #' @export
+#' @returns
+#' - The `set_transmission_reduction` function assigns a probability reduction 
+#' to the specified tool of class [epiworld_tool]. 
 #' @rdname tool
 set_transmission_reduction <- function(tool, prob) {
   
@@ -339,6 +361,9 @@ set_transmission_reduction_fun <- function(tool, model, tfun) {
 # Recovery enhancer ------------------------------------------------------------
 
 #' @export
+#' @returns
+#' - The `set_recovery_enhancer` function assigns a probability increase 
+#' to the specified tool of class [epiworld_tool]. 
 #' @rdname tool
 set_recovery_enhancer <- function(tool, prob) {
   
@@ -371,6 +396,9 @@ set_recovery_enhancer_fun <- function(tool, model, tfun) {
 # Death reduction --------------------------------------------------------------
 
 #' @export
+#' @returns
+#' - The `set_death_reduction` function assigns a probability decrease 
+#' to the specified tool of class [epiworld_tool]. 
 #' @rdname tool
 set_death_reduction <- function(tool, prob) {
   
