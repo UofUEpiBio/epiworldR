@@ -127,8 +127,8 @@ get_name_tool <- function(tool) {
 #' @export
 #' @param tool An object of class `epiworld_tool`
 #' @param proportion In the case of `add_tool`, a proportion, otherwise, an integer.
-#' @returns 
-#' - The `add_tool` function adds the specified tool to the model of class 
+#' @details 
+#' The `add_tool` function adds the specified tool to the model of class 
 #' [epiworld_model] with specified proportion.
 #' @rdname tool
 add_tool <- function(model, tool, proportion) UseMethod("add_tool")
