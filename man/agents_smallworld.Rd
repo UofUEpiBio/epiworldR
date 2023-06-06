@@ -12,7 +12,7 @@ agents_smallworld(m, n, k, d, p)
 
 agents_from_edgelist(m, source, target, size, directed)
 
-get_network(model)
+get_network(m)
 }
 \arguments{
 \item{m}{Model object.}

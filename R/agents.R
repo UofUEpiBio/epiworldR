@@ -90,8 +90,8 @@ agents_from_edgelist.epiworld_model <- function(
 #' @aliases network
 #' @return The `get_network` function returns a data frame with two columns
 #' (`source` and `target`) describing the edgelist of the network.
-get_network <- function(model) {
-  stopifnot_model(model)
-  get_network_cpp(model)
+get_network <- function(m) {
+  stopifnot_model(m)
+  get_network_cpp(m)
 }
 
