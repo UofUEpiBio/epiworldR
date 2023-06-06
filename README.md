@@ -93,11 +93,12 @@ sir
 #> 
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
+#> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 211.00ms
-#> Last run speed      : 23.68 million agents x day / second
+#> Last run elapsed t  : 219.00ms
+#> Last run speed      : 22.80 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -164,11 +165,12 @@ model_seirconn
 #> 
 #> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
 #> Population size     : 10000
+#> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 2
-#> Last run elapsed t  : 62.00ms
-#> Last run speed      : 15.99 million agents x day / second
+#> Last run elapsed t  : 65.00ms
+#> Last run speed      : 15.29 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:

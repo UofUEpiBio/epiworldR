@@ -100,6 +100,10 @@ ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, c
   .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, prob_recovery, prevalence)
 }
 
+ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params) {
+  .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
+}
+
 print_cpp <- function(m) {
   .Call(`_epiworldR_print_cpp`, m)
 }

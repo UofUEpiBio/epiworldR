@@ -22,7 +22,7 @@ ModelSURV(
   prob_noreinfect
 )
 
-\method{plot}{epiworld_surv}(x, main = "SURV Model", ...)
+\method{plot}{epiworld_surv}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -113,6 +113,7 @@ plot(model_surv, main = "SURV Model")
 epiworld-methods
 
 Other Models: 
+\code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},

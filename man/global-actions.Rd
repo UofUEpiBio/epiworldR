@@ -3,6 +3,11 @@
 \name{global-actions}
 \alias{global-actions}
 \alias{globalaction_tool}
+\alias{epiworld_globalaction_set_param}
+\alias{epiworld_globalaction_tool}
+\alias{epiworld_globalaction_tool_logit}
+\alias{epiworld_globalaction}
+\alias{actions}
 \alias{globalaction_tool_logit}
 \alias{globalaction_set_params}
 \alias{add_global_action}
@@ -47,6 +52,21 @@ add_global_action(model, action)
 \item{model}{An object of class \link{epiworld_model}.}
 
 \item{action}{A global action.}
+}
+\value{
+\itemize{
+\item The \code{globalaction_set_params} function returns an object of class
+\link{epiworld_globalaction_set_param} and \link{epiworld_globalaction}.
+\item \code{globalaction_tool} returns an object of class
+\link{epiworld_globalaction_tool} and \link{epiworld_globalaction}.
+\item \code{globalaction_tool_logit} returns an object of class
+\link{epiworld_globalaction_tool_logit} and \link{epiworld_globalaction}.
+}
+
+\itemize{
+\item The function \code{add_global_action} returns the model with the added
+action.
+}
 }
 \description{
 Global actions are functions that are executed at each time step of the

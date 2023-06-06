@@ -8,7 +8,7 @@
 \usage{
 ModelSIR(name, prevalence, infectiousness, recovery)
 
-\method{plot}{epiworld_sir}(x, main = "SIR Model", ...)
+\method{plot}{epiworld_sir}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -63,6 +63,7 @@ plot(model_sir)
 epiworld-methods
 
 Other Models: 
+\code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},

@@ -93,6 +93,7 @@ get_agents(model_logit)
 }
 \seealso{
 Other Models: 
+\code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},

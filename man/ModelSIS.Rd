@@ -8,7 +8,7 @@
 \usage{
 ModelSIS(name, prevalence, infectiousness, recovery)
 
-\method{plot}{epiworld_sis}(x, main = "SIS Model", ...)
+\method{plot}{epiworld_sis}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -64,6 +64,7 @@ plot(model_sis, main = "SIS Model")
 epiworld-methods
 
 Other Models: 
+\code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},

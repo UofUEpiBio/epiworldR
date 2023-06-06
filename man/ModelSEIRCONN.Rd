@@ -16,7 +16,7 @@ ModelSEIRCONN(
   prob_recovery
 )
 
-\method{plot}{epiworld_seirconn}(x, main = "SEIRCONN Model", ...)
+\method{plot}{epiworld_seirconn}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -85,6 +85,7 @@ plot(model_seirconn)
 epiworld-methods
 
 Other Models: 
+\code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},

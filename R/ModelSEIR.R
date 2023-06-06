@@ -49,6 +49,6 @@ ModelSEIR <- function(
 #' @returns The `plot` function returns a plot of the SEIR model of class 
 #' [epiworld_model].
 #' @export
-plot.epiworld_seir <- function(x, main = "SEIR Model", ...) { # col = NULL
+plot.epiworld_seir <- function(x, main = get_name(x), ...) { # col = NULL
  plot_epi(x, main = main, ...)
 }

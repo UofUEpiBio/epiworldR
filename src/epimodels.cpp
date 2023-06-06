@@ -246,3 +246,39 @@ SEXP ModelSIRLogit_cpp(
   return ptr;
   
 }
+
+
+[[cpp11::register]]
+SEXP ModelDiffNet_cpp(
+  std::string name,
+  double prevalence,
+  double prob_adopt,
+  bool normalize_exposure,
+  SEXP data,
+  int data_ncols,
+  std::vector< int > data_cols,
+  std::vector<double> params
+) {
+
+  // Maps data_cols to size_t
+  std::vector< size_t > data_cols_s;
+  for (auto i : data_cols)
+    data_cols_s.push_back(static_cast<size_t>(i));
+  
+  cpp11::external_pointer<epiworld::epimodels::ModelDiffNet<>> ptr(
+    new epiworld::epimodels::ModelDiffNet<>(
+      name,
+      prevalence,
+      prob_adopt,
+      normalize_exposure,
+      &(REAL(data)[0u]),
+      data_ncols,
+      data_cols_s,
+      params
+    )
+  );
+  
+  return ptr;
+  
+}
+

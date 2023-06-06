@@ -166,41 +166,54 @@ plot.epiworld_repnum <- function(
     type = "b",
     plot = TRUE,
     ...) {
-  
-  
-  # Computing stats
-  # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
-  repnum <- stats::aggregate(
-    x[["rt"]],
-    by = list(
-      variant = x[["variant"]],
-      date    = x[["source_exposure_date"]]
-      ),
-    FUN = function(x) {
-      ci <- stats::quantile(x, c(0.025, 0.975), na.rm = TRUE)
+    
 
-      data.frame(
-        avg  = mean(x, na.rm = TRUE),
-        n    = sum(!is.na(x)),
-        sd   = stats::sd(x, na.rm = TRUE),
-        lb   = ci[1],
-        ub   = ci[2]
-        )
-    },
-    simplify = FALSE
+  if (nrow(x) == 0) {
+    repnum <- data.frame(
+      variant = integer(),
+      date    = integer(),
+      avg     = numeric(),
+      n       = integer(),
+      sd      = numeric(),
+      lb      = numeric(),
+      ub      = numeric()
     )
+  } else {
 
-  repnum <- cbind(repnum[, -3, drop = FALSE], do.call(rbind, repnum[, 3]))
-  repnum <- repnum[order(repnum[["variant"]], repnum[["date"]]), , drop = FALSE]
-  rownames(repnum) <- NULL
+    # Computing stats
+    # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
+    repnum <- stats::aggregate(
+      x[["rt"]],
+      by = list(
+        variant = x[["variant"]],
+        date    = x[["source_exposure_date"]]
+        ),
+      FUN = function(x) {
+        ci <- stats::quantile(x, c(0.025, 0.975), na.rm = TRUE)
+
+        data.frame(
+          avg  = mean(x, na.rm = TRUE),
+          n    = sum(!is.na(x)),
+          sd   = stats::sd(x, na.rm = TRUE),
+          lb   = ci[1],
+          ub   = ci[2]
+          )
+      },
+      simplify = FALSE
+      )
+
+    repnum <- cbind(repnum[, -3, drop = FALSE], do.call(rbind, repnum[, 3]))
+    repnum <- repnum[order(repnum[["variant"]], repnum[["date"]]), , drop = FALSE]
+    rownames(repnum) <- NULL
+  }
 
   # Nvariants
   vlabs     <- sort(unique(x[, "variant"]))
   nvariants <- length(vlabs)
     
   # # Figuring out the range
-  yran <- range(repnum[["avg"]])
-  xran <- range(repnum[["date"]])
+  yran <- range(repnum[["avg"]], na.rm = TRUE)
+  xran <- range(repnum[["date"]], na.rm = TRUE)
   
   # Plotting -------------------------------------------------------------------
   if (plot) {
@@ -221,6 +234,8 @@ plot.epiworld_repnum <- function(
           ylab = ylab,
           main = main,
           type = type,
+          xlim = xran,
+          ylim = yran,
           ...
         )
         next
@@ -428,9 +443,17 @@ plot.epiworld_hist_transition <- function(
 #' @rdname epiworld-data
 #' @return The function `get_transmissions` returns a `data.frame` with the following
 #' columns: `date`, `source`, `target`, `variant`, and `source_exposure_date`.
-get_transmissions <- function(x) {
-  
-  stopifnot_model(x)
+get_transmissions <- function(x) UseMethod("get_transmissions")
+
+#' @export
+get_transmissions.epiworld_diffnet <- function(x) {
+  warning("The transmission network is not necesarily relevant for the diffnet model")
+  get_transmissions.epiworld_model(x)
+}
+
+#' @export
+get_transmissions.epiworld_model <- function(x) {
+   
   res <- get_transmissions_cpp(x)
   structure(
     res,

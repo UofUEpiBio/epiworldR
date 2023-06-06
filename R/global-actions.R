@@ -56,6 +56,22 @@
 #' run(model_sirconn2, ndays = 40, seed = 1912)
 #' model_sirconn2
 #' plot_incidence(model_sirconn2)
+#' @returns
+#' - The `globalaction_set_params` function returns an object of class
+#' [epiworld_globalaction_set_param] and [epiworld_globalaction].
+#' 
+#' - `globalaction_tool` returns an object of class 
+#' [epiworld_globalaction_tool] and [epiworld_globalaction].
+#' 
+#' - `globalaction_tool_logit` returns an object of class
+#' [epiworld_globalaction_tool_logit] and [epiworld_globalaction].
+#' @aliases 
+#' epiworld_globalaction_set_param
+#' epiworld_globalaction_tool
+#' epiworld_globalaction_tool_logit
+#' epiworld_globalaction
+#' actions
+#' 
 globalaction_tool <- function(
   tool, prob,
   name = get_name_tool(tool), day = -99
@@ -140,6 +156,9 @@ print.epiworld_globalaction <- function(x, ...) {
 #' action matches the current time step, the action is executed. When `day` is
 #' negative, the action is executed at each time step. When `day` is positive,
 #' the action is executed at the specified time step.
+#' @returns
+#' - The function `add_global_action` returns the model with the added
+#' action.
 add_global_action <- function(model, action) {
   
   if (length(attr(action, "tool")))
