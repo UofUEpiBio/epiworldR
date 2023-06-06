@@ -286,3 +286,19 @@ SEXP get_tool_model_cpp(SEXP model, int tool_pos) {
   
 }
 
+[[cpp11::register]]
+cpp11::data_frame get_network_cpp(SEXP model) {
+    
+    external_pointer<Model<>> modelptr(model);
+    
+    std::vector<int> from;
+    std::vector<int> to;
+
+    modelptr->write_edgelist(from, to);
+
+    return cpp11::writable::data_frame({
+      "from"_nm = from,
+      "to"_nm   = to
+    });
+    
+}

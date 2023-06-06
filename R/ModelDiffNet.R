@@ -54,7 +54,6 @@
 #' 
 #' # Plotting the model
 #' plot(adopt_chatgpt)
-#' mdiffnet <- ModelDiffNet("ChatGPT", .01, .1)
 #' @aliases epiworld_diffnet
 ModelDiffNet <- function(
   name,

@@ -355,6 +355,13 @@ extern "C" SEXP _epiworldR_get_tool_model_cpp(SEXP model, SEXP tool_pos) {
     return cpp11::as_sexp(get_tool_model_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(tool_pos)));
   END_CPP11
 }
+// model.cpp
+cpp11::data_frame get_network_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_network_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_network_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // tool.cpp
 SEXP tool_cpp(std::string name, double susceptibility_reduction, double transmission_reduction, double recovery_enhancer, double death_reduction);
 extern "C" SEXP _epiworldR_tool_cpp(SEXP name, SEXP susceptibility_reduction, SEXP transmission_reduction, SEXP recovery_enhancer, SEXP death_reduction) {
@@ -654,6 +661,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_name_tool_cpp",                    (DL_FUNC) &_epiworldR_get_name_tool_cpp,                     1},
     {"_epiworldR_get_name_virus_cpp",                   (DL_FUNC) &_epiworldR_get_name_virus_cpp,                    1},
     {"_epiworldR_get_ndays_cpp",                        (DL_FUNC) &_epiworldR_get_ndays_cpp,                         1},
+    {"_epiworldR_get_network_cpp",                      (DL_FUNC) &_epiworldR_get_network_cpp,                       1},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
     {"_epiworldR_get_state_agent_cpp",                  (DL_FUNC) &_epiworldR_get_state_agent_cpp,                   1},

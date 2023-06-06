@@ -200,6 +200,10 @@ get_tool_model_cpp <- function(model, tool_pos) {
   .Call(`_epiworldR_get_tool_model_cpp`, model, tool_pos)
 }
 
+get_network_cpp <- function(model) {
+  .Call(`_epiworldR_get_network_cpp`, model)
+}
+
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
   .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
 }

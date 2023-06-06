@@ -25,6 +25,10 @@
 #' run(sir, ndays = 100, seed = 1912)
 #' sir
 #' 
+#' # We can also retrieve the network
+#' net <- get_network(sir)
+#' head(net)
+#' 
 #' # Simulating a bernoulli graph
 #' set.seed(333)
 #' n <- 1000
@@ -81,4 +85,13 @@ agents_from_edgelist.epiworld_model <- function(
   
 }
 
-  
+#' @export 
+#' @rdname agents_smallworld
+#' @aliases network
+#' @return The `get_network` function returns a data frame with two columns
+#' (`source` and `target`) describing the edgelist of the network.
+get_network <- function(model) {
+  stopifnot_model(model)
+  get_network_cpp(model)
+}
+

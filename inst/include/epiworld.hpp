@@ -6391,8 +6391,8 @@ public:
         ) const;
 
     void write_edgelist(
-        std::vector< epiworld_fast_uint > & source,
-        std::vector< epiworld_fast_uint > & target
+        std::vector< int > & source,
+        std::vector< int > & target
         ) const;
     ///@}
 
@@ -8558,6 +8558,46 @@ inline void Model<TSeq>::write_edgelist(
         }
 
     }
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::write_edgelist(
+std::vector< int > & source,
+std::vector< int > & target
+) const {
+
+    // Figuring out the writing sequence
+    std::vector< const Agent<TSeq> * > wseq(size());
+    for (const auto & p: population)
+        wseq[p.id] = &p;
+
+    if (this->is_directed())
+    {
+
+        for (const auto & p : wseq)
+        {
+            for (auto & n : p->neighbors)
+            {
+                source.push_back(static_cast<int>(p->id));
+                target.push_back(static_cast<int>(n));
+            }
+        }
+
+    } else {
+
+        for (const auto & p : wseq)
+        {
+            for (auto & n : p->neighbors) {
+                if (static_cast<int>(p->id) <= static_cast<int>(n)) {
+                    source.push_back(static_cast<int>(p->id));
+                    target.push_back(static_cast<int>(n));
+                }
+            }
+        }
+
+    }
+
 
 }
 

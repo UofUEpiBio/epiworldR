@@ -4,11 +4,15 @@
 \alias{agents_smallworld}
 \alias{agents}
 \alias{agents_from_edgelist}
+\alias{get_network}
+\alias{network}
 \title{Load agents to a model}
 \usage{
 agents_smallworld(m, n, k, d, p)
 
 agents_from_edgelist(m, source, target, size, directed)
+
+get_network(model)
 }
 \arguments{
 \item{m}{Model object.}
@@ -30,6 +34,9 @@ loaded.
 
 The \code{agents_from_edgelist} function returns an empty model of class
 \code{epiworld_model}.
+
+The \code{get_network} function returns a data frame with two columns
+(\code{source} and \code{target}) describing the edgelist of the network.
 }
 \description{
 Load agents to a model
@@ -48,6 +55,10 @@ agents_smallworld(
  )
 run(sir, ndays = 100, seed = 1912)
 sir
+
+# We can also retrieve the network
+net <- get_network(sir)
+head(net)
 
 # Simulating a bernoulli graph
 set.seed(333)

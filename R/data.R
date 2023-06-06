@@ -600,3 +600,4 @@ plot.epiworld_generation_time <- function(
 plot_generation_time <- function(x, ...) {
   plot(get_generation_time(x), ...)
 }
+

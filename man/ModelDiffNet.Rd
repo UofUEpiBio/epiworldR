@@ -87,7 +87,6 @@ run(adopt_chatgpt, 50)
 
 # Plotting the model
 plot(adopt_chatgpt)
-mdiffnet <- ModelDiffNet("ChatGPT", .01, .1)
 }
 \seealso{
 Other Models: 
