@@ -69,7 +69,7 @@ This is equivalent to a compartmental model (<a href="https://en.wikipedia.org/w
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for epiworld_seirconn</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, main <span class="op">=</span> <span class="st">"SEIRCONN Model"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, main <span class="op">=</span> <span class="fu"><a href="epiworld-methods.html">get_name</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -128,6 +128,7 @@ incubation days.</p></dd>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>epiworld-methods</p>
 <p>Other Models: 
+<code><a href="ModelDiffNet.html">ModelDiffNet</a>()</code>,
 <code><a href="ModelSEIR.html">ModelSEIR</a>()</code>,
 <code><a href="ModelSIRCONN.html">ModelSIRCONN</a>()</code>,
 <code><a href="ModelSIRLogit.html">ModelSIRLogit</a>()</code>,
@@ -163,11 +164,12 @@ incubation days.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 101.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 9.85 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 99.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 10.02 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -218,13 +220,14 @@ incubation days.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 82.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 183.00ms (2 runs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 12.13 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 10.87 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 80.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 180.00ms (2 runs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 12.38 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 11.07 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>

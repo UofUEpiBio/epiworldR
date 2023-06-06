@@ -58,7 +58,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ModelSIR</span><span class="op">(</span><span class="va">name</span>, <span class="va">prevalence</span>, <span class="va">infectiousness</span>, <span class="va">recovery</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for epiworld_sir</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, main <span class="op">=</span> <span class="st">"SIR Model"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, main <span class="op">=</span> <span class="fu"><a href="epiworld-methods.html">get_name</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -104,6 +104,7 @@ infection.</p></dd>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>epiworld-methods</p>
 <p>Other Models: 
+<code><a href="ModelDiffNet.html">ModelDiffNet</a>()</code>,
 <code><a href="ModelSEIRCONN.html">ModelSEIRCONN</a>()</code>,
 <code><a href="ModelSEIR.html">ModelSEIR</a>()</code>,
 <code><a href="ModelSIRCONN.html">ModelSIRCONN</a>()</code>,
@@ -140,11 +141,12 @@ infection.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Infected-Recovered (SIR)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 2.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 43.55 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 42.44 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
