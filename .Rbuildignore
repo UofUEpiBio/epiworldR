@@ -27,3 +27,6 @@ README\.html
 
 # Add the .vscode
 \.vscode
+
+# Adding gitattributes
+\.gitattributes

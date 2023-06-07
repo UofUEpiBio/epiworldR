@@ -54,7 +54,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' }}
         with:
-          args: 'c("--as-cran")'
+          args: 'c("--as-cran", "--no-manual")'
           upload-snapshots: false
           upload-results: false
           check-dir: '"check"'
