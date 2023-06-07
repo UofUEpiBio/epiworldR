@@ -14,7 +14,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 
 This R package is a wrapper of the C++ library
 <a href="https://github.com/UofUEpiBio/epiworld"
-target="_blank">epiworld</a>. It provides a general framework for
+target="_blank">**epiworld**</a>. It provides a general framework for
 modeling disease transmission using <a
 href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
 target="_blank">agent-based models</a>. Some of the main features
