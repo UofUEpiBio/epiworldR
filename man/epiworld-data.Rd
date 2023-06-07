@@ -150,7 +150,10 @@ The function \code{plot_generation_time} is a wrapper for \link{plot} and
 \link{get_generation_time}.
 }
 \description{
-Accessing the database of \code{epiworld}
+Models in \code{epiworld} are stored in a database. This database can be accessed
+using the functions described in this manual page. Some elements of the
+database are: the transition matrix, the incidence matrix, the reproductive
+number, the generation time, and daily incidence at the virus and tool level.
 }
 \details{
 The \code{plot_reproductive_number} function is a wrapper around

@@ -8,7 +8,13 @@ stopifnot_model <- function(model) {
   }
 }
 
-#' Common methods for predefined models of Epiworld
+#' Methods for epiworldR objects
+#' 
+#' The functions described in this section are methods for objects of class
+#' `epiworld_model`. Besides of printing and plotting, other methods provide
+#' access to manipulate model parameters, getting information about the model
+#' and running the simulation.
+#' 
 #' @param x An object of class `epiworld_model`.
 #' @param ndays Number of days (steps) of the simulation.
 #' @param seed Seed to set for initializing random number generator.

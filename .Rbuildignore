@@ -25,3 +25,5 @@ src/Makefile
 ^\.github$
 README\.html
 
+# Add the .vscode
+\.vscode

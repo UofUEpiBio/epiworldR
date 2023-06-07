@@ -1,5 +1,9 @@
 #' Run multiple simulations at once
 #' 
+#' The `run_multiple` function allows running multiple simulations at once.
+#' When available, users can take advantage of parallel computing to speed up
+#' the process.
+#' 
 #' @param m,ndays,seed See [run].
 #' @param saver An object of class [epiworld_saver].
 #' @param nsims Integer. Number of replicats
@@ -23,10 +27,7 @@
 #' - `generation` Estimation of generation time.
 #' 
 #' @returns
-#' In the case of `make_saver`, an list of class `epiworld_saver`.
-#' The function `run_multiple` returns a list of the same class as `m`; usually
-#' an `epiworld_model` object.
-#' 
+#' - In the case of `make_saver`, an list of class `epiworld_saver`.
 #' @examples
 #' model_sir <- ModelSIRCONN(
 #'   name = "COVID-19",
@@ -99,8 +100,8 @@ run_multiple.epiworld_model <- function(
 #' @export
 #' @rdname run_multiple
 #' @returns 
-#' The `run_multiple_get_results` function returns epidemiological information 
-#' regarding the multiple-simulated model.
+#' - The `run_multiple_get_results` function returns a named list with the
+#' data specified by `make_saver`.
 #' @importFrom utils read.table
 run_multiple_get_results <- function(m) {
   
@@ -159,8 +160,6 @@ run_multiple_get_results <- function(m) {
 }
 
 #' @export
-#' @returns 
-#' - The `plot` function returns a plot of the [epiworld_model] object.
 plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
 
   # what <- attr(x, "what")
@@ -205,9 +204,6 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 }
 
 #' @export
-#' @returns 
-#' - The `plot` function returns a plot of the [epiworld_model] object's
-#' reproductive number.
 plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
 
   # Identifying sims
@@ -301,8 +297,6 @@ make_saver <- function(
 }
 
 #' @export
-#' @returns 
-#' The `print` function returns information egarding the selected saver.
 print.epiworld_saver <- function(x, ...) {
   
   cat("A saver for -run_multiple-\n")

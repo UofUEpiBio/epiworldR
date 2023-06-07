@@ -22,7 +22,7 @@
 \alias{get_agents_data_ncols}
 \alias{get_virus}
 \alias{get_tool}
-\title{Common methods for predefined models of Epiworld}
+\title{Methods for epiworldR objects}
 \usage{
 queuing_on(x)
 
@@ -155,7 +155,10 @@ of \code{epiworld_model}.
 }
 }
 \description{
-Common methods for predefined models of Epiworld
+The functions described in this section are methods for objects of class
+\code{epiworld_model}. Besides of printing and plotting, other methods provide
+access to manipulate model parameters, getting information about the model
+and running the simulation.
 }
 \details{
 The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing

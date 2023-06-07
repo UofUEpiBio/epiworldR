@@ -1,5 +1,12 @@
 #' Load agents to a model
-#' @param m Model object.
+#' 
+#' These functions provide access to the network of the model. The network is
+#' represented by an edgelist. The `agents_smallworld` function generates a
+#' small world network with the Watts-Strogatz algorithm. The 
+#' `agents_from_edgelist` function loads a network from an edgelist.
+#' The `get_network` function returns the edgelist of the network.
+#' 
+#' @param model Model object of class [epiworld_model].
 #' @param source,target Integer vectors describing the source and target of
 #' in the edgelist.
 #' @param n,size Number of individuals in the population.
@@ -51,13 +58,13 @@
 #' run(sir, 50)
 #' 
 #' plot(sir)
-agents_smallworld <- function(m, n, k, d, p)
+agents_smallworld <- function(model, n, k, d, p)
   UseMethod("agents_smallworld")
 
 #' @export
-agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
-  agents_smallworld_cpp(m, n, k, d, p)
-  invisible(m)
+agents_smallworld.epiworld_model <- function(model, n, k, d, p) {
+  agents_smallworld_cpp(model, n, k, d, p)
+  invisible(model)
 }
 
 #' @export
@@ -65,23 +72,23 @@ agents_smallworld.epiworld_model <- function(m, n, k, d, p) {
 #' `epiworld_model`. 
 #' @rdname agents_smallworld
 agents_from_edgelist <- function(
-  m, source, target, size, directed
+  model, source, target, size, directed
   ) UseMethod("agents_from_edgelist")
 
 #' @export
 agents_from_edgelist.epiworld_model <- function(
-  m, source, target, size, directed
+  model, source, target, size, directed
   ) {
   
   agents_from_edgelist_cpp(
-    m,
+    model,
     source,
     target,
     size,
     directed
   )
   
-  invisible(m)
+  invisible(model)
   
 }
 
@@ -90,8 +97,8 @@ agents_from_edgelist.epiworld_model <- function(
 #' @aliases network
 #' @return The `get_network` function returns a data frame with two columns
 #' (`source` and `target`) describing the edgelist of the network.
-get_network <- function(m) {
-  stopifnot_model(m)
-  get_network_cpp(m)
+get_network <- function(model) {
+  stopifnot_model(model)
+  get_network_cpp(model)
 }
 

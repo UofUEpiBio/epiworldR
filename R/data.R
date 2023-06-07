@@ -1,4 +1,11 @@
 #' Accessing the database of `epiworld`
+#' 
+#' Models in `epiworld` are stored in a database. This database can be accessed
+#' using the functions described in this manual page. Some elements of the
+#' database are: the transition matrix, the incidence matrix, the reproductive 
+#' number, the generation time, and daily incidence at the virus and tool level.
+#' 
+#' 
 #' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
 #' any model.
 #' @param skip_zeros Logical scalar. When `FALSE` it will return all the
@@ -286,8 +293,8 @@ plot_reproductive_number <- function(x, ...) {
 #' @export
 #' @rdname epiworld-data
 #' @returns 
-#' In the case of `get_hist_transition_matrix`, a [data.frame] with four columns:
-#' "state_from", "state_to", "date", and "counts." It will be
+#' - `get_hist_transition_matrix` returns a [data.frame] with four columns:
+#' "state_from", "state_to", "date", and "counts."
 get_hist_transition_matrix <- function(x, skip_zeros = FALSE)
   UseMethod("get_hist_transition_matrix")
 
@@ -307,8 +314,9 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
 
 #' @export
 #' @returns 
-#' The `as.array` method for `epiworld_hist_transition` objects turns the `data.frame`
-#' returned by `get_hist_transition_matrix` into an array of `nstates x nstates x (ndays + 1)`
+#' - The `as.array` method for `epiworld_hist_transition` objects turns the 
+#' `data.frame` returned by `get_hist_transition_matrix` into an array of
+#' `nstates x nstates x (ndays + 1)`
 #' entries, where the first entry is the initial state.
 #' @rdname epiworld-data
 as.array.epiworld_hist_transition <- function(x, ...) {
@@ -441,7 +449,8 @@ plot.epiworld_hist_transition <- function(
 
 #' @export
 #' @rdname epiworld-data
-#' @return The function `get_transmissions` returns a `data.frame` with the following
+#' @return
+#' - The function `get_transmissions` returns a `data.frame` with the following
 #' columns: `date`, `source`, `target`, `variant`, and `source_exposure_date`.
 get_transmissions <- function(x) UseMethod("get_transmissions")
 
@@ -464,9 +473,9 @@ get_transmissions.epiworld_model <- function(x) {
 
 #' @export
 #' @rdname epiworld-data
-#' @return The function `get_generation_time` returns a `data.frame` with
-#' the following columns: agent, virus_id, date, and gentime.
-#' 
+#' @return
+#' The function `get_generation_time` returns a `data.frame` with
+#' the following columns: "agent", "virus_id", "date", and "gentime".
 get_generation_time <- function(x) {
     
     stopifnot_model(x)
@@ -595,7 +604,8 @@ plot.epiworld_generation_time <- function(
 
 #' @export 
 #' @rdname epiworld-data
-#' @return The function `plot_generation_time` is a wrapper for [plot] and
+#' @return 
+#' - The function `plot_generation_time` is a wrapper for [plot] and
 #' [get_generation_time].
 plot_generation_time <- function(x, ...) {
   plot(get_generation_time(x), ...)

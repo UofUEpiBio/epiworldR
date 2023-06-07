@@ -1,10 +1,18 @@
 #' Agents in epiworldR
+#' 
+#' These functions provide read-access to the agents of the model. The
+#' `get_agents` function returns an object of class [epiworld_agents] which
+#' contains all the information about the agents in the model. The
+#' `get_agent` function returns the information of a single agent.
+#' And the `get_state` function returns the state of a single agent.
+#' 
 #' @param model An object of class [epiworld_model].
 #' @param x An object of class [epiworld_agents].
 #' @seealso agents
 #' @export
 #' @aliases epiworld_agents
-#' @return The `get_agents` function returns an object of class [epiworld_agents].
+#' @return 
+#' - The `get_agents` function returns an object of class [epiworld_agents].
 #' @examples
 #'  
 #' model_sirconn <- ModelSIRCONN(
@@ -45,7 +53,8 @@ get_agents <- function(model) {
 #' @param i Index (id) of the agent (from 0 to `n-1`)
 #' @export
 #' @rdname get_agents
-#' @return The `[` method returns an object of class [epiworld_agent].
+#' @return
+#' - The `[` method returns an object of class [epiworld_agent].
 #' @aliases epiworld_agent
 `[.epiworld_agents` <- function(x, i) {
   

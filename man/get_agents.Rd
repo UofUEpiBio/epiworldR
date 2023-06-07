@@ -35,9 +35,13 @@ about the agent.}
 \item{max_print}{Integer scalar. Maximum number of agents to print.}
 }
 \value{
-The \code{get_agents} function returns an object of class \link{epiworld_agents}.
+\itemize{
+\item The \code{get_agents} function returns an object of class \link{epiworld_agents}.
+}
 
-The \code{[} method returns an object of class \link{epiworld_agent}.
+\itemize{
+\item The \code{[} method returns an object of class \link{epiworld_agent}.
+}
 
 \itemize{
 \item The \code{print} function returns information about each individual agent of
@@ -49,7 +53,11 @@ class \link{epiworld_agent}.
 }
 }
 \description{
-Agents in epiworldR
+These functions provide read-access to the agents of the model. The
+\code{get_agents} function returns an object of class \link{epiworld_agents} which
+contains all the information about the agents in the model. The
+\code{get_agent} function returns the information of a single agent.
+And the \code{get_state} function returns the state of a single agent.
 }
 \examples{
  

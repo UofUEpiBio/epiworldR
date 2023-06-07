@@ -8,14 +8,14 @@
 \alias{network}
 \title{Load agents to a model}
 \usage{
-agents_smallworld(m, n, k, d, p)
+agents_smallworld(model, n, k, d, p)
 
-agents_from_edgelist(m, source, target, size, directed)
+agents_from_edgelist(model, source, target, size, directed)
 
-get_network(m)
+get_network(model)
 }
 \arguments{
-\item{m}{Model object.}
+\item{model}{Model object of class \link{epiworld_model}.}
 
 \item{n, size}{Number of individuals in the population.}
 
@@ -39,7 +39,11 @@ The \code{get_network} function returns a data frame with two columns
 (\code{source} and \code{target}) describing the edgelist of the network.
 }
 \description{
-Load agents to a model
+These functions provide access to the network of the model. The network is
+represented by an edgelist. The \code{agents_smallworld} function generates a
+small world network with the Watts-Strogatz algorithm. The
+\code{agents_from_edgelist} function loads a network from an edgelist.
+The \code{get_network} function returns the edgelist of the network.
 }
 \examples{
 

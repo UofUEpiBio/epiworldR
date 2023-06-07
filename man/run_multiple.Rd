@@ -40,20 +40,24 @@ make_saver(..., fn = "")
 \item{fn}{A file name pattern.}
 }
 \value{
-In the case of \code{make_saver}, an list of class \code{epiworld_saver}.
-The function \code{run_multiple} returns a list of the same class as \code{m}; usually
-an \code{epiworld_model} object.
+\itemize{
+\item In the case of \code{make_saver}, an list of class \code{epiworld_saver}.
+}
 
 \itemize{
 \item The \code{run_multiple} function runs a specified number of simulations and
 returns a model object of class \link{epiworld_model}.
 }
 
-The \code{run_multiple_get_results} function returns epidemiological information
-regarding the multiple-simulated model.
+\itemize{
+\item The \code{run_multiple_get_results} function returns a named list with the
+data specified by \code{make_saver}.
+}
 }
 \description{
-Run multiple simulations at once
+The \code{run_multiple} function allows running multiple simulations at once.
+When available, users can take advantage of parallel computing to speed up
+the process.
 }
 \details{
 Currently, the following elements can be saved:
