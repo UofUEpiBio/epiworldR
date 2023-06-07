@@ -1,11 +1,15 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-[![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
-
 # epiworldR
 
 <!-- badges: start -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
+[![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
+[![CRANlogs
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -97,8 +101,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
-#> Last run elapsed t  : 219.00ms
-#> Last run speed      : 22.80 million agents x day / second
+#> Last run elapsed t  : 192.00ms
+#> Last run speed      : 26.04 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -169,8 +173,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 2
-#> Last run elapsed t  : 65.00ms
-#> Last run speed      : 15.29 million agents x day / second
+#> Last run elapsed t  : 56.00ms
+#> Last run speed      : 17.72 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
