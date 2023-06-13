@@ -2,11 +2,11 @@
 #'
 #' @param name String. Name of the virus.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
+#' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
-#' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
+#' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus. 
 #' @param x Object of class SEIR. 
 #' @param ... Currently ignore.
 #' @export
@@ -16,7 +16,7 @@
 #' - The `ModelSEIR`function returns a model of class [epiworld_model].
 #' @examples 
 #' model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
-#' infectiousness = 0.9, recovery = 0.1, incubation_days = 4)
+#' transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4)
 #' 
 #' # Adding a small world population
 #' agents_smallworld(
@@ -34,11 +34,11 @@
 #' plot(model_seir, main = "SEIR Model")
 #' @seealso epiworld-methods
 ModelSEIR <- function(
-    name, prevalence, infectiousness, incubation_days, recovery
+    name, prevalence, transmission_rate, incubation_days, recovery_rate
 ) {
   
   structure(
-    ModelSEIR_cpp(name, prevalence, infectiousness, incubation_days, recovery),
+    ModelSEIR_cpp(name, prevalence, transmission_rate, incubation_days, recovery_rate),
     class = c("epiworld_seir", "epiworld_model")
   )
   

@@ -6,7 +6,7 @@
 \alias{plot.epiworld_seir}
 \title{Susceptible Exposed Infected Recovered model (SEIR)}
 \usage{
-ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
+ModelSEIR(name, prevalence, transmission_rate, incubation_days, recovery_rate)
 
 \method{plot}{epiworld_seir}(x, main = get_name(x), ...)
 }
@@ -15,13 +15,13 @@ ModelSEIR(name, prevalence, infectiousness, incubation_days, recovery)
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{infectiousness}{Numeric scalar between 0 and 1. Virus's rate of
+\item{transmission_rate}{Numeric scalar between 0 and 1. Virus's rate of
 infection.}
 
 \item{incubation_days}{Numeric scalar greater than 0. Average number of
 incubation days.}
 
-\item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
+\item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
 
 \item{x}{Object of class SEIR.}
 
@@ -42,7 +42,7 @@ Susceptible Exposed Infected Recovered model (SEIR)
 }
 \examples{
 model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
-infectiousness = 0.9, recovery = 0.1, incubation_days = 4)
+transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4)
 
 # Adding a small world population
 agents_smallworld(

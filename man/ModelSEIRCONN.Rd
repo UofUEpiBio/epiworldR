@@ -11,9 +11,9 @@ ModelSEIRCONN(
   n,
   prevalence,
   contact_rate,
-  prob_transmission,
+  transmission_rate,
   incubation_days,
-  prob_recovery
+  recovery_rate
 )
 
 \method{plot}{epiworld_seirconn}(x, main = get_name(x), ...)
@@ -27,13 +27,13 @@ ModelSEIRCONN(
 
 \item{contact_rate}{Numeric scalar. Average number of contacts per step.}
 
-\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
+\item{transmission_rate}{Numeric scalar between 0 and 1. Probability of
 transmission.}
 
 \item{incubation_days}{Numeric scalar greater than 0. Average number of
 incubation days.}
 
-\item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
+\item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery_rate.}
 
 \item{x}{Object of class SEIRCONN.}
 
@@ -61,8 +61,8 @@ model_seirconn <- ModelSEIRCONN(
   n                   = 10000,
   contact_rate        = 2, 
   incubation_days     = 7, 
-  prob_transmission   = 0.5,
-  prob_recovery       = 0.3
+  transmission_rate   = 0.5,
+  recovery_rate       = 0.3
 )
   
 # Running and printing

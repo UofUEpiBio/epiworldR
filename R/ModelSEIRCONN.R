@@ -7,11 +7,11 @@
 #' @param n Integer greater than zero. Population size.
 #' @param prevalence Initial proportion of individuals with the virus.
 #' @param contact_rate Numeric scalar. Average number of contacts per step.
-#' @param prob_transmission Numeric scalar between 0 and 1. Probability of 
+#' @param transmission_rate Numeric scalar between 0 and 1. Probability of 
 #' transmission.
 #' @param incubation_days Numeric scalar greater than 0. Average number of 
 #' incubation days.
-#' @param prob_recovery Numeric scalar between 0 and 1. Probability of recovery.
+#' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery_rate.
 #' @param x Object of class SEIRCONN. 
 #' @param ... Currently ignore. 
 #' @param n Number of individuals in the population.
@@ -28,8 +28,8 @@
 #'   n                   = 10000,
 #'   contact_rate        = 2, 
 #'   incubation_days     = 7, 
-#'   prob_transmission   = 0.5,
-#'   prob_recovery       = 0.3
+#'   transmission_rate   = 0.5,
+#'   recovery_rate       = 0.3
 #' )
 #'   
 #' # Running and printing
@@ -49,13 +49,13 @@
 #' plot(model_seirconn)
 #' @seealso epiworld-methods
 ModelSEIRCONN <- function(
-    name, n, prevalence, contact_rate, prob_transmission, 
-    incubation_days, prob_recovery
+    name, n, prevalence, contact_rate, transmission_rate, 
+    incubation_days, recovery_rate
 ) {
   
   structure(
     ModelSEIRCONN_cpp(name, n, prevalence, contact_rate, 
-                      prob_transmission, incubation_days, prob_recovery),
+                      transmission_rate, incubation_days, recovery_rate),
     class = c("epiworld_seirconn", "epiworld_model")
   )
   

@@ -97,8 +97,8 @@ model_sirconn <- ModelSIRCONN(
   n                   = 10000,
   prevalence          = 0.01,
   contact_rate        = 5,
-  prob_transmission   = 0.4,
-  prob_recovery       = 0.95
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
 
 # Creating a tool
@@ -126,8 +126,8 @@ model_sirconn2 <- ModelSIRCONN(
   n                   = 10000,
   prevalence          = 0.01,
   contact_rate        = 5,
-  prob_transmission   = 0.4,
-  prob_recovery       = 0.95
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
 
 closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)

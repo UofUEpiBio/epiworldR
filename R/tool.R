@@ -18,8 +18,8 @@
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
 #'   contact_rate        = 5,
-#'   prob_transmission   = 0.4,
-#'   prob_recovery       = 0.95
+#'   transmission_rate   = 0.4,
+#'   recovery_rate       = 0.95
 #' )
 #' 
 #' # Running and printing
@@ -186,7 +186,7 @@ rm_tool <- function(model, tool_pos) {
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", prevalence = 0.01, 
-#'   infectiousness = 0.9, recovery = 0.1
+#'   transmission_rate = 0.9, recovery_rate = 0.1
 #'   )
 #' 
 #' # Adding a small world population

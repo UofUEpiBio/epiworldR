@@ -2,8 +2,8 @@
 sir_0 <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
-  infectiousness = .9,
-  recovery = .3
+  transmission_rate = .9,
+  recovery_rate = .3
 )
 
 agents_smallworld(
@@ -27,8 +27,8 @@ tmat_0 <- get_transition_probability(sir_0)
 sir_1 <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
-  infectiousness = .9,
-  recovery = .3
+  transmission_rate = .9,
+  recovery_rate = .3
 )
 
 # Adding a Small world population 

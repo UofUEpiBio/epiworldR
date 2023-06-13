@@ -24,7 +24,7 @@
 virus(
   name,
   prob_infecting,
-  prob_recovery = 0.5,
+  recovery_rate = 0.5,
   prob_death = 0,
   post_immunity = -1
 )
@@ -66,7 +66,7 @@ set_prob_death_fun(virus, model, vfun)
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
-\item{prob_recovery}{Numeric scalar. Probability of recovery.}
+\item{recovery_rate}{Numeric scalar. Probability of recovery.}
 
 \item{prob_death}{Numeric scalar. Probability of death.}
 
@@ -176,8 +176,8 @@ mseirconn <- ModelSEIRCONN(
   n                   = 10000,
   contact_rate        = 4, 
   incubation_days     = 7, 
-  prob_transmission   = 0.5,
-  prob_recovery       = 0.99
+  transmission_rate   = 0.5,
+  recovery_rate       = 0.99
 )
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
@@ -209,7 +209,7 @@ virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(
   name = "COVID-19", prevalence = 0.01, 
-  infectiousness = 0.9, recovery = 0.1
+  transmission_rate = 0.9, recovery = 0.1
   )
 
 # Adding a small world population

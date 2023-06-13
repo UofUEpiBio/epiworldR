@@ -17,7 +17,7 @@ ModelSURV(
   prop_vax_redux_transm,
   prop_vax_redux_infect,
   surveillance_prob,
-  prob_transmission,
+  transmission_rate,
   prob_death,
   prob_noreinfect
 )
@@ -51,7 +51,7 @@ the chances of becoming infected.}
 
 \item{surveillance_prob}{Double. Probability of testing an agent.}
 
-\item{prob_transmission}{Double. Raw transmission probability.}
+\item{transmission_rate}{Double. Raw transmission probability.}
 
 \item{prob_death}{Double. Raw probability of death for symptomatic
 individuals.}
@@ -87,7 +87,7 @@ model_surv <- ModelSURV(
   prop_vax_redux_transm = 0.8,
   prop_vax_redux_infect = 0.95,
   surveillance_prob     = 0.1,
-  prob_transmission     = 0.2,
+  transmission_rate     = 0.2,
   prob_death            = 0.001,
   prob_noreinfect       = 0.5
 )

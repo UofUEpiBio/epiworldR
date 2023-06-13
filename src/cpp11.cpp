@@ -132,52 +132,52 @@ extern "C" SEXP _epiworldR_get_generation_time_cpp(SEXP model) {
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double prob_transmission, double prob_death, double prob_noreinfect);
-extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP prob_transmission, SEXP prob_death, SEXP prob_noreinfect) {
+SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double transmission_rate, double prob_death, double prob_noreinfect);
+extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP transmission_rate, SEXP prob_death, SEXP prob_noreinfect) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSURV_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(efficacy_vax), cpp11::as_cpp<cpp11::decay_t<double>>(latent_period), cpp11::as_cpp<cpp11::decay_t<double>>(prob_symptoms), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vaccinated), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_transm), cpp11::as_cpp<cpp11::decay_t<double>>(infect_period), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_infect), cpp11::as_cpp<cpp11::decay_t<double>>(surveillance_prob), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(prob_noreinfect)));
+    return cpp11::as_sexp(ModelSURV_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(efficacy_vax), cpp11::as_cpp<cpp11::decay_t<double>>(latent_period), cpp11::as_cpp<cpp11::decay_t<double>>(prob_symptoms), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vaccinated), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_transm), cpp11::as_cpp<cpp11::decay_t<double>>(infect_period), cpp11::as_cpp<cpp11::decay_t<double>>(prop_vax_redux_infect), cpp11::as_cpp<cpp11::decay_t<double>>(surveillance_prob), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(prob_noreinfect)));
   END_CPP11
 }
 // epimodels.cpp
-    SEXP ModelSEIR_cpp(std::string name, double prevalence, double infectiousness, double incubation_days, double recovery);
-extern "C" SEXP _epiworldR_ModelSEIR_cpp(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP incubation_days, SEXP recovery) {
+    SEXP ModelSEIR_cpp(std::string name, double prevalence, double transmission_rate, double incubation_days, double recovery_rate);
+extern "C" SEXP _epiworldR_ModelSEIR_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+    return cpp11::as_sexp(ModelSEIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIS_cpp(std::string name, double prevalence, double infectiousness, double recovery);
-extern "C" SEXP _epiworldR_ModelSIS_cpp(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP recovery) {
+SEXP ModelSIS_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate);
+extern "C" SEXP _epiworldR_ModelSIS_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIS_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+    return cpp11::as_sexp(ModelSIS_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double prob_transmission, double prob_recovery);
-extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP prob_transmission, SEXP prob_recovery) {
+SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double recovery_rate);
+extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP recovery_rate) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+    return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIR_cpp(std::string name, double prevalence, double infectiousness, double recovery);
-extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP infectiousness, SEXP recovery) {
+SEXP ModelSIR_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate);
+extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(infectiousness), cpp11::as_cpp<cpp11::decay_t<double>>(recovery)));
+    return cpp11::as_sexp(ModelSIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double prob_transmission, double incubation_days, double prob_recovery);
-extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP prob_transmission, SEXP incubation_days, SEXP prob_recovery) {
+SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double incubation_days, double recovery_rate);
+extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prob_transmission), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery)));
+    return cpp11::as_sexp(ModelSEIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSIRLogit_cpp(std::string vname, SEXP data, int ncols, std::vector< double > coefs_infect, std::vector< double > coefs_recover, std::vector< int > coef_infect_cols, std::vector< int > coef_recover_cols, double prob_infection, double prob_recovery, double prevalence);
-extern "C" SEXP _epiworldR_ModelSIRLogit_cpp(SEXP vname, SEXP data, SEXP ncols, SEXP coefs_infect, SEXP coefs_recover, SEXP coef_infect_cols, SEXP coef_recover_cols, SEXP prob_infection, SEXP prob_recovery, SEXP prevalence) {
+SEXP ModelSIRLogit_cpp(std::string vname, SEXP data, int ncols, std::vector< double > coefs_infect, std::vector< double > coefs_recover, std::vector< int > coef_infect_cols, std::vector< int > coef_recover_cols, double prob_infection, double recovery_rate, double prevalence);
+extern "C" SEXP _epiworldR_ModelSIRLogit_cpp(SEXP vname, SEXP data, SEXP ncols, SEXP coefs_infect, SEXP coefs_recover, SEXP coef_infect_cols, SEXP coef_recover_cols, SEXP prob_infection, SEXP recovery_rate, SEXP prevalence) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIRLogit_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(vname), cpp11::as_cpp<cpp11::decay_t<SEXP>>(data), cpp11::as_cpp<cpp11::decay_t<int>>(ncols), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_infect), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_recover), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_infect_cols), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_recover_cols), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infection), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence)));
+    return cpp11::as_sexp(ModelSIRLogit_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(vname), cpp11::as_cpp<cpp11::decay_t<SEXP>>(data), cpp11::as_cpp<cpp11::decay_t<int>>(ncols), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_infect), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(coefs_recover), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_infect_cols), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(coef_recover_cols), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infection), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence)));
   END_CPP11
 }
 // epimodels.cpp

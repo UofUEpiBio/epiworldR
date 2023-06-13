@@ -2,8 +2,8 @@
 # BUILDING AND INITIALIZING SEIR MODEL
 # library(epiworldR)
 
-# sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, 
-#                 recovery = 0.1)
+# sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, transmission_rate = 0.9, 
+#                 recovery_rate = 0.1)
 
 
 # # Adding a Small world population
