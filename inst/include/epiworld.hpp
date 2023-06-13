@@ -628,9 +628,9 @@ inline int roulette(std::vector< double > & probs, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline int roulette(std::vector< epiworld_double > & probs, Model<TSeq> * m)
+inline int roulette(std::vector< float > & probs, Model<TSeq> * m)
 {
-    return roulette<TSeq, epiworld_double>(probs, m);
+    return roulette<TSeq, float>(probs, m);
 }
 
 
@@ -10013,7 +10013,7 @@ public:
     void mutate(Model<TSeq> * model);
     void set_mutation(MutFun<TSeq> fun);
     
-    const TSeq* get_sequence();
+    std::shared_ptr<TSeq> get_sequence();
     void set_sequence(TSeq sequence);
     
     Agent<TSeq> * get_agent();
@@ -10237,10 +10237,10 @@ inline void Virus<TSeq>::set_mutation(
 }
 
 template<typename TSeq>
-inline const TSeq * Virus<TSeq>::get_sequence()
+inline std::shared_ptr<TSeq> Virus<TSeq>::get_sequence()
 {
 
-    return &(*baseline_sequence);
+    return baseline_sequence;
 
 }
 
