@@ -1,0 +1,51 @@
+---
+title: "Internals of epiworldR"
+author:
+  - Derek Meyer
+  - George Vega Yon
+date: "`r Sys.Date()`"
+output: rmarkdown::github_document
+vignette: >
+  %\VignetteIndexEntry{Internals of epiworldR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `epiworldR` package is a wrapper of the C++ library `epiworld`. The
+library is highly complex and provides a great deal of flexibility. 
+
+# Calculations
+
+## Transmission probability
+
+Generally, `epiworldR` assumes that at each step of the simulation,
+susceptible agents can acquire the disease from at most one infected
+agent. The probability of transmission from $i$
+to $j$ is given by the following formula:
+
+$$
+P(i\to j| \mbox{at most one}) = \frac{p_{ij} \times \prod_{k\neq i}\left(1 - p_{kj}\right)}{\prod_k\left(1 - p_{kj}\right) + \sum_k p_{kj} \times \prod_{l\neq k}\left(1 - p_{lj}\right)}
+$$
+
+The adjusted probabilities $p_{ij}$ are computed as a function of $i$, $j$,
+and the virus. The following section describes how these probabilities are
+computed.
+
+## Adjusted transmission probabilities
+
+Viruses and tools provide a way to adjust how agents move between states.
+Viruses in `epiworldR` contain various baseline probabilities used
+across models, including transmission, recovery, and death.
+On the other hand, tools alter these probabilities by reducing/increasing
+them. Furthermore, tools alter agents' susceptibility, infectiousness, 
+recovery, and death probabilities. Currently, tools alter these probabilities
+by a constant factor, 
+
+$$
+P(\mbox{Adjusted transmission}) = p_{\mbox{transmission}} \times \prod_{t\in \mbox{tools}} \left(1 - \mbox{factor}_t\right)
+$$
+
+Where $p_{ij}$ is the raw transmission probability of agent $i$. The $p_i$ 
+probabilities are calculated as a function of the virus and the agent's
+characteristics. In particular, using the virus' raw transmission probability
+and the agent's 
