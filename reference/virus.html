@@ -64,7 +64,7 @@ viruses.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">virus</span><span class="op">(</span></span>
 <span>  <span class="va">name</span>,</span>
 <span>  <span class="va">prob_infecting</span>,</span>
-<span>  prob_recovery <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  recovery_rate <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  prob_death <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  post_immunity <span class="op">=</span> <span class="op">-</span><span class="fl">1</span></span>
 <span><span class="op">)</span></span>
@@ -112,7 +112,7 @@ viruses.</p>
 <dd><p>Numeric scalar. Probability of infection (transmission).</p></dd>
 
 
-<dt>prob_recovery</dt>
+<dt>recovery_rate</dt>
 <dd><p>Numeric scalar. Probability of recovery.</p></dd>
 
 
@@ -222,8 +222,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">4</span>, </span></span>
 <span class="r-in"><span>  incubation_days     <span class="op">=</span> <span class="fl">7</span>, </span></span>
-<span class="r-in"><span>  prob_transmission   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
-<span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.99</span></span></span>
+<span class="r-in"><span>  transmission_rate   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.99</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">delta</span> <span class="op">&lt;-</span> <span class="fu">virus</span><span class="op">(</span><span class="st">"Delta Variant"</span>, <span class="fl">0</span>, <span class="fl">.5</span>, <span class="fl">.2</span>, <span class="fl">.01</span><span class="op">)</span></span></span>
@@ -250,8 +250,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 212.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.71 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 213.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.69 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -330,7 +330,7 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
 <span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
-<span class="r-in"><span>  infectiousness <span class="op">=</span> <span class="fl">0.9</span>, recovery <span class="op">=</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>, recovery <span class="op">=</span> <span class="fl">0.1</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>

@@ -168,34 +168,25 @@ epiworld_hist_variant.</p></li>
 </ul><ul><li><p>The <code>get_reproductive_number</code> function returns an object of class
 epiworld_repnum.</p></li>
 </ul><ul><li><p>The <code>plot</code> function returns a plot of the reproductive number over time.</p></li>
-</ul><p>In the case of <code>get_hist_transition_matrix</code>, a <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> with four columns:
-"state_from", "state_to", "date", and "counts." It will be</p>
-
-
-<p>The <code>as.array</code> method for <code>epiworld_hist_transition</code> objects turns the <code>data.frame</code></p>
-
-
-<p>returned by <code>get_hist_transition_matrix</code> into an array of <code>nstates x nstates x (ndays + 1)</code></p>
-
-
-<p>entries, where the first entry is the initial state.</p>
-
-
-<ul><li><p>The <code>plot_incidence</code> function returns a plot originating from the object
+</ul><ul><li><p><code>get_hist_transition_matrix</code> returns a <a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> with four columns:
+"state_from", "state_to", "date", and "counts."</p></li>
+</ul><ul><li><p>The <code>as.array</code> method for <code>epiworld_hist_transition</code> objects turns the
+<code>data.frame</code> returned by <code>get_hist_transition_matrix</code> into an array of
+<code>nstates x nstates x (ndays + 1)</code>
+entries, where the first entry is the initial state.</p></li>
+</ul><ul><li><p>The <code>plot_incidence</code> function returns a plot originating from the object
 <code>get_hist_transition_matrix</code>.</p></li>
 </ul><ul><li><p>The <code>plot</code> function returns a plot which originates from the
 <code>epiworld_hist_transition</code> object.</p></li>
-</ul><p>The function <code>get_transmissions</code> returns a <code>data.frame</code> with the following
-columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>variant</code>, and <code>source_exposure_date</code>.</p>
+</ul><ul><li><p>The function <code>get_transmissions</code> returns a <code>data.frame</code> with the following
+columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>variant</code>, and <code>source_exposure_date</code>.</p></li>
+</ul><p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
+the following columns: "agent", "virus_id", "date", and "gentime".</p>
 
 
-<p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
-the following columns: agent, virus_id, date, and gentime.</p>
-
-
-<p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
-get_generation_time.</p>
-    </div>
+<ul><li><p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
+get_generation_time.</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>plot_reproductive_number</code> function is a wrapper around
@@ -227,9 +218,9 @@ plotting.</p>
 <span class="r-in"><span>  n                 <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  prevalence        <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
 <span class="r-in"><span>  contact_rate      <span class="op">=</span> <span class="fl">2.0</span>, </span></span>
-<span class="r-in"><span>  prob_transmission <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
 <span class="r-in"><span>  incubation_days   <span class="op">=</span> <span class="fl">7.0</span>,</span></span>
-<span class="r-in"><span>  prob_recovery     <span class="op">=</span> <span class="fl">0.3</span></span></span>
+<span class="r-in"><span>  recovery_rate     <span class="op">=</span> <span class="fl">0.3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running the simulation for 50 steps (days)</span></span></span>

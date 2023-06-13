@@ -75,7 +75,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2023-06-12</h4>
+            <h4 data-toc-skip class="date">2023-06-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -111,8 +111,8 @@ will take you through the basic features of epiworldR.</p>
 <span>  n                 <span class="op">=</span> <span class="fl">100000</span>, </span>
 <span>  prevalence        <span class="op">=</span> <span class="fl">0.0001</span>, </span>
 <span>  contact_rate      <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  prob_transmission <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  prob_recovery     <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span></span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  recovery_rate     <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>Printing the model shows us some information. First, the name of the
 model, population size, number of entities (think of these as public
@@ -151,9 +151,9 @@ which originate from the parameters specified in the model.</p>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
-<span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
-<span><span class="co">#&gt;  - Prob. Transmission : 0.5000</span></span></code></pre></div>
+<span><span class="co">#&gt;  - Contact rate      : 2.0000</span></span>
+<span><span class="co">#&gt;  - Recovery rate     : 0.3333</span></span>
+<span><span class="co">#&gt;  - Transmission rate : 0.5000</span></span></code></pre></div>
 <p>To execute the model, use the run function with the SIR model object,
 number of simulation days, and an optional seed for reproducibility.
 Next, print out the results from the simulated model using
@@ -175,8 +175,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 888.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 5.63 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 852.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 5.87 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -189,9 +189,9 @@ model_sir.</p>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
-<span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
-<span><span class="co">#&gt;  - Prob. Transmission : 0.5000</span></span>
+<span><span class="co">#&gt;  - Contact rate      : 2.0000</span></span>
+<span><span class="co">#&gt;  - Recovery rate     : 0.3333</span></span>
+<span><span class="co">#&gt;  - Transmission rate : 0.5000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
 <span><span class="co">#&gt;   - (0) Susceptible :  99990 -&gt; 6514</span></span>
@@ -341,7 +341,7 @@ sections.</p>
 <span><span class="co">#&gt; Last run elapsed t  : 0.00s</span></span>
 <span><span class="co">#&gt; Total elapsed t     : 1.00s (2 runs)</span></span>
 <span><span class="co">#&gt; Last run speed      : 5.51 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 5.57 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 5.68 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -355,9 +355,9 @@ sections.</p>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Contact rate       : 2.0000</span></span>
-<span><span class="co">#&gt;  - Prob. Recovery     : 0.3333</span></span>
-<span><span class="co">#&gt;  - Prob. Transmission : 0.5000</span></span>
+<span><span class="co">#&gt;  - Contact rate      : 2.0000</span></span>
+<span><span class="co">#&gt;  - Recovery rate     : 0.3333</span></span>
+<span><span class="co">#&gt;  - Transmission rate : 0.5000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
 <span><span class="co">#&gt;   - (0) Susceptible :  99980 -&gt; 6488</span></span>

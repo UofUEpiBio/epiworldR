@@ -63,7 +63,7 @@
 <span>  <span class="va">coef_infect_cols</span>,</span>
 <span>  <span class="va">coef_recover_cols</span>,</span>
 <span>  <span class="va">prob_infection</span>,</span>
-<span>  <span class="va">prob_recovery</span>,</span>
+<span>  <span class="va">recovery_rate</span>,</span>
 <span>  <span class="va">prevalence</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -98,7 +98,7 @@
 <dd><p>Numeric scalar. Baseline probability of infection.</p></dd>
 
 
-<dt>prob_recovery</dt>
+<dt>recovery_rate</dt>
 <dd><p>Numeric scalar. Baseline probability of recovery.</p></dd>
 
 
@@ -139,7 +139,7 @@
 <span class="r-in"><span>  Female    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">2</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Declare coefficients for each sex regarding infectiousness and recovery.</span></span></span>
+<span class="r-in"><span><span class="co"># Declare coefficients for each sex regarding transmission_rate and recovery.</span></span></span>
 <span class="r-in"><span><span class="va">coef_infect</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="op">-</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">coef_recover</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -152,7 +152,7 @@
 <span class="r-in"><span>  coef_infect_cols  <span class="op">=</span> <span class="fl">1L</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  coef_recover_cols <span class="op">=</span> <span class="fl">1L</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  prob_infection <span class="op">=</span> <span class="fl">.8</span>,</span></span>
-<span class="r-in"><span>  prob_recovery <span class="op">=</span> <span class="fl">.3</span>,</span></span>
+<span class="r-in"><span>  recovery_rate <span class="op">=</span> <span class="fl">.3</span>,</span></span>
 <span class="r-in"><span>  prevalence <span class="op">=</span> <span class="fl">.01</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

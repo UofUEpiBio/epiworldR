@@ -60,8 +60,8 @@
 <span>  <span class="va">n</span>,</span>
 <span>  <span class="va">prevalence</span>,</span>
 <span>  <span class="va">contact_rate</span>,</span>
-<span>  <span class="va">prob_transmission</span>,</span>
-<span>  <span class="va">prob_recovery</span></span>
+<span>  <span class="va">transmission_rate</span>,</span>
+<span>  <span class="va">recovery_rate</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for epiworld_sirconn</span></span>
@@ -86,12 +86,12 @@
 <dd><p>Numeric scalar. Average number of contacts per step.</p></dd>
 
 
-<dt>prob_transmission</dt>
+<dt>transmission_rate</dt>
 <dd><p>Numeric scalar between 0 and 1. Probability of
 transmission.</p></dd>
 
 
-<dt>prob_recovery</dt>
+<dt>recovery_rate</dt>
 <dd><p>Numeric scalar between 0 and 1. Probability of recovery.</p></dd>
 
 
@@ -136,8 +136,8 @@ transmission.</p></dd>
 <span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
 <span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  prob_transmission   <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
-<span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.95</span></span></span>
+<span class="r-in"><span>  transmission_rate   <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.95</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
@@ -157,8 +157,8 @@ transmission.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 130.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 7.65 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 129.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 7.73 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -171,9 +171,9 @@ transmission.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate       : 5.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery     : 0.9500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission : 0.4000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate      : 5.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovery rate     : 0.9500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Transmission rate : 0.4000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9900 -&gt; 2000</span>

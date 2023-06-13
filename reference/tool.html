@@ -217,8 +217,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
 <span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>  prob_transmission   <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
-<span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.95</span></span></span>
+<span class="r-in"><span>  transmission_rate   <span class="op">=</span> <span class="fl">0.4</span>,</span></span>
+<span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.95</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
@@ -266,10 +266,10 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 416.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 550.00ms (2 runs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 2.40 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 3.64 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 411.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 545.00ms (2 runs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 2.43 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 3.67 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -282,9 +282,9 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Pfizer (baseline prevalence: 50.00%)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate       : 5.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery     : 0.9500</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission : 0.4000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate      : 5.0000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovery rate     : 0.9500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Transmission rate : 0.4000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9900 -&gt; 8344</span>
@@ -347,7 +347,7 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
 <span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
-<span class="r-in"><span>  infectiousness <span class="op">=</span> <span class="fl">0.9</span>, recovery <span class="op">=</span> <span class="fl">0.1</span></span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>, recovery_rate <span class="op">=</span> <span class="fl">0.1</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>

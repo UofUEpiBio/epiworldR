@@ -63,9 +63,9 @@ This is equivalent to a compartmental model (<a href="https://en.wikipedia.org/w
 <span>  <span class="va">n</span>,</span>
 <span>  <span class="va">prevalence</span>,</span>
 <span>  <span class="va">contact_rate</span>,</span>
-<span>  <span class="va">prob_transmission</span>,</span>
+<span>  <span class="va">transmission_rate</span>,</span>
 <span>  <span class="va">incubation_days</span>,</span>
-<span>  <span class="va">prob_recovery</span></span>
+<span>  <span class="va">recovery_rate</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for epiworld_seirconn</span></span>
@@ -90,7 +90,7 @@ This is equivalent to a compartmental model (<a href="https://en.wikipedia.org/w
 <dd><p>Numeric scalar. Average number of contacts per step.</p></dd>
 
 
-<dt>prob_transmission</dt>
+<dt>transmission_rate</dt>
 <dd><p>Numeric scalar between 0 and 1. Probability of
 transmission.</p></dd>
 
@@ -100,8 +100,8 @@ transmission.</p></dd>
 incubation days.</p></dd>
 
 
-<dt>prob_recovery</dt>
-<dd><p>Numeric scalar between 0 and 1. Probability of recovery.</p></dd>
+<dt>recovery_rate</dt>
+<dd><p>Numeric scalar between 0 and 1. Probability of recovery_rate.</p></dd>
 
 
 <dt>x</dt>
@@ -147,8 +147,8 @@ incubation days.</p></dd>
 <span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">2</span>, </span></span>
 <span class="r-in"><span>  incubation_days     <span class="op">=</span> <span class="fl">7</span>, </span></span>
-<span class="r-in"><span>  prob_transmission   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
-<span class="r-in"><span>  prob_recovery       <span class="op">=</span> <span class="fl">0.3</span></span></span>
+<span class="r-in"><span>  transmission_rate   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.3</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
@@ -168,8 +168,8 @@ incubation days.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 101.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 9.81 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 103.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 9.71 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -225,9 +225,9 @@ incubation days.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 82.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 184.00ms (2 runs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 12.06 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 10.82 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 185.00ms (2 runs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 12.12 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 10.78 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
