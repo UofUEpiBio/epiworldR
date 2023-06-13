@@ -35,7 +35,7 @@ namespace epiworld {
 #endif
 
 #ifndef EPIWORLD_MAXNEIGHBORS
-    #define EPIWORLD_MAXNEIGHBORS 100000
+    #define EPIWORLD_MAXNEIGHBORS 1048576
 #endif
 
 #ifdef _OPENMP
@@ -641,10 +641,14 @@ inline int roulette(
     )
 {
 
-    #ifdef EPI_DEBUG
-    if (nelements > m->array_double_tmp.size())
-        throw std::logic_error("Trying to sample from more data than there is in roulette!");
-    #endif
+    if ((nelements * 2) > m->array_double_tmp.size())
+    {
+        throw std::logic_error(
+            "Trying to sample from more data than there is in roulette!" +
+            std::to_string(nelements) + " vs " + 
+            std::to_string(m->array_double_tmp.size())
+            );
+    }
 
     // Step 1: Computing the prob on none 
     epiworld_double p_none = 1.0;
@@ -5883,7 +5887,7 @@ inline void GlobalAction<TSeq>::print() const
 template<typename TSeq>
 inline bool GlobalAction<TSeq>::operator==(const GlobalAction<TSeq> & other) const
 {
-    return (this->name == other.name) && (this->day == other.day) && (this->fun == other.fun);
+    return (this->name == other.name) && (this->day == other.day);
 }
 
 template<typename TSeq>
@@ -7254,8 +7258,12 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
             )
     );
 
-    array_double_tmp.resize(m.array_double_tmp.size());
-    array_virus_tmp.resize(m.array_virus_tmp.size());
+    array_double_tmp.resize(std::max(
+        size(),
+        static_cast<size_t>(1024 * 1024)
+    ));
+
+    array_virus_tmp.resize(1024u);
 
     return *this;
 
@@ -8113,8 +8121,12 @@ inline void Model<TSeq>::run(
     if (seed >= 0)
         engine.seed(seed);
 
-    array_double_tmp.resize(size()/2, 0.0);
-    array_virus_tmp.resize(size()/2);
+    array_double_tmp.resize(std::max(
+        size(),
+        static_cast<size_t>(1024 * 1024)
+    ));
+
+    array_virus_tmp.resize(1024);
 
     // Checking whether the proposed state in/out/removed
     // are valid
@@ -12302,7 +12314,7 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                         #endif
                             
@@ -12390,7 +12402,7 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                             
                         #endif
@@ -12470,7 +12482,7 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                         #endif
                             
@@ -12558,7 +12570,7 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                         #endif
                             
@@ -15001,7 +15013,7 @@ inline std::function<void(Model<TSeq>*)> globalaction_set_param(
  * @param vname std::string Name of the virus
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
- * @param initial_recovery epiworld_double Initial recovery rate of the immune system
+ * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
  */
 template<typename TSeq = int>
 class ModelSIS : public epiworld::Model<TSeq>
@@ -15015,15 +15027,15 @@ public:
         ModelSIS<TSeq> & model,
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
 
     ModelSIS(
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
 
 };
@@ -15033,8 +15045,8 @@ inline ModelSIS<TSeq>::ModelSIS(
     ModelSIS<TSeq> & model,
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15045,14 +15057,14 @@ inline ModelSIS<TSeq>::ModelSIS(
     model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
 
     // Setting up parameters
-    model.add_param(infectiousness, "Infection rate");
-    model.add_param(recovery, "Recovery rate");
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
     virus.set_state(1,0,0);
     
-    virus.set_prob_infecting(&model("Infection rate"));
+    virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_death(0.0);
     
@@ -15066,8 +15078,8 @@ template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15075,8 +15087,8 @@ inline ModelSIS<TSeq>::ModelSIS(
         *this,
         vname,
         prevalence,
-        infectiousness,
-        recovery
+        transmission_rate,
+        recovery_rate
     );    
 
     return;
@@ -15112,7 +15124,7 @@ inline ModelSIS<TSeq>::ModelSIS(
  * @param vname std::string Name of the virus
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
- * @param initial_recovery epiworld_double Initial recovery rate of the immune system
+ * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
  */
 template<typename TSeq = int>
 class ModelSIR : public epiworld::Model<TSeq>
@@ -15125,15 +15137,15 @@ public:
         ModelSIR<TSeq> & model,
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
 
     ModelSIR(
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
     
 };
@@ -15143,8 +15155,8 @@ inline ModelSIR<TSeq>::ModelSIR(
     ModelSIR<TSeq> & model,
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15154,15 +15166,15 @@ inline ModelSIR<TSeq>::ModelSIR(
     model.add_state("Recovered");
 
     // Setting up parameters
-    model.add_param(recovery, "Prob. of Recovery");
-    model.add_param(infectiousness, "Infectiousness");
+    model.add_param(recovery_rate, "Recovery rate");
+    model.add_param(transmission_rate, "Transmission rate");
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
     virus.set_state(1,2,2);
     
-    virus.set_prob_recovery(&model("Prob. of Recovery"));
-    virus.set_prob_infecting(&model("Infectiousness"));
+    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_infecting(&model("Transmission rate"));
     
     model.add_virus(virus, prevalence);
 
@@ -15176,8 +15188,8 @@ template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15185,8 +15197,8 @@ inline ModelSIR<TSeq>::ModelSIR(
         *this,
         vname,
         prevalence,
-        infectiousness,
-        recovery
+        transmission_rate,
+        recovery_rate
         );
 
     return;
@@ -15220,9 +15232,10 @@ inline ModelSIR<TSeq>::ModelSIR(
  * 
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
- * @param initial_prevalence epiworld_double Initial prevalence
- * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
- * @param initial_recovery epiworld_double Initial recovery rate of the immune system
+ * @param prevalence epiworld_double Initial prevalence the immune system
+ * @param transmission_rate epiworld_double Transmission rate of the virus
+ * @param avg_incubation_days epiworld_double Average incubation days of the virus
+ * @param recovery_rate epiworld_double Recovery rate of the virus.
  */
 template<typename TSeq = int>
 class ModelSEIR : public epiworld::Model<TSeq>
@@ -15241,17 +15254,17 @@ public:
         ModelSEIR<TSeq> & model,
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double incubation_days,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate
     );
 
     ModelSEIR(
         std::string vname,
         epiworld_double prevalence,
-        epiworld_double infectiousness,
-        epiworld_double incubation_days,
-        epiworld_double recovery
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate
     );
     
     epiworld::UpdateFun<TSeq> update_exposed_seir = [](
@@ -15271,7 +15284,7 @@ public:
         epiworld::Model<TSeq> * m
     ) -> void {
         // Does the agent recover?
-        if (m->runif() < (m->par("Immune recovery")))
+        if (m->runif() < (m->par("Recovery rate")))
             p->rm_virus(0, m);
 
         return;    
@@ -15285,9 +15298,9 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     ModelSEIR<TSeq> & model,
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double incubation_days,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15298,15 +15311,15 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     model.add_state("Removed");
 
     // Setting up parameters
-    model.add_param(infectiousness, "Infectiousness");
-    model.add_param(incubation_days, "Incubation days");
-    model.add_param(recovery, "Immune recovery");
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(avg_incubation_days, "Incubation days");
+    model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
     virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
-    virus.set_prob_infecting(&model("Infectiousness"));
+    virus.set_prob_infecting(&model("Transmission rate"));
     
     // Adding the tool and the virus
     model.add_virus(virus, prevalence);
@@ -15321,9 +15334,9 @@ template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
     std::string vname,
     epiworld_double prevalence,
-    epiworld_double infectiousness,
-    epiworld_double incubation_days,
-    epiworld_double recovery
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate
     )
 {
 
@@ -15331,9 +15344,9 @@ inline ModelSEIR<TSeq>::ModelSEIR(
         *this,
         vname,
         prevalence,
-        infectiousness,
-        incubation_days,
-        recovery
+        transmission_rate,
+        avg_incubation_days,
+        recovery_rate
         );
 
     return;
@@ -15797,8 +15810,8 @@ public:
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
-        epiworld_double prob_transmission,
-        epiworld_double prob_recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
 
     ModelSIRCONN(
@@ -15806,8 +15819,8 @@ public:
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
-        epiworld_double prob_transmission,
-        epiworld_double prob_recovery
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate
     );
 
     // Tracking who is infected and who is not
@@ -15886,8 +15899,8 @@ inline Model<TSeq> * ModelSIRCONN<TSeq>::clone_ptr()
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
  * @param contact_rate Average number of contacts (interactions) per step.
- * @param prob_transmission Probability of transmission
- * @param prob_recovery Probability of recovery
+ * @param transmission_rate Probability of transmission
+ * @param recovery_rate Probability of recovery
  */
 template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
@@ -15896,8 +15909,8 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
-    epiworld_double prob_transmission,
-    epiworld_double prob_recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     // epiworld_double prob_reinfection
     )
 {
@@ -15954,7 +15967,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                         #endif
                             
@@ -16051,15 +16064,15 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
     // Setting up parameters
     model.add_param(contact_rate, "Contact rate");
-    model.add_param(prob_transmission, "Prob. Transmission");
-    model.add_param(prob_recovery, "Prob. Recovery");
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(recovery_rate, "Recovery rate");
     // model.add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
     virus.set_state(1, 2, 2);
-    virus.set_prob_infecting(&model("Prob. Transmission"));
-    virus.set_prob_recovery(&model("Prob. Recovery"));
+    virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_prob_recovery(&model("Recovery rate"));
 
     model.add_virus(virus, prevalence);
 
@@ -16079,8 +16092,8 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
-    epiworld_double prob_transmission,
-    epiworld_double prob_recovery
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate
     )
 {
 
@@ -16090,8 +16103,8 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         n,
         prevalence,
         contact_rate,
-        prob_transmission,
-        prob_recovery
+        transmission_rate,
+        recovery_rate
     );
 
     return;
@@ -16140,9 +16153,9 @@ public:
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
-        epiworld_double prob_transmission,
-        epiworld_double incubation_days,
-        epiworld_double prob_recovery
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate
     );
     
     ModelSEIRCONN(
@@ -16150,9 +16163,9 @@ public:
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
-        epiworld_double prob_transmission,
-        epiworld_double incubation_days,
-        epiworld_double prob_recovery
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate
     );
 
     void run(
@@ -16213,8 +16226,8 @@ inline Model<TSeq> * ModelSEIRCONN<TSeq>::clone_ptr()
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
  * @param contact_rate Average number of contacts (interactions) per step.
- * @param prob_transmission Probability of transmission
- * @param prob_recovery Probability of recovery
+ * @param transmission_rate Probability of transmission
+ * @param recovery_rate Probability of recovery
  */
 template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
@@ -16223,9 +16236,9 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
-    epiworld_double prob_transmission,
-    epiworld_double incubation_days,
-    epiworld_double prob_recovery
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate
     // epiworld_double prob_reinfection
     )
 {
@@ -16273,7 +16286,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                     { 
 
                         #ifdef EPI_DEBUG
-                        if (nvariants_tmp >= m->array_virus_tmp.size())
+                        if (nvariants_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                         #endif
                             
@@ -16381,9 +16394,9 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
     // Setting up parameters
     model.add_param(contact_rate, "Contact rate");
-    model.add_param(prob_transmission, "Prob. Transmission");
-    model.add_param(prob_recovery, "Prob. Recovery");
-    model.add_param(incubation_days, "Avg. Incubation days");
+    model.add_param(transmission_rate, "Prob. Transmission");
+    model.add_param(recovery_rate, "Prob. Recovery");
+    model.add_param(avg_incubation_days, "Avg. Incubation days");
     
     // Status
     model.add_state("Susceptible", update_susceptible);
@@ -16422,9 +16435,9 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
-    epiworld_double prob_transmission,
-    epiworld_double incubation_days,
-    epiworld_double prob_recovery
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate
     )
 {
 
@@ -16434,9 +16447,9 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
         n,
         prevalence,
         contact_rate,
-        prob_transmission,
-        incubation_days,
-        prob_recovery
+        transmission_rate,
+        avg_incubation_days,
+        recovery_rate
     );
 
     return;
@@ -16504,11 +16517,11 @@ public:
         epiworld_double incu_rate,
         epiworld_double infe_shape,
         epiworld_double infe_rate,
-        epiworld_double p_hosp,
-        epiworld_double p_hosp_rec,
-        epiworld_double p_hosp_die,
-        epiworld_double p_transmission,
-        epiworld_double p_transmission_entity,
+        epiworld_double hospitalization_rate,
+        epiworld_double hospitalization_recover_rate,
+        epiworld_double hospitalization_decease_rate,
+        epiworld_double transmission_rate,
+        epiworld_double transmission_entity_rate,
         size_t n_entities,
         size_t n_interactions
     );
@@ -16533,11 +16546,11 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
         "Gamma rate (incubation)",
         "Gamma shape (infected)",
         "Gamma rate (infected)",
-        "Hospitalization prob.",
-        "Prob. hosp. recovers",
-        "Prob. hosp. dies",
-        "Infectiousness",
-        "Infectiousness in entity",
+        "Hospitalization rate",
+        "Recovery rate (hosp.)",
+        "Decease rate (hosp)",
+        "Transmission rate",
+        "Transmission rate (entity)",
         "Prevalence",
         "N entities",
         "N interactions"
@@ -16586,7 +16599,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
 
     // Creating the virus
     Virus<TSeq> virus(vname);
-    virus.set_prob_infecting(&model("Infectiousness"));
+    virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_state(S::Exposed, S::Recovered);
     virus.set_queue(Queue<TSeq>::OnlySelf, -99LL);
     virus.get_data() = {0.0, 0.0F};
@@ -16617,11 +16630,11 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     epiworld_double incu_rate,
     epiworld_double infe_shape,
     epiworld_double infe_rate,
-    epiworld_double p_hosp,
-    epiworld_double p_hosp_rec,
-    epiworld_double p_hosp_die,
-    epiworld_double p_transmission,
-    epiworld_double p_transmission_entity,
+    epiworld_double hospitalization_rate,
+    epiworld_double hospitalization_recover_rate,
+    epiworld_double hospitalization_decease_rate,
+    epiworld_double transmission_rate,
+    epiworld_double transmission_entity_rate,
     size_t n_entities,
     size_t n_interactions
 ) {
@@ -16631,11 +16644,11 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     this->add_param(incu_rate, "Gamma rate (incubation) ");
     this->add_param(infe_shape, "Gamma shape (infected)");
     this->add_param(infe_rate, "Gamma rate (infected)");
-    this->add_param(p_hosp, "Hospitalization prob.");
-    this->add_param(p_hosp_rec, "Prob. hosp. recovers");
-    this->add_param(p_hosp_rec, "Prob. hosp. dies");
-    this->add_param(p_transmission, "Infectiousness");
-    this->add_param(p_transmission_entity, "Infectiousness in entity");
+    this->add_param(hospitalization_rate, "Hospitalization rate");
+    this->add_param(hospitalization_recover_rate, "Recovery rate (hosp.)");
+    this->add_param(hospitalization_recover_rate, "Decease rate (hosp)");
+    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(transmission_entity_rate, "Transmission rate (entity)");
     this->add_param(prevalence, "Prevalence");
     this->add_param(static_cast<epiworld_double>(n_entities), "N entities");
     this->add_param(static_cast<epiworld_double>(n_interactions), "N interactions");
@@ -16681,7 +16694,7 @@ inline void ModelSEIRD<TSeq>::update_exposed(
 
         // Prob of becoming hospitalized
         v->get_data()[2u] = (
-            m->runif() < m->par("Hospitalization prob.")
+            m->runif() < m->par("Hospitalization rate")
             ) ? 100.0 : -100.0;
 
 
@@ -16738,8 +16751,8 @@ inline void ModelSEIRD<TSeq>::update_hospitalized(
     // Computing the recovery probability
     auto v = p->get_virus(0u);
     auto probs = {
-        m->par("Prob. hosp. recovers"),
-        m->par("Prob. hosp. dies")
+        m->par("Recovery rate (hosp.)"),
+        m->par("Decease rate (hosp)")
         };
 
     int which = epiworld::roulette(probs, m);
@@ -16787,7 +16800,7 @@ inline void ModelSEIRD<TSeq>::contact(Model<TSeq> * m)
 
             // Is the individual getting the infection?
             double p_infection = 1.0 - std::pow(
-	        1.0 - m->par("Infectiousness in entity"), n_viruses
+	        1.0 - m->par("Transmission rate (entity)"), n_viruses
 		);
 
             if (m->runif() >= p_infection)
@@ -16864,8 +16877,8 @@ public:
         std::vector< double > coefs_recover,
         std::vector< size_t > coef_infect_cols,
         std::vector< size_t > coef_recover_cols,
-        epiworld_double prob_infect,
-        epiworld_double prob_recover,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate,
         epiworld_double prevalence
     );
 
@@ -16877,8 +16890,8 @@ public:
         std::vector< double > coefs_recover,
         std::vector< size_t > coef_infect_cols,
         std::vector< size_t > coef_recover_cols,
-        epiworld_double prob_infect,
-        epiworld_double prob_recover,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate,
         epiworld_double prevalence
     );
 
@@ -16977,8 +16990,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     std::vector< double > coefs_recover,
     std::vector< size_t > coef_infect_cols,
     std::vector< size_t > coef_recover_cols,
-    epiworld_double prob_infect,
-    epiworld_double prob_recover,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
     epiworld_double prevalence
     )
 {
@@ -17094,8 +17107,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
     // Setting up parameters
     // model.add_param(contact_rate, "Contact rate");
-    model.add_param(prob_infect, "Prob. Infection");
-    model.add_param(prob_recover, "Prob. Recovery");
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(recovery_rate, "Recovery rate");
     // model.add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
@@ -17106,8 +17119,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
         ModelSIRLogit<TSeq>::RECOVERED
         );
 
-    virus.set_prob_infecting(&model("Prob. Infection"));
-    virus.set_prob_recovery(&model("Prob. Recovery"));
+    virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_prob_recovery(&model("Recovery rate"));
 
     // virus.set_prob
 
@@ -17128,8 +17141,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     std::vector< double > coefs_recover,
     std::vector< size_t > coef_infect_cols,
     std::vector< size_t > coef_recover_cols,
-    epiworld_double prob_infect,
-    epiworld_double prob_recover,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
     epiworld_double prevalence
     )
 {
@@ -17143,8 +17156,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
         coefs_recover,
         coef_infect_cols,
         coef_recover_cols,
-        prob_infect,
-        prob_recover,
+        transmission_rate,
+        recovery_rate,
         prevalence
     );
 

@@ -21,9 +21,9 @@
 #'   n                 = 10000,
 #'   prevalence        = 0.1,
 #'   contact_rate      = 2.0, 
-#'   prob_transmission = 0.8,
+#'   transmission_rate = 0.8,
 #'   incubation_days   = 7.0,
-#'   prob_recovery     = 0.3
+#'   recovery_rate     = 0.3
 #' )
 #' 
 #' # Running the simulation for 50 steps (days)

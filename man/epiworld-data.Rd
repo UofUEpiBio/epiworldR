@@ -123,12 +123,17 @@ entries in the transition matrix.}
 \item The \code{plot} function returns a plot of the reproductive number over time.
 }
 
-In the case of \code{get_hist_transition_matrix}, a \link{data.frame} with four columns:
-"state_from", "state_to", "date", and "counts." It will be
+\itemize{
+\item \code{get_hist_transition_matrix} returns a \link{data.frame} with four columns:
+"state_from", "state_to", "date", and "counts."
+}
 
-The \code{as.array} method for \code{epiworld_hist_transition} objects turns the \code{data.frame}
-returned by \code{get_hist_transition_matrix} into an array of \verb{nstates x nstates x (ndays + 1)}
+\itemize{
+\item The \code{as.array} method for \code{epiworld_hist_transition} objects turns the
+\code{data.frame} returned by \code{get_hist_transition_matrix} into an array of
+\verb{nstates x nstates x (ndays + 1)}
 entries, where the first entry is the initial state.
+}
 
 \itemize{
 \item The \code{plot_incidence} function returns a plot originating from the object
@@ -140,14 +145,18 @@ entries, where the first entry is the initial state.
 \code{epiworld_hist_transition} object.
 }
 
-The function \code{get_transmissions} returns a \code{data.frame} with the following
+\itemize{
+\item The function \code{get_transmissions} returns a \code{data.frame} with the following
 columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{source_exposure_date}.
+}
 
 The function \code{get_generation_time} returns a \code{data.frame} with
-the following columns: agent, virus_id, date, and gentime.
+the following columns: "agent", "virus_id", "date", and "gentime".
 
-The function \code{plot_generation_time} is a wrapper for \link{plot} and
+\itemize{
+\item The function \code{plot_generation_time} is a wrapper for \link{plot} and
 \link{get_generation_time}.
+}
 }
 \description{
 Models in \code{epiworld} are stored in a database. This database can be accessed
@@ -173,9 +182,9 @@ seirconn <- ModelSEIRCONN(
   n                 = 10000,
   prevalence        = 0.1,
   contact_rate      = 2.0, 
-  prob_transmission = 0.8,
+  transmission_rate = 0.8,
   incubation_days   = 7.0,
-  prob_recovery     = 0.3
+  recovery_rate     = 0.3
 )
 
 # Running the simulation for 50 steps (days)

@@ -6,11 +6,11 @@
 #' @param name String. Name of the virus
 
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param infectiousness Numeric scalar between 0 and 1. Virus's rate of 
+#' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of 
 #' infection.
-#' @param recovery Numeric scalar between 0 and 1. Rate of recovery from virus. 
+#' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus. 
 #' @param x Object of class SIR. 
-#' @param ... Currently ignore. 
+#' @param ... Additional arguments passed to [graphics::plot].
 #' @export
 #' @family Models
 #' @aliases epiworld_sir
@@ -18,7 +18,7 @@
 #' - The `ModelSIR` function returns a model of class [epiworld_model].
 #' @examples 
 #' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
-#'                       infectiousness = 0.9, recovery = 0.1)
+#'                       transmission_rate = 0.9, recovery_rate = 0.1)
 #' 
 #' # Adding a small world population
 #' agents_smallworld(
@@ -37,11 +37,11 @@
 #' plot(model_sir)
 #' @seealso epiworld-methods
 ModelSIR <- function(
-    name, prevalence, infectiousness, recovery
+    name, prevalence, transmission_rate, recovery_rate
 ) {
   
   structure(
-    ModelSIR_cpp(name, prevalence, infectiousness, recovery),
+    ModelSIR_cpp(name, prevalence, transmission_rate, recovery_rate),
     class = c("epiworld_sir", "epiworld_model")
   )
   

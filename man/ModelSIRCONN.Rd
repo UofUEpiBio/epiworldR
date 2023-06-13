@@ -11,8 +11,8 @@ ModelSIRCONN(
   n,
   prevalence,
   contact_rate,
-  prob_transmission,
-  prob_recovery
+  transmission_rate,
+  recovery_rate
 )
 
 \method{plot}{epiworld_sirconn}(x, main = get_name(x), ...)
@@ -26,10 +26,10 @@ ModelSIRCONN(
 
 \item{contact_rate}{Numeric scalar. Average number of contacts per step.}
 
-\item{prob_transmission}{Numeric scalar between 0 and 1. Probability of
+\item{transmission_rate}{Numeric scalar between 0 and 1. Probability of
 transmission.}
 
-\item{prob_recovery}{Numeric scalar between 0 and 1. Probability of recovery.}
+\item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery.}
 
 \item{x}{Object of class SIRCONN.}
 
@@ -54,8 +54,8 @@ model_sirconn <- ModelSIRCONN(
   n                   = 10000,
   prevalence          = 0.01,
   contact_rate        = 5,
-  prob_transmission   = 0.4,
-  prob_recovery       = 0.95
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
   
 # Running and printing

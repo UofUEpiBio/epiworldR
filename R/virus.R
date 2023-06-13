@@ -7,7 +7,7 @@
 #' @param name of the virus
 #' @param post_immunity Numeric scalar. Post immunity (prob of re-infection).
 #' @param prob_infecting Numeric scalar. Probability of infection (transmission).
-#' @param prob_recovery Numeric scalar. Probability of recovery.
+#' @param recovery_rate Numeric scalar. Probability of recovery.
 #' @param prob_death Numeric scalar. Probability of death.
 #' @param virus_pos Positive integer. Index of the virus's position in the model.
 #' @details
@@ -25,8 +25,8 @@
 #'   n                   = 10000,
 #'   contact_rate        = 4, 
 #'   incubation_days     = 7, 
-#'   prob_transmission   = 0.5,
-#'   prob_recovery       = 0.99
+#'   transmission_rate   = 0.5,
+#'   recovery_rate       = 0.99
 #' )
 #' 
 #' delta <- virus("Delta Variant", 0, .5, .2, .01)
@@ -60,7 +60,7 @@
 virus <- function(
     name,
     prob_infecting,
-    prob_recovery = 0.5,
+    recovery_rate = 0.5,
     prob_death    = 0.0,
     post_immunity = -1.0
     ) {
@@ -69,7 +69,7 @@ virus <- function(
     virus_cpp(
       name,
       prob_infecting,
-      prob_recovery,
+      recovery_rate,
       prob_death,
       post_immunity
       ),
@@ -273,7 +273,7 @@ rm_virus <- function(model, virus_pos) {
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", prevalence = 0.01, 
-#'   infectiousness = 0.9, recovery = 0.1
+#'   transmission_rate = 0.9, recovery = 0.1
 #'   )
 #' 
 #' # Adding a small world population

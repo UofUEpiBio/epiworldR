@@ -79,7 +79,7 @@ model_sir <- ModelSIRCONN(
   prevalence = 0.01,
   n = 1000,
   contact_rate = 2,
-  prob_transmission = 0.9, prob_recovery = 0.1
+  transmission_rate = 0.9, recovery_rate = 0.1
   )
 
 # Generating a saver
