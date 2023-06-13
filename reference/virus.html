@@ -99,7 +99,13 @@ viruses.</p>
 <span></span>
 <span><span class="fu">set_prob_death_ptr</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_prob_death_fun</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">vfun</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">set_prob_death_fun</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">vfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_incubation</span><span class="op">(</span><span class="va">virus</span>, <span class="va">incubation</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_incubation_ptr</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_incubation_fun</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">vfun</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -198,6 +204,8 @@ epiworld_virus.</p></li>
 </ul><ul><li><p>The <code>set_prob_death</code> function does not return a value, but instead
 assigns a probability to death for the specified virus of class
 epiworld_virus.</p></li>
+</ul><ul><li><p>The <code>set_incubation</code> function does not return a value, but instead
+assigns an incubation period to the specified virus of class epiworld_virus.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -250,8 +258,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 254.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 3.93 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 210.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.76 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
@@ -289,32 +297,8 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Setting parameters for the delta virus manually</span></span></span>
 <span class="r-in"><span><span class="fu">set_prob_infecting</span><span class="op">(</span><span class="va">delta</span>, <span class="fl">0.5</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus          : COVID-19 Strain</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Id             : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_removed : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : -2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_removed  : -99</span>
 <span class="r-in"><span><span class="fu">set_prob_recovery</span><span class="op">(</span><span class="va">delta</span>, <span class="fl">0.9</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus          : COVID-19 Strain</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Id             : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_removed : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : -2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_removed  : -99</span>
 <span class="r-in"><span><span class="fu">set_prob_death</span><span class="op">(</span><span class="va">delta</span>, <span class="fl">0.01</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus          : COVID-19 Strain</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Id             : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_init    : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_post    : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> status_removed : 3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_init     : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_post     : -2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> queue_removed  : -99</span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">mseirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">992</span><span class="op">)</span> <span class="co"># Run the model to observe changes</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
