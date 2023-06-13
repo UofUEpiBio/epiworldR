@@ -615,6 +615,27 @@ extern "C" SEXP _epiworldR_set_prob_death_fun_cpp(SEXP virus, SEXP model, SEXP v
   END_CPP11
 }
 // virus.cpp
+SEXP set_incubation_cpp(SEXP virus, double prob);
+extern "C" SEXP _epiworldR_set_incubation_cpp(SEXP virus, SEXP prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_incubation_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<double>>(prob)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_incubation_ptr_cpp(SEXP virus, SEXP model, std::string param);
+extern "C" SEXP _epiworldR_set_incubation_ptr_cpp(SEXP virus, SEXP model, SEXP param) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_incubation_ptr_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(param)));
+  END_CPP11
+}
+// virus.cpp
+SEXP set_incubation_fun_cpp(SEXP virus, SEXP model, SEXP vfun);
+extern "C" SEXP _epiworldR_set_incubation_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_incubation_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(vfun)));
+  END_CPP11
+}
+// virus.cpp
 std::string get_name_virus_cpp(SEXP virus);
 extern "C" SEXP _epiworldR_get_name_virus_cpp(SEXP virus) {
   BEGIN_CPP11
@@ -690,6 +711,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},
+    {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
+    {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},
+    {"_epiworldR_set_incubation_ptr_cpp",               (DL_FUNC) &_epiworldR_set_incubation_ptr_cpp,                3},
     {"_epiworldR_set_name_cpp",                         (DL_FUNC) &_epiworldR_set_name_cpp,                          2},
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},

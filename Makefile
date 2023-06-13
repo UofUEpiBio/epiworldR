@@ -24,7 +24,7 @@ clean:
 	Rscript --vanilla -e 'devtools::clean_dll()'
 
 docs:
-	Rscript --vanilla -e 'roxygen2::roxygenize()'
+	Rscript --vanilla -e 'devtools::document()'
 
 .PHONY: build update check clean docs
 

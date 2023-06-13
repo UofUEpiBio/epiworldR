@@ -19,6 +19,9 @@
 \alias{set_prob_death}
 \alias{set_prob_death_ptr}
 \alias{set_prob_death_fun}
+\alias{set_incubation}
+\alias{set_incubation_ptr}
+\alias{set_incubation_fun}
 \title{Virus design}
 \usage{
 virus(
@@ -60,6 +63,12 @@ set_prob_death(virus, prob)
 set_prob_death_ptr(virus, model, param)
 
 set_prob_death_fun(virus, model, vfun)
+
+set_incubation(virus, incubation)
+
+set_incubation_ptr(virus, model, param)
+
+set_incubation_fun(virus, model, vfun)
 }
 \arguments{
 \item{name}{of the virus}
@@ -146,6 +155,11 @@ assigns a probability to recovery for the specified virus of class
 \item The \code{set_prob_death} function does not return a value, but instead
 assigns a probability to death for the specified virus of class
 \link{epiworld_virus}.
+}
+
+\itemize{
+\item The \code{set_incubation} function does not return a value, but instead
+assigns an incubation period to the specified virus of class \link{epiworld_virus}.
 }
 }
 \description{

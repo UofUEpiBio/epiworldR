@@ -212,6 +212,10 @@ public:
 #ifndef EPI_DEFAULT_VIRUS_PROB_DEATH
     #define EPI_DEFAULT_VIRUS_PROB_DEATH        0.0
 #endif
+
+#ifndef EPI_DEFAULT_INCUBATION_DAYS
+    #define EPI_DEFAULT_INCUBATION_DAYS         7.0
+#endif
 ///@}
 
 #ifdef EPI_DEBUG
@@ -2984,8 +2988,6 @@ inline void DataBase<TSeq>::reset()
     transmission_target.clear();
     transmission_source_exposure_date.clear();
 
-    
-
     return;
 
 }
@@ -3743,7 +3745,7 @@ inline void DataBase<TSeq>::write_data(
         }
 
         file_variant <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread "<< "date " << "id " << "state " << "n\n";
             #else
             "date " << "id " << "state " << "n\n";
@@ -3751,7 +3753,7 @@ inline void DataBase<TSeq>::write_data(
 
         for (epiworld_fast_uint i = 0; i < hist_variant_id.size(); ++i)
             file_variant <<
-                #ifdef _OPENMP
+                #ifdef EPI_DEBUG
                 EPI_GET_THREAD_ID() << " " <<
                 #endif
                 hist_variant_date[i] << " " <<
@@ -3774,7 +3776,7 @@ inline void DataBase<TSeq>::write_data(
         }
 
         file_tool_info <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread " << 
             #endif
             "id " << "tool_name " << "tool_sequence " << "date_recorded\n";
@@ -3783,7 +3785,7 @@ inline void DataBase<TSeq>::write_data(
         {
             int id = t.second;
             file_tool_info <<
-                #ifdef _OPENMP
+                #ifdef EPI_DEBUG
                 EPI_GET_THREAD_ID() << " " <<
                 #endif
                 id << " \"" <<
@@ -3808,14 +3810,14 @@ inline void DataBase<TSeq>::write_data(
         }
         
         file_tool_hist <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread " << 
             #endif
             "date " << "id " << "state " << "n\n";
 
         for (epiworld_fast_uint i = 0; i < hist_tool_id.size(); ++i)
             file_tool_hist <<
-                #ifdef _OPENMP
+                #ifdef EPI_DEBUG
                 EPI_GET_THREAD_ID() << " " <<
                 #endif
                 hist_tool_date[i] << " " <<
@@ -3838,14 +3840,14 @@ inline void DataBase<TSeq>::write_data(
         }
 
         file_total <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread " << 
             #endif
             "date " << "nvariants " << "state " << "counts\n";
 
         for (epiworld_fast_uint i = 0; i < hist_total_date.size(); ++i)
             file_total <<
-                #ifdef _OPENMP
+                #ifdef EPI_DEBUG
                 EPI_GET_THREAD_ID() << " " <<
                 #endif
                 hist_total_date[i] << " " <<
@@ -3868,14 +3870,14 @@ inline void DataBase<TSeq>::write_data(
         }
 
         file_transmission <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread " << 
             #endif
             "date " << "variant " << "source_exposure_date " << "source " << "target\n";
 
         for (epiworld_fast_uint i = 0; i < transmission_target.size(); ++i)
             file_transmission <<
-                #ifdef _OPENMP
+                #ifdef EPI_DEBUG
                 EPI_GET_THREAD_ID() << " " <<
                 #endif
                 transmission_date[i] << " " <<
@@ -3900,7 +3902,7 @@ inline void DataBase<TSeq>::write_data(
         }
 
         file_transition <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             "thread " << 
             #endif
             "date " << "from " << "to " << "counts\n";
@@ -3913,7 +3915,7 @@ inline void DataBase<TSeq>::write_data(
             for (int from = 0u; from < ns; ++from)
                 for (int to = 0u; to < ns; ++to)
                     file_transition <<
-                        #ifdef _OPENMP
+                        #ifdef EPI_DEBUG
                         EPI_GET_THREAD_ID() << " " <<
                         #endif
                         i << " " <<
@@ -4056,14 +4058,14 @@ inline void DataBase<TSeq>::reproductive_number(
     }
 
     fn_file << 
-        #ifdef _OPENMP
+        #ifdef EPI_DEBUG
         "thread " <<
         #endif
         "variant source source_exposure_date rt\n";
 
     for (auto & m : map)
         fn_file <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             EPI_GET_THREAD_ID() << " " <<
             #endif
             m.first[0u] << " " <<
@@ -4685,7 +4687,7 @@ inline void DataBase<TSeq>::generation_time(
 
 
     fn_file << 
-        #ifdef _OPENMP
+        #ifdef EPI_DEBUG
         "thread " <<
         #endif
         "variant source source_exposure_date gentime\n";
@@ -4693,7 +4695,7 @@ inline void DataBase<TSeq>::generation_time(
     size_t n = agent_id.size();
     for (size_t i = 0u; i < n; ++i)
         fn_file <<
-            #ifdef _OPENMP
+            #ifdef EPI_DEBUG
             EPI_GET_THREAD_ID() << " " <<
             #endif
             virus_id[i] << " " <<
@@ -9994,6 +9996,7 @@ private:
     VirusFun<TSeq>        probability_of_infecting_fun = nullptr;
     VirusFun<TSeq>        probability_of_recovery_fun  = nullptr;
     VirusFun<TSeq>        probability_of_death_fun     = nullptr;
+    VirusFun<TSeq>        incubation_fun               = nullptr;
 
     // Setup parameters
     std::vector< epiworld_double * > params = {};
@@ -10037,6 +10040,7 @@ public:
     epiworld_double get_prob_infecting(Model<TSeq> * model);
     epiworld_double get_prob_recovery(Model<TSeq> * model);
     epiworld_double get_prob_death(Model<TSeq> * model);
+    epiworld_double get_incubation(Model<TSeq> * model);
     
     void post_recovery(Model<TSeq> * model);
     void set_post_recovery(PostRecoveryFun<TSeq> fun);
@@ -10046,14 +10050,17 @@ public:
     void set_prob_infecting_fun(VirusFun<TSeq> fun);
     void set_prob_recovery_fun(VirusFun<TSeq> fun);
     void set_prob_death_fun(VirusFun<TSeq> fun);
+    void set_incubation_fun(VirusFun<TSeq> fun);
     
     void set_prob_infecting(const epiworld_double * prob);
     void set_prob_recovery(const epiworld_double * prob);
     void set_prob_death(const epiworld_double * prob);
+    void set_incubation(const epiworld_double * prob);
     
     void set_prob_infecting(epiworld_double prob);
     void set_prob_recovery(epiworld_double prob);
     void set_prob_death(epiworld_double prob);
+    void set_incubation(epiworld_double prob);
     ///@}
 
 
@@ -10210,12 +10217,6 @@ inline Virus<TSeq>::Virus(std::string name) {
     set_name(name);
 }
 
-// template<typename TSeq>
-// inline Virus<TSeq>::Virus(TSeq sequence, std::string name) {
-//     baseline_sequence = std::make_shared<TSeq>(sequence);
-//     set_name(name);
-// }
-
 template<typename TSeq>
 inline void Virus<TSeq>::mutate(
     Model<TSeq> * model
@@ -10357,6 +10358,19 @@ inline epiworld_double Virus<TSeq>::get_prob_death(
 }
 
 template<typename TSeq>
+inline epiworld_double Virus<TSeq>::get_incubation(
+    Model<TSeq> * model
+)
+{
+
+    if (incubation_fun)
+        return incubation_fun(agent, *this, model);
+        
+    return EPI_DEFAULT_INCUBATION_DAYS;
+
+}
+
+template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting_fun(VirusFun<TSeq> fun)
 {
     probability_of_infecting_fun = fun;
@@ -10372,6 +10386,12 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_prob_death_fun(VirusFun<TSeq> fun)
 {
     probability_of_death_fun = fun;
+}
+
+template<typename TSeq>
+inline void Virus<TSeq>::set_incubation_fun(VirusFun<TSeq> fun)
+{
+    incubation_fun = fun;
 }
 
 template<typename TSeq>
@@ -10411,6 +10431,18 @@ inline void Virus<TSeq>::set_prob_death(const epiworld_double * prob)
 }
 
 template<typename TSeq>
+inline void Virus<TSeq>::set_incubation(const epiworld_double * prob)
+{
+    VirusFun<TSeq> tmpfun = 
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
+        {
+            return *prob;
+        };
+    
+    incubation_fun = tmpfun;
+}
+
+template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting(epiworld_double prob)
 {
     VirusFun<TSeq> tmpfun = 
@@ -10444,6 +10476,18 @@ inline void Virus<TSeq>::set_prob_death(epiworld_double prob)
         };
     
     probability_of_death_fun = tmpfun;
+}
+
+template<typename TSeq>
+inline void Virus<TSeq>::set_incubation(epiworld_double prob)
+{
+    VirusFun<TSeq> tmpfun = 
+        [prob](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> *)
+        {
+            return prob;
+        };
+    
+    incubation_fun = tmpfun;
 }
 
 template<typename TSeq>
@@ -15271,8 +15315,12 @@ public:
         epiworld::Agent<TSeq> * p,
         epiworld::Model<TSeq> * m
     ) -> void {
+
+        // Getting the virus
+        auto v = p->get_virus(0);
+
         // Does the agent become infected?
-        if (m->runif() < 1.0/(m->par("Incubation days")))
+        if (m->runif() < 1.0/(v->get_incubation(m)))
             p->change_state(m, ModelSEIR<TSeq>::INFECTED);
 
         return;    
@@ -15320,6 +15368,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
     virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_incubation(&model("Incubation days"));
     
     // Adding the tool and the virus
     model.add_virus(virus, prevalence);
@@ -16333,8 +16382,11 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
             if (status == ModelSEIRCONN<TSeq>::EXPOSED)
             {
 
+                // Getting the virus
+                auto & v = p->get_virus(0u);
+
                 // Does the agent become infected?
-                if (m->runif() < 1.0/(m->par("Avg. Incubation days")))
+                if (m->runif() < 1.0/(v->get_incubation(m)))
                 {
 
                     p->change_state(m, ModelSEIRCONN<TSeq>::INFECTED);
@@ -16415,6 +16467,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
     virus.set_prob_infecting(&model("Prob. Transmission"));
     virus.set_prob_recovery(&model("Prob. Recovery"));
+    virus.set_incubation(&model("Avg. Incubation days"));
 
     model.add_virus(virus, prevalence);
 

@@ -225,6 +225,43 @@ SEXP set_prob_death_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
  
 }
 
+// Incubation period ----------------------------------------------------------
+[[cpp11::register]]
+SEXP set_incubation_cpp(SEXP virus, double prob) {
+ 
+ WrapVirus(vptr)(virus);
+ vptr->set_incubation(prob);
+ return virus;
+ 
+}
+
+[[cpp11::register]]
+SEXP set_incubation_ptr_cpp(SEXP virus, SEXP model, std::string param) {
+ 
+ WrapVirus(vptr)(virus);
+ external_pointer<Model<>> mptr(model);
+ 
+ vptr->set_incubation(
+     &(mptr->operator()(param))
+ );
+ 
+ return virus;
+ 
+}
+
+[[cpp11::register]]
+SEXP set_incubation_fun_cpp(SEXP virus, SEXP model, SEXP vfun) {
+ 
+ WrapVirus(vptr)(virus);
+ external_pointer<Model<>> mptr(model);
+ external_pointer<VirusFun<>> vfunptr(vfun);
+ 
+ vptr->set_incubation_fun(*vfunptr);
+ 
+ return virus;
+ 
+}
+
 [[cpp11::register]]
 std::string get_name_virus_cpp(SEXP virus) {
   return external_pointer<Virus<>>(virus)->get_name();

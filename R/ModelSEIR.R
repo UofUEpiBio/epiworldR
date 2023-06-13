@@ -34,7 +34,11 @@
 #' plot(model_seir, main = "SEIR Model")
 #' @seealso epiworld-methods
 ModelSEIR <- function(
-    name, prevalence, transmission_rate, incubation_days, recovery_rate
+    name,
+    prevalence,
+    transmission_rate,
+    incubation_days,
+    recovery_rate
 ) {
   
   structure(

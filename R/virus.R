@@ -364,7 +364,7 @@ print.epiworld_virus_fun <- function(x, ...) {
 set_prob_infecting <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_infecting_cpp(virus, prob)
+  invisible(set_prob_infecting_cpp(virus, prob))
   
 }
 
@@ -406,7 +406,7 @@ set_prob_infecting_fun <- function(virus, model, vfun) {
 set_prob_recovery <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_recovery_cpp(virus, prob)
+  invisible(set_prob_recovery_cpp(virus, prob))
   
 }
 
@@ -416,7 +416,7 @@ set_prob_recovery_ptr <- function(virus, model, param) {
   
   stopifnot_virus(virus)
   stopifnot_model(model)
-  set_prob_recovery_ptr_cpp(virus, model, param)
+  invisible(set_prob_recovery_ptr_cpp(virus, model, param))
   
 }
 
@@ -427,7 +427,8 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
-  set_prob_recovery_fun_cpp(virus, model, vfun)
+  invisible(set_prob_recovery_fun_cpp(virus, model, vfun))
+
 }
 
 #' @export
@@ -439,7 +440,7 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
 set_prob_death <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_death_cpp(virus, prob)
+  invisible(set_prob_death_cpp(virus, prob))
   
 }
 
@@ -449,7 +450,7 @@ set_prob_death_ptr <- function(virus, model, param) {
   
   stopifnot_virus(virus)
   stopifnot_model(model)
-  set_prob_death_ptr_cpp(virus, model, param)
+  invisible(set_prob_death_ptr_cpp(virus, model, param))
   
 }
 
@@ -460,8 +461,39 @@ set_prob_death_fun <- function(virus, model, vfun) {
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
-  set_prob_death_fun_cpp(virus, model, vfun)
+  invisible(set_prob_death_fun_cpp(virus, model, vfun))
   
 }
 
+#' @export 
+#' @return 
+#' - The `set_incubation` function does not return a value, but instead
+#' assigns an incubation period to the specified virus of class [epiworld_virus].
+#' @rdname virus
+set_incubation <- function(virus, incubation) {
+  
+  stopifnot_virus(virus)
+  invisible(set_incubation_cpp(virus, incubation))
+  
+}
 
+#' @export
+#' @rdname virus
+set_incubation_ptr <- function(virus, model, param) {
+  
+  stopifnot_virus(virus)
+  stopifnot_model(model)
+  invisible(set_incubation_ptr_cpp(virus, model, param))
+  
+}
+
+#' @export
+#' @rdname virus
+set_incubation_fun <- function(virus, model, vfun) {
+  
+  stopifnot_virus(virus)
+  stopifnot_model(model)
+  stopifnot_vfun(vfun)
+  invisible(set_incubation_fun_cpp(virus, model, vfun))
+  
+}

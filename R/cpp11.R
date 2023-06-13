@@ -348,6 +348,18 @@ set_prob_death_fun_cpp <- function(virus, model, vfun) {
   .Call(`_epiworldR_set_prob_death_fun_cpp`, virus, model, vfun)
 }
 
+set_incubation_cpp <- function(virus, prob) {
+  .Call(`_epiworldR_set_incubation_cpp`, virus, prob)
+}
+
+set_incubation_ptr_cpp <- function(virus, model, param) {
+  .Call(`_epiworldR_set_incubation_ptr_cpp`, virus, model, param)
+}
+
+set_incubation_fun_cpp <- function(virus, model, vfun) {
+  .Call(`_epiworldR_set_incubation_fun_cpp`, virus, model, vfun)
+}
+
 get_name_virus_cpp <- function(virus) {
   .Call(`_epiworldR_get_name_virus_cpp`, virus)
 }
