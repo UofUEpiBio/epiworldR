@@ -76,7 +76,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2023-06-13</h4>
+            <h4 data-toc-skip class="date">2023-06-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -177,7 +177,7 @@ model_sir.</p>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of variants  : 1</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
-<span><span class="co">#&gt; Last run speed      : 4.21 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run speed      : 3.65 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -275,13 +275,13 @@ number</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   variant source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1       0  58843                   49  0</span></span>
-<span><span class="co">#&gt; 2       0  37567                   46  1</span></span>
-<span><span class="co">#&gt; 3       0   4457                   45  0</span></span>
-<span><span class="co">#&gt; 4       0  34389                   45  1</span></span>
-<span><span class="co">#&gt; 5       0  62631                   44  0</span></span>
-<span><span class="co">#&gt; 6       0  77784                   43  0</span></span></code></pre></div>
+<span><span class="co">#&gt;   virus_id  variant source source_exposure_date rt</span></span>
+<span><span class="co">#&gt; 1        0 COVID-19  58843                   49  0</span></span>
+<span><span class="co">#&gt; 2        0 COVID-19  37567                   46  1</span></span>
+<span><span class="co">#&gt; 3        0 COVID-19   4457                   45  0</span></span>
+<span><span class="co">#&gt; 4        0 COVID-19  34389                   45  1</span></span>
+<span><span class="co">#&gt; 5        0 COVID-19  62631                   44  0</span></span>
+<span><span class="co">#&gt; 6        0 COVID-19  77784                   43  0</span></span></code></pre></div>
 <p>epiworldR has a method to plot the reproductive number automatically.
 The function takes the average of values in the above table for each
 date and repeats until all data have been accounted for. For example, on
@@ -341,8 +341,8 @@ sections.</p>
 <span><span class="co">#&gt; Number of variants  : 2</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
 <span><span class="co">#&gt; Total elapsed t     : 2.00s (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 4.06 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 4.14 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run speed      : 3.51 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 3.58 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>

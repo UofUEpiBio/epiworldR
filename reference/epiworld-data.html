@@ -180,9 +180,9 @@ entries, where the first entry is the initial state.</p></li>
 </ul><ul><li><p>The <code>plot</code> function returns a plot which originates from the
 <code>epiworld_hist_transition</code> object.</p></li>
 </ul><ul><li><p>The function <code>get_transmissions</code> returns a <code>data.frame</code> with the following
-columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>variant</code>, and <code>source_exposure_date</code>.</p></li>
+columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>virus_id</code>, <code>variant</code>, and <code>source_exposure_date</code>.</p></li>
 </ul><p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
-the following columns: "agent", "virus_id", "date", and "gentime".</p>
+the following columns: "agent", "virus_id", "virus", "date", and "gentime".</p>
 
 
 <ul><li><p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
@@ -242,7 +242,7 @@ plotting.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving date, state, and counts dataframe including any added tools </span></span></span>
 <span class="r-in"><span><span class="fu">get_hist_tool</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] date   id     state  counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] date    tool_id tool    state   counts </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving overall date, state, and counts dataframe </span></span></span>
@@ -257,13 +257,13 @@ plotting.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving date, state, and counts dataframe by variant</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_hist_variant</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   date id       state counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0  0 Susceptible      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0  0     Exposed   1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0  0    Infected      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0  0   Recovered      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1  0 Susceptible      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1  0     Exposed    859</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   date id variant       state counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0  0 Disease Susceptible      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0  0 Disease     Exposed   1000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0  0 Disease    Infected      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0  0 Disease   Recovered      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    1  0 Disease Susceptible      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    1  0 Disease     Exposed    859</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving (and plotting) the reproductive number</span></span></span>
 <span class="r-in"><span><span class="va">rp</span> <span class="op">&lt;-</span> <span class="fu">get_reproductive_number</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
