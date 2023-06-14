@@ -46,6 +46,9 @@
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -118,7 +121,7 @@ will take you through the basic features of epiworldR.</p>
 <p>Printing the model shows us some information. First, the name of the
 model, population size, number of entities (think of these as public
 spaces in which agents can make social contact with one another), the
-duration in days, number of variants, amount of time the last replicate
+duration in days, number of viruses, amount of time the last replicate
 took to run (last run elapsed t), and rewiring status (on or off). The
 next piece of information you will see is a list of the viruses used in
 the model. In this case, COVID-19 was the only disease used. Note that
@@ -138,7 +141,7 @@ which originate from the parameters specified in the model.</p>
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 0 (of 0)</span></span>
-<span><span class="co">#&gt; Number of variants  : 1</span></span>
+<span><span class="co">#&gt; Number of viruses  : 1</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : -</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -175,9 +178,9 @@ model_sir.</p>
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
-<span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 981.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 5.09 million agents x day / second</span></span>
+<span><span class="co">#&gt; Number of viruses  : 1</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 892.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 5.60 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -238,9 +241,9 @@ functions that can be called using the epiworld model object.</p>
 <span><span class="co">#&gt;  [3] add_virus_n                add_virus                 </span></span>
 <span><span class="co">#&gt;  [5] agents_from_edgelist       agents_smallworld         </span></span>
 <span><span class="co">#&gt;  [7] get_hist_tool              get_hist_total            </span></span>
-<span><span class="co">#&gt;  [9] get_hist_transition_matrix get_hist_variant          </span></span>
+<span><span class="co">#&gt;  [9] get_hist_transition_matrix get_hist_virus            </span></span>
 <span><span class="co">#&gt; [11] get_n_replicates           get_n_tools               </span></span>
-<span><span class="co">#&gt; [13] get_n_variants             get_name                  </span></span>
+<span><span class="co">#&gt; [13] get_n_viruses              get_name                  </span></span>
 <span><span class="co">#&gt; [15] get_ndays                  get_param                 </span></span>
 <span><span class="co">#&gt; [17] get_reproductive_number    get_states                </span></span>
 <span><span class="co">#&gt; [19] get_transition_probability get_transmissions         </span></span>
@@ -275,7 +278,7 @@ number</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   virus_id  variant source source_exposure_date rt</span></span>
+<span><span class="co">#&gt;   virus_id    virus source source_exposure_date rt</span></span>
 <span><span class="co">#&gt; 1        0 COVID-19  58843                   49  0</span></span>
 <span><span class="co">#&gt; 2        0 COVID-19  37567                   46  1</span></span>
 <span><span class="co">#&gt; 3        0 COVID-19   4457                   45  0</span></span>
@@ -300,11 +303,11 @@ visualizing the data:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></code></pre></div>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-5-1.png" width="80%" style="display: block; margin: auto;"></p>
 <pre><code>
-## Adding more viruses/variants
+## Adding more viruses/viruses
 
-epiworldR supports multi-variant models. The below code gives instructions on 
+epiworldR supports multi-virus models. The below code gives instructions on 
 how to implement this. Using the "virus" function, give a name to the new 
-virus/variant with its corresponding probability of infecting any given agent. 
+virus/virus with its corresponding probability of infecting any given agent. 
 In this example, `prob_infecting` is set to 1.0, making it highly contagious. 
 To officially add this new virus to the model, use the `add_virus` 
 function by calling the original epiworldR model object, the new virus, and 
@@ -338,11 +341,11 @@ sections.</p>
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
-<span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
-<span><span class="co">#&gt; Total elapsed t     : 2.00s (2 runs)</span></span>
-<span><span class="co">#&gt; Last run speed      : 4.78 million agents x day / second</span></span>
-<span><span class="co">#&gt; Average run speed   : 4.93 million agents x day / second</span></span>
+<span><span class="co">#&gt; Number of viruses  : 2</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 0.00s</span></span>
+<span><span class="co">#&gt; Total elapsed t     : 1.00s (2 runs)</span></span>
+<span><span class="co">#&gt; Last run speed      : 5.42 million agents x day / second</span></span>
+<span><span class="co">#&gt; Average run speed   : 5.51 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -371,7 +374,7 @@ sections.</p>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <p>Plotting the previous model (including the flu) yields the following.
 Notice the presence of two reproductive numbers plotted over time.
-Variant 0 refers to COVID-19, and variant 1 refers to the flu.</p>
+Variant 0 refers to COVID-19, and virus 1 refers to the flu.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">repnum2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
@@ -385,8 +388,8 @@ Variant 0 refers to COVID-19, and variant 1 refers to the flu.</p>
 <div class="section level3">
 <h3 id="tools">Tools<a class="anchor" aria-label="anchor" href="#tools"></a>
 </h3>
-<p>Now, the implementation of tools to combat any viruses and variants
-in the model will be demonstrated. First, for the sake of simplicity,
+<p>Now, the implementation of tools to combat any viruses and viruses in
+the model will be demonstrated. First, for the sake of simplicity,
 remove the flu virus from the SIR model object (keep in mind the index
 for the flu virus in the model object is 1). Next, provide parameters
 for the new tool using the “tool” function. These parameters include the

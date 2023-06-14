@@ -33,6 +33,9 @@ the process."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -125,8 +128,8 @@ data specified by <code>make_saver</code>.</p></li>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Currently, the following elements can be saved:</p><ul><li><p><code>total_hist</code> History of the model (total numbers per time).</p></li>
-<li><p><code>variant_info</code> Information about <code>variants</code>.</p></li>
-<li><p><code>variant_hist</code> Changes in <code>variants</code>.</p></li>
+<li><p><code>virus_info</code> Information about <code>viruses</code>.</p></li>
+<li><p><code>virus_hist</code> Changes in <code>viruses</code>.</p></li>
 <li><p><code>tool_info</code> Information about <code>tools</code>.</p></li>
 <li><p><code>tool_hist</code> Changes in <code>tools</code>.</p></li>
 <li><p><code>transmission</code> Transmission events.</p></li>
@@ -160,21 +163,21 @@ data specified by <code>make_saver</code>.</p></li>
 <span class="r-in"><span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num date nvariants       state counts</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1    0         1 Susceptible    990</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    0         1    Infected     10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1    0         1   Recovered      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1         1 Susceptible    974</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1         1    Infected     26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1         1   Recovered      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num date nviruses       state counts</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1    0        1 Susceptible    990</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    0        1    Infected     10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1    0        1   Recovered      0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1        1 Susceptible    974</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1        1    Infected     26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1        1   Recovered      0</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num variant source source_exposure_date rt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1       0    175                   10  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1       0    672                   10  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1       0    718                   10  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1       0    210                    9  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1       0    448                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1       0    592                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num virus_id    virus source source_exposure_date rt</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1        0 COVID-19    175                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1        0 COVID-19    672                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1        0 COVID-19    718                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1        0 COVID-19    210                    9  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1        0 COVID-19    448                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    592                    8  0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
 <span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span></span>

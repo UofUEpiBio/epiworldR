@@ -46,6 +46,9 @@
     <a class="dropdown-item" href="articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="news/index.html">Changelog</a>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -70,7 +73,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpiBio/epiworld" target="_blank" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" target="_blank" class="external-link">agent-based models</a>. Some of the main features include:</p>
+<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpiBio/epiworld" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" class="external-link">agent-based models</a>. Some of the main features include:</p>
 <ul>
 <li>Fast simulation with an average of 30 million agents/day per second.</li>
 <li>One model can include multiple diseases.</li>
@@ -94,7 +97,7 @@
 <div class="section level1">
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
-<p>This R package includes several popular epidemiological models including <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" target="_blank" class="external-link">SIS</a>, <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" target="_blank" class="external-link">SIR</a>, and <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" target="_blank" class="external-link">SEIR</a> using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
+<p>This R package includes several popular epidemiological models including <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" class="external-link">SIS</a>, <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" class="external-link">SIR</a>, and <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" class="external-link">SEIR</a> using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
 <div class="section level2">
 <h2 id="sir-model-using-a-random-graph">SIR model using a random graph<a class="anchor" aria-label="anchor" href="#sir-model-using-a-random-graph"></a>
 </h2>
@@ -128,9 +131,9 @@
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
-<span><span class="co">#&gt; Number of variants  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 192.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 26.01 million agents x day / second</span></span>
+<span><span class="co">#&gt; Number of viruses  : 1</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 189.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 26.41 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -191,9 +194,9 @@
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
-<span><span class="co">#&gt; Number of variants  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 51.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 19.45 million agents x day / second</span></span>
+<span><span class="co">#&gt; Number of viruses  : 2</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 104.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 9.58 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -233,26 +236,26 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-2.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    variant date      avg   n       sd lb    ub</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 COVID-19    0 1.628099 242 1.704922  1  6.00</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 COVID-19    2 1.018519  54 1.687811  0  5.00</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 COVID-19    3 1.657143  35 2.248435  0  7.00</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 COVID-19    4 1.157895  57 1.740171  0  5.60</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 COVID-19    5 1.392157  51 2.050155  0  7.75</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 COVID-19    6 1.683333  60 2.527756  0 10.05</span></span>
+<div class="sourceCode" id="cb7"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg  n       sd lb    ub</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_incidence</span>(model_seirconn)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-3.png" width="100%"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/epiworld-data.html">plot_generation_time</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-4.png" width="100%"></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   date  variant      avg  n       sd ci_lower ci_upper</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2 COVID-19 5.714286 21 4.681270        2    17.00</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3 COVID-19 7.444444 18 4.501271        2    15.45</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    4 COVID-19 7.192308 26 5.578668        2    20.75</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    5 COVID-19 7.448276 29 4.272723        2    15.60</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    6 COVID-19 7.575000 40 7.249713        2    30.20</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    7 COVID-19 6.457143 35 4.500607        2    18.00</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
@@ -396,21 +399,21 @@
 <span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sim_num date nvariants       state counts</span></span>
-<span><span class="co">#&gt; 1       1    0         1 Susceptible    990</span></span>
-<span><span class="co">#&gt; 2       1    0         1    Infected     10</span></span>
-<span><span class="co">#&gt; 3       1    0         1   Recovered      0</span></span>
-<span><span class="co">#&gt; 4       1    1         1 Susceptible    974</span></span>
-<span><span class="co">#&gt; 5       1    1         1    Infected     25</span></span>
-<span><span class="co">#&gt; 6       1    1         1   Recovered      1</span></span>
+<span><span class="co">#&gt;   sim_num date nviruses       state counts</span></span>
+<span><span class="co">#&gt; 1       1    0        1 Susceptible    990</span></span>
+<span><span class="co">#&gt; 2       1    0        1    Infected     10</span></span>
+<span><span class="co">#&gt; 3       1    0        1   Recovered      0</span></span>
+<span><span class="co">#&gt; 4       1    1        1 Susceptible    974</span></span>
+<span><span class="co">#&gt; 5       1    1        1    Infected     25</span></span>
+<span><span class="co">#&gt; 6       1    1        1   Recovered      1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   sim_num variant source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1       1       0    767                   11  0</span></span>
-<span><span class="co">#&gt; 2       1       0    835                   10  0</span></span>
-<span><span class="co">#&gt; 3       1       0    466                    9  0</span></span>
-<span><span class="co">#&gt; 4       1       0    612                    9  0</span></span>
-<span><span class="co">#&gt; 5       1       0    793                    9  0</span></span>
-<span><span class="co">#&gt; 6       1       0     20                    8  0</span></span>
+<span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
+<span><span class="co">#&gt; 1       1        0 COVID-19    527                   10  0</span></span>
+<span><span class="co">#&gt; 2       1        0 COVID-19    835                   10  0</span></span>
+<span><span class="co">#&gt; 3       1        0 COVID-19    189                    9  0</span></span>
+<span><span class="co">#&gt; 4       1        0 COVID-19    192                    9  0</span></span>
+<span><span class="co">#&gt; 5       1        0 COVID-19    612                    9  0</span></span>
+<span><span class="co">#&gt; 6       1        0 COVID-19    977                    9  0</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
@@ -419,7 +422,7 @@
 <div class="section level1">
 <h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
 </h1>
-<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" target="_blank" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" target="_blank" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" target="_blank" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" target="_blank" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" target="_blank" class="external-link"><code>RNetLogo</code></a>.</p>
+<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" class="external-link"><code>RNetLogo</code></a>.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">

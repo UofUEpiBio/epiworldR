@@ -33,6 +33,9 @@ distancing."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -106,7 +109,10 @@ distancing.</p>
 <span></span>
 <span><span class="fu">set_death_reduction_ptr</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_death_reduction_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">set_death_reduction_fun</span><span class="op">(</span><span class="va">tool</span>, <span class="va">model</span>, <span class="va">tfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for epiworld_agents_tools</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, max_print <span class="op">=</span> <span class="fl">10</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -173,6 +179,18 @@ will be added to the tool (see details).</p></dd>
 <dt>tfun</dt>
 <dd><p>An object of class <code>epiworld_tool_fun</code>.</p></dd>
 
+
+<dt>x</dt>
+<dd><p>An object of class <code>epiworld_agents_tools</code>.</p></dd>
+
+
+<dt>max_print</dt>
+<dd><p>Numeric scalar. Maximum number of tools to print.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Currently ignored.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -181,11 +199,9 @@ will be added to the tool (see details).</p></dd>
 <ul><li><p>The <code>tool</code> function creates a tool of class epiworld_tool.</p></li>
 </ul><ul><li><p>The <code>set_name_tool</code> function assigns a name to the tool of class
 epiworld_tool and returns the tool.</p></li>
-</ul><p>The <code>get_name_tool</code> function returns the name of the tool of class
-epiworld_tool.</p>
-
-
-<ul><li><p>The <code>add_tool_n</code> function adds the specified tool to the model of class
+</ul><ul><li><p>The <code>get_name_tool</code> function returns the name of the tool of class
+epiworld_tool.</p></li>
+</ul><ul><li><p>The <code>add_tool_n</code> function adds the specified tool to the model of class
 <a href="epiworld-methods.html">epiworld_model</a> with specified count n.</p></li>
 </ul><ul><li><p>The <code>rm_tool</code> function removes the specified tool from a model.</p></li>
 </ul><ul><li><p>The <code>set_susceptibility_reduction</code> function assigns a probability reduction
@@ -266,11 +282,11 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 424.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 559.00ms (2 runs)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 2.35 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 3.57 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses  : 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 411.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total elapsed t     : 544.00ms (2 runs)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 2.43 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Average run speed   : 3.67 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>

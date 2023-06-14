@@ -33,6 +33,9 @@ viruses."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -107,7 +110,10 @@ viruses.</p>
 <span></span>
 <span><span class="fu">set_incubation_ptr</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">param</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_incubation_fun</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">vfun</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">set_incubation_fun</span><span class="op">(</span><span class="va">virus</span>, <span class="va">model</span>, <span class="va">vfun</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for epiworld_agents_viruses</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, max_print <span class="op">=</span> <span class="fl">10</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -182,6 +188,18 @@ will be added to the virus (see details).</p></dd>
 
 <dt>vfun</dt>
 <dd><p>An object of class <code>epiworld_virus_fun</code>.</p></dd>
+
+
+<dt>x</dt>
+<dd><p>An object of class <code>epiworld_agents_viruses</code>.</p></dd>
+
+
+<dt>max_print</dt>
+<dd><p>Numeric scalar. Maximum number of viruses to print.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>Currently ignored.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -263,9 +281,9 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 219.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.55 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses  : 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 212.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.72 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>

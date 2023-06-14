@@ -37,6 +37,9 @@ The get_network function returns the edgelist of the network."><!-- mathjax --><
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -54,7 +57,7 @@ The get_network function returns the edgelist of the network."><!-- mathjax --><
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Load agents to a model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/agents.R" class="external-link"><code>R/agents.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/agents.R" class="external-link"><code>R/agents.R</code></a>, <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/tool.R" class="external-link"><code>R/tool.R</code></a>, <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/virus.R" class="external-link"><code>R/virus.R</code></a></small>
       <div class="d-none name"><code>agents_smallworld.Rd</code></div>
     </div>
 
@@ -72,7 +75,13 @@ The <code>get_network</code> function returns the edgelist of the network.</p>
 <span></span>
 <span><span class="fu">agents_from_edgelist</span><span class="op">(</span><span class="va">model</span>, <span class="va">source</span>, <span class="va">target</span>, <span class="va">size</span>, <span class="va">directed</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_network</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">get_network</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_agents_states</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_agents_tools</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_agents_viruses</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -106,17 +115,19 @@ in the edgelist.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>The 'agents_smallworld' function returns a model with the agents
-loaded.</p>
-
-
-<p>The <code>agents_from_edgelist</code> function returns an empty model of class
-<code>epiworld_model</code>.</p>
-
-
-<p>The <code>get_network</code> function returns a data frame with two columns
-(<code>source</code> and <code>target</code>) describing the edgelist of the network.</p>
-    </div>
+<ul><li><p>The 'agents_smallworld' function returns a model with the agents
+loaded.</p></li>
+</ul><ul><li><p>The <code>agents_from_edgelist</code> function returns an empty model of class
+<code>epiworld_model</code>.</p></li>
+</ul><ul><li><p>The <code>get_network</code> function returns a data frame with two columns
+(<code>source</code> and <code>target</code>) describing the edgelist of the network.</p></li>
+</ul><ul><li><p><code>get_agents_states</code> returns an character vector with the states of the
+agents by the end of the simulation.</p></li>
+</ul><ul><li><p><code>get_agents_tools</code> returns a list of class <code>epiworld_agents_tools</code>
+with <code>epiworld_tools</code> (list of lists).</p></li>
+</ul><ul><li><p><code>get_agents_viruses</code> returns a list of class <code>epiworld_agents_viruses</code>
+with <code>epiworld_viruses</code> (list of lists).</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -146,9 +157,9 @@ loaded.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of variants  : 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses  : 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 2.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 41.79 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 42.46 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>

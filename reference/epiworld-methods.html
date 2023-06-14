@@ -35,6 +35,9 @@ and running the simulation."><!-- mathjax --><script src="https://cdnjs.cloudfla
     <a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a>
   </div>
 </li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -85,7 +88,7 @@ and running the simulation.</p>
 <span></span>
 <span><span class="fu">get_name</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_n_variants</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">get_n_viruses</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_n_tools</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
@@ -163,7 +166,7 @@ parameter value.</p></li>
 </ul><ul><li><p>The <code>set_name</code> function does not return a value but instead alters an object
 of <code>epiworld_model</code>.</p></li>
 </ul><ul><li><p><code>get_name</code> returns the name of the model.</p></li>
-</ul><ul><li><p><code>get_n_variants</code> returns the number of variants of the model.</p></li>
+</ul><ul><li><p><code>get_n_viruses</code> returns the number of viruses of the model.</p></li>
 </ul><ul><li><p><code>get_n_tools</code> returns the number of tools of the model.</p></li>
 </ul><ul><li><p><code>get_ndays</code> returns the number of days of the model.</p></li>
 </ul><ul><li><p><code>get_n_replicates</code> returns the number of replicates of the model.</p></li>
@@ -236,9 +239,9 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <span class="r-in"><span><span class="fu">get_name</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span> <span class="co"># Returns the set name of the model. </span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "My Epi-Model"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">get_n_variants</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span> <span class="co"># Returns the number of variants in the model. </span></span></span>
+<span class="r-in"><span><span class="fu">get_n_viruses</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span> <span class="co"># Returns the number of viruses in the model. </span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-in"><span>                              <span class="co"># In this case, there is only one variant:</span></span></span>
+<span class="r-in"><span>                              <span class="co"># In this case, there is only one virus:</span></span></span>
 <span class="r-in"><span>                              <span class="co"># "COVID-19". </span></span></span>
 <span class="r-in"><span>                              </span></span>
 <span class="r-in"><span><span class="fu">get_n_tools</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span> <span class="co"># Returns the number of tools in the model. In </span></span></span>
