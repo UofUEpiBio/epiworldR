@@ -29,7 +29,8 @@ virus(
   prob_infecting,
   recovery_rate = 0.5,
   prob_death = 0,
-  post_immunity = -1
+  post_immunity = -1,
+  incubation = 7
 )
 
 set_name_virus(virus, name)
@@ -80,6 +81,8 @@ set_incubation_fun(virus, model, vfun)
 \item{prob_death}{Numeric scalar. Probability of death.}
 
 \item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
+
+\item{incubation}{Numeric scalar. Incubation period (in days) of the virus.}
 
 \item{virus}{An object of class \code{epiworld_virus}}
 

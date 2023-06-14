@@ -10,6 +10,7 @@
 #' @param recovery_rate Numeric scalar. Probability of recovery.
 #' @param prob_death Numeric scalar. Probability of death.
 #' @param virus_pos Positive integer. Index of the virus's position in the model.
+#' @param incubation Numeric scalar. Incubation period (in days) of the virus.
 #' @details
 #' The [virus()] function can be used to initialize a virus. Virus features can
 #' then be modified using the functions `set_prob_*`.
@@ -62,7 +63,8 @@ virus <- function(
     prob_infecting,
     recovery_rate = 0.5,
     prob_death    = 0.0,
-    post_immunity = -1.0
+    post_immunity = -1.0,
+    incubation    = 7.0
     ) {
   
   structure(
@@ -71,7 +73,8 @@ virus <- function(
       prob_infecting,
       recovery_rate,
       prob_death,
-      post_immunity
+      post_immunity,
+      incubation
       ),
     class = "epiworld_virus"
   )

@@ -451,7 +451,7 @@ plot.epiworld_hist_transition <- function(
 #' @rdname epiworld-data
 #' @return
 #' - The function `get_transmissions` returns a `data.frame` with the following
-#' columns: `date`, `source`, `target`, `variant`, and `source_exposure_date`.
+#' columns: `date`, `source`, `target`, `virus_id`, `variant`, and `source_exposure_date`.
 get_transmissions <- function(x) UseMethod("get_transmissions")
 
 #' @export
@@ -475,7 +475,7 @@ get_transmissions.epiworld_model <- function(x) {
 #' @rdname epiworld-data
 #' @return
 #' The function `get_generation_time` returns a `data.frame` with
-#' the following columns: "agent", "virus_id", "date", and "gentime".
+#' the following columns: "agent", "virus_id", "virus", "date", and "gentime".
 get_generation_time <- function(x) {
     
     stopifnot_model(x)
@@ -511,7 +511,7 @@ plot.epiworld_generation_time <- function(
   gt <- stats::aggregate(
     x[["gentime"]], by = list(
       date    = x[["date"]],
-      variant = x[["virus_id"]]
+      variant = x[["virus"]]
       ),
     FUN = function(x) {
       ci <- stats::quantile(

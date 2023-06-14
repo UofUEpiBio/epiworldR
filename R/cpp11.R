@@ -284,8 +284,8 @@ print_tool_cpp <- function(t) {
   .Call(`_epiworldR_print_tool_cpp`, t)
 }
 
-virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity) {
-  .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity)
+virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation) {
+  .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation)
 }
 
 virus_set_state_cpp <- function(v, init, end, removed) {

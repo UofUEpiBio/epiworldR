@@ -4,7 +4,7 @@ author:
   - Derek Meyer
   - George Vega Yon
 date: "`r Sys.Date()`"
-output: rmarkdown::github_document
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Internals of epiworldR}
   %\VignetteEngine{knitr::rmarkdown}

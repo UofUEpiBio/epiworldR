@@ -18,7 +18,8 @@ SEXP virus_cpp(
     double prob_infecting,
     double prob_recovery,
     double prob_death,
-    double post_immunity
+    double post_immunity,
+    double incubation
     ) {
   
   WrapVirus(virus)(new epiworld::Virus<int>(name));
@@ -29,6 +30,8 @@ SEXP virus_cpp(
   
   if (post_immunity > 0.0)
     virus->set_post_immunity(post_immunity);
+  
+  virus->set_incubation(incubation);
   
   return virus;
   

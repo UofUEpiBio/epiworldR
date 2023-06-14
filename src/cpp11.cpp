@@ -503,10 +503,10 @@ extern "C" SEXP _epiworldR_print_tool_cpp(SEXP t) {
   END_CPP11
 }
 // virus.cpp
-SEXP virus_cpp(std::string name, double prob_infecting, double prob_recovery, double prob_death, double post_immunity);
-extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death, SEXP post_immunity) {
+SEXP virus_cpp(std::string name, double prob_infecting, double prob_recovery, double prob_death, double post_immunity, double incubation);
+extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death, SEXP post_immunity, SEXP incubation) {
   BEGIN_CPP11
-    return cpp11::as_sexp(virus_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infecting), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(post_immunity)));
+    return cpp11::as_sexp(virus_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prob_infecting), cpp11::as_cpp<cpp11::decay_t<double>>(prob_recovery), cpp11::as_cpp<cpp11::decay_t<double>>(prob_death), cpp11::as_cpp<cpp11::decay_t<double>>(post_immunity), cpp11::as_cpp<cpp11::decay_t<double>>(incubation)));
   END_CPP11
 }
 // virus.cpp
@@ -741,7 +741,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},
     {"_epiworldR_verbose_off_cpp",                      (DL_FUNC) &_epiworldR_verbose_off_cpp,                       1},
     {"_epiworldR_verbose_on_cpp",                       (DL_FUNC) &_epiworldR_verbose_on_cpp,                        1},
-    {"_epiworldR_virus_cpp",                            (DL_FUNC) &_epiworldR_virus_cpp,                             5},
+    {"_epiworldR_virus_cpp",                            (DL_FUNC) &_epiworldR_virus_cpp,                             6},
     {"_epiworldR_virus_fun_logit_cpp",                  (DL_FUNC) &_epiworldR_virus_fun_logit_cpp,                   3},
     {"_epiworldR_virus_set_state_cpp",                  (DL_FUNC) &_epiworldR_virus_set_state_cpp,                   4},
     {NULL, NULL, 0}

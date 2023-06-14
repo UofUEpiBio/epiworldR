@@ -147,11 +147,11 @@ entries, where the first entry is the initial state.
 
 \itemize{
 \item The function \code{get_transmissions} returns a \code{data.frame} with the following
-columns: \code{date}, \code{source}, \code{target}, \code{variant}, and \code{source_exposure_date}.
+columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{variant}, and \code{source_exposure_date}.
 }
 
 The function \code{get_generation_time} returns a \code{data.frame} with
-the following columns: "agent", "virus_id", "date", and "gentime".
+the following columns: "agent", "virus_id", "virus", "date", and "gentime".
 
 \itemize{
 \item The function \code{plot_generation_time} is a wrapper for \link{plot} and
