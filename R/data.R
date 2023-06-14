@@ -177,22 +177,27 @@ plot.epiworld_repnum <- function(
 
   if (nrow(x) == 0) {
     repnum <- data.frame(
-      variant = integer(),
-      date    = integer(),
-      avg     = numeric(),
-      n       = integer(),
-      sd      = numeric(),
-      lb      = numeric(),
-      ub      = numeric()
+      virus_id = integer(),
+      virus    = character(),
+      date     = integer(),
+      avg      = numeric(),
+      n        = integer(),
+      sd       = numeric(),
+      lb       = numeric(),
+      ub       = numeric()
     )
   } else {
 
     # Computing stats
     # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
+
+    # Creating a new column combining virus_id and variant
+    x[["virus_comb"]] <- sprintf("%s (%i)", x[["virus"]], x[["virus_id"]])
+
     repnum <- stats::aggregate(
       x[["rt"]],
       by = list(
-        variant = x[["variant"]],
+        variant = x[["virus_comb"]],
         date    = x[["source_exposure_date"]]
         ),
       FUN = function(x) {
@@ -210,12 +215,30 @@ plot.epiworld_repnum <- function(
       )
 
     repnum <- cbind(repnum[, -3, drop = FALSE], do.call(rbind, repnum[, 3]))
-    repnum <- repnum[order(repnum[["variant"]], repnum[["date"]]), , drop = FALSE]
+    repnum <- repnum[order(repnum[["virus_comb"]], repnum[["date"]]), , drop = FALSE]
+
+    # Merging the virus and virus_id column of x to repnum
+    repnum <- merge(
+      repnum,
+      x[, c("virus", "virus_id", "virus_comb")],
+      by = "virus_comb",
+      all.x = TRUE,
+      all.y = FALSE
+      )
+    
     rownames(repnum) <- NULL
+
+    # Reordering columns
+    repnum <- repnum[, c(
+      "virus_id", "virus", "date", "avg", "n", "sd", "lb", "ub",
+      "virus_comb"
+      )]
+
   }
 
+
   # Nvariants
-  vlabs     <- sort(unique(x[, "variant"]))
+  vlabs     <- sort(unique(x[, "virus_comb"]))
   nvariants <- length(vlabs)
     
   # # Figuring out the range
@@ -226,7 +249,7 @@ plot.epiworld_repnum <- function(
   if (plot) {
     for (i in seq_along(vlabs)) {
 
-      tmp <- repnum[repnum[["variant"]] == vlabs[i], ]
+      tmp <- repnum[repnum[["virus_comb"]] == vlabs[i], ]
       
       if (i == 1L) {
         
@@ -269,13 +292,17 @@ plot.epiworld_repnum <- function(
         pch    = 1L:nvariants,
         col    = 1L:nvariants,
         lwd    = 2,
-        title  = "Variants",
+        title  = "Virus",
         bty    = "n"
       )
       
     }
 
   }
+
+  # Removing the virus_comb column
+  repnum[["virus_comb"]] <- NULL
+
   invisible(repnum)
   
 }
@@ -508,10 +535,17 @@ plot.epiworld_generation_time <- function(
     stop("The object must be of class 'epiworld_generation_time'")
   }
 
+  # Combining virus with virus id (as we've done before)
+  x[["virus_comb"]] <- sprintf(
+    "%s (%s)",
+    x[["virus"]],
+    x[["virus_id"]]
+  )
+
   gt <- stats::aggregate(
     x[["gentime"]], by = list(
       date    = x[["date"]],
-      variant = x[["virus"]]
+      virus = x[["virus_comb"]]
       ),
     FUN = function(x) {
       ci <- stats::quantile(
@@ -530,8 +564,18 @@ plot.epiworld_generation_time <- function(
     )
 
   gt <- cbind(gt[, -3, drop = FALSE], do.call(rbind, gt[, 3]))
-  gt <- gt[order(gt[["variant"]], gt[["date"]]), , drop = FALSE]
-  rownames(gt) <- NULL
+  gt <- gt[order(gt[["virus"]], gt[["date"]]), , drop = FALSE]
+  
+  # Merging the virus and virus_id column of x to repnum
+  gt <- merge(
+    gt,
+    x[, c("virus", "virus_id", "virus_comb")],
+    by = "virus_comb",
+    all.x = TRUE,
+    all.y = FALSE
+    )
+  
+  rownames(repnum) <- NULL
 
   # Replacing NaNs with NAs
   gt <- as.data.frame(lapply(gt, function(x) {
@@ -541,12 +585,12 @@ plot.epiworld_generation_time <- function(
 
   if (plot) {
     # Number of viruses
-    variants <- sort(unique(gt[["variant"]]))
+    variants <- sort(unique(gt[["virus_comb"]]))
     n_viruses <- length(variants)
 
     for (i in 1L:n_viruses) {
 
-      gt_i <- gt[gt[["variant"]] == variants[i], , drop = FALSE]
+      gt_i <- gt[gt[["virus_comb"]] == variants[i], , drop = FALSE]
       
       if (i == 1L) {
   
@@ -589,13 +633,16 @@ plot.epiworld_generation_time <- function(
         col    = 1:n_viruses,
         lwd    = 2,
         lty    = 1L:n_viruses,
-        title  = "Viruses",
+        title  = "Virus",
         bty    = "n"
       )
       
     }
 
   }
+
+  # Deleting the virus_comb column
+  gt[["virus_comb"]] <- NULL
 
   invisible(gt)
     

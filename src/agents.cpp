@@ -3,6 +3,7 @@
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/data_frame.hpp"
 #include "epiworld-common.h"
+#include "cpp11/list.hpp"
 
 using namespace epiworld;
 using namespace cpp11;
@@ -62,3 +63,21 @@ int get_state_agent_cpp(SEXP agent) {
   return cpp11::external_pointer<Agent<>>(agent)->get_state();
 }
 
+// Function to get agent's states using get_agents_states()
+[[cpp11::register]]
+std::vector<int> get_agents_states_cpp(SEXP model) {
+  
+  cpp11::external_pointer<Model<>> ptr(model);
+  
+  std::vector<int> states;
+  states.reserve(ptr->size());
+  
+  auto states_uint = ptr->get_agents_states();
+
+  // Copying the data to states
+  for (auto i : states_uint)
+    states.push_back(static_cast<int>(i));
+  
+  return states;
+  
+}

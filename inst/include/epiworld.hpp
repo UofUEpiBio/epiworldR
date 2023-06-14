@@ -72,7 +72,19 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Virus;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Viruses;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Viruses_const;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Tool;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Tools;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Tools_const;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Entity;
@@ -5931,6 +5943,12 @@ template<typename TSeq>
 class Virus;
 
 template<typename TSeq>
+class Viruses;
+
+template<typename TSeq> 
+class Viruses_const;
+
+template<typename TSeq>
 class Tool;
 
 class AdjList;
@@ -6304,7 +6322,13 @@ public:
 
     bool is_directed() const;
 
-    std::vector< Agent<TSeq> > & get_agents();
+    std::vector< Agent<TSeq> > & get_agents(); ///< Returns a reference to the vector of agents.
+
+    std::vector< epiworld_fast_uint > get_agents_states() const; ///< Returns a vector with the states of the agents.
+
+    std::vector< Viruses_const<TSeq> > get_agents_viruses() const; ///< Returns a const vector with the viruses of the agents.
+
+    std::vector< Viruses<TSeq> > get_agents_viruses(); ///< Returns a vector with the viruses of the agents.
 
     std::vector< Entity<TSeq> > & get_entities();
 
@@ -7281,6 +7305,41 @@ template<typename TSeq>
 inline std::vector<Agent<TSeq>> & Model<TSeq>::get_agents()
 {
     return population;
+}
+
+template<typename TSeq>
+inline std::vector< epiworld_fast_uint > Model<TSeq>::get_agents_states() const
+{
+    std::vector< epiworld_fast_uint > states(population.size());
+    for (size_t i = 0u; i < population.size(); ++i)
+        states[i] = population[i].get_state();
+
+    return states;
+}
+
+template<typename TSeq>
+inline std::vector< Viruses_const<TSeq> > Model<TSeq>::get_agents_viruses() const
+{
+
+    std::vector< Viruses_const<TSeq> > viruses(population.size());
+    for (size_t i = 0u; i < population.size(); ++i)
+        viruses[i] = population[i].get_viruses();
+
+    return viruses;
+
+}
+
+// Same as before, but the non const version
+template<typename TSeq>
+inline std::vector< Viruses<TSeq> > Model<TSeq>::get_agents_viruses()
+{
+
+    std::vector< Viruses<TSeq> > viruses(population.size());
+    for (size_t i = 0u; i < population.size(); ++i)
+        viruses[i] = population[i].get_viruses();
+
+    return viruses;
+
 }
 
 template<typename TSeq>
@@ -9808,6 +9867,8 @@ public:
 
     size_t size() const noexcept;
 
+    void print() const noexcept;
+
 };
 
 template<typename TSeq>
@@ -9855,6 +9916,25 @@ template<typename TSeq>
 inline size_t Viruses<TSeq>::size() const noexcept 
 {
     return *n_viruses;
+}
+
+template<typename TSeq>
+inline void Viruses<TSeq>::print() const noexcept
+{
+
+    printf_epiworld("List of viruses (%i):\n", *n_viruses);
+
+    // Printing the name of each virus separated by a comma
+    for (size_t i = 0u; i < *n_viruses; ++i)
+    {
+        if (i == *n_viruses - 1u)
+            printf_epiworld("%s", dat->operator[](i)->get_name().c_str());
+        else
+            printf_epiworld("%s, ", dat->operator[](i)->get_name().c_str());
+    }
+    
+    printf_epiworld("\n");
+
 }
 
 /**

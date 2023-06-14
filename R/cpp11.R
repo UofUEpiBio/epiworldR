@@ -40,6 +40,10 @@ get_state_agent_cpp <- function(agent) {
   .Call(`_epiworldR_get_state_agent_cpp`, agent)
 }
 
+get_agents_states_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_states_cpp`, model)
+}
+
 get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
@@ -366,4 +370,12 @@ get_name_virus_cpp <- function(virus) {
 
 set_name_virus_cpp <- function(virus, name) {
   .Call(`_epiworldR_set_name_virus_cpp`, virus, name)
+}
+
+get_agents_viruses_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_viruses_cpp`, model)
+}
+
+print_viruses_cpp <- function(viruses) {
+  .Call(`_epiworldR_print_viruses_cpp`, viruses)
 }

@@ -500,3 +500,44 @@ set_incubation_fun <- function(virus, model, vfun) {
   invisible(set_incubation_fun_cpp(virus, model, vfun))
   
 }
+
+#' @export
+#' @rdname agents_smallworld
+get_agents_viruses <- function(model) {
+
+  stopifnot_model(model)
+
+  res <- lapply(
+      get_agents_viruses_cpp(model),
+      `class<-`,
+      "epiworld_viruses"
+    )
+
+  structure(res, class = c(class(res), "epiworld_agents_viruses"))
+  
+}
+
+#' @export 
+#' @rdname virus
+#' @param max_print Numeric scalar. Maximum number of viruses to print.
+print.epiworld_agents_viruses <- function(x, max_print = 10, ...) {
+
+  for (i in 1:min(max_print, length(x))) {
+    print_agent_viruses_cpp(x[i])
+  }
+
+  if (length(x) > max_print) {
+    cat(sprintf("Showing first %s of %s viruses.\n", max_print, length(x)))
+  }
+
+  invisible(x)
+  
+}
+
+#' @export
+print.epiworld_viruses <- function(x, ...) {
+  print_agent_viruses_cpp(x)
+  invisible(x)
+}
+
+

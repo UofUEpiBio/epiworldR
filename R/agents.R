@@ -15,7 +15,8 @@
 #' @param p Probability of rewiring.
 #' @export
 #' @aliases agents
-#' @return The 'agents_smallworld' function returns a model with the agents 
+#' @return
+#' - The 'agents_smallworld' function returns a model with the agents 
 #' loaded.
 #' @examples
 #' 
@@ -68,7 +69,8 @@ agents_smallworld.epiworld_model <- function(model, n, k, d, p) {
 }
 
 #' @export
-#' @return The `agents_from_edgelist` function returns an empty model of class
+#' @return
+#' - The `agents_from_edgelist` function returns an empty model of class
 #' `epiworld_model`. 
 #' @rdname agents_smallworld
 agents_from_edgelist <- function(
@@ -95,10 +97,22 @@ agents_from_edgelist.epiworld_model <- function(
 #' @export 
 #' @rdname agents_smallworld
 #' @aliases network
-#' @return The `get_network` function returns a data frame with two columns
+#' @return
+#' - The `get_network` function returns a data frame with two columns
 #' (`source` and `target`) describing the edgelist of the network.
 get_network <- function(model) {
   stopifnot_model(model)
   get_network_cpp(model)
 }
+
+#' @export 
+#' @return 
+#' - `get_agents_states` returns an integer vector with the states of the
+#' agents.
+#' @rdname agents_smallworld
+get_agents_states <- function(model) {
+  stopifnot_model(model)
+  get_agents_states_cpp(model)
+}
+
 

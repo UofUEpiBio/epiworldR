@@ -22,6 +22,7 @@
 \alias{set_incubation}
 \alias{set_incubation_ptr}
 \alias{set_incubation_fun}
+\alias{print.epiworld_agents_viruses}
 \title{Virus design}
 \usage{
 virus(
@@ -70,6 +71,8 @@ set_incubation(virus, incubation)
 set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
+
+\method{print}{epiworld_agents_viruses}(x, max_print = 10, ...)
 }
 \arguments{
 \item{name}{of the virus}
@@ -109,6 +112,8 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
+
+\item{max_print}{Numeric scalar. Maximum number of viruses to print.}
 }
 \value{
 \itemize{

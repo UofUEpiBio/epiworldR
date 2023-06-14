@@ -62,7 +62,7 @@ cpp11::data_frame get_hist_variant_cpp(
   return cpp11::writable::data_frame({
     "date"_nm    = date, 
     "id"_nm      = id,
-    "variant"_nm = vnames,
+    "virus"_nm = vnames,
     "state"_nm   = state,
     "counts"_nm  = counts,
   });
@@ -180,7 +180,7 @@ cpp11::data_frame get_reproductive_number_cpp(
   
   return cpp11::writable::data_frame({
     "virus_id"_nm           = variant,
-    "variant"_nm              = vnames,
+    "virus"_nm              = vnames,
     "source"_nm               = source,
     "source_exposure_date"_nm = source_exposure_date,
     "rt"_nm                   = counts
@@ -224,8 +224,8 @@ cpp11::data_frame get_transmissions_cpp(
     "date"_nm                 = date,
     "source"_nm               = source,
     "target"_nm               = target,
-    "virus_id"_nm           = variant,
-    "variant"_nm              = vnames,
+    "virus_id"_nm             = variant,
+    "virus"_nm                = vnames,
     "source_exposure_date"_nm = source_exposure_date,
   });
   
