@@ -91,11 +91,10 @@ plot.epiworld_hist <- function(x, y, ...) {
 #' - The `get_hist_virus` function returns an object of class 
 #' [epiworld_hist_virus].
 #' @rdname epiworld-data
-#' @aliases epiworld_hist_variant
+#' @aliases epiworld_hist_variant epiworld_hist_virus
 get_hist_virus <- function(x) UseMethod("get_hist_virus")
 
 #' @export
-#' @aliases epiworld_hist_virus
 get_hist_virus.epiworld_model <- function(x)  {
   res <- get_hist_virus_cpp(x)
   
@@ -110,6 +109,7 @@ get_hist_virus.epiworld_model <- function(x)  {
 #' @returns 
 #' - The `get_hist_tool` function returns an object of [epiworld_hist_virus].
 #' @rdname epiworld-data
+#' @aliases epiworld_hist_tool
 get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
 #' @export

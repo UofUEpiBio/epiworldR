@@ -6,7 +6,9 @@
 \alias{epiworld_hist_total}
 \alias{get_hist_virus}
 \alias{epiworld_hist_variant}
+\alias{epiworld_hist_virus}
 \alias{get_hist_tool}
+\alias{epiworld_hist_tool}
 \alias{get_transition_probability}
 \alias{get_reproductive_number}
 \alias{epiworld_repnum}
