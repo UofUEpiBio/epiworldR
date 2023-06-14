@@ -297,7 +297,7 @@ cpp11::writable::list get_agents_viruses_cpp(SEXP model) {
 
 
 [[cpp11::register]]
-SEXP print_viruses_cpp(SEXP viruses) {
+SEXP print_agent_viruses_cpp(SEXP viruses) {
   external_pointer<Viruses<>> vptr(viruses);
   vptr->print();
   return viruses;

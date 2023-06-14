@@ -197,7 +197,7 @@ plot.epiworld_repnum <- function(
     repnum <- stats::aggregate(
       x[["rt"]],
       by = list(
-        variant = x[["virus_comb"]],
+        virus_comb = x[["virus_comb"]],
         date    = x[["source_exposure_date"]]
         ),
       FUN = function(x) {
@@ -220,7 +220,7 @@ plot.epiworld_repnum <- function(
     # Merging the virus and virus_id column of x to repnum
     repnum <- merge(
       repnum,
-      x[, c("virus", "virus_id", "virus_comb")],
+      unique(x[, c("virus", "virus_id", "virus_comb")]),
       by = "virus_comb",
       all.x = TRUE,
       all.y = FALSE
@@ -545,7 +545,7 @@ plot.epiworld_generation_time <- function(
   gt <- stats::aggregate(
     x[["gentime"]], by = list(
       date    = x[["date"]],
-      virus = x[["virus_comb"]]
+      virus_comb = x[["virus_comb"]]
       ),
     FUN = function(x) {
       ci <- stats::quantile(
@@ -564,12 +564,12 @@ plot.epiworld_generation_time <- function(
     )
 
   gt <- cbind(gt[, -3, drop = FALSE], do.call(rbind, gt[, 3]))
-  gt <- gt[order(gt[["virus"]], gt[["date"]]), , drop = FALSE]
+  gt <- gt[order(gt[["virus_comb"]], gt[["date"]]), , drop = FALSE]
   
   # Merging the virus and virus_id column of x to repnum
   gt <- merge(
     gt,
-    x[, c("virus", "virus_id", "virus_comb")],
+    unique(x[, c("virus", "virus_id", "virus_comb")]),
     by = "virus_comb",
     all.x = TRUE,
     all.y = FALSE

@@ -76,7 +76,7 @@ extern "C" SEXP _epiworldR_get_state_agent_cpp(SEXP agent) {
   END_CPP11
 }
 // agents.cpp
-std::vector<int> get_agents_states_cpp(SEXP model);
+std::vector<std::string> get_agents_states_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_agents_states_cpp(SEXP model) {
   BEGIN_CPP11
     return cpp11::as_sexp(get_agents_states_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
@@ -509,6 +509,20 @@ extern "C" SEXP _epiworldR_print_tool_cpp(SEXP t) {
     return cpp11::as_sexp(print_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(t)));
   END_CPP11
 }
+// tool.cpp
+cpp11::writable::list get_agents_tools_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_agents_tools_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_agents_tools_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// tool.cpp
+SEXP print_agent_tools_cpp(SEXP tools);
+extern "C" SEXP _epiworldR_print_agent_tools_cpp(SEXP tools) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(print_agent_tools_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tools)));
+  END_CPP11
+}
 // virus.cpp
 SEXP virus_cpp(std::string name, double prob_infecting, double prob_recovery, double prob_death, double post_immunity, double incubation);
 extern "C" SEXP _epiworldR_virus_cpp(SEXP name, SEXP prob_infecting, SEXP prob_recovery, SEXP prob_death, SEXP post_immunity, SEXP incubation) {
@@ -664,10 +678,10 @@ extern "C" SEXP _epiworldR_get_agents_viruses_cpp(SEXP model) {
   END_CPP11
 }
 // virus.cpp
-SEXP print_viruses_cpp(SEXP viruses);
-extern "C" SEXP _epiworldR_print_viruses_cpp(SEXP viruses) {
+SEXP print_agent_viruses_cpp(SEXP viruses);
+extern "C" SEXP _epiworldR_print_agent_viruses_cpp(SEXP viruses) {
   BEGIN_CPP11
-    return cpp11::as_sexp(print_viruses_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(viruses)));
+    return cpp11::as_sexp(print_agent_viruses_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(viruses)));
   END_CPP11
 }
 
@@ -692,6 +706,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
     {"_epiworldR_get_agents_states_cpp",                (DL_FUNC) &_epiworldR_get_agents_states_cpp,                 1},
+    {"_epiworldR_get_agents_tools_cpp",                 (DL_FUNC) &_epiworldR_get_agents_tools_cpp,                  1},
     {"_epiworldR_get_agents_viruses_cpp",               (DL_FUNC) &_epiworldR_get_agents_viruses_cpp,                1},
     {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               1},
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
@@ -719,11 +734,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_globalaction_tool_logit_cpp",          (DL_FUNC) &_epiworldR_globalaction_tool_logit_cpp,           5},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
+    {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},
+    {"_epiworldR_print_agent_viruses_cpp",              (DL_FUNC) &_epiworldR_print_agent_viruses_cpp,               1},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             1},
     {"_epiworldR_print_global_action_cpp",              (DL_FUNC) &_epiworldR_print_global_action_cpp,               1},
     {"_epiworldR_print_tool_cpp",                       (DL_FUNC) &_epiworldR_print_tool_cpp,                        1},
     {"_epiworldR_print_virus_cpp",                      (DL_FUNC) &_epiworldR_print_virus_cpp,                       1},
-    {"_epiworldR_print_viruses_cpp",                    (DL_FUNC) &_epiworldR_print_viruses_cpp,                     1},
     {"_epiworldR_queuing_off_cpp",                      (DL_FUNC) &_epiworldR_queuing_off_cpp,                       1},
     {"_epiworldR_queuing_on_cpp",                       (DL_FUNC) &_epiworldR_queuing_on_cpp,                        1},
     {"_epiworldR_rm_global_action_cpp",                 (DL_FUNC) &_epiworldR_rm_global_action_cpp,                  2},

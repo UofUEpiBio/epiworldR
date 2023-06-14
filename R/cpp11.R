@@ -288,6 +288,14 @@ print_tool_cpp <- function(t) {
   .Call(`_epiworldR_print_tool_cpp`, t)
 }
 
+get_agents_tools_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_tools_cpp`, model)
+}
+
+print_agent_tools_cpp <- function(tools) {
+  .Call(`_epiworldR_print_agent_tools_cpp`, tools)
+}
+
 virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation) {
   .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation)
 }
@@ -376,6 +384,6 @@ get_agents_viruses_cpp <- function(model) {
   .Call(`_epiworldR_get_agents_viruses_cpp`, model)
 }
 
-print_viruses_cpp <- function(viruses) {
-  .Call(`_epiworldR_print_viruses_cpp`, viruses)
+print_agent_viruses_cpp <- function(viruses) {
+  .Call(`_epiworldR_print_agent_viruses_cpp`, viruses)
 }

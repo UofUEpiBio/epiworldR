@@ -21,6 +21,7 @@
 \alias{set_death_reduction}
 \alias{set_death_reduction_ptr}
 \alias{set_death_reduction_fun}
+\alias{print.epiworld_agents_tools}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -68,6 +69,8 @@ set_death_reduction(tool, prob)
 set_death_reduction_ptr(tool, model, param)
 
 set_death_reduction_fun(tool, model, tfun)
+
+\method{print}{epiworld_agents_tools}(x, max_print = 10, ...)
 }
 \arguments{
 \item{name}{Name of the tool}
@@ -102,6 +105,8 @@ coefficients associated to the logit probability.}
 will be added to the tool (see details).}
 
 \item{tfun}{An object of class \code{epiworld_tool_fun}.}
+
+\item{max_print}{Numeric scalar. Maximum number of tools to print.}
 }
 \value{
 \itemize{
@@ -113,8 +118,10 @@ will be added to the tool (see details).}
 \link{epiworld_tool} and returns the tool.
 }
 
-The \code{get_name_tool} function returns the name of the tool of class
+\itemize{
+\item The \code{get_name_tool} function returns the name of the tool of class
 \link{epiworld_tool}.
+}
 
 \itemize{
 \item The \code{add_tool_n} function adds the specified tool to the model of class

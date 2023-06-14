@@ -65,18 +65,21 @@ int get_state_agent_cpp(SEXP agent) {
 
 // Function to get agent's states using get_agents_states()
 [[cpp11::register]]
-std::vector<int> get_agents_states_cpp(SEXP model) {
+std::vector<std::string> get_agents_states_cpp(SEXP model) {
   
   cpp11::external_pointer<Model<>> ptr(model);
   
-  std::vector<int> states;
+  std::vector<std::string> states;
   states.reserve(ptr->size());
   
   auto states_uint = ptr->get_agents_states();
+  
+  // Getting the model's states
+  auto model_states = ptr->get_states();
 
   // Copying the data to states
   for (auto i : states_uint)
-    states.push_back(static_cast<int>(i));
+    states.push_back(model_states[i]);
   
   return states;
   

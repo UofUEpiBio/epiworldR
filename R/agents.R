@@ -107,8 +107,8 @@ get_network <- function(model) {
 
 #' @export 
 #' @return 
-#' - `get_agents_states` returns an integer vector with the states of the
-#' agents.
+#' - `get_agents_states` returns an character vector with the states of the
+#' agents by the end of the simulation.
 #' @rdname agents_smallworld
 get_agents_states <- function(model) {
   stopifnot_model(model)

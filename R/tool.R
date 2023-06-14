@@ -121,7 +121,7 @@ set_name_tool <- function(tool, name) {
 
 
 #' @returns
-#' The `get_name_tool` function returns the name of the tool of class 
+#' - The `get_name_tool` function returns the name of the tool of class 
 #' [epiworld_tool].
 #' @rdname tool
 #' @export
@@ -433,5 +433,48 @@ set_death_reduction_fun <- function(tool, model, tfun) {
   set_death_reduction_fun_cpp(tool, model, tfun)
   
 }
+
+#' @export
+#' @rdname agents_smallworld
+#' @returns 
+#' - `get_agents_tools` returns a list of class `epiworld_agents_tools`
+#' with `epiworld_tools` (list of lists).
+get_agents_tools <- function(model) {
+  
+  stopifnot_model(model)
+  
+  res <- lapply(
+    get_agents_tools_cpp(model),
+    `class<-`,
+    "epiworld_tools"
+  )
+  
+  structure(res, class = c("epiworld_agents_tools", class(res)))
+  
+}
+
+#' @export 
+#' @rdname tool
+#' @param max_print Numeric scalar. Maximum number of tools to print.
+print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
+  
+  for (i in 1:min(max_print, length(x))) {
+    print_agent_tools_cpp(x[[i]])
+  }
+  
+  if (length(x) > max_print) {
+    cat(sprintf("Showing first %s of %s tools.\n", max_print, length(x)))
+  }
+  
+  invisible(x)
+  
+}
+
+#' @export
+print.epiworld_viruses <- function(x, ...) {
+  print_agent_viruses_cpp(x)
+  invisible(x)
+}
+
 
 

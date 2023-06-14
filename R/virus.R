@@ -503,6 +503,9 @@ set_incubation_fun <- function(virus, model, vfun) {
 
 #' @export
 #' @rdname agents_smallworld
+#' @returns 
+#' - `get_agents_viruses` returns a list of class `epiworld_agents_viruses`
+#' with `epiworld_viruses` (list of lists).
 get_agents_viruses <- function(model) {
 
   stopifnot_model(model)
@@ -513,7 +516,7 @@ get_agents_viruses <- function(model) {
       "epiworld_viruses"
     )
 
-  structure(res, class = c(class(res), "epiworld_agents_viruses"))
+  structure(res, class = c("epiworld_agents_viruses", class(res)))
   
 }
 
@@ -523,7 +526,7 @@ get_agents_viruses <- function(model) {
 print.epiworld_agents_viruses <- function(x, max_print = 10, ...) {
 
   for (i in 1:min(max_print, length(x))) {
-    print_agent_viruses_cpp(x[i])
+    print_agent_viruses_cpp(x[[i]])
   }
 
   if (length(x) > max_print) {
