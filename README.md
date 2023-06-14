@@ -14,7 +14,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 
 This R package is a wrapper of the C++ library
 <a href="https://github.com/UofUEpiBio/epiworld"
-target="_blank">**epiworld**</a>. It provides a general framework for
+target="_blank">epiworld</a>. It provides a general framework for
 modeling disease transmission using <a
 href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
 target="_blank">agent-based models</a>. Some of the main features
@@ -78,7 +78,7 @@ library(epiworldR)
 sir <- ModelSIR(
   name           = "COVID-19",
   prevalence     = .01,
-  infectiousness = .7,
+  transmission_rate = .7,
   recovery       = .3
   ) |>
   # Adding a Small world population 
@@ -102,7 +102,7 @@ sir
 #> Days (duration)     : 50 (of 50)
 #> Number of variants  : 1
 #> Last run elapsed t  : 192.00ms
-#> Last run speed      : 26.04 million agents x day / second
+#> Last run speed      : 26.01 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -115,8 +115,8 @@ sir
 #>  (none)
 #> 
 #> Model parameters:
-#>  - Infectiousness    : 0.7000
-#>  - Prob. of Recovery : 0.3000
+#>  - Recovery rate     : 0.3000
+#>  - Transmission rate : 0.7000
 #> 
 #> Distribution of the population at time 50:
 #>   - (0) Susceptible :  99000 -> 822
@@ -152,8 +152,8 @@ model_seirconn <- ModelSEIRCONN(
   n                   = 10000,
   contact_rate        = 4, 
   incubation_days     = 7, 
-  prob_transmission   = 0.6,
-  prob_recovery       = 0.5
+  transmission_rate   = 0.6,
+  recovery_rate       = 0.5
 ) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
 
 set.seed(132)
@@ -173,8 +173,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of variants  : 2
-#> Last run elapsed t  : 56.00ms
-#> Last run speed      : 17.72 million agents x day / second
+#> Last run elapsed t  : 51.00ms
+#> Last run speed      : 19.45 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -223,13 +223,13 @@ head(plot(repnum))
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
 
-    #>   variant date      avg  n       sd lb    ub
-    #> 1       0    0 2.858974 78 2.592318  1  7.30
-    #> 2       0    2 1.964286 28 1.914509  0  5.65
-    #> 3       0    3 2.761905 21 2.321740  0  7.00
-    #> 4       0    4 2.000000 33 1.887459  0  6.40
-    #> 5       0    5 1.864865 37 2.225636  0  9.10
-    #> 6       0    6 2.104167 48 2.667692  0 10.65
+    #>    variant date      avg   n       sd lb    ub
+    #> 1 COVID-19    0 1.628099 242 1.704922  1  6.00
+    #> 2 COVID-19    2 1.018519  54 1.687811  0  5.00
+    #> 3 COVID-19    3 1.657143  35 2.248435  0  7.00
+    #> 4 COVID-19    4 1.157895  57 1.740171  0  5.60
+    #> 5 COVID-19    5 1.392157  51 2.050155  0  7.75
+    #> 6 COVID-19    6 1.683333  60 2.527756  0 10.05
 
     plot_incidence(model_seirconn)
 
@@ -241,13 +241,13 @@ head(plot_generation_time(model_seirconn))
 
 <img src="man/figures/README-unnamed-chunk-4-4.png" width="100%" />
 
-    #>   date variant      avg  n       sd ci_lower ci_upper
-    #> 1    2       0 5.714286 21 4.681270        2    17.00
-    #> 2    3       0 7.444444 18 4.501271        2    15.45
-    #> 3    4       0 7.192308 26 5.578668        2    20.75
-    #> 4    5       0 7.111111 27 4.236593        2    15.70
-    #> 5    6       0 7.575000 40 7.249713        2    30.20
-    #> 6    7       0 6.303030 33 4.531038        2    18.00
+    #>   date  variant      avg  n       sd ci_lower ci_upper
+    #> 1    2 COVID-19 5.714286 21 4.681270        2    17.00
+    #> 2    3 COVID-19 7.444444 18 4.501271        2    15.45
+    #> 3    4 COVID-19 7.192308 26 5.578668        2    20.75
+    #> 4    5 COVID-19 7.448276 29 4.272723        2    15.60
+    #> 5    6 COVID-19 7.575000 40 7.249713        2    30.20
+    #> 6    7 COVID-19 6.457143 35 4.500607        2    18.00
 
 ## SIR Logit
 
@@ -285,7 +285,7 @@ model_logit <- ModelSIRLogit(
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
-  prob_recovery = .3,
+  recovery_rate = .3,
   prevalence = .01
 )
 
@@ -344,7 +344,7 @@ transmission. Infected individuals recover at a 0.5 rate:
 sir <- ModelSIR(
   name           = "COVID-19",
   prevalence     = .01,
-  infectiousness = .5,
+  transmission_rate = .5,
   recovery       = .5
   ) |>
     # Adding a Small world population 
@@ -396,7 +396,7 @@ model_sir <- ModelSIRCONN(
   prevalence = 0.01,
   n = 1000,
   contact_rate = 2,
-  prob_transmission = 0.9, prob_recovery = 0.1
+  transmission_rate = 0.9, recovery_rate = 0.1
   )
 
 # Generating a saver
@@ -415,21 +415,21 @@ run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 ans <- run_multiple_get_results(model_sir)
 
 head(ans$total_hist)
-#>   sim_num thread date nvariants       state counts
-#> 1       1      0    0         1 Susceptible    990
-#> 2       1      0    0         1    Infected     10
-#> 3       1      0    0         1   Recovered      0
-#> 4       1      0    1         1 Susceptible    974
-#> 5       1      0    1         1    Infected     25
-#> 6       1      0    1         1   Recovered      1
+#>   sim_num date nvariants       state counts
+#> 1       1    0         1 Susceptible    990
+#> 2       1    0         1    Infected     10
+#> 3       1    0         1   Recovered      0
+#> 4       1    1         1 Susceptible    974
+#> 5       1    1         1    Infected     25
+#> 6       1    1         1   Recovered      1
 head(ans$reproductive)
-#>   sim_num thread variant source source_exposure_date rt
-#> 1       1      0       0    767                   11  0
-#> 2       1      0       0    835                   10  0
-#> 3       1      0       0    466                    9  0
-#> 4       1      0       0    612                    9  0
-#> 5       1      0       0    793                    9  0
-#> 6       1      0       0     20                    8  0
+#>   sim_num variant source source_exposure_date rt
+#> 1       1       0    767                   11  0
+#> 2       1       0    835                   10  0
+#> 3       1       0    466                    9  0
+#> 4       1       0    612                    9  0
+#> 5       1       0    793                    9  0
+#> 6       1       0     20                    8  0
 
 plot(ans$reproductive)
 ```
