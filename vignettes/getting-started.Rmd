@@ -55,7 +55,7 @@ model_sir <- ModelSIRCONN(
 Printing the model shows us some information. First, the name of the model, 
 population size, number of entities (think of these as public spaces in which 
 agents can make social contact with one another), the duration in days, number 
-of variants, amount of time the last replicate took to run (last run elapsed t), 
+of viruses, amount of time the last replicate took to run (last run elapsed t), 
 and rewiring 
 status (on or off). The next piece of information you will see is a list of the 
 viruses used in the model. In this case, COVID-19 was the only disease used. 
@@ -149,11 +149,11 @@ plot_incidence(model_sir)
 ```
 ```
 
-## Adding more viruses/variants
+## Adding more viruses/viruses
 
-epiworldR supports multi-variant models. The below code gives instructions on 
+epiworldR supports multi-virus models. The below code gives instructions on 
 how to implement this. Using the "virus" function, give a name to the new 
-virus/variant with its corresponding probability of infecting any given agent. 
+virus/virus with its corresponding probability of infecting any given agent. 
 In this example, `prob_infecting` is set to 1.0, making it highly contagious. 
 To officially add this new virus to the model, use the `add_virus` 
 function by calling the original epiworldR model object, the new virus, and 
@@ -179,7 +179,7 @@ model_sir
 
 Plotting the previous model (including the flu) yields the following. Notice 
 the presence of two reproductive numbers plotted over time. Variant 0 refers 
-to COVID-19, and variant 1 refers to the flu. 
+to COVID-19, and virus 1 refers to the flu. 
 
 ```{r, fig.height=10}
 repnum2 <- get_reproductive_number(model_sir)
@@ -192,7 +192,7 @@ par(op)
 
 ## Tools
 
-Now, the implementation of tools to combat any viruses and variants in the model 
+Now, the implementation of tools to combat any viruses and viruses in the model 
 will be demonstrated. First, for the sake of simplicity, remove the flu virus 
 from the SIR model object (keep in  mind the index for the flu virus in the 
 model object is 1). Next, provide parameters for the new tool using the "tool"

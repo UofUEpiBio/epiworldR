@@ -70,8 +70,8 @@ stopifnot_model <- function(model) {
 #'                                         
 #' get_name(model_sirconn) # Returns the set name of the model. 
 #' 
-#' get_n_variants(model_sirconn) # Returns the number of variants in the model. 
-#'                               # In this case, there is only one variant:
+#' get_n_viruses(model_sirconn) # Returns the number of viruses in the model. 
+#'                               # In this case, there is only one virus:
 #'                               # "COVID-19". 
 #'                               
 #' get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
@@ -236,11 +236,11 @@ get_name.epiworld_model <- function(x) {
 #' @export 
 #' @rdname epiworld-methods
 #' @returns
-#' - `get_n_variants` returns the number of variants of the model.
-get_n_variants <- function(x) UseMethod("get_n_variants")
+#' - `get_n_viruses` returns the number of viruses of the model.
+get_n_viruses <- function(x) UseMethod("get_n_viruses")
 
 #' @export
-get_n_variants.epiworld_model <- function(x) get_n_variants_cpp(x)
+get_n_viruses.epiworld_model <- function(x) get_n_viruses_cpp(x)
 
 
 #' @export 

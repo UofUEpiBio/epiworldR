@@ -13,18 +13,16 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
-<a href="https://github.com/UofUEpiBio/epiworld"
-target="_blank">epiworld</a>. It provides a general framework for
-modeling disease transmission using <a
-href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
-target="_blank">agent-based models</a>. Some of the main features
-include:
+[epiworld](https://github.com/UofUEpiBio/epiworld). It provides a
+general framework for modeling disease transmission using [agent-based
+models](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802).
+Some of the main features include:
 
-- Fast simulation with an average of 30 million agents/day per second.
-- One model can include multiple diseases.
-- Policies (tools) can be multiple and user-defined.
-- Transmission can be a function of agents’ features.
-- Out-of-the-box parallelization for multiple simulations.
+  - Fast simulation with an average of 30 million agents/day per second.
+  - One model can include multiple diseases.
+  - Policies (tools) can be multiple and user-defined.
+  - Transmission can be a function of agents’ features.
+  - Out-of-the-box parallelization for multiple simulations.
 
 From the package’s description:
 
@@ -53,15 +51,12 @@ devtools::install_github("UofUEpiBioepiworldR")
 # Examples
 
 This R package includes several popular epidemiological models including
-<a
-href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model"
-target="_blank">SIS</a>, <a
-href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model"
-target="_blank">SIR</a>, and <a
-href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model"
-target="_blank">SEIR</a> using either a fully connected graph (similar
-to a compartmental model) or a user-defined network. Here are some
-examples:
+[SIS](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model),
+[SIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model),
+and
+[SEIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model)
+using either a fully connected graph (similar to a compartmental model)
+or a user-defined network. Here are some examples:
 
 ## SIR model using a random graph
 
@@ -100,9 +95,9 @@ sir
 #> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
-#> Number of variants  : 1
-#> Last run elapsed t  : 192.00ms
-#> Last run speed      : 26.01 million agents x day / second
+#> Number of viruses  : 1
+#> Last run elapsed t  : 189.00ms
+#> Last run speed      : 26.41 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -172,9 +167,9 @@ model_seirconn
 #> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
-#> Number of variants  : 2
-#> Last run elapsed t  : 51.00ms
-#> Last run speed      : 19.45 million agents x day / second
+#> Number of viruses  : 2
+#> Last run elapsed t  : 104.00ms
+#> Last run speed      : 9.58 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -223,14 +218,14 @@ head(plot(repnum))
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
 
-    #>    variant date      avg   n       sd lb    ub
-    #> 1 COVID-19    0 1.628099 242 1.704922  1  6.00
-    #> 2 COVID-19    2 1.018519  54 1.687811  0  5.00
-    #> 3 COVID-19    3 1.657143  35 2.248435  0  7.00
-    #> 4 COVID-19    4 1.157895  57 1.740171  0  5.60
-    #> 5 COVID-19    5 1.392157  51 2.050155  0  7.75
-    #> 6 COVID-19    6 1.683333  60 2.527756  0 10.05
-
+    #>   virus_id    virus date      avg  n       sd lb    ub
+    #> 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30
+    #> 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65
+    #> 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00
+    #> 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40
+    #> 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10
+    #> 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65
+    
     plot_incidence(model_seirconn)
 
 <img src="man/figures/README-unnamed-chunk-4-3.png" width="100%" />
@@ -241,13 +236,13 @@ head(plot_generation_time(model_seirconn))
 
 <img src="man/figures/README-unnamed-chunk-4-4.png" width="100%" />
 
-    #>   date  variant      avg  n       sd ci_lower ci_upper
-    #> 1    2 COVID-19 5.714286 21 4.681270        2    17.00
-    #> 2    3 COVID-19 7.444444 18 4.501271        2    15.45
-    #> 3    4 COVID-19 7.192308 26 5.578668        2    20.75
-    #> 4    5 COVID-19 7.448276 29 4.272723        2    15.60
-    #> 5    6 COVID-19 7.575000 40 7.249713        2    30.20
-    #> 6    7 COVID-19 6.457143 35 4.500607        2    18.00
+    #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
+    #> 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0
+    #> 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0
+    #> 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0
+    #> 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0
+    #> 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0
+    #> 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0
 
 ## SIR Logit
 
@@ -415,21 +410,21 @@ run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 ans <- run_multiple_get_results(model_sir)
 
 head(ans$total_hist)
-#>   sim_num date nvariants       state counts
-#> 1       1    0         1 Susceptible    990
-#> 2       1    0         1    Infected     10
-#> 3       1    0         1   Recovered      0
-#> 4       1    1         1 Susceptible    974
-#> 5       1    1         1    Infected     25
-#> 6       1    1         1   Recovered      1
+#>   sim_num date nviruses       state counts
+#> 1       1    0        1 Susceptible    990
+#> 2       1    0        1    Infected     10
+#> 3       1    0        1   Recovered      0
+#> 4       1    1        1 Susceptible    974
+#> 5       1    1        1    Infected     25
+#> 6       1    1        1   Recovered      1
 head(ans$reproductive)
-#>   sim_num variant source source_exposure_date rt
-#> 1       1       0    767                   11  0
-#> 2       1       0    835                   10  0
-#> 3       1       0    466                    9  0
-#> 4       1       0    612                    9  0
-#> 5       1       0    793                    9  0
-#> 6       1       0     20                    8  0
+#>   sim_num virus_id    virus source source_exposure_date rt
+#> 1       1        0 COVID-19    527                   10  0
+#> 2       1        0 COVID-19    835                   10  0
+#> 3       1        0 COVID-19    189                    9  0
+#> 4       1        0 COVID-19    192                    9  0
+#> 5       1        0 COVID-19    612                    9  0
+#> 6       1        0 COVID-19    977                    9  0
 
 plot(ans$reproductive)
 ```
@@ -439,13 +434,8 @@ plot(ans$reproductive)
 # Other ABM R packages
 
 You may want to check out other R packages for agent-based modeling:
-<a href="https://cran.r-project.org/package=ABM"
-target="_blank"><code>ABM</code></a>,
-<a href="https://cran.r-project.org/package=abmR"
-target="_blank"><code>abmR</code></a>,
-<a href="https://cran.r-project.org/package=cystiSim"
-target="_blank"><code>cystiSim</code></a>,
-<a href="https://cran.r-project.org/package=villager"
-target="_blank"><code>villager</code></a>, and
-<a href="https://cran.r-project.org/package=RNetLogo"
-target="_blank"><code>RNetLogo</code></a>.
+[`ABM`](https://cran.r-project.org/package=ABM),
+[`abmR`](https://cran.r-project.org/package=abmR),
+[`cystiSim`](https://cran.r-project.org/package=cystiSim),
+[`villager`](https://cran.r-project.org/package=villager), and
+[`RNetLogo`](https://cran.r-project.org/package=RNetLogo).

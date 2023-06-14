@@ -456,6 +456,8 @@ get_agents_tools <- function(model) {
 #' @export 
 #' @rdname tool
 #' @param max_print Numeric scalar. Maximum number of tools to print.
+#' @param ... Currently ignored.
+#' @param x An object of class `epiworld_agents_tools`.
 print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
   
   for (i in 1:min(max_print, length(x))) {

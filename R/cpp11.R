@@ -48,8 +48,8 @@ get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
 
-get_hist_variant_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_variant_cpp`, model)
+get_hist_virus_cpp <- function(model) {
+  .Call(`_epiworldR_get_hist_virus_cpp`, model)
 }
 
 get_hist_tool_cpp <- function(model) {
@@ -124,8 +124,8 @@ run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
 
-make_saver_cpp <- function(fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation) {
-  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation)
+make_saver_cpp <- function(fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation) {
+  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation)
 }
 
 run_multiple_cpp <- function(m, ndays, nsims, seed, saver, reset, verbose, nthreads) {
@@ -168,8 +168,8 @@ verbose_off_cpp <- function(model) {
   .Call(`_epiworldR_verbose_off_cpp`, model)
 }
 
-get_n_variants_cpp <- function(model) {
-  .Call(`_epiworldR_get_n_variants_cpp`, model)
+get_n_viruses_cpp <- function(model) {
+  .Call(`_epiworldR_get_n_viruses_cpp`, model)
 }
 
 get_n_tools_cpp <- function(model) {

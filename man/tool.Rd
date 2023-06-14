@@ -106,7 +106,11 @@ will be added to the tool (see details).}
 
 \item{tfun}{An object of class \code{epiworld_tool_fun}.}
 
+\item{x}{An object of class \code{epiworld_agents_tools}.}
+
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
+
+\item{...}{Currently ignored.}
 }
 \value{
 \itemize{

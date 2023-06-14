@@ -64,8 +64,8 @@ typedef std::function<void(size_t,Model<>*)> funptr;
 SEXP make_saver_cpp(
   std::string fn,
   bool total_hist,
-  bool variant_info,
-  bool variant_hist,
+  bool virus_info,
+  bool virus_hist,
   bool tool_info,
   bool tool_hist,
   bool transmission,
@@ -77,8 +77,8 @@ SEXP make_saver_cpp(
   funptr* saver = new funptr(make_save_run<>(
     fn,
     total_hist,
-    variant_info,
-    variant_hist,
+    virus_info,
+    virus_hist,
     tool_info,
     tool_hist,
     transmission,
@@ -201,10 +201,10 @@ SEXP verbose_off_cpp(SEXP model) {
 }
 
 [[cpp11::register]]
-int get_n_variants_cpp(SEXP model) {
+int get_n_viruses_cpp(SEXP model) {
   
   external_pointer<Model<>> ptr(model);
-  return static_cast<int>(ptr->get_n_variants());
+  return static_cast<int>(ptr->get_n_viruses());
   
 }
 

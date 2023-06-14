@@ -4,7 +4,7 @@
 \alias{epiworld-data}
 \alias{get_hist_total}
 \alias{epiworld_hist_total}
-\alias{get_hist_variant}
+\alias{get_hist_virus}
 \alias{epiworld_hist_variant}
 \alias{get_hist_tool}
 \alias{get_transition_probability}
@@ -24,7 +24,7 @@
 \usage{
 get_hist_total(x)
 
-get_hist_variant(x)
+get_hist_virus(x)
 
 get_hist_tool(x)
 
@@ -101,12 +101,12 @@ entries in the transition matrix.}
 }
 
 \itemize{
-\item The \code{get_hist_variant} function returns an object of class
-\link{epiworld_hist_variant}.
+\item The \code{get_hist_virus} function returns an object of class
+\link{epiworld_hist_virus}.
 }
 
 \itemize{
-\item The \code{get_hist_tool} function returns an object of \link{epiworld_hist_variant}.
+\item The \code{get_hist_tool} function returns an object of \link{epiworld_hist_virus}.
 }
 
 \itemize{
@@ -147,7 +147,7 @@ entries, where the first entry is the initial state.
 
 \itemize{
 \item The function \code{get_transmissions} returns a \code{data.frame} with the following
-columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{variant}, and \code{source_exposure_date}.
+columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{virus}, and \code{source_exposure_date}.
 }
 
 The function \code{get_generation_time} returns a \code{data.frame} with
@@ -201,7 +201,7 @@ get_hist_tool(seirconn)
 head(get_hist_total(seirconn))
 
 # Retrieving date, state, and counts dataframe by variant
-head(get_hist_variant(seirconn))
+head(get_hist_virus(seirconn))
 
 # Retrieving (and plotting) the reproductive number
 rp <- get_reproductive_number(seirconn)

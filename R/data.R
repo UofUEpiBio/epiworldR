@@ -40,7 +40,7 @@
 #' head(get_hist_total(seirconn))
 #' 
 #' # Retrieving date, state, and counts dataframe by variant
-#' head(get_hist_variant(seirconn))
+#' head(get_hist_virus(seirconn))
 #' 
 #' # Retrieving (and plotting) the reproductive number
 #' rp <- get_reproductive_number(seirconn)
@@ -88,26 +88,26 @@ plot.epiworld_hist <- function(x, y, ...) {
 
 #' @export
 #' @returns 
-#' - The `get_hist_variant` function returns an object of class 
-#' [epiworld_hist_variant].
+#' - The `get_hist_virus` function returns an object of class 
+#' [epiworld_hist_virus].
 #' @rdname epiworld-data
 #' @aliases epiworld_hist_variant
-get_hist_variant <- function(x) UseMethod("get_hist_variant")
+get_hist_virus <- function(x) UseMethod("get_hist_virus")
 
 #' @export
-get_hist_variant.epiworld_model <- function(x)  {
-  res <- get_hist_variant_cpp(x)
+get_hist_virus.epiworld_model <- function(x)  {
+  res <- get_hist_virus_cpp(x)
   
   structure(
     res,
-    class  = c("epiworld_hist_variant", "epiworld_hist", "data.frame"),
+    class  = c("epiworld_hist_virus", "epiworld_hist", "data.frame"),
     states = sort(unique(res$state))
   )
 }
 
 #' @export
 #' @returns 
-#' - The `get_hist_tool` function returns an object of [epiworld_hist_variant].
+#' - The `get_hist_tool` function returns an object of [epiworld_hist_virus].
 #' @rdname epiworld-data
 get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
@@ -189,7 +189,7 @@ plot.epiworld_repnum <- function(
   } else {
 
     # Computing stats
-    # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
+    # Compute the mean and 95% CI of rt by virus and source_exposure_date using the repnum data.frame with the tapply function
 
     # Creating a new column combining virus_id and variant
     x[["virus_comb"]] <- sprintf("%s (%i)", x[["virus"]], x[["virus_id"]])
@@ -237,9 +237,9 @@ plot.epiworld_repnum <- function(
   }
 
 
-  # Nvariants
+  # Nviruses
   vlabs     <- sort(unique(x[, "virus_comb"]))
-  nvariants <- length(vlabs)
+  nviruses <- length(vlabs)
     
   # # Figuring out the range
   yran <- range(repnum[["avg"]], na.rm = TRUE)
@@ -284,13 +284,13 @@ plot.epiworld_repnum <- function(
       
     }
 
-    if (nvariants > 1L) {
+    if (nviruses > 1L) {
       
       graphics::legend(
         "topright",
         legend = vlabs,
-        pch    = 1L:nvariants,
-        col    = 1L:nvariants,
+        pch    = 1L:nviruses,
+        col    = 1L:nviruses,
         lwd    = 2,
         title  = "Virus",
         bty    = "n"
@@ -478,7 +478,7 @@ plot.epiworld_hist_transition <- function(
 #' @rdname epiworld-data
 #' @return
 #' - The function `get_transmissions` returns a `data.frame` with the following
-#' columns: `date`, `source`, `target`, `virus_id`, `variant`, and `source_exposure_date`.
+#' columns: `date`, `source`, `target`, `virus_id`, `virus`, and `source_exposure_date`.
 get_transmissions <- function(x) UseMethod("get_transmissions")
 
 #' @export
@@ -575,7 +575,7 @@ plot.epiworld_generation_time <- function(
     all.y = FALSE
     )
   
-  rownames(repnum) <- NULL
+  rownames(gt) <- NULL
 
   # Replacing NaNs with NAs
   gt <- as.data.frame(lapply(gt, function(x) {
@@ -585,12 +585,12 @@ plot.epiworld_generation_time <- function(
 
   if (plot) {
     # Number of viruses
-    variants <- sort(unique(gt[["virus_comb"]]))
-    n_viruses <- length(variants)
+    viruses <- sort(unique(gt[["virus_comb"]]))
+    n_viruses <- length(viruses)
 
     for (i in 1L:n_viruses) {
 
-      gt_i <- gt[gt[["virus_comb"]] == variants[i], , drop = FALSE]
+      gt_i <- gt[gt[["virus_comb"]] == viruses[i], , drop = FALSE]
       
       if (i == 1L) {
   
@@ -629,7 +629,7 @@ plot.epiworld_generation_time <- function(
       
       graphics::legend(
         "topright",
-        legend = variants,
+        legend = viruses,
         col    = 1:n_viruses,
         lwd    = 2,
         lty    = 1L:n_viruses,

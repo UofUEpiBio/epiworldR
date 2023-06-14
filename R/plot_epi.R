@@ -47,7 +47,7 @@ plot_epi.epiworld_model <- function(
   
 }
 
-plot_epi.epiworld_hist_variant <- function(
+plot_epi.epiworld_hist_virus <- function(
     x, main = "",
     counts_scale,
     ...

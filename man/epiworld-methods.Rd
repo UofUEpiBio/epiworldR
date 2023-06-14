@@ -13,7 +13,7 @@
 \alias{set_param}
 \alias{set_name}
 \alias{get_name}
-\alias{get_n_variants}
+\alias{get_n_viruses}
 \alias{get_n_tools}
 \alias{get_ndays}
 \alias{get_n_replicates}
@@ -44,7 +44,7 @@ set_name(x, mname)
 
 get_name(x)
 
-get_n_variants(x)
+get_n_viruses(x)
 
 get_n_tools(x)
 
@@ -119,7 +119,7 @@ of \code{epiworld_model}.
 }
 
 \itemize{
-\item \code{get_n_variants} returns the number of variants of the model.
+\item \code{get_n_viruses} returns the number of viruses of the model.
 }
 
 \itemize{
@@ -212,8 +212,8 @@ set_name(model_sirconn, 'My Epi-Model') # This function allows for setting
                                         
 get_name(model_sirconn) # Returns the set name of the model. 
 
-get_n_variants(model_sirconn) # Returns the number of variants in the model. 
-                              # In this case, there is only one variant:
+get_n_viruses(model_sirconn) # Returns the number of viruses in the model. 
+                              # In this case, there is only one virus:
                               # "COVID-19". 
                               
 get_n_tools(model_sirconn) # Returns the number of tools in the model. In 

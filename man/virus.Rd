@@ -113,7 +113,11 @@ will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
 
+\item{x}{An object of class \code{epiworld_agents_viruses}.}
+
 \item{max_print}{Numeric scalar. Maximum number of viruses to print.}
+
+\item{...}{Currently ignored.}
 }
 \value{
 \itemize{

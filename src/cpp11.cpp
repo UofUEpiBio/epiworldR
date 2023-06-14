@@ -90,10 +90,10 @@ extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_variant_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hist_variant_cpp(SEXP model) {
+cpp11::data_frame get_hist_virus_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_hist_virus_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_variant_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // db.cpp
@@ -223,10 +223,10 @@ extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   END_CPP11
 }
 // model.cpp
-SEXP make_saver_cpp(std::string fn, bool total_hist, bool variant_info, bool variant_hist, bool tool_info, bool tool_hist, bool transmission, bool transition, bool reproductive, bool generation);
-extern "C" SEXP _epiworldR_make_saver_cpp(SEXP fn, SEXP total_hist, SEXP variant_info, SEXP variant_hist, SEXP tool_info, SEXP tool_hist, SEXP transmission, SEXP transition, SEXP reproductive, SEXP generation) {
+SEXP make_saver_cpp(std::string fn, bool total_hist, bool virus_info, bool virus_hist, bool tool_info, bool tool_hist, bool transmission, bool transition, bool reproductive, bool generation);
+extern "C" SEXP _epiworldR_make_saver_cpp(SEXP fn, SEXP total_hist, SEXP virus_info, SEXP virus_hist, SEXP tool_info, SEXP tool_hist, SEXP transmission, SEXP transition, SEXP reproductive, SEXP generation) {
   BEGIN_CPP11
-    return cpp11::as_sexp(make_saver_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(fn), cpp11::as_cpp<cpp11::decay_t<bool>>(total_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(variant_info), cpp11::as_cpp<cpp11::decay_t<bool>>(variant_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_info), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(transmission), cpp11::as_cpp<cpp11::decay_t<bool>>(transition), cpp11::as_cpp<cpp11::decay_t<bool>>(reproductive), cpp11::as_cpp<cpp11::decay_t<bool>>(generation)));
+    return cpp11::as_sexp(make_saver_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(fn), cpp11::as_cpp<cpp11::decay_t<bool>>(total_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_info), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_info), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(transmission), cpp11::as_cpp<cpp11::decay_t<bool>>(transition), cpp11::as_cpp<cpp11::decay_t<bool>>(reproductive), cpp11::as_cpp<cpp11::decay_t<bool>>(generation)));
   END_CPP11
 }
 // model.cpp
@@ -300,10 +300,10 @@ extern "C" SEXP _epiworldR_verbose_off_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
-int get_n_variants_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_n_variants_cpp(SEXP model) {
+int get_n_viruses_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_n_viruses_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_n_variants_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_n_viruses_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // model.cpp
@@ -712,10 +712,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
     {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    1},
     {"_epiworldR_get_hist_transition_matrix_cpp",       (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,        2},
-    {"_epiworldR_get_hist_variant_cpp",                 (DL_FUNC) &_epiworldR_get_hist_variant_cpp,                  1},
+    {"_epiworldR_get_hist_virus_cpp",                   (DL_FUNC) &_epiworldR_get_hist_virus_cpp,                    1},
     {"_epiworldR_get_n_replicates_cpp",                 (DL_FUNC) &_epiworldR_get_n_replicates_cpp,                  1},
     {"_epiworldR_get_n_tools_cpp",                      (DL_FUNC) &_epiworldR_get_n_tools_cpp,                       1},
-    {"_epiworldR_get_n_variants_cpp",                   (DL_FUNC) &_epiworldR_get_n_variants_cpp,                    1},
+    {"_epiworldR_get_n_viruses_cpp",                    (DL_FUNC) &_epiworldR_get_n_viruses_cpp,                     1},
     {"_epiworldR_get_name_cpp",                         (DL_FUNC) &_epiworldR_get_name_cpp,                          1},
     {"_epiworldR_get_name_tool_cpp",                    (DL_FUNC) &_epiworldR_get_name_tool_cpp,                     1},
     {"_epiworldR_get_name_virus_cpp",                   (DL_FUNC) &_epiworldR_get_name_virus_cpp,                    1},

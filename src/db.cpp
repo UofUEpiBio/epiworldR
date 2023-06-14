@@ -32,7 +32,7 @@ cpp11::data_frame get_hist_total_cpp(
 }
 
 [[cpp11::register]]
-cpp11::data_frame get_hist_variant_cpp(
+cpp11::data_frame get_hist_virus_cpp(
   SEXP model
 ) {
   
@@ -43,7 +43,7 @@ cpp11::data_frame get_hist_variant_cpp(
   std::vector<std::string> state;
   std::vector<int> counts;
   
-  ptr->get_db().get_hist_variant(
+  ptr->get_db().get_hist_virus(
     date, id, state, counts
   );
   
@@ -60,11 +60,11 @@ cpp11::data_frame get_hist_variant_cpp(
   );
 
   return cpp11::writable::data_frame({
-    "date"_nm    = date, 
-    "id"_nm      = id,
-    "virus"_nm = vnames,
-    "state"_nm   = state,
-    "counts"_nm  = counts,
+    "date"_nm      = date, 
+    "virus_id"_nm  = id,
+    "virus"_nm     = vnames,
+    "state"_nm     = state,
+    "counts"_nm    = counts,
   });
   
 }
@@ -148,7 +148,7 @@ cpp11::data_frame get_reproductive_number_cpp(
 ) {
   
   // Making some room
-  std::vector< int > variant;
+  std::vector< int > virus;
   std::vector< int > source;
   std::vector< int > source_exposure_date;
   std::vector< int > counts;
@@ -161,25 +161,25 @@ cpp11::data_frame get_reproductive_number_cpp(
 
   for (const auto & m : rn) 
   {
-    variant.push_back(m.first[0u]);
+    virus.push_back(m.first[0u]);
     source.push_back(m.first[1u]);
     source_exposure_date.push_back(m.first[2u]);
     counts.push_back(m.second);
   }
 
-  // Same as before: Need to map variant (id) to their names
+  // Same as before: Need to map virus (id) to their names
   std::vector< std::string > viruses;
   for (const auto & i : ptr->get_viruses())
     viruses.push_back(i->get_name());
 
-  std::vector< std::string > vnames(variant.size());
+  std::vector< std::string > vnames(virus.size());
   std::transform(
-    variant.begin(), variant.end(), vnames.begin(),
+    virus.begin(), virus.end(), vnames.begin(),
     [&viruses](int i) { return viruses[i]; }
   );
   
   return cpp11::writable::data_frame({
-    "virus_id"_nm           = variant,
+    "virus_id"_nm           = virus,
     "virus"_nm              = vnames,
     "source"_nm               = source,
     "source_exposure_date"_nm = source_exposure_date,
@@ -198,14 +198,14 @@ cpp11::data_frame get_transmissions_cpp(
   std::vector<int> date;
   std::vector<int> source;
   std::vector<int> target;
-  std::vector<int> variant;
+  std::vector<int> virus;
   std::vector<int> source_exposure_date;
  
   ptr->get_db().get_transmissions(
     date,
     source,
     target,
-    variant,
+    virus,
     source_exposure_date
   );
 
@@ -214,9 +214,9 @@ cpp11::data_frame get_transmissions_cpp(
   for (const auto & i : ptr->get_viruses())
     viruses.push_back(i->get_name());
 
-  std::vector< std::string > vnames(variant.size());
+  std::vector< std::string > vnames(virus.size());
   std::transform(
-    variant.begin(), variant.end(), vnames.begin(),
+    virus.begin(), virus.end(), vnames.begin(),
     [&viruses](int i) { return viruses[i]; }
   );
   
@@ -224,7 +224,7 @@ cpp11::data_frame get_transmissions_cpp(
     "date"_nm                 = date,
     "source"_nm               = source,
     "target"_nm               = target,
-    "virus_id"_nm             = variant,
+    "virus_id"_nm             = virus,
     "virus"_nm                = vnames,
     "source_exposure_date"_nm = source_exposure_date,
   });

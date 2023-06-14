@@ -17,8 +17,8 @@
 #' Currently, the following elements can be saved:
 #' 
 #' - `total_hist` History of the model (total numbers per time).
-#' - `variant_info` Information about `variants`.
-#' - `variant_hist` Changes in `variants`.
+#' - `virus_info` Information about `viruses`.
+#' - `virus_hist` Changes in `viruses`.
 #' - `tool_info` Information about `tools`.
 #' - `tool_hist` Changes in `tools`.
 #' - `transmission` Transmission events.
@@ -250,8 +250,8 @@ make_saver <- function(
   # Any missmatch?
   available <- c(
     "total_hist",
-    "variant_info",
-    "variant_hist",
+    "virus_info",
+    "virus_hist",
     "tool_info",
     "tool_hist",
     "transmission",
