@@ -70,6 +70,8 @@ number, the generation time, and daily incidence at the virus and tool level.</p
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_hist_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">get_today_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for epiworld_model</span></span>
 <span><span class="fu">get_today_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
@@ -167,6 +169,8 @@ entries in the transition matrix.</p></dd>
 
 <ul><li><p>The <code>get_hist_total</code> function returns an object of class
 epiworld_hist_total.</p></li>
+</ul><ul><li><p>The <code>get_today_total</code> function returns a named vector with the
+total number of individuals in each state at the end of the simulation.</p></li>
 </ul><ul><li><p>The <code>get_hist_virus</code> function returns an object of class
 epiworld_hist_virus.</p></li>
 </ul><ul><li><p>The <code>get_hist_tool</code> function returns an object of epiworld_hist_virus.</p></li>
