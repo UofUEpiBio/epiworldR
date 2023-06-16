@@ -176,6 +176,7 @@ print.epiworld_model <- function(x, ...) {
 #' - The `summary` function prints a more detailed view of the model, and returns the same model invisibly.
 #' @rdname epiworld-methods
 #' @param object Object of class `epiworld_model`.
+#' @param ... Additional arguments. 
 summary.epiworld_model <- function(object, ...) {
   print_cpp(object, lite = FALSE)
   invisible(object)

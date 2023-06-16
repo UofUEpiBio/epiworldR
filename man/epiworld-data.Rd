@@ -4,6 +4,7 @@
 \alias{epiworld-data}
 \alias{get_hist_total}
 \alias{epiworld_hist_total}
+\alias{get_today_total}
 \alias{get_today_total.epiworld_model}
 \alias{get_hist_virus}
 \alias{epiworld_hist_variant}
@@ -26,6 +27,8 @@
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
+
+get_today_total(x)
 
 \method{get_today_total}{epiworld_model}(x)
 
@@ -103,6 +106,11 @@ entries in the transition matrix.}
 \itemize{
 \item The \code{get_hist_total} function returns an object of class
 \link{epiworld_hist_total}.
+}
+
+\itemize{
+\item The \code{get_today_total} function returns a named vector with the
+total number of individuals in each state at the end of the simulation.
 }
 
 \itemize{

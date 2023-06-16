@@ -76,6 +76,8 @@ get_tool(model, tool_pos)
 
 \item{object}{Object of class \code{epiworld_model}.}
 
+\item{...}{Additional arguments.}
+
 \item{pname}{String. Name of the parameter.}
 
 \item{pval}{Numeric. Value of the parameter.}
