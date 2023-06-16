@@ -209,59 +209,10 @@ individuals.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
 <span class="r-in"><span><span class="va">model_surv</span> </span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SIMULATION STUDY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Surveillance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses  : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 5.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 171.85 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Surveilance program (runs daily)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Covid19 (baseline prevalence: 20 seeds)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tool(s):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Vaccine (baseline prevalence: 50.00%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infect period          : 0.8000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Latent period          : 4.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob of symptoms       : 5.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob of transmission   : 0.2000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. death            : 0.0010</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. no reinfect      : 0.5000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Surveilance prob.      : 0.1000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Vax efficacy           : 0.6000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Vax redux transmission : 0.7000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible           :  9980 -&gt; 9978</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Latent                :    20 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Symptomatic           :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (3) Symptomatic isolated  :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (4) Asymptomatic          :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (5) Asymptomatic isolated :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (6) Recovered             :     0 -&gt; 22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (7) Removed               :     0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible            1.00  0.00  0.00  0.00  0.00  0.00  0.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Latent                 0.00  0.68  0.08  0.09  0.00  0.00  0.15  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Symptomatic            0.00  0.00  0.00  0.00  0.00  0.00  1.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Symptomatic isolated   0.00  0.00  0.00  0.60  0.00  0.00  0.40  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Asymptomatic              -     -     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Asymptomatic isolated     -     -     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered              0.00  0.00  0.00  0.00  0.00  0.00  1.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Removed                   -     -     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Surveillance</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> It features 10000 agents, 1 virus(es), and 1 tool(s).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The model has 8 states.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 9978 Susceptible, 0 Latent, 0 Symptomatic, 0 Symptomatic isolated, 0 Asymptomatic, 0 Asymptomatic isolated, 22 Recovered, and 0 Removed.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_surv</span>, main <span class="op">=</span> <span class="st">"SURV Model"</span><span class="op">)</span></span></span>

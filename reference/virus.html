@@ -273,47 +273,10 @@ read directly from the <code>model</code> object, so changes will be reflected.<
 <span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
 <span class="r-in"><span><span class="va">mseirconn</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> SIMULATION STUDY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Population size     : 10000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agents' data        : (none)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses  : 2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 204.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 4.88 million agents x day / second</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Global actions:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  (none)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Virus(es):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - COVID-19 (baseline prevalence: 1.00%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Delta Variant (baseline prevalence: 30.00%)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Tool(s):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  (none)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Model parameters:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Avg. Incubation days : 7.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Contact rate         : 4.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Recovery       : 0.9900</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission   : 0.5000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  6900 -&gt; 3774</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Exposed     :  3100 -&gt; 102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Infected    :     0 -&gt; 18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (3) Recovered   :     0 -&gt; 6106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.99  0.01  0.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed      0.00  0.86  0.14  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.00  0.13  0.87</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  0.00  1.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible-Exposed-Infected-Removed (SEIR) (connected)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> It features 10000 agents, 2 virus(es), and 0 tool(s).</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The model has 4 states.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 3774 Susceptible, 102 Exposed, 18 Infected, and 6106 Recovered.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">rm_virus</span><span class="op">(</span><span class="va">mseirconn</span>, <span class="fl">0</span><span class="op">)</span> <span class="co"># Removing the first virus from the model object</span></span></span>
 <span class="r-in"><span><span class="fu">add_virus_n</span><span class="op">(</span><span class="va">mseirconn</span>, <span class="va">delta</span>, <span class="fl">100</span><span class="op">)</span> <span class="co"># Setting initial count of delta virus</span></span></span>

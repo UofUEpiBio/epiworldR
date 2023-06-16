@@ -78,6 +78,9 @@ and running the simulation.</p>
 <span></span>
 <span><span class="fu">run</span><span class="op">(</span><span class="va">model</span>, <span class="va">ndays</span>, seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample.int</a></span><span class="op">(</span><span class="fl">10000</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for epiworld_model</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">get_states</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_param</span><span class="op">(</span><span class="va">x</span>, <span class="va">pname</span><span class="op">)</span></span>
@@ -125,6 +128,10 @@ and running the simulation.</p>
 <dd><p>Seed to set for initializing random number generator.</p></dd>
 
 
+<dt>object</dt>
+<dd><p>Object of class <code>epiworld_model</code>.</p></dd>
+
+
 <dt>pname</dt>
 <dd><p>String. Name of the parameter.</p></dd>
 
@@ -158,6 +165,7 @@ in the model</p></dd>
 <ul><li><p>The <code>verbose_on</code> and <code>verbose_off</code> functions return the same model, however
 <code>verbose_off</code> returns the model with no progress bar.</p></li>
 </ul><ul><li><p>The <code>run</code> function returns the simulated model of class <code>epiworld_model</code>.</p></li>
+</ul><ul><li><p>The <code>summary</code> function prints a more detailed view of the model, and returns the same model invisibly.</p></li>
 </ul><ul><li><p>The <code>get_states</code> function returns the unique states found in a model.</p></li>
 </ul><ul><li><p>The <code>get_param</code> function returns a selected parameter from the model object
 of class <code>epiworld_model</code>.</p></li>
