@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpiBio/epiworld" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" class="external-link">agent-based models</a>. Some of the main features include:</p>
+<p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpiBio/epiworld" target="_blank" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" target="_blank" class="external-link">agent-based models</a>. Some of the main features include:</p>
 <ul>
 <li>Fast simulation with an average of 30 million agents/day per second.</li>
 <li>One model can include multiple diseases.</li>
@@ -97,7 +97,7 @@
 <div class="section level1">
 <h1 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h1>
-<p>This R package includes several popular epidemiological models including <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" class="external-link">SIS</a>, <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" class="external-link">SIR</a>, and <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" class="external-link">SEIR</a> using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
+<p>This R package includes several popular epidemiological models including <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model" target="_blank" class="external-link">SIS</a>, <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model" target="_blank" class="external-link">SIR</a>, and <a href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model" target="_blank" class="external-link">SEIR</a> using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:</p>
 <div class="section level2">
 <h2 id="sir-model-using-a-random-graph">SIR model using a random graph<a class="anchor" aria-label="anchor" href="#sir-model-using-a-random-graph"></a>
 </h2>
@@ -122,7 +122,7 @@
 <span><span class="co">#&gt; | done.</span></span>
 <span></span>
 <span><span class="va">sir</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; SIMULATION STUDY</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -132,8 +132,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses  : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 189.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 26.41 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 191.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 26.05 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -185,7 +185,7 @@
 <span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
 <span><span class="co">#&gt;  done.</span></span>
 <span><span class="va">model_seirconn</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; SIMULATION STUDY</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -195,8 +195,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses  : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 104.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 9.58 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 54.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 18.36 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -408,12 +408,12 @@
 <span><span class="co">#&gt; 6       1    1        1   Recovered      1</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1       1        0 COVID-19    527                   10  0</span></span>
+<span><span class="co">#&gt; 1       1        0 COVID-19    767                   11  0</span></span>
 <span><span class="co">#&gt; 2       1        0 COVID-19    835                   10  0</span></span>
-<span><span class="co">#&gt; 3       1        0 COVID-19    189                    9  0</span></span>
-<span><span class="co">#&gt; 4       1        0 COVID-19    192                    9  0</span></span>
-<span><span class="co">#&gt; 5       1        0 COVID-19    612                    9  0</span></span>
-<span><span class="co">#&gt; 6       1        0 COVID-19    977                    9  0</span></span>
+<span><span class="co">#&gt; 3       1        0 COVID-19    466                    9  0</span></span>
+<span><span class="co">#&gt; 4       1        0 COVID-19    612                    9  0</span></span>
+<span><span class="co">#&gt; 5       1        0 COVID-19    793                    9  0</span></span>
+<span><span class="co">#&gt; 6       1        0 COVID-19     20                    8  0</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
@@ -422,7 +422,7 @@
 <div class="section level1">
 <h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
 </h1>
-<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" class="external-link"><code>RNetLogo</code></a>.</p>
+<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" target="_blank" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" target="_blank" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" target="_blank" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" target="_blank" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" target="_blank" class="external-link"><code>RNetLogo</code></a>.</p>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
