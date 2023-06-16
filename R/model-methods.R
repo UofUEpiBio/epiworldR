@@ -167,8 +167,18 @@ run.epiworld_model <- function(model, ndays, seed = sample.int(1e4, 1)) {
 
 #' @export
 print.epiworld_model <- function(x, ...) {
-  print_cpp(x)
+  print_cpp(x, lite = TRUE)
   invisible(x)
+}
+
+#' @export 
+#' @returns
+#' - The `summary` function prints a more detailed view of the model, and returns the same model invisibly.
+#' @rdname epiworld-methods
+#' @param object Object of class `epiworld_model`.
+summary.epiworld_model <- function(object, ...) {
+  print_cpp(object, lite = FALSE)
+  invisible(object)
 }
 
 #' @export

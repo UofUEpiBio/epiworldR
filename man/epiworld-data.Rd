@@ -4,6 +4,7 @@
 \alias{epiworld-data}
 \alias{get_hist_total}
 \alias{epiworld_hist_total}
+\alias{get_today_total.epiworld_model}
 \alias{get_hist_virus}
 \alias{epiworld_hist_variant}
 \alias{epiworld_hist_virus}
@@ -25,6 +26,8 @@
 \title{Accessing the database of \code{epiworld}}
 \usage{
 get_hist_total(x)
+
+\method{get_today_total}{epiworld_model}(x)
 
 get_hist_virus(x)
 

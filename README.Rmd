@@ -40,8 +40,13 @@ From the package's description:
 You can install the development version of epiworldR from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("UofUEpiBioepiworldR")
+devtools::install_github("UofUEpiBio/epiworldR")
+```
+
+Or from CRAN
+
+```r
+install.packages("epiworldR")
 ```
 
 # Examples
@@ -76,6 +81,7 @@ sir
 Visualizing the outputs
 
 ```{r}
+summary(sir)
 plot(sir)
 ```
 

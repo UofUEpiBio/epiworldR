@@ -138,6 +138,13 @@ extern "C" SEXP _epiworldR_get_generation_time_cpp(SEXP model) {
     return cpp11::as_sexp(get_generation_time_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// db.cpp
+cpp11::writable::doubles get_today_total_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_today_total_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_today_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // epimodels.cpp
 SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double transmission_rate, double prob_death, double prob_noreinfect);
 extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP transmission_rate, SEXP prob_death, SEXP prob_noreinfect) {
@@ -195,10 +202,10 @@ extern "C" SEXP _epiworldR_ModelDiffNet_cpp(SEXP name, SEXP prevalence, SEXP pro
   END_CPP11
 }
 // model.cpp
-SEXP print_cpp(SEXP m);
-extern "C" SEXP _epiworldR_print_cpp(SEXP m) {
+SEXP print_cpp(SEXP m, bool lite);
+extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
   BEGIN_CPP11
-    return cpp11::as_sexp(print_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+    return cpp11::as_sexp(print_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<bool>>(lite)));
   END_CPP11
 }
 // model.cpp
@@ -725,6 +732,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
     {"_epiworldR_get_state_agent_cpp",                  (DL_FUNC) &_epiworldR_get_state_agent_cpp,                   1},
     {"_epiworldR_get_states_cpp",                       (DL_FUNC) &_epiworldR_get_states_cpp,                        1},
+    {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
@@ -736,7 +744,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},
     {"_epiworldR_print_agent_viruses_cpp",              (DL_FUNC) &_epiworldR_print_agent_viruses_cpp,               1},
-    {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             1},
+    {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             2},
     {"_epiworldR_print_global_action_cpp",              (DL_FUNC) &_epiworldR_print_global_action_cpp,               1},
     {"_epiworldR_print_tool_cpp",                       (DL_FUNC) &_epiworldR_print_tool_cpp,                        1},
     {"_epiworldR_print_virus_cpp",                      (DL_FUNC) &_epiworldR_print_virus_cpp,                       1},

@@ -76,6 +76,10 @@ get_generation_time_cpp <- function(model) {
   .Call(`_epiworldR_get_generation_time_cpp`, model)
 }
 
+get_today_total_cpp <- function(model) {
+  .Call(`_epiworldR_get_today_total_cpp`, model)
+}
+
 ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
   .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
 }
@@ -108,8 +112,8 @@ ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, d
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
-print_cpp <- function(m) {
-  .Call(`_epiworldR_print_cpp`, m)
+print_cpp <- function(m, lite) {
+  .Call(`_epiworldR_print_cpp`, m, lite)
 }
 
 agents_smallworld_cpp <- function(m, n, k, d, p) {

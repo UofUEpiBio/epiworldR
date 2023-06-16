@@ -10,4 +10,4 @@
 
 * Fixed bug in `run_multiple` and added more tests (C++).
 
-
+* Redid autoconf and Makevars using RcppArmadillo as a template for checking for OpenMP.

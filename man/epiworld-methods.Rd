@@ -8,6 +8,7 @@
 \alias{verbose_off}
 \alias{verbose_on}
 \alias{run}
+\alias{summary.epiworld_model}
 \alias{get_states}
 \alias{get_param}
 \alias{set_param}
@@ -33,6 +34,8 @@ verbose_off(x)
 verbose_on(x)
 
 run(model, ndays, seed = sample.int(10000, 1))
+
+\method{summary}{epiworld_model}(object, ...)
 
 get_states(x)
 
@@ -71,6 +74,8 @@ get_tool(model, tool_pos)
 
 \item{seed}{Seed to set for initializing random number generator.}
 
+\item{object}{Object of class \code{epiworld_model}.}
+
 \item{pname}{String. Name of the parameter.}
 
 \item{pval}{Numeric. Value of the parameter.}
@@ -93,6 +98,10 @@ in the model}
 
 \itemize{
 \item The \code{run} function returns the simulated model of class \code{epiworld_model}.
+}
+
+\itemize{
+\item The \code{summary} function prints a more detailed view of the model, and returns the same model invisibly.
 }
 
 \itemize{

@@ -4,9 +4,9 @@ build: docs clean
 debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
-install: 
+install: build 
 	which R
-	R CMD INSTALL .
+	R CMD INSTALL epiworldR_*.tar.gz
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'

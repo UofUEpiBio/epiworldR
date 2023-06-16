@@ -6,10 +6,10 @@ using namespace epiworld;
 using namespace cpp11;
 
 [[cpp11::register]]
-SEXP print_cpp(SEXP m) {
+SEXP print_cpp(SEXP m, bool lite) {
   
   external_pointer<Model<>> ptr(m);
-  ptr->print();
+  ptr->print(lite);
   
   return m;
   

@@ -81,6 +81,18 @@ get_hist_total.epiworld_model <- function(x)  {
   
 }
 
+#' @export 
+#' @returns
+#' - The `get_today_total` function returns a named vector with the
+#' total number of individuals in each state at the end of the simulation.
+get_today_total <- function(x) UseMethod("get_today_total")
+
+#' @export 
+#' @rdname epiworld-data
+get_today_total.epiworld_model <- function(x) {
+  get_today_total_cpp(x)
+}
+
 #' @export
 plot.epiworld_hist <- function(x, y, ...) {
   plot_epi(x, ...)

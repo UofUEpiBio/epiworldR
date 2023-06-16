@@ -2,6 +2,8 @@
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/data_frame.hpp"
+#include "cpp11/doubles.hpp"
+#include "cpp11/strings.hpp"
 #include "epiworld-common.h"
 
 using namespace epiworld;
@@ -269,4 +271,22 @@ cpp11::data_frame get_generation_time_cpp(
     "gentime"_nm  = gentime
   });
   
+}
+
+[[cpp11::register]]
+cpp11::writable::doubles get_today_total_cpp(SEXP model) {
+
+  cpp11::external_pointer<Model<>> ptr(model);
+
+  std::vector< int > totals;
+  std::vector< std::string > names;
+  ptr->get_db().get_today_total(&names, &totals);
+
+  cpp11::writable::doubles totals_r(totals.begin(), totals.end()); 
+  cpp11::writable::strings names_r(names.begin(), names.end());
+
+  totals_r.names() = names_r;
+
+  return totals_r;
+
 }

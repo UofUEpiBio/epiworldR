@@ -13,6 +13,7 @@ Useful links:
 \itemize{
   \item \url{https://github.com/UofUEpiBio/epiworldR}
   \item \url{https://uofuepibio.github.io/epiworldR/}
+  \item \url{https://uofuepibio.github.io/epiworldR-workshop/}
   \item Report bugs at \url{https://github.com/UofUEpiBio/epiworldR/issues}
 }
 

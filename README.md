@@ -46,8 +46,13 @@ You can install the development version of epiworldR from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("UofUEpiBioepiworldR")
+devtools::install_github("UofUEpiBio/epiworldR")
+```
+
+Or from CRAN
+
+``` r
+install.packages("epiworldR")
 ```
 
 # Examples
@@ -92,6 +97,17 @@ sir <- ModelSIR(
 
 sir
 #> ________________________________________________________________________________
+#> Susceptible-Infected-Recovered (SIR)
+#> It features 100000 agents, 1 virus(es), and 0 tool(s).
+#> The model has 3 states.
+#> The final distribution is: 822 Susceptible, 415 Infected, and 98763 Recovered.
+```
+
+Visualizing the outputs
+
+``` r
+summary(sir)
+#> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
 #> 
@@ -100,9 +116,9 @@ sir
 #> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
-#> Number of viruses  : 1
-#> Last run elapsed t  : 191.00ms
-#> Last run speed      : 26.05 million agents x day / second
+#> Number of viruses   : 1
+#> Last run elapsed t  : 194.00ms
+#> Last run speed      : 25.77 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -127,11 +143,6 @@ sir
 #>  - Susceptible  0.91  0.09  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
-```
-
-Visualizing the outputs
-
-``` r
 plot(sir)
 ```
 
@@ -164,46 +175,10 @@ run(model_seirconn, ndays = 100)
 #>  done.
 model_seirconn
 #> ________________________________________________________________________________
-#> ________________________________________________________________________________
-#> SIMULATION STUDY
-#> 
-#> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
-#> Population size     : 10000
-#> Agents' data        : (none)
-#> Number of entities  : 0
-#> Days (duration)     : 100 (of 100)
-#> Number of viruses  : 2
-#> Last run elapsed t  : 54.00ms
-#> Last run speed      : 18.36 million agents x day / second
-#> Rewiring            : off
-#> 
-#> Global actions:
-#>  (none)
-#> 
-#> Virus(es):
-#>  - COVID-19 (baseline prevalence: 1.00%)
-#>  - COVID-19 (baseline prevalence: 50.00%)
-#> 
-#> Tool(s):
-#>  (none)
-#> 
-#> Model parameters:
-#>  - Avg. Incubation days : 7.0000
-#>  - Contact rate         : 4.0000
-#>  - Prob. Recovery       : 0.5000
-#>  - Prob. Transmission   : 0.6000
-#> 
-#> Distribution of the population at time 100:
-#>   - (0) Susceptible :  4900 -> 608
-#>   - (1) Exposed     :  5100 -> 4
-#>   - (2) Infected    :     0 -> 2
-#>   - (3) Recovered   :     0 -> 9386
-#> 
-#> Transition Probabilities:
-#>  - Susceptible  0.98  0.02  0.00  0.00
-#>  - Exposed      0.00  0.86  0.14  0.00
-#>  - Infected     0.00  0.00  0.48  0.52
-#>  - Recovered    0.00  0.00  0.00  1.00
+#> Susceptible-Exposed-Infected-Removed (SEIR) (connected)
+#> It features 10000 agents, 2 virus(es), and 0 tool(s).
+#> The model has 4 states.
+#> The final distribution is: 608 Susceptible, 4 Exposed, 2 Infected, and 9386 Recovered.
 ```
 
 Computing some key statistics
