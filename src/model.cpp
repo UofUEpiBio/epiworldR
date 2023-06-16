@@ -74,7 +74,7 @@ SEXP make_saver_cpp(
   bool generation
 ) {
   
-  funptr* saver = new funptr(make_save_run<>(
+  funptr* saver = new funptr(make_save_run<int>(
     fn,
     total_hist,
     virus_info,

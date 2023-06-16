@@ -13,16 +13,18 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
-[epiworld](https://github.com/UofUEpiBio/epiworld). It provides a
-general framework for modeling disease transmission using [agent-based
-models](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802).
-Some of the main features include:
+<a href="https://github.com/UofUEpiBio/epiworld"
+target="_blank">epiworld</a>. It provides a general framework for
+modeling disease transmission using <a
+href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802"
+target="_blank">agent-based models</a>. Some of the main features
+include:
 
-  - Fast simulation with an average of 30 million agents/day per second.
-  - One model can include multiple diseases.
-  - Policies (tools) can be multiple and user-defined.
-  - Transmission can be a function of agents’ features.
-  - Out-of-the-box parallelization for multiple simulations.
+- Fast simulation with an average of 30 million agents/day per second.
+- One model can include multiple diseases.
+- Policies (tools) can be multiple and user-defined.
+- Transmission can be a function of agents’ features.
+- Out-of-the-box parallelization for multiple simulations.
 
 From the package’s description:
 
@@ -51,12 +53,15 @@ devtools::install_github("UofUEpiBioepiworldR")
 # Examples
 
 This R package includes several popular epidemiological models including
-[SIS](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model),
-[SIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model),
-and
-[SEIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model)
-using either a fully connected graph (similar to a compartmental model)
-or a user-defined network. Here are some examples:
+<a
+href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model"
+target="_blank">SIS</a>, <a
+href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model"
+target="_blank">SIR</a>, and <a
+href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model"
+target="_blank">SEIR</a> using either a fully connected graph (similar
+to a compartmental model) or a user-defined network. Here are some
+examples:
 
 ## SIR model using a random graph
 
@@ -86,7 +91,7 @@ sir <- ModelSIR(
 #> | done.
 
 sir
-#> 
+#> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
 #> 
@@ -96,8 +101,8 @@ sir
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses  : 1
-#> Last run elapsed t  : 189.00ms
-#> Last run speed      : 26.41 million agents x day / second
+#> Last run elapsed t  : 191.00ms
+#> Last run speed      : 26.05 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -158,7 +163,7 @@ run(model_seirconn, ndays = 100)
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
 model_seirconn
-#> 
+#> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
 #> 
@@ -168,8 +173,8 @@ model_seirconn
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses  : 2
-#> Last run elapsed t  : 104.00ms
-#> Last run speed      : 9.58 million agents x day / second
+#> Last run elapsed t  : 54.00ms
+#> Last run speed      : 18.36 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -225,7 +230,7 @@ head(plot(repnum))
     #> 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40
     #> 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10
     #> 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65
-    
+
     plot_incidence(model_seirconn)
 
 <img src="man/figures/README-unnamed-chunk-4-3.png" width="100%" />
@@ -419,12 +424,12 @@ head(ans$total_hist)
 #> 6       1    1        1   Recovered      1
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    527                   10  0
+#> 1       1        0 COVID-19    767                   11  0
 #> 2       1        0 COVID-19    835                   10  0
-#> 3       1        0 COVID-19    189                    9  0
-#> 4       1        0 COVID-19    192                    9  0
-#> 5       1        0 COVID-19    612                    9  0
-#> 6       1        0 COVID-19    977                    9  0
+#> 3       1        0 COVID-19    466                    9  0
+#> 4       1        0 COVID-19    612                    9  0
+#> 5       1        0 COVID-19    793                    9  0
+#> 6       1        0 COVID-19     20                    8  0
 
 plot(ans$reproductive)
 ```
@@ -434,8 +439,13 @@ plot(ans$reproductive)
 # Other ABM R packages
 
 You may want to check out other R packages for agent-based modeling:
-[`ABM`](https://cran.r-project.org/package=ABM),
-[`abmR`](https://cran.r-project.org/package=abmR),
-[`cystiSim`](https://cran.r-project.org/package=cystiSim),
-[`villager`](https://cran.r-project.org/package=villager), and
-[`RNetLogo`](https://cran.r-project.org/package=RNetLogo).
+<a href="https://cran.r-project.org/package=ABM"
+target="_blank"><code>ABM</code></a>,
+<a href="https://cran.r-project.org/package=abmR"
+target="_blank"><code>abmR</code></a>,
+<a href="https://cran.r-project.org/package=cystiSim"
+target="_blank"><code>cystiSim</code></a>,
+<a href="https://cran.r-project.org/package=villager"
+target="_blank"><code>villager</code></a>, and
+<a href="https://cran.r-project.org/package=RNetLogo"
+target="_blank"><code>RNetLogo</code></a>.
