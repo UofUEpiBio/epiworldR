@@ -5,7 +5,6 @@
 \alias{get_hist_total}
 \alias{epiworld_hist_total}
 \alias{get_today_total}
-\alias{get_today_total.epiworld_model}
 \alias{get_hist_virus}
 \alias{epiworld_hist_variant}
 \alias{epiworld_hist_virus}
@@ -24,13 +23,11 @@
 \alias{get_generation_time}
 \alias{plot.epiworld_generation_time}
 \alias{plot_generation_time}
-\title{Accessing the database of \code{epiworld}}
+\title{Accessing the database of epiworld}
 \usage{
 get_hist_total(x)
 
 get_today_total(x)
-
-\method{get_today_total}{epiworld_model}(x)
 
 get_hist_virus(x)
 
@@ -163,8 +160,10 @@ entries, where the first entry is the initial state.
 columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{virus}, and \code{source_exposure_date}.
 }
 
-The function \code{get_generation_time} returns a \code{data.frame} with
+\itemize{
+\item The function \code{get_generation_time} returns a \code{data.frame} with
 the following columns: "agent", "virus_id", "virus", "date", and "gentime".
+}
 
 \itemize{
 \item The function \code{plot_generation_time} is a wrapper for \link{plot} and

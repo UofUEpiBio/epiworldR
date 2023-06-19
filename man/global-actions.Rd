@@ -10,6 +10,7 @@
 \alias{actions}
 \alias{globalaction_tool_logit}
 \alias{globalaction_set_params}
+\alias{globalaction_fun}
 \alias{add_global_action}
 \title{Global Actions}
 \usage{
@@ -30,6 +31,8 @@ globalaction_set_params(
   day = -99
 )
 
+globalaction_fun(fun, name = deparse(substitute(fun)), day = -99)
+
 add_global_action(model, action)
 }
 \arguments{
@@ -48,6 +51,8 @@ add_global_action(model, action)
 \item{param}{Character scalar. The name of the parameter to be set.}
 
 \item{value}{Numeric scalar. The value of the parameter.}
+
+\item{fun}{Function. The function to be executed.}
 
 \item{model}{An object of class \link{epiworld_model}.}
 
@@ -83,6 +88,10 @@ model.
 The function \code{globalaction_set_param} allows to set a parameter of
 the model. The parameter is specified by its name \code{param} and the value by
 \code{value}.
+
+The function \code{globalaction_fun} allows to specify a function to be
+executed at a given day. The function object must receive an object of class
+\link{epiworld_model} as only argument.
 
 The function \code{add_global_action} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added

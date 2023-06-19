@@ -117,3 +117,27 @@ SEXP rm_global_action_cpp(
   
 }
 
+[[cpp11::register]]
+SEXP globalaction_fun_cpp(
+    cpp11::function fun,
+    std::string name,
+    int day
+    ) {
+  
+  GlobalFun<int> fun_call = [fun](Model<int> * model) -> void {
+    
+    external_pointer<Model<int>> modelptr(model, false);
+
+    
+
+    fun(modelptr);
+    return;
+  };
+  
+  return external_pointer<GlobalAction<int>>(
+    new GlobalAction<int>(fun_call, name, day)
+  );
+  
+  
+}
+

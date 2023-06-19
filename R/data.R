@@ -1,4 +1,4 @@
-#' Accessing the database of `epiworld`
+#' Accessing the database of epiworld
 #' 
 #' Models in `epiworld` are stored in a database. This database can be accessed
 #' using the functions described in this manual page. Some elements of the
@@ -89,7 +89,6 @@ get_hist_total.epiworld_model <- function(x)  {
 get_today_total <- function(x) UseMethod("get_today_total")
 
 #' @export 
-#' @rdname epiworld-data
 get_today_total.epiworld_model <- function(x) {
   get_today_total_cpp(x)
 }
@@ -515,7 +514,7 @@ get_transmissions.epiworld_model <- function(x) {
 #' @export
 #' @rdname epiworld-data
 #' @return
-#' The function `get_generation_time` returns a `data.frame` with
+#' - The function `get_generation_time` returns a `data.frame` with
 #' the following columns: "agent", "virus_id", "virus", "date", and "gentime".
 get_generation_time <- function(x) {
     

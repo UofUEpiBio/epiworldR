@@ -124,8 +124,32 @@ globalaction_set_params <- function(
     globalaction_set_param_cpp(param, value, name, day),
     class = c("epiworld_globalaction_set_param", "epiworld_globalaction"),
     param = param,
-    value = value
+    value = value,
+    call = match.call()
   )
+}
+
+#' @export 
+#' @rdname global-actions
+#' @param fun Function. The function to be executed.
+#' @details The function `globalaction_fun` allows to specify a function to be
+#' executed at a given day. The function object must receive an object of class
+#' [epiworld_model] as only argument.
+globalaction_fun <- function(
+  fun, name = deparse(substitute(fun)), day = -99
+  ) {
+
+  fun_caller <- function(model) {
+    fun(structure(model, class = "epiworld_model"))
+  }
+
+  structure(
+    globalaction_fun_cpp(fun_caller, name, day),
+    class = c("epiworld_globalaction_fun", "epiworld_globalaction"),
+    fun = fun,
+    call = match.call()
+  )
+
 }
 
 #' @export

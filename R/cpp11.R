@@ -24,6 +24,10 @@ rm_global_action_cpp <- function(model, name) {
   .Call(`_epiworldR_rm_global_action_cpp`, model, name)
 }
 
+globalaction_fun_cpp <- function(fun, name, day) {
+  .Call(`_epiworldR_globalaction_fun_cpp`, fun, name, day)
+}
+
 get_agents_cpp <- function(model) {
   .Call(`_epiworldR_get_agents_cpp`, model)
 }
