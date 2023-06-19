@@ -54,7 +54,7 @@ number, the generation time, and daily incidence at the virus and tool level."><
 </nav><div class="container template-reference-topic">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Accessing the database of <code>epiworld</code></h1>
+      <img src="" class="logo" alt=""><h1>Accessing the database of epiworld</h1>
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/data.R" class="external-link"><code>R/data.R</code></a></small>
       <div class="d-none name"><code>epiworld-data.Rd</code></div>
     </div>
@@ -70,9 +70,6 @@ number, the generation time, and daily incidence at the virus and tool level.</p
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_hist_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_today_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for epiworld_model</span></span>
 <span><span class="fu">get_today_total</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_hist_virus</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
@@ -191,11 +188,9 @@ entries, where the first entry is the initial state.</p></li>
 <code>epiworld_hist_transition</code> object.</p></li>
 </ul><ul><li><p>The function <code>get_transmissions</code> returns a <code>data.frame</code> with the following
 columns: <code>date</code>, <code>source</code>, <code>target</code>, <code>virus_id</code>, <code>virus</code>, and <code>source_exposure_date</code>.</p></li>
-</ul><p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
-the following columns: "agent", "virus_id", "virus", "date", and "gentime".</p>
-
-
-<ul><li><p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
+</ul><ul><li><p>The function <code>get_generation_time</code> returns a <code>data.frame</code> with
+the following columns: "agent", "virus_id", "virus", "date", and "gentime".</p></li>
+</ul><ul><li><p>The function <code>plot_generation_time</code> is a wrapper for <a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a> and
 get_generation_time.</p></li>
 </ul></div>
     <div class="section level2">

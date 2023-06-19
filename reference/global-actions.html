@@ -82,6 +82,8 @@ vaccination, isolation, and social distancing by means of tools.</p>
 <span>  day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">globalaction_fun</span><span class="op">(</span><span class="va">fun</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/deparse.html" class="external-link">deparse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">substitute</a></span><span class="op">(</span><span class="va">fun</span><span class="op">)</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model</span>, <span class="va">action</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -119,6 +121,10 @@ vaccination, isolation, and social distancing by means of tools.</p>
 <dd><p>Numeric scalar. The value of the parameter.</p></dd>
 
 
+<dt>fun</dt>
+<dd><p>Function. The function to be executed.</p></dd>
+
+
 <dt>model</dt>
 <dd><p>An object of class <a href="epiworld-methods.html">epiworld_model</a>.</p></dd>
 
@@ -150,6 +156,9 @@ model.</p>
 <p>The function <code>globalaction_set_param</code> allows to set a parameter of
 the model. The parameter is specified by its name <code>param</code> and the value by
 <code>value</code>.</p>
+<p>The function <code>globalaction_fun</code> allows to specify a function to be
+executed at a given day. The function object must receive an object of class
+<a href="epiworld-methods.html">epiworld_model</a> as only argument.</p>
 <p>The function <code>add_global_action</code> adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
 action matches the current time step, the action is executed. When <code>day</code> is
