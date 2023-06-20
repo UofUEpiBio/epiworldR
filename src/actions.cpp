@@ -127,13 +127,15 @@ SEXP globalaction_fun_cpp(
   
   GlobalFun<int> fun_call = [fun](Model<int> * model) -> void {
     
-    external_pointer<Model<int>> modelptr(model, false);
+    cpp11::external_pointer<Model<int>> modelptr(model, false);
 
     sexp modelptrs(modelptr);
     modelptrs.attr("class") = "epiworld_model";
 
     fun(modelptr);
+    
     return;
+
   };
   
   return external_pointer<GlobalAction<int>>(

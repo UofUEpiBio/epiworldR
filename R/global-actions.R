@@ -135,10 +135,40 @@ globalaction_set_params <- function(
 #' @details The function `globalaction_fun` allows to specify a function to be
 #' executed at a given day. The function object must receive an object of class
 #' [epiworld_model] as only argument.
+#' @examples 
+#' # Example using `globalaction_fun` to record the state of the
+#' # agents at each time step.
+#' 
+#' # We start by creating an SIR connected model
+#' model <- ModelSIRCONN(
+#'   name              = "SIR with Global Saver",
+#'   n                 = 1000,
+#'   prevalence        = 0.01,
+#'   contact_rate      = 5,
+#'   transmission_rate = 0.4,
+#'   recovery_rate     = 0.3
+#'   )
+#' 
+#' # We create the object where the history of the agents will be stored
+#' agents_history <- NULL
+#' 
+#' # This function prints the total number of agents in each state
+#' # and stores the history of the agents in the object `agents_history`
+#' hist_saver <- function(m) {
+#'   
+#'   message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
+#' 
+#'   # We use the `<<-` operator to assign the value to the global variable
+#'   # `agents_history` (see ?"<<-")
+#'   agents_history <<- cbind(
+#'     agents_history,
+#'     get_agents_states(m)
+#'     )
+#'     
+#' }
 globalaction_fun <- function(
   fun, name = deparse(substitute(fun)), day = -99
   ) {
-
 
   structure(
     globalaction_fun_cpp(fun, name, day),
