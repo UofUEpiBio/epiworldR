@@ -154,7 +154,7 @@ These will be implemented in future versions of
 <code>epiworldR</code>.</p>
 </div>
 <div class="section level2">
-<h2 id="calculations">Calculations<a class="anchor" aria-label="anchor" href="#calculations"></a>
+<h2 id="computing-probabilities">Computing probabilities<a class="anchor" aria-label="anchor" href="#computing-probabilities"></a>
 </h2>
 <div class="section level3">
 <h3 id="transmission-probability">Transmission probability<a class="anchor" aria-label="anchor" href="#transmission-probability"></a>
@@ -182,15 +182,15 @@ reducing/increasing them. Furthermore, tools alter agents’
 susceptibility, infectiousness, recovery, and death probabilities.
 Currently, tools alter these probabilities by a constant factor,</p>
 <p><span class="math display">\[
-p_{ij} = p_{v} \times \left(1 - \mbox{factor}_{host}\right) \times
-\left(1 - \mbox{factor}_{target}\right)
+p_{ij} = p_{v} \times \left(1 - factor_{host}\right) \times \left(1 -
+factor_{target}\right)
 \]</span></p>
 <p>Where <span class="math inline">\(p_{v}\)</span> is the raw
 transmission probability of the virus <span class="math inline">\(v\)</span>, and <span class="math inline">\(factor_{t}\)</span> are the increasing/reducing
 factors tools have over the process. For example, if <code>p_v</code>
-was 0.9, the host was wearing a mask, so <span class="math inline">\(\mbox{factor}_{\mbox{mask host}} = 0.3\)</span>
-and the target was vaccinated, so <span class="math inline">\(\mbox{factor}_{\mbox{vaccinated target}} =
-0.5\)</span>, then the adjusted probability <span class="math inline">\(p_{ij}\)</span> would be <span class="math inline">\(0.9 \times (1 - 0.3) \times (1 - 0.5) =
+was 0.9, the host was wearing a mask, so <span class="math inline">\(factor_{\mbox{mask host}} = 0.3\)</span> and the
+target was vaccinated, so <span class="math inline">\(factor_{\mbox{vaccinated target}} = 0.5\)</span>,
+then the adjusted probability <span class="math inline">\(p_{ij}\)</span> would be <span class="math inline">\(0.9 \times (1 - 0.3) \times (1 - 0.5) =
 0.27\)</span>.</p>
 <p>When agents have more than one tool, factors are combined as
 follows:</p>
