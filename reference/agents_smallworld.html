@@ -79,6 +79,16 @@ The <code>get_network</code> function returns the edgelist of the network.</p>
 <span></span>
 <span><span class="fu">get_agents_states</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">add_virus_agent</span><span class="op">(</span><span class="va">agent</span>, <span class="va">model</span>, <span class="va">virus</span>, state_new <span class="op">=</span> <span class="op">-</span><span class="fl">99</span>, queue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">add_tool_agent</span><span class="op">(</span><span class="va">agent</span>, <span class="va">model</span>, <span class="va">tool</span>, state_new <span class="op">=</span> <span class="op">-</span><span class="fl">99</span>, queue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">has_virus</span><span class="op">(</span><span class="va">agent</span>, <span class="va">virus</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">has_tool</span><span class="op">(</span><span class="va">agent</span>, <span class="va">tool</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">change_state</span><span class="op">(</span><span class="va">agent</span>, <span class="va">model</span>, <span class="va">state_new</span>, queue <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">get_agents_tools</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_agents_viruses</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -110,6 +120,26 @@ The <code>get_network</code> function returns the edgelist of the network.</p>
 <dd><p>Integer vectors describing the source and target of
 in the edgelist.</p></dd>
 
+
+<dt>agent</dt>
+<dd><p>Agent object of class <code>epiworld_agent</code>.</p></dd>
+
+
+<dt>virus</dt>
+<dd><p>Virus object of class <code>epiworld_virus</code>.</p></dd>
+
+
+<dt>state_new</dt>
+<dd><p>Integer scalar. New state of the agent after the action is executed.</p></dd>
+
+
+<dt>queue</dt>
+<dd><p>Integer scalar. Change in the queuing system after the action is executed.</p></dd>
+
+
+<dt>tool</dt>
+<dd><p>Tool object of class <code>epiworld_tool</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -123,11 +153,22 @@ loaded.</p></li>
 (<code>source</code> and <code>target</code>) describing the edgelist of the network.</p></li>
 </ul><ul><li><p><code>get_agents_states</code> returns an character vector with the states of the
 agents by the end of the simulation.</p></li>
+</ul><ul><li><p>The function <code>add_virus_agent</code> adds a virus to an agent and
+returns the agent invisibly.</p></li>
+</ul><ul><li><p>The function <code>add_tool_agent</code> adds a tool to an agent and
+returns the agent invisibly.</p></li>
+</ul><ul><li><p>The functions <code>has_virus</code> and <code>has_tool</code> return a logical scalar
+indicating whether the agent has the virus/tool or not.</p></li>
 </ul><ul><li><p><code>get_agents_tools</code> returns a list of class <code>epiworld_agents_tools</code>
 with <code>epiworld_tools</code> (list of lists).</p></li>
 </ul><ul><li><p><code>get_agents_viruses</code> returns a list of class <code>epiworld_agents_viruses</code>
 with <code>epiworld_viruses</code> (list of lists).</p></li>
 </ul></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The <code>new_state</code> and <code>queue</code> parameters are optional. If they are not
+provided, the agent will be updated with the default values of the virus/tool.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
