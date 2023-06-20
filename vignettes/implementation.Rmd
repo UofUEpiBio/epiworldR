@@ -46,7 +46,7 @@ The core function of `epiworldR` is the `run()` function. This function executes
 Other steps included in `epiworld` but not in `epiworldR` are the network rewiring and mutation of viruses. These will be implemented in future versions of `epiworldR`.
 
 
-# Calculations
+# Computing probabilities
 
 ## Transmission probability
 
@@ -74,10 +74,10 @@ recovery, and death probabilities. Currently, tools alter these probabilities
 by a constant factor, 
 
 $$
-p_{ij} = p_{v} \times \left(1 - \mbox{factor}_{host}\right) \times \left(1 - \mbox{factor}_{target}\right)
+p_{ij} = p_{v} \times \left(1 - factor_{host}\right) \times \left(1 - factor_{target}\right)
 $$
 
-Where $p_{v}$ is the raw transmission probability of the virus $v$, and $factor_{t}$ are the increasing/reducing factors tools have over the process. For example, if `p_v` was 0.9, the host was wearing a mask, so $\mbox{factor}_{\mbox{mask host}} = 0.3$ and the target was vaccinated, so $\mbox{factor}_{\mbox{vaccinated target}} = 0.5$, then the adjusted probability $p_{ij}$ would be $0.9 \times (1 - 0.3) \times (1 - 0.5) = 0.27$.
+Where $p_{v}$ is the raw transmission probability of the virus $v$, and $factor_{t}$ are the increasing/reducing factors tools have over the process. For example, if `p_v` was 0.9, the host was wearing a mask, so $factor_{\mbox{mask host}} = 0.3$ and the target was vaccinated, so $factor_{\mbox{vaccinated target}} = 0.5$, then the adjusted probability $p_{ij}$ would be $0.9 \times (1 - 0.3) \times (1 - 0.5) = 0.27$.
 
 When agents have more than one tool, factors are combined as follows:
 

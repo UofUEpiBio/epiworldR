@@ -146,6 +146,36 @@ add_global_action(model_sirconn2, closure_day_10)
 run(model_sirconn2, ndays = 40, seed = 1912)
 model_sirconn2
 plot_incidence(model_sirconn2)
+# Example using `globalaction_fun` to record the state of the
+# agents at each time step.
+
+# We start by creating an SIR connected model
+model <- ModelSIRCONN(
+  name              = "SIR with Global Saver",
+  n                 = 1000,
+  prevalence        = 0.01,
+  contact_rate      = 5,
+  transmission_rate = 0.4,
+  recovery_rate     = 0.3
+  )
+
+# We create the object where the history of the agents will be stored
+agents_history <- NULL
+
+# This function prints the total number of agents in each state
+# and stores the history of the agents in the object `agents_history`
+hist_saver <- function(m) {
+  
+  message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
+
+  # We use the `<<-` operator to assign the value to the global variable
+  # `agents_history` (see ?"<<-")
+  agents_history <<- cbind(
+    agents_history,
+    get_agents_states(m)
+    )
+    
+}
 }
 \seealso{
 epiworld-model
