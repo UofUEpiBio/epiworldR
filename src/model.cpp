@@ -302,3 +302,4 @@ cpp11::data_frame get_network_cpp(SEXP model) {
     });
     
 }
+

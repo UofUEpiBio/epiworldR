@@ -117,4 +117,3 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
 get_state <- function(x) {
   get_state_agent_cpp(x)
 }
-#'

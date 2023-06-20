@@ -1,3 +1,8 @@
+stopifnot_agent <- function(x) {
+  if (!inherits(x, "epiworld_agent"))
+    stop("x must be an object of class epiworld_agent")
+}
+
 #' Load agents to a model
 #' 
 #' These functions provide access to the network of the model. The network is
@@ -115,4 +120,75 @@ get_agents_states <- function(model) {
   get_agents_states_cpp(model)
 }
 
+#' @export 
+#' @param agent Agent object of class `epiworld_agent`.
+#' @param virus Virus object of class `epiworld_virus`.
+#' @param state_new Integer scalar. New state of the agent after the action is executed.
+#' @param queue Integer scalar. Change in the queuing system after the action is executed.
+#' @details
+#' The `new_state` and `queue` parameters are optional. If they are not
+#' provided, the agent will be updated with the default values of the virus/tool.
+#' @rdname agents_smallworld
+#' @return
+#' - The function `add_virus_agent` adds a virus to an agent and
+#' returns the agent invisibly.
+add_virus_agent <- function(
+  agent, model, virus, state_new = -99, queue = -99
+) {
 
+  stopifnot_model(model)
+  stopifnot_virus(virus)
+  stopifnot_agent(agent)
+
+  invisible(
+    add_virus_agent_cpp(agent, model, virus, state_new, queue)
+  )
+
+}
+
+#' @export
+#' @param tool Tool object of class `epiworld_tool`.
+#' @rdname agents_smallworld
+#' @return
+#' - The function `add_tool_agent` adds a tool to an agent and
+#' returns the agent invisibly.
+add_tool_agent <- function(
+  agent, model, tool, state_new = -99, queue = -99
+) {
+
+  stopifnot_model(model)
+  stopifnot_tool(tool)
+  stopifnot_agent(agent)
+
+  invisible(
+    add_tool_agent_cpp(agent, model, tool, state_new, queue)
+  )
+
+}
+
+#' @export
+#' @rdname agents_smallworld
+#' @return
+#' - The functions `has_virus` and `has_tool` return a logical scalar
+#' indicating whether the agent has the virus/tool or not.
+has_virus <- function(agent, virus) {
+  stopifnot_agent(agent)
+  stopifnot_virus(virus)
+  has_virus_cpp(agent, virus)
+}
+
+#' @export
+#' @rdname agents_smallworld
+has_tool <- function(agent, tool) {
+  stopifnot_agent(agent)
+  stopifnot_tool(tool)
+  has_tool_cpp(agent, tool)
+}
+
+#' @export
+#' @rdname agents_smallworld
+change_state <- function(agent, model, state_new, queue = -99) {
+  stopifnot_agent(agent)
+  stopifnot_model(model)
+  change_state_cpp(agent, model, state_new, queue)
+}

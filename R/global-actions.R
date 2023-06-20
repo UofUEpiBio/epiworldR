@@ -139,12 +139,9 @@ globalaction_fun <- function(
   fun, name = deparse(substitute(fun)), day = -99
   ) {
 
-  fun_caller <- function(model) {
-    fun(structure(model, class = "epiworld_model"))
-  }
 
   structure(
-    globalaction_fun_cpp(fun_caller, name, day),
+    globalaction_fun_cpp(fun, name, day),
     class = c("epiworld_globalaction_fun", "epiworld_globalaction"),
     fun = fun,
     call = match.call()

@@ -89,6 +89,41 @@ extern "C" SEXP _epiworldR_get_agents_states_cpp(SEXP model) {
     return cpp11::as_sexp(get_agents_states_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// agents.cpp
+SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, int state_new, int queue);
+extern "C" SEXP _epiworldR_add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, SEXP state_new, SEXP queue) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_virus_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<int>>(state_new), cpp11::as_cpp<cpp11::decay_t<int>>(queue)));
+  END_CPP11
+}
+// agents.cpp
+SEXP add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool, int state_new, int queue);
+extern "C" SEXP _epiworldR_add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool, SEXP state_new, SEXP queue) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_tool_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<int>>(state_new), cpp11::as_cpp<cpp11::decay_t<int>>(queue)));
+  END_CPP11
+}
+// agents.cpp
+bool has_virus_cpp(SEXP agent, SEXP virus);
+extern "C" SEXP _epiworldR_has_virus_cpp(SEXP agent, SEXP virus) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(has_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus)));
+  END_CPP11
+}
+// agents.cpp
+bool has_tool_cpp(SEXP agent, SEXP tool);
+extern "C" SEXP _epiworldR_has_tool_cpp(SEXP agent, SEXP tool) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(has_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool)));
+  END_CPP11
+}
+// agents.cpp
+SEXP change_state_cpp(SEXP agent, SEXP model, int new_state, int queue);
+extern "C" SEXP _epiworldR_change_state_cpp(SEXP agent, SEXP model, SEXP new_state, SEXP queue) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(change_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(new_state), cpp11::as_cpp<cpp11::decay_t<int>>(queue)));
+  END_CPP11
+}
 // db.cpp
 cpp11::data_frame get_hist_total_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
@@ -710,12 +745,15 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
     {"_epiworldR_add_global_action_cpp",                (DL_FUNC) &_epiworldR_add_global_action_cpp,                 2},
+    {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    5},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          3},
     {"_epiworldR_add_tool_n_cpp",                       (DL_FUNC) &_epiworldR_add_tool_n_cpp,                        3},
+    {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         3},
     {"_epiworldR_add_virus_n_cpp",                      (DL_FUNC) &_epiworldR_add_virus_n_cpp,                       3},
     {"_epiworldR_agents_from_edgelist_cpp",             (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,              5},
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
+    {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
@@ -748,6 +786,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_globalaction_set_param_cpp",           (DL_FUNC) &_epiworldR_globalaction_set_param_cpp,            4},
     {"_epiworldR_globalaction_tool_cpp",                (DL_FUNC) &_epiworldR_globalaction_tool_cpp,                 4},
     {"_epiworldR_globalaction_tool_logit_cpp",          (DL_FUNC) &_epiworldR_globalaction_tool_logit_cpp,           5},
+    {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
+    {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},

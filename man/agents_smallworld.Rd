@@ -7,6 +7,11 @@
 \alias{get_network}
 \alias{network}
 \alias{get_agents_states}
+\alias{add_virus_agent}
+\alias{add_tool_agent}
+\alias{has_virus}
+\alias{has_tool}
+\alias{change_state}
 \alias{get_agents_tools}
 \alias{get_agents_viruses}
 \title{Load agents to a model}
@@ -18,6 +23,16 @@ agents_from_edgelist(model, source, target, size, directed)
 get_network(model)
 
 get_agents_states(model)
+
+add_virus_agent(agent, model, virus, state_new = -99, queue = -99)
+
+add_tool_agent(agent, model, tool, state_new = -99, queue = -99)
+
+has_virus(agent, virus)
+
+has_tool(agent, tool)
+
+change_state(agent, model, state_new, queue = -99)
 
 get_agents_tools(model)
 
@@ -36,6 +51,16 @@ get_agents_viruses(model)
 
 \item{source, target}{Integer vectors describing the source and target of
 in the edgelist.}
+
+\item{agent}{Agent object of class \code{epiworld_agent}.}
+
+\item{virus}{Virus object of class \code{epiworld_virus}.}
+
+\item{state_new}{Integer scalar. New state of the agent after the action is executed.}
+
+\item{queue}{Integer scalar. Change in the queuing system after the action is executed.}
+
+\item{tool}{Tool object of class \code{epiworld_tool}.}
 }
 \value{
 \itemize{
@@ -59,6 +84,21 @@ agents by the end of the simulation.
 }
 
 \itemize{
+\item The function \code{add_virus_agent} adds a virus to an agent and
+returns the agent invisibly.
+}
+
+\itemize{
+\item The function \code{add_tool_agent} adds a tool to an agent and
+returns the agent invisibly.
+}
+
+\itemize{
+\item The functions \code{has_virus} and \code{has_tool} return a logical scalar
+indicating whether the agent has the virus/tool or not.
+}
+
+\itemize{
 \item \code{get_agents_tools} returns a list of class \code{epiworld_agents_tools}
 with \code{epiworld_tools} (list of lists).
 }
@@ -74,6 +114,10 @@ represented by an edgelist. The \code{agents_smallworld} function generates a
 small world network with the Watts-Strogatz algorithm. The
 \code{agents_from_edgelist} function loads a network from an edgelist.
 The \code{get_network} function returns the edgelist of the network.
+}
+\details{
+The \code{new_state} and \code{queue} parameters are optional. If they are not
+provided, the agent will be updated with the default values of the virus/tool.
 }
 \examples{
 

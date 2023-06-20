@@ -48,6 +48,26 @@ get_agents_states_cpp <- function(model) {
   .Call(`_epiworldR_get_agents_states_cpp`, model)
 }
 
+add_virus_agent_cpp <- function(agent, model, virus, state_new, queue) {
+  .Call(`_epiworldR_add_virus_agent_cpp`, agent, model, virus, state_new, queue)
+}
+
+add_tool_agent_cpp <- function(agent, model, tool, state_new, queue) {
+  .Call(`_epiworldR_add_tool_agent_cpp`, agent, model, tool, state_new, queue)
+}
+
+has_virus_cpp <- function(agent, virus) {
+  .Call(`_epiworldR_has_virus_cpp`, agent, virus)
+}
+
+has_tool_cpp <- function(agent, tool) {
+  .Call(`_epiworldR_has_tool_cpp`, agent, tool)
+}
+
+change_state_cpp <- function(agent, model, new_state, queue) {
+  .Call(`_epiworldR_change_state_cpp`, agent, model, new_state, queue)
+}
+
 get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }

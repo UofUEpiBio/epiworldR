@@ -3,6 +3,7 @@
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/data_frame.hpp"
 #include "epiworld-common.h"
+#include "cpp11/sexp.hpp"
 
 using namespace epiworld;
 using namespace cpp11;
@@ -128,7 +129,8 @@ SEXP globalaction_fun_cpp(
     
     external_pointer<Model<int>> modelptr(model, false);
 
-    
+    sexp modelptrs(modelptr);
+    modelptrs.attr("class") = "epiworld_model";
 
     fun(modelptr);
     return;
