@@ -12,7 +12,7 @@ ModelSIRLogit(
   coef_infect_cols,
   coef_recover_cols,
   prob_infection,
-  prob_recovery,
+  recovery_rate,
   prevalence
 )
 }
@@ -31,7 +31,7 @@ ModelSIRLogit(
 
 \item{prob_infection}{Numeric scalar. Baseline probability of infection.}
 
-\item{prob_recovery}{Numeric scalar. Baseline probability of recovery.}
+\item{recovery_rate}{Numeric scalar. Baseline probability of recovery.}
 
 \item{prevalence}{Numeric scalar. Prevalence (initial state) in proportion.}
 }
@@ -56,7 +56,7 @@ X <- cbind(
   Female    = sample.int(2, n, replace = TRUE) - 1
 )
 
-# Declare coefficients for each sex regarding infectiousness and recovery.
+# Declare coefficients for each sex regarding transmission_rate and recovery.
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
 
@@ -69,7 +69,7 @@ model_logit <- ModelSIRLogit(
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
-  prob_recovery = .3,
+  recovery_rate = .3,
   prevalence = .01
 )
 

@@ -24,6 +24,10 @@ rm_global_action_cpp <- function(model, name) {
   .Call(`_epiworldR_rm_global_action_cpp`, model, name)
 }
 
+globalaction_fun_cpp <- function(fun, name, day) {
+  .Call(`_epiworldR_globalaction_fun_cpp`, fun, name, day)
+}
+
 get_agents_cpp <- function(model) {
   .Call(`_epiworldR_get_agents_cpp`, model)
 }
@@ -40,12 +44,36 @@ get_state_agent_cpp <- function(agent) {
   .Call(`_epiworldR_get_state_agent_cpp`, agent)
 }
 
+get_agents_states_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_states_cpp`, model)
+}
+
+add_virus_agent_cpp <- function(agent, model, virus, state_new, queue) {
+  .Call(`_epiworldR_add_virus_agent_cpp`, agent, model, virus, state_new, queue)
+}
+
+add_tool_agent_cpp <- function(agent, model, tool, state_new, queue) {
+  .Call(`_epiworldR_add_tool_agent_cpp`, agent, model, tool, state_new, queue)
+}
+
+has_virus_cpp <- function(agent, virus) {
+  .Call(`_epiworldR_has_virus_cpp`, agent, virus)
+}
+
+has_tool_cpp <- function(agent, tool) {
+  .Call(`_epiworldR_has_tool_cpp`, agent, tool)
+}
+
+change_state_cpp <- function(agent, model, new_state, queue) {
+  .Call(`_epiworldR_change_state_cpp`, agent, model, new_state, queue)
+}
+
 get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
 
-get_hist_variant_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_variant_cpp`, model)
+get_hist_virus_cpp <- function(model) {
+  .Call(`_epiworldR_get_hist_virus_cpp`, model)
 }
 
 get_hist_tool_cpp <- function(model) {
@@ -72,40 +100,44 @@ get_generation_time_cpp <- function(model) {
   .Call(`_epiworldR_get_generation_time_cpp`, model)
 }
 
-ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect) {
-  .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, prob_transmission, prob_death, prob_noreinfect)
+get_today_total_cpp <- function(model) {
+  .Call(`_epiworldR_get_today_total_cpp`, model)
 }
 
-ModelSEIR_cpp <- function(name, prevalence, infectiousness, incubation_days, recovery) {
-  .Call(`_epiworldR_ModelSEIR_cpp`, name, prevalence, infectiousness, incubation_days, recovery)
+ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
+  .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
 }
 
-ModelSIS_cpp <- function(name, prevalence, infectiousness, recovery) {
-  .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, infectiousness, recovery)
+ModelSEIR_cpp <- function(name, prevalence, transmission_rate, incubation_days, recovery_rate) {
+  .Call(`_epiworldR_ModelSEIR_cpp`, name, prevalence, transmission_rate, incubation_days, recovery_rate)
 }
 
-ModelSIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmission, prob_recovery) {
-  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, prob_recovery)
+ModelSIS_cpp <- function(name, prevalence, transmission_rate, recovery_rate) {
+  .Call(`_epiworldR_ModelSIS_cpp`, name, prevalence, transmission_rate, recovery_rate)
 }
 
-ModelSIR_cpp <- function(name, prevalence, infectiousness, recovery) {
-  .Call(`_epiworldR_ModelSIR_cpp`, name, prevalence, infectiousness, recovery)
+ModelSIRCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate) {
+  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate)
 }
 
-ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery) {
-  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, prob_transmission, incubation_days, prob_recovery)
+ModelSIR_cpp <- function(name, prevalence, transmission_rate, recovery_rate) {
+  .Call(`_epiworldR_ModelSIR_cpp`, name, prevalence, transmission_rate, recovery_rate)
 }
 
-ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, prob_recovery, prevalence) {
-  .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, prob_recovery, prevalence)
+ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate) {
+  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate)
+}
+
+ModelSIRLogit_cpp <- function(vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, recovery_rate, prevalence) {
+  .Call(`_epiworldR_ModelSIRLogit_cpp`, vname, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, recovery_rate, prevalence)
 }
 
 ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params) {
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
-print_cpp <- function(m) {
-  .Call(`_epiworldR_print_cpp`, m)
+print_cpp <- function(m, lite) {
+  .Call(`_epiworldR_print_cpp`, m, lite)
 }
 
 agents_smallworld_cpp <- function(m, n, k, d, p) {
@@ -120,8 +152,8 @@ run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
 
-make_saver_cpp <- function(fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation) {
-  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, variant_info, variant_hist, tool_info, tool_hist, transmission, transition, reproductive, generation)
+make_saver_cpp <- function(fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation) {
+  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation)
 }
 
 run_multiple_cpp <- function(m, ndays, nsims, seed, saver, reset, verbose, nthreads) {
@@ -164,8 +196,8 @@ verbose_off_cpp <- function(model) {
   .Call(`_epiworldR_verbose_off_cpp`, model)
 }
 
-get_n_variants_cpp <- function(model) {
-  .Call(`_epiworldR_get_n_variants_cpp`, model)
+get_n_viruses_cpp <- function(model) {
+  .Call(`_epiworldR_get_n_viruses_cpp`, model)
 }
 
 get_n_tools_cpp <- function(model) {
@@ -284,8 +316,16 @@ print_tool_cpp <- function(t) {
   .Call(`_epiworldR_print_tool_cpp`, t)
 }
 
-virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity) {
-  .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity)
+get_agents_tools_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_tools_cpp`, model)
+}
+
+print_agent_tools_cpp <- function(tools) {
+  .Call(`_epiworldR_print_agent_tools_cpp`, tools)
+}
+
+virus_cpp <- function(name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation) {
+  .Call(`_epiworldR_virus_cpp`, name, prob_infecting, prob_recovery, prob_death, post_immunity, incubation)
 }
 
 virus_set_state_cpp <- function(v, init, end, removed) {
@@ -348,10 +388,30 @@ set_prob_death_fun_cpp <- function(virus, model, vfun) {
   .Call(`_epiworldR_set_prob_death_fun_cpp`, virus, model, vfun)
 }
 
+set_incubation_cpp <- function(virus, prob) {
+  .Call(`_epiworldR_set_incubation_cpp`, virus, prob)
+}
+
+set_incubation_ptr_cpp <- function(virus, model, param) {
+  .Call(`_epiworldR_set_incubation_ptr_cpp`, virus, model, param)
+}
+
+set_incubation_fun_cpp <- function(virus, model, vfun) {
+  .Call(`_epiworldR_set_incubation_fun_cpp`, virus, model, vfun)
+}
+
 get_name_virus_cpp <- function(virus) {
   .Call(`_epiworldR_get_name_virus_cpp`, virus)
 }
 
 set_name_virus_cpp <- function(virus, name) {
   .Call(`_epiworldR_set_name_virus_cpp`, virus, name)
+}
+
+get_agents_viruses_cpp <- function(model) {
+  .Call(`_epiworldR_get_agents_viruses_cpp`, model)
+}
+
+print_agent_viruses_cpp <- function(viruses) {
+  .Call(`_epiworldR_print_agent_viruses_cpp`, viruses)
 }

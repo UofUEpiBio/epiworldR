@@ -40,8 +40,13 @@ From the package's description:
 You can install the development version of epiworldR from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("UofUEpiBioepiworldR")
+devtools::install_github("UofUEpiBio/epiworldR")
+```
+
+Or from CRAN
+
+```r
+install.packages("epiworldR")
 ```
 
 # Examples
@@ -62,7 +67,7 @@ library(epiworldR)
 sir <- ModelSIR(
   name           = "COVID-19",
   prevalence     = .01,
-  infectiousness = .7,
+  transmission_rate = .7,
   recovery       = .3
   ) |>
   # Adding a Small world population 
@@ -76,6 +81,7 @@ sir
 Visualizing the outputs
 
 ```{r}
+summary(sir)
 plot(sir)
 ```
 
@@ -90,8 +96,8 @@ model_seirconn <- ModelSEIRCONN(
   n                   = 10000,
   contact_rate        = 4, 
   incubation_days     = 7, 
-  prob_transmission   = 0.6,
-  prob_recovery       = 0.5
+  transmission_rate   = 0.6,
+  recovery_rate       = 0.5
 ) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
 
 set.seed(132)
@@ -148,7 +154,7 @@ model_logit <- ModelSIRLogit(
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
-  prob_recovery = .3,
+  recovery_rate = .3,
   prevalence = .01
 )
 
@@ -180,7 +186,7 @@ This example shows how we can draw a transmission network from a simulation. The
 sir <- ModelSIR(
   name           = "COVID-19",
   prevalence     = .01,
-  infectiousness = .5,
+  transmission_rate = .5,
   recovery       = .5
   ) |>
     # Adding a Small world population 
@@ -209,7 +215,7 @@ model_sir <- ModelSIRCONN(
   prevalence = 0.01,
   n = 1000,
   contact_rate = 2,
-  prob_transmission = 0.9, prob_recovery = 0.1
+  transmission_rate = 0.9, recovery_rate = 0.1
   )
 
 # Generating a saver

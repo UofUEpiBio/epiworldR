@@ -1,4 +1,4 @@
-#' Accessing the database of `epiworld`
+#' Accessing the database of epiworld
 #' 
 #' Models in `epiworld` are stored in a database. This database can be accessed
 #' using the functions described in this manual page. Some elements of the
@@ -21,9 +21,9 @@
 #'   n                 = 10000,
 #'   prevalence        = 0.1,
 #'   contact_rate      = 2.0, 
-#'   prob_transmission = 0.8,
+#'   transmission_rate = 0.8,
 #'   incubation_days   = 7.0,
-#'   prob_recovery     = 0.3
+#'   recovery_rate     = 0.3
 #' )
 #' 
 #' # Running the simulation for 50 steps (days)
@@ -40,7 +40,7 @@
 #' head(get_hist_total(seirconn))
 #' 
 #' # Retrieving date, state, and counts dataframe by variant
-#' head(get_hist_variant(seirconn))
+#' head(get_hist_virus(seirconn))
 #' 
 #' # Retrieving (and plotting) the reproductive number
 #' rp <- get_reproductive_number(seirconn)
@@ -81,6 +81,18 @@ get_hist_total.epiworld_model <- function(x)  {
   
 }
 
+#' @export 
+#' @rdname epiworld-data
+#' @returns
+#' - The `get_today_total` function returns a named vector with the
+#' total number of individuals in each state at the end of the simulation.
+get_today_total <- function(x) UseMethod("get_today_total")
+
+#' @export 
+get_today_total.epiworld_model <- function(x) {
+  get_today_total_cpp(x)
+}
+
 #' @export
 plot.epiworld_hist <- function(x, y, ...) {
   plot_epi(x, ...)
@@ -88,27 +100,28 @@ plot.epiworld_hist <- function(x, y, ...) {
 
 #' @export
 #' @returns 
-#' - The `get_hist_variant` function returns an object of class 
-#' [epiworld_hist_variant].
+#' - The `get_hist_virus` function returns an object of class 
+#' [epiworld_hist_virus].
 #' @rdname epiworld-data
-#' @aliases epiworld_hist_variant
-get_hist_variant <- function(x) UseMethod("get_hist_variant")
+#' @aliases epiworld_hist_variant epiworld_hist_virus
+get_hist_virus <- function(x) UseMethod("get_hist_virus")
 
 #' @export
-get_hist_variant.epiworld_model <- function(x)  {
-  res <- get_hist_variant_cpp(x)
+get_hist_virus.epiworld_model <- function(x)  {
+  res <- get_hist_virus_cpp(x)
   
   structure(
     res,
-    class  = c("epiworld_hist_variant", "epiworld_hist", "data.frame"),
+    class  = c("epiworld_hist_virus", "epiworld_hist", "data.frame"),
     states = sort(unique(res$state))
   )
 }
 
 #' @export
 #' @returns 
-#' - The `get_hist_tool` function returns an object of [epiworld_hist_variant].
+#' - The `get_hist_tool` function returns an object of [epiworld_hist_virus].
 #' @rdname epiworld-data
+#' @aliases epiworld_hist_tool
 get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
 #' @export
@@ -177,22 +190,27 @@ plot.epiworld_repnum <- function(
 
   if (nrow(x) == 0) {
     repnum <- data.frame(
-      variant = integer(),
-      date    = integer(),
-      avg     = numeric(),
-      n       = integer(),
-      sd      = numeric(),
-      lb      = numeric(),
-      ub      = numeric()
+      virus_id = integer(),
+      virus    = character(),
+      date     = integer(),
+      avg      = numeric(),
+      n        = integer(),
+      sd       = numeric(),
+      lb       = numeric(),
+      ub       = numeric()
     )
   } else {
 
     # Computing stats
-    # Compute the mean and 95% CI of rt by variant and source_exposure_date using the repnum data.frame with the tapply function
+    # Compute the mean and 95% CI of rt by virus and source_exposure_date using the repnum data.frame with the tapply function
+
+    # Creating a new column combining virus_id and variant
+    x[["virus_comb"]] <- sprintf("%s (%i)", x[["virus"]], x[["virus_id"]])
+
     repnum <- stats::aggregate(
       x[["rt"]],
       by = list(
-        variant = x[["variant"]],
+        virus_comb = x[["virus_comb"]],
         date    = x[["source_exposure_date"]]
         ),
       FUN = function(x) {
@@ -210,13 +228,31 @@ plot.epiworld_repnum <- function(
       )
 
     repnum <- cbind(repnum[, -3, drop = FALSE], do.call(rbind, repnum[, 3]))
-    repnum <- repnum[order(repnum[["variant"]], repnum[["date"]]), , drop = FALSE]
+    repnum <- repnum[order(repnum[["virus_comb"]], repnum[["date"]]), , drop = FALSE]
+
+    # Merging the virus and virus_id column of x to repnum
+    repnum <- merge(
+      repnum,
+      unique(x[, c("virus", "virus_id", "virus_comb")]),
+      by = "virus_comb",
+      all.x = TRUE,
+      all.y = FALSE
+      )
+    
     rownames(repnum) <- NULL
+
+    # Reordering columns
+    repnum <- repnum[, c(
+      "virus_id", "virus", "date", "avg", "n", "sd", "lb", "ub",
+      "virus_comb"
+      )]
+
   }
 
-  # Nvariants
-  vlabs     <- sort(unique(x[, "variant"]))
-  nvariants <- length(vlabs)
+
+  # Nviruses
+  vlabs     <- sort(unique(x[, "virus_comb"]))
+  nviruses <- length(vlabs)
     
   # # Figuring out the range
   yran <- range(repnum[["avg"]], na.rm = TRUE)
@@ -226,7 +262,7 @@ plot.epiworld_repnum <- function(
   if (plot) {
     for (i in seq_along(vlabs)) {
 
-      tmp <- repnum[repnum[["variant"]] == vlabs[i], ]
+      tmp <- repnum[repnum[["virus_comb"]] == vlabs[i], ]
       
       if (i == 1L) {
         
@@ -261,21 +297,25 @@ plot.epiworld_repnum <- function(
       
     }
 
-    if (nvariants > 1L) {
+    if (nviruses > 1L) {
       
       graphics::legend(
         "topright",
         legend = vlabs,
-        pch    = 1L:nvariants,
-        col    = 1L:nvariants,
+        pch    = 1L:nviruses,
+        col    = 1L:nviruses,
         lwd    = 2,
-        title  = "Variants",
+        title  = "Virus",
         bty    = "n"
       )
       
     }
 
   }
+
+  # Removing the virus_comb column
+  repnum[["virus_comb"]] <- NULL
+
   invisible(repnum)
   
 }
@@ -451,7 +491,7 @@ plot.epiworld_hist_transition <- function(
 #' @rdname epiworld-data
 #' @return
 #' - The function `get_transmissions` returns a `data.frame` with the following
-#' columns: `date`, `source`, `target`, `variant`, and `source_exposure_date`.
+#' columns: `date`, `source`, `target`, `virus_id`, `virus`, and `source_exposure_date`.
 get_transmissions <- function(x) UseMethod("get_transmissions")
 
 #' @export
@@ -474,8 +514,8 @@ get_transmissions.epiworld_model <- function(x) {
 #' @export
 #' @rdname epiworld-data
 #' @return
-#' The function `get_generation_time` returns a `data.frame` with
-#' the following columns: "agent", "virus_id", "date", and "gentime".
+#' - The function `get_generation_time` returns a `data.frame` with
+#' the following columns: "agent", "virus_id", "virus", "date", and "gentime".
 get_generation_time <- function(x) {
     
     stopifnot_model(x)
@@ -508,10 +548,17 @@ plot.epiworld_generation_time <- function(
     stop("The object must be of class 'epiworld_generation_time'")
   }
 
+  # Combining virus with virus id (as we've done before)
+  x[["virus_comb"]] <- sprintf(
+    "%s (%s)",
+    x[["virus"]],
+    x[["virus_id"]]
+  )
+
   gt <- stats::aggregate(
     x[["gentime"]], by = list(
       date    = x[["date"]],
-      variant = x[["virus_id"]]
+      virus_comb = x[["virus_comb"]]
       ),
     FUN = function(x) {
       ci <- stats::quantile(
@@ -530,7 +577,17 @@ plot.epiworld_generation_time <- function(
     )
 
   gt <- cbind(gt[, -3, drop = FALSE], do.call(rbind, gt[, 3]))
-  gt <- gt[order(gt[["variant"]], gt[["date"]]), , drop = FALSE]
+  gt <- gt[order(gt[["virus_comb"]], gt[["date"]]), , drop = FALSE]
+  
+  # Merging the virus and virus_id column of x to repnum
+  gt <- merge(
+    gt,
+    unique(x[, c("virus", "virus_id", "virus_comb")]),
+    by = "virus_comb",
+    all.x = TRUE,
+    all.y = FALSE
+    )
+  
   rownames(gt) <- NULL
 
   # Replacing NaNs with NAs
@@ -541,12 +598,12 @@ plot.epiworld_generation_time <- function(
 
   if (plot) {
     # Number of viruses
-    variants <- sort(unique(gt[["variant"]]))
-    n_viruses <- length(variants)
+    viruses <- sort(unique(gt[["virus_comb"]]))
+    n_viruses <- length(viruses)
 
     for (i in 1L:n_viruses) {
 
-      gt_i <- gt[gt[["variant"]] == variants[i], , drop = FALSE]
+      gt_i <- gt[gt[["virus_comb"]] == viruses[i], , drop = FALSE]
       
       if (i == 1L) {
   
@@ -585,17 +642,20 @@ plot.epiworld_generation_time <- function(
       
       graphics::legend(
         "topright",
-        legend = variants,
+        legend = viruses,
         col    = 1:n_viruses,
         lwd    = 2,
         lty    = 1L:n_viruses,
-        title  = "Viruses",
+        title  = "Virus",
         bty    = "n"
       )
       
     }
 
   }
+
+  # Deleting the virus_comb column
+  gt[["virus_comb"]] <- NULL
 
   invisible(gt)
     

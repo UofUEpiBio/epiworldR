@@ -19,14 +19,19 @@
 \alias{set_prob_death}
 \alias{set_prob_death_ptr}
 \alias{set_prob_death_fun}
+\alias{set_incubation}
+\alias{set_incubation_ptr}
+\alias{set_incubation_fun}
+\alias{print.epiworld_agents_viruses}
 \title{Virus design}
 \usage{
 virus(
   name,
   prob_infecting,
-  prob_recovery = 0.5,
+  recovery_rate = 0.5,
   prob_death = 0,
-  post_immunity = -1
+  post_immunity = -1,
+  incubation = 7
 )
 
 set_name_virus(virus, name)
@@ -60,17 +65,27 @@ set_prob_death(virus, prob)
 set_prob_death_ptr(virus, model, param)
 
 set_prob_death_fun(virus, model, vfun)
+
+set_incubation(virus, incubation)
+
+set_incubation_ptr(virus, model, param)
+
+set_incubation_fun(virus, model, vfun)
+
+\method{print}{epiworld_agents_viruses}(x, max_print = 10, ...)
 }
 \arguments{
 \item{name}{of the virus}
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
-\item{prob_recovery}{Numeric scalar. Probability of recovery.}
+\item{recovery_rate}{Numeric scalar. Probability of recovery.}
 
 \item{prob_death}{Numeric scalar. Probability of death.}
 
 \item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
+
+\item{incubation}{Numeric scalar. Incubation period (in days) of the virus.}
 
 \item{virus}{An object of class \code{epiworld_virus}}
 
@@ -97,6 +112,12 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
+
+\item{x}{An object of class \code{epiworld_agents_viruses}.}
+
+\item{max_print}{Numeric scalar. Maximum number of viruses to print.}
+
+\item{...}{Currently ignored.}
 }
 \value{
 \itemize{
@@ -147,6 +168,11 @@ assigns a probability to recovery for the specified virus of class
 assigns a probability to death for the specified virus of class
 \link{epiworld_virus}.
 }
+
+\itemize{
+\item The \code{set_incubation} function does not return a value, but instead
+assigns an incubation period to the specified virus of class \link{epiworld_virus}.
+}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,
@@ -176,8 +202,8 @@ mseirconn <- ModelSEIRCONN(
   n                   = 10000,
   contact_rate        = 4, 
   incubation_days     = 7, 
-  prob_transmission   = 0.5,
-  prob_recovery       = 0.99
+  transmission_rate   = 0.5,
+  recovery_rate       = 0.99
 )
 
 delta <- virus("Delta Variant", 0, .5, .2, .01)
@@ -209,7 +235,7 @@ virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(
   name = "COVID-19", prevalence = 0.01, 
-  infectiousness = 0.9, recovery = 0.1
+  transmission_rate = 0.9, recovery = 0.1
   )
 
 # Adding a small world population

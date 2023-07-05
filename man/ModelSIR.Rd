@@ -6,7 +6,7 @@
 \alias{plot.epiworld_sir}
 \title{SIR model}
 \usage{
-ModelSIR(name, prevalence, infectiousness, recovery)
+ModelSIR(name, prevalence, transmission_rate, recovery_rate)
 
 \method{plot}{epiworld_sir}(x, main = get_name(x), ...)
 }
@@ -15,16 +15,16 @@ ModelSIR(name, prevalence, infectiousness, recovery)
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{infectiousness}{Numeric scalar between 0 and 1. Virus's rate of
+\item{transmission_rate}{Numeric scalar between 0 and 1. Virus's rate of
 infection.}
 
-\item{recovery}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
+\item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
 
 \item{x}{Object of class SIR.}
 
 \item{main}{Title of the plot}
 
-\item{...}{Currently ignore.}
+\item{...}{Additional arguments passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
@@ -41,7 +41,7 @@ SIR model
 }
 \examples{
 model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
-                      infectiousness = 0.9, recovery = 0.1)
+                      transmission_rate = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
 agents_smallworld(

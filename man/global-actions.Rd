@@ -10,6 +10,7 @@
 \alias{actions}
 \alias{globalaction_tool_logit}
 \alias{globalaction_set_params}
+\alias{globalaction_fun}
 \alias{add_global_action}
 \title{Global Actions}
 \usage{
@@ -30,6 +31,8 @@ globalaction_set_params(
   day = -99
 )
 
+globalaction_fun(fun, name = deparse(substitute(fun)), day = -99)
+
 add_global_action(model, action)
 }
 \arguments{
@@ -48,6 +51,8 @@ add_global_action(model, action)
 \item{param}{Character scalar. The name of the parameter to be set.}
 
 \item{value}{Numeric scalar. The value of the parameter.}
+
+\item{fun}{Function. The function to be executed.}
 
 \item{model}{An object of class \link{epiworld_model}.}
 
@@ -84,6 +89,10 @@ The function \code{globalaction_set_param} allows to set a parameter of
 the model. The parameter is specified by its name \code{param} and the value by
 \code{value}.
 
+The function \code{globalaction_fun} allows to specify a function to be
+executed at a given day. The function object must receive an object of class
+\link{epiworld_model} as only argument.
+
 The function \code{add_global_action} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
 action matches the current time step, the action is executed. When \code{day} is
@@ -97,8 +106,8 @@ model_sirconn <- ModelSIRCONN(
   n                   = 10000,
   prevalence          = 0.01,
   contact_rate        = 5,
-  prob_transmission   = 0.4,
-  prob_recovery       = 0.95
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
 
 # Creating a tool
@@ -126,8 +135,8 @@ model_sirconn2 <- ModelSIRCONN(
   n                   = 10000,
   prevalence          = 0.01,
   contact_rate        = 5,
-  prob_transmission   = 0.4,
-  prob_recovery       = 0.95
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
 
 closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)
@@ -137,6 +146,36 @@ add_global_action(model_sirconn2, closure_day_10)
 run(model_sirconn2, ndays = 40, seed = 1912)
 model_sirconn2
 plot_incidence(model_sirconn2)
+# Example using `globalaction_fun` to record the state of the
+# agents at each time step.
+
+# We start by creating an SIR connected model
+model <- ModelSIRCONN(
+  name              = "SIR with Global Saver",
+  n                 = 1000,
+  prevalence        = 0.01,
+  contact_rate      = 5,
+  transmission_rate = 0.4,
+  recovery_rate     = 0.3
+  )
+
+# We create the object where the history of the agents will be stored
+agents_history <- NULL
+
+# This function prints the total number of agents in each state
+# and stores the history of the agents in the object `agents_history`
+hist_saver <- function(m) {
+  
+  message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
+
+  # We use the `<<-` operator to assign the value to the global variable
+  # `agents_history` (see ?"<<-")
+  agents_history <<- cbind(
+    agents_history,
+    get_agents_states(m)
+    )
+    
+}
 }
 \seealso{
 epiworld-model

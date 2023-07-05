@@ -63,8 +63,8 @@ the process.
 Currently, the following elements can be saved:
 \itemize{
 \item \code{total_hist} History of the model (total numbers per time).
-\item \code{variant_info} Information about \code{variants}.
-\item \code{variant_hist} Changes in \code{variants}.
+\item \code{virus_info} Information about \code{viruses}.
+\item \code{virus_hist} Changes in \code{viruses}.
 \item \code{tool_info} Information about \code{tools}.
 \item \code{tool_hist} Changes in \code{tools}.
 \item \code{transmission} Transmission events.
@@ -79,7 +79,7 @@ model_sir <- ModelSIRCONN(
   prevalence = 0.01,
   n = 1000,
   contact_rate = 2,
-  prob_transmission = 0.9, prob_recovery = 0.1
+  transmission_rate = 0.9, recovery_rate = 0.1
   )
 
 # Generating a saver

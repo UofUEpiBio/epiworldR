@@ -7,9 +7,10 @@
 #' @param name of the virus
 #' @param post_immunity Numeric scalar. Post immunity (prob of re-infection).
 #' @param prob_infecting Numeric scalar. Probability of infection (transmission).
-#' @param prob_recovery Numeric scalar. Probability of recovery.
+#' @param recovery_rate Numeric scalar. Probability of recovery.
 #' @param prob_death Numeric scalar. Probability of death.
 #' @param virus_pos Positive integer. Index of the virus's position in the model.
+#' @param incubation Numeric scalar. Incubation period (in days) of the virus.
 #' @details
 #' The [virus()] function can be used to initialize a virus. Virus features can
 #' then be modified using the functions `set_prob_*`.
@@ -25,8 +26,8 @@
 #'   n                   = 10000,
 #'   contact_rate        = 4, 
 #'   incubation_days     = 7, 
-#'   prob_transmission   = 0.5,
-#'   prob_recovery       = 0.99
+#'   transmission_rate   = 0.5,
+#'   recovery_rate       = 0.99
 #' )
 #' 
 #' delta <- virus("Delta Variant", 0, .5, .2, .01)
@@ -60,18 +61,20 @@
 virus <- function(
     name,
     prob_infecting,
-    prob_recovery = 0.5,
+    recovery_rate = 0.5,
     prob_death    = 0.0,
-    post_immunity = -1.0
+    post_immunity = -1.0,
+    incubation    = 7.0
     ) {
   
   structure(
     virus_cpp(
       name,
       prob_infecting,
-      prob_recovery,
+      recovery_rate,
       prob_death,
-      post_immunity
+      post_immunity,
+      incubation
       ),
     class = "epiworld_virus"
   )
@@ -273,7 +276,7 @@ rm_virus <- function(model, virus_pos) {
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", prevalence = 0.01, 
-#'   infectiousness = 0.9, recovery = 0.1
+#'   transmission_rate = 0.9, recovery = 0.1
 #'   )
 #' 
 #' # Adding a small world population
@@ -364,7 +367,7 @@ print.epiworld_virus_fun <- function(x, ...) {
 set_prob_infecting <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_infecting_cpp(virus, prob)
+  invisible(set_prob_infecting_cpp(virus, prob))
   
 }
 
@@ -406,7 +409,7 @@ set_prob_infecting_fun <- function(virus, model, vfun) {
 set_prob_recovery <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_recovery_cpp(virus, prob)
+  invisible(set_prob_recovery_cpp(virus, prob))
   
 }
 
@@ -416,7 +419,7 @@ set_prob_recovery_ptr <- function(virus, model, param) {
   
   stopifnot_virus(virus)
   stopifnot_model(model)
-  set_prob_recovery_ptr_cpp(virus, model, param)
+  invisible(set_prob_recovery_ptr_cpp(virus, model, param))
   
 }
 
@@ -427,7 +430,8 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
-  set_prob_recovery_fun_cpp(virus, model, vfun)
+  invisible(set_prob_recovery_fun_cpp(virus, model, vfun))
+
 }
 
 #' @export
@@ -439,7 +443,7 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
 set_prob_death <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  set_prob_death_cpp(virus, prob)
+  invisible(set_prob_death_cpp(virus, prob))
   
 }
 
@@ -449,7 +453,7 @@ set_prob_death_ptr <- function(virus, model, param) {
   
   stopifnot_virus(virus)
   stopifnot_model(model)
-  set_prob_death_ptr_cpp(virus, model, param)
+  invisible(set_prob_death_ptr_cpp(virus, model, param))
   
 }
 
@@ -460,8 +464,85 @@ set_prob_death_fun <- function(virus, model, vfun) {
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
-  set_prob_death_fun_cpp(virus, model, vfun)
+  invisible(set_prob_death_fun_cpp(virus, model, vfun))
   
+}
+
+#' @export 
+#' @return 
+#' - The `set_incubation` function does not return a value, but instead
+#' assigns an incubation period to the specified virus of class [epiworld_virus].
+#' @rdname virus
+set_incubation <- function(virus, incubation) {
+  
+  stopifnot_virus(virus)
+  invisible(set_incubation_cpp(virus, incubation))
+  
+}
+
+#' @export
+#' @rdname virus
+set_incubation_ptr <- function(virus, model, param) {
+  
+  stopifnot_virus(virus)
+  stopifnot_model(model)
+  invisible(set_incubation_ptr_cpp(virus, model, param))
+  
+}
+
+#' @export
+#' @rdname virus
+set_incubation_fun <- function(virus, model, vfun) {
+  
+  stopifnot_virus(virus)
+  stopifnot_model(model)
+  stopifnot_vfun(vfun)
+  invisible(set_incubation_fun_cpp(virus, model, vfun))
+  
+}
+
+#' @export
+#' @rdname agents_smallworld
+#' @returns 
+#' - `get_agents_viruses` returns a list of class `epiworld_agents_viruses`
+#' with `epiworld_viruses` (list of lists).
+get_agents_viruses <- function(model) {
+
+  stopifnot_model(model)
+
+  res <- lapply(
+      get_agents_viruses_cpp(model),
+      `class<-`,
+      "epiworld_viruses"
+    )
+
+  structure(res, class = c("epiworld_agents_viruses", class(res)))
+  
+}
+
+#' @export 
+#' @rdname virus
+#' @param max_print Numeric scalar. Maximum number of viruses to print.
+#' @param ... Currently ignored.
+#' @param x An object of class `epiworld_agents_viruses`.
+print.epiworld_agents_viruses <- function(x, max_print = 10, ...) {
+
+  for (i in 1:min(max_print, length(x))) {
+    print_agent_viruses_cpp(x[[i]])
+  }
+
+  if (length(x) > max_print) {
+    cat(sprintf("Showing first %s of %s viruses.\n", max_print, length(x)))
+  }
+
+  invisible(x)
+  
+}
+
+#' @export
+print.epiworld_viruses <- function(x, ...) {
+  print_agent_viruses_cpp(x)
+  invisible(x)
 }
 
 

@@ -25,7 +25,7 @@ SEXP ModelSURV_cpp(
   double infect_period,         
   double prop_vax_redux_infect, 
   double surveillance_prob,     
-  double prob_transmission,     
+  double transmission_rate,     
   double prob_death,            
   double prob_noreinfect       
 ) {
@@ -44,7 +44,7 @@ SEXP ModelSURV_cpp(
       prop_vax_redux_transm, 
       prop_vax_redux_infect, 
       surveillance_prob,     
-      prob_transmission,     
+      transmission_rate,     
       prob_death,            
       prob_noreinfect   
     )
@@ -62,9 +62,9 @@ SEXP ModelSURV_cpp(
     SEXP ModelSEIR_cpp(
         std::string name,
         double prevalence,
-        double infectiousness,
+        double transmission_rate,
         double incubation_days,
-        double recovery
+        double recovery_rate
     
     ) {
       
@@ -73,9 +73,9 @@ SEXP ModelSURV_cpp(
           new epiworld::epimodels::ModelSEIR<>(
               name,
               prevalence,
-              infectiousness,
+              transmission_rate,
               incubation_days,
-              recovery
+              recovery_rate
           )
       );
       
@@ -91,8 +91,8 @@ SEXP ModelSURV_cpp(
 SEXP ModelSIS_cpp(
     std::string name,
     double prevalence,
-    double infectiousness,
-    double recovery
+    double transmission_rate,
+    double recovery_rate
 ) {
   
   // Creating a pointer to a ModelSIR model
@@ -100,8 +100,8 @@ SEXP ModelSIS_cpp(
       new epiworld::epimodels::ModelSIS<>(
           name,
           prevalence,
-          infectiousness,
-          recovery
+          transmission_rate,
+          recovery_rate
       )
   );
   
@@ -123,8 +123,8 @@ SEXP ModelSIRCONN_cpp(
     
     double prevalence,
     double contact_rate,
-    double prob_transmission, 
-    double prob_recovery
+    double transmission_rate, 
+    double recovery_rate
 ) {
   
   // Creating a pointer to a ModelSIR model
@@ -134,8 +134,8 @@ SEXP ModelSIRCONN_cpp(
           n,
           prevalence,
           contact_rate,
-          prob_transmission,
-          prob_recovery
+          transmission_rate,
+          recovery_rate
       )
   );
   
@@ -152,8 +152,8 @@ SEXP ModelSIRCONN_cpp(
 SEXP ModelSIR_cpp(
     std::string name,
     double prevalence,
-    double infectiousness,
-    double recovery
+    double transmission_rate,
+    double recovery_rate
 ) {
   
   // Creating a pointer to a ModelSIR model
@@ -161,8 +161,8 @@ SEXP ModelSIR_cpp(
       new epiworld::epimodels::ModelSIR<>(
           name,
           prevalence,
-          infectiousness,
-          recovery
+          transmission_rate,
+          recovery_rate
       )
   );
   
@@ -181,9 +181,9 @@ SEXP ModelSEIRCONN_cpp(
     unsigned int n,
     double prevalence,
     double contact_rate,
-    double prob_transmission,
+    double transmission_rate,
     double incubation_days,
-    double prob_recovery
+    double recovery_rate
 ) {
   
   // Creating a pointer to a ModelSIR model
@@ -193,9 +193,9 @@ SEXP ModelSEIRCONN_cpp(
           n,
           prevalence,
           contact_rate,
-          prob_transmission,
+          transmission_rate,
           incubation_days,
-          prob_recovery
+          recovery_rate
       )
   );
   
@@ -215,7 +215,7 @@ SEXP ModelSIRLogit_cpp(
   std::vector< int > coef_infect_cols,
   std::vector< int > coef_recover_cols,
   double prob_infection,
-  double prob_recovery,
+  double recovery_rate,
   double prevalence
 ) {
   
@@ -238,7 +238,7 @@ SEXP ModelSIRLogit_cpp(
         cinfect,
         crecover,
         prob_infection,
-        prob_recovery,
+        recovery_rate,
         prevalence
     )
   );

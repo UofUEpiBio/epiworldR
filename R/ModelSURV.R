@@ -17,7 +17,7 @@
 #' @param prop_vax_redux_infect Double. Factor by which the vaccine reduces
 #' the chances of becoming infected.
 #' @param surveillance_prob Double. Probability of testing an agent.
-#' @param prob_transmission Double. Raw transmission probability.
+#' @param transmission_rate Double. Raw transmission probability.
 #' @param prob_death Double. Raw probability of death for symptomatic 
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
@@ -40,7 +40,7 @@
 #'   prop_vax_redux_transm = 0.8,
 #'   prop_vax_redux_infect = 0.95,
 #'   surveillance_prob     = 0.1,
-#'   prob_transmission     = 0.2,
+#'   transmission_rate     = 0.2,
 #'   prob_death            = 0.001,
 #'   prob_noreinfect       = 0.5
 #' )
@@ -65,13 +65,13 @@
 ModelSURV <- function(
     name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, 
     prop_vaccinated, prop_vax_redux_transm, prop_vax_redux_infect, 
-    surveillance_prob, prob_transmission, prob_death, prob_noreinfect  
+    surveillance_prob, transmission_rate, prob_death, prob_noreinfect  
 ) {
   
   structure(
     ModelSURV_cpp(name, prevalence, efficacy_vax, latent_period, infect_period, 
                   prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
-                  prop_vax_redux_infect, surveillance_prob, prob_transmission, 
+                  prop_vax_redux_infect, surveillance_prob, transmission_rate, 
                   prob_death, prob_noreinfect),
     class = c("epiworld_surv", "epiworld_model")
   )

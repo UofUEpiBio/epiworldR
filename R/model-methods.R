@@ -29,8 +29,8 @@ stopifnot_model <- function(model) {
 #' n                   = 10000,
 #' prevalence          = 0.01,
 #' contact_rate        = 5,
-#' prob_transmission   = 0.4,
-#' prob_recovery       = 0.95
+#' transmission_rate   = 0.4,
+#' recovery_rate       = 0.95
 #' )
 #' 
 #' # Queuing - If you wish to implement the queuing function, declare whether 
@@ -70,8 +70,8 @@ stopifnot_model <- function(model) {
 #'                                         
 #' get_name(model_sirconn) # Returns the set name of the model. 
 #' 
-#' get_n_variants(model_sirconn) # Returns the number of variants in the model. 
-#'                               # In this case, there is only one variant:
+#' get_n_viruses(model_sirconn) # Returns the number of viruses in the model. 
+#'                               # In this case, there is only one virus:
 #'                               # "COVID-19". 
 #'                               
 #' get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
@@ -167,8 +167,19 @@ run.epiworld_model <- function(model, ndays, seed = sample.int(1e4, 1)) {
 
 #' @export
 print.epiworld_model <- function(x, ...) {
-  print_cpp(x)
+  print_cpp(x, lite = TRUE)
   invisible(x)
+}
+
+#' @export 
+#' @returns
+#' - The `summary` function prints a more detailed view of the model, and returns the same model invisibly.
+#' @rdname epiworld-methods
+#' @param object Object of class `epiworld_model`.
+#' @param ... Additional arguments. 
+summary.epiworld_model <- function(object, ...) {
+  print_cpp(object, lite = FALSE)
+  invisible(object)
 }
 
 #' @export
@@ -236,11 +247,11 @@ get_name.epiworld_model <- function(x) {
 #' @export 
 #' @rdname epiworld-methods
 #' @returns
-#' - `get_n_variants` returns the number of variants of the model.
-get_n_variants <- function(x) UseMethod("get_n_variants")
+#' - `get_n_viruses` returns the number of viruses of the model.
+get_n_viruses <- function(x) UseMethod("get_n_viruses")
 
 #' @export
-get_n_variants.epiworld_model <- function(x) get_n_variants_cpp(x)
+get_n_viruses.epiworld_model <- function(x) get_n_viruses_cpp(x)
 
 
 #' @export 

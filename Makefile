@@ -1,12 +1,12 @@
 build: docs clean
-	R CMD build .
+	cd .. && rm -f epiworldR_*.tar.gz & R CMD build epiworldR
 
 debug: clean
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
 
-install: 
+install: build 
 	which R
-	R CMD INSTALL .
+	cd ../ && R CMD INSTALL epiworldR_*.tar.gz
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
@@ -24,7 +24,7 @@ clean:
 	Rscript --vanilla -e 'devtools::clean_dll()'
 
 docs:
-	Rscript --vanilla -e 'roxygen2::roxygenize()'
+	Rscript --vanilla -e 'devtools::document()'
 
 .PHONY: build update check clean docs
 

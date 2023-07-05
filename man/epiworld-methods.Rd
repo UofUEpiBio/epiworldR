@@ -8,12 +8,13 @@
 \alias{verbose_off}
 \alias{verbose_on}
 \alias{run}
+\alias{summary.epiworld_model}
 \alias{get_states}
 \alias{get_param}
 \alias{set_param}
 \alias{set_name}
 \alias{get_name}
-\alias{get_n_variants}
+\alias{get_n_viruses}
 \alias{get_n_tools}
 \alias{get_ndays}
 \alias{get_n_replicates}
@@ -34,6 +35,8 @@ verbose_on(x)
 
 run(model, ndays, seed = sample.int(10000, 1))
 
+\method{summary}{epiworld_model}(object, ...)
+
 get_states(x)
 
 get_param(x, pname)
@@ -44,7 +47,7 @@ set_name(x, mname)
 
 get_name(x)
 
-get_n_variants(x)
+get_n_viruses(x)
 
 get_n_tools(x)
 
@@ -71,6 +74,10 @@ get_tool(model, tool_pos)
 
 \item{seed}{Seed to set for initializing random number generator.}
 
+\item{object}{Object of class \code{epiworld_model}.}
+
+\item{...}{Additional arguments.}
+
 \item{pname}{String. Name of the parameter.}
 
 \item{pval}{Numeric. Value of the parameter.}
@@ -93,6 +100,10 @@ in the model}
 
 \itemize{
 \item The \code{run} function returns the simulated model of class \code{epiworld_model}.
+}
+
+\itemize{
+\item The \code{summary} function prints a more detailed view of the model, and returns the same model invisibly.
 }
 
 \itemize{
@@ -119,7 +130,7 @@ of \code{epiworld_model}.
 }
 
 \itemize{
-\item \code{get_n_variants} returns the number of variants of the model.
+\item \code{get_n_viruses} returns the number of viruses of the model.
 }
 
 \itemize{
@@ -171,8 +182,8 @@ name                = "COVID-19",
 n                   = 10000,
 prevalence          = 0.01,
 contact_rate        = 5,
-prob_transmission   = 0.4,
-prob_recovery       = 0.95
+transmission_rate   = 0.4,
+recovery_rate       = 0.95
 )
 
 # Queuing - If you wish to implement the queuing function, declare whether 
@@ -212,8 +223,8 @@ set_name(model_sirconn, 'My Epi-Model') # This function allows for setting
                                         
 get_name(model_sirconn) # Returns the set name of the model. 
 
-get_n_variants(model_sirconn) # Returns the number of variants in the model. 
-                              # In this case, there is only one variant:
+get_n_viruses(model_sirconn) # Returns the number of viruses in the model. 
+                              # In this case, there is only one virus:
                               # "COVID-19". 
                               
 get_n_tools(model_sirconn) # Returns the number of tools in the model. In 
