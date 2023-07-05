@@ -1,0 +1,36 @@
+---
+title: 'epiworldR: Fast Agent-Based Epi Models'
+authors:
+- affiliation: 1
+  name: George G Vega Yon
+  orcid: 0000-0002-3171-0844
+- affiliation: 1
+  name: Derek Meyer
+date: "03 July 2023"
+output:
+  html_document:
+    df_print: paged
+bibliography: paper.bib
+tags:
+- ABM
+- epiworldR
+- parallel computing
+affiliations:
+- index: 1
+  name: Division of Epidemiology, University of Utah
+---
+
+# Introduction
+
+# Key Features
+
+# Existing Alternatives
+
+1.  [Covasim](https://github.com/InstituteforDiseaseModeling/covasim)
+2.  [OpenABM-Covid19](https://github.com/BDI-pathogens/OpenABM-Covid19)
+3.  [COVID19_AgentBasedSimulation](https://github.com/petroniocandido/COVID19_AgentBasedSimulation)
+4.  [covid19-agent-based-model](https://github.com/worldbank/covid19-agent-based-model)
+
+# Conclusion
+
+A
