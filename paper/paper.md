@@ -2,10 +2,11 @@
 title: 'epiworldR: Fast Agent-Based Epi Models'
 authors:
 - affiliation: 1
+  name: Derek Meyer
+  orcid: 0009-0005-1350-6988
+- affiliation: 1
   name: George G Vega Yon
   orcid: 0000-0002-3171-0844
-- affiliation: 1
-  name: Derek Meyer
 date: "03 July 2023"
 output:
   html_document:
@@ -30,7 +31,15 @@ Built on the robust foundation of C++, this package combines efficient computati
 
 # Existing Alternatives
 
-Several existing alternatives to 'epiworldR' provide researchers with different options for agent-based modeling in epidemiology. The first alternative, [Covasim](https://github.com/InstituteforDiseaseModeling/covasim), is a powerful and widely used framework that offers comprehensive modeling capabilities for infectious diseases. [OpenABM-Covid19](https://github.com/BDI-pathogens/OpenABM-Covid19) is another alternative that focuses specifically on simulating the spread of COVID-19, providing detailed models and tools for analysis. [COVID19_AgentBasedSimulation](https://github.com/petroniocandido/COVID19_AgentBasedSimulation) is a versatile package that allows for the simulation of COVID-19 transmission and intervention strategies. Lastly, [covid19-agent-based-model](https://github.com/worldbank/covid19-agent-based-model) developed by the World Bank offers a sophisticated modeling approach for studying the impact of COVID-19 on different socioeconomic factors. These alternatives provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling.
+Several existing alternatives to 'epiworldR' exist. These alternatives provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. The below table is a manually curated list of existing alternatives:
+
+| Package                                                       | Multiple-Viruses | Multiple-Tools | Multiple-Runs | Global Actions | Dependencies                                                                                             | Activity                                                                                                               |
+|:--------------------------------------------------------------|:-----------------|:---------------|:--------------|:---------------|:---------------------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------|
+| [**epiworldR**](https://cran.r-project.org/package=epiworldR) | yes              | yes            | yes           | yes            | [![status](https://tinyverse.netlify.com/badge/epiworldR)](https://CRAN.R-project.org/package=epiworldR) | [![Activity](https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR)](https://github.com/UofUEpiBio/epiworldR) |
+| [**ABM**](https://cran.r-project.org/package=ABM)             | \-               | \-             | \-            | \-             | [![status](https://tinyverse.netlify.com/badge/ABM)](https://CRAN.R-project.org/package=ABM)             | [![Activity](https://img.shields.io/github/last-commit/junlingm/ABM)](https://github.com/junlingm/ABM)                 |
+| [**abmR**](https://cran.r-project.org/package=abmR)           | \-               | \-             | \-            | \-             | [![status](https://tinyverse.netlify.com/badge/abmR)](https://CRAN.R-project.org/package=abmR)           | [![Activity](https://img.shields.io/github/last-commit/bgoch5/abmR)](https://github.com/bgoch5/abmR)                   |
+| [**cystiSim**](https://cran.r-project.org/package=cystiSim)   | \-               | \-             | \-            | \-             | [![status](https://tinyverse.netlify.com/badge/cystiSim)](https://CRAN.R-project.org/package=cystiSim)   | [![Activity](https://img.shields.io/github/last-commit/brechtdv/cystiSim)](https://github.com/brechtdv/cystiSim)       |
+| [**villager**](https://cran.r-project.org/package=villager)   | \-               | \-             | \-            | \-             | [![status](https://tinyverse.netlify.com/badge/villager)](https://CRAN.R-project.org/package=villager)   | [![Activity](https://img.shields.io/github/last-commit/zizroc/villager)](https://github.com/zizroc/villager)           |
 
 # Conclusion
 
