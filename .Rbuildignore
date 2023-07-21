@@ -31,3 +31,5 @@ README\.html
 
 # Adding gitattributes
 \.gitattributes
+
+paper\..+
