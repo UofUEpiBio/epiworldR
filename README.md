@@ -413,8 +413,6 @@ plot(ans$reproductive)
 
 # Other ABM R packages
 
-# Existing Alternatives
-
 Several alternatives to `epiworldR` exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].
 
 | Package                                                                     | Multiple Viruses | Multiple Tools | Multiple Runs | Global Actions | Built-In Epi Models | Dependencies                                                                                             | Activity                                                                                                               |
@@ -425,16 +423,3 @@ Several alternatives to `epiworldR` exist and provide researchers with a range o
 | [**cystiSim**](https://cran.r-project.org/package=cystiSim)                 | \-               | yes            | yes           | \-             | \-                  | [![status](https://tinyverse.netlify.com/badge/cystiSim)](https://CRAN.R-project.org/package=cystiSim)   | [![Activity](https://img.shields.io/github/last-commit/brechtdv/cystiSim)](https://github.com/brechtdv/cystiSim)       |
 | [**villager**](https://cran.r-project.org/package=villager)                 | \-               | \-             | \-            | yes            | \-                  | [![status](https://tinyverse.netlify.com/badge/villager)](https://CRAN.R-project.org/package=villager)   | [![Activity](https://img.shields.io/github/last-commit/zizroc/villager)](https://github.com/zizroc/villager)           |
 | [**RNetLogo**](https://cran.r-project.org/web/packages/RNetLogo/index.html) | \-               | yes            | yes           | yes            | \-                  | [![status](https://tinyverse.netlify.com/badge/RNetLogo)](https://CRAN.R-project.org/package=RNetLogo)   | [![Activity](https://img.shields.io/github/last-commit/cran/RNetLogo)](https://github.com/cran/RNetLogo)               |
-
-
-You may want to check out other R packages for agent-based modeling:
-<a href="https://cran.r-project.org/package=ABM"
-target="_blank"><code>ABM</code></a>,
-<a href="https://cran.r-project.org/package=abmR"
-target="_blank"><code>abmR</code></a>,
-<a href="https://cran.r-project.org/package=cystiSim"
-target="_blank"><code>cystiSim</code></a>,
-<a href="https://cran.r-project.org/package=villager"
-target="_blank"><code>villager</code></a>, and
-<a href="https://cran.r-project.org/package=RNetLogo"
-target="_blank"><code>RNetLogo</code></a>.
