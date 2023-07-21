@@ -394,7 +394,91 @@
 <div class="section level1">
 <h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
 </h1>
-<p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" target="_blank" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" target="_blank" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" target="_blank" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" target="_blank" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" target="_blank" class="external-link"><code>RNetLogo</code></a>.</p>
+<p>Several alternatives to <code>epiworldR</code> exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].</p>
+<table class="table">
+<colgroup>
+<col width="12%">
+<col width="12%">
+<col width="12%">
+<col width="12%">
+<col width="12%">
+<col width="12%">
+<col width="12%">
+<col width="12%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Package</th>
+<th align="left">Multiple Viruses</th>
+<th align="left">Multiple Tools</th>
+<th align="left">Multiple Runs</th>
+<th align="left">Global Actions</th>
+<th>Built-In Epi Models</th>
+<th align="left">Dependencies</th>
+<th align="left">Activity</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left"><a href="https://cran.r-project.org/package=epiworldR" class="external-link"><strong>epiworldR</strong></a></td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td>yes</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://tinyverse.netlify.com/badge/epiworldR" alt="status"></a></td>
+<td align="left"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link"><img src="https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR" alt="Activity"></a></td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://cran.r-project.org/package=ABM" class="external-link"><strong>ABM</strong></a></td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">yes</td>
+<td>yes</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=ABM" class="external-link"><img src="https://tinyverse.netlify.com/badge/ABM" alt="status"></a></td>
+<td align="left"><a href="https://github.com/junlingm/ABM" class="external-link"><img src="https://img.shields.io/github/last-commit/junlingm/ABM" alt="Activity"></a></td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://cran.r-project.org/package=abmR" class="external-link"><strong>abmR</strong></a></td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">yes</td>
+<td align="left">-</td>
+<td>-</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=abmR" class="external-link"><img src="https://tinyverse.netlify.com/badge/abmR" alt="status"></a></td>
+<td align="left"><a href="https://github.com/bgoch5/abmR" class="external-link"><img src="https://img.shields.io/github/last-commit/bgoch5/abmR" alt="Activity"></a></td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://cran.r-project.org/package=cystiSim" class="external-link"><strong>cystiSim</strong></a></td>
+<td align="left">-</td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td align="left">-</td>
+<td>-</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=cystiSim" class="external-link"><img src="https://tinyverse.netlify.com/badge/cystiSim" alt="status"></a></td>
+<td align="left"><a href="https://github.com/brechtdv/cystiSim" class="external-link"><img src="https://img.shields.io/github/last-commit/brechtdv/cystiSim" alt="Activity"></a></td>
+</tr>
+<tr class="odd">
+<td align="left"><a href="https://cran.r-project.org/package=villager" class="external-link"><strong>villager</strong></a></td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">-</td>
+<td align="left">yes</td>
+<td>-</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=villager" class="external-link"><img src="https://tinyverse.netlify.com/badge/villager" alt="status"></a></td>
+<td align="left"><a href="https://github.com/zizroc/villager" class="external-link"><img src="https://img.shields.io/github/last-commit/zizroc/villager" alt="Activity"></a></td>
+</tr>
+<tr class="even">
+<td align="left"><a href="https://cran.r-project.org/web/packages/RNetLogo/index.html" class="external-link"><strong>RNetLogo</strong></a></td>
+<td align="left">-</td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td align="left">yes</td>
+<td>-</td>
+<td align="left"><a href="https://CRAN.R-project.org/package=RNetLogo" class="external-link"><img src="https://tinyverse.netlify.com/badge/RNetLogo" alt="status"></a></td>
+<td align="left"><a href="https://github.com/cran/RNetLogo" class="external-link"><img src="https://img.shields.io/github/last-commit/cran/RNetLogo" alt="Activity"></a></td>
+</tr>
+</tbody>
+</table>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
