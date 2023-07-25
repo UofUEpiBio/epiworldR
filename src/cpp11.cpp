@@ -223,6 +223,13 @@ extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP transmi
   END_CPP11
 }
 // epimodels.cpp
+SEXP ModelSIRD_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate, double death_rate);
+extern "C" SEXP _epiworldR_ModelSIRD_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate, SEXP death_rate) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSIRD_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<double>>(death_rate)));
+  END_CPP11
+}
+// epimodels.cpp
 SEXP ModelSEIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double incubation_days, double recovery_rate);
 extern "C" SEXP _epiworldR_ModelSEIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate) {
   BEGIN_CPP11
@@ -740,6 +747,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIR_cpp",                        (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                         5},
     {"_epiworldR_ModelSIRCONN_cpp",                     (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                      6},
+    {"_epiworldR_ModelSIRD_cpp",                        (DL_FUNC) &_epiworldR_ModelSIRD_cpp,                         5},
     {"_epiworldR_ModelSIRLogit_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRLogit_cpp,                    10},
     {"_epiworldR_ModelSIR_cpp",                         (DL_FUNC) &_epiworldR_ModelSIR_cpp,                          4},
     {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},

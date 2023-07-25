@@ -175,7 +175,7 @@ SEXP ModelSIR_cpp(
   cpp11::external_pointer<epiworld::epimodels::ModelSIRD<>> (a)
 
 [[cpp11::register]]
-SEXP ModelSIR_cpp(
+SEXP ModelSIRD_cpp(
     std::string name,
     double prevalence,
     double transmission_rate,
@@ -183,7 +183,7 @@ SEXP ModelSIR_cpp(
     double death_rate
 ) {
   
-  // Creating a pointer to a ModelSIR model
+  // Creating a pointer to a ModelSIRD model
   WrapSIRD(ptr)(
       new epiworld::epimodels::ModelSIRD<>(
           name,

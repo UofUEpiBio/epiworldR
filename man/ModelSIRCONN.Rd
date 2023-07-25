@@ -71,6 +71,7 @@ Other Models:
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIR}()},
+\code{\link{ModelSIRD}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIS}()},
