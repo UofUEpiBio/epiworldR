@@ -226,6 +226,51 @@ SEXP ModelSISD_cpp(
 }
   
 #undef WrapSISD
+
+#define WrapSURVD(a) \
+  cpp11::external_pointer<epiworld::epimodels::ModelSURVD<>> (a)
+
+[[cpp11::register]]
+SEXP ModelSURVD_cpp(
+  std::string name,
+  double prevalence,
+  double efficacy_vax,
+  double latent_period,         
+  double prob_symptoms,         
+  double prop_vaccinated,       
+  double prop_vax_redux_transm, 
+  double infect_period,         
+  double prop_vax_redux_infect, 
+  double surveillance_prob,     
+  double transmission_rate,     
+  double prob_death,            
+  double prob_noreinfect       
+) {
+    
+
+  // Creating a pointer to a ModelSURVD model
+  WrapSURVD(ptr)(
+    new epiworld::epimodels::ModelSURVD<>(
+      name,
+      prevalence,
+      efficacy_vax,
+      latent_period,  
+      infect_period,  
+      prob_symptoms,         
+      prop_vaccinated,       
+      prop_vax_redux_transm, 
+      prop_vax_redux_infect, 
+      surveillance_prob,     
+      transmission_rate,     
+      prob_death,            
+      prob_noreinfect   
+    )
+  );
+
+  return ptr;
+}
+
+#undef WrapSURVD
   
 #define WrapSEIRCONN(a) \
   cpp11::external_pointer<epiworld::epimodels::ModelSEIRCONN<>> (a)
