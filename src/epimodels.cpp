@@ -199,6 +199,34 @@ SEXP ModelSIRD_cpp(
   
 #undef WrapSIRD
   
+#define WrapSISD(a) \
+  cpp11::external_pointer<epiworld::epimodels::ModelSISD<>> (a)
+
+[[cpp11::register]]
+SEXP ModelSISD_cpp(
+    std::string name,
+    double prevalence,
+    double transmission_rate,
+    double recovery_rate,
+    double death_rate
+) {
+  
+  // Creating a pointer to a ModelSISD model
+  WrapSISD(ptr)(
+      new epiworld::epimodels::ModelSISD<>(
+          name,
+          prevalence,
+          transmission_rate,
+          recovery_rate,
+          death_rate
+      )
+  );
+  
+  return ptr;
+}
+  
+#undef WrapSISD
+  
 #define WrapSEIRCONN(a) \
   cpp11::external_pointer<epiworld::epimodels::ModelSEIRCONN<>> (a)
 
