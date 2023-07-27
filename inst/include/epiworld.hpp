@@ -15239,7 +15239,6 @@ inline std::function<void(Model<TSeq>*)> globalaction_set_param(
 //////////////////////////////////////////////////////////////////////////////*/
 
 
-
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -16842,6 +16841,124 @@ inline ModelSIRD<TSeq>::ModelSIRD(
 /*//////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+ Start of -include/epiworld//models/sisd.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_MODELS_SISD_HPP 
+#define EPIWORLD_MODELS_SISD_HPP
+
+/**
+ * @brief Template for a Susceptible-Infected-Susceptible-Deceased (SISD) model
+ * 
+ * @param vname std::string Name of the virus
+ * @param initial_prevalence epiworld_double Initial prevalence
+ * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
+ * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
+ * @param inital_death epiworld_double Initial death_rate of the immune system
+ */
+template<typename TSeq = int>
+class ModelSISD : public epiworld::Model<TSeq>
+{
+
+public:
+
+    ModelSISD() {};
+
+    ModelSISD(
+        ModelSISD<TSeq> & model,
+        std::string vname,
+        epiworld_double prevalence,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate,
+        epiworld_double death_rate
+    );
+
+    ModelSISD(
+        std::string vname,
+        epiworld_double prevalence,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate,
+        epiworld_double death_rate
+    );
+
+};
+
+template<typename TSeq>
+inline ModelSISD<TSeq>::ModelSISD(
+    ModelSISD<TSeq> & model,
+    std::string vname,
+    epiworld_double prevalence,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate
+    )
+{
+
+    model.set_name("Susceptible-Infected-Susceptible-Deceased (SISD)");
+
+    // Adding statuses
+    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Deceased")
+
+    // Setting up parameters
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(recovery_rate, "Recovery rate");
+    model.add_param(death_rate, "Death rate")
+
+    // Preparing the virus -------------------------------------------
+    epiworld::Virus<TSeq> virus(vname);
+    virus.set_state(1,0,0);
+    
+    virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_death(0.01);
+    
+    model.add_virus(virus, prevalence);
+
+    return;
+
+}
+
+template<typename TSeq>
+inline ModelSISD<TSeq>::ModelSISD(
+    std::string vname,
+    epiworld_double prevalence,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate,
+    )
+{
+
+    ModelSISD<TSeq>(
+        *this,
+        vname,
+        prevalence,
+        transmission_rate,
+        recovery_rate,
+        death_rate
+    );    
+
+    return;
+
+}
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/sisd.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
  Start of -include/epiworld//models/seird.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17201,6 +17318,1132 @@ inline void ModelSEIRD<TSeq>::contact(Model<TSeq> * m)
 ////////////////////////////////////////////////////////////////////////////////
 
  End of -include/epiworld//models/seird.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/surveillanced.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_MODELS_SURVEILLANCED_HPP
+#define EPIWORLD_MODELS_SURVEILLANCED_HPP
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ModelSURVD : public epiworld::Model<TSeq> {
+
+private:
+    // state
+    static const int SUSCEPTIBLE           = 0;
+    static const int LATENT                = 1;
+    static const int SYMPTOMATIC           = 2;
+    static const int SYMPTOMATIC_ISOLATED  = 3; // sampled and discovered
+    static const int ASYMPTOMATIC          = 4;
+    static const int ASYMPTOMATIC_ISOLATED = 5;
+    static const int RECOVERED             = 6;
+    static const int REMOVED               = 7;
+
+public:
+
+    /**
+     * @name Construct a new ModelSURVD object
+     * 
+     * The ModelSURVD class simulates a survaillence model where agents can be
+     * isolated, even if asyptomatic.
+     * 
+     * @param vname String. Name of the virus
+     * @param prevalence Integer. Number of initial cases of the virus.
+     * @param efficacy_vax Double. Efficacy of the vaccine (1 - P(acquire the disease)).
+     * @param latent_period Double. Shape parameter of a `Gamma(latent_period, 1)`
+     *   distribution. This coincides with the expected number of latent days.
+     * @param infect_period Double. Shape parameter of a `Gamma(infected_period, 1)`
+     *   distribution. This coincides with the expected number of infectious days.
+     * @param prob_symptoms Double. Probability of generating symptoms.
+     * @param prop_vaccinated Double. Probability of vaccination. Coincides with
+     *   the initial prevalence of vaccinated individuals.
+     * @param prop_vax_redux_transm Double. Factor by which the vaccine reduces
+     *   transmissibility.
+     * @param prop_vax_redux_infect Double. Factor by which the vaccine reduces
+     *   the chances of becoming infected.
+     * @param surveillance_prob Double. Probability of testing an agent.
+     * @param prob_transmission Double. Raw transmission probability.
+     * @param prob_death Double. Raw probability of death for symptomatic individuals.
+     * @param prob_noreinfect Double. Probability of no re-infection.
+     * 
+     * @details
+     * This model features the following states:
+     * 
+     * - Susceptible
+     * - Latent
+     * - Symptomatic
+     * - Symptomatic isolated
+     * - Asymptomatic
+     * - Asymptomatic isolated
+     * - Recovered
+     * - Removed  
+     * - Deceased  
+     * 
+     * @returns An object of class `epiworld_survd`
+     * 
+     */
+    ///@{
+    ModelSURVD() {};
+
+    ModelSURVD(
+        ModelSURVD<TSeq> & model,
+        std::string vname,
+        epiworld_fast_uint prevalence               = 50,
+        epiworld_double efficacy_vax          = 0.9,
+        epiworld_double latent_period         = 3u,
+        epiworld_double infect_period         = 6u,
+        epiworld_double prob_symptoms         = 0.6,
+        epiworld_double prop_vaccinated       = 0.25,
+        epiworld_double prop_vax_redux_transm = 0.5,
+        epiworld_double prop_vax_redux_infect = 0.5,
+        epiworld_double surveillance_prob     = 0.001,
+        epiworld_double prob_transmission     = 1.0,
+        epiworld_double prob_death            = 0.001,
+        epiworld_double prob_noreinfect       = 0.9
+    );
+
+    ModelSURVD(
+        std::string vname,
+        epiworld_fast_uint prevalence         = 50,
+        epiworld_double efficacy_vax          = 0.9,
+        epiworld_double latent_period         = 3u,
+        epiworld_double infect_period         = 6u,
+        epiworld_double prob_symptoms         = 0.6,
+        epiworld_double prop_vaccinated       = 0.25,
+        epiworld_double prop_vax_redux_transm = 0.5,
+        epiworld_double prop_vax_redux_infect = 0.5,
+        epiworld_double surveillance_prob     = 0.001,
+        epiworld_double prob_transmission     = 1.0,
+        epiworld_double prob_death            = 0.001,
+        epiworld_double prob_noreinfect       = 0.9
+    );
+    ///@}
+
+};
+
+template<typename TSeq>
+inline ModelSURVD<TSeq>::ModelSURVD(
+    ModelSURVD<TSeq> & model,
+    std::string vname,
+    epiworld_fast_uint prevalence,
+    epiworld_double efficacy_vax,
+    epiworld_double latent_period,
+    epiworld_double infect_period,
+    epiworld_double prob_symptoms,
+    epiworld_double prop_vaccinated,
+    epiworld_double prop_vax_redux_transm,
+    epiworld_double prop_vax_redux_infect,
+    epiworld_double surveillance_prob,
+    epiworld_double prob_transmission,
+    epiworld_double prob_death,
+    epiworld_double prob_noreinfect
+    )
+{
+
+    EPI_NEW_UPDATEFUN_LAMBDA(surveillance_update_susceptible, TSeq) {
+
+        // This computes the prob of getting any neighbor variant
+        epiworld_fast_uint nviruses_tmp = 0u;
+        for (auto & neighbor: p->get_neighbors()) 
+        {
+                    
+            for (size_t i = 0u; i < neighbor->get_n_viruses(); ++i) 
+            { 
+
+                auto & v = neighbor->get_virus(i);
+                    
+                /* And it is a function of susceptibility_reduction as well */ 
+                epiworld_double tmp_transmission = 
+                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                    v->get_prob_infecting(m) * 
+                    (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                    ; 
+            
+                m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
+                m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                
+            } 
+        }
+
+        // No virus to compute on
+        if (nviruses_tmp == 0)
+            return;
+
+        // Running the roulette
+        int which = roulette(nviruses_tmp, m);
+
+        if (which < 0)
+            return;
+
+        p->add_virus(*m->array_virus_tmp[which], m); 
+        return;
+
+    };
+
+
+    epiworld::UpdateFun<TSeq> surveillance_update_exposed = 
+    [](epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m) -> void
+    {
+
+        epiworld::VirusPtr<TSeq> & v = p->get_virus(0u); 
+        epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+        
+        epiworld_fast_uint days_since_exposed = m->today() - v->get_date();
+        epiworld_fast_uint state = p->get_state();
+
+        // Figuring out latent period
+        if (v->get_data().size() == 0u)
+        {
+            epiworld_double latent_days = m->rgamma(m->par("Latent period"), 1.0);
+            v->get_data().push_back(latent_days);
+
+            v->get_data().push_back(
+                m->rgamma(m->par("Infect period"), 1.0) + latent_days
+            );
+        }
+        
+        // If still latent, nothing happens
+        if (days_since_exposed <= v->get_data()[0u])
+            return;
+
+        // If past days infected + latent, then bye.
+        if (days_since_exposed >= v->get_data()[1u])
+        {
+            p->rm_virus(0, m);
+            return;
+        }
+
+        // If it is infected, then it can be asymptomatic or symptomatic
+        if (state == ModelSURVD<TSeq>::LATENT)
+        {
+
+            // Will be symptomatic?
+            if (EPI_RUNIF() < m->par("Prob of symptoms"))
+                p->change_state(m, ModelSURVD<TSeq>::SYMPTOMATIC);
+            else
+                p->change_state(m, ModelSURVD<TSeq>::ASYMPTOMATIC);
+            
+            return;
+
+        }
+        
+        // Otherwise, it can be removed
+        if (EPI_RUNIF() < p_die)
+        {
+            p->change_state(m, ModelSURVD<TSeq>::REMOVED, -1);
+            return;
+        }
+        
+        return;
+
+    };
+
+    std::vector< epiworld_fast_uint > exposed_state = {
+        SYMPTOMATIC,
+        SYMPTOMATIC_ISOLATED,
+        ASYMPTOMATIC,
+        ASYMPTOMATIC_ISOLATED,
+        LATENT
+    };
+
+    epiworld::GlobalFun<TSeq> surveillance_program = 
+    [exposed_state](
+        epiworld::Model<TSeq>* m
+        ) -> void
+    {
+
+        // How many will we find
+        std::binomial_distribution<> bdist(m->size(), m->par("Surveilance prob."));
+        int nsampled = bdist(m->get_rand_endgine());
+
+        int to_go = nsampled + 1;
+
+        epiworld_double ndetected        = 0.0;
+        epiworld_double ndetected_asympt = 0.0;
+        
+        auto & pop = m->get_agents();
+        std::vector< bool > sampled(m->size(), false);
+        
+        while (to_go-- > 0)
+        {
+
+            // Who is the lucky one
+            epiworld_fast_uint i = static_cast<epiworld_fast_uint>(std::floor(EPI_RUNIF() * m->size()));
+
+            if (sampled[i])
+                continue;
+
+            sampled[i] = true;
+            epiworld::Agent<TSeq> * p = &pop[i];
+            
+            // If still exposed for the next term
+            if (epiworld::IN(p->get_state(), exposed_state ))
+            {
+
+                ndetected += 1.0;
+                if (p->get_state() == ModelSURVD<TSeq>::ASYMPTOMATIC)
+                {
+                    ndetected_asympt += 1.0;
+                    p->change_state(m, ModelSURVD<TSeq>::ASYMPTOMATIC_ISOLATED);
+                }
+                else 
+                {
+                    p->change_state(m, ModelSURVD<TSeq>::SYMPTOMATIC_ISOLATED);
+                }
+
+            }
+
+        }
+
+        // Writing the user data
+        std::vector< int > totals;
+        m->get_db().get_today_total(nullptr,&totals);
+        m->add_user_data(
+            {
+                static_cast<epiworld_double>(nsampled),
+                ndetected,
+                ndetected_asympt,
+                static_cast<epiworld_double>(totals[ModelSURVD<TSeq>::ASYMPTOMATIC])
+            }
+            );
+
+
+    };
+
+    model.add_state("Susceptible", surveillance_update_susceptible);
+    model.add_state("Latent", surveillance_update_exposed);
+    model.add_state("Symptomatic", surveillance_update_exposed);
+    model.add_state("Symptomatic isolated", surveillance_update_exposed);
+    model.add_state("Asymptomatic", surveillance_update_exposed);
+    model.add_state("Asymptomatic isolated", surveillance_update_exposed);
+    model.add_state("Recovered");
+    model.add_state("Removed");
+    model.add_state("Deceased");
+
+    // General model parameters
+    model.add_param(latent_period, "Latent period");
+    model.add_param(infect_period, "Infect period");
+    model.add_param(prob_symptoms, "Prob of symptoms");
+    model.add_param(surveillance_prob, "Surveilance prob.");
+    model.add_param(efficacy_vax, "Vax efficacy");
+    model.add_param(prop_vax_redux_transm, "Vax redux transmission");
+    model.add_param(prob_transmission, "Prob of transmission");
+    model.add_param(prob_death, "Prob. death");
+    model.add_param(prob_noreinfect, "Prob. no reinfect");
+
+    // Virus ------------------------------------------------------------------
+    epiworld::Virus<TSeq> covid("Covid19");
+    covid.set_state(LATENT, RECOVERED, REMOVED);
+    covid.set_post_immunity(&model("Prob. no reinfect"));
+    covid.set_prob_death(&model("Prob. death"));
+
+    epiworld::VirusFun<TSeq> ptransmitfun = [](
+        epiworld::Agent<TSeq> * p,
+        epiworld::Virus<TSeq> & v,
+        epiworld::Model<TSeq> * m
+        ) -> epiworld_double
+    {
+        // No chance of infecting
+        epiworld_fast_uint  s = p->get_state();
+        if (s == ModelSURVD<TSeq>::LATENT)
+            return static_cast<epiworld_double>(0.0);
+        else if (s == ModelSURVD<TSeq>::SYMPTOMATIC_ISOLATED)
+            return static_cast<epiworld_double>(0.0);
+        else if (s == ModelSURVD<TSeq>::ASYMPTOMATIC_ISOLATED)
+            return static_cast<epiworld_double>(0.0);
+
+        // Otherwise
+        return m->par("Prob of transmission");
+    };
+
+    covid.set_prob_infecting_fun(ptransmitfun);
+    
+    model.add_virus_n(covid, prevalence);
+
+    model.set_user_data({"nsampled", "ndetected", "ndetected_asympt", "nasymptomatic"});
+    model.add_global_action(surveillance_program, "Surveilance program", -1);
+   
+    // Vaccine tool -----------------------------------------------------------
+    epiworld::Tool<TSeq> vax("Vaccine");
+    vax.set_susceptibility_reduction(&model("Vax efficacy"));
+    vax.set_transmission_reduction(&model("Vax redux transmission"));
+    
+    model.add_tool(vax, prop_vaccinated);
+
+    model.set_name("Surveillance");
+
+    return;
+
+}
+
+template<typename TSeq>
+inline ModelSURVD<TSeq>::ModelSURVD(
+    std::string vname,
+    epiworld_fast_uint prevalence,
+    epiworld_double efficacy_vax,
+    epiworld_double latent_period,
+    epiworld_double infect_period,
+    epiworld_double prob_symptoms,
+    epiworld_double prop_vaccinated,
+    epiworld_double prop_vax_redux_transm,
+    epiworld_double prop_vax_redux_infect,
+    epiworld_double surveillance_prob,
+    epiworld_double prob_transmission,
+    epiworld_double prob_death,
+    epiworld_double prob_noreinfect
+    )
+{
+
+    ModelSURVD(
+        *this,
+        vname,
+        prevalence,
+        efficacy_vax,
+        latent_period,
+        infect_period,
+        prob_symptoms,
+        prop_vaccinated,
+        prop_vax_redux_transm,
+        prop_vax_redux_infect,
+        surveillance_prob,
+        prob_transmission,
+        prob_death,
+        prob_noreinfect
+    );
+
+    return;
+
+}
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/surveillanced.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/sirdconnected.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_MODELS_SIRDCONNECTED_HPP 
+#define EPIWORLD_MODELS_SIRDCONNECTED_HPP
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ModelSIRDCONN : public epiworld::Model<TSeq>
+{
+private:
+    static const int SUSCEPTIBLE = 0;
+    static const int INFECTED    = 1;
+    static const int RECOVERED   = 2;
+
+public:
+
+    ModelSIRDCONN() {
+        
+        // tracked_agents_infected.reserve(1e4);
+        // tracked_agents_infected_next.reserve(1e4);
+
+    };
+
+    ModelSIRDCONN(
+        ModelSIRDCONN<TSeq> & model,
+        std::string vname,
+        epiworld_fast_uint n,
+        epiworld_double prevalence,
+        epiworld_double contact_rate,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate, 
+        epiworld_double death_rate
+    );
+
+    ModelSIRDCONN(
+        std::string vname,
+        epiworld_fast_uint n,
+        epiworld_double prevalence,
+        epiworld_double contact_rate,
+        epiworld_double transmission_rate,
+        epiworld_double recovery_rate,
+        epiworld_double death_rate
+    );
+
+    // Tracking who is infected and who is not
+    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected = {};
+    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected_next = {};
+    // std::vector< epiworld_double >        tracked_agents_weight        = {};
+    // std::vector< epiworld_double >        tracked_agents_weight_next   = {};
+
+    // int tracked_ninfected = 0;
+    // int tracked_ninfected_next = 0;
+    // epiworld_double tracked_current_infect_prob = 0.0;
+
+    void run(
+        epiworld_fast_uint ndays,
+        int seed = -1
+    );
+    
+    void reset();
+
+    Model<TSeq> * clone_ptr();
+
+
+};
+
+template<typename TSeq>
+inline void ModelSIRDCONN<TSeq>::run(
+    epiworld_fast_uint ndays,
+    int seed
+)
+{
+
+    // tracked_agents_infected.clear();
+    // tracked_agents_infected_next.clear();
+
+    // tracked_ninfected = 0;
+    // tracked_ninfected_next = 0;
+    // tracked_current_infect_prob = 0.0;
+
+    Model<TSeq>::run(ndays, seed);
+
+}
+
+template<typename TSeq>
+inline void ModelSIRDCONN<TSeq>::reset()
+{
+
+    Model<TSeq>::reset();
+
+    // Model<TSeq>::set_rand_binom(
+    //     Model<TSeq>::size(),
+    //     static_cast<double>(
+    //         Model<TSeq>::par("Contact rate"))/
+    //         static_cast<double>(Model<TSeq>::size())
+    //     );
+
+    return;
+
+}
+
+template<typename TSeq>
+inline Model<TSeq> * ModelSIRDCONN<TSeq>::clone_ptr()
+{
+    
+    ModelSIRDCONN<TSeq> * ptr = new ModelSIRDCONN<TSeq>(
+        *dynamic_cast<const ModelSIRDCONN<TSeq>*>(this)
+        );
+
+    return dynamic_cast< Model<TSeq> *>(ptr);
+
+}
+
+/**
+ * @brief Template for a Susceptible-Infected-Removed (SIR) model
+ * 
+ * @param model A Model<TSeq> object where to set up the SIR.
+ * @param vname std::string Name of the virus
+ * @param prevalence Initial prevalence (proportion)
+ * @param contact_rate Average number of contacts (interactions) per step.
+ * @param transmission_rate Probability of transmission
+ * @param recovery_rate Probability of recovery
+ * @param death_rate Probability of death
+ */
+template<typename TSeq>
+inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
+    ModelSIRDCONN<TSeq> & model,
+    std::string vname,
+    epiworld_fast_uint n,
+    epiworld_double prevalence,
+    epiworld_double contact_rate,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate
+    // epiworld_double prob_reinfection
+    )
+{
+
+
+
+    epiworld::UpdateFun<TSeq> update_susceptible = [](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void
+        {
+
+            // Sampling how many individuals
+            m->set_rand_binom(
+                m->size(),
+                static_cast<double>(
+                    m->par("Contact rate"))/
+                    static_cast<double>(m->size())
+            );
+
+            int ndraw = m->rbinom();
+
+            if (ndraw == 0)
+                return;
+
+            // Drawing from the set
+            int nviruses_tmp = 0;
+            for (int i = 0; i < ndraw; ++i)
+            {
+                // Now selecting who is transmitting the disease
+                int which = static_cast<int>(
+                    std::floor(m->size() * m->runif())
+                );
+
+                /* There is a bug in which runif() returns 1.0. It is rare, but
+                 * we saw it here. See the Notes section in the C++ manual
+                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
+                 * And the reported bug in GCC:
+                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
+                 * 
+                 */
+                if (which == static_cast<int>(m->size()))
+                    --which;
+
+                // Can't sample itself
+                if (which == static_cast<int>(p->get_id()))
+                    continue;
+
+                // If the neighbor is infected, then proceed
+                auto & neighbor = m->get_agents()[which];
+                if (neighbor.get_state() == ModelSIRDCONN<TSeq>::INFECTED)
+                {
+
+                    for (const VirusPtr<TSeq> & v : neighbor.get_viruses()) 
+                    { 
+
+                        #ifdef EPI_DEBUG
+                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
+                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                        #endif
+                            
+                        /* And it is a function of susceptibility_reduction as well */ 
+                        m->array_double_tmp[nviruses_tmp] =
+                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                            v->get_prob_infecting(m) * 
+                            (1.0 - neighbor.get_transmission_reduction(v, m)) 
+                            ; 
+                    
+                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                        
+                    } 
+
+                }
+            }
+
+            // No virus to compute
+            if (nviruses_tmp == 0u)
+                return;
+
+            // Running the roulette
+            int which = roulette(nviruses_tmp, m);
+
+            if (which < 0)
+                return;
+
+            p->add_virus(*m->array_virus_tmp[which], m);
+
+            return; 
+
+        };
+
+
+    epiworld::UpdateFun<TSeq> update_infected = [](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void {
+
+            auto state = p->get_state();
+
+            if (state == ModelSIRDCONN<TSeq>::INFECTED)
+            {
+
+
+                // Odd: Die, Even: Recover
+                epiworld_fast_uint n_events = 0u;
+                for (const auto & v : p->get_viruses())
+                {
+
+                    // Recover
+                    m->array_double_tmp[n_events++] = 
+                        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+
+                }
+
+                #ifdef EPI_DEBUG
+                if (n_events == 0u)
+                {
+                    printf_epiworld(
+                        "[epi-debug] agent %i has 0 possible events!!\n",
+                        static_cast<int>(p->get_id())
+                        );
+                    throw std::logic_error("Zero events in exposed.");
+                }
+                #else
+                if (n_events == 0u)
+                    return;
+                #endif
+                
+
+                // Running the roulette
+                int which = roulette(n_events, m);
+
+                if (which < 0)
+                    return;
+
+                // Which roulette happen?
+                size_t which_v = std::floor(which / 2);
+                p->rm_virus(which_v, m);
+
+                return ;
+
+            } else
+                throw std::logic_error("This function can only be applied to infected individuals. (SIR)") ;
+
+            return;
+
+        };
+
+    // state
+    model.add_state("Susceptible", update_susceptible);
+    model.add_state("Infected", update_infected);
+    model.add_state("Recovered");
+    model.add_state("Deceased");
+      
+
+    // Setting up parameters
+    model.add_param(contact_rate, "Contact rate");
+    model.add_param(transmission_rate, "Transmission rate");
+    model.add_param(recovery_rate, "Recovery rate");
+    model.add_param(death_rate, "Death rate");
+    // model.add_param(prob_reinfection, "Prob. Reinfection");
+    
+    // Preparing the virus -------------------------------------------
+    epiworld::Virus<TSeq> virus(vname);
+    virus.set_state(1, 2, 2);
+    virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_death(&model("Death rate"));
+    
+    model.add_virus(virus, prevalence);
+
+    model.queuing_off(); // No queuing need
+
+    model.agents_empty_graph(n);
+
+    model.set_name("Susceptible-Infected-Removed-Deceased (SIRD) (connected)");
+
+    return;
+
+}
+
+template<typename TSeq>
+inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
+    std::string vname,
+    epiworld_fast_uint n,
+    epiworld_double prevalence,
+    epiworld_double contact_rate,
+    epiworld_double transmission_rate,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate
+    )
+{
+
+    ModelSIRDCONN(
+        *this,
+        vname,
+        n,
+        prevalence,
+        contact_rate,
+        transmission_rate,
+        recovery_rate,
+        death_rate
+    );
+
+    return;
+
+}
+
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/sirdconnected.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ Start of -include/epiworld//models/seirdconnected.hpp-
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
+
+#ifndef EPIWORLD_MODELS_SEIRDCONNECTED_HPP
+#define EPIWORLD_MODELS_SEIRDCONNECTED_HPP
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ModelSEIRDCONN : public epiworld::Model<TSeq> 
+{
+public:
+
+    static const int SUSCEPTIBLE = 0;
+    static const int EXPOSED     = 1;
+    static const int INFECTED    = 2;
+    static const int RECOVERED   = 3;
+    static const int DECEASED    = 4;
+
+
+    ModelSEIRDCONN() {};
+
+    ModelSEIRDCONN(
+        ModelSEIRDCONN<TSeq> & model,
+        std::string vname,
+        epiworld_fast_uint n,
+        epiworld_double prevalence,
+        epiworld_double contact_rate,
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate,
+        epiworld_double death_rate
+    );
+    
+    ModelSEIRDCONN(
+        std::string vname,
+        epiworld_fast_uint n,
+        epiworld_double prevalence,
+        epiworld_double contact_rate,
+        epiworld_double transmission_rate,
+        epiworld_double avg_incubation_days,
+        epiworld_double recovery_rate,
+        epiworld_double death_rate
+    );
+
+    void run(
+        epiworld_fast_uint ndays,
+        int seed = -1
+    );
+
+    void reset();
+
+    Model<TSeq> * clone_ptr();
+
+};
+
+template<typename TSeq>
+inline void ModelSEIRDCONN<TSeq>::run(
+    epiworld_fast_uint ndays,
+    int seed
+)
+{
+    
+    Model<TSeq>::run(ndays, seed);
+
+}
+
+template<typename TSeq>
+inline void ModelSEIRDCONN<TSeq>::reset()
+{
+
+    Model<TSeq>::reset();
+
+    Model<TSeq>::set_rand_binom(
+        Model<TSeq>::size(),
+        static_cast<double>(
+            Model<TSeq>::par("Contact rate"))/
+            static_cast<double>(Model<TSeq>::size())
+        );
+
+    return;
+
+}
+
+template<typename TSeq>
+inline Model<TSeq> * ModelSEIRDCONN<TSeq>::clone_ptr()
+{
+    
+    ModelSEIRDCONN<TSeq> * ptr = new ModelSEIRDCONN<TSeq>(
+        *dynamic_cast<const ModelSEIRDCONN<TSeq>*>(this)
+        );
+
+    return dynamic_cast< Model<TSeq> *>(ptr);
+
+}
+
+/**
+ * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
+ * 
+ * @param model A Model<TSeq> object where to set up the SIR.
+ * @param vname std::string Name of the virus
+ * @param prevalence Initial prevalence (proportion)
+ * @param contact_rate Average number of contacts (interactions) per step.
+ * @param transmission_rate Probability of transmission
+ * @param recovery_rate Probability of recovery
+ * @param death_rate Probability of death
+ */
+template<typename TSeq>
+inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
+    ModelSEIRDCONN<TSeq> & model,
+    std::string vname,
+    epiworld_fast_uint n,
+    epiworld_double prevalence,
+    epiworld_double contact_rate,
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate
+    // epiworld_double prob_reinfection
+    )
+{
+
+    epiworld::UpdateFun<TSeq> update_susceptible = [](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void
+        {
+
+            // Sampling how many individuals
+            int ndraw = m->rbinom();
+
+            if (ndraw == 0)
+                return;
+
+            // Drawing from the set
+            int nviruses_tmp = 0;
+            for (int i = 0; i < ndraw; ++i)
+            {
+                // Now selecting who is transmitting the disease
+                int which = static_cast<int>(
+                    std::floor(m->size() * m->runif())
+                );
+
+                /* There is a bug in which runif() returns 1.0. It is rare, but
+                 * we saw it here. See the Notes section in the C++ manual
+                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
+                 * And the reported bug in GCC:
+                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
+                 * 
+                 */
+                if (which == static_cast<int>(m->size()))
+                    --which;
+
+                // Can't sample itself
+                if (which == static_cast<int>(p->get_id()))
+                    continue;
+
+                // If the neighbor is infected, then proceed
+                auto & neighbor = m->get_agents()[which];
+                if (neighbor.get_state() == ModelSEIRDCONN<TSeq>::INFECTED)
+                {
+
+                    for (const VirusPtr<TSeq> & v : neighbor.get_viruses()) 
+                    { 
+
+                        #ifdef EPI_DEBUG
+                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
+                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                        #endif
+                            
+                        /* And it is a function of susceptibility_reduction as well */ 
+                        m->array_double_tmp[nviruses_tmp] =
+                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                            v->get_prob_infecting(m) * 
+                            (1.0 - neighbor.get_transmission_reduction(v, m)) 
+                            ; 
+                    
+                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                        
+                    } 
+
+                }
+            }
+
+            // No virus to compute
+            if (nviruses_tmp == 0u)
+                return;
+
+            // Running the roulette
+            int which = roulette(nviruses_tmp, m);
+
+            if (which < 0)
+                return;
+
+            p->add_virus(
+                *m->array_virus_tmp[which],
+                m,
+                ModelSEIRDCONN<TSeq>::EXPOSED
+                );
+
+            return; 
+
+        };
+
+    epiworld::UpdateFun<TSeq> update_infected = [](
+        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+        ) -> void {
+
+            auto state = p->get_state();
+
+            if (state == ModelSEIRDCONN<TSeq>::EXPOSED)
+            {
+
+                // Getting the virus
+                auto & v = p->get_virus(0u);
+
+                // Does the agent become infected?
+                if (m->runif() < 1.0/(v->get_incubation(m)))
+                {
+
+                    p->change_state(m, ModelSEIRDCONN<TSeq>::INFECTED);
+                    return;
+
+                }
+
+
+            } else if (state == ModelSEIRDCONN<TSeq>::INFECTED)
+            {
+
+
+                // Odd: Die, Even: Recover
+                epiworld_fast_uint n_events = 0u;
+                for (const auto & v : p->get_viruses())
+                {
+
+                    // Recover
+                    m->array_double_tmp[n_events++] = 
+                        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+
+                }
+
+                #ifdef EPI_DEBUG
+                if (n_events == 0u)
+                {
+                    printf_epiworld(
+                        "[epi-debug] agent %i has 0 possible events!!\n",
+                        static_cast<int>(p->get_id())
+                        );
+                    throw std::logic_error("Zero events in exposed.");
+                }
+                #else
+                if (n_events == 0u)
+                    return;
+                #endif
+                
+
+                // Running the roulette
+                int which = roulette(n_events, m);
+
+                if (which < 0)
+                    return;
+
+                // Which roulette happen?
+                size_t which_v = std::floor(which / 2);
+                p->rm_virus(which_v, m);
+
+                return ;
+
+            } else
+                throw std::logic_error("This function can only be applied to exposed or infected individuals. (SEIR)") ;
+
+            return;
+
+        };
+
+    // Setting up parameters
+    model.add_param(contact_rate, "Contact rate");
+    model.add_param(transmission_rate, "Prob. Transmission");
+    model.add_param(recovery_rate, "Prob. Recovery");
+    model.add_param(avg_incubation_days, "Avg. Incubation days");
+    model.add_param(death_rate, "Death rate");
+    
+    // state
+    model.add_state("Susceptible", update_susceptible);
+    model.add_state("Exposed", update_infected);
+    model.add_state("Infected", update_infected);
+    model.add_state("Recovered");
+    model.add_state("Deceased");
+
+
+    // Preparing the virus -------------------------------------------
+    epiworld::Virus<TSeq> virus(vname);
+    virus.set_state(
+        ModelSEIRDCONN<TSeq>::EXPOSED,
+        ModelSEIRDCONN<TSeq>::RECOVERED,
+        ModelSEIRDCONN<TSeq>::RECOVERED
+        );
+
+    virus.set_prob_infecting(&model("Prob. Transmission"));
+    virus.set_prob_recovery(&model("Prob. Recovery"));
+    virus.set_incubation(&model("Avg. Incubation days"));
+    virus.set_prob_death(&model("Death rate"));
+    model.add_virus(virus, prevalence);
+
+    model.queuing_off(); // No queuing need
+
+    // Adding the empty population
+    model.agents_empty_graph(n);
+
+    model.set_name("Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) (connected)");
+
+    return;
+
+}
+
+template<typename TSeq>
+inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
+    std::string vname,
+    epiworld_fast_uint n,
+    epiworld_double prevalence,
+    epiworld_double contact_rate,
+    epiworld_double transmission_rate,
+    epiworld_double avg_incubation_days,
+    epiworld_double recovery_rate,
+    epiworld_double death_rate
+    )
+{
+
+    ModelSEIRDCONN(
+        *this,
+        vname,
+        n,
+        prevalence,
+        contact_rate,
+        transmission_rate,
+        avg_incubation_days,
+        recovery_rate,
+        death_rate
+    );
+
+    return;
+
+}
+
+#endif
+/*//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ End of -include/epiworld//models/seirdconnected.hpp-
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
@@ -17774,6 +19017,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////*/
+
 
 
 

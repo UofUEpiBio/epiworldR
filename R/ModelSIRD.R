@@ -16,7 +16,7 @@
 #' @family Models
 #' @aliases epiworld_sir
 #' @returns
-#' - The `ModelSIR` function returns a model of class [epiworld_model].
+#' - The `ModelSIRD` function returns a model of class [epiworld_model].
 #' @examples 
 #' model_sird <- ModelSIRD(
 #'  name              = "COVID-19",
