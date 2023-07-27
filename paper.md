@@ -18,7 +18,7 @@ tags:
 - parallel computing
 affiliations:
 - index: 1
-  name: Division of Epidemiology, University of Utah
+  name: Division of Epidemiology, University of Utah, Salt Lake City, Utah
 ---
 
 # Introduction
