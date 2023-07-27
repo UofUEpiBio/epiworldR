@@ -12,7 +12,7 @@
 #' @export
 #' @family Models
 #' @returns
-#' - The `ModelSIRCONN`function returns a model of class [epiworld_model].
+#' - The `ModelSIRDCONN`function returns a model of class [epiworld_model].
 #' @aliases epiworld_sirconn
 #' 
 #' @examples 
