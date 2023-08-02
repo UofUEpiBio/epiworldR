@@ -95,11 +95,14 @@ get_agents(model_logit)
 Other Models: 
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRD}()},
 \code{\link{ModelSIR}()},
+\code{\link{ModelSISD}()},
 \code{\link{ModelSIS}()},
+\code{\link{ModelSURVD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }

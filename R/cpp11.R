@@ -128,6 +128,22 @@ ModelSIRD_cpp <- function(name, prevalence, transmission_rate, recovery_rate, de
   .Call(`_epiworldR_ModelSIRD_cpp`, name, prevalence, transmission_rate, recovery_rate, death_rate)
 }
 
+ModelSISD_cpp <- function(name, prevalence, transmission_rate, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSISD_cpp`, name, prevalence, transmission_rate, recovery_rate, death_rate)
+}
+
+ModelSURVD_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
+  .Call(`_epiworldR_ModelSURVD_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
+}
+
+ModelSIRDCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSIRDCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate, death_rate)
+}
+
+ModelSEIRDCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSEIRDCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, death_rate)
+}
+
 ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate) {
   .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate)
 }

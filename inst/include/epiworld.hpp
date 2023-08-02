@@ -3183,8 +3183,10 @@ inline void DataBase<TSeq>::record()
         // Now the diagonal must reflect the state
         for (size_t s_i = 0u; s_i < model->nstates; ++s_i)
         {
+
             for (size_t s_j = 0u; s_j < model->nstates; ++s_j)
             {
+                
                 if ((s_i != s_j) && (transition_matrix[s_i + s_j * model->nstates] > 0))
                 {
                     transition_matrix[s_j + s_j * model->nstates] +=
@@ -3195,15 +3197,18 @@ inline void DataBase<TSeq>::record()
          
             }
 
-            #ifdef EPI_DEBUG
+        }
+
+        #ifdef EPI_DEBUG
+        for (size_t s_i = 0u; s_i < model->nstates; ++s_i)
+        {
             if (transition_matrix[s_i + s_i * model->nstates] != 
                 today_total[s_i])
                 throw std::logic_error(
                     "The diagonal of the updated transition Matrix should match the daily totals"
                     );
-            #endif
         }
-
+        #endif
 
     }
 
@@ -6948,7 +6953,6 @@ inline void Model<TSeq>::actions_run()
 
                 for (size_t t = 0u; t < p->n_tools; ++t)
                     db.update_tool(p->tools[t]->id, p->state, a.new_state);
-
 
                 // Saving the last state and setting the new one
                 p->state_prev = p->state;
@@ -16902,16 +16906,16 @@ inline ModelSISD<TSeq>::ModelSISD(
     // Adding statuses
     model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
     model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
-    model.add_state("Deceased")
+    model.add_state("Deceased");
 
     // Setting up parameters
     model.add_param(transmission_rate, "Transmission rate");
     model.add_param(recovery_rate, "Recovery rate");
-    model.add_param(death_rate, "Death rate")
+    model.add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_state(1,0,0);
+    virus.set_state(1,0,2);
     
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
@@ -16929,7 +16933,7 @@ inline ModelSISD<TSeq>::ModelSISD(
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,
-    epiworld_double death_rate,
+    epiworld_double death_rate
     )
 {
 

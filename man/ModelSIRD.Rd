@@ -30,7 +30,7 @@ infection.}
 }
 \value{
 \itemize{
-\item The \code{ModelSIR} function returns a model of class \link{epiworld_model}.
+\item The \code{ModelSIRD} function returns a model of class \link{epiworld_model}.
 }
 
 \itemize{
@@ -72,11 +72,14 @@ epiworld-methods
 Other Models: 
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
+\code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},
+\code{\link{ModelSISD}()},
 \code{\link{ModelSIS}()},
+\code{\link{ModelSURVD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }
