@@ -279,7 +279,6 @@ SEXP ModelSURVD_cpp(
 SEXP ModelSIRDCONN_cpp(
     std::string name,
     unsigned int n,
-    
     double prevalence,
     double contact_rate,
     double transmission_rate, 
