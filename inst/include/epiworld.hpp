@@ -18394,7 +18394,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     virus.set_state(
         ModelSEIRDCONN<TSeq>::EXPOSED,
         ModelSEIRDCONN<TSeq>::RECOVERED,
-        ModelSEIRDCONN<TSeq>::RECOVERED
+        ModelSEIRDCONN<TSeq>::DECEASED
         );
 
     virus.set_prob_infecting(&model("Prob. Transmission"));
