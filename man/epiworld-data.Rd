@@ -240,6 +240,7 @@ Other Models:
 \code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
+\code{\link{ModelSIRDCONN}()},
 \code{\link{ModelSIRD}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},

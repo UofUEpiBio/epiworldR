@@ -67,6 +67,7 @@ Other Models:
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSIRCONN}()},
+\code{\link{ModelSIRDCONN}()},
 \code{\link{ModelSIRD}()},
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},

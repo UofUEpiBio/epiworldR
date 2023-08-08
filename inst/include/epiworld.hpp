@@ -17757,7 +17757,8 @@ class ModelSIRDCONN : public epiworld::Model<TSeq>
 private:
     static const int SUSCEPTIBLE = 0;
     static const int INFECTED    = 1;
-    static const int RECOVERED   = 2;
+    static const int RECOVERED     = 2;
+    static const int DECEASED    = 3;
 
 public:
 
@@ -17980,41 +17981,55 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
             {
 
 
-                // Odd: Die, Even: Recover
-                epiworld_fast_uint n_events = 0u;
-                for (const auto & v : p->get_viruses())
-                {
-
-                    // Recover
-                    m->array_double_tmp[n_events++] = 
-                        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
-
-                }
-
-                #ifdef EPI_DEBUG
-                if (n_events == 0u)
-                {
-                    printf_epiworld(
-                        "[epi-debug] agent %i has 0 possible events!!\n",
-                        static_cast<int>(p->get_id())
-                        );
-                    throw std::logic_error("Zero events in exposed.");
-                }
-                #else
-                if (n_events == 0u)
-                    return;
-                #endif
+              // Odd: Die, Even: Recover
+              epiworld_fast_uint n_events = 0u;
+              for (const auto & v : p->get_viruses())
+              {
                 
-
-                // Running the roulette
-                int which = roulette(n_events, m);
-
-                if (which < 0)
-                    return;
-
-                // Which roulette happen?
+                // Die
+                m->array_double_tmp[n_events++] = 
+                  v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+                
+                // Recover
+                m->array_double_tmp[n_events++] = 
+                  1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+                
+              }
+              
+#ifdef EPI_DEBUG
+              if (n_events == 0u)
+              {
+                printf_epiworld(
+                  "[epi-debug] agent %i has 0 possible events!!\n",
+                  static_cast<int>(p->get_id())
+                );
+                throw std::logic_error("Zero events in exposed.");
+              }
+#else
+              if (n_events == 0u)
+                return;
+#endif
+              
+              
+              // Running the roulette
+              int which = roulette(n_events, m);
+              
+              if (which < 0)
+                return;
+              
+              // Which roulette happen?
+              if ((which % 2) == 0) // If odd
+              {
+                
+                size_t which_v = std::ceil(which / 2);
+                p->rm_agent_by_virus(which_v, m);
+                
+              } else {
+                
                 size_t which_v = std::floor(which / 2);
                 p->rm_virus(which_v, m);
+                
+              }
 
                 return ;
 
@@ -18041,7 +18056,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
     
     // Preparing the virus -------------------------------------------
     epiworld::Virus<TSeq> virus(vname);
-    virus.set_state(1, 2, 2);
+    virus.set_state(1, 2, 3);
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_death(&model("Death rate"));
@@ -18116,7 +18131,7 @@ public:
     static const int SUSCEPTIBLE = 0;
     static const int EXPOSED     = 1;
     static const int INFECTED    = 2;
-    static const int RECOVERED   = 3;
+    static const int REMOVED     = 3;
     static const int DECEASED    = 4;
 
 
@@ -18329,46 +18344,60 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
             {
 
 
-                // Odd: Die, Even: Recover
-                epiworld_fast_uint n_events = 0u;
-                for (const auto & v : p->get_viruses())
-                {
-
-                    // Recover
-                    m->array_double_tmp[n_events++] = 
-                        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
-
-                }
-
-                #ifdef EPI_DEBUG
-                if (n_events == 0u)
-                {
-                    printf_epiworld(
-                        "[epi-debug] agent %i has 0 possible events!!\n",
-                        static_cast<int>(p->get_id())
-                        );
-                    throw std::logic_error("Zero events in exposed.");
-                }
-                #else
-                if (n_events == 0u)
-                    return;
-                #endif
+              // Odd: Die, Even: Recover
+              epiworld_fast_uint n_events = 0u;
+              for (const auto & v : p->get_viruses())
+              {
                 
-
-                // Running the roulette
-                int which = roulette(n_events, m);
-
-                if (which < 0)
-                    return;
-
-                // Which roulette happen?
+                // Die
+                m->array_double_tmp[n_events++] = 
+                  v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+                
+                // Recover
+                m->array_double_tmp[n_events++] = 
+                  1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+                
+              }
+              
+              #ifdef EPI_DEBUG
+              if (n_events == 0u)
+              {
+                printf_epiworld(
+                  "[epi-debug] agent %i has 0 possible events!!\n",
+                  static_cast<int>(p->get_id())
+                );
+                throw std::logic_error("Zero events in exposed.");
+              }
+              #else
+              if (n_events == 0u)
+                return;
+              #endif
+              
+              
+              // Running the roulette
+              int which = roulette(n_events, m);
+              
+              if (which < 0)
+                return;
+              
+              // Which roulette happen?
+              if ((which % 2) == 0) // If odd
+              {
+                
+                size_t which_v = std::ceil(which / 2);
+                p->rm_agent_by_virus(which_v, m);
+                
+              } else {
+                
                 size_t which_v = std::floor(which / 2);
                 p->rm_virus(which_v, m);
+                
+              }
 
                 return ;
 
             } else
-                throw std::logic_error("This function can only be applied to exposed or infected individuals. (SEIR)") ;
+                throw std::logic_error("This function can only be applied to exposed or infected individuals. (SEIRD)") ;
 
             return;
 
@@ -18385,7 +18414,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     model.add_state("Susceptible", update_susceptible);
     model.add_state("Exposed", update_infected);
     model.add_state("Infected", update_infected);
-    model.add_state("Recovered");
+    model.add_state("Removed");
     model.add_state("Deceased");
 
 
@@ -18393,7 +18422,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     epiworld::Virus<TSeq> virus(vname);
     virus.set_state(
         ModelSEIRDCONN<TSeq>::EXPOSED,
-        ModelSEIRDCONN<TSeq>::RECOVERED,
+        ModelSEIRDCONN<TSeq>::REMOVED,
         ModelSEIRDCONN<TSeq>::DECEASED
         );
 
