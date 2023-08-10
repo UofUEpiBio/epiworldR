@@ -74,7 +74,6 @@ Other Models:
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSISD}()},
-\code{\link{ModelSURVD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }

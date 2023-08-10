@@ -73,7 +73,6 @@ Other Models:
 \code{\link{ModelSIR}()},
 \code{\link{ModelSISD}()},
 \code{\link{ModelSIS}()},
-\code{\link{ModelSURVD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }

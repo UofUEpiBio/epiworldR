@@ -18,12 +18,12 @@
 #' @examples 
 #' model_sirdconn <- ModelSIRDCONN(
 #'   name                = "COVID-19",
-#'   n                   = 10000,
+#'   n                   = 100000,
 #'   prevalence          = 0.01,
 #'   contact_rate        = 5,
 #'   transmission_rate   = 0.4,
-#'   recovery_rate       = 0.95,
-#'   death_rate          = 0.01
+#'   recovery_rate       = 0.5,
+#'   death_rate          = 0.1
 #' )
 #'   
 #' # Running and printing
