@@ -46,6 +46,9 @@
     <loc>/reference/ModelSEIRCONN.html</loc>
   </url>
   <url>
+    <loc>/reference/ModelSEIRDCONN.html</loc>
+  </url>
+  <url>
     <loc>/reference/ModelSIR.html</loc>
   </url>
   <url>
@@ -55,10 +58,16 @@
     <loc>/reference/ModelSIRD.html</loc>
   </url>
   <url>
+    <loc>/reference/ModelSIRDCONN.html</loc>
+  </url>
+  <url>
     <loc>/reference/ModelSIRLogit.html</loc>
   </url>
   <url>
     <loc>/reference/ModelSIS.html</loc>
+  </url>
+  <url>
+    <loc>/reference/ModelSISD.html</loc>
   </url>
   <url>
     <loc>/reference/ModelSURV.html</loc>
