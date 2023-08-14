@@ -79,6 +79,22 @@ run_multiple.epiworld_model <- function(
   
   if (!inherits(saver, "epiworld_saver"))
     stop("-saver- should be of class \"epiworld_saver\"")
+
+  # Checking the saver object
+  saver$nruns <- saver$nruns + 1L
+
+  # If the saver is greater than 1, then
+  # we need to delete the files from the previous run
+  if (saver$nruns > 1L) {
+
+    fnames <- list.files(
+      path       = dirname(saver$fn),
+      full.names = TRUE
+    )
+
+    unlink(fnames)
+
+  }
   
   run_multiple_cpp(
     m,
@@ -114,8 +130,6 @@ run_multiple_get_results <- function(m) {
   if (!length(saver)) 
     stop("No -saver- found. -run_multiple_get_results- can only be used after using -run_multiple-.")
   
-  pattern <- gsub("%[0-9]*lu", "*", saver$fn)
-  
   output <- vector("list", length(saver$what))
   names(output) <- saver$what
   
@@ -123,8 +137,8 @@ run_multiple_get_results <- function(m) {
     
     # Listing the files
     fnames <- list.files(
-      path    = dirname(pattern),
-      pattern = sprintf("%s\\.csv", i),
+      path       = dirname(saver$fn),
+      pattern    = sprintf("%s\\.csv", i),
       full.names = TRUE
     )
     
@@ -274,9 +288,17 @@ make_saver <- function(
   
   # Checking the filename
   file_output <- TRUE
+  
+  # Using tempfile to generate directories
+  id <- basename(tempfile("epiworldR-"))
+
   if (fn == "") {
-    fn <- file.path(tempdir(), "%05lu-episimulation.csv")
+
+    fp <- file.path(tempdir(), id)
+    dir.create(fp)
+    fn <- file.path(fp, "%05lu-episim")
     file_output <- FALSE
+
   } else if (!dir.exists(dirname(fn))) {
     stop("The directory \"", dirname(fn), "\" does not exists.")
   }
@@ -289,7 +311,9 @@ make_saver <- function(
       ptr         = do.call(make_saver_cpp, what_bool),
       fn          = fn,
       file_output = file_output,
-      what        = available[which(available %in% what)]
+      what        = available[which(available %in% what)],
+      nruns       = 0,
+      id          = id
       ),
     class = "epiworld_saver"
   )
@@ -306,5 +330,6 @@ print.epiworld_saver <- function(x, ...) {
     cat("Saver pattern      :", x$fn)
   
   invisible(x)
+  
 }
 
