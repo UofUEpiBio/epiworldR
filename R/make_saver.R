@@ -80,20 +80,15 @@ run_multiple.epiworld_model <- function(
   if (!inherits(saver, "epiworld_saver"))
     stop("-saver- should be of class \"epiworld_saver\"")
 
-  # Checking the saver object
-  saver$nruns <- saver$nruns + 1L
-
   # If the saver is greater than 1, then
   # we need to delete the files from the previous run
-  if (saver$nruns > 1L) {
-
-    fnames <- list.files(
-      path       = dirname(saver$fn),
-      full.names = TRUE
+  fnames <- list.files(
+    path = dirname(saver$fn),
+    full.names = TRUE
     )
 
-    unlink(fnames)
-
+  if (length(fnames)) {
+    unlink(fnames, expand = FALSE)
   }
   
   run_multiple_cpp(
@@ -312,7 +307,6 @@ make_saver <- function(
       fn          = fn,
       file_output = file_output,
       what        = available[which(available %in% what)],
-      nruns       = 0,
       id          = id
       ),
     class = "epiworld_saver"
@@ -330,6 +324,6 @@ print.epiworld_saver <- function(x, ...) {
     cat("Saver pattern      :", x$fn)
   
   invisible(x)
-  
+
 }
 
