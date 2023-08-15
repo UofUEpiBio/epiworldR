@@ -66,6 +66,7 @@ Other Models:
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRDCONN}()},
+\code{\link{ModelSEIRD}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRDCONN}()},
 \code{\link{ModelSIRD}()},

@@ -92,6 +92,7 @@ plot(adopt_chatgpt)
 Other Models: 
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRDCONN}()},
+\code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRDCONN}()},

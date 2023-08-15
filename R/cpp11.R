@@ -128,6 +128,10 @@ ModelSIRD_cpp <- function(name, prevalence, transmission_rate, recovery_rate, de
   .Call(`_epiworldR_ModelSIRD_cpp`, name, prevalence, transmission_rate, recovery_rate, death_rate)
 }
 
+ModelSEIRD_cpp <- function(name, prevalence, transmission_rate, incubation_days, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSEIRD_cpp`, name, prevalence, transmission_rate, incubation_days, recovery_rate, death_rate)
+}
+
 ModelSISD_cpp <- function(name, prevalence, transmission_rate, recovery_rate, death_rate) {
   .Call(`_epiworldR_ModelSISD_cpp`, name, prevalence, transmission_rate, recovery_rate, death_rate)
 }

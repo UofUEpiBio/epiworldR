@@ -87,6 +87,7 @@ epiworld-methods
 Other Models: 
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelSEIRDCONN}()},
+\code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRDCONN}()},
