@@ -17020,17 +17020,17 @@ public:
     epiworld::Agent<TSeq> * p,
     epiworld::Model<TSeq> * m
   ) -> void {
-    
+
     // Getting the virus
     auto v = p->get_virus(0);
-    
+
     // Does the agent become infected?
     if (m->runif() < 1.0/(v->get_incubation(m)))
       p->change_state(m, ModelSEIRD<TSeq>::INFECTED);
-    
-    return;    
+
+    return;
   };
-  
+
   
   epiworld::UpdateFun<TSeq> update_infected = [](
     epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
@@ -17047,6 +17047,10 @@ public:
       for (const auto & v : p->get_viruses())
       {
         
+        // Die
+        m->array_double_tmp[n_events++] = 
+          v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+        
         // Recover
         m->array_double_tmp[n_events++] = 
           1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
@@ -17062,13 +17066,14 @@ public:
         );
         throw std::logic_error("Zero events in exposed.");
       }
-      #else
+#else
       if (n_events == 0u)
         return;
-      #endif
+#endif
+      
       
       // Running the roulette
-        int which = roulette(n_events, m);
+      int which = roulette(n_events, m);
       
       if (which < 0)
         return;
@@ -17086,16 +17091,17 @@ public:
         p->rm_virus(which_v, m);
         
       }
+      
       return ;
       
     } else
-      throw std::logic_error("This function can only be applied to infected individuals. (SEIRD)") ;
+      throw std::logic_error("This function can only be applied to exposed or infected individuals. (SEIRD)") ;
     
     return;
     
   };
-  
 };
+
 
 
 template<typename TSeq>
@@ -17112,7 +17118,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   
   // Adding statuses
   model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
-  model.add_state("Exposed", model.update_exposed_seir);
+  model.add_state("Exposed",  model.update_exposed_seir);
   model.add_state("Infected", model.update_infected);
   model.add_state("Removed");
   model.add_state("Deceased");
