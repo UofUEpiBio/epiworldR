@@ -18,7 +18,7 @@
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models
-#' @aliases epiworld_seirconn
+#' @aliases epiworld_seirdconn
 #' @returns
 #' - The `ModelSEIRDCONN`function returns a model of class [epiworld_model].
 #' @examples 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ModelSEIRDCONN.R
 \name{ModelSEIRDCONN}
 \alias{ModelSEIRDCONN}
-\alias{epiworld_seirconn}
+\alias{epiworld_seirdconn}
 \alias{plot.epiworld_seirdconn}
 \title{Susceptible Exposed Infected Removed Deceased model (SEIRD connected)}
 \usage{

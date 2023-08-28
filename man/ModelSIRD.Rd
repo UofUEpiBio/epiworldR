@@ -2,7 +2,7 @@
 % Please edit documentation in R/ModelSIRD.R
 \name{ModelSIRD}
 \alias{ModelSIRD}
-\alias{epiworld_sir}
+\alias{epiworld_sird}
 \alias{plot.epiworld_sird}
 \title{SIRD model}
 \usage{

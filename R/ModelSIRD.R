@@ -14,7 +14,7 @@
 #' @param ... Additional arguments passed to [graphics::plot].
 #' @export
 #' @family Models
-#' @aliases epiworld_sir
+#' @aliases epiworld_sird
 #' @returns
 #' - The `ModelSIRD` function returns a model of class [epiworld_model].
 #' @examples 
