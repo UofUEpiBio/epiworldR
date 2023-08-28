@@ -161,12 +161,30 @@ add_virus.epiworld_sir <- function(model, virus, proportion) {
 }
 
 #' @export
+add_virus.epiworld_sird <- function(model, virus, proportion) {
+  
+  stopifnot_virus(virus)
+  virus_set_state(virus, init = 1, end = 2, removed = 3)
+  invisible(add_virus_cpp(model, virus, proportion))
+  
+}
+
+#' @export
 add_virus.epiworld_sirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_sir(model, virus, proportion)
   
 }
+
+#' @export
+add_virus.epiworld_sirdconn <- function(model, virus, proportion) {
+  
+  stopifnot_virus(virus)
+  add_virus.epiworld_sird(model, virus, proportion)
+  
+}
+
 
 #' @export
 add_virus.epiworld_seir <- function(model, virus, proportion) {
@@ -178,10 +196,27 @@ add_virus.epiworld_seir <- function(model, virus, proportion) {
 }
 
 #' @export
+add_virus.epiworld_seird <- function(model, virus, proportion) {
+  
+  stopifnot_virus(virus)
+  virus_set_state(virus, init = 1, end = 3, removed = 4)
+  invisible(add_virus_cpp(model, virus, proportion))
+  
+}
+
+#' @export
 add_virus.epiworld_seirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_seir(model, virus, proportion)
+  
+}
+
+#' @export
+add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
+  
+  stopifnot_virus(virus)
+  add_virus.epiworld_seird(model, virus, proportion)
   
 }
 

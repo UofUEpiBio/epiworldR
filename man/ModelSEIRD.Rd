@@ -52,12 +52,12 @@ Susceptible-Exposed-Infected-Recovered-Deceased model (SEIRD)
 \examples{
 model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01, 
 transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4, 
-death_rate = 0.001)
+death_rate = 0.01)
 
 # Adding a small world population
 agents_smallworld(
   model_seird,
-  n = 10000,
+  n = 100000,
   k = 5,
   d = FALSE,
   p = .01
