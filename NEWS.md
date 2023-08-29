@@ -1,6 +1,6 @@
 # epiworldR 0.0-3
 
-* Added the following models: `ModelSEIRD`, `ModelSEIRDCONN`, `ModelSIRD`, `ModelSIRDCONN`, `ModelSISD`, and `ModelSURVD`.
+* Added the following models: `ModelSEIRD`, `ModelSEIRDCONN`, `ModelSIRD`, `ModelSIRDCONN`, and `ModelSISD`.
 
 * Fixed a bug reported on issue [6](https://github.com/UofUEpiBio/epiworldR/issues/6).
 

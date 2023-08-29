@@ -259,3 +259,7 @@ You may want to check out other R packages for agent-based modeling: [`ABM`](htt
 [`cystiSim`](https://cran.r-project.org/package=cystiSim){target="_blank"},
 [`villager`](https://cran.r-project.org/package=villager){target="_blank"}, and
 [`RNetLogo`](https://cran.r-project.org/package=RNetLogo){target="_blank"}.
+
+## Code of Conduct
+  
+Please note that the epiworldR project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
