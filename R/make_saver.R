@@ -151,16 +151,27 @@ run_multiple_get_results <- function(m) {
     # Putting all together
     output[[i]] <- do.call(rbind, output[[i]])
     
-    # runif
-    # 
-    # runif(10, min=2, max=4)
-    # do.call(runif, list(10, 2, 4))
-    # 
-    # rbind(output[[i]][[1]], output[[i]][[2]], ...)
-    
-    class(output[[i]]) <- c("epiworld_multiple_save_i", class(output[[i]]))
+    # If there are no observations, then
+    err_msg <- tryCatch({
+      class(output[[i]]) <- c("epiworld_multiple_save_i", class(output[[i]]))
+    }, error = function(e) e
+    )
+
+    if (inherits(err_msg, "error")) {
+
+      warning(
+        "When retrieving the saved results, for the case of ",
+        i, ", there were no observations."
+        )
+
+      class(output[[i]]) <- structure(
+        data.frame(),
+        c("epiworld_multiple_save_i")
+      )
+
+    }
+
     attr(output[[i]], "what") <- i
-      
     
   }
   
@@ -180,6 +191,14 @@ plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
 plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 
   what <- attr(x, "what")
+
+  if (nrow(x) == 0) {
+    warning(
+      "When plotting the saved results, for the case of ",
+      what, ", there were no observations."
+      )
+    return(NULL)
+  }
   
   # If it is not reproductive number, then...
   if (what != "reproductive") {
