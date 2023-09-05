@@ -86,7 +86,7 @@ model_sir <- ModelSIRCONN(
 saver <- make_saver("total_hist", "reproductive")
 
 # Running and printing
-run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
+run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 1)
 
 # Retrieving the results
 ans <- run_multiple_get_results(model_sir)
