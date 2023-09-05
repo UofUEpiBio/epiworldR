@@ -6754,7 +6754,7 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         std::string reproductive = "";
         std::string generation = "";
 
-        char buff[128];
+        char buff[fmt.size()*2 + 1u];
         if (what_to_save[0u])
         {
             virus_info = fmt + std::string("_virus_info.csv");
