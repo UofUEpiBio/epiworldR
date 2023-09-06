@@ -11,11 +11,11 @@ install: build
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
 
-update:
-	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
-		mv epiworld.hpp inst/include/epiworld.hpp 
+# update:
+# 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
+# 		mv epiworld.hpp inst/include/epiworld.hpp 
 local-update:
-	rsync -avz ../epiworld/epiworld.hpp inst/include/epiworld.hpp
+	rsync -avz ../epiworld/include/epiworld inst/include/.
 
 check: build
 	R CMD check epiworldR_*.tar.gz

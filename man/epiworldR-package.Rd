@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com}
+\strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
 
 Authors:
 \itemize{
@@ -28,6 +28,9 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Susan Holmes (\href{https://orcid.org/0000-0002-2208-8168}{ORCID}) (JOSS reviewer) [reviewer]
+  \item Abinash Satapathy (\href{https://orcid.org/0000-0002-2955-2744}{ORCID}) (JOSS reviewer) [reviewer]
+  \item Carinogurjao [reviewer]
   \item Centers for Disease Control and Prevention (Award number 1U01CK000585; 75D30121F00003) [funder]
 }
 
