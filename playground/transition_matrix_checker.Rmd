@@ -1,0 +1,186 @@
+---
+title: "P(Death | Infected)"
+author: "Derek Meyer"
+date: "2023-08-28"
+output: html_document
+---
+
+# SEIRD Example
+```{r}
+#' model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01, 
+#' transmission_rate = 0.9, recovery_rate = 0.2, incubation_days = 4, 
+#' death_rate = 0.1)
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_seird,
+#'   n = 500000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#'   )
+#'   
+#' # Running and printing
+#' run(model_seird, ndays = 100, seed = 1912)
+#' model_seird
+
+# Transition Probabilities:
+#  - Susceptible  0.96  0.04  0.00  0.00  0.00
+#  - Exposed      0.00  0.75  0.25  0.00  0.00
+#  - Infected     0.00  0.00  0.78  0.13  0.09
+#  - Removed      0.00  0.00  0.00  1.00  0.00
+#  - Deceased     0.00  0.00  0.00  0.00  1.00
+
+pdie <- 0.1
+precovery <- 0.2
+pnone <- (1-pdie)*(1-precovery)
+patmost_one <- pdie*(1-precovery) + precovery*(1-pdie)
+
+p_die_given_infected <- pdie * (1-precovery) / (pnone + patmost_one) # 0.08163265
+p_recovery_given_infected <- precovery * (1-pdie) / (pnone + patmost_one) # 0.1836735
+
+```
+
+$P(Dying | Infected) = \frac{p_{die} * (1-p_{recovery})}{(1-p_{die})*(1-p_{recovery})+p_{die}*(1-p_{recovery}) + p_{recovery}*(1-p_{die})} = \frac{0.01 * (1-0.1)}{(1-0.01)*(1-0.1) + 0.01*(1-0.01)+0.1*(1-0.01)} = 0.009 \approx 0.01$
+
+# SEIRDCONN Example
+```{r}
+#' # An example with COVID-19
+#' model_seirdconn <- ModelSEIRDCONN(
+#'   name                = "COVID-19",
+#'   prevalence          = 0.01, 
+#'   n                   = 100000,
+#'   contact_rate        = 2, 
+#'   incubation_days     = 7, 
+#'   transmission_rate   = 0.5,
+#'   recovery_rate       = 0.3,
+#'   death_rate          = 0.01
+#' )
+#'   
+#' # Running and printing
+#' run(model_seirdconn, ndays = 100, seed = 1912)
+#' model_seirdconn
+#' 
+#' plot(model_seirdconn)
+
+# Transition Probabilities:
+#  - Susceptible  0.97  0.03  0.00  0.00  0.00
+#  - Exposed      0.00  0.86  0.14  0.00  0.00
+#  - Infected     0.00  0.00  0.69  0.30  0.01
+#  - Removed      0.00  0.00  0.00  1.00  0.00
+#  - Deceased     0.00  0.00  0.00  0.00  1.00
+
+pdie <- 0.01
+precovery <- 0.3
+pnone <- (1-pdie)*(1-precovery)
+patmost_one <- pdie*(1-precovery) + precovery*(1-pdie)
+
+p_die_given_infected <- pdie * (1-precovery) / (pnone + patmost_one) # 0.007021063
+p_recovery_given_infected <- precovery * (1-pdie) / (pnone + patmost_one) # 0.2978937
+```
+
+# SIRDCONN Example
+```{r}
+#' model_sirdconn <- ModelSIRDCONN(
+#'   name                = "COVID-19",
+#'   n                   = 100000,
+#'   prevalence          = 0.01,
+#'   contact_rate        = 5,
+#'   transmission_rate   = 0.4,
+#'   recovery_rate       = 0.5,
+#'   death_rate          = 0.1
+#' )
+#'   
+#' # Running and printing
+#' run(model_sirdconn, ndays = 100, seed = 1912)
+#' model_sirdconn
+
+# Transition Probabilities:
+#  - Susceptible  0.97  0.03  0.00  0.00
+#  - Infected     0.00  0.52  0.44  0.05
+#  - Recovered    0.00  0.00  1.00  0.00
+#  - Deceased     0.00  0.00  0.00  1.00
+
+pdie <- 0.1
+precovery <- 0.5
+pnone <- (1-pdie)*(1-precovery)
+patmost_one <- pdie*(1-precovery) + precovery*(1-pdie)
+
+p_die_given_infected <- pdie * (1-precovery) / (pnone + patmost_one) # 0.05263158
+p_recovery_given_infected <- precovery * (1-pdie) / (pnone + patmost_one) # 0.4736842
+```
+
+# SIRD Example
+```{r}
+#' model_sird <- ModelSIRD(
+#'  name              = "COVID-19",
+#'  prevalence        = 0.01, 
+#'  transmission_rate = 0.9,
+#'  recovery_rate     = 0.2,
+#'  death_rate        = 0.01
+#' )
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_sird,
+#'   n = 100000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#'   )
+#'   
+#' # Running and printing
+#' run(model_sird, ndays = 100, seed = 1912)
+#' model_sird
+
+# Transition Probabilities:
+#  - Susceptible  0.96  0.04  0.00  0.00
+#  - Infected     0.00  0.80  0.20  0.01
+#  - Recovered    0.00  0.00  1.00  0.00
+#  - Deceased     0.00  0.00  0.00  1.00
+
+pdie <- 0.01
+precovery <- 0.2
+pnone <- (1-pdie)*(1-precovery)
+patmost_one <- pdie*(1-precovery) + precovery*(1-pdie)
+
+p_die_given_infected <- pdie * (1-precovery) / (pnone + patmost_one) # 0.008016032
+p_recovery_given_infected <- precovery * (1-pdie) / (pnone + patmost_one) # 0.1983968
+```
+
+# SISD Example
+```{r}
+#' model_sisd <- ModelSISD(
+#'                name = "COVID-19", 
+#'                prevalence = 0.01, 
+#'                transmission_rate = 0.9, 
+#'                recovery_rate = 0.2, 
+#'                death_rate = 0.01
+#'              )
+#' 
+#' # Adding a small world population
+#' agents_smallworld(
+#'   model_sisd,
+#'   n = 100000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#'   )
+#'   
+#' # Running and printing
+#' run(model_sisd, ndays = 100, seed = 1912)
+#' model_sisd
+
+# Transition Probabilities:
+#  - Susceptible  0.57  0.43  0.00
+#  - Infected     0.20  0.79  0.01
+#  - Deceased     0.00  0.00  1.00
+
+pdie <- 0.01
+precovery <- 0.2
+pnone <- (1-pdie)*(1-precovery)
+patmost_one <- pdie*(1-precovery) + precovery*(1-pdie)
+
+p_die_given_infected <- pdie * (1-precovery) / (pnone + patmost_one) # 0.008016032
+```
+
