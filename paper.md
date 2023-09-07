@@ -48,7 +48,7 @@ Several alternatives to `epiworldR` exist and provide researchers with a range o
 | [**abmR**](https://cran.r-project.org/package=abmR)                         | \-               | \-             | yes           | \-             | \-                  | 156          | June 2023                   |
 | [**cystiSim**](https://cran.r-project.org/package=cystiSim)                 | \-               | yes            | yes           | \-             | \-                  | 28   | February 2020      |
 | [**villager**](https://cran.r-project.org/package=villager)                 | \-               | \-             | \-            | yes            | \-                  | 26  | December 2022          |
-| [**RNetLogo**](https://cran.r-project.org/web/packages/RNetLogo/index.html) | \-               | yes            | yes           | yes            | \-                  | 7   | June 2017               |
+| [**RNetLogo**](https://cran.r-project.org/package=RNetLogo) | \-               | yes            | yes           | yes            | \-                  | 7   | June 2017               |
 
 # Statement of Need
 
