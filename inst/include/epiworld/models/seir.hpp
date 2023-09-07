@@ -14,13 +14,12 @@
 template<typename TSeq = int>
 class ModelSEIR : public epiworld::Model<TSeq>
 {
-private:
+
+public:
     static const int SUSCEPTIBLE = 0;
     static const int EXPOSED     = 1;
     static const int INFECTED    = 2;
     static const int REMOVED     = 3;
-
-public:
 
     ModelSEIR() {};
 
@@ -99,6 +98,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_incubation(&model("Incubation days"));
+    virus.set_prob_recovery(&model("Recovery rate"));
     
     // Adding the tool and the virus
     model.add_virus(virus, prevalence);

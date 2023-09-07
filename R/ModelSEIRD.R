@@ -45,8 +45,14 @@ ModelSEIRD <- function(
 ) {
   
   structure(
-    ModelSEIRD_cpp(name, prevalence, transmission_rate, incubation_days, 
-                  recovery_rate, death_rate),
+    ModelSEIRD_cpp(
+      name              = name,
+      prevalence        = prevalence,
+      transmission_rate = transmission_rate,
+      incubation_days   = incubation_days,
+      recovery_rate     = recovery_rate,
+      death_rate        = death_rate
+      ),
     class = c("epiworld_seird", "epiworld_model")
   )
   

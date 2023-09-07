@@ -33,3 +33,4 @@ README\.html
 \.gitattributes
 
 paper\..+
+docker

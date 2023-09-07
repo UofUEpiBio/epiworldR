@@ -1,8 +1,15 @@
+# Capture the current value of the version of the package in DESCRIPTION
+VERSION := $(shell grep Version DESCRIPTION | sed -e 's/Version: //')
+
 build: docs clean
 	cd .. && rm -f epiworldR_*.tar.gz & R CMD build epiworldR
 
 debug: clean
-	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL .
+	docker run --rm -ti -w/mnt -v $(PWD):/mnt uofuepibio/epiworldr:debug make docker-debug 
+
+docker-debug:
+	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL \
+		--no-docs --build .
 
 install: build 
 	which R
@@ -26,7 +33,7 @@ clean:
 docs:
 	Rscript --vanilla -e 'devtools::document()'
 
-.PHONY: build update check clean docs
+.PHONY: build update check clean docs docker-debug
 
 checkv: build
 	R CMD check --as-cran --use-valgrind epiworldR*.tar.gz
