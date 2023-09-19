@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.0-3
+Version: 0.0-3.9000
 Date: 2023-08-29
 Authors@R: c(
   person("Derek", "Meyer", role=c("aut","cre"), 

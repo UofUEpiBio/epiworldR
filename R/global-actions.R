@@ -99,8 +99,16 @@ globalaction_tool_logit <- function(
   name = get_name_tool(tool), day = -99
   ) {
 
+  stopifnot_tool(tool)
+
   structure(
-    globalaction_tool_logit_cpp(tool, vars, coefs, name, day),
+    globalaction_tool_logit_cpp(
+      tool,
+      as.integer(vars),
+      as.double(coefs),
+      name,
+      as.integer(day)
+      ),
     class = c("epiworld_globalaction_tool_logit", "epiworld_globalaction"),
     tool = tool,
     call = match.call()
@@ -121,10 +129,15 @@ globalaction_set_params <- function(
   ) {
 
   structure(
-    globalaction_set_param_cpp(param, value, name, day),
+    globalaction_set_param_cpp(
+      param,
+      as.double(value),
+      name,
+      as.integer(day)
+      ),
     class = c("epiworld_globalaction_set_param", "epiworld_globalaction"),
     param = param,
-    value = value,
+    value = as.double(value),
     call = match.call()
   )
 }
@@ -171,7 +184,7 @@ globalaction_fun <- function(
   ) {
 
   structure(
-    globalaction_fun_cpp(fun, name, day),
+    globalaction_fun_cpp(fun, name, as.integer(day)),
     class = c("epiworld_globalaction_fun", "epiworld_globalaction"),
     fun = fun,
     call = match.call()

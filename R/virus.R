@@ -362,7 +362,7 @@ virus_fun_logit <- function(vars, coefs, model) {
   
   structure(
     virus_fun_logit_cpp(vars, coefs, model),
-    class = "epiworld_virus_fun",
+    class   = "epiworld_virus_fun",
     builder = "virus_fun_logit",
     vars    = vars,
     coefs   = coefs,
@@ -402,7 +402,7 @@ print.epiworld_virus_fun <- function(x, ...) {
 set_prob_infecting <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  invisible(set_prob_infecting_cpp(virus, prob))
+  invisible(set_prob_infecting_cpp(virus, as.numeric(prob)))
   
 }
 
@@ -444,7 +444,7 @@ set_prob_infecting_fun <- function(virus, model, vfun) {
 set_prob_recovery <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  invisible(set_prob_recovery_cpp(virus, prob))
+  invisible(set_prob_recovery_cpp(virus, as.numeric(prob)))
   
 }
 
@@ -478,7 +478,7 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
 set_prob_death <- function(virus, prob) {
   
   stopifnot_virus(virus)
-  invisible(set_prob_death_cpp(virus, prob))
+  invisible(set_prob_death_cpp(virus, as.numeric(prob)))
   
 }
 
@@ -511,7 +511,7 @@ set_prob_death_fun <- function(virus, model, vfun) {
 set_incubation <- function(virus, incubation) {
   
   stopifnot_virus(virus)
-  invisible(set_incubation_cpp(virus, incubation))
+  invisible(set_incubation_cpp(virus, as.numeric(incubation)))
   
 }
 

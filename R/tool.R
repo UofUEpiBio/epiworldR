@@ -141,8 +141,11 @@ add_tool <- function(model, tool, proportion) UseMethod("add_tool")
 
 #' @export
 add_tool.epiworld_model <- function(model, tool, proportion) {
-  add_tool_cpp(model, tool, proportion)
+
+  stopifnot_tool(tool)
+  add_tool_cpp(model, tool, as.double(proportion))
   invisible(model)
+
 }
 
 #' @export
@@ -155,8 +158,11 @@ add_tool_n <- function(model, tool, n) UseMethod("add_tool_n")
 
 #' @export
 add_tool_n.epiworld_model <- function(model, tool, n) {
-  add_tool_n_cpp(model, tool, n)
+
+  stopifnot_tool(tool)
+  add_tool_n_cpp(model, tool, as.integer(n))
   invisible(model)
+
 }
 
 #' @export
@@ -164,13 +170,10 @@ add_tool_n.epiworld_model <- function(model, tool, n) {
 #' - The `rm_tool` function removes the specified tool from a model.
 #' @rdname tool
 rm_tool <- function(model, tool_pos) {
-  invisible(rm_tool_cpp(model, tool_pos))
-}
 
-#' @export
-#' @rdname tool
-rm_tool <- function(model, tool_pos) {
-  invisible(rm_tool_cpp(model, tool_pos))
+  stopifnot_model(model)
+  invisible(rm_tool_cpp(model, as.integer(tool_pos)))
+
 }
 
 # Tool functions ---------------------------------------------------------------
@@ -253,7 +256,7 @@ tool_fun_logit <- function(vars, coefs, model) {
   stopifnot_model(model)
   
   structure(
-    tool_fun_logit_cpp(vars, coefs, model),
+    tool_fun_logit_cpp(as.integer(vars), as.double(coefs), model),
     class = "epiworld_tool_fun",
     builder = "tool_fun_logit",
     vars    = vars,
@@ -295,7 +298,7 @@ print.epiworld_tool_fun <- function(x, ...) {
 set_susceptibility_reduction <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_susceptibility_reduction_cpp(tool, prob)
+  set_susceptibility_reduction_cpp(tool, as.double(prob))
   
 }
 
@@ -340,7 +343,7 @@ set_susceptibility_reduction_fun <- function(tool, model, tfun) {
 set_transmission_reduction <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_transmission_reduction_cpp(tool, prob)
+  set_transmission_reduction_cpp(tool, as.double(prob))
   
 }
 
@@ -374,7 +377,7 @@ set_transmission_reduction_fun <- function(tool, model, tfun) {
 set_recovery_enhancer <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_recovery_enhancer_cpp(tool, prob)
+  set_recovery_enhancer_cpp(tool, as.double(prob))
   
 }
 
@@ -409,7 +412,7 @@ set_recovery_enhancer_fun <- function(tool, model, tfun) {
 set_death_reduction <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_death_reduction_cpp(tool, prob)
+  set_death_reduction_cpp(tool, as.double(prob))
   
 }
 

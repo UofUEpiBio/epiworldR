@@ -1,8 +1,16 @@
+# epiworldR 0.0-3.9000 (development version)
+
+* Added missing checks of tool class when adding a model with `add_too_n`.
+
+* Various small improvements.
+
+
 # epiworldR 0.0-3
 
 * Added the following models: `ModelSEIRD`, `ModelSEIRDCONN`, `ModelSIRD`, `ModelSIRDCONN`, and `ModelSISD`.
 
 * Fixed a bug reported on issue [6](https://github.com/UofUEpiBio/epiworldR/issues/6).
+
 
 # epiworldR 0.0-2
 
