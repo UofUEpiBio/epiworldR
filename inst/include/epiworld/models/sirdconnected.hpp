@@ -4,13 +4,11 @@
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRDCONN : public epiworld::Model<TSeq>
 {
-private:
+public:
     static const int SUSCEPTIBLE = 0;
     static const int INFECTED    = 1;
-    static const int RECOVERED     = 2;
+    static const int RECOVERED   = 2;
     static const int DECEASED    = 3;
-
-public:
 
     ModelSIRDCONN() {
         

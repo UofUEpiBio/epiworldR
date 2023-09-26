@@ -90,27 +90,27 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     id     = p.id;
     
     // Dealing with the virus
-    viruses.resize(p.get_n_viruses(), nullptr);
+    viruses.reserve(p.get_n_viruses());
     n_viruses = viruses.size();
     for (size_t i = 0u; i < n_viruses; ++i)
     {
 
         // Will create a copy of the virus, with the exeption of
         // the virus code
-        viruses[i] = std::make_shared<Virus<TSeq>>(*p.viruses[i]);
-        viruses[i]->set_agent(this, i);
+        viruses.emplace_back(std::make_shared<Virus<TSeq>>(*p.viruses[i]));
+        viruses.back()->set_agent(this, i);
 
     }
 
-    tools.resize(p.get_n_tools(), nullptr);
+    tools.reserve(p.get_n_tools());
     n_tools = tools.size();
     for (size_t i = 0u; i < n_tools; ++i)
     {
         
         // Will create a copy of the virus, with the exeption of
         // the virus code
-        tools[i] = std::make_shared<Tool<TSeq>>(*p.tools[i]);
-        tools[i]->set_agent(this, i);
+        tools.emplace_back(std::make_shared<Tool<TSeq>>(*p.tools[i]));
+        tools.back()->set_agent(this, i);
 
     }
 
