@@ -18,6 +18,8 @@ status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.
 [![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 [![CRANlogs
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -125,8 +127,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 241.00ms
-#> Last run speed      : 20.67 million agents x day / second
+#> Last run elapsed t  : 196.00ms
+#> Last run speed      : 25.43 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
