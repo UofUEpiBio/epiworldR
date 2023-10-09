@@ -1,4 +1,4 @@
-Package: epiworldR
+Package: epiworldRfaster
 Type: Package
 Title: Fast Agent-Based Epi Models
 Version: 0.0-3.9000

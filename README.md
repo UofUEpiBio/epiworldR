@@ -87,7 +87,7 @@ virus, with a 70% chance of transmission. Infected individuals recover
 at a 0.3 rate:
 
 ``` r
-library(epiworldR)
+library(epiworldRfaster)
 
 # Creating a SIR model
 sir <- ModelSIR(
@@ -127,8 +127,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 196.00ms
-#> Last run speed      : 25.43 million agents x day / second
+#> Last run elapsed t  : 172.00ms
+#> Last run speed      : 29.03 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -303,16 +303,16 @@ rn <- get_reproductive_number(model_logit)
 # Looking into the agents
 get_agents(model_logit)
 #> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
-#> Agent: 0, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 1, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 2, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 3, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 4, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 5, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 6, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 7, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 8, state: Susceptible (0), Nvirus: 0, NTools: 0, NNeigh: 8
-#> Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8
+#> Agent: 0, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 6, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 7, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
 #> ... 99990 more agents ...
 ```
 
@@ -411,10 +411,10 @@ head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
 #> 1       1        0 COVID-19    767                   11  0
 #> 2       1        0 COVID-19    835                   10  0
-#> 3       1        0 COVID-19    466                    9  0
+#> 3       1        0 COVID-19    793                    9  0
 #> 4       1        0 COVID-19    612                    9  0
-#> 5       1        0 COVID-19    793                    9  0
-#> 6       1        0 COVID-19     20                    8  0
+#> 5       1        0 COVID-19    466                    9  0
+#> 6       1        0 COVID-19    920                    8  0
 
 plot(ans$reproductive)
 ```

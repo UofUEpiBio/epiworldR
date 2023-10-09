@@ -122,22 +122,20 @@ inline ModelSURV<TSeq>::ModelSURV(
         for (auto & neighbor: p->get_neighbors()) 
         {
                     
-            for (size_t i = 0u; i < neighbor->get_n_viruses(); ++i) 
-            { 
+            auto & v = neighbor->get_virus();
 
-                auto & v = neighbor->get_virus(i);
-                    
-                /* And it is a function of susceptibility_reduction as well */ 
-                epiworld_double tmp_transmission = 
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                    ; 
-            
-                m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
-                m->array_virus_tmp[nviruses_tmp++] = &(*v);
+            if (v == nullptr)
+                continue;
                 
-            } 
+            /* And it is a function of susceptibility_reduction as well */ 
+            epiworld_double tmp_transmission = 
+                (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                v->get_prob_infecting(m) * 
+                (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                ; 
+        
+            m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
+            m->array_virus_tmp[nviruses_tmp++] = &(*v);
         }
 
         // No virus to compute on
@@ -150,7 +148,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         if (which < 0)
             return;
 
-        p->add_virus(*m->array_virus_tmp[which], m); 
+        p->set_virus(*m->array_virus_tmp[which], m); 
         return;
 
     };
@@ -160,7 +158,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     [](epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m) -> void
     {
 
-        epiworld::VirusPtr<TSeq> & v = p->get_virus(0u); 
+        epiworld::VirusPtr<TSeq> & v = p->get_virus(); 
         epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
         
         epiworld_fast_uint days_since_exposed = m->today() - v->get_date();
@@ -184,7 +182,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         // If past days infected + latent, then bye.
         if (days_since_exposed >= v->get_data()[1u])
         {
-            p->rm_virus(0, m);
+            p->rm_virus(m);
             return;
         }
 

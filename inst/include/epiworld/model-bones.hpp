@@ -104,7 +104,6 @@ protected:
     bool using_backup = true;
     std::vector< Agent<TSeq> > population_backup = {};
 
-
     /**
      * @name Auxiliary variables for AgentsSample<TSeq> iterators
      * 
@@ -221,7 +220,7 @@ protected:
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
         Entity<TSeq> * entity_,
-        epiworld_fast_uint new_state_,
+        epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
         ActionFun<TSeq> call_,
         int idx_agent_,
@@ -263,7 +262,7 @@ public:
 
     Model();
     Model(const Model<TSeq> & m);
-    Model(Model<TSeq> & m) = delete;
+    Model(Model<TSeq> & m);
     Model(Model<TSeq> && m);
     Model<TSeq> & operator=(const Model<TSeq> & m);
 

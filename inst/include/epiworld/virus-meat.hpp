@@ -128,21 +128,9 @@ inline Agent<TSeq> * Virus<TSeq>::get_agent()
 }
 
 template<typename TSeq>
-inline void Virus<TSeq>::set_agent(Agent<TSeq> * p, epiworld_fast_uint idx)
+inline void Virus<TSeq>::set_agent(Agent<TSeq> * p)
 {
-
-    #ifdef EPI_DEBUG
-    if (idx >= p->viruses.size())
-    {
-        printf_epiworld(
-            "[epi-debug]Virus::set_agent id to set up is outside of range."
-            );
-    }
-    #endif
-
-    agent        = p;
-    pos_in_agent = static_cast<int>(idx);
-
+    agent = p;
 }
 
 template<typename TSeq>

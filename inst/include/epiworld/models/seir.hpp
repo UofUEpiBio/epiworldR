@@ -46,7 +46,7 @@ public:
     ) -> void {
 
         // Getting the virus
-        auto v = p->get_virus(0);
+        auto v = p->get_virus();
 
         // Does the agent become infected?
         if (m->runif() < 1.0/(v->get_incubation(m)))
@@ -62,7 +62,7 @@ public:
     ) -> void {
         // Does the agent recover?
         if (m->runif() < (m->par("Recovery rate")))
-            p->rm_virus(0, m);
+            p->rm_virus(m);
 
         return;    
     };

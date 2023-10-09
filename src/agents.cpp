@@ -92,7 +92,7 @@ SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, int state_new, int 
   cpp11::external_pointer<Model<>> ptr_model(model);
   cpp11::external_pointer<Virus<>> ptr_virus(virus);
   
-  ptr_agent->add_virus(*ptr_virus, &(*ptr_model));
+  ptr_agent->set_virus(*ptr_virus, &(*ptr_model));
   
   return agent;
   

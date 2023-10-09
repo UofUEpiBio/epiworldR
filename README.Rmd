@@ -67,7 +67,7 @@ This R package includes several popular epidemiological models including
 This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of transmission. Infected individuals recover at a 0.3 rate:
 
 ```{r example}
-library(epiworldR)
+library(epiworldRfaster)
 
 # Creating a SIR model
 sir <- ModelSIR(

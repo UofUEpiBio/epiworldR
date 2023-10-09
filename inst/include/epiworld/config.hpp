@@ -259,7 +259,9 @@ public:
         if (a) \
         {\
             throw EPI_DEBUG_ERROR(std::logic_error, b); \
-        } 
+        }
+
+    #define epiexception(a) std::logic_error
 #else
     #define EPI_DEBUG_PRINTF(fmt, ...)
     #define EPI_DEBUG_ERROR(fmt, ...)
@@ -271,6 +273,7 @@ public:
     #define EPI_DEBUG_FAIL_AT_TRUE(a, b) \
         if (a) \
             return false;
+    #define epiexception(a) a
 #endif
 
 #ifdef EPI_DEBUG_NO_THREAD_ID

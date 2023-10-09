@@ -50,7 +50,7 @@ public:
   ) -> void {
 
     // Getting the virus
-    auto v = p->get_virus(0);
+    auto v = p->get_virus();
 
     // Does the agent become infected?
     if (m->runif() < 1.0/(v->get_incubation(m)))
@@ -63,23 +63,20 @@ public:
   epiworld::UpdateFun<TSeq> update_infected = [](
     epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
   ) -> void {
-    
-    auto state = p->get_state();
-      
+          
     // Odd: Die, Even: Recover
     epiworld_fast_uint n_events = 0u;
-    for (const auto & v : p->get_viruses())
-    {
+
+    const auto & v = p->get_virus();
       
-      // Die
-      m->array_double_tmp[n_events++] = 
-        v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
-      
-      // Recover
-      m->array_double_tmp[n_events++] = 
-        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
-      
-    }
+    // Die
+    m->array_double_tmp[n_events++] = 
+      v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+    
+    // Recover
+    m->array_double_tmp[n_events++] = 
+      1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+    
     
 #ifdef EPI_DEBUG
     if (n_events == 0u)
@@ -106,13 +103,11 @@ public:
     if ((which % 2) == 0) // If odd
     {
       
-      size_t which_v = std::ceil(which / 2);
-      p->rm_agent_by_virus(which_v, m);
+      p->rm_agent_by_virus(m);
       
     } else {
       
-      size_t which_v = std::floor(which / 2);
-      p->rm_virus(which_v, m);
+      p->rm_virus(m);
       
     }
     

@@ -67,7 +67,7 @@ public:
     void set_sequence(TSeq sequence);
     
     Agent<TSeq> * get_agent();
-    void set_agent(Agent<TSeq> * p, epiworld_fast_uint idx);
+    void set_agent(Agent<TSeq> * p);
     
     void set_date(int d);
     int get_date() const;

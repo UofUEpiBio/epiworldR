@@ -276,31 +276,5 @@ SEXP set_name_virus_cpp(SEXP virus, std::string name) {
   return virus;
 }
 
-// Function to get agent's viruses using get_agents_viruses()
-[[cpp11::register]]
-cpp11::writable::list get_agents_viruses_cpp(SEXP model) {
-    
-    cpp11::external_pointer<Model<>> ptr(model);
-    
-    cpp11::writable::list viruses;
-    
-    for (auto & agent : ptr->get_agents())
-      viruses.push_back(
-          cpp11::external_pointer< Viruses<> >(
-              new Viruses<>(agent.get_viruses())
-          )
-      );
-
-    return viruses;
-
-}
-
-
-[[cpp11::register]]
-SEXP print_agent_viruses_cpp(SEXP viruses) {
-  external_pointer<Viruses<>> vptr(viruses);
-  vptr->print();
-  return viruses;
-}
 
 #undef WrapVirus
