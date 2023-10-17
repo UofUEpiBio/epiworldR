@@ -11,9 +11,16 @@ docker-debug:
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL \
 		--no-docs --build .
 
-install: build 
-	which R
-	cd ../ && R CMD INSTALL epiworldR_*.tar.gz
+install-dev: clean
+	sed -i -E 's/^Package:.+/Package: epiworldRdev/g' DESCRIPTION 
+	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldRdev)/g' README.*
+	EPI_DEV=yes R CMD INSTALL .
+
+install: clean
+	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
+	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldR)/g' README.*
+	R CMD INSTALL .
+		
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'

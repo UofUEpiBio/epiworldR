@@ -87,7 +87,7 @@ virus, with a 70% chance of transmission. Infected individuals recover
 at a 0.3 rate:
 
 ``` r
-library(epiworldRfaster)
+library(epiworldRdev)
 
 # Creating a SIR model
 sir <- ModelSIR(
@@ -345,9 +345,9 @@ sir <- ModelSIR(
 net <- get_transmissions(sir)
 
 # Plotting
-library(netplot)
+library(epiworldRdev)
 #> Loading required package: grid
-library(igraph)
+library(epiworldRdev)
 #> 
 #> Attaching package: 'igraph'
 #> The following object is masked from 'package:netplot':
