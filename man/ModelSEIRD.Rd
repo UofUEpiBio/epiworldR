@@ -49,6 +49,13 @@ The \code{plot} function returns a plot of the SEIRD model of class
 \description{
 Susceptible-Exposed-Infected-Recovered-Deceased model (SEIRD)
 }
+\details{
+The \link{initial_state} function allows the user to set the initial state of the
+model. The user must provide a vector of proportions indicating the following
+values: (1) Proportion of exposed agents who are infected, (2)
+proportion of non-infected agents already removed, and (3) proportion of
+non-ifected agents already deceased.
+}
 \examples{
 model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01, 
 transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4, 

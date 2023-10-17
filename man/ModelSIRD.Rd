@@ -41,6 +41,12 @@ infection.}
 \description{
 SIRD model
 }
+\details{
+The \link{initial_state} function allows the user to set the initial state of the
+model. The user must provide a vector of proportions indicating the following
+values: (1) proportion of non-infected agents already removed, and (2) proportion of
+non-ifected agents already deceased.
+}
 \examples{
 model_sird <- ModelSIRD(
  name              = "COVID-19",

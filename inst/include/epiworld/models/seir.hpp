@@ -67,6 +67,17 @@ public:
         return;    
     };
 
+    /**
+     * @brief Set up the initial states of the model.
+     * @param proportions_ Double vector with the following values:
+     * - 0: Proportion of non-infected agents who are removed.
+     * - 1: Proportion of exposed agents to be set as infected.
+    */
+    ModelSEIR<TSeq> & initial_states(
+        std::vector< double > proportions_,
+        std::vector< int > queue_ = {}
+    );
+
 };
 
 
@@ -132,6 +143,18 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
 }
 
+template<typename TSeq>
+inline ModelSEIR<TSeq> & ModelSEIR<TSeq>::initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > /**/
+) {
 
+    Model<TSeq>::initial_states_fun =
+        create_init_function_seir<TSeq>(proportions_)
+        ;
+
+    return *this;
+
+}
 
 #endif

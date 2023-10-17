@@ -9,7 +9,7 @@
     #define EPIWORLD_MAXNEIGHBORS 1048576
 #endif
 
-#ifdef _OPENMP
+#if defined(_OPENMP) || defined(__OPENMP)
     #include <omp.h>
 // #else
 //     #define omp_get_thread_num() 0
@@ -276,7 +276,7 @@ public:
     #define epiexception(a) a
 #endif
 
-#ifdef EPI_DEBUG_NO_THREAD_ID
+#if defined(EPI_DEBUG_NO_THREAD_ID) || (!defined(__OPENMP) && !defined(_OPENMP))
     #define EPI_GET_THREAD_ID() 0
 #else
     #define EPI_GET_THREAD_ID() omp_get_thread_num()

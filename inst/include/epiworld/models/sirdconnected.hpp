@@ -48,7 +48,7 @@ public:
     // int tracked_ninfected_next = 0;
     // epiworld_double tracked_current_infect_prob = 0.0;
 
-    void run(
+    ModelSIRDCONN<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     );
@@ -61,20 +61,15 @@ public:
 };
 
 template<typename TSeq>
-inline void ModelSIRDCONN<TSeq>::run(
+inline ModelSIRDCONN<TSeq> & ModelSIRDCONN<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 )
 {
 
-    // tracked_agents_infected.clear();
-    // tracked_agents_infected_next.clear();
-
-    // tracked_ninfected = 0;
-    // tracked_ninfected_next = 0;
-    // tracked_current_infect_prob = 0.0;
-
     Model<TSeq>::run(ndays, seed);
+
+    return *this;
 
 }
 

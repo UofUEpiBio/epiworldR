@@ -31,6 +31,16 @@ public:
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
     );
+
+    /**
+     * @brief Set the initial states of the model
+     * @param proportions_ Double vector with a single element:
+     * - The proportion of non-infected individuals who have recovered.
+    */
+    ModelSIR<TSeq> & initial_states(
+        std::vector< double > proportions_,
+        std::vector< int > queue_ = {}
+    );
     
 };
 
@@ -86,6 +96,20 @@ inline ModelSIR<TSeq>::ModelSIR(
         );
 
     return;
+
+}
+
+template<typename TSeq>
+inline ModelSIR<TSeq> & ModelSIR<TSeq>::initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > /* queue_ */
+) {
+
+    Model<TSeq>::initial_states_fun =
+        create_init_function_sir<TSeq>(proportions_)
+        ;
+
+    return *this;
 
 }
 

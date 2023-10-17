@@ -102,8 +102,6 @@ private:
     std::vector< ToolPtr<TSeq> > tools;
     epiworld_fast_uint n_tools = 0u;
 
-    epiworld_fast_uint action_counter = 0u;
-
     std::vector< Agent<TSeq> * > sampled_agents;
     size_t sampled_agents_n      = 0u;
     std::vector< size_t > sampled_agents_left;

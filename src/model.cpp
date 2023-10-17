@@ -289,17 +289,29 @@ SEXP get_tool_model_cpp(SEXP model, int tool_pos) {
 [[cpp11::register]]
 cpp11::data_frame get_network_cpp(SEXP model) {
     
-    external_pointer<Model<>> modelptr(model);
-    
-    std::vector<int> from;
-    std::vector<int> to;
+  external_pointer<Model<>> modelptr(model);
+  
+  std::vector<int> from;
+  std::vector<int> to;
 
-    modelptr->write_edgelist(from, to);
+  modelptr->write_edgelist(from, to);
 
-    return cpp11::writable::data_frame({
-      "from"_nm = from,
-      "to"_nm   = to
-    });
+  return cpp11::writable::data_frame({
+    "from"_nm = from,
+    "to"_nm   = to
+  });
     
 }
 
+[[cpp11::register]]
+SEXP initial_states_cpp(SEXP model, cpp11::doubles proportions) {
+
+  external_pointer<Model<>> modelptr(model);
+
+  std::vector< double > states_vec(proportions.begin(), proportions.end());
+
+  modelptr->initial_states(states_vec, std::vector< int >({}));
+  
+  return model;
+ 
+}

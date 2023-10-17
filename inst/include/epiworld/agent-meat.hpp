@@ -27,8 +27,7 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     state_last_changed(p.state_last_changed),
     id(p.id),
     tools(std::move(p.tools)), /// Needs to be adjusted
-    n_tools(p.n_tools),
-    action_counter(p.action_counter)
+    n_tools(p.n_tools)
 {
 
     state = p.state;
@@ -138,8 +137,6 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
         tools[i] = std::make_shared<Tool<TSeq>>(*other_agent.tools[i]);
         tools[i]->set_agent(this, i);
     }
-
-    action_counter      = other_agent.action_counter;
     
     return *this;
     

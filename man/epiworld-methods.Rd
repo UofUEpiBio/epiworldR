@@ -23,6 +23,7 @@
 \alias{get_agents_data_ncols}
 \alias{get_virus}
 \alias{get_tool}
+\alias{initial_states}
 \title{Methods for epiworldR objects}
 \usage{
 queuing_on(x)
@@ -64,6 +65,8 @@ get_agents_data_ncols(model)
 get_virus(model, virus_pos)
 
 get_tool(model, tool_pos)
+
+initial_states(model, proportions)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -91,6 +94,9 @@ in the model}
 
 \item{tool_pos}{Integer. Relative location (starting from 0) of the tool
 in the model}
+
+\item{proportions}{Numeric vector. Proportions in which agents will be
+distributed (see details).}
 }
 \value{
 \itemize{
@@ -163,6 +169,10 @@ of \code{epiworld_model}.
 
 \itemize{
 \item \code{get_tool} returns a \link{tool}.
+}
+
+\itemize{
+\item \code{inital_states} returns the model with an updated initial state.
 }
 }
 \description{

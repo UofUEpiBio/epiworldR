@@ -169,8 +169,13 @@ protected:
     epiworld_fast_uint ndays = 0;
     Progress pb;
 
-    std::vector< UpdateFun<TSeq> >    state_fun = {};
-    std::vector< std::string >        states_labels = {};
+    std::vector< UpdateFun<TSeq> >    state_fun = {};                  ///< Functions to update states
+    std::vector< std::string >        states_labels = {};              ///< Labels of the states
+    
+    /** Function to distribute states. Goes along with the function  */
+    std::function<void(Model<TSeq>*)> initial_states_fun = [](Model<TSeq> * /**/)
+    -> void {};
+
     epiworld_fast_uint nstates = 0u;
     
     bool verbose     = true;
@@ -228,13 +233,6 @@ protected:
         );
 
     /**
-     * @brief Executes the stored action
-     * 
-     * @param model_ Model over which it will be executed.
-     */
-    void actions_run();
-
-    /**
      * @name Tool Mixers
      * 
      * These functions combine the effects tools have to deliver
@@ -257,6 +255,7 @@ protected:
 
 public:
 
+    
     std::vector<epiworld_double> array_double_tmp;
     std::vector<Virus<TSeq> * > array_virus_tmp;
 
@@ -400,7 +399,7 @@ public:
 
     std::vector< Entity<TSeq> > & get_entities();
 
-    void agents_smallworld(
+    Model<TSeq> & agents_smallworld(
         epiworld_fast_uint n = 1000,
         epiworld_fast_uint k = 5,
         bool d = false,
@@ -422,7 +421,7 @@ public:
     void update_state();
     void mutate_virus();
     void next();
-    virtual void run(
+    virtual Model<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     ); ///< Runs the simulation (after initialization)
@@ -437,14 +436,14 @@ public:
         );
     ///@}
 
-    size_t get_n_viruses() const;
-    size_t get_n_tools() const;
+    size_t get_n_viruses() const; ///< Number of viruses in the model
+    size_t get_n_tools() const; ///< Number of tools in the model
     epiworld_fast_uint get_ndays() const;
     epiworld_fast_uint get_n_replicates() const;
     void set_ndays(epiworld_fast_uint ndays);
     bool get_verbose() const;
-    void verbose_off();
-    void verbose_on();
+    Model<TSeq> & verbose_off();
+    Model<TSeq> & verbose_on();
     int today() const; ///< The current time of the model
 
     /**
@@ -524,7 +523,7 @@ public:
      * 
      */
     virtual void reset();
-    void print(bool lite = false) const;
+    const Model<TSeq> & print(bool lite = false) const;
 
     Model<TSeq> && clone() const;
 
@@ -548,6 +547,19 @@ public:
     const std::vector< UpdateFun<TSeq> > & get_state_fun() const;
     void print_state_codes() const;
     ///@}
+
+    /**
+     * @name Initial states
+     * 
+     * @details These functions are called before the simulation starts.
+     * 
+     * @param proportions_ Vector of proportions for each state.
+     * @param queue_ Vector of queue for each state.
+     */
+    virtual Model<TSeq> & initial_states(
+        std::vector< double > /*proportions_*/,
+        std::vector< int > /*queue_*/
+    ) {return *this;};
 
     /**
      * @name Setting and accessing parameters from the model
@@ -654,7 +666,7 @@ public:
      */
     ////@{
     void queuing_on(); ///< Activates the queuing system (default.)
-    void queuing_off(); ///< Deactivates the queuing system.
+    Model<TSeq> & queuing_off(); ///< Deactivates the queuing system.
     bool is_queuing_on() const; ///< Query if the queuing system is on.
     Queue<TSeq> & get_queue(); ///< Retrieve the `Queue` object.
     ///@}
@@ -673,6 +685,8 @@ public:
     ///@}
 
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
+    const std::vector< epiworld_double > & get_prevalence_virus() const;
+    const std::vector< bool > & get_prevalence_virus_as_proportion() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
     Virus<TSeq> & get_virus(size_t id);
     Tool<TSeq> & get_tool(size_t id);
@@ -702,6 +716,14 @@ public:
 
     bool operator==(const Model<TSeq> & other) const;
     bool operator!=(const Model<TSeq> & other) const {return !operator==(other);};
+
+    /**
+     * @brief Executes the stored action
+     * 
+     * @param model_ Model over which it will be executed.
+     */
+    void actions_run();
+
 
 };
 

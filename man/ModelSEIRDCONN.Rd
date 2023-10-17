@@ -56,6 +56,13 @@ The \code{plot} function returns a plot of the SEIRDCONN model of class
 The SEIRD connected model implements a model where all agents are connected.
 This is equivalent to a compartmental model (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model}{wiki}).
 }
+\details{
+The \link{initial_state} function allows the user to set the initial state of the
+model. The user must provide a vector of proportions indicating the following
+values: (1) Proportion of exposed agents who are infected, (2)
+proportion of non-infected agents already removed, and (3) proportion of
+non-ifected agents already deceased.
+}
 \examples{
 # An example with COVID-19
 model_seirdconn <- ModelSEIRDCONN(

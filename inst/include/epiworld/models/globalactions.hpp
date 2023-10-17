@@ -81,7 +81,9 @@ inline std::function<void(Model<TSeq>*)> globalaction_tool_logit(
             // Computing the probability using a logit. Uses OpenMP reduction
             // to sum the coefficients.
             double p = 0.0;
+            #if defined(__OPENMP) || defined(_OPENMP)
             #pragma omp parallel for reduction(+:p)
+            #endif
             for (size_t i = 0u; i < coefs.size(); ++i)
                 p += coefs.at(i) * agent(vars[i]);
 

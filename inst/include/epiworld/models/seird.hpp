@@ -3,15 +3,7 @@
 
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) model
- * 
- * @param model A Model<TSeq> object where to set up the SIR.
- * @param vname std::string Name of the virus
- * @param prevalence epiworld_double Initial prevalence the immune system
- * @param transmission_rate epiworld_double Transmission rate of the virus
- * @param avg_incubation_days epiworld_double Average incubation days of the virus
- * @param recovery_rate epiworld_double Recovery rate of the virus.
- * @param death_rate epiworld_double Death rate of the virus.
- */
+*/
 template<typename TSeq = int>
 class ModelSEIRD : public epiworld::Model<TSeq>
 {
@@ -25,6 +17,18 @@ public:
   
   ModelSEIRD() {};
   
+  /**
+   * @brief Constructor for the SEIRD model.
+   * 
+   * @tparam TSeq Type of the sequence used in the model.
+   * @param model Reference to the SEIRD model.
+   * @param vname Name of the model.
+   * @param prevalence Prevalence of the disease.
+   * @param transmission_rate Transmission rate of the disease.
+   * @param avg_incubation_days Average incubation period of the disease.
+   * @param recovery_rate Recovery rate of the disease.
+   * @param death_rate Death rate of the disease.
+   */
   ModelSEIRD(
     ModelSEIRD<TSeq> & model,
     std::string vname,
@@ -35,6 +39,16 @@ public:
     epiworld_double death_rate
   );
   
+  /**
+   * @brief Constructor for the SEIRD model.
+   * 
+   * @param vname Name of the model.
+   * @param prevalence Initial prevalence of the disease.
+   * @param transmission_rate Transmission rate of the disease.
+   * @param avg_incubation_days Average incubation period of the disease.
+   * @param recovery_rate Recovery rate of the disease.
+   * @param death_rate Death rate of the disease.
+   */
   ModelSEIRD(
     std::string vname,
     epiworld_double prevalence,
@@ -118,6 +132,12 @@ public:
     return;
     
   };
+
+  ModelSEIRD<TSeq> & initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > queue_ = {}
+  );
+
 };
 
 
@@ -190,6 +210,19 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   
 }
 
+template<typename TSeq>
+inline ModelSEIRD<TSeq> & ModelSEIRD<TSeq>::initial_states(
+  std::vector< double > proportions_,
+  std::vector< int > /**/
+) {
+
+  Model<TSeq>::initial_states_fun =
+    create_init_function_seird<TSeq>(proportions_)
+    ;
+
+  return *this;
+
+}
 
 
 #endif

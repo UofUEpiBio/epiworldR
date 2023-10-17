@@ -192,7 +192,7 @@ AC_CONFIG_COMMANDS_POST(
     )
 
 AC_CONFIG_COMMANDS_POST(
-    [sed -i -E 's/^\\(name|alias|title)\{[[a-zA-Z]]+/\\\1{'"${epiworldname}"'/g' man/epiworldRfaster-package.Rd]
+    [sed -i -E 's/^\\(name|alias|title)\{[[a-zA-Z]]+/\\\1{'"${epiworldname}"'/g' man/epiworldR-package.Rd]
     )
 
 AC_OUTPUT

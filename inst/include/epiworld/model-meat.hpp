@@ -399,6 +399,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     pb(model.pb),
     state_fun(model.state_fun),
     states_labels(model.states_labels),
+    initial_states_fun(model.initial_states_fun),
     nstates(model.nstates),
     verbose(model.verbose),
     current_date(model.current_date),
@@ -483,6 +484,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     pb(std::move(model.pb)),
     state_fun(std::move(model.state_fun)),
     states_labels(std::move(model.states_labels)),
+    initial_states_fun(std::move(model.initial_states_fun)),
     nstates(model.nstates),
     verbose(model.verbose),
     current_date(std::move(model.current_date)),
@@ -554,6 +556,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     state_fun    = m.state_fun;
     states_labels = m.states_labels;
+    initial_states_fun = m.initial_states_fun;
     nstates       = m.nstates;
 
     verbose     = m.verbose;
@@ -642,7 +645,7 @@ inline std::vector<Entity<TSeq>> & Model<TSeq>::get_entities()
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::agents_smallworld(
+inline Model<TSeq> & Model<TSeq>::agents_smallworld(
     epiworld_fast_uint n,
     epiworld_fast_uint k,
     bool d,
@@ -652,6 +655,8 @@ inline void Model<TSeq>::agents_smallworld(
     agents_from_adjlist(
         rgraph_smallworld(n, k, p, d, *this)
     );
+
+    return *this;
 }
 
 template<typename TSeq>
@@ -738,10 +743,9 @@ inline void Model<TSeq>::dist_virus()
 
     // Starting first infection
     int n = size();
-    std::vector< size_t > idx(n);
-
-    int n_left = n;
+    std::vector< size_t > idx(n, 0u);
     std::iota(idx.begin(), idx.end(), 0);
+    int n_left = idx.size();
 
     for (size_t v = 0u; v < viruses.size(); ++v)
     {
@@ -1456,7 +1460,7 @@ inline void Model<TSeq>::next() {
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::run(
+inline Model<TSeq> & Model<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 ) 
@@ -1561,6 +1565,8 @@ inline void Model<TSeq>::run(
     this->current_date--;
 
     chrono_end();
+
+    return *this;
 
 }
 
@@ -1792,6 +1798,15 @@ inline void Model<TSeq>::update_state() {
 template<typename TSeq>
 inline void Model<TSeq>::mutate_virus() {
 
+    // Checking if any virus has mutation
+    size_t nmutates = 0u;
+    for (const auto & v: viruses)
+        if (v->mutation_fun)
+            nmutates++;
+
+    if (nmutates == 0u)
+        return;
+
     if (use_queuing)
     {
 
@@ -1856,13 +1871,15 @@ inline bool Model<TSeq>::get_verbose() const {
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::verbose_on() {
+inline Model<TSeq> & Model<TSeq>::verbose_on() {
     verbose = true;
+    return *this;
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::verbose_off() {
+inline Model<TSeq> & Model<TSeq>::verbose_off() {
     verbose = false;
+    return *this;
 }
 
 template<typename TSeq>
@@ -2070,6 +2087,9 @@ inline void Model<TSeq>::reset() {
     // Re distributing tools and virus
     dist_virus();
     dist_tools();
+
+    // Distributing initial state, if specified
+    initial_states_fun(this);
 
     // Recording the original state (at time 0) and advancing
     // to time 1
@@ -2497,9 +2517,10 @@ inline void Model<TSeq>::queuing_on()
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::queuing_off()
+inline Model<TSeq> & Model<TSeq>::queuing_off()
 {
     use_queuing = false;
+    return *this;
 }
 
 template<typename TSeq>
@@ -2518,6 +2539,18 @@ template<typename TSeq>
 inline const std::vector< VirusPtr<TSeq> > & Model<TSeq>::get_viruses() const
 {
     return viruses;
+}
+
+template<typename TSeq>
+inline const std::vector< epiworld_double > & Model<TSeq>::get_prevalence_virus() const
+{
+    return prevalence_virus;
+}
+
+template<typename TSeq>
+inline const std::vector< bool > & Model<TSeq>::get_prevalence_virus_as_proportion() const
+{
+    return prevalence_virus_as_proportion;
 }
 
 template<typename TSeq>

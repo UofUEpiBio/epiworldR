@@ -65,7 +65,9 @@ inline VirusFun<TSeq> virus_fun_logit(
         size_t K = coefs_f.size();
         epiworld_double res = 0.0;
 
+        #if defined(__OPENMP) || defined(_OPENMP)
         #pragma omp simd reduction(+:res)
+        #endif
         for (size_t i = 0u; i < K; ++i)
             res += agent->operator[](vars.at(i)) * coefs_f.at(i);
 

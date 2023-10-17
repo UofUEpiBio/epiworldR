@@ -51,7 +51,7 @@ public:
         epiworld_double prevalence
     );
 
-    void run(
+    ModelSIRLogit<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     );
@@ -70,13 +70,14 @@ public:
 
 
 template<typename TSeq>
-inline void ModelSIRLogit<TSeq>::run(
+inline ModelSIRLogit<TSeq> & ModelSIRLogit<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 )
 {
 
     Model<TSeq>::run(ndays, seed);
+    return *this;
 
 }
 
@@ -242,7 +243,9 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
             // Computing recovery probability once
             double prob    = 0.0;
+            #if defined(__OPENMP) || defined(_OPENMP)
             #pragma omp simd reduction(+:prob)
+            #endif
             for (size_t i = 0u; i < _m->coefs_recover.size(); ++i)
                 prob += p->operator[](i) * _m->coefs_recover[i];
 

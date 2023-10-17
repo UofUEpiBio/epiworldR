@@ -38,7 +38,7 @@ public:
         epiworld_double death_rate
     );
 
-    void run(
+    ModelSEIRDCONN<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     );
@@ -47,16 +47,29 @@ public:
 
     Model<TSeq> * clone_ptr();
 
+    /**
+     * @brief Set up the initial states of the model.
+     * @param proportions_ Double vector with the following values:
+     * - 0: Proportion of non-infected agents who are removed.
+     * - 1: Proportion of exposed agents to be set as infected.
+    */
+    ModelSEIRDCONN<TSeq> & initial_states(
+        std::vector< double > proportions_,
+        std::vector< int > queue_ = {}
+    );
+
 };
 
 template<typename TSeq>
-inline void ModelSEIRDCONN<TSeq>::run(
+inline ModelSEIRDCONN<TSeq> & ModelSEIRDCONN<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 )
 {
     
     Model<TSeq>::run(ndays, seed);
+
+    return *this;
 
 }
 
@@ -339,6 +352,20 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     );
 
     return;
+
+}
+
+template<typename TSeq>
+inline ModelSEIRDCONN<TSeq> & ModelSEIRDCONN<TSeq>::initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > /**/
+) {
+
+    Model<TSeq>::initial_states_fun =
+        create_init_function_seird<TSeq>(proportions_)
+        ;
+
+    return *this;
 
 }
 
