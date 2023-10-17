@@ -3385,11 +3385,6 @@ ac_config_files="$ac_config_files src/Makevars R/epiworldR-package.R"
 # Use sed to replace the line useDynLib\([a-zA-Z]+ in the NAMESPACE
 # file with useDynLib(${epiworldname}
 
-
-
-
-
-
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -4514,12 +4509,6 @@ ac_clean_files=$ac_clean_files_save
 
 test $ac_write_fail = 0 ||
   as_fn_error $? "write failure creating $CONFIG_STATUS" "$LINENO" 5
-
-sed -i -E 's/^useDynLib\([a-zA-Z]+/useDynLib('"${epiworldname}"'/g' NAMESPACE
-
-sed -i -E 's/^Package:.+/Package: '"${epiworldname}"'/g' DESCRIPTION
-
-sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{'"${epiworldname}"'/g' man/epiworldR-package.Rd
 
 
 # configure is writing to config.log, and then calls config.status.

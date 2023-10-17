@@ -12,13 +12,14 @@ docker-debug:
 		--no-docs --build .
 
 install-dev: clean
+	sed -i -E 's/^useDynLib\([a-zA-Z]+/useDynLib(epiworldRdev/g' NAMESPACE
 	sed -i -E 's/^Package:.+/Package: epiworldRdev/g' DESCRIPTION 
+	sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldRdev/g' man/epiworldR-package.Rd
 	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldRdev)/g' README.*
 	EPI_DEV=yes R CMD INSTALL .
+	$(MAKE) clean
 
 install: clean
-	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
-	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldR)/g' README.*
 	R CMD INSTALL .
 		
 
@@ -36,6 +37,12 @@ check: build
 
 clean: 
 	Rscript --vanilla -e 'devtools::clean_dll()'
+	sed -i -E 's/^useDynLib\([a-zA-Z]+/useDynLib(epiworldR/g' NAMESPACE
+	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
+	sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' man/epiworldR-package.Rd
+	sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' R/epiworldR-package.Rd
+
+	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldR)/g' README.*
 
 docs:
 	Rscript --vanilla -e 'devtools::document()'

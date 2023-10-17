@@ -183,16 +183,5 @@ AC_CONFIG_FILES([src/Makevars R/epiworldR-package.R])
 
 # Use sed to replace the line useDynLib\([a-zA-Z]+ in the NAMESPACE
 # file with useDynLib(${epiworldname}
-AC_CONFIG_COMMANDS_POST(
-    [sed -i -E 's/^useDynLib\([[a-zA-Z]]+/useDynLib('"${epiworldname}"'/g' NAMESPACE]
-    )
-
-AC_CONFIG_COMMANDS_POST(
-    [sed -i -E 's/^Package:.+/Package: '"${epiworldname}"'/g' DESCRIPTION]
-    )
-
-AC_CONFIG_COMMANDS_POST(
-    [sed -i -E 's/^\\(name|alias|title)\{[[a-zA-Z]]+/\\\1{'"${epiworldname}"'/g' man/epiworldR-package.Rd]
-    )
 
 AC_OUTPUT
