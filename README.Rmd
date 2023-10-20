@@ -71,10 +71,10 @@ library(epiworldR)
 
 # Creating a SIR model
 sir <- ModelSIR(
-  name           = "COVID-19",
-  prevalence     = .01,
+  name              = "COVID-19",
+  prevalence        = .01,
   transmission_rate = .7,
-  recovery       = .3
+  recovery          = .3
   ) |>
   # Adding a Small world population 
   agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
@@ -205,8 +205,10 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
-library(epiworldR)
-x <- graph_from_edgelist(as.matrix(net[,2:3]) + 1)
+library(netplot)
+x <- igraph::graph_from_edgelist(
+  as.matrix(net[,2:3]) + 1
+  )
 
 nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
 ```

@@ -1,5 +1,5 @@
-library(epiworldR)
-library(epiworldRfaster)
+# library(epiworldRdev)
+# library(epiworldR)
 
 library(microbenchmark)
 
@@ -22,23 +22,23 @@ for (n in ns) {
     epiworldR::verbose_off()
 
 
-  sirfast <- epiworldRfaster::ModelSEIR(
+  sirfast <- epiworldRdev::ModelSEIR(
     name                = "COVID-19",
     prevalence          = 0.01, 
     incubation_days     = 7, 
     transmission_rate   = 0.6,
     recovery_rate       = 0.5
   ) |> 
-    epiworldRfaster::agents_smallworld(n = n, k = 20, p = 0, d = FALSE) |>
-    epiworldRfaster::add_virus(
-      epiworldRfaster::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
+    epiworldRdev::agents_smallworld(n = n, k = 20, p = 0, d = FALSE) |>
+    epiworldRdev::add_virus(
+      epiworldRdev::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
       ) |>
-    epiworldRfaster::verbose_off()
+    epiworldRdev::verbose_off()
 
 
   ans[[as.character(n)]] <- microbenchmark(
     old = epiworldR::run(sir, ndays = 100, seed = 1912),
-    new = epiworldRfaster::run(sirfast, ndays = 100, seed = 1912),
+    new = epiworldRdev::run(sirfast, ndays = 100, seed = 1912),
     times = 10
   )
 

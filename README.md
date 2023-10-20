@@ -91,10 +91,10 @@ library(epiworldR)
 
 # Creating a SIR model
 sir <- ModelSIR(
-  name           = "COVID-19",
-  prevalence     = .01,
+  name              = "COVID-19",
+  prevalence        = .01,
   transmission_rate = .7,
-  recovery       = .3
+  recovery          = .3
   ) |>
   # Adding a Small world population 
   agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
@@ -127,8 +127,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 170.00ms
-#> Last run speed      : 29.29 million agents x day / second
+#> Last run elapsed t  : 166.00ms
+#> Last run speed      : 30.01 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -346,20 +346,11 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
+library(netplot)
 #> Loading required package: grid
-library(epiworldR)
-#> 
-#> Attaching package: 'igraph'
-#> The following object is masked from 'package:netplot':
-#> 
-#>     ego
-#> The following objects are masked from 'package:stats':
-#> 
-#>     decompose, spectrum
-#> The following object is masked from 'package:base':
-#> 
-#>     union
-x <- graph_from_edgelist(as.matrix(net[,2:3]) + 1)
+x <- igraph::graph_from_edgelist(
+  as.matrix(net[,2:3]) + 1
+  )
 
 nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
 ```
