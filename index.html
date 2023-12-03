@@ -8,8 +8,8 @@
 <meta name="description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents features, providing great complexity for the model dynamics. Furthermore, epiworldR' is ideal for simulation studies featuring large populations.">
 <title>Fast Agent-Based Epi Models • epiworldR</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Fast Agent-Based Epi Models">
 <meta property="og:description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents features, providing great complexity for the model dynamics. Furthermore, epiworldR' is ideal for simulation studies featuring large populations.">
@@ -115,10 +115,10 @@
 <span></span>
 <span><span class="co"># Creating a SIR model</span></span>
 <span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
-<span>  name           <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
-<span>  prevalence     <span class="op">=</span> <span class="fl">.01</span>,</span>
+<span>  name              <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
+<span>  prevalence        <span class="op">=</span> <span class="fl">.01</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="fl">.7</span>,</span>
-<span>  recovery       <span class="op">=</span> <span class="fl">.3</span></span>
+<span>  recovery          <span class="op">=</span> <span class="fl">.3</span></span>
 <span>  <span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="co"># Adding a Small world population </span></span>
 <span>  <span class="fu"><a href="reference/agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">100000</span>, k <span class="op">=</span> <span class="fl">10</span>, d <span class="op">=</span> <span class="cn">FALSE</span>, p <span class="op">=</span> <span class="fl">.01</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -148,8 +148,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 196.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 25.43 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 166.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 30.01 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -292,16 +292,16 @@
 <span><span class="co"># Looking into the agents</span></span>
 <span><span class="fu"><a href="reference/get_agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span></span>
-<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Nvirus: 0, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
 <span><span class="co">#&gt; ... 99990 more agents ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -329,21 +329,12 @@
 <span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_transmissions</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plotting</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: grid</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/" class="external-link">igraph</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'igraph'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:netplot':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     ego</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     decompose, spectrum</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     union</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
+<span>  <span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/netplot/man/nplot.html" class="external-link">nplot</a></span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-transmission-net-1.png" width="100%"></p>
@@ -388,10 +379,10 @@
 <span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
 <span><span class="co">#&gt; 1       1        0 COVID-19    767                   11  0</span></span>
 <span><span class="co">#&gt; 2       1        0 COVID-19    835                   10  0</span></span>
-<span><span class="co">#&gt; 3       1        0 COVID-19    466                    9  0</span></span>
+<span><span class="co">#&gt; 3       1        0 COVID-19    793                    9  0</span></span>
 <span><span class="co">#&gt; 4       1        0 COVID-19    612                    9  0</span></span>
-<span><span class="co">#&gt; 5       1        0 COVID-19    793                    9  0</span></span>
-<span><span class="co">#&gt; 6       1        0 COVID-19     20                    8  0</span></span>
+<span><span class="co">#&gt; 5       1        0 COVID-19    466                    9  0</span></span>
+<span><span class="co">#&gt; 6       1        0 COVID-19    920                    8  0</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"> # Existing Alternatives</p>
