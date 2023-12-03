@@ -46,7 +46,7 @@ public:
     ) -> void {
 
         // Getting the virus
-        auto v = p->get_virus(0);
+        auto v = p->get_virus();
 
         // Does the agent become infected?
         if (m->runif() < 1.0/(v->get_incubation(m)))
@@ -62,10 +62,21 @@ public:
     ) -> void {
         // Does the agent recover?
         if (m->runif() < (m->par("Recovery rate")))
-            p->rm_virus(0, m);
+            p->rm_virus(m);
 
         return;    
     };
+
+    /**
+     * @brief Set up the initial states of the model.
+     * @param proportions_ Double vector with the following values:
+     * - 0: Proportion of non-infected agents who are removed.
+     * - 1: Proportion of exposed agents to be set as infected.
+    */
+    ModelSEIR<TSeq> & initial_states(
+        std::vector< double > proportions_,
+        std::vector< int > queue_ = {}
+    );
 
 };
 
@@ -132,6 +143,18 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
 }
 
+template<typename TSeq>
+inline ModelSEIR<TSeq> & ModelSEIR<TSeq>::initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > /**/
+) {
 
+    Model<TSeq>::initial_states_fun =
+        create_init_function_seir<TSeq>(proportions_)
+        ;
+
+    return *this;
+
+}
 
 #endif

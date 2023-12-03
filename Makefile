@@ -11,9 +11,18 @@ docker-debug:
 	EPI_CONFIG="-DEPI_DEBUG -Wall -pedantic -g" R CMD INSTALL \
 		--no-docs --build .
 
-install: build 
-	which R
-	cd ../ && R CMD INSTALL epiworldR_*.tar.gz
+install-dev: clean
+	sed -i -E 's/@useDynLib\s+[a-zA-Z]+/@useDynLib epiworldRdev/g' R/epiworldR-package.R
+	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldRdev/g' NAMESPACE
+	sed -i -E 's/^Package:.+/Package: epiworldRdev/g' DESCRIPTION 
+	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldRdev)/g' README.*
+	Rscript --vanilla -e 'roxygen2::roxygenize()'
+	EPI_DEV=yes R CMD INSTALL .& $(MAKE) clean
+
+install:
+	$(MAKE) clean
+	R CMD INSTALL .
+		
 
 README.md: README.Rmd
 	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
@@ -29,6 +38,11 @@ check: build
 
 clean: 
 	Rscript --vanilla -e 'devtools::clean_dll()'
+	sed -i -E 's/@useDynLib\s+[a-zA-Z]+/@useDynLib epiworldR/g' R/epiworldR-package.R
+	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldR/g' NAMESPACE
+	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
+	# sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' man/epiworldR-package.Rd
+	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldR)/g' README.*
 
 docs:
 	Rscript --vanilla -e 'devtools::document()'

@@ -2,7 +2,9 @@
 #define EPIWORLD_MODELS_HPP
 
 namespace epimodels {
-    
+
+    #include "init-functions.hpp"
+
     #include "globalactions.hpp"
     #include "sis.hpp"
     #include "sir.hpp"

@@ -351,3 +351,17 @@ get_tool <- function(model, tool_pos) {
     class = "epiworld_tool"
   )
 }
+
+#' @export 
+#' @param proportions Numeric vector. Proportions in which agents will be
+#' distributed (see details).
+#' @return 
+#' - `inital_states` returns the model with an updated initial state.
+#' @rdname epiworld-methods
+initial_states <- function(model, proportions) {
+
+  stopifnot_model(model)
+  invisible(initial_states_cpp(model, proportions))
+
+}
+

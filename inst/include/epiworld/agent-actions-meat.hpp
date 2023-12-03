@@ -8,9 +8,6 @@ inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m)
     Agent<TSeq> *  p = a.agent;
     VirusPtr<TSeq> v = a.virus;
 
-    CHECK_COALESCE_(a.new_state, v->state_init, p->get_state())
-    CHECK_COALESCE_(a.queue, v->queue_init, 1)
-
     // Has a agent? If so, we need to register the transmission
     if (v->get_agent())
     {
@@ -26,30 +23,22 @@ inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m)
 
     }
     
-    // Update virus accounting
-    p->n_viruses++;
-    size_t n_viruses = p->n_viruses;
+    p->virus = std::make_shared< Virus<TSeq> >(*v);
+    p->virus->set_date(m->today());
+    p->virus->set_agent(p);
 
-    if (n_viruses <= p->viruses.size())
-        p->viruses[n_viruses - 1] = std::make_shared< Virus<TSeq> >(*v);
-    else
-        p->viruses.push_back(std::make_shared< Virus<TSeq> >(*v));
-
-    n_viruses--;
-
-    // Notice that both agent and date can be changed in this case
-    // as only the sequence is a shared_ptr itself.
-    #ifdef EPI_DEBUG
-    if (n_viruses >= p->viruses.size())
+    // Change of state needs to be recorded and updated on the
+    // tools.
+    if (p->state_prev != p->state)
     {
-        throw std::logic_error(
-            "[epi-debug]::default_add_virus Index for new virus out of range."
-            );
-    }
-    #endif
-    p->viruses[n_viruses]->set_agent(p, n_viruses);
-    p->viruses[n_viruses]->set_date(m->today());
+        auto & db = m->get_db();
+        db.update_state(p->state_prev, p->state);
 
+        for (size_t i = 0u; i < p->n_tools; ++i)
+            db.update_tool(p->tools[i]->get_id(), p->state_prev, p->state);
+    }
+
+    // Lastly, we increase the daily count of the virus
     #ifdef EPI_DEBUG
     m->get_db().today_virus.at(v->get_id()).at(p->state)++;
     #else
@@ -64,9 +53,6 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
 
     Agent<TSeq> * p = a.agent;
     ToolPtr<TSeq> t = a.tool;
-
-    CHECK_COALESCE_(a.new_state, t->state_init, p->get_state())
-    CHECK_COALESCE_(a.queue, t->queue_init, Queue<TSeq>::NoOne)
     
     // Update tool accounting
     p->n_tools++;
@@ -82,7 +68,19 @@ inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m)
     p->tools[n_tools]->set_date(m->today());
     p->tools[n_tools]->set_agent(p, n_tools);
 
+    // Change of state needs to be recorded and updated on the
+    // tools.
+    if (p->state_prev != p->state)
+    {
+        auto & db = m->get_db();
+        db.update_state(p->state_prev, p->state);
+
+        if (p->virus)
+            db.update_virus(p->virus->get_id(), p->state_prev, p->state);
+    }
+
     m->get_db().today_tool[t->get_id()][p->state]++;
+
 
 }
 
@@ -90,38 +88,43 @@ template<typename TSeq>
 inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * model)
 {
 
-    Agent<TSeq> * p    = a.agent;    
-    VirusPtr<TSeq> & v = a.agent->viruses[a.virus->pos_in_agent];
-    
-    CHECK_COALESCE_(a.new_state, v->state_post, p->get_state())
-    CHECK_COALESCE_(a.queue, v->queue_post, -Queue<TSeq>::Everyone)
+    Agent<TSeq> * p    = a.agent;
+    VirusPtr<TSeq> & v = a.virus;
 
-    if (--p->n_viruses > 0)
-    {
-        // The new virus will change positions
-        p->viruses[p->n_viruses]->pos_in_agent = v->pos_in_agent;
-        std::swap(
-            p->viruses[p->n_viruses],   // Moving to the end
-            p->viruses[v->pos_in_agent] // Moving to the beginning
-            );
-    }
-    
     // Calling the virus action over the removed virus
     v->post_recovery(model);
 
+    p->virus = nullptr;
+
+    // Change of state needs to be recorded and updated on the
+    // tools.
+    if (p->state_prev != p->state)
+    {
+        auto & db = model->get_db();
+        db.update_state(p->state_prev, p->state);
+
+        for (size_t i = 0u; i < p->n_tools; ++i)
+            db.update_tool(p->tools[i]->get_id(), p->state_prev, p->state);
+    }
+
+    // The counters of the virus only needs to decrease
+    #ifdef EPI_DEBUG
+    model->get_db().today_virus.at(v->get_id()).at(p->state_prev)--;
+    #else
+    model->get_db().today_virus[v->get_id()][p->state_prev]--;
+    #endif
+
+    
     return;
 
 }
 
 template<typename TSeq>
-inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * /*m*/)
+inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * m)
 {
 
     Agent<TSeq> * p   = a.agent;    
     ToolPtr<TSeq> & t = a.agent->tools[a.tool->pos_in_agent];
-
-    CHECK_COALESCE_(a.new_state, t->state_post, p->get_state())
-    CHECK_COALESCE_(a.queue, t->queue_post, Queue<TSeq>::NoOne)
 
     if (--p->n_tools > 0)
     {
@@ -132,7 +135,46 @@ inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * /*m*/)
             );
     }
 
+    // Change of state needs to be recorded and updated on the
+    // tools.
+    if (p->state_prev != p->state)
+    {
+        auto & db = m->get_db();
+        db.update_state(p->state_prev, p->state);
+
+        if (p->virus)
+            db.update_virus(p->virus->get_id(), p->state_prev, p->state);
+    }
+
+    // Lastly, we increase the daily count of the tool
+    #ifdef EPI_DEBUG
+    m->get_db().today_tool.at(t->get_id()).at(p->state_prev)--;
+    #else
+    m->get_db().today_tool[t->get_id()][p->state_prev]--;
+    #endif
+
     return;
+
+}
+
+template<typename TSeq>
+inline void default_change_state(Action<TSeq> & a, Model<TSeq> * m)
+{
+
+    Agent<TSeq> * p = a.agent;
+
+    if (p->state_prev != p->state)
+    {
+        auto & db = m->get_db();
+        db.update_state(p->state_prev, p->state);
+
+        if (p->virus)
+            db.update_virus(p->virus->get_id(), p->state_prev, p->state);
+
+        for (size_t i = 0u; i < p->n_tools; ++i)
+            db.update_tool(p->tools[i]->get_id(), p->state_prev, p->state);
+
+    }
 
 }
 
@@ -142,9 +184,6 @@ inline void default_add_entity(Action<TSeq> & a, Model<TSeq> *)
 
     Agent<TSeq> *  p = a.agent;
     Entity<TSeq> * e = a.entity;
-
-    CHECK_COALESCE_(a.new_state, e->state_post, p->get_state())
-    CHECK_COALESCE_(a.queue, e->queue_post, Queue<TSeq>::NoOne)
 
     // Checking the agent and the entity are not linked
     if ((p->get_n_entities() > 0) && (e->size() > 0))
@@ -207,9 +246,6 @@ inline void default_rm_entity(Action<TSeq> & a, Model<TSeq> * m)
     Entity<TSeq> * e = a.entity;
     size_t idx_agent_in_entity = a.idx_agent;
     size_t idx_entity_in_agent = a.idx_object;
-
-    CHECK_COALESCE_(a.new_state, e->state_post, p->get_state())
-    CHECK_COALESCE_(a.queue, e->queue_post, Queue<TSeq>::NoOne)
 
     if (--p->n_entities > 0)
     {

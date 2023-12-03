@@ -30,8 +30,6 @@ class Virus {
 private:
     
     Agent<TSeq> * agent       = nullptr;
-    int       pos_in_agent    = -99; ///< Location in the agent
-    int agent_exposure_number = -99;
 
     std::shared_ptr<TSeq> baseline_sequence = nullptr;
     std::shared_ptr<std::string> virus_name = nullptr;
@@ -46,7 +44,6 @@ private:
     VirusFun<TSeq>        incubation_fun               = nullptr;
 
     // Setup parameters
-    std::vector< epiworld_double * > params = {};
     std::vector< epiworld_double > data = {};
 
     epiworld_fast_int state_init    = -99; ///< Change of state when added to agent.
@@ -67,7 +64,7 @@ public:
     void set_sequence(TSeq sequence);
     
     Agent<TSeq> * get_agent();
-    void set_agent(Agent<TSeq> * p, epiworld_fast_uint idx);
+    void set_agent(Agent<TSeq> * p);
     
     void set_date(int d);
     int get_date() const;

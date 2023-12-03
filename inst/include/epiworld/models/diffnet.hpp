@@ -91,24 +91,25 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
             if (neighbor->get_state() == ModelDiffNet<TSeq>::ADOPTER)
             {
 
-                for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                { 
-                        
-                    /* And it is a function of susceptibility_reduction as well */ 
-                    double p_i =
-                        (1.0 - agent.get_susceptibility_reduction(v, m)) * 
-                        (1.0 - agent.get_transmission_reduction(v, m)) 
-                        ; 
+                auto & v = neighbor->get_virus();
                 
-                    size_t vid = v->get_id();
-                    if (!stored[vid])
-                    {
-                        stored[vid] = true;
-                        innovations[vid] = &(*v);
-                    }
-                    exposure[vid] += p_i;
-                    
-                } 
+                if (v == nullptr)
+                    continue;
+    
+                /* And it is a function of susceptibility_reduction as well */ 
+                double p_i =
+                    (1.0 - agent.get_susceptibility_reduction(v, m)) * 
+                    (1.0 - agent.get_transmission_reduction(v, m)) 
+                    ; 
+            
+                size_t vid = v->get_id();
+                if (!stored[vid])
+                {
+                    stored[vid] = true;
+                    innovations[vid] = &(*v);
+                }
+                exposure[vid] += p_i;
+
 
             }
 
@@ -141,7 +142,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
             return;
 
         // Otherwise, it is adopted from any of the neighbors
-        agent.add_virus(
+        agent.set_virus(
             *innovations.at(which),
             m,
             ModelDiffNet::ADOPTER

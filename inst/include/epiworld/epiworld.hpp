@@ -71,8 +71,6 @@ namespace epiworld {
 
     #include "models/models.hpp"
 
-    
-
 }
 
 #endif 

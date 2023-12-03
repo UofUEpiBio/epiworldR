@@ -39,6 +39,11 @@ infection.}
 \description{
 SIR model
 }
+\details{
+The \link{initial_states} function allows the user to set the initial state of the
+model. In particular, the user can specify how many of the non-infected
+agents have been removed at the beginning of the simulation.
+}
 \examples{
 model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
                       transmission_rate = 0.9, recovery_rate = 0.1)

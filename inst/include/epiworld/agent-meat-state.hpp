@@ -33,7 +33,7 @@ inline void default_update_susceptible(
     if (virus == nullptr)
         return;
 
-    p->add_virus(*virus, m); 
+    p->set_virus(*virus, m); 
 
     return;
 
@@ -42,59 +42,37 @@ inline void default_update_susceptible(
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
 
-    if (p->get_n_viruses() == 0u)
+    if (p->get_virus() == nullptr)
         throw std::logic_error(
             std::string("Using the -default_update_exposed- on agents WITHOUT viruses makes no sense! ") +
             std::string("Agent id ") + std::to_string(p->get_id()) + std::string(" has no virus registered.")
             );
 
-    // Odd: Die, Even: Recover
-    epiworld_fast_uint n_events = 0u;
-    for (const auto & v : p->get_viruses())
-    {
+    // Die
+    auto & virus = p->get_virus();
+    m->array_double_tmp[0u] = 
+        virus->get_prob_death(m) * (1.0 - p->get_death_reduction(virus, m)); 
 
-        // Die
-        m->array_double_tmp[n_events++] = 
-            v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
-
-        // Recover
-        m->array_double_tmp[n_events++] = 
-            1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
-
-    }
-
-    #ifdef EPI_DEBUG
-    if (n_events == 0u)
-    {
-        printf_epiworld(
-            "[epi-debug] agent %i has 0 possible events!!\n",
-            static_cast<int>(p->get_id())
-            );
-        throw std::logic_error("Zero events in exposed.");
-    }
-    #else
-    if (n_events == 0u)
-        return;
-    #endif
+    // Recover
+    m->array_double_tmp[1u] = 
+        1.0 - (1.0 - virus->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(virus, m)); 
     
 
     // Running the roulette
-    int which = roulette(n_events, m);
+    int which = roulette(2u, m);
 
     if (which < 0)
         return;
 
     // Which roulette happen?
-    if ((which % 2) == 0) // If odd
+    if (which == 0u) // If odd
     {
 
-        size_t which_v = std::ceil(which / 2);
-        p->rm_agent_by_virus(which_v, m);
+        p->rm_agent_by_virus(m);
         
     } else {
 
-        size_t which_v = std::floor(which / 2);
-        p->rm_virus(which_v, m);
+        p->rm_virus(m);
 
     }
 

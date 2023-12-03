@@ -256,6 +256,10 @@ get_network_cpp <- function(model) {
   .Call(`_epiworldR_get_network_cpp`, model)
 }
 
+initial_states_cpp <- function(model, proportions) {
+  .Call(`_epiworldR_initial_states_cpp`, model, proportions)
+}
+
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
   .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
 }
@@ -426,12 +430,4 @@ get_name_virus_cpp <- function(virus) {
 
 set_name_virus_cpp <- function(virus, name) {
   .Call(`_epiworldR_set_name_virus_cpp`, virus, name)
-}
-
-get_agents_viruses_cpp <- function(model) {
-  .Call(`_epiworldR_get_agents_viruses_cpp`, model)
-}
-
-print_agent_viruses_cpp <- function(viruses) {
-  .Call(`_epiworldR_print_agent_viruses_cpp`, viruses)
 }

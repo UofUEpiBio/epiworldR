@@ -51,7 +51,7 @@ public:
         epiworld_double prevalence
     );
 
-    void run(
+    ModelSIRLogit<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     );
@@ -70,13 +70,14 @@ public:
 
 
 template<typename TSeq>
-inline void ModelSIRLogit<TSeq>::run(
+inline ModelSIRLogit<TSeq> & ModelSIRLogit<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 )
 {
 
     Model<TSeq>::run(ndays, seed);
+    return *this;
 
 }
 
@@ -189,30 +190,30 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             for (auto & neighbor: p->get_neighbors()) 
             {
                 
-                for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                { 
+                if (neighbor->get_virus() == nullptr)
+                    continue;
 
-                    #ifdef EPI_DEBUG
-                    if (nviruses_tmp >= m->array_virus_tmp.size())
-                        throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                    #endif
-                        
-                    /* And it is a function of susceptibility_reduction as well */ 
-                    m->array_double_tmp[nviruses_tmp] =
-                        baseline +
-                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                        v->get_prob_infecting(m) * 
-                        (1.0 - neighbor->get_transmission_reduction(v, m))  *
-                        coef_exposure
-                        ; 
+                auto & v = neighbor->get_virus();
 
-                    // Applying the plogis function
-                    m->array_double_tmp[nviruses_tmp] = 1.0/
-                        (1.0 + std::exp(-m->array_double_tmp[nviruses_tmp]));
-                
-                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                #ifdef EPI_DEBUG
+                if (nviruses_tmp >= m->array_virus_tmp.size())
+                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                #endif
+                    
+                /* And it is a function of susceptibility_reduction as well */ 
+                m->array_double_tmp[nviruses_tmp] =
+                    baseline +
+                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                    v->get_prob_infecting(m) * 
+                    (1.0 - neighbor->get_transmission_reduction(v, m))  *
+                    coef_exposure
+                    ; 
 
-                }
+                // Applying the plogis function
+                m->array_double_tmp[nviruses_tmp] = 1.0/
+                    (1.0 + std::exp(-m->array_double_tmp[nviruses_tmp]));
+            
+                m->array_virus_tmp[nviruses_tmp++] = &(*v);
 
             }
 
@@ -226,7 +227,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             if (which < 0)
                 return;
 
-            p->add_virus(*m->array_virus_tmp[which], m);
+            p->set_virus(*m->array_virus_tmp[which], m);
 
             return;
 
@@ -242,7 +243,9 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
             // Computing recovery probability once
             double prob    = 0.0;
+            #if defined(__OPENMP) || defined(_OPENMP)
             #pragma omp simd reduction(+:prob)
+            #endif
             for (size_t i = 0u; i < _m->coefs_recover.size(); ++i)
                 prob += p->operator[](i) * _m->coefs_recover[i];
 
@@ -250,7 +253,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             prob = 1.0/(1.0 + std::exp(-prob));
 
             if (prob > m->runif())
-                p->rm_virus(0, m);
+                p->rm_virus(m);
             
             return;
 

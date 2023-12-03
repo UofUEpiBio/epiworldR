@@ -617,6 +617,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+EPIWORLD_NAME
 OPENMP_FLAG
 CXXCPP
 OBJEXT
@@ -3365,11 +3366,24 @@ printf "%s\n" "found and suitable" >&6; }
     fi
 fi
 
+# Checking if the development version is being built
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to build the dev version" >&5
+printf %s "checking whether to build the dev version... " >&6; }
+epiworldname="epiworldR"
+if test x"${EPI_DEV}" != x"" ; then
+    epiworldname="epiworldRdev"
+fi
 
 ## now use all these
 OPENMP_FLAG="${openmp_flag}"
 
-ac_config_files="$ac_config_files src/Makevars"
+EPIWORLD_NAME="${epiworldname}"
+
+ac_config_files="$ac_config_files src/Makevars R/epiworldR-package.R"
+
+
+# Use sed to replace the line useDynLib\([a-zA-Z]+ in the NAMESPACE
+# file with useDynLib(${epiworldname}
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4072,6 +4086,7 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "src/Makevars") CONFIG_FILES="$CONFIG_FILES src/Makevars" ;;
+    "R/epiworldR-package.R") CONFIG_FILES="$CONFIG_FILES R/epiworldR-package.R" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

@@ -11,12 +11,7 @@ private:
 
 public:
 
-    ModelSIRCONN() {
-        
-        // tracked_agents_infected.reserve(1e4);
-        // tracked_agents_infected_next.reserve(1e4);
-
-    };
+    ModelSIRCONN() {};
 
     ModelSIRCONN(
         ModelSIRCONN<TSeq> & model,
@@ -37,17 +32,7 @@ public:
         epiworld_double recovery_rate
     );
 
-    // Tracking who is infected and who is not
-    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected = {};
-    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected_next = {};
-    // std::vector< epiworld_double >        tracked_agents_weight        = {};
-    // std::vector< epiworld_double >        tracked_agents_weight_next   = {};
-
-    // int tracked_ninfected = 0;
-    // int tracked_ninfected_next = 0;
-    // epiworld_double tracked_current_infect_prob = 0.0;
-
-    void run(
+    ModelSIRCONN<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
     );
@@ -56,24 +41,28 @@ public:
 
     Model<TSeq> * clone_ptr();
 
+    /**
+     * @brief Set the initial states of the model
+     * @param proportions_ Double vector with a single element:
+     * - The proportion of non-infected individuals who have recovered.
+    */
+    ModelSIRCONN<TSeq> & initial_states(
+        std::vector< double > proportions_,
+        std::vector< int > queue_ = {}
+    );
+
 
 };
 
 template<typename TSeq>
-inline void ModelSIRCONN<TSeq>::run(
+inline ModelSIRCONN<TSeq> & ModelSIRCONN<TSeq>::run(
     epiworld_fast_uint ndays,
     int seed
 )
 {
 
-    // tracked_agents_infected.clear();
-    // tracked_agents_infected_next.clear();
-
-    // tracked_ninfected = 0;
-    // tracked_ninfected_next = 0;
-    // tracked_current_infect_prob = 0.0;
-
     Model<TSeq>::run(ndays, seed);
+    return *this;
 
 }
 
@@ -82,14 +71,6 @@ inline void ModelSIRCONN<TSeq>::reset()
 {
 
     Model<TSeq>::reset();
-
-    // Model<TSeq>::set_rand_binom(
-    //     Model<TSeq>::size(),
-    //     static_cast<double>(
-    //         Model<TSeq>::par("Contact rate"))/
-    //         static_cast<double>(Model<TSeq>::size())
-    //     );
-
     return;
 
 }
@@ -128,8 +109,6 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     // epiworld_double prob_reinfection
     )
 {
-
-
 
     epiworld::UpdateFun<TSeq> update_susceptible = [](
         epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
@@ -177,24 +156,25 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                 if (neighbor.get_state() == ModelSIRCONN<TSeq>::INFECTED)
                 {
 
-                    for (const VirusPtr<TSeq> & v : neighbor.get_viruses()) 
-                    { 
+                    if (neighbor.get_virus() == nullptr)
+                        continue;
 
-                        #ifdef EPI_DEBUG
-                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                        #endif
-                            
-                        /* And it is a function of susceptibility_reduction as well */ 
-                        m->array_double_tmp[nviruses_tmp] =
-                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                            v->get_prob_infecting(m) * 
-                            (1.0 - neighbor.get_transmission_reduction(v, m)) 
-                            ; 
-                    
-                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    auto & v = neighbor.get_virus();
+
+                    #ifdef EPI_DEBUG
+                    if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
+                        throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                    #endif
                         
-                    } 
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nviruses_tmp] =
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor.get_transmission_reduction(v, m)) 
+                        ; 
+                
+                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                      
 
                 }
             }
@@ -209,7 +189,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             if (which < 0)
                 return;
 
-            p->add_virus(*m->array_virus_tmp[which], m);
+            p->set_virus(*m->array_virus_tmp[which], m);
 
             return; 
 
@@ -228,14 +208,10 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
                 // Odd: Die, Even: Recover
                 epiworld_fast_uint n_events = 0u;
-                for (const auto & v : p->get_viruses())
-                {
-
-                    // Recover
-                    m->array_double_tmp[n_events++] = 
-                        1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
-
-                }
+                // Recover
+                m->array_double_tmp[n_events++] = 
+                    1.0 - (1.0 - p->get_virus()->get_prob_recovery(m)) *
+                        (1.0 - p->get_recovery_enhancer(p->get_virus(), m)); 
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -259,13 +235,14 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                     return;
 
                 // Which roulette happen?
-                size_t which_v = std::floor(which / 2);
-                p->rm_virus(which_v, m);
+                p->rm_virus(m);
 
                 return ;
 
             } else
-                throw std::logic_error("This function can only be applied to infected individuals. (SIR)") ;
+                throw std::logic_error(
+                    "This function can only be applied to infected individuals. (SIR)"
+                    ) ;
 
             return;
 
@@ -322,6 +299,20 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     );
 
     return;
+
+}
+
+template<typename TSeq>
+inline ModelSIRCONN<TSeq> & ModelSIRCONN<TSeq>::initial_states(
+    std::vector< double > proportions_,
+    std::vector< int > /**/ 
+) {
+
+    Model<TSeq>::initial_states_fun = 
+        create_init_function_sir<TSeq>(proportions_)
+        ;
+
+    return *this;
 
 }
 

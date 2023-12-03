@@ -22,6 +22,9 @@ inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * m);
 template<typename TSeq>
 inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * m);
 
+template<typename TSeq>
+inline void default_change_state(Action<TSeq> & a, Model<TSeq> * m);
+
 /**
  * @brief Statistical data about the process
  * 
@@ -34,6 +37,7 @@ class DataBase {
     friend void default_add_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
     friend void default_rm_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
     friend void default_rm_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
+    friend void default_change_state<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
 private:
     Model<TSeq> * model;
 

@@ -2,7 +2,7 @@
 #define EPIWORLD_MODEL_MEAT_PRINT_HPP
 
 template<typename TSeq>
-inline void Model<TSeq>::print(bool lite) const
+inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
 {
 
     // Horizontal line
@@ -58,7 +58,7 @@ inline void Model<TSeq>::print(bool lite) const
             printf_epiworld(" The model hasn't been run yet.\n");
         }
 
-        return;
+        return *this;
     }
 
     printf_epiworld("%s\n%s\n\n",line.c_str(), "SIMULATION STUDY");
@@ -324,7 +324,7 @@ inline void Model<TSeq>::print(bool lite) const
     if (today() != 0)
         (void) db.transition_probability(true);
 
-    return;
+    return *this;
 
 }
 

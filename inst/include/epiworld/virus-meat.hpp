@@ -65,7 +65,9 @@ inline VirusFun<TSeq> virus_fun_logit(
         size_t K = coefs_f.size();
         epiworld_double res = 0.0;
 
+        #if defined(__OPENMP) || defined(_OPENMP)
         #pragma omp simd reduction(+:res)
+        #endif
         for (size_t i = 0u; i < K; ++i)
             res += agent->operator[](vars.at(i)) * coefs_f.at(i);
 
@@ -128,21 +130,9 @@ inline Agent<TSeq> * Virus<TSeq>::get_agent()
 }
 
 template<typename TSeq>
-inline void Virus<TSeq>::set_agent(Agent<TSeq> * p, epiworld_fast_uint idx)
+inline void Virus<TSeq>::set_agent(Agent<TSeq> * p)
 {
-
-    #ifdef EPI_DEBUG
-    if (idx >= p->viruses.size())
-    {
-        printf_epiworld(
-            "[epi-debug]Virus::set_agent id to set up is outside of range."
-            );
-    }
-    #endif
-
-    agent        = p;
-    pos_in_agent = static_cast<int>(idx);
-
+    agent = p;
 }
 
 template<typename TSeq>

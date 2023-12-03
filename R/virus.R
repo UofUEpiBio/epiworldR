@@ -536,25 +536,6 @@ set_incubation_fun <- function(virus, model, vfun) {
   
 }
 
-#' @export
-#' @rdname agents_smallworld
-#' @returns 
-#' - `get_agents_viruses` returns a list of class `epiworld_agents_viruses`
-#' with `epiworld_viruses` (list of lists).
-get_agents_viruses <- function(model) {
-
-  stopifnot_model(model)
-
-  res <- lapply(
-      get_agents_viruses_cpp(model),
-      `class<-`,
-      "epiworld_viruses"
-    )
-
-  structure(res, class = c("epiworld_agents_viruses", class(res)))
-  
-}
-
 #' @export 
 #' @rdname virus
 #' @param max_print Numeric scalar. Maximum number of viruses to print.

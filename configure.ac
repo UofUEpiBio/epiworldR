@@ -169,8 +169,19 @@ if test x"${can_use_openmp}" = x"yes"; then
     fi
 fi
 
+# Checking if the development version is being built
+AC_MSG_CHECKING([whether to build the dev version])
+epiworldname="epiworldR"
+if test x"${EPI_DEV}" != x"" ; then
+    epiworldname="epiworldRdev"
+fi
 
 ## now use all these
 AC_SUBST([OPENMP_FLAG], ["${openmp_flag}"])
-AC_CONFIG_FILES([src/Makevars])
+AC_SUBST([EPIWORLD_NAME], ["${epiworldname}"])
+AC_CONFIG_FILES([src/Makevars R/epiworldR-package.R])
+
+# Use sed to replace the line useDynLib\([a-zA-Z]+ in the NAMESPACE
+# file with useDynLib(${epiworldname}
+
 AC_OUTPUT

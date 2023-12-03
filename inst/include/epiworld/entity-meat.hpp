@@ -1,28 +1,6 @@
 #ifndef EPIWORLD_ENTITY_MEAT_HPP
 #define EPIWORLD_ENTITY_MEAT_HPP
 
-// template<typename TSeq>
-// inline Entity<TSeq>::Entity(const Entity<TSeq> & e) :
-//     model(e.model),
-//     id(e.id),
-//     agents(0u),
-//     agents_location(0u),
-//     n_agents(0),
-//     sampled_agents(0u),
-//     sampled_agents_n(0u),
-//     sampled_agents_left(0u),
-//     sampled_agents_left_n(0u),
-//     max_capacity(e.max_capacity),
-//     entity_name(e.entity_name),
-//     location(e.location),
-//     state_init(e.state_init),
-//     state_post(e.state_post),
-//     queue_init(e.queue_init),
-//     queue_post(e.queue_post)
-// {
-
-// }
-
 template<typename TSeq>
 inline void Entity<TSeq>::add_agent(
     Agent<TSeq> & p,

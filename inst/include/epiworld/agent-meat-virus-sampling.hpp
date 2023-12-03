@@ -34,37 +34,31 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
             [](Agent<TSeq> * p, Model<TSeq> * m) -> void
             {
 
-                if (p->get_n_viruses() > 0u)
+                if (p->get_virus() != nullptr)
                     throw std::logic_error(
                         std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
                         std::string("Agent id ") + std::to_string(p->get_id()) +
-                        std::string(" has ") + std::to_string(p->get_n_viruses()) +
-                        std::string(" viruses.")
+                        std::string(" has a virus.")
                         );
 
                 // This computes the prob of getting any neighbor variant
                 size_t nviruses_tmp = 0u;
                 for (auto & neighbor: p->get_neighbors()) 
                 {
-                            
-                    for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                    { 
-
-                        #ifdef EPI_DEBUG
-                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                        #endif
-                            
-                        /* And it is a function of susceptibility_reduction as well */ 
-                        m->array_double_tmp[nviruses_tmp] =
-                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                            v->get_prob_infecting(m) * 
-                            (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                            ; 
                     
-                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    auto & v = neighbor->get_virus();
+                    if (v == nullptr)
+                        continue;
+                    
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nviruses_tmp] =
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                        ; 
+                
+                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
                         
-                    } 
                 }
 
                 // No virus to compute
@@ -77,7 +71,7 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                 if (which < 0)
                     return;
 
-                p->add_virus(*m->array_virus_tmp[which], m);
+                p->set_virus(*m->array_virus_tmp[which], m);
 
                 return; 
             };
@@ -118,12 +112,11 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
 
                 }                    
 
-                if (p->get_n_viruses() > 0u)
+                if (p->get_virus() != nullptr)
                     throw std::logic_error(
                         std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
                         std::string("Agent id ") + std::to_string(p->get_id()) +
-                        std::string(" has ") + std::to_string(p->get_n_viruses()) +
-                        std::string(" viruses.")
+                        std::string(" has a virus.")
                         );
 
                 // This computes the prob of getting any neighbor variant
@@ -134,26 +127,21 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                     // If the state is in the list, exclude it
                     if (exclude_agent_bool->operator[](neighbor->get_state()))
                         continue;
-                            
-                    for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                    { 
 
-                        #ifdef EPI_DEBUG
-                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                    auto & v = neighbor->get_virus();
+                    if (v == nullptr)
+                        continue;
                             
-                        #endif
-                            
-                        /* And it is a function of susceptibility_reduction as well */ 
-                        m->array_double_tmp[nviruses_tmp] =
-                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                            v->get_prob_infecting(m) * 
-                            (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                            ; 
+                
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nviruses_tmp] =
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                        ; 
+                
+                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
                     
-                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
-                        
-                    } 
                 }
 
                 // No virus to compute
@@ -166,7 +154,7 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
                 if (which < 0)
                     return;
 
-                p->add_virus(*m->array_virus_tmp[which], m); 
+                p->set_virus(*m->array_virus_tmp[which], m); 
 
                 return;
 
@@ -202,37 +190,37 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
         std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> res = 
             [](Agent<TSeq> * p, Model<TSeq> * m) -> Virus<TSeq>* {
 
-                if (p->get_n_viruses() > 0u)
+                if (p->get_virus() != nullptr)
                     throw std::logic_error(
                         std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
                         std::string("Agent id ") + std::to_string(p->get_id()) +
-                        std::string(" has ") + std::to_string(p->get_n_viruses()) +
-                        std::string(" viruses.")
+                        std::string(" has a virus.")
                         );
 
                 // This computes the prob of getting any neighbor variant
                 size_t nviruses_tmp = 0u;
                 for (auto & neighbor: p->get_neighbors()) 
                 {
-                            
-                    for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                    { 
-
-                        #ifdef EPI_DEBUG
-                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                        #endif
-                            
-                        /* And it is a function of susceptibility_reduction as well */ 
-                        m->array_double_tmp[nviruses_tmp] =
-                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                            v->get_prob_infecting(m) * 
-                            (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                            ; 
                     
-                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    if (neighbor->get_virus() == nullptr)
+                        continue;
+
+                    auto & v = neighbor->get_virus();
+
+                    #ifdef EPI_DEBUG
+                    if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
+                        throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                    #endif
                         
-                    } 
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nviruses_tmp] =
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                        ; 
+                
+                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    
                 }
 
                 // No virus to compute
@@ -286,12 +274,11 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
 
                 }    
                 
-                if (p->get_n_viruses() > 0u)
+                if (p->get_virus() != nullptr)
                     throw std::logic_error(
                         std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
                         std::string("Agent id ") + std::to_string(p->get_id()) +
-                        std::string(" has ") + std::to_string(p->get_n_viruses()) +
-                        std::string(" viruses.")
+                        std::string(" has a virus.")
                         );
 
                 // This computes the prob of getting any neighbor variant
@@ -302,25 +289,26 @@ inline std::function<Virus<TSeq>*(Agent<TSeq>*,Model<TSeq>*)> make_sample_virus_
                     // If the state is in the list, exclude it
                     if (exclude_agent_bool->operator[](neighbor->get_state()))
                         continue;
-                            
-                    for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-                    { 
 
-                        #ifdef EPI_DEBUG
-                        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                        #endif
+                    if (neighbor->get_virus() == nullptr)
+                        continue;
+
+                    auto & v = neighbor->get_virus();
                             
-                        /* And it is a function of susceptibility_reduction as well */ 
-                        m->array_double_tmp[nviruses_tmp] =
-                            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                            v->get_prob_infecting(m) * 
-                            (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                            ; 
-                    
-                        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    #ifdef EPI_DEBUG
+                    if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
+                        throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+                    #endif
                         
-                    } 
+                    /* And it is a function of susceptibility_reduction as well */ 
+                    m->array_double_tmp[nviruses_tmp] =
+                        (1.0 - p->get_susceptibility_reduction(v, m)) * 
+                        v->get_prob_infecting(m) * 
+                        (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                        ; 
+                
+                    m->array_virus_tmp[nviruses_tmp++] = &(*v);
+                    
                 }
 
                 // No virus to compute
@@ -363,12 +351,11 @@ template<typename TSeq = int>
 inline Virus<TSeq> * sample_virus_single(Agent<TSeq> * p, Model<TSeq> * m)
 {
 
-    if (p->get_n_viruses() > 0u)
+    if (p->get_virus() != nullptr)
         throw std::logic_error(
-            std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
+            std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense!") +
             std::string("Agent id ") + std::to_string(p->get_id()) +
-            std::string(" has ") + std::to_string(p->get_n_viruses()) +
-            std::string(" viruses.")
+            std::string(" has a virus.")
             );
 
     // This computes the prob of getting any neighbor variant
@@ -377,40 +364,42 @@ inline Virus<TSeq> * sample_virus_single(Agent<TSeq> * p, Model<TSeq> * m)
     {   
         #ifdef EPI_DEBUG
         int _vcount_neigh = 0;
-        #endif                 
-        for (const VirusPtr<TSeq> & v : neighbor->get_viruses()) 
-        { 
+        #endif                
 
-            #ifdef EPI_DEBUG
-            if (nviruses_tmp >= m->array_virus_tmp.size())
-                throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-            #endif
-                
-            /* And it is a function of susceptibility_reduction as well */ 
-            m->array_double_tmp[nviruses_tmp] =
-                (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                v->get_prob_infecting(m) * 
-                (1.0 - neighbor->get_transmission_reduction(v, m)) 
-                ; 
-        
-            m->array_virus_tmp[nviruses_tmp++] = &(*v);
+        if (neighbor->get_virus() == nullptr)
+            continue;
 
-            #ifdef EPI_DEBUG
-            if (
-                (m->array_double_tmp[nviruses_tmp - 1] < 0.0) |
-                (m->array_double_tmp[nviruses_tmp - 1] > 1.0)
-                )
-            {
-                printf_epiworld(
-                    "[epi-debug] Agent %i's virus %i has transmission prob outside of [0, 1]: %.4f!\n",
-                    static_cast<int>(neighbor->get_id()),
-                    static_cast<int>(_vcount_neigh++),
-                    m->array_double_tmp[nviruses_tmp - 1]
-                    );
-            }
-            #endif
+        auto & v = neighbor->get_virus();
+
+        #ifdef EPI_DEBUG
+        if (nviruses_tmp >= m->array_virus_tmp.size())
+            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
+        #endif
             
-        } 
+        /* And it is a function of susceptibility_reduction as well */ 
+        m->array_double_tmp[nviruses_tmp] =
+            (1.0 - p->get_susceptibility_reduction(v, m)) * 
+            v->get_prob_infecting(m) * 
+            (1.0 - neighbor->get_transmission_reduction(v, m)) 
+            ; 
+    
+        m->array_virus_tmp[nviruses_tmp++] = &(*v);
+
+        #ifdef EPI_DEBUG
+        if (
+            (m->array_double_tmp[nviruses_tmp - 1] < 0.0) |
+            (m->array_double_tmp[nviruses_tmp - 1] > 1.0)
+            )
+        {
+            printf_epiworld(
+                "[epi-debug] Agent %i's virus %i has transmission prob outside of [0, 1]: %.4f!\n",
+                static_cast<int>(neighbor->get_id()),
+                static_cast<int>(_vcount_neigh++),
+                m->array_double_tmp[nviruses_tmp - 1]
+                );
+        }
+        #endif
+            
     }
 
 

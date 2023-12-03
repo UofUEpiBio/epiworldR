@@ -42,8 +42,6 @@ add_tool_n(model, tool, n)
 
 rm_tool(model, tool_pos)
 
-rm_tool(model, tool_pos)
-
 tool_fun_logit(vars, coefs, model)
 
 set_susceptibility_reduction(tool, prob)

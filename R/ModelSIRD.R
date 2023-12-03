@@ -13,6 +13,11 @@
 #' @param x Object of class SIR. 
 #' @param ... Additional arguments passed to [graphics::plot].
 #' @export
+#' @details
+#' The [initial_states] function allows the user to set the initial state of the
+#' model. The user must provide a vector of proportions indicating the following
+#' values: (1) proportion of non-infected agents already removed, and (2) proportion of
+#' non-ifected agents already deceased.
 #' @family Models
 #' @aliases epiworld_sird
 #' @returns
