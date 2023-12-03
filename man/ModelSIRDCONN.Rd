@@ -52,7 +52,7 @@ The \code{plot} function returns a plot of the SIRDCONN model of class
 Susceptible Infected Removed Deceased model (SIRD connected)
 }
 \details{
-The \link{initial_state} function allows the user to set the initial state of the
+The \link{initial_states} function allows the user to set the initial state of the
 model. The user must provide a vector of proportions indicating the following
 values: (1) proportion of non-infected agents already removed, and (2) proportion of
 non-ifected agents already deceased.

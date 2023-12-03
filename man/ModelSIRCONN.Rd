@@ -49,7 +49,7 @@ The \code{plot} function returns a plot of the SIRCONN model of class
 Susceptible Infected Removed model (SIR connected)
 }
 \details{
-The \link{initial_state} function allows the user to set the initial state of the
+The \link{initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
 }

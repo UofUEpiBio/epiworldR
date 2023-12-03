@@ -41,7 +41,7 @@ The \code{plot} function returns a plot of the SEIR model of class
 Susceptible Exposed Infected Recovered model (SEIR)
 }
 \details{
-The \link{initial_state} function allows the user to set the initial state of the
+The \link{initial_states} function allows the user to set the initial state of the
 model. The user must provide a vector of proportions indicating the following
 values: (1) Proportion of non-infected agents who are removed, and (2)
 Proportion of exposed agents to be set as infected.
