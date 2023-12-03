@@ -109,7 +109,9 @@ and running the simulation.</p>
 <span></span>
 <span><span class="fu">get_tool</span><span class="op">(</span><span class="va">model</span>, <span class="va">tool_pos</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">initial_states</span><span class="op">(</span><span class="va">model</span>, <span class="va">proportions</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">initial_states</span><span class="op">(</span><span class="va">model</span>, <span class="va">proportions</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">clone_model</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -195,11 +197,15 @@ of <code>epiworld_model</code>.</p></li>
 </ul><ul><li><p>'get_virus' returns a <a href="virus.html">virus</a>.</p></li>
 </ul><ul><li><p><code>get_tool</code> returns a <a href="tool.html">tool</a>.</p></li>
 </ul><ul><li><p><code>inital_states</code> returns the model with an updated initial state.</p></li>
+</ul><ul><li><p><code>clone_model</code> returns a copy of the model.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The <code>verbose_on</code> and <code>verbose_off</code> functions activate and deactivate printing
 progress on screen, respectively. Both functions return the model (<code>x</code>) invisibly.</p>
+<p><code>epiworld_model</code> objects are pointers to an underlying C++ class
+in <code>epiworld</code>. To generate a copy of a model, use <code>clone_model</code>, otherwise,
+the assignment operator will only copy the pointer.</p>
     </div>
 
     <div class="section level2">
