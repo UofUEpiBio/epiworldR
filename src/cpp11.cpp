@@ -460,6 +460,13 @@ extern "C" SEXP _epiworldR_initial_states_cpp(SEXP model, SEXP proportions) {
     return cpp11::as_sexp(initial_states_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<cpp11::doubles>>(proportions)));
   END_CPP11
 }
+// model.cpp
+SEXP clone_model_cpp(const SEXP & model);
+extern "C" SEXP _epiworldR_clone_model_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clone_model_cpp(cpp11::as_cpp<cpp11::decay_t<const SEXP &>>(model)));
+  END_CPP11
+}
 // tool.cpp
 SEXP tool_cpp(std::string name, double susceptibility_reduction, double transmission_reduction, double recovery_enhancer, double death_reduction);
 extern "C" SEXP _epiworldR_tool_cpp(SEXP name, SEXP susceptibility_reduction, SEXP transmission_reduction, SEXP recovery_enhancer, SEXP death_reduction) {
@@ -787,6 +794,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_from_edgelist_cpp",             (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,              5},
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
+    {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},

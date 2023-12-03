@@ -260,6 +260,10 @@ initial_states_cpp <- function(model, proportions) {
   .Call(`_epiworldR_initial_states_cpp`, model, proportions)
 }
 
+clone_model_cpp <- function(model) {
+  .Call(`_epiworldR_clone_model_cpp`, model)
+}
+
 tool_cpp <- function(name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {
   .Call(`_epiworldR_tool_cpp`, name, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction)
 }

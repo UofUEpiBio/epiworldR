@@ -365,3 +365,18 @@ initial_states <- function(model, proportions) {
 
 }
 
+#' @rdname epiworld-methods
+#' @export
+#' @details `epiworld_model` objects are pointers to an underlying C++ class
+#' in `epiworld`. To generate a copy of a model, use `clone_model`, otherwise,
+#' the assignment operator will only copy the pointer.
+#' @return
+#' - `clone_model` returns a copy of the model.
+clone_model <- function(model) {
+  stopifnot_model(model)
+  structure(
+    clone_model_cpp(model),
+    class = class(model)
+  )
+}
+

@@ -24,6 +24,7 @@
 \alias{get_virus}
 \alias{get_tool}
 \alias{initial_states}
+\alias{clone_model}
 \title{Methods for epiworldR objects}
 \usage{
 queuing_on(x)
@@ -67,6 +68,8 @@ get_virus(model, virus_pos)
 get_tool(model, tool_pos)
 
 initial_states(model, proportions)
+
+clone_model(model)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -174,6 +177,10 @@ of \code{epiworld_model}.
 \itemize{
 \item \code{inital_states} returns the model with an updated initial state.
 }
+
+\itemize{
+\item \code{clone_model} returns a copy of the model.
+}
 }
 \description{
 The functions described in this section are methods for objects of class
@@ -184,6 +191,10 @@ and running the simulation.
 \details{
 The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing
 progress on screen, respectively. Both functions return the model (\code{x}) invisibly.
+
+\code{epiworld_model} objects are pointers to an underlying C++ class
+in \code{epiworld}. To generate a copy of a model, use \code{clone_model}, otherwise,
+the assignment operator will only copy the pointer.
 }
 \examples{
 

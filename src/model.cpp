@@ -315,3 +315,16 @@ SEXP initial_states_cpp(SEXP model, cpp11::doubles proportions) {
   return model;
  
 }
+
+// Function for cloning a model
+[[cpp11::register]]
+SEXP clone_model_cpp(const SEXP & model) {
+  
+  external_pointer<const Model<>> modelptr(model);
+  
+  return external_pointer<Model<>>(
+    new Model<>(*modelptr)
+  );
+  
+}
+
