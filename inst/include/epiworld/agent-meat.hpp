@@ -687,20 +687,20 @@ inline void Agent<TSeq>::print(
     if (compressed)
     {
         printf_epiworld(
-            "Agent: %i, state: %s (%lu), Has virus: %s, NTools: %lu, NNeigh: %lu\n",
-            id, model->states_labels[state].c_str(), state,
+            "Agent: %i, state: %s (%i), Has virus: %s, NTools: %i, NNeigh: %i\n",
+            id, model->states_labels[state].c_str(), static_cast<int>(state),
             virus == nullptr ? std::string("no").c_str() : std::string("yes").c_str(),
-            n_tools, neighbors.size()
+            static_cast<int>(n_tools), neighbors.size()
         );
     }
     else {
 
         printf_epiworld("Information about agent id %i\n", this->id);
-        printf_epiworld("  State        : %s (%lu)\n", model->states_labels[state].c_str(), state);
+        printf_epiworld("  State        : %s (%i)\n", model->states_labels[state].c_str(), static_cast<int>(state));
         printf_epiworld("  Has virus    : %s\n", virus == nullptr ?
             std::string("no").c_str() : std::string("yes").c_str());
-        printf_epiworld("  Tool count   : %lu\n", n_tools);
-        printf_epiworld("  Neigh. count : %lu\n", neighbors.size());
+        printf_epiworld("  Tool count   : %i\n", static_cast<int>(n_tools));
+        printf_epiworld("  Neigh. count : %i\n", neighbors.size());
 
         size_t nfeats = model->get_agents_data_ncols();
         if (nfeats > 0)
