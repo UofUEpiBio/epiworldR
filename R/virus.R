@@ -536,29 +536,5 @@ set_incubation_fun <- function(virus, model, vfun) {
   
 }
 
-#' @export 
-#' @rdname virus
-#' @param max_print Numeric scalar. Maximum number of viruses to print.
-#' @param ... Currently ignored.
-#' @param x An object of class `epiworld_agents_viruses`.
-print.epiworld_agents_viruses <- function(x, max_print = 10, ...) {
-
-  for (i in 1:min(max_print, length(x))) {
-    print_agent_viruses_cpp(x[[i]])
-  }
-
-  if (length(x) > max_print) {
-    cat(sprintf("Showing first %s of %s viruses.\n", max_print, length(x)))
-  }
-
-  invisible(x)
-  
-}
-
-#' @export
-print.epiworld_viruses <- function(x, ...) {
-  print_agent_viruses_cpp(x)
-  invisible(x)
-}
 
 

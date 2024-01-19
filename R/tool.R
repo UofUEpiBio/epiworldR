@@ -475,11 +475,5 @@ print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
   
 }
 
-#' @export
-print.epiworld_viruses <- function(x, ...) {
-  print_agent_viruses_cpp(x)
-  invisible(x)
-}
-
 
 
