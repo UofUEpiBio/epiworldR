@@ -346,7 +346,7 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
-library(netplot)
+library(epiworldR)
 #> Loading required package: grid
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
