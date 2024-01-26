@@ -148,8 +148,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 166.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 30.01 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 456.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 10.94 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global actions:</span></span>
@@ -330,13 +330,13 @@
 <span></span>
 <span><span class="co"># Plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: grid</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/netplot/man/nplot.html" class="external-link">nplot</a></span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-transmission-net-1.png" width="100%"></p>
 </div>
 <div class="section level2">
@@ -385,7 +385,12 @@
 <span><span class="co">#&gt; 6       1        0 COVID-19    920                    8  0</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"> # Existing Alternatives</p>
+<p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
+</div>
+</div>
+<div class="section level1">
+<h1 id="existing-alternatives">Existing Alternatives<a class="anchor" aria-label="anchor" href="#existing-alternatives"></a>
+</h1>
 <p>Several alternatives to <code>epiworldR</code> exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].</p>
 <table class="table">
 <colgroup>
@@ -471,7 +476,6 @@
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 <div class="section level1">
 <h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
