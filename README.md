@@ -127,8 +127,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 166.00ms
-#> Last run speed      : 30.01 million agents x day / second
+#> Last run elapsed t  : 456.00ms
+#> Last run speed      : 10.94 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global actions:
@@ -346,7 +346,7 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
-library(epiworldR)
+library(netplot)
 #> Loading required package: grid
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
@@ -410,8 +410,9 @@ head(ans$reproductive)
 plot(ans$reproductive)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" /> \#
-Existing Alternatives
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+# Existing Alternatives
 
 Several alternatives to `epiworldR` exist and provide researchers with a
 range of options, each with its own unique features and strengths,

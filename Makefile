@@ -1,8 +1,8 @@
 # Capture the current value of the version of the package in DESCRIPTION
 VERSION := $(shell grep Version DESCRIPTION | sed -e 's/Version: //')
 
-build: docs clean
-	cd .. && rm -f epiworldR_*.tar.gz & R CMD build epiworldR
+build: 
+	cd .. && R CMD build epiworldR
 
 debug: clean
 	docker run --rm -ti -w/mnt -v $(PWD):/mnt uofuepibio/epiworldr:debug make docker-debug 
@@ -19,9 +19,9 @@ install-dev: clean
 	Rscript --vanilla -e 'roxygen2::roxygenize()'
 	EPI_DEV=yes R CMD INSTALL .& $(MAKE) clean
 
-install:
-	$(MAKE) clean
-	R CMD INSTALL .
+install: 
+	cd .. && \
+		R CMD INSTALL epiworldR_$(VERSION).tar.gz
 		
 
 README.md: README.Rmd

@@ -53,7 +53,8 @@
         "sstream": "cpp",
         "stdexcept": "cpp",
         "streambuf": "cpp",
-        "typeinfo": "cpp"
+        "typeinfo": "cpp",
+        "thread": "cpp"
     },
     "editor.indentSize": "tabSize",
     "[r]": {
