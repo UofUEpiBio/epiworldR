@@ -31,8 +31,8 @@
 #' 
 #' 
 #' # Adding a global action
-#' vaccine_day_20 <- globalaction_tool(epitool, .2, day = 20)
-#' add_global_action(model_sirconn, vaccine_day_20)
+#' vaccine_day_20 <- globalevent_tool(epitool, .2, day = 20)
+#' add_globalevent(model_sirconn, vaccine_day_20)
 #' 
 #' # Running and printing
 #' run(model_sirconn, ndays = 40, seed = 1912)
@@ -49,37 +49,37 @@
 #'   recovery_rate       = 0.95
 #' )
 #' 
-#' closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)
-#' add_global_action(model_sirconn2, closure_day_10)
+#' closure_day_10 <- globalevent_set_params("Contact rate", 0, day = 10)
+#' add_globalevent(model_sirconn2, closure_day_10)
 #' 
 #' # Running and printing
 #' run(model_sirconn2, ndays = 40, seed = 1912)
 #' model_sirconn2
 #' plot_incidence(model_sirconn2)
 #' @returns
-#' - The `globalaction_set_params` function returns an object of class
-#' [epiworld_globalaction_set_param] and [epiworld_globalaction].
+#' - The `globalevent_set_params` function returns an object of class
+#' [epiworld_globalevent_set_param] and [epiworld_globalaction].
 #' 
-#' - `globalaction_tool` returns an object of class 
-#' [epiworld_globalaction_tool] and [epiworld_globalaction].
+#' - `globalevent_tool` returns an object of class 
+#' [epiworld_globalevent_tool] and [epiworld_globalaction].
 #' 
-#' - `globalaction_tool_logit` returns an object of class
-#' [epiworld_globalaction_tool_logit] and [epiworld_globalaction].
+#' - `globalevent_tool_logit` returns an object of class
+#' [epiworld_globalevent_tool_logit] and [epiworld_globalaction].
 #' @aliases 
-#' epiworld_globalaction_set_param
-#' epiworld_globalaction_tool
-#' epiworld_globalaction_tool_logit
+#' epiworld_globalevent_set_param
+#' epiworld_globalevent_tool
+#' epiworld_globalevent_tool_logit
 #' epiworld_globalaction
 #' actions
 #' 
-globalaction_tool <- function(
+globalevent_tool <- function(
   tool, prob,
   name = get_name_tool(tool), day = -99
   ) {
 
   structure(
-    globalaction_tool_cpp(tool, prob, name, day),
-    class = c("epiworld_globalaction_tool", "epiworld_globalaction"),
+    globalevent_tool_cpp(tool, prob, name, day),
+    class = c("epiworld_globalevent_tool", "epiworld_globalaction"),
     tool = tool,
     call = match.call()
   )
@@ -89,12 +89,12 @@ globalaction_tool <- function(
 #' @rdname global-actions
 #' @param vars Integer vector. The position of the variables in the model.
 #' @param coefs Numeric vector. The coefficients of the logistic regression.
-#' @details The function `globalaction_tool_logit` allows to specify a logistic
+#' @details The function `globalevent_tool_logit` allows to specify a logistic
 #' regression model for the probability of using a tool. The model is specified
 #' by the vector of coefficients `coefs` and the vector of variables `vars`.
 #' `vars` is an integer vector indicating the position of the variables in the
 #' model.
-globalaction_tool_logit <- function(
+globalevent_tool_logit <- function(
   tool, vars, coefs,
   name = get_name_tool(tool), day = -99
   ) {
@@ -102,14 +102,14 @@ globalaction_tool_logit <- function(
   stopifnot_tool(tool)
 
   structure(
-    globalaction_tool_logit_cpp(
+    globalevent_tool_logit_cpp(
       tool,
       as.integer(vars),
       as.double(coefs),
       name,
       as.integer(day)
       ),
-    class = c("epiworld_globalaction_tool_logit", "epiworld_globalaction"),
+    class = c("epiworld_globalevent_tool_logit", "epiworld_globalaction"),
     tool = tool,
     call = match.call()
   )
@@ -120,22 +120,22 @@ globalaction_tool_logit <- function(
 #' @param param Character scalar. The name of the parameter to be set.
 #' @param value Numeric scalar. The value of the parameter.
 #' @rdname global-actions
-#' @details The function `globalaction_set_param` allows to set a parameter of
+#' @details The function `globalevent_set_param` allows to set a parameter of
 #' the model. The parameter is specified by its name `param` and the value by
 #' `value`.
-globalaction_set_params <- function(
+globalevent_set_params <- function(
   param, value,
   name = paste0("Set ", param, " to ", value), day = -99
   ) {
 
   structure(
-    globalaction_set_param_cpp(
+    globalevent_set_param_cpp(
       param,
       as.double(value),
       name,
       as.integer(day)
       ),
-    class = c("epiworld_globalaction_set_param", "epiworld_globalaction"),
+    class = c("epiworld_globalevent_set_param", "epiworld_globalaction"),
     param = param,
     value = as.double(value),
     call = match.call()
@@ -199,7 +199,7 @@ print.epiworld_globalaction <- function(x, ...) {
   cat("Call: ", deparse(attr(x, "call")), "\n")
   if (length(attr(x, "tool"))) {
     cat("Tool: ", get_name_tool(attr(x, "tool")), "\n")
-  } else if (inherits(x, "epiworld_globalaction_set_param")) {
+  } else if (inherits(x, "epiworld_globalevent_set_param")) {
     cat("Parameter: ", attr(x, "param"), "\n")
     cat("Value: ", attr(x, "value"), "\n")
   }
@@ -215,20 +215,20 @@ print.epiworld_globalaction <- function(x, ...) {
 #' @param name Character scalar. The name of the action.
 #' @rdname global-actions
 #' @seealso epiworld-model
-#' @details The function `add_global_action` adds a global action to a model.
+#' @details The function `add_globalevent` adds a global action to a model.
 #' The model checks for actions to be executed at each time step. If the added
 #' action matches the current time step, the action is executed. When `day` is
 #' negative, the action is executed at each time step. When `day` is positive,
 #' the action is executed at the specified time step.
 #' @returns
-#' - The function `add_global_action` returns the model with the added
+#' - The function `add_globalevent` returns the model with the added
 #' action.
-add_global_action <- function(model, action) {
+add_globalevent <- function(model, action) {
   
   if (length(attr(action, "tool")))
     add_tool_n(model, attr(action, "tool"), 0)
 
-  invisible(add_global_action_cpp(model, action))
+  invisible(add_globalevent_cpp(model, action))
 
 }
 

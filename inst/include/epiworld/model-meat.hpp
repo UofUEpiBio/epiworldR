@@ -150,7 +150,7 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
 
 
 template<typename TSeq>
-inline void Model<TSeq>::actions_add(
+inline void Model<TSeq>::events_add(
     Agent<TSeq> * agent_,
     VirusPtr<TSeq> virus_,
     ToolPtr<TSeq> tool_,
@@ -169,11 +169,11 @@ inline void Model<TSeq>::actions_add(
         throw std::logic_error("Actions cannot be zero!!");
     #endif
 
-    if (nactions > actions.size())
+    if (nactions > events.size())
     {
 
-        actions.emplace_back(
-            Action<TSeq>(
+        events.emplace_back(
+            Event<TSeq>(
                 agent_, virus_, tool_, entity_, new_state_, queue_, call_,
                 idx_agent_, idx_object_
             ));
@@ -182,7 +182,7 @@ inline void Model<TSeq>::actions_add(
     else 
     {
 
-        Action<TSeq> & A = actions.at(nactions - 1u);
+        Event<TSeq> & A = events.at(nactions - 1u);
 
         A.agent      = agent_;
         A.virus      = virus_;
@@ -201,14 +201,14 @@ inline void Model<TSeq>::actions_add(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::actions_run()
+inline void Model<TSeq>::events_run()
 {
     // Making the call
-    size_t nactions_tmp = 0;
-    while (nactions_tmp < nactions)
+    size_t nevents_tmp = 0;
+    while (nevents_tmp < nactions)
     {
 
-        Action<TSeq> & a = actions[nactions_tmp++];
+        Event<TSeq> & a = events[nevents_tmp++];
         Agent<TSeq> * p  = a.agent;
 
         #ifdef EPI_DEBUG
@@ -403,7 +403,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     nstates(model.nstates),
     verbose(model.verbose),
     current_date(model.current_date),
-    global_actions(model.global_actions),
+    globalevents(model.globalevents),
     queue(model.queue),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
@@ -488,7 +488,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     nstates(model.nstates),
     verbose(model.verbose),
     current_date(std::move(model.current_date)),
-    global_actions(std::move(model.global_actions)),
+    globalevents(std::move(model.globalevents)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
@@ -563,7 +563,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     current_date = m.current_date;
 
-    global_actions = m.global_actions;
+    globalevents = m.globalevents;
 
     queue       = m.queue;
     use_queuing = m.use_queuing;
@@ -798,8 +798,8 @@ inline void Model<TSeq>::dist_virus()
 
         }
 
-        // Apply the actions
-        actions_run();
+        // Apply the events
+        events_run();
     }
 
 }
@@ -858,8 +858,8 @@ inline void Model<TSeq>::dist_tools()
 
         }
 
-        // Apply the actions
-        actions_run();
+        // Apply the events
+        events_run();
 
     }
 
@@ -915,8 +915,8 @@ inline void Model<TSeq>::dist_tools()
 
 //         }
 
-//         // Apply the actions
-//         actions_run();
+//         // Apply the events
+//         events_run();
 
 //     }
 
@@ -1546,8 +1546,8 @@ inline Model<TSeq> & Model<TSeq>::run(
         // user needs.
         this->update_state();
     
-        // We start with the global actions
-        this->run_global_actions();
+        // We start with the Global events
+        this->run_globalevents();
 
         // In this case we are applying degree sequence rewiring
         // to change the network just a bit.
@@ -1789,7 +1789,7 @@ inline void Model<TSeq>::update_state() {
 
     }
 
-    actions_run();
+    events_run();
     
 }
 
@@ -2412,15 +2412,15 @@ inline UserData<TSeq> & Model<TSeq>::get_user_data()
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_global_action(
+inline void Model<TSeq>::add_globalevent(
     std::function<void(Model<TSeq>*)> fun,
     std::string name,
     int date
 )
 {
 
-    global_actions.push_back(
-        GlobalAction<TSeq>(
+    globalevents.push_back(
+        GlobalEvent<TSeq>(
             fun,
             name,
             date
@@ -2430,20 +2430,20 @@ inline void Model<TSeq>::add_global_action(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_global_action(
-    GlobalAction<TSeq> action
+inline void Model<TSeq>::add_globalevent(
+    GlobalEvent<TSeq> action
 )
 {
-    global_actions.push_back(action);
+    globalevents.push_back(action);
 }
 
 template<typename TSeq>
-GlobalAction<TSeq> & Model<TSeq>::get_global_action(
+GlobalEvent<TSeq> & Model<TSeq>::get_globalevent(
     std::string name
 )
 {
 
-    for (auto & a : global_actions)
+    for (auto & a : globalevents)
         if (a.name == name)
             return a;
 
@@ -2452,30 +2452,30 @@ GlobalAction<TSeq> & Model<TSeq>::get_global_action(
 }
 
 template<typename TSeq>
-GlobalAction<TSeq> & Model<TSeq>::get_global_action(
+GlobalEvent<TSeq> & Model<TSeq>::get_globalevent(
     size_t index
 )
 {
 
-    if (index >= global_actions.size())
+    if (index >= globalevents.size())
         throw std::range_error("The index " + std::to_string(index) + " is out of range.");
 
-    return global_actions[index];
+    return globalevents[index];
 
 }
 
 // Remove implementation
 template<typename TSeq>
-inline void Model<TSeq>::rm_global_action(
+inline void Model<TSeq>::rm_globalevent(
     std::string name
 )
 {
 
-    for (auto it = global_actions.begin(); it != global_actions.end(); ++it)
+    for (auto it = globalevents.begin(); it != globalevents.end(); ++it)
     {
         if (it->get_name() == name)
         {
-            global_actions.erase(it);
+            globalevents.erase(it);
             return;
         }
     }
@@ -2486,26 +2486,26 @@ inline void Model<TSeq>::rm_global_action(
 
 // Same as above, but the index implementation
 template<typename TSeq>
-inline void Model<TSeq>::rm_global_action(
+inline void Model<TSeq>::rm_globalevent(
     size_t index
 )
 {
 
-    if (index >= global_actions.size())
+    if (index >= globalevents.size())
         throw std::range_error("The index " + std::to_string(index) + " is out of range.");
 
-    global_actions.erase(global_actions.begin() + index);
+    globalevents.erase(globalevents.begin() + index);
 
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::run_global_actions()
+inline void Model<TSeq>::run_globalevents()
 {
 
-    for (auto & action: global_actions)
+    for (auto & action: globalevents)
     {
         action(this, today());
-        actions_run();
+        events_run();
     }
 
 }
@@ -2788,7 +2788,7 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         "Model:: current_date don't match"
     )
 
-    VECT_MATCH(global_actions, other.global_actions, "global action don't match");
+    VECT_MATCH(globalevents, other.globalevents, "global action don't match");
 
     EPI_DEBUG_FAIL_AT_TRUE(
         queue != other.queue,

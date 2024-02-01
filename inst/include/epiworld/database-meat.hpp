@@ -821,9 +821,9 @@ inline void DataBase<TSeq>::write_data(
 
         file_virus <<
             #ifdef EPI_DEBUG
-            "thread "<< "date " << "id " << "state " << "n\n";
+            "thread "<< "date " << "virus_id " << "virus " << "state " << "n\n";
             #else
-            "date " << "virus_id virus" << "state " << "n\n";
+            "date " << "virus_id " << "virus " << "state " << "n\n";
             #endif
 
         for (epiworld_fast_uint i = 0; i < hist_virus_id.size(); ++i)

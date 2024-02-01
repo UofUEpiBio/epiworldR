@@ -90,7 +90,7 @@ inline void Tools<TSeq>::print() const noexcept
         return;
     }
 
-    printf_epiworld("List of tools (%i): ", static_cast<int>(*n_tools));
+    printf_epiworld("List of tools (%i): ", *n_tools);
 
     // Printing the name of each virus separated by a comma
     for (size_t i = 0u; i < *n_tools; ++i)

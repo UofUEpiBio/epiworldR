@@ -25,8 +25,8 @@ class Virus {
     friend class Agent<TSeq>;
     friend class Model<TSeq>;
     friend class DataBase<TSeq>;
-    friend void default_add_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
     
     Agent<TSeq> * agent       = nullptr;

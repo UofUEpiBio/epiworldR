@@ -5,7 +5,7 @@ namespace epimodels {
 
     #include "init-functions.hpp"
 
-    #include "globalactions.hpp"
+    #include "globalevents.hpp"
     #include "sis.hpp"
     #include "sir.hpp"
     #include "seir.hpp"

@@ -58,8 +58,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
         for (auto & agent : sample)
             agent->change_state(model, 2, Queue<TSeq>::NoOne);
         
-        // Running the actions
-        model->actions_run();
+        // Running the events
+        model->events_run();
 
         return;
 
@@ -146,8 +146,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
         for (auto & agent : sample_deceased)
             agent->change_state(model, 3, Queue<TSeq>::NoOne);
         
-        // Running the actions
-        model->actions_run();
+        // Running the events
+        model->events_run();
 
         return;
 
@@ -226,8 +226,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
         for (auto & agent : sample_exposed)
             agent->change_state(model, 2, Queue<TSeq>::NoOne);
         
-        // Running the actions
-        model->actions_run();
+        // Running the events
+        model->events_run();
 
         return;
 
@@ -311,8 +311,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
         for (auto & agent : sample_exposed)
             agent->change_state(model, 2, Queue<TSeq>::NoOne);
 
-        // Running the actions
-        model->actions_run();
+        // Running the events
+        model->events_run();
 
         // Setting the initial states for the deceased
         epiworld::AgentsSample<TSeq> sample_deceased(
@@ -326,8 +326,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
         for (auto & agent : sample_deceased)
             agent->change_state(model, 4, Queue<TSeq>::NoOne);
         
-        // Running the actions
-        model->actions_run();
+        // Running the events
+        model->events_run();
 
         return;
 

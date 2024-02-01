@@ -94,7 +94,7 @@ inline void Viruses<TSeq>::print() const noexcept
         return;
     }
 
-    printf_epiworld("List of viruses (%i): ", static_cast<int>(*n_viruses));
+    printf_epiworld("List of viruses (%i): ", *n_viruses);
 
     // Printing the name of each virus separated by a comma
     for (size_t i = 0u; i < *n_viruses; ++i)

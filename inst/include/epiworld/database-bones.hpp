@@ -11,19 +11,19 @@ template<typename TSeq>
 class UserData;
 
 template<typename TSeq>
-inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_change_state(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m);
 
 /**
  * @brief Statistical data about the process
@@ -33,11 +33,11 @@ inline void default_change_state(Action<TSeq> & a, Model<TSeq> * m);
 template<typename TSeq>
 class DataBase {
     friend class Model<TSeq>;
-    friend void default_add_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_change_state<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_change_state<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
     Model<TSeq> * model;
 
