@@ -48,10 +48,10 @@ extern "C" SEXP _epiworldR_rm_globalevent_cpp(SEXP model, SEXP name) {
   END_CPP11
 }
 // actions.cpp
-SEXP globalaction_fun_cpp(cpp11::function fun, std::string name, int day);
-extern "C" SEXP _epiworldR_globalaction_fun_cpp(SEXP fun, SEXP name, SEXP day) {
+SEXP globalevent_fun_cpp(cpp11::function fun, std::string name, int day);
+extern "C" SEXP _epiworldR_globalevent_fun_cpp(SEXP fun, SEXP name, SEXP day) {
   BEGIN_CPP11
-    return cpp11::as_sexp(globalaction_fun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun), cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<int>>(day)));
+    return cpp11::as_sexp(globalevent_fun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun), cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<int>>(day)));
   END_CPP11
 }
 // agents.cpp
@@ -822,7 +822,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
-    {"_epiworldR_globalaction_fun_cpp",                 (DL_FUNC) &_epiworldR_globalaction_fun_cpp,                  3},
+    {"_epiworldR_globalevent_fun_cpp",                  (DL_FUNC) &_epiworldR_globalevent_fun_cpp,                   3},
     {"_epiworldR_globalevent_set_param_cpp",            (DL_FUNC) &_epiworldR_globalevent_set_param_cpp,             4},
     {"_epiworldR_globalevent_tool_cpp",                 (DL_FUNC) &_epiworldR_globalevent_tool_cpp,                  4},
     {"_epiworldR_globalevent_tool_logit_cpp",           (DL_FUNC) &_epiworldR_globalevent_tool_logit_cpp,            5},

@@ -58,18 +58,18 @@
 #' plot_incidence(model_sirconn2)
 #' @returns
 #' - The `globalevent_set_params` function returns an object of class
-#' [epiworld_globalevent_set_param] and [epiworld_globalaction].
+#' [epiworld_globalevent_set_param] and [epiworld_globalevent].
 #' 
 #' - `globalevent_tool` returns an object of class 
-#' [epiworld_globalevent_tool] and [epiworld_globalaction].
+#' [epiworld_globalevent_tool] and [epiworld_globalevent].
 #' 
 #' - `globalevent_tool_logit` returns an object of class
-#' [epiworld_globalevent_tool_logit] and [epiworld_globalaction].
+#' [epiworld_globalevent_tool_logit] and [epiworld_globalevent].
 #' @aliases 
 #' epiworld_globalevent_set_param
 #' epiworld_globalevent_tool
 #' epiworld_globalevent_tool_logit
-#' epiworld_globalaction
+#' epiworld_globalevent
 #' actions
 #' 
 globalevent_tool <- function(
@@ -79,10 +79,22 @@ globalevent_tool <- function(
 
   structure(
     globalevent_tool_cpp(tool, prob, name, day),
-    class = c("epiworld_globalevent_tool", "epiworld_globalaction"),
+    class = c("epiworld_globalevent_tool", "epiworld_globalevent"),
     tool = tool,
     call = match.call()
   )
+}
+
+#' @export
+#' @rdname epiworldR-deprecated
+globalaction_tool <- function(...) {
+
+  .Deprecated(
+    new = "globalevent_tool"
+    )  
+
+  globalevent_tool(...)
+  
 }
 
 #' @export
@@ -109,11 +121,23 @@ globalevent_tool_logit <- function(
       name,
       as.integer(day)
       ),
-    class = c("epiworld_globalevent_tool_logit", "epiworld_globalaction"),
+    class = c("epiworld_globalevent_tool_logit", "epiworld_globalevent"),
     tool = tool,
     call = match.call()
   )
 
+}
+
+#' @export
+#' @rdname epiworldR-deprecated
+globalaction_tool_logit <- function(...) {
+
+  .Deprecated(
+    new = "globalevent_tool_logit"
+    )  
+
+  globalevent_tool_logit(...)
+  
 }
 
 #' @export 
@@ -135,21 +159,33 @@ globalevent_set_params <- function(
       name,
       as.integer(day)
       ),
-    class = c("epiworld_globalevent_set_param", "epiworld_globalaction"),
+    class = c("epiworld_globalevent_set_param", "epiworld_globalevent"),
     param = param,
     value = as.double(value),
     call = match.call()
   )
 }
 
+#' @export
+#' @rdname epiworldR-deprecated
+globalaction_set_params <- function(...) {
+
+  .Deprecated(
+    new = "globalevent_set_params"
+    )  
+
+  globalevent_set_params(...)
+  
+}
+
 #' @export 
 #' @rdname global-actions
 #' @param fun Function. The function to be executed.
-#' @details The function `globalaction_fun` allows to specify a function to be
+#' @details The function `globalevent_fun` allows to specify a function to be
 #' executed at a given day. The function object must receive an object of class
 #' [epiworld_model] as only argument.
 #' @examples 
-#' # Example using `globalaction_fun` to record the state of the
+#' # Example using `globalevent_fun` to record the state of the
 #' # agents at each time step.
 #' 
 #' # We start by creating an SIR connected model
@@ -179,13 +215,13 @@ globalevent_set_params <- function(
 #'     )
 #'     
 #' }
-globalaction_fun <- function(
+globalevent_fun <- function(
   fun, name = deparse(substitute(fun)), day = -99
   ) {
 
   structure(
-    globalaction_fun_cpp(fun, name, as.integer(day)),
-    class = c("epiworld_globalaction_fun", "epiworld_globalaction"),
+    globalevent_fun_cpp(fun, name, as.integer(day)),
+    class = c("epiworld_globalevent_fun", "epiworld_globalevent"),
     fun = fun,
     call = match.call()
   )
@@ -193,7 +229,19 @@ globalaction_fun <- function(
 }
 
 #' @export
-print.epiworld_globalaction <- function(x, ...) {
+#' @rdname epiworldR-deprecated
+globalaction_fun <- function(...) {
+
+  .Deprecated(
+    new = "globalevent_fun"
+    )  
+
+  globalevent_fun(...)
+  
+}
+
+#' @export
+print.epiworld_globalevent <- function(x, ...) {
 
   print_global_action_cpp(x)
   cat("Call: ", deparse(attr(x, "call")), "\n")

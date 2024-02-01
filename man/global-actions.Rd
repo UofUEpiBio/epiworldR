@@ -6,11 +6,11 @@
 \alias{epiworld_globalevent_set_param}
 \alias{epiworld_globalevent_tool}
 \alias{epiworld_globalevent_tool_logit}
-\alias{epiworld_globalaction}
+\alias{epiworld_globalevent}
 \alias{actions}
 \alias{globalevent_tool_logit}
 \alias{globalevent_set_params}
-\alias{globalaction_fun}
+\alias{globalevent_fun}
 \alias{add_globalevent}
 \title{Global Actions}
 \usage{
@@ -31,7 +31,7 @@ globalevent_set_params(
   day = -99
 )
 
-globalaction_fun(fun, name = deparse(substitute(fun)), day = -99)
+globalevent_fun(fun, name = deparse(substitute(fun)), day = -99)
 
 add_globalevent(model, action)
 }
@@ -61,11 +61,11 @@ add_globalevent(model, action)
 \value{
 \itemize{
 \item The \code{globalevent_set_params} function returns an object of class
-\link{epiworld_globalevent_set_param} and \link{epiworld_globalaction}.
+\link{epiworld_globalevent_set_param} and \link{epiworld_globalevent}.
 \item \code{globalevent_tool} returns an object of class
-\link{epiworld_globalevent_tool} and \link{epiworld_globalaction}.
+\link{epiworld_globalevent_tool} and \link{epiworld_globalevent}.
 \item \code{globalevent_tool_logit} returns an object of class
-\link{epiworld_globalevent_tool_logit} and \link{epiworld_globalaction}.
+\link{epiworld_globalevent_tool_logit} and \link{epiworld_globalevent}.
 }
 
 \itemize{
@@ -89,7 +89,7 @@ The function \code{globalevent_set_param} allows to set a parameter of
 the model. The parameter is specified by its name \code{param} and the value by
 \code{value}.
 
-The function \code{globalaction_fun} allows to specify a function to be
+The function \code{globalevent_fun} allows to specify a function to be
 executed at a given day. The function object must receive an object of class
 \link{epiworld_model} as only argument.
 
@@ -146,7 +146,7 @@ add_globalevent(model_sirconn2, closure_day_10)
 run(model_sirconn2, ndays = 40, seed = 1912)
 model_sirconn2
 plot_incidence(model_sirconn2)
-# Example using `globalaction_fun` to record the state of the
+# Example using `globalevent_fun` to record the state of the
 # agents at each time step.
 
 # We start by creating an SIR connected model

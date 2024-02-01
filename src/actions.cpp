@@ -119,7 +119,7 @@ SEXP rm_globalevent_cpp(
 }
 
 [[cpp11::register]]
-SEXP globalaction_fun_cpp(
+SEXP globalevent_fun_cpp(
     cpp11::function fun,
     std::string name,
     int day

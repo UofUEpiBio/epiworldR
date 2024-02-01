@@ -24,8 +24,8 @@ rm_globalevent_cpp <- function(model, name) {
   .Call(`_epiworldR_rm_globalevent_cpp`, model, name)
 }
 
-globalaction_fun_cpp <- function(fun, name, day) {
-  .Call(`_epiworldR_globalaction_fun_cpp`, fun, name, day)
+globalevent_fun_cpp <- function(fun, name, day) {
+  .Call(`_epiworldR_globalevent_fun_cpp`, fun, name, day)
 }
 
 get_agents_cpp <- function(model) {
