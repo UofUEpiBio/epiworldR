@@ -191,7 +191,7 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     if (nvariants > 0)
     {
 
-        printf_epiworld(" ...and %li more variants...\n", nvariants);
+        printf_epiworld(" ...and %i more variants...\n", static_cast<int>(nvariants));
 
     }
 
@@ -207,7 +207,10 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
 
         if ((n_tools_model > 10) && (i >= 10))
         {
-            printf_epiworld(" ...and %li more tools...\n", n_tools_model - i);
+            printf_epiworld(
+                " ...and %i more tools...\n",
+                static_cast<int>(n_tools_model) - static_cast<int>(i)
+                );
             break;
         }
 
