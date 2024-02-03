@@ -145,7 +145,10 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
 
         if ((n_viruses_model > 10) && (i >= 10))
         {
-            printf_epiworld(" ...and %li more viruses...\n", n_viruses_model - i);
+            printf_epiworld(" ...and %i more viruses...\n",
+                static_cast<int>(n_viruses_model) - 
+                static_cast<int>(i)
+                );
             break;
         }
 
