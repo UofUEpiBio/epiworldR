@@ -2,21 +2,21 @@
 % Please edit documentation in R/global-actions.R
 \name{global-actions}
 \alias{global-actions}
-\alias{globalaction_tool}
-\alias{epiworld_globalaction_set_param}
-\alias{epiworld_globalaction_tool}
-\alias{epiworld_globalaction_tool_logit}
-\alias{epiworld_globalaction}
+\alias{globalevent_tool}
+\alias{epiworld_globalevent_set_param}
+\alias{epiworld_globalevent_tool}
+\alias{epiworld_globalevent_tool_logit}
+\alias{epiworld_globalevent}
 \alias{actions}
-\alias{globalaction_tool_logit}
-\alias{globalaction_set_params}
-\alias{globalaction_fun}
-\alias{add_global_action}
+\alias{globalevent_tool_logit}
+\alias{globalevent_set_params}
+\alias{globalevent_fun}
+\alias{add_globalevent}
 \title{Global Actions}
 \usage{
-globalaction_tool(tool, prob, name = get_name_tool(tool), day = -99)
+globalevent_tool(tool, prob, name = get_name_tool(tool), day = -99)
 
-globalaction_tool_logit(
+globalevent_tool_logit(
   tool,
   vars,
   coefs,
@@ -24,16 +24,16 @@ globalaction_tool_logit(
   day = -99
 )
 
-globalaction_set_params(
+globalevent_set_params(
   param,
   value,
   name = paste0("Set ", param, " to ", value),
   day = -99
 )
 
-globalaction_fun(fun, name = deparse(substitute(fun)), day = -99)
+globalevent_fun(fun, name = deparse(substitute(fun)), day = -99)
 
-add_global_action(model, action)
+add_globalevent(model, action)
 }
 \arguments{
 \item{tool}{An object of class \link{tool}.}
@@ -60,16 +60,16 @@ add_global_action(model, action)
 }
 \value{
 \itemize{
-\item The \code{globalaction_set_params} function returns an object of class
-\link{epiworld_globalaction_set_param} and \link{epiworld_globalaction}.
-\item \code{globalaction_tool} returns an object of class
-\link{epiworld_globalaction_tool} and \link{epiworld_globalaction}.
-\item \code{globalaction_tool_logit} returns an object of class
-\link{epiworld_globalaction_tool_logit} and \link{epiworld_globalaction}.
+\item The \code{globalevent_set_params} function returns an object of class
+\link{epiworld_globalevent_set_param} and \link{epiworld_globalevent}.
+\item \code{globalevent_tool} returns an object of class
+\link{epiworld_globalevent_tool} and \link{epiworld_globalevent}.
+\item \code{globalevent_tool_logit} returns an object of class
+\link{epiworld_globalevent_tool_logit} and \link{epiworld_globalevent}.
 }
 
 \itemize{
-\item The function \code{add_global_action} returns the model with the added
+\item The function \code{add_globalevent} returns the model with the added
 action.
 }
 }
@@ -79,21 +79,21 @@ simulation. They are useful for implementing interventions, such as
 vaccination, isolation, and social distancing by means of tools.
 }
 \details{
-The function \code{globalaction_tool_logit} allows to specify a logistic
+The function \code{globalevent_tool_logit} allows to specify a logistic
 regression model for the probability of using a tool. The model is specified
 by the vector of coefficients \code{coefs} and the vector of variables \code{vars}.
 \code{vars} is an integer vector indicating the position of the variables in the
 model.
 
-The function \code{globalaction_set_param} allows to set a parameter of
+The function \code{globalevent_set_param} allows to set a parameter of
 the model. The parameter is specified by its name \code{param} and the value by
 \code{value}.
 
-The function \code{globalaction_fun} allows to specify a function to be
+The function \code{globalevent_fun} allows to specify a function to be
 executed at a given day. The function object must receive an object of class
 \link{epiworld_model} as only argument.
 
-The function \code{add_global_action} adds a global action to a model.
+The function \code{add_globalevent} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
 action matches the current time step, the action is executed. When \code{day} is
 negative, the action is executed at each time step. When \code{day} is positive,
@@ -121,8 +121,8 @@ epitool <- tool(
 
 
 # Adding a global action
-vaccine_day_20 <- globalaction_tool(epitool, .2, day = 20)
-add_global_action(model_sirconn, vaccine_day_20)
+vaccine_day_20 <- globalevent_tool(epitool, .2, day = 20)
+add_globalevent(model_sirconn, vaccine_day_20)
 
 # Running and printing
 run(model_sirconn, ndays = 40, seed = 1912)
@@ -139,14 +139,14 @@ model_sirconn2 <- ModelSIRCONN(
   recovery_rate       = 0.95
 )
 
-closure_day_10 <- globalaction_set_params("Contact rate", 0, day = 10)
-add_global_action(model_sirconn2, closure_day_10)
+closure_day_10 <- globalevent_set_params("Contact rate", 0, day = 10)
+add_globalevent(model_sirconn2, closure_day_10)
 
 # Running and printing
 run(model_sirconn2, ndays = 40, seed = 1912)
 model_sirconn2
 plot_incidence(model_sirconn2)
-# Example using `globalaction_fun` to record the state of the
+# Example using `globalevent_fun` to record the state of the
 # agents at each time step.
 
 # We start by creating an SIR connected model

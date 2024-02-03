@@ -8,7 +8,7 @@ inline void Entity<TSeq>::add_agent(
     )
 {
 
-    // Need to add it to the actions, through the individual
+    // Need to add it to the events, through the individual
     p.add_entity(*this, model);    
 
 }

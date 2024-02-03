@@ -9,7 +9,7 @@ using namespace epiworld;
 using namespace cpp11;
 
 [[cpp11::register]]
-SEXP globalaction_tool_logit_cpp(
+SEXP globalevent_tool_logit_cpp(
     SEXP tool,
     std::vector< int > vars,
     std::vector< double > coefs,
@@ -19,14 +19,14 @@ SEXP globalaction_tool_logit_cpp(
 
     std::vector< size_t > vars_size_t(vars.begin(), vars.end());
 
-    GlobalFun<int> action(epimodels::globalaction_tool_logit<int>(
+    GlobalFun<int> action(epimodels::globalevent_tool_logit<int>(
         *cpp11::external_pointer<Tool<int>>(tool),
         vars_size_t,
         coefs
     ));
 
-    cpp11::external_pointer<GlobalAction<int>> ptr(
-        new GlobalAction<int>(action, name, day)
+    cpp11::external_pointer<GlobalEvent<int>> ptr(
+        new GlobalEvent<int>(action, name, day)
     );
     
     return ptr;
@@ -34,20 +34,20 @@ SEXP globalaction_tool_logit_cpp(
 }
 
 [[cpp11::register]]
-SEXP globalaction_tool_cpp(
+SEXP globalevent_tool_cpp(
     SEXP tool,
     double prob,
     std::string name,
     int day
 ) {
 
-    GlobalFun<int> action(epimodels::globalaction_tool<int>(
+    GlobalFun<int> action(epimodels::globalevent_tool<int>(
         *cpp11::external_pointer<Tool<int>>(tool),
         prob
     ));
     
-    cpp11::external_pointer<GlobalAction<int>> ptr(
-        new GlobalAction<int>(action, name, day)
+    cpp11::external_pointer<GlobalEvent<int>> ptr(
+        new GlobalEvent<int>(action, name, day)
     );
     
     return ptr;
@@ -55,20 +55,20 @@ SEXP globalaction_tool_cpp(
 }
 
 [[cpp11::register]]
-SEXP globalaction_set_param_cpp(
+SEXP globalevent_set_param_cpp(
     std::string param,
     double value,
     std::string name,
     int day
 ) {
 
-    GlobalFun<int> action(epimodels::globalaction_set_param<int>(
+    GlobalFun<int> action(epimodels::globalevent_set_param<int>(
         param,
         value
     ));
     
-    cpp11::external_pointer<GlobalAction<int>> ptr(
-        new GlobalAction<int>(action, name, day)
+    cpp11::external_pointer<GlobalEvent<int>> ptr(
+        new GlobalEvent<int>(action, name, day)
     );
     
     return ptr;
@@ -80,7 +80,7 @@ SEXP print_global_action_cpp(
     SEXP action
 ) {
   
-  external_pointer<GlobalAction<int>> actionptr(action);
+  external_pointer<GlobalEvent<int>> actionptr(action);
   
   actionptr->print();
   
@@ -90,36 +90,36 @@ SEXP print_global_action_cpp(
 
 
 [[cpp11::register]]
-SEXP add_global_action_cpp(
+SEXP add_globalevent_cpp(
     SEXP model,
     SEXP action
 ) {
   
   external_pointer<Model<int>> modelptr(model);
-  external_pointer<GlobalAction<int>> actionptr(action);
+  external_pointer<GlobalEvent<int>> actionptr(action);
   
-  modelptr->add_global_action(*actionptr);
+  modelptr->add_globalevent(*actionptr);
   
   return model;
   
 }
 
 [[cpp11::register]]
-SEXP rm_global_action_cpp(
+SEXP rm_globalevent_cpp(
     SEXP model,
     std::string name
 ) {
   
   external_pointer<Model<int>> modelptr(model);
   
-  modelptr->rm_global_action(name);
+  modelptr->rm_globalevent(name);
   
   return model;
   
 }
 
 [[cpp11::register]]
-SEXP globalaction_fun_cpp(
+SEXP globalevent_fun_cpp(
     cpp11::function fun,
     std::string name,
     int day
@@ -138,8 +138,8 @@ SEXP globalaction_fun_cpp(
 
   };
   
-  return external_pointer<GlobalAction<int>>(
-    new GlobalAction<int>(fun_call, name, day)
+  return external_pointer<GlobalEvent<int>>(
+    new GlobalEvent<int>(fun_call, name, day)
   );
   
   

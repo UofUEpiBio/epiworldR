@@ -333,7 +333,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_virus_n(covid, prevalence);
 
     model.set_user_data({"nsampled", "ndetected", "ndetected_asympt", "nasymptomatic"});
-    model.add_global_action(surveillance_program, "Surveilance program", -1);
+    model.add_globalevent(surveillance_program, "Surveilance program", -1);
    
     // Vaccine tool -----------------------------------------------------------
     epiworld::Tool<TSeq> vax("Vaccine");

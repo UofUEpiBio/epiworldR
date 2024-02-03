@@ -287,7 +287,7 @@ inline ModelSEIRCONNLogit<TSeq>::ModelSEIRCONNLogit(
     model.add_virus(virus, prevalence);
 
     // Adding updating function
-    model.add_global_action(global_accounting, "Accounting", -1);
+    model.add_globalevent(global_accounting, "Accounting", -1);
 
     model.queuing_off(); // No queuing need
 

@@ -26,7 +26,7 @@ template<typename TSeq>
 class Queue;
 
 template<typename TSeq>
-struct Action;
+struct Event;
 
 template<typename TSeq>
 class Entity;
@@ -35,25 +35,25 @@ template<typename TSeq>
 class Entities;
 
 template<typename TSeq>
-inline void default_add_virus(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_add_tool(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_add_entity(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_add_entity(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_rm_virus(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_rm_tool(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_rm_entity(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
-inline void default_change_state(Action<TSeq> & a, Model<TSeq> * m);
+inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m);
 
 
 
@@ -72,13 +72,13 @@ class Agent {
     friend class Queue<TSeq>;
     friend class Entities<TSeq>;
     friend class AgentsSample<TSeq>;
-    friend void default_add_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_entity<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_virus<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_entity<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_change_state<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_change_state<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
     
     Model<TSeq> * model;

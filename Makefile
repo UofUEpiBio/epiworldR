@@ -34,7 +34,7 @@ local-update:
 	rsync -avz ../epiworld/include/epiworld inst/include/.
 
 check: build
-	R CMD check epiworldR_*.tar.gz
+	cd .. && R CMD check epiworldR_*.tar.gz
 
 clean: 
 	Rscript --vanilla -e 'devtools::clean_dll()'

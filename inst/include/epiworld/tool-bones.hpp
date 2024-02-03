@@ -23,8 +23,8 @@ template<typename TSeq>
 class Tool {
     friend class Agent<TSeq>;
     friend class Model<TSeq>;
-    friend void default_add_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_tool<TSeq>(Action<TSeq> & a, Model<TSeq> * m);
+    friend void default_add_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
+    friend void default_rm_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
 
     Agent<TSeq> * agent = nullptr;

@@ -88,10 +88,10 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 using GlobalFun = std::function<void(Model<TSeq>*)>;
 
 template<typename TSeq>
-struct Action;
+struct Event;
 
 template<typename TSeq>
-using ActionFun = std::function<void(Action<TSeq>&,Model<TSeq>*)>;
+using ActionFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Decides how to distribute viruses at initialization
@@ -112,12 +112,12 @@ template<typename TSeq>
 using EntityToAgentFun = std::function<void(Entity<TSeq>&,Model<TSeq>*)>;
 
 /**
- * @brief Action data for update an agent
+ * @brief Event data for update an agent
  * 
  * @tparam TSeq 
  */
 template<typename TSeq>
-struct Action {
+struct Event {
     Agent<TSeq> * agent;
     VirusPtr<TSeq> virus;
     ToolPtr<TSeq> tool;
@@ -129,7 +129,7 @@ struct Action {
     int idx_object;
 public:
 /**
-     * @brief Construct a new Action object
+     * @brief Construct a new Event object
      * 
      * All the parameters are rather optional.
      * 
@@ -144,7 +144,7 @@ public:
      * @param idx_agent_ Location of agent in object.
      * @param idx_object_ Location of object in agent.
      */
-    Action(
+    Event(
         Agent<TSeq> * agent_,
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
