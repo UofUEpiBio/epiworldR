@@ -65,9 +65,9 @@ vaccination, isolation, and social distancing by means of tools.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span>, name <span class="op">=</span> <span class="fu"><a href="tool.html">get_name_tool</a></span><span class="op">(</span><span class="va">tool</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">globalevent_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">prob</span>, name <span class="op">=</span> <span class="fu"><a href="tool.html">get_name_tool</a></span><span class="op">(</span><span class="va">tool</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">globalaction_tool_logit</span><span class="op">(</span></span>
+<span><span class="fu">globalevent_tool_logit</span><span class="op">(</span></span>
 <span>  <span class="va">tool</span>,</span>
 <span>  <span class="va">vars</span>,</span>
 <span>  <span class="va">coefs</span>,</span>
@@ -75,16 +75,16 @@ vaccination, isolation, and social distancing by means of tools.</p>
 <span>  day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">globalaction_set_params</span><span class="op">(</span></span>
+<span><span class="fu">globalevent_set_params</span><span class="op">(</span></span>
 <span>  <span class="va">param</span>,</span>
 <span>  <span class="va">value</span>,</span>
 <span>  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Set "</span>, <span class="va">param</span>, <span class="st">" to "</span>, <span class="va">value</span><span class="op">)</span>,</span>
 <span>  day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">globalaction_fun</span><span class="op">(</span><span class="va">fun</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/deparse.html" class="external-link">deparse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">substitute</a></span><span class="op">(</span><span class="va">fun</span><span class="op">)</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
+<span><span class="fu">globalevent_fun</span><span class="op">(</span><span class="va">fun</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/deparse.html" class="external-link">deparse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/substitute.html" class="external-link">substitute</a></span><span class="op">(</span><span class="va">fun</span><span class="op">)</span><span class="op">)</span>, day <span class="op">=</span> <span class="op">-</span><span class="fl">99</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model</span>, <span class="va">action</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">add_globalevent</span><span class="op">(</span><span class="va">model</span>, <span class="va">action</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -137,29 +137,29 @@ vaccination, isolation, and social distancing by means of tools.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<ul><li><p>The <code>globalaction_set_params</code> function returns an object of class
-epiworld_globalaction_set_param and epiworld_globalaction.</p></li>
-<li><p><code>globalaction_tool</code> returns an object of class
-epiworld_globalaction_tool and epiworld_globalaction.</p></li>
-<li><p><code>globalaction_tool_logit</code> returns an object of class
-epiworld_globalaction_tool_logit and epiworld_globalaction.</p></li>
-</ul><ul><li><p>The function <code>add_global_action</code> returns the model with the added
+<ul><li><p>The <code>globalevent_set_params</code> function returns an object of class
+epiworld_globalevent_set_param and epiworld_globalevent.</p></li>
+<li><p><code>globalevent_tool</code> returns an object of class
+epiworld_globalevent_tool and epiworld_globalevent.</p></li>
+<li><p><code>globalevent_tool_logit</code> returns an object of class
+epiworld_globalevent_tool_logit and epiworld_globalevent.</p></li>
+</ul><ul><li><p>The function <code>add_globalevent</code> returns the model with the added
 action.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function <code>globalaction_tool_logit</code> allows to specify a logistic
+    <p>The function <code>globalevent_tool_logit</code> allows to specify a logistic
 regression model for the probability of using a tool. The model is specified
 by the vector of coefficients <code>coefs</code> and the vector of variables <code>vars</code>.
 <code>vars</code> is an integer vector indicating the position of the variables in the
 model.</p>
-<p>The function <code>globalaction_set_param</code> allows to set a parameter of
+<p>The function <code>globalevent_set_param</code> allows to set a parameter of
 the model. The parameter is specified by its name <code>param</code> and the value by
 <code>value</code>.</p>
-<p>The function <code>globalaction_fun</code> allows to specify a function to be
+<p>The function <code>globalevent_fun</code> allows to specify a function to be
 executed at a given day. The function object must receive an object of class
 <a href="epiworld-methods.html">epiworld_model</a> as only argument.</p>
-<p>The function <code>add_global_action</code> adds a global action to a model.
+<p>The function <code>add_globalevent</code> adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added
 action matches the current time step, the action is executed. When <code>day</code> is
 negative, the action is executed at each time step. When <code>day</code> is positive,
@@ -193,8 +193,8 @@ the action is executed at the specified time step.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a global action</span></span></span>
-<span class="r-in"><span><span class="va">vaccine_day_20</span> <span class="op">&lt;-</span> <span class="fu">globalaction_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">.2</span>, day <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">vaccine_day_20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vaccine_day_20</span> <span class="op">&lt;-</span> <span class="fu">globalevent_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">.2</span>, day <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">add_globalevent</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">vaccine_day_20</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">40</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
@@ -221,8 +221,8 @@ the action is executed at the specified time step.</p>
 <span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.95</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">closure_day_10</span> <span class="op">&lt;-</span> <span class="fu">globalaction_set_params</span><span class="op">(</span><span class="st">"Contact rate"</span>, <span class="fl">0</span>, day <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">add_global_action</span><span class="op">(</span><span class="va">model_sirconn2</span>, <span class="va">closure_day_10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">closure_day_10</span> <span class="op">&lt;-</span> <span class="fu">globalevent_set_params</span><span class="op">(</span><span class="st">"Contact rate"</span>, <span class="fl">0</span>, day <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">add_globalevent</span><span class="op">(</span><span class="va">model_sirconn2</span>, <span class="va">closure_day_10</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn2</span>, ndays <span class="op">=</span> <span class="fl">40</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
@@ -238,7 +238,7 @@ the action is executed at the specified time step.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 2127 Susceptible, 0 Infected, and 7873 Recovered.</span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">model_sirconn2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="global-actions-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="co"># Example using `globalaction_fun` to record the state of the</span></span></span>
+<span class="r-in"><span><span class="co"># Example using `globalevent_fun` to record the state of the</span></span></span>
 <span class="r-in"><span><span class="co"># agents at each time step.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># We start by creating an SIR connected model</span></span></span>
