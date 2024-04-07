@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0-4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,13 +68,7 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><div class="section level2">
-<h2 id="versions">Versions<a class="anchor" aria-label="anchor" href="#versions"></a>
-</h2>
-<p>The virtual INSNA Sunbelt 2023 session can be found here: <a href="https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual" class="external-link uri">https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual</a></p>
-<p>The in-person INSNA Sunbelt 2023 session can be found here: <a href="https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson" class="external-link uri">https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson</a></p>
-</div>
-<div class="section level1">
+  <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="epiworldr">epiworldR<a class="anchor" aria-label="anchor" href="#epiworldr"></a>
 </h1></div>
 <!-- badges: start -->
@@ -148,11 +142,11 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 456.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 10.94 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 141.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 35.22 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Global actions:</span></span>
+<span><span class="co">#&gt; Global events:</span></span>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
@@ -214,26 +208,26 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-2.png" width="100%"></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg  n       sd lb    ub</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_incidence</span>(model_seirconn)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg  n       sd lb    ub</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30</span></span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65</span></span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00</span></span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40</span></span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65</span></span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a><span class="fu">plot_incidence</span>(model_seirconn)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-3.png" width="100%"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/epiworld-data.html">plot_generation_time</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-4-4.png" width="100%"></p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
@@ -292,16 +286,16 @@
 <span><span class="co"># Looking into the agents</span></span>
 <span><span class="fu"><a href="reference/get_agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span></span>
-<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0, NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
 <span><span class="co">#&gt; ... 99990 more agents ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -330,13 +324,13 @@
 <span></span>
 <span><span class="co"># Plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: grid</span></span>
 <span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span><span class="fu">nplot</span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/netplot/man/nplot.html" class="external-link">nplot</a></span><span class="op">(</span><span class="va">x</span>, edge.curvature <span class="op">=</span> <span class="fl">0</span>, edge.color <span class="op">=</span> <span class="st">"gray"</span>, skip.vertex<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-transmission-net-1.png" width="100%"></p>
 </div>
 <div class="section level2">
@@ -387,6 +381,35 @@
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-6-1.png" width="100%"></p>
 </div>
+</div>
+<div class="section level1">
+<h1 id="tutorials">Tutorials<a class="anchor" aria-label="anchor" href="#tutorials"></a>
+</h1>
+<ul>
+<li><p>The virtual INSNA Sunbelt 2023 session can be found here: <a href="https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual" class="external-link uri">https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual</a></p></li>
+<li><p>The in-person INSNA Sunbelt 2023 session can be found here: <a href="https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson" class="external-link uri">https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson</a></p></li>
+</ul>
+</div>
+<div class="section level1">
+<h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h1>
+<p>If you use <code>epiworldR</code> in your research, please cite it as follows:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"epiworldR"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; To cite epiworldR in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Meyer, Derek and Vega Yon, George (2023). epiworldR: Fast Agent-Based</span></span>
+<span><span class="co">#&gt;   Epi Models. Journal of Open Source Software, 8(90), 5781,</span></span>
+<span><span class="co">#&gt;   https://doi.org/10.21105/joss.05781</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; And the actual R package:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.</span></span>
+<span><span class="co">#&gt;   R package version 0.1-0, &lt;https://github.com/UofUEpiBio/epiworldR&gt;.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; To see these entries in BibTeX format, use 'print(&lt;citation&gt;,</span></span>
+<span><span class="co">#&gt; bibtex=TRUE)', 'toBibtex(.)', or set</span></span>
+<span><span class="co">#&gt; 'options(citation.bibtex.max=999)'.</span></span></code></pre></div>
 </div>
 <div class="section level1">
 <h1 id="existing-alternatives">Existing Alternatives<a class="anchor" aria-label="anchor" href="#existing-alternatives"></a>
