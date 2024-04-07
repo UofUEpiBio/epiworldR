@@ -15,7 +15,7 @@ install-dev: clean
 	sed -i -E 's/@useDynLib\s+[a-zA-Z]+/@useDynLib epiworldRdev/g' R/epiworldR-package.R
 	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldRdev/g' NAMESPACE
 	sed -i -E 's/^Package:.+/Package: epiworldRdev/g' DESCRIPTION 
-	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldRdev)/g' README.*
+	sed -i -E 's/^library\(epiworldR\)/library(epiworldRdev)/g' README.*
 	Rscript --vanilla -e 'roxygen2::roxygenize()'
 	EPI_DEV=yes R CMD INSTALL .& $(MAKE) clean
 
@@ -42,7 +42,7 @@ clean:
 	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldR/g' NAMESPACE
 	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
 	# sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' man/epiworldR-package.Rd
-	sed -i -E 's/^library\([a-zA-Z]+\)/library(epiworldR)/g' README.*
+	sed -i -E 's/^library\(epiworldRdev\)/library(epiworldR)/g' README.*
 
 docs:
 	Rscript --vanilla -e 'devtools::document()'

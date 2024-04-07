@@ -244,6 +244,14 @@ plot(ans$reproductive)
 https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson
 
 
+# Citation
+
+If you use `epiworldR` in your research, please cite it as follows:
+
+```{r}
+citation("epiworldR")
+```
+
 # Existing Alternatives
 
 Several alternatives to `epiworldR` exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].

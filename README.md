@@ -119,8 +119,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 155.00ms
-#> Last run speed      : 32.12 million agents x day / second
+#> Last run elapsed t  : 141.00ms
+#> Last run speed      : 35.22 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -411,6 +411,28 @@ plot(ans$reproductive)
 
 - The in-person INSNA Sunbelt 2023 session can be found here:
   <https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson>
+
+# Citation
+
+If you use `epiworldR` in your research, please cite it as follows:
+
+``` r
+citation("epiworldR")
+#> To cite epiworldR in publications use:
+#> 
+#>   Meyer, Derek and Vega Yon, George (2023). epiworldR: Fast Agent-Based
+#>   Epi Models. Journal of Open Source Software, 8(90), 5781,
+#>   https://doi.org/10.21105/joss.05781
+#> 
+#> And the actual R package:
+#> 
+#>   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.
+#>   R package version 0.1-0, <https://github.com/UofUEpiBio/epiworldR>.
+#> 
+#> To see these entries in BibTeX format, use 'print(<citation>,
+#> bibtex=TRUE)', 'toBibtex(.)', or set
+#> 'options(citation.bibtex.max=999)'.
+```
 
 # Existing Alternatives
 

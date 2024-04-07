@@ -1,4 +1,4 @@
-# epiworldR 0.0-9999 (development version)
+# epiworldR 0.1-0`
 
 * Force model to update agents' states when running a simulation.
   This was causing issues when calling `run_multiple()` after a single
