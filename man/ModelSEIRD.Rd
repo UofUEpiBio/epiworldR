@@ -81,16 +81,16 @@ epiworld-methods
 
 Other Models: 
 \code{\link{ModelDiffNet}()},
+\code{\link{ModelSEIR}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRDCONN}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSIRCONN}()},
-\code{\link{ModelSIRDCONN}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIR}()},
-\code{\link{ModelSISD}()},
+\code{\link{ModelSIRCONN}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIRDCONN}()},
+\code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIS}()},
+\code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
 }
