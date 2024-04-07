@@ -2039,21 +2039,19 @@ inline void Model<TSeq>::reset() {
         }
         #endif
 
-    } 
-    else
-    {
-        for (auto & p : population)
-            p.reset();
-
-        #ifdef EPI_DEBUG
-        for (auto & a: population)
-        {
-            if (a.get_state() != 0u)
-                throw std::logic_error("Model::reset population doesn't match."
-                    "Some agents are not in the baseline state.");
-        }
-        #endif
     }
+
+    for (auto & p : population)
+        p.reset();
+
+    #ifdef EPI_DEBUG
+    for (auto & a: population)
+    {
+        if (a.get_state() != 0u)
+            throw std::logic_error("Model::reset population doesn't match."
+                "Some agents are not in the baseline state.");
+    }
+    #endif
         
     if (entities_backup.size() != 0)
     {

@@ -13,12 +13,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Versions
-The virtual INSNA Sunbelt 2023 session can be found here: https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual
-
-The in-person INSNA Sunbelt 2023 session can be found here:
-https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson
-
 # epiworldR 
 
 <!-- badges: start -->
@@ -205,7 +199,7 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
-library(epiworldR)
+library(netplot)
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
   )
@@ -241,6 +235,14 @@ head(ans$reproductive)
 
 plot(ans$reproductive)
 ```
+
+# Tutorials
+
+- The virtual INSNA Sunbelt 2023 session can be found here: https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual
+
+- The in-person INSNA Sunbelt 2023 session can be found here:
+https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson
+
 
 # Existing Alternatives
 

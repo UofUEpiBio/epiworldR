@@ -3,6 +3,34 @@
 #ifndef EPIWORLD_MODELS_SIRLOGIT_HPP 
 #define EPIWORLD_MODELS_SIRLOGIT_HPP
 
+
+/**
+ * @brief Template for a Susceptible-Infected-Removed (SIR) model
+ * 
+ * @details
+ * In this model, infection and recoveru probabilities are computed
+ * using a logit model. Particularly, the probability of infection
+ * is computed as:
+ * 
+ * \f[
+ * \frac{1}{1 + \exp\left(-\left(\beta_0 E_i + \sum_{i=1}^{n} \beta_i x_i\right)\right)}
+ * \f]
+ * 
+ * where \f$\beta_0\f$ is the exposure coefficient and \f$E_i\f$ is the exposure
+ * number, \f$\beta_i\f$ are the
+ * coefficients for the features \f$x_i\f$ of the agents, and \f$n\f$ is the
+ * number of features. The probability of recovery is computed as:
+ * 
+ * \f[
+ * \frac{1}{1 + \exp\left(-\left(\sum_{i=1}^{n} \beta_i x_i\right)\right)}
+ * \f]
+ * 
+ * where \f$\beta_i\f$ are the coefficients for the features \f$x_i\f$ of the agents,
+ * and \f$n\f$ is the number of features.
+ * 
+ * @param TSeq Type of the sequence (e.g. std::vector, std::deque)
+ 
+*/
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRLogit : public epiworld::Model<TSeq>
 {

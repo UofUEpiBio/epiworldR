@@ -1,14 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-## Versions
-
-The virtual INSNA Sunbelt 2023 session can be found here:
-<https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual>
-
-The in-person INSNA Sunbelt 2023 session can be found here:
-<https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson>
-
 # epiworldR
 
 <!-- badges: start -->
@@ -127,11 +119,11 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 456.00ms
-#> Last run speed      : 10.94 million agents x day / second
+#> Last run elapsed t  : 155.00ms
+#> Last run speed      : 32.12 million agents x day / second
 #> Rewiring            : off
 #> 
-#> Global actions:
+#> Global events:
 #>  (none)
 #> 
 #> Virus(es):
@@ -303,16 +295,16 @@ rn <- get_reproductive_number(model_logit)
 # Looking into the agents
 get_agents(model_logit)
 #> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
-#> Agent: 0, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 6, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 7, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0, NNeigh: 8
-#> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0, NNeigh: 8
+#> Agent: 0, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 6, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 7, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
 #> ... 99990 more agents ...
 ```
 
@@ -346,7 +338,7 @@ net <- get_transmissions(sir)
 
 # Plotting
 library(epiworldR)
-library(epiworldR)
+library(netplot)
 #> Loading required package: grid
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
@@ -411,6 +403,14 @@ plot(ans$reproductive)
 ```
 
 <img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+
+# Tutorials
+
+- The virtual INSNA Sunbelt 2023 session can be found here:
+  <https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbelt2023-virtual>
+
+- The in-person INSNA Sunbelt 2023 session can be found here:
+  <https://github.com/UofUEpiBio/epiworldR-workshop/tree/sunbetl2023-inperson>
 
 # Existing Alternatives
 

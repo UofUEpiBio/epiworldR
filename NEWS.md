@@ -1,4 +1,11 @@
-# epiworldR 0.0-3.9000 (development version)
+# epiworldR 0.0-9999 (development version)
+
+* Force model to update agents' states when running a simulation.
+  This was causing issues when calling `run_multiple()` after a single
+  call of `run()`. Reported on [14](https://github.com/UofUEpiBio/epiworldR/issues/14).
+
+
+# epiworldR 0.0-4
 
 * Added missing checks of tool class when adding a model with `add_too_n`.
 

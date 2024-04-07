@@ -83,6 +83,13 @@ inline LFMCMCProposalFun<TData> make_proposal_norm_reflective(
 
         }
 
+        #ifdef EPI_DEBUG
+        for (auto & p : params_now)
+            if (p < lb || p > ub)
+                throw std::range_error("The parameter is out of bounds.");
+        #endif
+
+
         return;
 
     };
