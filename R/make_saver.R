@@ -164,10 +164,10 @@ run_multiple_get_results <- function(m) {
         i, ", there were no observations."
         )
 
-      class(output[[i]]) <- structure(
-        data.frame(),
-        c("epiworld_multiple_save_i")
-      )
+      class(output[[i]]) <- c(
+        "epiworld_multiple_save_i",
+        class(output[[i]])
+        )
 
     }
 
