@@ -1578,7 +1578,11 @@ inline void Model<TSeq>::run_multiple(
     std::function<void(size_t,Model<TSeq>*)> fun,
     bool reset,
     bool verbose,
+    #ifdef _OPENMP
     int nthreads
+    #else
+    int
+    #endif
 )
 {
 
