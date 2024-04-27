@@ -120,7 +120,6 @@ SEXP ModelSIS_cpp(
 SEXP ModelSIRCONN_cpp(
     std::string name,
     unsigned int n,
-    
     double prevalence,
     double contact_rate,
     double transmission_rate, 
@@ -435,3 +434,60 @@ SEXP ModelDiffNet_cpp(
   
 }
 
+[[cpp11::register]]
+SEXP ModelSIRMixing_cpp(
+    std::string name,
+    unsigned int n,
+    double prevalence,
+    double contact_rate,
+    double transmission_rate,
+    double recovery_rate,
+    std::vector< double > contact_matrix
+) {
+  
+  // Creating a pointer to a ModelSIRMixing model
+  cpp11::external_pointer<epiworld::epimodels::ModelSIRMixing<>> ptr(
+      new epiworld::epimodels::ModelSIRMixing<>(
+          name,
+          n,
+          prevalence,
+          contact_rate,
+          transmission_rate,
+          recovery_rate,
+          contact_matrix
+      )
+  );
+  
+  return ptr;
+
+}
+
+[[cpp11::register]]
+SEXP ModelSEIRMixing_cpp(
+    std::string name,
+    unsigned int n,
+    double prevalence,
+    double contact_rate,
+    double transmission_rate,
+    double incubation_days,
+    double recovery_rate,
+    std::vector< double > contact_matrix
+) {
+  
+  // Creating a pointer to a ModelSIRMixing model
+  cpp11::external_pointer<epiworld::epimodels::ModelSEIRMixing<>> ptr(
+      new epiworld::epimodels::ModelSEIRMixing<>(
+          name,
+          n,
+          prevalence,
+          contact_rate,
+          transmission_rate,
+          incubation_days,
+          recovery_rate,
+          contact_matrix
+      )
+  );
+  
+  return ptr;
+  
+}

@@ -278,6 +278,20 @@ extern "C" SEXP _epiworldR_ModelDiffNet_cpp(SEXP name, SEXP prevalence, SEXP pro
     return cpp11::as_sexp(ModelDiffNet_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(prob_adopt), cpp11::as_cpp<cpp11::decay_t<bool>>(normalize_exposure), cpp11::as_cpp<cpp11::decay_t<SEXP>>(data), cpp11::as_cpp<cpp11::decay_t<int>>(data_ncols), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(data_cols), cpp11::as_cpp<cpp11::decay_t<std::vector<double>>>(params)));
   END_CPP11
 }
+// epimodels.cpp
+SEXP ModelSIRMixing_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double recovery_rate, std::vector< double > contact_matrix);
+extern "C" SEXP _epiworldR_ModelSIRMixing_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP recovery_rate, SEXP contact_matrix) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSIRMixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
+  END_CPP11
+}
+// epimodels.cpp
+SEXP ModelSEIRMixing_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double incubation_days, double recovery_rate, std::vector< double > contact_matrix);
+extern "C" SEXP _epiworldR_ModelSEIRMixing_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate, SEXP contact_matrix) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(ModelSEIRMixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -775,11 +789,13 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},
     {"_epiworldR_ModelSEIRD_cpp",                       (DL_FUNC) &_epiworldR_ModelSEIRD_cpp,                        6},
+    {"_epiworldR_ModelSEIRMixing_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIRMixing_cpp,                   8},
     {"_epiworldR_ModelSEIR_cpp",                        (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                         5},
     {"_epiworldR_ModelSIRCONN_cpp",                     (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                      6},
     {"_epiworldR_ModelSIRDCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRDCONN_cpp,                     7},
     {"_epiworldR_ModelSIRD_cpp",                        (DL_FUNC) &_epiworldR_ModelSIRD_cpp,                         5},
     {"_epiworldR_ModelSIRLogit_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRLogit_cpp,                    10},
+    {"_epiworldR_ModelSIRMixing_cpp",                   (DL_FUNC) &_epiworldR_ModelSIRMixing_cpp,                    7},
     {"_epiworldR_ModelSIR_cpp",                         (DL_FUNC) &_epiworldR_ModelSIR_cpp,                          4},
     {"_epiworldR_ModelSISD_cpp",                        (DL_FUNC) &_epiworldR_ModelSISD_cpp,                         5},
     {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},

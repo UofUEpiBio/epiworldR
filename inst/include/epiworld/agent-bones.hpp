@@ -102,9 +102,9 @@ private:
     std::vector< ToolPtr<TSeq> > tools;
     epiworld_fast_uint n_tools = 0u;
 
-    std::vector< Agent<TSeq> * > sampled_agents;
+    std::vector< Agent<TSeq> * > sampled_agents = {};
     size_t sampled_agents_n      = 0u;
-    std::vector< size_t > sampled_agents_left;
+    std::vector< size_t > sampled_agents_left = {};
     size_t sampled_agents_left_n = 0u;
     int date_last_build_sample   = -99;
 

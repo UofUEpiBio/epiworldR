@@ -253,11 +253,15 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
         // When we move the end entity to the new location, the 
         // moved entity needs to reflect the change, i.e., where the
         // entity will now be located in the agent
-        size_t agent_location_in_last_entity  = p->entities_locations[p->n_entities];
-        Entity<TSeq> * last_entity = &m->get_entities()[p->entities[p->n_entities]]; ///< Last entity of the agent
+        size_t agent_location_in_last_entity  =
+            p->entities_locations[p->n_entities];
+
+        Entity<TSeq> * last_entity =
+            &m->get_entities()[p->entities[p->n_entities]]; ///< Last entity of the agent
 
         // The end entity will be located where the removed was
-        last_entity->agents_location[agent_location_in_last_entity] = idx_entity_in_agent;
+        last_entity->agents_location[agent_location_in_last_entity] =
+            idx_entity_in_agent;
 
         // We now make the swap
         std::swap(
@@ -274,10 +278,13 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
         // moved agent needs to reflect the change, i.e., where the
         // agent will now be located in the entity
         size_t entity_location_in_last_agent = e->agents_location[e->n_agents];
-        Agent<TSeq> * last_agent  = &m->get_agents()[e->agents[e->n_agents]]; ///< Last agent of the entity
+        
+        Agent<TSeq> * last_agent  =
+            &m->get_agents()[e->agents[e->n_agents]]; ///< Last agent of the entity
 
         // The end entity will be located where the removed was
-        last_agent->entities_locations[entity_location_in_last_agent] = idx_agent_in_entity;
+        last_agent->entities_locations[entity_location_in_last_agent] =
+            idx_agent_in_entity;
 
         // We now make the swap
         std::swap(

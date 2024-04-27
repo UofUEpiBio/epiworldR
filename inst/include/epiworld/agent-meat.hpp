@@ -242,7 +242,7 @@ inline void Agent<TSeq>::add_entity(
                 -1, -1
             );
 
-        // default_add_entity(a, model); /* passing model makes nothing */
+        default_add_entity(a, model); /* passing model makes nothing */
 
     }
 
@@ -336,8 +336,15 @@ inline void Agent<TSeq>::rm_entity(
     CHECK_COALESCE_(queue, model->entities[entity_idx].queue_post, Queue<TSeq>::NoOne);
 
     model->events_add(
-        this, nullptr, nullptr, model->entities[entity_idx], state_new, queue, 
-        default_rm_entity<TSeq>, entities_locations[entity_idx], entity_idx
+        this,
+        nullptr,
+        nullptr,
+        &model->entities[entities[entity_idx]],
+        state_new,
+        queue, 
+        default_rm_entity<TSeq>,
+        entities_locations[entity_idx],
+        entity_idx
     );
 }
 
@@ -354,22 +361,35 @@ inline void Agent<TSeq>::rm_entity(
     int entity_idx = -1;
     for (size_t i = 0u; i < n_entities; ++i)
     {
-        if (entities[i] == entity->get_id())
+        if (static_cast<int>(entities[i]) == entity.get_id())
+        {
             entity_idx = i;
+            break;
+        }
     }
 
     if (entity_idx == -1)
         throw std::logic_error(
-            "The agent " + std::to_string(id) + " is not associated with entity \"" +
-            entity.get_name() + "\"."
+            std::string("The agent ") +
+            std::to_string(id) +
+            std::string(" is not associated with entity \"") +
+            entity.get_name() +
+            std::string("\".")
             );
 
     CHECK_COALESCE_(state_new, entity.state_post, state);
     CHECK_COALESCE_(queue, entity.queue_post, Queue<TSeq>::NoOne);
 
     model->events_add(
-        this, nullptr, nullptr, entities[entity_idx], state_new, queue, 
-        default_rm_entity<TSeq>, entities_locations[entity_idx], entity_idx
+        this,
+        nullptr,
+        nullptr,
+        &model->entities[entity.get_id()],
+        state_new,
+        queue, 
+        default_rm_entity<TSeq>,
+        entities_locations[entity_idx],
+        entity_idx
     );
 }
 

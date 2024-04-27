@@ -1,8 +1,8 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.1-1
-Date: 2024-04-07
+Version: 0.2-0
+Date: 2024-04-27
 Authors@R: c(
   person("Derek", "Meyer", role=c("aut","cre"), 
   email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),

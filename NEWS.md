@@ -1,3 +1,8 @@
+# epiworldR 0.2-0 (dev)
+
+* Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
+
+
 # epiworldR 0.1-0`
 
 * Force model to update agents' states when running a simulation.

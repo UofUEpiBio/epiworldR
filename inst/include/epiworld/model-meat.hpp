@@ -388,10 +388,10 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     prevalence_tool_as_proportion(model.prevalence_tool_as_proportion),
     tools_dist_funs(model.tools_dist_funs),
     entities(model.entities),
+    prevalence_entity(model.prevalence_entity),
+    prevalence_entity_as_proportion(model.prevalence_entity_as_proportion),
+    entities_dist_funs(model.entities_dist_funs),
     entities_backup(model.entities_backup),
-    // prevalence_entity(model.prevalence_entity),
-    // prevalence_entity_as_proportion(model.prevalence_entity_as_proportion),
-    // entities_dist_funs(model.entities_dist_funs),
     rewire_fun(model.rewire_fun),
     rewire_prop(model.rewire_prop),
     parameters(model.parameters),
@@ -407,7 +407,8 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     queue(model.queue),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size()),
+    array_int_tmp(model.array_int_tmp.size())
 {
 
 
@@ -464,10 +465,10 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     tools_dist_funs(std::move(model.tools_dist_funs)),
     // Entities
     entities(std::move(model.entities)),
+    prevalence_entity(std::move(model.prevalence_entity)),
+    prevalence_entity_as_proportion(std::move(model.prevalence_entity_as_proportion)),
+    entities_dist_funs(std::move(model.entities_dist_funs)),
     entities_backup(std::move(model.entities_backup)),
-    // prevalence_entity(std::move(model.prevalence_entity)),
-    // prevalence_entity_as_proportion(std::move(model.prevalence_entity_as_proportion)),
-    // entities_dist_funs(std::move(model.entities_dist_funs)),
     // Pseudo-RNG
     engine(std::move(model.engine)),
     runifd(std::move(model.runifd)),
@@ -492,7 +493,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size()),
+    array_int_tmp(model.array_int_tmp.size())
 {
 
     db.model = this;
@@ -542,10 +544,10 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     tools_dist_funs               = m.tools_dist_funs;
     
     entities        = m.entities;
+    prevalence_entity = m.prevalence_entity;
+    prevalence_entity_as_proportion = m.prevalence_entity_as_proportion;
+    entities_dist_funs = m.entities_dist_funs;
     entities_backup = m.entities_backup;
-    // prevalence_entity = m.prevalence_entity;
-    // prevalence_entity_as_proportion = m.prevalence_entity_as_proportion;
-    // entities_dist_funs = m.entities_dist_funs;
     
     rewire_fun  = m.rewire_fun;
     rewire_prop = m.rewire_prop;
@@ -586,6 +588,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     ));
 
     array_virus_tmp.resize(1024u);
+    array_int_tmp.resize(1024u * 1024);
 
     return *this;
 
@@ -865,62 +868,62 @@ inline void Model<TSeq>::dist_tools()
 
 }
 
-// template<typename TSeq>
-// inline void Model<TSeq>::dist_entities()
-// {
+template<typename TSeq>
+inline void Model<TSeq>::dist_entities()
+{
 
-//     // Starting first infection
-//     int n = size();
-//     std::vector< size_t > idx(n);
-//     for (epiworld_fast_uint e = 0; e < entities.size(); ++e)
-//     {
+    // Starting first infection
+    int n = size();
+    std::vector< size_t > idx(n);
+    for (epiworld_fast_uint e = 0; e < entities.size(); ++e)
+    {
 
-//         if (entities_dist_funs[e])
-//         {
+        if (entities_dist_funs[e])
+        {
 
-//             entities_dist_funs[e](entities[e], this);
+            entities_dist_funs[e](entities[e], this);
 
-//         } else {
+        } else {
 
-//             // Picking how many
-//             int nsampled;
-//             if (prevalence_entity_as_proportion[e])
-//             {
-//                 nsampled = static_cast<int>(std::floor(prevalence_entity[e] * size()));
-//             }
-//             else
-//             {
-//                 nsampled = static_cast<int>(prevalence_entity[e]);
-//             }
+            // Picking how many
+            int nsampled;
+            if (prevalence_entity_as_proportion[e])
+            {
+                nsampled = static_cast<int>(std::floor(prevalence_entity[e] * size()));
+            }
+            else
+            {
+                nsampled = static_cast<int>(prevalence_entity[e]);
+            }
 
-//             if (nsampled > static_cast<int>(size()))
-//                 throw std::range_error("There are only " + std::to_string(size()) + 
-//                 " individuals in the population. Cannot add the entity to " + std::to_string(nsampled));
+            if (nsampled > static_cast<int>(size()))
+                throw std::range_error("There are only " + std::to_string(size()) + 
+                " individuals in the population. Cannot add the entity to " + std::to_string(nsampled));
             
-//             Entity<TSeq> & entity = entities[e];
+            Entity<TSeq> & entity = entities[e];
 
-//             int n_left = n;
-//             std::iota(idx.begin(), idx.end(), 0);
-//             while (nsampled > 0)
-//             {
-//                 int loc = static_cast<epiworld_fast_uint>(floor(runif() * n_left--));
+            int n_left = n;
+            std::iota(idx.begin(), idx.end(), 0);
+            while (nsampled > 0)
+            {
+                int loc = static_cast<epiworld_fast_uint>(floor(runif() * n_left--));
                 
-//                 population[idx[loc]].add_entity(entity, this, entity.state_init, entity.queue_init);
+                population[idx[loc]].add_entity(entity, this, entity.state_init, entity.queue_init);
                 
-//                 nsampled--;
+                nsampled--;
 
-//                 std::swap(idx[loc], idx[n_left]);
+                std::swap(idx[loc], idx[n_left]);
 
-//             }
+            }
 
-//         }
+        }
 
-//         // Apply the events
-//         events_run();
+        // Apply the events
+        events_run();
 
-//     }
+    }
 
-// }
+}
 
 template<typename TSeq>
 inline void Model<TSeq>::chrono_start() {
@@ -1202,6 +1205,32 @@ inline void Model<TSeq>::add_entity(Entity<TSeq> e)
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::add_entity_n(Entity<TSeq> e, epiworld_fast_uint preval)
+{
+
+    e.model = this;
+    e.id = entities.size();
+    entities.push_back(e);
+    prevalence_entity.push_back(preval);
+    prevalence_entity_as_proportion.push_back(false);
+    entities_dist_funs.push_back(nullptr);
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::add_entity_fun(Entity<TSeq> e, EntityToAgentFun<TSeq> fun)
+{
+
+    e.model = this;
+    e.id = entities.size();
+    entities.push_back(e);
+    prevalence_entity.push_back(0.0);
+    prevalence_entity_as_proportion.push_back(false);
+    entities_dist_funs.push_back(fun);
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::rm_virus(size_t virus_pos)
 {
 
@@ -1291,7 +1320,6 @@ inline void Model<TSeq>::load_agents_entities_ties(
         throw std::logic_error("The file " + fn + " was not found.");
 
     int linenum = 0;
-    std::vector< epiworld_fast_uint > source_;
     std::vector< std::vector< epiworld_fast_uint > > target_(entities.size());
 
     target_.reserve(1e5);
@@ -1332,35 +1360,63 @@ inline void Model<TSeq>::load_agents_entities_ties(
 
     }
 
-    // // Iterating over entities
-    // for (size_t e = 0u; e < entities.size(); ++e)
-    // {
+    return;
 
-    //     // This entity will have individuals assigned to it, so we add it
-    //     if (target_[e].size() > 0u)
-    //     {
+}
 
-    //         // Filling in the gaps
-    //         prevalence_entity[e] = static_cast<epiworld_double>(target_[e].size());
-    //         prevalence_entity_as_proportion[e] = false;
+template<typename TSeq>
+inline void Model<TSeq>::load_agents_entities_ties(
+    const std::vector< int > & agents_ids,
+    const std::vector< int > & entities_ids
+) {
 
-    //         // Generating the assignment function
-    //         auto who = target_[e];
-    //         entities_dist_funs[e] =
-    //             [who](Entity<TSeq> & e, Model<TSeq>* m) -> void {
+    if (agents_ids.size() != entities_ids.size())
+        throw std::length_error(
+            std::string("agents_ids (") +
+            std::to_string(agents_ids.size()) +
+            std::string(") and entities_ids (") +
+            std::to_string(entities_ids.size()) +
+            std::string(") should match.")
+            );
 
-    //                 for (auto w : who)
-    //                     m->population[w].add_entity(e, m, e.state_init, e.queue_init);
-                    
-    //                 return;
-                    
-    //             };
 
-    //     }
+    size_t n_entries = agents_ids.size();
+    for (size_t i = 0u; i < n_entries; ++i)
+    {
 
-    // }
+        if (agents_ids[i] >= this->population.size())
+            throw std::length_error(
+                std::string("agents_ids[") +
+                std::to_string(i) +
+                std::string("] = ") +
+                std::to_string(agents_ids[i]) +
+                std::string(" is out of range (population size: ") +
+                std::to_string(this->population.size()) +
+                std::string(").")
+                );
+
+        
+        if (entities_ids[i] >= this->entities.size())
+            throw std::length_error(
+                std::string("entities_ids[") +
+                std::to_string(i) +
+                std::string("] = ") +
+                std::to_string(entities_ids[i]) +
+                std::string(" is out of range (entities size: ") +
+                std::to_string(this->entities.size()) +
+                std::string(").")
+                );
+
+        // Adding the entity to the agent
+        this->population[agents_ids[i]].add_entity(
+            this->entities[entities_ids[i]],
+            nullptr /* Immediately add it to the agent */
+        );
+
+    }
 
     return;
+
 
 }
 
@@ -1488,6 +1544,7 @@ inline Model<TSeq> & Model<TSeq>::run(
 
 
     array_virus_tmp.resize(1024);
+    array_int_tmp.resize(1024 * 1024);
 
     // Checking whether the proposed state in/out/removed
     // are valid
@@ -2072,11 +2129,9 @@ inline void Model<TSeq>::reset() {
         #endif
         
     }
-    else
-    {
-        for (auto & e: entities)
-            e.reset();
-    }
+
+    for (auto & e: entities)
+        e.reset();
     
     current_date = 0;
 
@@ -2089,6 +2144,7 @@ inline void Model<TSeq>::reset() {
     // Re distributing tools and virus
     dist_virus();
     dist_tools();
+    dist_entities();
 
     // Distributing initial state, if specified
     initial_states_fun(this);

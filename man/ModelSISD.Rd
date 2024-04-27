@@ -76,11 +76,13 @@ Other Models:
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIRDCONN}()},
+\code{\link{ModelSEIRMixing}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRD}()},
 \code{\link{ModelSIRDCONN}()},
 \code{\link{ModelSIRLogit}()},
+\code{\link{ModelSIRMixing}()},
 \code{\link{ModelSIS}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}

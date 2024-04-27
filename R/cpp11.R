@@ -156,6 +156,14 @@ ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, d
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
+ModelSIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix) {
+  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix)
+}
+
+ModelSEIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix) {
+  .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }

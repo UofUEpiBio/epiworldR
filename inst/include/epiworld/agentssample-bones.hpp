@@ -30,10 +30,10 @@ private:
 
     size_t sample_size = 0u;
 
-    std::vector< Agent<TSeq>* > * agents = nullptr; ///< Pointer to sample of agents
+    std::vector< Agent<TSeq>* >* agents = nullptr; ///< Pointer to sample of agents
     size_t * agents_n = nullptr;                    ///< Size of sample of agents
     
-    std::vector< size_t > * agents_left = nullptr;  ///< Pointer to agents left (iota)
+    std::vector< size_t >* agents_left = nullptr;  ///< Pointer to agents left (iota)
     size_t * agents_left_n = nullptr;               ///< Size of agents left
 
     Model<TSeq> * model   = nullptr;   ///< Extracts runif() and (if the case) population.
@@ -49,7 +49,7 @@ private:
 public:
 
     // Not available (for now)
-    AgentsSample() = delete;                       ///< Default constructor
+    AgentsSample() = delete;                             ///< Default constructor
     AgentsSample(const AgentsSample<TSeq> & a) = delete; ///< Copy constructor
     AgentsSample(AgentsSample<TSeq> && a) = delete;      ///< Move constructor
 
@@ -60,13 +60,17 @@ public:
         );
 
     AgentsSample(
-        Model<TSeq> * model, Entity<TSeq> & entity_, size_t n,
+        Model<TSeq> * model,
+        Entity<TSeq> & entity_,
+        size_t n,
         std::vector< size_t > states_ = {},
         bool truncate = false
         );
 
     AgentsSample(
-        Model<TSeq> * model, Agent<TSeq> & agent_, size_t n,
+        Model<TSeq> * model,
+        Agent<TSeq> & agent_,
+        size_t n,
         std::vector< size_t > states_ = {},
         bool truncate = false
         );
@@ -187,9 +191,6 @@ inline AgentsSample<TSeq>::AgentsSample(
     agents        = &agent_.sampled_agents;
     agents_n      = &agent_.sampled_agents_n;
 
-    agents_left   = &agent_.sampled_agents_left;
-    agents_left_n = &agent_.sampled_agents_left_n;
-
     // Computing the cumulative sum of counts across entities
     size_t agents_in_entities = 0;
     Entities<TSeq> entities_a = agent->get_entities();
@@ -228,31 +229,37 @@ inline AgentsSample<TSeq>::AgentsSample(
         agents->resize(n);
 
     size_t i_obs = 0u;
-    for (size_t i = 0u; i < agents_in_entities; ++i)
+    for (size_t i = 0u; i < sample_size; ++i)
     {
+
+        // Sampling a single agent from the set of entities
         int jth = std::floor(model->runif() * agents_in_entities);
         for (size_t e = 0u; e < cum_agents_count.size(); ++e)
         {
+            
             // Are we in the limit?
             if (jth <= cum_agents_count[e])
             {
                 size_t agent_idx = 0u;
                 if (e == 0) // From the first group
-                    agent_idx = entities_a[e][jth];
+                    agent_idx = entities_a[e][jth]->get_id();
                 else
-                    agent_idx = entities_a[e][jth - cum_agents_count[e - 1]];
+                    agent_idx = entities_a[e][jth - cum_agents_count[e - 1]]->get_id();
 
-                // Getting the state
-                size_t state = model->population[agent_idx].get_state();
 
                 // Checking if states was specified
                 if (states.size())
                 {
+
+                    // Getting the state
+                    size_t state = model->population[agent_idx].get_state();
+
                     if (std::find(states.begin(), states.end(), state) != states.end())
                         continue;
+
                 }
                 
-                agents->operator[](i_obs++) = agent_idx;
+                agents->operator[](i_obs++) = &(model->population[agent_idx]);
 
                 break;
             }
