@@ -32,7 +32,7 @@ ModelSIRMixing <- function(
 ) {
   
   structure(
-    ModelSIRCONN_cpp(
+    ModelSIRMixing_cpp(
       name, n, prevalence, contact_rate, 
       transmission_rate, recovery_rate, as.vector(contact_matrix)
       ),

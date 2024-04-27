@@ -34,7 +34,7 @@ ModelSEIRMixing <- function(
 ) {
   
   structure(
-    ModelSEIRCONN_cpp(
+    ModelSEIRMixing_cpp(
       name, n, prevalence, contact_rate, 
       transmission_rate, incubation_days, 
       recovery_rate, as.vector(contact_matrix)

@@ -42,6 +42,24 @@ From the package’s description:
 > Furthermore, epiworldR is ideal for simulation studies featuring large
 > populations.
 
+Current available models:
+
+1.  `ModelDiffNet`
+2.  `ModelSEIR`
+3.  `ModelSEIRCONN`
+4.  `ModelSEIRD`
+5.  `ModelSEIRDCONN`
+6.  `ModelSEIRMixing`
+7.  `ModelSIR`
+8.  `ModelSIRCONN`
+9.  `ModelSIRD`
+10. `ModelSIRDCONN`
+11. `ModelSIRLogit`
+12. `ModelSIRMixing`
+13. `ModelSIS`
+14. `ModelSISD`
+15. `ModelSURV`
+
 ## Installation
 
 You can install the development version of epiworldR from
@@ -119,8 +137,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 141.00ms
-#> Last run speed      : 35.22 million agents x day / second
+#> Last run elapsed t  : 146.00ms
+#> Last run speed      : 34.11 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -148,7 +166,13 @@ summary(sir)
 plot(sir)
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+<img src="man/figures/README-sir-figures-1.png" width="100%" />
+
+``` r
+plot_incidence(sir)
+```
+
+<img src="man/figures/README-sir-figures-2.png" width="100%" />
 
 ## SEIR model with a fully connected graph
 
@@ -163,10 +187,10 @@ model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
   prevalence          = 0.01, 
   n                   = 10000,
-  contact_rate        = 4, 
+  contact_rate        = 10, 
   incubation_days     = 7, 
-  transmission_rate   = 0.6,
-  recovery_rate       = 0.5
+  transmission_rate   = 0.1,
+  recovery_rate       = 1/7
 ) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
 
 set.seed(132)
@@ -175,12 +199,48 @@ run(model_seirconn, ndays = 100)
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
-model_seirconn
+summary(model_seirconn)
 #> ________________________________________________________________________________
-#> Susceptible-Exposed-Infected-Removed (SEIR) (connected)
-#> It features 10000 agents, 2 virus(es), and 0 tool(s).
-#> The model has 4 states.
-#> The final distribution is: 608 Susceptible, 4 Exposed, 2 Infected, and 9386 Recovered.
+#> ________________________________________________________________________________
+#> SIMULATION STUDY
+#> 
+#> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
+#> Population size     : 10000
+#> Agents' data        : (none)
+#> Number of entities  : 0
+#> Days (duration)     : 100 (of 100)
+#> Number of viruses   : 2
+#> Last run elapsed t  : 47.00ms
+#> Last run speed      : 20.91 million agents x day / second
+#> Rewiring            : off
+#> 
+#> Global events:
+#>  - Update infected individuals (runs daily)
+#> 
+#> Virus(es):
+#>  - COVID-19 (baseline prevalence: 1.00%)
+#>  - COVID-19 (baseline prevalence: 50.00%)
+#> 
+#> Tool(s):
+#>  (none)
+#> 
+#> Model parameters:
+#>  - Avg. Incubation days : 7.0000
+#>  - Contact rate         : 10.0000
+#>  - Prob. Recovery       : 0.1429
+#>  - Prob. Transmission   : 0.1000
+#> 
+#> Distribution of the population at time 100:
+#>   - (0) Susceptible :  4900 -> 229
+#>   - (1) Exposed     :  5100 -> 8
+#>   - (2) Infected    :     0 -> 27
+#>   - (3) Recovered   :     0 -> 9736
+#> 
+#> Transition Probabilities:
+#>  - Susceptible  0.97  0.03  0.00  0.00
+#>  - Exposed      0.00  0.86  0.14  0.00
+#>  - Infected     0.00  0.00  0.78  0.22
+#>  - Recovered    0.00  0.00  0.00  1.00
 ```
 
 Computing some key statistics
@@ -189,7 +249,7 @@ Computing some key statistics
 plot(model_seirconn)
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-seir-conn-figures-1.png" width="100%" />
 
 ``` r
 
@@ -198,33 +258,27 @@ repnum <- get_reproductive_number(model_seirconn)
 head(plot(repnum))
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
+<img src="man/figures/README-seir-conn-figures-2.png" width="100%" />
 
-    #>   virus_id    virus date      avg  n       sd lb    ub
-    #> 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30
-    #> 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65
-    #> 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00
-    #> 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40
-    #> 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10
-    #> 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65
+    #>   virus_id    virus date      avg  n       sd lb   ub
+    #> 1        0 COVID-19    0 3.671053 76 3.012809  1 12.0
+    #> 2        0 COVID-19    2 2.714286  7 4.347961  0 10.8
+    #> 3        0 COVID-19    3 3.461538 13 4.539005  0 12.8
+    #> 4        0 COVID-19    4 3.307692 13 3.923957  0 12.1
+    #> 5        0 COVID-19    5 2.074074 27 2.615427  0  9.0
+    #> 6        0 COVID-19    6 3.421053 19 2.968647  0  9.1
 
-    plot_incidence(model_seirconn)
+    head(plot_generation_time(model_seirconn))
 
-<img src="man/figures/README-unnamed-chunk-4-3.png" width="100%" />
+<img src="man/figures/README-seir-conn-figures-3.png" width="100%" />
 
-``` r
-head(plot_generation_time(model_seirconn))
-```
-
-<img src="man/figures/README-unnamed-chunk-4-4.png" width="100%" />
-
-    #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0
-    #> 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0
-    #> 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0
-    #> 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0
-    #> 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0
-    #> 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0
+    #>   date       avg  n       sd ci_lower ci_upper    virus virus_id
+    #> 1    2  3.250000  4 1.258306    2.075    4.850 COVID-19        0
+    #> 2    3 11.600000 10 8.733079    2.000   26.975 COVID-19        0
+    #> 3    4 11.545455 11 6.890046    4.000   23.000 COVID-19        0
+    #> 4    5  9.666667 18 8.791707    2.425   30.775 COVID-19        0
+    #> 5    6  9.571429 14 6.618323    2.650   24.450 COVID-19        0
+    #> 6    7 10.045455 22 6.168100    2.525   25.900 COVID-19        0
 
 ## SIR Logit
 
@@ -278,7 +332,7 @@ run(model_logit, 50)
 plot(model_logit)
 ```
 
-<img src="man/figures/README-unnamed-chunk-5-1.png" width="100%" />
+<img src="man/figures/README-logit-model-1.png" width="100%" />
 
 ``` r
 
@@ -387,22 +441,22 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    974
-#> 5       1    1        1    Infected     25
+#> 4       1    1        1 Susceptible    977
+#> 5       1    1        1    Infected     22
 #> 6       1    1        1   Recovered      1
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    767                   11  0
-#> 2       1        0 COVID-19    835                   10  0
-#> 3       1        0 COVID-19    793                    9  0
-#> 4       1        0 COVID-19    612                    9  0
-#> 5       1        0 COVID-19    466                    9  0
-#> 6       1        0 COVID-19    920                    8  0
+#> 1       1        0 COVID-19    976                    9  0
+#> 2       1        0 COVID-19    644                    9  0
+#> 3       1        0 COVID-19    608                    9  0
+#> 4       1        0 COVID-19    314                    9  0
+#> 5       1        0 COVID-19     41                    9  0
+#> 6       1        0 COVID-19     32                    9  0
 
 plot(ans$reproductive)
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+<img src="man/figures/README-multiple-example-1.png" width="100%" />
 
 # Tutorials
 
@@ -427,7 +481,7 @@ citation("epiworldR")
 #> And the actual R package:
 #> 
 #>   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.
-#>   R package version 0.1-0, <https://github.com/UofUEpiBio/epiworldR>.
+#>   R package version 0.2-0, <https://github.com/UofUEpiBio/epiworldR>.
 #> 
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set
