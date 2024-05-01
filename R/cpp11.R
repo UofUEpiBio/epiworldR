@@ -104,6 +104,42 @@ get_today_total_cpp <- function(model) {
   .Call(`_epiworldR_get_today_total_cpp`, model)
 }
 
+get_entities_cpp <- function(model) {
+  .Call(`_epiworldR_get_entities_cpp`, model)
+}
+
+get_entity_cpp <- function(entities, idx) {
+  .Call(`_epiworldR_get_entity_cpp`, entities, idx)
+}
+
+entity_cpp <- function(name) {
+  .Call(`_epiworldR_entity_cpp`, name)
+}
+
+entity_size_cpp <- function(entity) {
+  .Call(`_epiworldR_entity_size_cpp`, entity)
+}
+
+entity_add_agent_cpp <- function(entity, agent, model) {
+  .Call(`_epiworldR_entity_add_agent_cpp`, entity, agent, model)
+}
+
+entity_rm_agent_cpp <- function(entity, idx) {
+  .Call(`_epiworldR_entity_rm_agent_cpp`, entity, idx)
+}
+
+entity_get_name_cpp <- function(entity) {
+  .Call(`_epiworldR_entity_get_name_cpp`, entity)
+}
+
+add_entity_cpp <- function(model, entity) {
+  .Call(`_epiworldR_add_entity_cpp`, model, entity)
+}
+
+add_entity_cpp_n <- function(model, entity, n) {
+  .Call(`_epiworldR_add_entity_cpp_n`, model, entity, n)
+}
+
 ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
   .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
 }

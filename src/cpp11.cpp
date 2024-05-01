@@ -187,6 +187,69 @@ extern "C" SEXP _epiworldR_get_today_total_cpp(SEXP model) {
     return cpp11::as_sexp(get_today_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// entities.cpp
+SEXP get_entities_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_entities_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_entities_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// entities.cpp
+SEXP get_entity_cpp(SEXP entities, int idx);
+extern "C" SEXP _epiworldR_get_entity_cpp(SEXP entities, SEXP idx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_entity_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entities), cpp11::as_cpp<cpp11::decay_t<int>>(idx)));
+  END_CPP11
+}
+// entities.cpp
+SEXP entity_cpp(std::string name);
+extern "C" SEXP _epiworldR_entity_cpp(SEXP name) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(entity_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name)));
+  END_CPP11
+}
+// entities.cpp
+int entity_size_cpp(SEXP entity);
+extern "C" SEXP _epiworldR_entity_size_cpp(SEXP entity) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(entity_size_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity)));
+  END_CPP11
+}
+// entities.cpp
+int entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model);
+extern "C" SEXP _epiworldR_entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(entity_add_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity), cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// entities.cpp
+int entity_rm_agent_cpp(SEXP entity, int idx);
+extern "C" SEXP _epiworldR_entity_rm_agent_cpp(SEXP entity, SEXP idx) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(entity_rm_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity), cpp11::as_cpp<cpp11::decay_t<int>>(idx)));
+  END_CPP11
+}
+// entities.cpp
+std::string entity_get_name_cpp(SEXP entity);
+extern "C" SEXP _epiworldR_entity_get_name_cpp(SEXP entity) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(entity_get_name_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity)));
+  END_CPP11
+}
+// entities.cpp
+int add_entity_cpp(SEXP model, SEXP entity);
+extern "C" SEXP _epiworldR_add_entity_cpp(SEXP model, SEXP entity) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_entity_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity)));
+  END_CPP11
+}
+// entities.cpp
+int add_entity_cpp_n(SEXP model, SEXP entity, int n);
+extern "C" SEXP _epiworldR_add_entity_cpp_n(SEXP model, SEXP entity, SEXP n) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_entity_cpp_n(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity), cpp11::as_cpp<cpp11::decay_t<int>>(n)));
+  END_CPP11
+}
 // epimodels.cpp
 SEXP ModelSURV_cpp(std::string name, double prevalence, double efficacy_vax, double latent_period, double prob_symptoms, double prop_vaccinated, double prop_vax_redux_transm, double infect_period, double prop_vax_redux_infect, double surveillance_prob, double transmission_rate, double prob_death, double prob_noreinfect);
 extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP efficacy_vax, SEXP latent_period, SEXP prob_symptoms, SEXP prop_vaccinated, SEXP prop_vax_redux_transm, SEXP infect_period, SEXP prop_vax_redux_infect, SEXP surveillance_prob, SEXP transmission_rate, SEXP prob_death, SEXP prob_noreinfect) {
@@ -800,6 +863,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSISD_cpp",                        (DL_FUNC) &_epiworldR_ModelSISD_cpp,                         5},
     {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
+    {"_epiworldR_add_entity_cpp",                       (DL_FUNC) &_epiworldR_add_entity_cpp,                        2},
+    {"_epiworldR_add_entity_cpp_n",                     (DL_FUNC) &_epiworldR_add_entity_cpp_n,                      3},
     {"_epiworldR_add_globalevent_cpp",                  (DL_FUNC) &_epiworldR_add_globalevent_cpp,                   2},
     {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    5},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          3},
@@ -811,11 +876,18 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
+    {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
+    {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            1},
+    {"_epiworldR_entity_get_name_cpp",                  (DL_FUNC) &_epiworldR_entity_get_name_cpp,                   1},
+    {"_epiworldR_entity_rm_agent_cpp",                  (DL_FUNC) &_epiworldR_entity_rm_agent_cpp,                   2},
+    {"_epiworldR_entity_size_cpp",                      (DL_FUNC) &_epiworldR_entity_size_cpp,                       1},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
     {"_epiworldR_get_agents_states_cpp",                (DL_FUNC) &_epiworldR_get_agents_states_cpp,                 1},
     {"_epiworldR_get_agents_tools_cpp",                 (DL_FUNC) &_epiworldR_get_agents_tools_cpp,                  1},
+    {"_epiworldR_get_entities_cpp",                     (DL_FUNC) &_epiworldR_get_entities_cpp,                      1},
+    {"_epiworldR_get_entity_cpp",                       (DL_FUNC) &_epiworldR_get_entity_cpp,                        2},
     {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               1},
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
     {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    1},

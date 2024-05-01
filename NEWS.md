@@ -2,6 +2,7 @@
 
 * Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
 
+* Ports the `Entity` class. Entities are used to group agents within a model.
 
 # epiworldR 0.1-0`
 
