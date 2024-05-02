@@ -159,7 +159,10 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
     {
 
         if (a.get_state() == ModelSIRMixing<TSeq>::INFECTED)
-            infected[a.get_entity(0u).get_id()].push_back(&a);
+        {
+            if (a.get_n_entities() > 0u)
+                infected[a.get_entity(0u).get_id()].push_back(&a);
+        }
 
     }
 

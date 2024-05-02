@@ -164,7 +164,10 @@ inline void ModelSEIRMixing<TSeq>::update_infected()
     {
 
         if (a.get_state() == ModelSEIRMixing<TSeq>::INFECTED)
-            infected[a.get_entity(0u).get_id()].push_back(&a);
+        {
+            if (a.get_n_entities() > 0u)
+                infected[a.get_entity(0u).get_id()].push_back(&a);
+        }
 
     }
 

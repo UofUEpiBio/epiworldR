@@ -9,7 +9,9 @@
 \alias{get_entity_name}
 \alias{entity_add_agent}
 \alias{entity_rm_agent}
+\alias{rm_entity}
 \alias{add_entity_n}
+\alias{load_agents_entities_ties}
 \title{Get entities}
 \usage{
 get_entities(model)
@@ -26,7 +28,11 @@ entity_add_agent(entity, agent, model = attr(entity, "model"))
 
 entity_rm_agent(entity, id)
 
+rm_entity(model, id)
+
 add_entity_n(model, entity, n)
+
+load_agents_entities_ties(model, agents_id, entities_id)
 }
 \arguments{
 \item{model}{Model object of class \code{epiworld_model}.}
@@ -42,6 +48,10 @@ add_entity_n(model, entity, n)
 \item{agent}{Agent object of class \code{epiworld_agent}.}
 
 \item{n}{Integer scalar. Number of randomly assigned agents.}
+
+\item{agents_id}{Integer vector.}
+
+\item{entities_id}{Integer vector.}
 }
 \value{
 \itemize{
@@ -62,6 +72,14 @@ add_entity_n(model, entity, n)
 
 \itemize{
 \item The function \code{entity_rm_agent} removes an agent from the entity.
+}
+
+\itemize{
+\item The function \code{rm_entity} removes an entity from the model.
+}
+
+\itemize{
+\item The function \code{load_agents_entities_ties} loads agents into entities.
 }
 }
 \description{
@@ -89,5 +107,7 @@ ent2 <- entity("Second")
 add_entity_n(mymodel, ent1, 5000)
 add_entity_n(mymodel, ent2, 5000)
 
+run(mymodel, ndays = 100, seed = 1912)
 
+summary(mymodel)
 }

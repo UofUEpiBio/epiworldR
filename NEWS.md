@@ -1,4 +1,4 @@
-# epiworldR 0.2-0 (dev)
+# epiworldR 0.2-1 (dev)
 
 * Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
 

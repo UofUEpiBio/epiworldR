@@ -35,6 +35,8 @@ stopifnot_entity <- function(entity) {
 #' add_entity_n(mymodel, ent2, 5000)
 #' 
 #' run(mymodel, ndays = 100, seed = 1912)
+#' 
+#' summary(mymodel)
 get_entities <- function(model) {
   stopifnot_model(model)
   structure(
@@ -133,17 +135,17 @@ entity_rm_agent <- function(
 
 }
 
-# #' @export
-# #' @rdname entities
-# #' @return 
-# #' - The function `rm_entity` removes an entity from the model.
-# rm_entity <- function(model, id) {
+#' @export
+#' @rdname entities
+#' @return 
+#' - The function `rm_entity` removes an entity from the model.
+rm_entity <- function(model, id) {
   
-#   stopifnot_model(model)
-#   rm_entity_cpp(model, entity)
+  stopifnot_model(model)
+  rm_entity_cpp(model, entity)
 
-#   invisible(model)
-# }
+  invisible(model)
+}
 
 #' @export
 #' @rdname entities
@@ -161,3 +163,30 @@ add_entity_n <- function(
   invisible(model)
 
 }
+
+#' @export 
+#' @rdname entities
+#' @param agents_id Integer vector. 
+#' @param entities_id Integer vector. 
+#' @return 
+#' - The function `load_agents_entities_ties` loads agents into entities.
+load_agents_entities_ties <- function(
+  model,
+  agents_id,
+  entities_id
+  ) {
+
+    stopifnot_model(model)
+    if (!inherits(agents_id, "integer")) {
+      stop("Argument 'agents_id' must be an integer.")
+    }
+
+    if (!inherits(entities_id, "integer")) {
+      stop("Argument 'entities_id' must be an integer.")
+    }
+
+    load_agents_entities_ties_cpp(model, agents_id, entities_id)
+
+    invisible(model)
+
+  }

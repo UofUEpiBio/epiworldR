@@ -257,7 +257,7 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
             p->entities_locations[p->n_entities];
 
         Entity<TSeq> * last_entity =
-            &m->get_entities()[p->entities[p->n_entities]]; ///< Last entity of the agent
+            &m->get_entity(p->entities[p->n_entities]); ///< Last entity of the agent
 
         // The end entity will be located where the removed was
         last_entity->agents_location[agent_location_in_last_entity] =

@@ -388,9 +388,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     prevalence_tool_as_proportion(model.prevalence_tool_as_proportion),
     tools_dist_funs(model.tools_dist_funs),
     entities(model.entities),
-    prevalence_entity(model.prevalence_entity),
-    prevalence_entity_as_proportion(model.prevalence_entity_as_proportion),
-    entities_dist_funs(model.entities_dist_funs),
     entities_backup(model.entities_backup),
     rewire_fun(model.rewire_fun),
     rewire_prop(model.rewire_prop),
@@ -465,9 +462,6 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     tools_dist_funs(std::move(model.tools_dist_funs)),
     // Entities
     entities(std::move(model.entities)),
-    prevalence_entity(std::move(model.prevalence_entity)),
-    prevalence_entity_as_proportion(std::move(model.prevalence_entity_as_proportion)),
-    entities_dist_funs(std::move(model.entities_dist_funs)),
     entities_backup(std::move(model.entities_backup)),
     // Pseudo-RNG
     engine(std::move(model.engine)),
@@ -544,9 +538,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     tools_dist_funs               = m.tools_dist_funs;
     
     entities        = m.entities;
-    prevalence_entity = m.prevalence_entity;
-    prevalence_entity_as_proportion = m.prevalence_entity_as_proportion;
-    entities_dist_funs = m.entities_dist_funs;
     entities_backup = m.entities_backup;
     
     rewire_fun  = m.rewire_fun;
@@ -607,6 +598,12 @@ inline std::vector<Agent<TSeq>> & Model<TSeq>::get_agents()
 }
 
 template<typename TSeq>
+inline Agent<TSeq> & Model<TSeq>::get_agent(size_t i)
+{
+    return population[i];
+}
+
+template<typename TSeq>
 inline std::vector< epiworld_fast_uint > Model<TSeq>::get_agents_states() const
 {
     std::vector< epiworld_fast_uint > states(population.size());
@@ -645,6 +642,25 @@ template<typename TSeq>
 inline std::vector<Entity<TSeq>> & Model<TSeq>::get_entities()
 {
     return entities;
+}
+
+template<typename TSeq>
+inline Entity<TSeq> & Model<TSeq>::get_entity(size_t i, int * entity_pos)
+{
+    
+    for (size_t j = 0u; j < entities.size(); ++j)
+        if (entities[j].get_id() == static_cast<int>(i))
+        {
+
+            if (entity_pos)
+                *entity_pos = j;
+
+            return entities[j];
+
+        }
+
+    throw std::range_error("The entity with id " + std::to_string(i) + " was not found.");
+
 }
 
 template<typename TSeq>
@@ -872,51 +888,10 @@ template<typename TSeq>
 inline void Model<TSeq>::dist_entities()
 {
 
-    // Starting first infection
-    int n = size();
-    std::vector< size_t > idx(n);
-    for (epiworld_fast_uint e = 0; e < entities.size(); ++e)
+    for (auto & entity: entities)
     {
 
-        if (entities_dist_funs[e])
-        {
-
-            entities_dist_funs[e](entities[e], this);
-
-        } else {
-
-            // Picking how many
-            int nsampled;
-            if (prevalence_entity_as_proportion[e])
-            {
-                nsampled = static_cast<int>(std::floor(prevalence_entity[e] * size()));
-            }
-            else
-            {
-                nsampled = static_cast<int>(prevalence_entity[e]);
-            }
-
-            if (nsampled > static_cast<int>(size()))
-                throw std::range_error("There are only " + std::to_string(size()) + 
-                " individuals in the population. Cannot add the entity to " + std::to_string(nsampled));
-            
-            Entity<TSeq> & entity = entities[e];
-
-            int n_left = n;
-            std::iota(idx.begin(), idx.end(), 0);
-            while (nsampled > 0)
-            {
-                int loc = static_cast<epiworld_fast_uint>(floor(runif() * n_left--));
-                
-                population[idx[loc]].add_entity(entity, this, entity.state_init, entity.queue_init);
-                
-                nsampled--;
-
-                std::swap(idx[loc], idx[n_left]);
-
-            }
-
-        }
+        entity.distribute();
 
         // Apply the events
         events_run();
@@ -1210,10 +1185,9 @@ inline void Model<TSeq>::add_entity_n(Entity<TSeq> e, epiworld_fast_uint preval)
 
     e.model = this;
     e.id = entities.size();
+    e.prevalence = preval;
+    e.prevalence_as_proportion = false;
     entities.push_back(e);
-    prevalence_entity.push_back(preval);
-    prevalence_entity_as_proportion.push_back(false);
-    entities_dist_funs.push_back(nullptr);
 
 }
 
@@ -1223,11 +1197,26 @@ inline void Model<TSeq>::add_entity_fun(Entity<TSeq> e, EntityToAgentFun<TSeq> f
 
     e.model = this;
     e.id = entities.size();
+    e.dist_fun = fun;
     entities.push_back(e);
-    prevalence_entity.push_back(0.0);
-    prevalence_entity_as_proportion.push_back(false);
-    entities_dist_funs.push_back(fun);
 
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::rm_entity(size_t entity_id)
+{
+
+    int entity_pos = 0;
+    auto & entity = this->get_entity(entity_id, &entity_pos);
+
+    // First, resetting the entity
+    entity.reset();
+
+    // How should
+    if (entity_pos != (entities.size() - 1))
+        std::swap(entities[entity_pos], entities[entities.size() - 1]);
+
+    entities.pop_back();
 }
 
 template<typename TSeq>
@@ -1370,46 +1359,87 @@ inline void Model<TSeq>::load_agents_entities_ties(
     const std::vector< int > & entities_ids
 ) {
 
+    // Checking the size
     if (agents_ids.size() != entities_ids.size())
         throw std::length_error(
-            std::string("agents_ids (") +
+            std::string("The size of agents_ids (") +
             std::to_string(agents_ids.size()) +
             std::string(") and entities_ids (") +
             std::to_string(entities_ids.size()) +
-            std::string(") should match.")
+            std::string(") must be the same.")
             );
 
+    return this->load_agents_entities_ties(
+        agents_ids.data(),
+        entities_ids.data(),
+        agents_ids.size()
+    );
 
-    size_t n_entries = agents_ids.size();
-    for (size_t i = 0u; i < n_entries; ++i)
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::load_agents_entities_ties(
+    const int * agents_ids,
+    const int * entities_ids,
+    size_t n
+) {
+
+    auto get_agent = [agents_ids](int i) -> int {
+        return *(agents_ids + i);
+        };
+
+    auto get_entity = [entities_ids](int i) -> int {
+        return *(entities_ids + i);
+        };
+
+    for (size_t i = 0u; i < n; ++i)
     {
 
-        if (agents_ids[i] >= this->population.size())
+        if (get_agent(i) < 0)
             throw std::length_error(
                 std::string("agents_ids[") +
                 std::to_string(i) +
                 std::string("] = ") +
-                std::to_string(agents_ids[i]) +
-                std::string(" is out of range (population size: ") +
-                std::to_string(this->population.size()) +
-                std::string(").")
+                std::to_string(get_agent(i)) +
+                std::string(" is negative.")
                 );
 
-        
-        if (entities_ids[i] >= this->entities.size())
+        if (get_entity(i) < 0)
             throw std::length_error(
                 std::string("entities_ids[") +
                 std::to_string(i) +
                 std::string("] = ") +
-                std::to_string(entities_ids[i]) +
+                std::to_string(get_entity(i)) +
+                std::string(" is negative.")
+                );
+
+        int pop_size = static_cast<int>(this->population.size());
+        if (get_agent(i) >= pop_size)
+            throw std::length_error(
+                std::string("agents_ids[") +
+                std::to_string(i) +
+                std::string("] = ") +
+                std::to_string(get_agent(i)) +
+                std::string(" is out of range (population size: ") +
+                std::to_string(pop_size) +
+                std::string(").")
+                );
+
+        int ent_size = static_cast<int>(this->entities.size());
+        if (get_entity(i) >= ent_size)
+            throw std::length_error(
+                std::string("entities_ids[") +
+                std::to_string(i) +
+                std::string("] = ") +
+                std::to_string(get_entity(i)) +
                 std::string(" is out of range (entities size: ") +
-                std::to_string(this->entities.size()) +
+                std::to_string(ent_size) +
                 std::string(").")
                 );
 
         // Adding the entity to the agent
-        this->population[agents_ids[i]].add_entity(
-            this->entities[entities_ids[i]],
+        this->population[get_agent(i)].add_entity(
+            this->entities[get_entity(i)],
             nullptr /* Immediately add it to the agent */
         );
 

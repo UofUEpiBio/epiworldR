@@ -226,4 +226,58 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
 
 }
 
+template<typename TSeq>
+inline void Entity<TSeq>::distribute()
+{
+
+    // Starting first infection
+    int n = this->model->size();
+    std::vector< size_t > idx(n);
+
+    if (dist_fun)
+    {
+
+        dist_fun(*this, model);
+
+    }
+    else
+    {
+
+        // Picking how many
+        int nsampled;
+        if (prevalence_as_proportion)
+        {
+            nsampled = static_cast<int>(std::floor(prevalence * size()));
+        }
+        else
+        {
+            nsampled = static_cast<int>(prevalence);
+        }
+
+        if (nsampled > static_cast<int>(model->size()))
+            throw std::range_error("There are only " + std::to_string(model->size()) + 
+            " individuals in the population. Cannot add the entity to " + std::to_string(nsampled));
+        
+        int n_left = n;
+        std::iota(idx.begin(), idx.end(), 0);
+        while (nsampled > 0)
+        {
+            int loc = static_cast<epiworld_fast_uint>(
+                floor(model->runif() * n_left--)
+                );
+            
+            model->get_agent(idx[loc]).add_entity(
+                *this, this->model, this->state_init, this->queue_init
+                );
+            
+            nsampled--;
+
+            std::swap(idx[loc], idx[n_left]);
+
+        }
+
+    }
+
+}
+
 #endif

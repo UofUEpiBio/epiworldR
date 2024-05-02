@@ -332,14 +332,14 @@ inline void Agent<TSeq>::rm_entity(
             "There is entity to remove here!"
         );
 
-    CHECK_COALESCE_(state_new, model->entities[entity_idx].state_post, state);
-    CHECK_COALESCE_(queue, model->entities[entity_idx].queue_post, Queue<TSeq>::NoOne);
+    CHECK_COALESCE_(state_new, model->get_entity(entity_idx).state_post, state);
+    CHECK_COALESCE_(queue, model->get_entity(entity_idx).queue_post, Queue<TSeq>::NoOne);
 
     model->events_add(
         this,
         nullptr,
         nullptr,
-        &model->entities[entities[entity_idx]],
+        &model->get_entity(entity_idx),
         state_new,
         queue, 
         default_rm_entity<TSeq>,
@@ -811,7 +811,7 @@ inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[entities[i]];
+    return model->get_entity(entities[i]);
 }
 
 template<typename TSeq>
@@ -820,7 +820,7 @@ inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[entities[i]];
+    return model->get_entity(entities[i]);
 }
 
 template<typename TSeq>

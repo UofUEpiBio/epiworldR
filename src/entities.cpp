@@ -113,17 +113,40 @@ int add_entity_n_cpp(SEXP model, SEXP entity, int n) {
   return 0;
 }
 
-// [[cpp11::register]]
-// int rm_entity_cpp(SEXP model, int entity_pos) {
+[[cpp11::register]]
+int rm_entity_cpp(SEXP model, int entity_pos) {
   
-//   cpp11::external_pointer<Model<>> ptr_model(model);
+  cpp11::external_pointer<Model<>> ptr_model(model);
   
-//   ptr_model->rm_entity(
-//     static_cast<size_t>(entity_pos)
-//   );
+  ptr_model->rm_entity(
+    static_cast<size_t>(entity_pos)
+  );
   
-//   return 0;
-// }
+  return 0;
+}
+
+[[cpp11::register]]
+int load_agent_entities_ties_cpp(
+  SEXP model,
+  SEXP agents_ids,
+  SEXP entities_ids
+) {
+
+  cpp11::external_pointer<Model<>> ptr_model(model);
+
+  if (LENGTH(agents_ids) != LENGTH(entities_ids)) {
+    cpp11::stop("agents_ids and entities_ids must have the same length");
+  }
+
+  ptr_model->load_agents_entities_ties(
+    INTEGER(agents_ids),
+    INTEGER(entities_ids),
+    LENGTH(agents_ids)
+  );
+
+  return 0;
+
+}
 
 // [[cpp11::register]]
 // int entity_set_name_cpp(SEXP entity, std::string name) {

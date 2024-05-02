@@ -59,7 +59,12 @@ private:
     epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
+
 public:
+
+    epiworld_double prevalence = 0.0;
+    bool prevalence_as_proportion = false;
+    EntityToAgentFun<TSeq> dist_fun = nullptr;
 
     // Entity() = delete;
     // Entity(Entity<TSeq> & e) = delete;
@@ -95,6 +100,8 @@ public:
 
     bool operator==(const Entity<TSeq> & other) const;
     bool operator!=(const Entity<TSeq> & other) const {return !operator==(other);};
+
+    void distribute();
 
 };
 
