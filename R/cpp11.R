@@ -148,6 +148,14 @@ load_agent_entities_ties_cpp <- function(model, agents_ids, entities_ids) {
   .Call(`_epiworldR_load_agent_entities_ties_cpp`, model, agents_ids, entities_ids)
 }
 
+entity_get_agents_cpp <- function(entity) {
+  .Call(`_epiworldR_entity_get_agents_cpp`, entity)
+}
+
+print_entity_cpp <- function(entity) {
+  .Call(`_epiworldR_print_entity_cpp`, entity)
+}
+
 ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
   .Call(`_epiworldR_ModelSURV_cpp`, name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
 }

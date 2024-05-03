@@ -38,12 +38,26 @@ stopifnot_entity <- function(entity) {
 #' 
 #' summary(mymodel)
 get_entities <- function(model) {
+
   stopifnot_model(model)
   structure(
-    get_entities_cpp(model),
-    class = c("epiworld_entities"),
-    model = model
+    lapply(
+      get_entities_cpp(model), \(e) {
+        structure(
+          e,
+          class = c("epiworld_entity"),
+          model = model
+        )
+      }
+    ),
+    class = c("epiworld_entities")
   )
+}
+
+#' @export
+print.epiworld_entities <- function(x, ...) {
+  cat("A collection of ", length(x), " entities.\n")
+  invisible(x)
 }
 
 #' @export 
@@ -170,23 +184,41 @@ add_entity_n <- function(
 #' @param entities_id Integer vector. 
 #' @return 
 #' - The function `load_agents_entities_ties` loads agents into entities.
-load_agents_entities_ties <- function(
+  load_agents_entities_ties <- function(
   model,
   agents_id,
   entities_id
-  ) {
+) {
 
-    stopifnot_model(model)
-    if (!inherits(agents_id, "integer")) {
-      stop("Argument 'agents_id' must be an integer.")
-    }
-
-    if (!inherits(entities_id, "integer")) {
-      stop("Argument 'entities_id' must be an integer.")
-    }
-
-    load_agents_entities_ties_cpp(model, agents_id, entities_id)
-
-    invisible(model)
-
+  stopifnot_model(model)
+  if (!inherits(agents_id, "integer")) {
+    stop("Argument 'agents_id' must be an integer.")
   }
+
+  if (!inherits(entities_id, "integer")) {
+    stop("Argument 'entities_id' must be an integer.")
+  }
+
+  load_agents_entities_ties_cpp(model, agents_id, entities_id)
+
+  invisible(model)
+
+}
+
+#' @export 
+#' @rdname entities
+#' @return 
+#' - The function `entity_get_agents` returns an integer vector with the agents
+#'   in the entity (ids).
+entity_get_agents <- function(entity) {
+
+  stopifnot_entity(entity)
+  entity_get_agents_cpp(entity)
+
+}
+
+#' @export 
+print.epiworld_entity <- function(x, ...) {
+  print_entity_cpp(x)
+  invisible(x)
+}

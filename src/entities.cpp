@@ -2,6 +2,7 @@
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/matrix.hpp"
+#include "cpp11/data_frame.hpp"
 #include "epiworld-common.h"
 
 using namespace cpp11;
@@ -16,12 +17,14 @@ SEXP get_entities_cpp(
   
   cpp11::external_pointer<Model<>> ptr(model);
 
-  cpp11::external_pointer<std::vector< Entity<> >> entities(
-      &ptr->get_entities(),
-      false
-      );
+  cpp11::writable::list res;
+
+  for (auto & i : ptr->get_entities()) {
+    cpp11::external_pointer<Entity<>> entity(&i, false);
+    res.push_back(entity);
+  }
   
-  return entities;
+  return res;
   
 }
 
@@ -146,6 +149,35 @@ int load_agent_entities_ties_cpp(
 
   return 0;
 
+}
+
+[[cpp11::register]]
+cpp11::data_frame entity_get_agents_cpp(SEXP entity) {
+  
+  cpp11::external_pointer<Entity<>> ptr(entity);
+  
+  cpp11::writable::integers agent;
+  cpp11::writable::integers entity_id;
+  
+  int id = static_cast<int>(ptr->get_id());
+  auto agents_ids = ptr->get_agents();
+  size_t nagents = ptr->size();
+  for (size_t i = 0u; i < nagents; ++i) {
+    agent.push_back(static_cast<int>(agents_ids[i]));
+    entity_id.push_back(id);
+  }
+
+  return cpp11::writable::data_frame({
+    "agent"_nm = agent,
+    "entity"_nm = entity_id
+  });
+  
+}
+
+[[cpp11::register]]
+int print_entity_cpp(SEXP entity) {
+  cpp11::external_pointer<Entity<>>(entity)->print();
+  return 0;
 }
 
 // [[cpp11::register]]

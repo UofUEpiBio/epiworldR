@@ -12,6 +12,7 @@
 \alias{rm_entity}
 \alias{add_entity_n}
 \alias{load_agents_entities_ties}
+\alias{entity_get_agents}
 \title{Get entities}
 \usage{
 get_entities(model)
@@ -33,6 +34,8 @@ rm_entity(model, id)
 add_entity_n(model, entity, n)
 
 load_agents_entities_ties(model, agents_id, entities_id)
+
+entity_get_agents(entity)
 }
 \arguments{
 \item{model}{Model object of class \code{epiworld_model}.}
@@ -80,6 +83,11 @@ load_agents_entities_ties(model, agents_id, entities_id)
 
 \itemize{
 \item The function \code{load_agents_entities_ties} loads agents into entities.
+}
+
+\itemize{
+\item The function \code{entity_get_agents} returns an integer vector with the agents
+in the entity (ids).
 }
 }
 \description{

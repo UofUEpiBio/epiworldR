@@ -1,0 +1,128 @@
+---
+title: "Mixing models"
+author:
+  - George Vega Yon
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Mixing models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
+  fig.align = "center"
+)
+```
+
+## Introduction
+
+This vignette shows how to create a mixing model using the `epiworldR` package. Mixing models feature multiple populations. Each group, called `Entities`, has a subset of the agents. The agents can interact with each other within the same group and with agents from other groups. A contact matrix defines the interaction between agents.
+
+$$
+\left[%
+\begin{array}{ccc}
+0.9 & 0.05 & 0.05 \\
+0.1 & 0.8 & 0.1 \\
+0.1 & 0.2 & 0.7 \\
+\end{array}%
+\right]
+$$
+
+
+```{r model-setup} 
+library(epiworldR)
+
+e1 <- entity("Population 1")
+e2 <- entity("Population 2")
+e3 <- entity("Population 3")
+
+# Row-stochastic matrix (rowsums 1)
+cmatrix <- c(
+  c(0.9, 0.05, 0.05),
+  c(0.1, 0.8, 0.1),
+  c(0.1, 0.2, 0.7)
+) |> matrix(byrow = TRUE, nrow = 3)
+
+N <- 1e4
+
+flu_model <- ModelSEIRMixing(
+  name              = "Flu",
+  n                 = N,
+  prevalence        = 10 / N,
+  contact_rate      = 20,
+  transmission_rate = 0.1,
+  recovery_rate     = 1 / 7,
+  incubation_days   = 7,
+  contact_matrix    = cmatrix
+)
+
+flu_model |>
+  add_entity_n(e1, N / 5) |>
+  add_entity_n(e2, N / 5 * 2) |>
+  add_entity_n(e3, N / 5 * 2)
+```
+
+```{r model-simulate}
+set.seed(331)
+run(flu_model, ndays = 100)
+```
+
+```{r model-summary}
+summary(flu_model)
+```
+
+```{r viz}
+plot_incidence(flu_model)
+```
+
+Investigating the history
+
+```{r investigate, eval=FALSE}
+library(data.table)
+
+agents_entities <- lapply(get_entities(flu_model), \(e) {
+  entity_get_agents(e)
+}) |> rbindlist()
+
+head(agents_entities)
+```
+
+```{r transmissions}
+transmissions <- get_transmissions(flu_model) |>
+  data.table()
+
+transmissions <- subset(
+  transmissions,
+  select = c("date", "source")
+)
+
+transmissions <- merge(
+  transmissions,
+  agents_entities,
+  by.x = "source", by.y = "agent"
+)
+
+# Aggregating by date x entity (counts)
+transmissions <- transmissions[, .N, by = .(date, entity)]
+```
+
+```{r transmissions-plot}
+setorder(transmissions, date, entity)
+
+ran <- range(transmissions$N)
+transmissions[entity == 0, plot(
+  x = date, y = N, type = "l", col = "black", ylim = ran)]
+transmissions[entity == 1, lines(x = date, y = N, col = "red")]
+transmissions[entity == 2, lines(x = date, y = N, col = "blue")]
+
+legend(
+  "topright",
+  legend = c("Population 1", "Population 2", "Population 3"),
+  col = c("black", "red", "blue"),
+  lty = 1
+)
+```
