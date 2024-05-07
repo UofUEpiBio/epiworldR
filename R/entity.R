@@ -184,7 +184,7 @@ add_entity_n <- function(
 #' @param entities_id Integer vector. 
 #' @return 
 #' - The function `load_agents_entities_ties` loads agents into entities.
-  load_agents_entities_ties <- function(
+load_agents_entities_ties <- function(
   model,
   agents_id,
   entities_id

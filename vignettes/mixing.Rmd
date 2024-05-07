@@ -22,6 +22,10 @@ knitr::opts_chunk$set(
 
 This vignette shows how to create a mixing model using the `epiworldR` package. Mixing models feature multiple populations. Each group, called `Entities`, has a subset of the agents. The agents can interact with each other within the same group and with agents from other groups. A contact matrix defines the interaction between agents.
 
+## An SEIR model with mixing
+
+For this example, we will simulate an outbreak featuring three populations. The contact matrix is defined as follows:
+
 $$
 \left[%
 \begin{array}{ccc}
@@ -32,8 +36,11 @@ $$
 \right]
 $$
 
+This matrix represents the probability of an agent from population $i$ interacting with an agent from population $j$. The matrix is row-stochastic, meaning that the sum of each row is equal to 1.
 
-```{r model-setup} 
+We will build this model using the `entity` class in epiworld. The following code chunk instantiates three entities and the contact matrix.
+
+```{r entity-matrix-setup} 
 library(epiworldR)
 
 e1 <- entity("Population 1")
@@ -46,7 +53,11 @@ cmatrix <- c(
   c(0.1, 0.8, 0.1),
   c(0.1, 0.2, 0.7)
 ) |> matrix(byrow = TRUE, nrow = 3)
+```
 
+With these in hand, we can proceed to create a mixing model. The following code chunk creates a model, an SEIR with mixing, and adds the entities to the model:
+
+```{r model-build}
 N <- 1e4
 
 flu_model <- ModelSEIRMixing(
@@ -60,28 +71,27 @@ flu_model <- ModelSEIRMixing(
   contact_matrix    = cmatrix
 )
 
+# Adding the entities 
 flu_model |>
   add_entity_n(e1, N / 5) |>
   add_entity_n(e2, N / 5 * 2) |>
   add_entity_n(e3, N / 5 * 2)
 ```
 
+The function `add_entity_n` adds the corresponding entity and the number of agents that should be allocated to it. The default behavior randomly assigns agents to the entities at the beginning of the simulation. Agents cannot be assigned to more than one entity. The following code-chunk simulates the model for 100 days, summarizes the results, and plots the incidence curve:
+
 ```{r model-simulate}
 set.seed(331)
 run(flu_model, ndays = 100)
-```
-
-```{r model-summary}
 summary(flu_model)
-```
-
-```{r viz}
 plot_incidence(flu_model)
 ```
 
-Investigating the history
+## Investigating the history
 
-```{r investigate, eval=FALSE}
+After running the simulation, a possible question is: how many agents from each entity were infected each day? The following code chunk retrieves the agents from each entity and the transmissions that occurred during the simulation:
+
+```{r investigate, eval=TRUE}
 library(data.table)
 
 agents_entities <- lapply(get_entities(flu_model), \(e) {
@@ -91,15 +101,20 @@ agents_entities <- lapply(get_entities(flu_model), \(e) {
 head(agents_entities)
 ```
 
+We can retrieve the daily incidence for each entity by merging the transmissions with the agents' entities. The following code chunk accomplishes this:
+
 ```{r transmissions}
+# Retrieving the transmissions
 transmissions <- get_transmissions(flu_model) |>
   data.table()
 
+# We only need the date and the source
 transmissions <- subset(
   transmissions,
   select = c("date", "source")
 )
 
+# Attaching the entity to the source
 transmissions <- merge(
   transmissions,
   agents_entities,
@@ -108,7 +123,12 @@ transmissions <- merge(
 
 # Aggregating by date x entity (counts)
 transmissions <- transmissions[, .N, by = .(date, entity)]
+
+# Taking a look at the data
+head(transmissions)
 ```
+
+With this information, we can now visualize the daily incidence for each entity. The following code chunk plots the daily incidence for each entity:
 
 ```{r transmissions-plot}
 setorder(transmissions, date, entity)
