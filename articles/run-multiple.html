@@ -79,7 +79,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2024-04-25</h4>
+            <h4 data-toc-skip class="date">2024-05-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/vignettes/run-multiple.Rmd" class="external-link"><code>vignettes/run-multiple.Rmd</code></a></small>
       <div class="d-none name"><code>run-multiple.Rmd</code></div>
@@ -149,8 +149,9 @@ simulations.</p>
 <span><span class="co">#&gt; 3       1    0        1    Infected      0</span></span>
 <span><span class="co">#&gt; 4       1    0        1   Recovered      0</span></span>
 <span><span class="co">#&gt; 5       1    1        1 Susceptible   9999</span></span>
-<span><span class="co">#&gt; 6       1    1        1     Exposed      1</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 6       1    1        1     Exposed      1</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
 <span><span class="co">#&gt; 1       2        0 COVID-19   9315                   50  0</span></span>
 <span><span class="co">#&gt; 2       2        0 COVID-19   9075                   50  0</span></span>
@@ -168,7 +169,7 @@ boxplots, extract the results from the model object using
 be less than or equal to 20 to observe the epicurves in the first 20
 days. Notice each boxplot in the below table represents the observed
 values from each of the 50 simulations for each date.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span>
 <span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">seirconn_50</span><span class="op">[</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>,<span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">)</span></span></code></pre></div>
@@ -180,11 +181,11 @@ function. Notice each source exposure date displays a boxplot
 representing the distribution of reproductive numbers across all 50
 simulations. As expected, the reproductive number on average, decreases
 over time.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seirconn_50_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">reproductive</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">seirconn_50_r</span><span class="op">)</span></span></code></pre></div>
 <p><img src="run-multiple_files/figure-html/reproductive%20number%20plot-1.png" width="80%" style="display: block; margin: auto;"></p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># boxplot(rt ~ source_exposure_date, data = seirconn_50_r,</span></span>
 <span><span class="co">#         main = "Reproductive Number",</span></span>
 <span><span class="co">#         xlab = "Source Exposure Date",</span></span>
