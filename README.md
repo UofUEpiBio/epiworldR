@@ -114,6 +114,9 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 sir
 #> ________________________________________________________________________________
@@ -137,8 +140,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 146.00ms
-#> Last run speed      : 34.11 million agents x day / second
+#> Last run elapsed t  : 162.00ms
+#> Last run speed      : 30.85 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -163,6 +166,9 @@ summary(sir)
 #>  - Susceptible  0.91  0.09  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
+```
+
+``` r
 plot(sir)
 ```
 
@@ -199,6 +205,9 @@ run(model_seirconn, ndays = 100)
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 summary(model_seirconn)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
@@ -210,8 +219,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 47.00ms
-#> Last run speed      : 20.91 million agents x day / second
+#> Last run elapsed t  : 34.00ms
+#> Last run speed      : 29.33 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -268,7 +277,10 @@ head(plot(repnum))
     #> 5        0 COVID-19    5 2.074074 27 2.615427  0  9.0
     #> 6        0 COVID-19    6 3.421053 19 2.968647  0  9.1
 
-    head(plot_generation_time(model_seirconn))
+``` r
+
+head(plot_generation_time(model_seirconn))
+```
 
 <img src="man/figures/README-seir-conn-figures-3.png" width="100%" />
 
@@ -329,6 +341,9 @@ run(model_logit, 50)
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 plot(model_logit)
 ```
 
@@ -345,6 +360,9 @@ rn <- get_reproductive_number(model_logit)
 ) |> prop.table())[,2]
 #>       0       1 
 #> 0.12984 0.14201
+```
+
+``` r
 
 # Looking into the agents
 get_agents(model_logit)
@@ -386,6 +404,9 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 # Transmission network
 net <- get_transmissions(sir)
@@ -394,6 +415,9 @@ net <- get_transmissions(sir)
 library(epiworldR)
 library(netplot)
 #> Loading required package: grid
+```
+
+``` r
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
   )
@@ -432,6 +456,9 @@ run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 
 # Retrieving the results
 ans <- run_multiple_get_results(model_sir)
@@ -444,6 +471,9 @@ head(ans$total_hist)
 #> 4       1    1        1 Susceptible    977
 #> 5       1    1        1    Infected     22
 #> 6       1    1        1   Recovered      1
+```
+
+``` r
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
 #> 1       1        0 COVID-19    976                    9  0
@@ -452,6 +482,9 @@ head(ans$reproductive)
 #> 4       1        0 COVID-19    314                    9  0
 #> 5       1        0 COVID-19     41                    9  0
 #> 6       1        0 COVID-19     32                    9  0
+```
+
+``` r
 
 plot(ans$reproductive)
 ```
@@ -481,7 +514,7 @@ citation("epiworldR")
 #> And the actual R package:
 #> 
 #>   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.
-#>   R package version 0.2-0, <https://github.com/UofUEpiBio/epiworldR>.
+#>   R package version 0.2-1, <https://github.com/UofUEpiBio/epiworldR>.
 #> 
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set
