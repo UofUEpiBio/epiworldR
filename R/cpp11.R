@@ -116,8 +116,8 @@ entity_cpp <- function(name) {
   .Call(`_epiworldR_entity_cpp`, name)
 }
 
-entity_size_cpp <- function(entity) {
-  .Call(`_epiworldR_entity_size_cpp`, entity)
+get_entity_size_cpp <- function(entity) {
+  .Call(`_epiworldR_get_entity_size_cpp`, entity)
 }
 
 entity_add_agent_cpp <- function(entity, agent, model) {
@@ -128,8 +128,8 @@ entity_rm_agent_cpp <- function(entity, idx) {
   .Call(`_epiworldR_entity_rm_agent_cpp`, entity, idx)
 }
 
-entity_get_name_cpp <- function(entity) {
-  .Call(`_epiworldR_entity_get_name_cpp`, entity)
+get_entity_name_cpp <- function(entity) {
+  .Call(`_epiworldR_get_entity_name_cpp`, entity)
 }
 
 add_entity_cpp <- function(model, entity) {
@@ -144,8 +144,8 @@ rm_entity_cpp <- function(model, entity_pos) {
   .Call(`_epiworldR_rm_entity_cpp`, model, entity_pos)
 }
 
-load_agent_entities_ties_cpp <- function(model, agents_ids, entities_ids) {
-  .Call(`_epiworldR_load_agent_entities_ties_cpp`, model, agents_ids, entities_ids)
+load_agents_entities_ties_cpp <- function(model, agents_ids, entities_ids) {
+  .Call(`_epiworldR_load_agents_entities_ties_cpp`, model, agents_ids, entities_ids)
 }
 
 entity_get_agents_cpp <- function(entity) {

@@ -59,7 +59,7 @@ SEXP entity_cpp(
 }
 
 [[cpp11::register]]
-int entity_size_cpp(SEXP entity) {
+int get_entity_size_cpp(SEXP entity) {
   auto res = cpp11::external_pointer<Entity<>>(entity)->size();
   return static_cast<int>(res);
 }
@@ -90,7 +90,7 @@ int entity_rm_agent_cpp(
 }
 
 [[cpp11::register]]
-std::string entity_get_name_cpp(SEXP entity) {
+std::string get_entity_name_cpp(SEXP entity) {
   return cpp11::external_pointer<Entity<>>(entity)->get_name();
 }
 
@@ -129,7 +129,7 @@ int rm_entity_cpp(SEXP model, int entity_pos) {
 }
 
 [[cpp11::register]]
-int load_agent_entities_ties_cpp(
+int load_agents_entities_ties_cpp(
   SEXP model,
   SEXP agents_ids,
   SEXP entities_ids

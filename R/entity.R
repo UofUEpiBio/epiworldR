@@ -134,16 +134,16 @@ entity_add_agent <- function(
 
 #' @export
 #' @rdname entities
+#' @param agent_id Integer scalar. Agent id to remove from the entity.
 #' @return 
 #' - The function `entity_rm_agent` removes an agent from the entity.
 entity_rm_agent <- function(
   entity,
-  id
+  agent_id
 ) {
 
   stopifnot_entity(entity)
-  stopifnot_agent(agent)
-  entity_rm_agent_cpp(entity, agent)
+  entity_rm_agent_cpp(entity, agent_id)
 
   invisible(entity)
 
@@ -151,6 +151,7 @@ entity_rm_agent <- function(
 
 #' @export
 #' @rdname entities
+#' @param id Integer scalar. Entity id to remove (starting from zero).
 #' @return 
 #' - The function `rm_entity` removes an entity from the model.
 rm_entity <- function(model, id) {

@@ -1213,7 +1213,7 @@ inline void Model<TSeq>::rm_entity(size_t entity_id)
     entity.reset();
 
     // How should
-    if (entity_pos != (entities.size() - 1))
+    if (entity_pos != (static_cast<int>(entities.size()) - 1))
         std::swap(entities[entity_pos], entities[entities.size() - 1]);
 
     entities.pop_back();

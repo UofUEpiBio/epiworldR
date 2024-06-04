@@ -27,7 +27,7 @@ get_entity_name(entity)
 
 entity_add_agent(entity, agent, model = attr(entity, "model"))
 
-entity_rm_agent(entity, id)
+entity_rm_agent(entity, agent_id)
 
 rm_entity(model, id)
 
@@ -49,6 +49,10 @@ entity_get_agents(entity)
 \item{entity}{Entity object of class \code{epiworld_entity}.}
 
 \item{agent}{Agent object of class \code{epiworld_agent}.}
+
+\item{agent_id}{Integer scalar. Agent id to remove from the entity.}
+
+\item{id}{Integer scalar. Entity id to remove (starting from zero).}
 
 \item{n}{Integer scalar. Number of randomly assigned agents.}
 
