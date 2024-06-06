@@ -12,6 +12,7 @@ status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
+[![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://codecov.io/gh/UofUEpiBio/epiworldR)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -96,6 +97,9 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 sir
 #> ________________________________________________________________________________
@@ -119,8 +123,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 141.00ms
-#> Last run speed      : 35.22 million agents x day / second
+#> Last run elapsed t  : 165.00ms
+#> Last run speed      : 30.13 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -145,6 +149,9 @@ summary(sir)
 #>  - Susceptible  0.91  0.09  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
+```
+
+``` r
 plot(sir)
 ```
 
@@ -175,12 +182,15 @@ run(model_seirconn, ndays = 100)
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 model_seirconn
 #> ________________________________________________________________________________
 #> Susceptible-Exposed-Infected-Removed (SEIR) (connected)
 #> It features 10000 agents, 2 virus(es), and 0 tool(s).
 #> The model has 4 states.
-#> The final distribution is: 608 Susceptible, 4 Exposed, 2 Infected, and 9386 Recovered.
+#> The final distribution is: 634 Susceptible, 5 Exposed, 0 Infected, and 9361 Recovered.
 ```
 
 Computing some key statistics
@@ -200,15 +210,18 @@ head(plot(repnum))
 
 <img src="man/figures/README-unnamed-chunk-4-2.png" width="100%" />
 
-    #>   virus_id    virus date      avg  n       sd lb    ub
-    #> 1        0 COVID-19    0 2.858974 78 2.592318  1  7.30
-    #> 2        0 COVID-19    2 1.964286 28 1.914509  0  5.65
-    #> 3        0 COVID-19    3 2.761905 21 2.321740  0  7.00
-    #> 4        0 COVID-19    4 2.000000 33 1.887459  0  6.40
-    #> 5        0 COVID-19    5 1.864865 37 2.225636  0  9.10
-    #> 6        0 COVID-19    6 2.104167 48 2.667692  0 10.65
+    #>   virus_id    virus date      avg  n       sd  lb    ub
+    #> 1        0 COVID-19    0 2.762500 80 2.082135 1.0 7.025
+    #> 2        0 COVID-19    2 3.250000 24 2.862805 0.0 9.850
+    #> 3        0 COVID-19    3 3.294118 17 2.663755 0.4 9.400
+    #> 4        0 COVID-19    4 2.666667 18 2.351470 0.0 7.875
+    #> 5        0 COVID-19    5 1.878788 33 1.745666 0.0 5.800
+    #> 6        0 COVID-19    6 1.794118 34 1.533058 0.0 4.350
 
-    plot_incidence(model_seirconn)
+``` r
+
+plot_incidence(model_seirconn)
+```
 
 <img src="man/figures/README-unnamed-chunk-4-3.png" width="100%" />
 
@@ -218,13 +231,13 @@ head(plot_generation_time(model_seirconn))
 
 <img src="man/figures/README-unnamed-chunk-4-4.png" width="100%" />
 
-    #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    2 5.714286 21 4.681270        2    17.00 COVID-19        0
-    #> 2    3 7.444444 18 4.501271        2    15.45 COVID-19        0
-    #> 3    4 7.192308 26 5.578668        2    20.75 COVID-19        0
-    #> 4    5 7.111111 27 4.236593        2    15.70 COVID-19        0
-    #> 5    6 7.575000 40 7.249713        2    30.20 COVID-19        0
-    #> 6    7 6.303030 33 4.531038        2    18.00 COVID-19        0
+    #>   date       avg  n       sd ci_lower ci_upper    virus virus_id
+    #> 1    2  8.400000 20 6.227274    2.475   24.150 COVID-19        0
+    #> 2    3  8.750000 16 6.547264    2.375   21.750 COVID-19        0
+    #> 3    4  7.625000 16 5.302515    2.375   19.000 COVID-19        0
+    #> 4    5  5.888889 27 3.178453    2.000   12.700 COVID-19        0
+    #> 5    6 10.148148 27 5.586410    2.000   21.400 COVID-19        0
+    #> 6    7  8.458333 24 6.064717    2.000   20.825 COVID-19        0
 
 ## SIR Logit
 
@@ -275,6 +288,9 @@ run(model_logit, 50)
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 plot(model_logit)
 ```
 
@@ -291,6 +307,9 @@ rn <- get_reproductive_number(model_logit)
 ) |> prop.table())[,2]
 #>       0       1 
 #> 0.12984 0.14201
+```
+
+``` r
 
 # Looking into the agents
 get_agents(model_logit)
@@ -332,6 +351,9 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 # Transmission network
 net <- get_transmissions(sir)
@@ -340,6 +362,9 @@ net <- get_transmissions(sir)
 library(epiworldR)
 library(netplot)
 #> Loading required package: grid
+```
+
+``` r
 x <- igraph::graph_from_edgelist(
   as.matrix(net[,2:3]) + 1
   )
@@ -378,6 +403,9 @@ run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 
 # Retrieving the results
 ans <- run_multiple_get_results(model_sir)
@@ -387,17 +415,23 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    974
-#> 5       1    1        1    Infected     25
+#> 4       1    1        1 Susceptible    977
+#> 5       1    1        1    Infected     22
 #> 6       1    1        1   Recovered      1
+```
+
+``` r
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    767                   11  0
-#> 2       1        0 COVID-19    835                   10  0
-#> 3       1        0 COVID-19    793                    9  0
-#> 4       1        0 COVID-19    612                    9  0
-#> 5       1        0 COVID-19    466                    9  0
-#> 6       1        0 COVID-19    920                    8  0
+#> 1       1        0 COVID-19    976                    9  0
+#> 2       1        0 COVID-19    644                    9  0
+#> 3       1        0 COVID-19    608                    9  0
+#> 4       1        0 COVID-19    314                    9  0
+#> 5       1        0 COVID-19     41                    9  0
+#> 6       1        0 COVID-19     32                    9  0
+```
+
+``` r
 
 plot(ans$reproductive)
 ```
@@ -427,7 +461,7 @@ citation("epiworldR")
 #> And the actual R package:
 #> 
 #>   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.
-#>   R package version 0.1-0, <https://github.com/UofUEpiBio/epiworldR>.
+#>   R package version 0.2-1, <https://github.com/UofUEpiBio/epiworldR>.
 #> 
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set

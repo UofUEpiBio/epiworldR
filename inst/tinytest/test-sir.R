@@ -16,10 +16,9 @@ agents_smallworld(
 
 # Initializing 
 queuing_off(sir_0)
-init(sir_0, days = 50, seed = 1912)
 
 # Running and printing
-run(sir_0)
+run(sir_0, ndays = 50, seed = 1912)
 
 tmat_0 <- get_transition_probability(sir_0)
 
@@ -40,19 +39,23 @@ agents_smallworld(
   p = .01
 )
 
-# Initializing 
-init(sir_1, days = 50, seed = 1912)
-
 # Running and printing
-run(sir_1)
+run(sir_1, ndays = 50, seed = 1912)
 
 tmat_1 <- get_transition_probability(sir_1)
 
 # Expected
-tmat_expected <- structure(c(0.90395575761795, 0, 0, 0.0959785506129265, 0.707067608833313, 
-                             0, 6.55534968245775e-05, 0.292932420969009, 1), dim = c(3L, 3L
-                             ), dimnames = list(c("Susceptible", "Infected", "Recovered"), 
-                                                c("Susceptible", "Infected", "Recovered")))
+tmat_expected <- structure(
+  c(
+    0.963432729244232, 0, 0, 0.0365671403706074, 0.702733814716339, 
+    0, 0, 0.297266155481339, 1
+    ),
+  dim = c(3L, 3L),
+  dimnames = list(
+    c("Susceptible", "Infected", "Recovered"), 
+    c("Susceptible", "Infected", "Recovered")
+    )
+  )
 
 expect_equivalent(tmat_0, tmat_1)
 expect_equivalent(tmat_0, tmat_expected)
