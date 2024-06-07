@@ -4,6 +4,11 @@
 
 * Ports the `Entity` class. Entities are used to group agents within a model.
 
+* Refactors `add_tool`, `add_virus`, and `add_entity` simplifying syntax. Now,
+  these functions only receive the model and object. Prevalence is 
+  specified in the object itself.
+
+
 # epiworldR 0.1-0`
 
 * Force model to update agents' states when running a simulation.
