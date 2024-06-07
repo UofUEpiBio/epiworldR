@@ -109,7 +109,16 @@ model_seirconn <- ModelSEIRCONN(
   incubation_days     = 7, 
   transmission_rate   = 0.1,
   recovery_rate       = 1/7
-) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
+) |> add_virus(
+    virus(
+      name = "COVID-19",
+      prevalence = 0.01,
+      as_proportion = TRUE,
+      prob_infecting = 0.01,
+      recovery_rate = 0.6,
+      prob_death = 0.5,
+      incubation = 7
+    ))
 
 set.seed(132)
 run(model_seirconn, ndays = 100)

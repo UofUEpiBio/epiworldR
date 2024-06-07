@@ -83,8 +83,12 @@ model_seirdconn
 plot(model_seirdconn)
 
 # Adding the flu
-flu <- virus("Flu", prob_infecting = .3, recovery_rate = 1/7, prob_death = 0.001)
-add_virus(model = model_seirdconn, virus = flu, proportion = .001)
+flu <- virus(
+  "Flu", prob_infecting = .3, recovery_rate = 1/7,
+  prob_death = 0.001,
+  prevalence = 0.001, as_proportion = TRUE
+)
+add_virus(model = model_seirdconn, virus = flu)
 
 #' # Running and printing
 run(model_seirdconn, ndays = 100, seed = 1912)

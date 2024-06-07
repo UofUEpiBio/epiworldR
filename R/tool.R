@@ -47,7 +47,8 @@
 #' 
 #' # To declare a certain number of individuals with the tool
 #' rm_tool(model_sirconn, 0) # Removing epitool from the model
-#' add_tool_n(model_sirconn, epitool)
+#' set_prevalence_tool(epitool, 0.1, TRUE) # Setting prevalence to 0.1
+#' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' 
 #' # Adjusting probabilities due to tool
@@ -55,6 +56,9 @@
 #' set_transmission_reduction(epitool, 0.2) # Transmission reduction
 #' set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
 #' set_death_reduction(epitool, 0.05) # Probability reduction of death
+#' 
+#' rm_tool(model_sirconn, 0) 
+#' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #' 
 #' @export

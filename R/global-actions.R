@@ -23,6 +23,8 @@
 #' # Creating a tool
 #' epitool <- tool(
 #'   name = "Vaccine",
+#'   prevalence = 0,
+#'   as_proportion = FALSE,
 #'   susceptibility_reduction = .9,
 #'   transmission_reduction = .5,
 #'   recovery_enhancer = .5, 

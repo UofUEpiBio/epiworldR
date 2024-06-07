@@ -39,8 +39,8 @@
 #' plot(model_seirconn)
 #' 
 #' # Adding the flu
-#' flu <- virus("Flu", .9, 1/7)
-#' add_virus(model_seirconn, flu, .001)
+#' flu <- virus("Flu", .9, 1/7, prevalence = 0.001, as_proportion = TRUE)
+#' add_virus(model_seirconn, flu)
 #' 
 #' #' # Running and printing
 #' run(model_seirconn, ndays = 100, seed = 1912)

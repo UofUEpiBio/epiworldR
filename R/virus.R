@@ -30,10 +30,12 @@
 #'   recovery_rate       = 0.99
 #' )
 #' 
-#' delta <- virus("Delta Variant", 0, .5, .2, .01)
+#' delta <- virus(
+#'   "Delta Variant", 0, .5, .2, .01, prevalence = 0.3, as_proportion = TRUE
+#' )
 #' 
 #' # Adding virus and setting/getting virus name
-#' add_virus(mseirconn, delta, .3)
+#' add_virus(mseirconn, delta)
 #' set_name_virus(delta, "COVID-19 Strain")
 #' get_name_virus(delta)
 #' 
@@ -41,8 +43,8 @@
 #' mseirconn
 #' 
 #' rm_virus(mseirconn, 0) # Removing the first virus from the model object
-#' add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus
-#'                                    # to n = 100
+#' set_prevalence_virus(delta, 100, as_proportion = FALSE)
+#' add_virus(mseirconn, delta) 
 #' 
 #' # Setting parameters for the delta virus manually
 #' set_prob_infecting(delta, 0.5)
@@ -54,7 +56,9 @@
 #' # 1: Infected
 #' # 2: Recovered
 #' # 3: Dead
-#' delta2 <- virus("Delta Variant 2", 0, .5, .2, .01)
+#' delta2 <- virus(
+#'   "Delta Variant 2", 0, .5, .2, .01, prevalence = 0, as_proportion = TRUE
+#' )
 #' virus_set_state(delta2, 1, 2, 3)
 #' @export
 #' @aliases epiworld_virus
