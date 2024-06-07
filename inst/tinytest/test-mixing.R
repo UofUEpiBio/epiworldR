@@ -1,8 +1,8 @@
 library(epiworldR)
 
-e1 <- entity("Population 1")
-e2 <- entity("Population 2")
-e3 <- entity("Population 3")
+e1 <- entity("Population 1", 3e3, FALSE)
+e2 <- entity("Population 2", 3e3, FALSE)
+e3 <- entity("Population 3", 3e3, FALSE)
 
 # Row-stochastic matrix (rowsums 1)
 cmatrix <- c(
@@ -26,9 +26,9 @@ flu_model <- ModelSEIRMixing(
 
 # Adding the entities 
 flu_model |>
-  add_entity_n(e1, 3e3) |>
-  add_entity_n(e2, 3e3) |>
-  add_entity_n(e3, 3e3)
+  add_entity_n(e1) |>
+  add_entity_n(e2) |>
+  add_entity_n(e3)
 
 run(flu_model, ndays = 100, seed = 1233)
 summary(flu_model)

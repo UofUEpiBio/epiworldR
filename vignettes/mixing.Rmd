@@ -43,9 +43,9 @@ We will build this model using the `entity` class in epiworld. The following cod
 ```{r entity-matrix-setup} 
 library(epiworldR)
 
-e1 <- entity("Population 1")
-e2 <- entity("Population 2")
-e3 <- entity("Population 3")
+e1 <- entity("Population 1", 3e3, FALSE)
+e2 <- entity("Population 2", 3e3, FALSE)
+e3 <- entity("Population 3", 3e3, FALSE)
 
 # Row-stochastic matrix (rowsums 1)
 cmatrix <- c(
@@ -58,7 +58,7 @@ cmatrix <- c(
 With these in hand, we can proceed to create a mixing model. The following code chunk creates a model, an SEIR with mixing, and adds the entities to the model:
 
 ```{r model-build}
-N <- 1e4
+N <- 3e3
 
 flu_model <- ModelSEIRMixing(
   name              = "Flu",
@@ -73,9 +73,9 @@ flu_model <- ModelSEIRMixing(
 
 # Adding the entities 
 flu_model |>
-  add_entity_n(e1, N / 5) |>
-  add_entity_n(e2, N / 5 * 2) |>
-  add_entity_n(e3, N / 5 * 2)
+  add_entity(e1) |>
+  add_entity(e2) |>
+  add_entity(e3)
 ```
 
 The function `add_entity_n` adds the corresponding entity and the number of agents that should be allocated to it. The default behavior randomly assigns agents to the entities at the beginning of the simulation. Agents cannot be assigned to more than one entity. The following code-chunk simulates the model for 100 days, summarizes the results, and plots the incidence curve:

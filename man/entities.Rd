@@ -10,7 +10,7 @@
 \alias{entity_add_agent}
 \alias{entity_rm_agent}
 \alias{rm_entity}
-\alias{add_entity_n}
+\alias{add_entity}
 \alias{load_agents_entities_ties}
 \alias{entity_get_agents}
 \title{Get entities}
@@ -19,7 +19,7 @@ get_entities(model)
 
 \method{[}{epiworld_entities}(x, i)
 
-entity(name)
+entity(name, prevalence, as_proportion)
 
 get_entity_size(entity)
 
@@ -31,7 +31,7 @@ entity_rm_agent(entity, agent_id)
 
 rm_entity(model, id)
 
-add_entity_n(model, entity, n)
+add_entity(model, entity)
 
 load_agents_entities_ties(model, agents_id, entities_id)
 
@@ -46,6 +46,11 @@ entity_get_agents(entity)
 
 \item{name}{Character scalar. Name of the entity.}
 
+\item{prevalence}{Numeric scalar. Prevalence of the entity.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
+as a proportion.}
+
 \item{entity}{Entity object of class \code{epiworld_entity}.}
 
 \item{agent}{Agent object of class \code{epiworld_agent}.}
@@ -53,8 +58,6 @@ entity_get_agents(entity)
 \item{agent_id}{Integer scalar. Agent id to remove from the entity.}
 
 \item{id}{Integer scalar. Entity id to remove (starting from zero).}
-
-\item{n}{Integer scalar. Number of randomly assigned agents.}
 
 \item{agents_id}{Integer vector.}
 
@@ -113,11 +116,12 @@ mymodel <- ModelSIRMixing(
  contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2)
 )
 
-ent1 <- entity("First")
-ent2 <- entity("Second")
+ent1 <- entity("First", 5000, FALSE)
+ent2 <- entity("Second", 5000, FALSE)
 
-add_entity_n(mymodel, ent1, 5000)
-add_entity_n(mymodel, ent2, 5000)
+mymodel |>
+  add_entity(ent1) |>
+  add_entity(ent2)
 
 run(mymodel, ndays = 100, seed = 1912)
 

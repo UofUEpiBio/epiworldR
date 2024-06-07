@@ -161,10 +161,13 @@ the new virus' prevalence (which is set to 0.01 in this example).
 
 ```{r design-and-add}
 # Building the virus
-flu <- virus(name = "Flu", prob_infecting = .3)
+flu <- virus(
+  name = "Flu", prob_infecting = .3,
+  prevalence = .0001, as_proportion = TRUE
+  )
 
 # Adding the virus to the model
-add_virus(model_sir, flu, .0001)
+add_virus(model_sir, flu)
 ```
 
 After running the updated model with the new virus included for 50 days, the
@@ -194,7 +197,7 @@ par(op)
 
 Now, the implementation of tools to combat any viruses and viruses in the model 
 will be demonstrated. First, for the sake of simplicity, remove the flu virus 
-from the SIR model object (keep in  mind the index for the flu virus in the 
+from the SIR model object (keep in mind the index for the flu virus in the 
 model object is 1). Next, provide parameters for the new tool using the `tool`
 function. These parameters include the name of the tool, any reduction in 
 probabilities for the SIR model parameters, and increased probability of 

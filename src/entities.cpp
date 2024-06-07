@@ -47,11 +47,17 @@ SEXP get_entity_cpp(
 
 [[cpp11::register]]
 SEXP entity_cpp(
-  std::string name
+  std::string name,
+  double preval,
+  bool as_proportion
 ) {
   
   cpp11::external_pointer<Entity<>> ptr(
-    new Entity<>(name)
+    new Entity<>(
+      name,
+      preval,
+      as_proportion
+      )
   );
   
   return ptr;
@@ -95,7 +101,10 @@ std::string get_entity_name_cpp(SEXP entity) {
 }
 
 [[cpp11::register]]
-int add_entity_cpp(SEXP model, SEXP entity) {
+int add_entity_cpp(
+  SEXP model,
+  SEXP entity
+  ) {
   
   cpp11::external_pointer<Model<>> ptr_model(model);
   cpp11::external_pointer<Entity<>> ptr_entity(entity);

@@ -28,11 +28,12 @@ stopifnot_entity <- function(entity) {
 #'  contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2)
 #' )
 #' 
-#' ent1 <- entity("First")
-#' ent2 <- entity("Second")
+#' ent1 <- entity("First", 5000, FALSE)
+#' ent2 <- entity("Second", 5000, FALSE)
 #' 
-#' add_entity_n(mymodel, ent1, 5000)
-#' add_entity_n(mymodel, ent2, 5000)
+#' mymodel |>
+#'   add_entity(ent1) |>
+#'   add_entity(ent2)
 #' 
 #' run(mymodel, ndays = 100, seed = 1912)
 #' 
@@ -82,13 +83,20 @@ print.epiworld_entities <- function(x, ...) {
 
 #' @export 
 #' @param name Character scalar. Name of the entity.
+#' @param prevalence Numeric scalar. Prevalence of the entity.
+#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
+#' as a proportion.
 #' @return 
 #' - The function `entity` creates an entity object.
 #' @rdname entities
-entity <- function(name) {
+entity <- function(name, prevalence, as_proportion) {
 
   structure(
-    entity_cpp(name),
+    entity_cpp(
+      name,
+      as.double(prevalence),
+      as.logical(as_proportion)
+      ),
     class = "epiworld_entity"
   )
 
@@ -164,16 +172,17 @@ rm_entity <- function(model, id) {
 
 #' @export
 #' @rdname entities
-#' @param n Integer scalar. Number of randomly assigned agents.
-add_entity_n <- function(
+add_entity <- function(
   model,
-  entity,
-  n
+  entity
 ) {
 
   stopifnot_model(model)
   stopifnot_entity(entity)
-  add_entity_n_cpp(model, entity, n)
+  add_entity_cpp(
+    model,
+    entity
+    )
 
   invisible(model)
 

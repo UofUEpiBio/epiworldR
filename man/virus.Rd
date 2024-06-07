@@ -6,7 +6,6 @@
 \alias{set_name_virus}
 \alias{get_name_virus}
 \alias{add_virus}
-\alias{add_virus_n}
 \alias{virus_set_state}
 \alias{rm_virus}
 \alias{virus_fun_logit}
@@ -22,10 +21,13 @@
 \alias{set_incubation}
 \alias{set_incubation_ptr}
 \alias{set_incubation_fun}
+\alias{set_prevalence_virus}
 \title{Virus design}
 \usage{
 virus(
   name,
+  prevalence,
+  as_proportion,
   prob_infecting,
   recovery_rate = 0.5,
   prob_death = 0,
@@ -37,9 +39,7 @@ set_name_virus(virus, name)
 
 get_name_virus(virus)
 
-add_virus(model, virus, proportion)
-
-add_virus_n(model, virus, n)
+add_virus(model, virus)
 
 virus_set_state(virus, init, end, removed)
 
@@ -70,9 +70,15 @@ set_incubation(virus, incubation)
 set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
+
+set_prevalence_virus(virus, prevalence, as_proportion)
 }
 \arguments{
 \item{name}{of the virus}
+
+\item{prevalence}{Numeric scalar. Prevalence of the virus.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is a proportion.}
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
@@ -87,10 +93,6 @@ set_incubation_fun(virus, model, vfun)
 \item{virus}{An object of class \code{epiworld_virus}}
 
 \item{model}{An object of class \code{epiworld_model}.}
-
-\item{proportion}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
-
-\item{n}{A positive integer. Initial count of agents to have the virus.}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
@@ -124,12 +126,6 @@ a name to the virus of choice.
 \itemize{
 \item The \code{add_virus} function does not return a value, instead it adds the
 virus of choice to the model object of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{add_virus_n} function does not return a value, but instead adds a
-specified number of agents with the virus of choice to the model object
-of class \link{epiworld_model}.
 }
 
 \itemize{
