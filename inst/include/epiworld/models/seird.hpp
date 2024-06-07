@@ -168,7 +168,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   model.add_param(death_rate, "Death rate");
   
   // Preparing the virus -------------------------------------------
-  epiworld::Virus<TSeq> virus(vname);
+  epiworld::Virus<TSeq> virus(vname, prevalence, true);
   virus.set_state(ModelSEIRD<TSeq>::EXPOSED, ModelSEIRD<TSeq>::REMOVED, ModelSEIRD<TSeq>::DECEASED);
   
   virus.set_prob_infecting(&model("Transmission rate"));
@@ -177,7 +177,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   virus.set_prob_recovery(&model("Recovery rate"));
   
   // Adding the tool and the virus
-  model.add_virus(virus, prevalence);
+  model.add_virus(virus);
   
   model.set_name("Susceptible-Exposed-Infected-Removed-Deceased (SEIRD)");
   

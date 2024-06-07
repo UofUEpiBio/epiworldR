@@ -15,6 +15,8 @@ using namespace epiworld;
 [[cpp11::register]]
 SEXP virus_cpp(
     std::string name,
+    double prevalence,
+    bool as_proportion,
     double prob_infecting,
     double prob_recovery,
     double prob_death,
@@ -22,7 +24,9 @@ SEXP virus_cpp(
     double incubation
     ) {
   
-  WrapVirus(virus)(new epiworld::Virus<int>(name));
+  WrapVirus(virus)(new epiworld::Virus<int>(
+    name, prevalence, as_proportion
+    ));
   
   virus->set_prob_infecting(prob_infecting);
   virus->set_prob_recovery(prob_recovery);
@@ -55,22 +59,10 @@ SEXP virus_set_state_cpp(
 }
 
 [[cpp11::register]]
-SEXP add_virus_cpp(SEXP m, SEXP v, double preval) {
+SEXP add_virus_cpp(SEXP m, SEXP v) {
   
   external_pointer<epiworld::Model<>>(m)->add_virus(
-    *external_pointer<epiworld::Virus<>>(v),
-    preval
-  );
-  
-  return m;
-}
-
-[[cpp11::register]]
-SEXP add_virus_n_cpp(SEXP m, SEXP v, size_t preval) {
-  
-  external_pointer<Model<>>(m)->add_virus_n(
-      *external_pointer<Virus<>>(v),
-      preval
+    *external_pointer<epiworld::Virus<>>(v)
   );
   
   return m;
@@ -275,6 +267,22 @@ SEXP set_name_virus_cpp(SEXP virus, std::string name) {
   external_pointer<Virus<>>(virus)->set_name(name);
   return virus;
 }
+
+[[cpp11::register]]
+SEXP set_prevalence_virus_cpp(
+  SEXP virus,
+  double prevalence,
+  bool as_proportion
+  ) {
+
+  external_pointer<Virus<>>(virus)->set_prevalence(
+    prevalence, as_proportion
+    );
+    
+  return virus;
+
+}
+
 
 
 #undef WrapVirus

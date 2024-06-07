@@ -164,12 +164,12 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     model.add_param(prob_adopt, parname);
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> innovation(innovation_name);
+    epiworld::Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
     innovation.set_prob_infecting(&model(parname));
     
-    model.add_virus(innovation, prevalence);
+    model.add_virus(innovation);
 
     model.set_name(
         std::string("Diffusion of Innovations - ") + innovation_name);

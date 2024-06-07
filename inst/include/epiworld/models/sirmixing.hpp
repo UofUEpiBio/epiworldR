@@ -426,7 +426,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSIRMixing<TSeq>::INFECTED,
         ModelSIRMixing<TSeq>::RECOVERED,
@@ -436,7 +436,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     virus.set_prob_infecting(&model("Prob. Transmission"));
     virus.set_prob_recovery(&model("Prob. Recovery"));
 
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.queuing_off(); // No queuing need
 

@@ -209,13 +209,15 @@ rm_virus(model_sir, 1)
 
 vaccine <- tool(
   name = "Vaccine",
+  prevalence = 0.5,
+  as_proportion = TRUE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5, 
   death_reduction = .9
 )
 
-add_tool(model_sir, vaccine, 0.5)
+add_tool(model_sir, vaccine)
 run(model_sir, ndays = 50, seed = 1231)
 ```
 

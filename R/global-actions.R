@@ -274,7 +274,7 @@ print.epiworld_globalevent <- function(x, ...) {
 add_globalevent <- function(model, action) {
   
   if (length(attr(action, "tool")))
-    add_tool_n(model, attr(action, "tool"), 0)
+    add_tool(model, attr(action, "tool"))
 
   invisible(add_globalevent_cpp(model, action))
 

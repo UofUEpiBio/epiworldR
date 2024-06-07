@@ -135,14 +135,7 @@ protected:
     bool directed = false;
     
     std::vector< VirusPtr<TSeq> > viruses = {};
-    std::vector< epiworld_double > prevalence_virus = {}; ///< Initial prevalence_virus of each virus
-    std::vector< bool > prevalence_virus_as_proportion = {};
-    std::vector< VirusToAgentFun<TSeq> > viruses_dist_funs = {};
-    
     std::vector< ToolPtr<TSeq> > tools = {};
-    std::vector< epiworld_double > prevalence_tool = {};
-    std::vector< bool > prevalence_tool_as_proportion = {};
-    std::vector< ToolToAgentFun<TSeq> > tools_dist_funs = {};
 
     std::vector< Entity<TSeq> > entities = {}; 
     std::vector< Entity<TSeq> > entities_backup = {};
@@ -338,15 +331,9 @@ public:
      * indicating number of individuals.
      */
     ///@{
-    void add_virus(Virus<TSeq> & v, epiworld_double preval);
-    void add_virus_n(Virus<TSeq> & v, epiworld_fast_uint preval);
-    void add_virus_fun(Virus<TSeq> & v, VirusToAgentFun<TSeq> fun);
-    void add_tool(Tool<TSeq> & t, epiworld_double preval);
-    void add_tool_n(Tool<TSeq> & t, epiworld_fast_uint preval);
-    void add_tool_fun(Tool<TSeq> & t, ToolToAgentFun<TSeq> fun);
+    void add_virus(Virus<TSeq> & v);
+    void add_tool(Tool<TSeq> & t);
     void add_entity(Entity<TSeq> e);
-    void add_entity_n(Entity<TSeq> e, epiworld_fast_uint preval);
-    void add_entity_fun(Entity<TSeq> e, EntityToAgentFun<TSeq> fun);
     void rm_virus(size_t virus_pos);
     void rm_tool(size_t tool_pos);
     void rm_entity(size_t entity_id);
@@ -706,8 +693,6 @@ public:
     ///@}
 
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
-    const std::vector< epiworld_double > & get_prevalence_virus() const;
-    const std::vector< bool > & get_prevalence_virus_as_proportion() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
     Virus<TSeq> & get_virus(size_t id);
     Tool<TSeq> & get_tool(size_t id);

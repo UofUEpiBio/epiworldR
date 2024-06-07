@@ -78,13 +78,13 @@ inline ModelSIRD<TSeq>::ModelSIRD(
     model.add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,3);
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_death(&model("Death rate"));
     
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.set_name("Susceptible-Infected-Recovered-Deceased (SIRD)");
 

@@ -60,6 +60,8 @@
 #' @aliases epiworld_virus
 virus <- function(
     name,
+    prevalence,
+    as_proportion,
     prob_infecting,
     recovery_rate = 0.5,
     prob_death    = 0.0,
@@ -70,6 +72,8 @@ virus <- function(
   structure(
     virus_cpp(
       name,
+      prevalence,
+      as_proportion,
       prob_infecting,
       recovery_rate,
       prob_death,
@@ -135,139 +139,86 @@ get_name_virus <- function(virus) {
 #' @rdname virus
 #' @param model An object of class `epiworld_model`.
 #' @param virus An object of class `epiworld_virus`
-#' @param proportion In the case of `add_virus`, a proportion, otherwise, an integer.
 #' @returns 
 #' - The `add_virus` function does not return a value, instead it adds the 
 #' virus of choice to the model object of class [epiworld_model].
-add_virus <- function(model, virus, proportion) UseMethod("add_virus")
+add_virus <- function(model, virus) UseMethod("add_virus")
 
 #' @export
-add_virus.epiworld_model <- function(model, virus, proportion) {
+add_virus.epiworld_model <- function(model, virus) {
   
   stopifnot_virus(virus)
-  
-  add_virus_cpp(model, virus, proportion)
+  add_virus_cpp(model, virus)
   invisible(model)
   
 }
 
 #' @export
-add_virus.epiworld_sir <- function(model, virus, proportion) {
+add_virus.epiworld_sir <- function(model, virus) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 2)
-  invisible(add_virus_cpp(model, virus, proportion))
+  invisible(add_virus_cpp(model, virus))
   
 }
 
 #' @export
-add_virus.epiworld_sird <- function(model, virus, proportion) {
+add_virus.epiworld_sird <- function(model, virus) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 3)
-  invisible(add_virus_cpp(model, virus, proportion))
+  invisible(add_virus_cpp(model, virus))
   
 }
 
 #' @export
-add_virus.epiworld_sirconn <- function(model, virus, proportion) {
+add_virus.epiworld_sirconn <- function(model, virus) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_sir(model, virus, proportion)
+  add_virus.epiworld_sir(model, virus)
   
 }
 
 #' @export
-add_virus.epiworld_sirdconn <- function(model, virus, proportion) {
+add_virus.epiworld_sirdconn <- function(model, virus) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_sird(model, virus, proportion)
+  add_virus.epiworld_sird(model, virus)
   
 }
 
 
 #' @export
-add_virus.epiworld_seir <- function(model, virus, proportion) {
+add_virus.epiworld_seir <- function(model, virus) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 3)
-  invisible(add_virus_cpp(model, virus, proportion))
+  invisible(add_virus_cpp(model, virus))
   
 }
 
 #' @export
-add_virus.epiworld_seird <- function(model, virus, proportion) {
+add_virus.epiworld_seird <- function(model, virus) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 4)
-  invisible(add_virus_cpp(model, virus, proportion))
+  invisible(add_virus_cpp(model, virus))
   
 }
 
 #' @export
-add_virus.epiworld_seirconn <- function(model, virus, proportion) {
+add_virus.epiworld_seirconn <- function(model, virus) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_seir(model, virus, proportion)
+  add_virus.epiworld_seir(model, virus)
   
 }
 
 #' @export
-add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
+add_virus.epiworld_seirdconn <- function(model, virus) {
   
   stopifnot_virus(virus)
-  add_virus.epiworld_seird(model, virus, proportion)
-  
-}
-
-#' @export
-#' @rdname virus
-#' @returns 
-#' - The `add_virus_n` function does not return a value, but instead adds a 
-#' specified number of agents with the virus of choice to the model object 
-#' of class [epiworld_model].
-#' @param n A positive integer. Initial count of agents to have the virus.
-add_virus_n <- function(model, virus, n) UseMethod("add_virus_n")
-
-#' @export
-add_virus_n.epiworld_model <- function(model, virus, n) {
-  
-  stopifnot_virus(virus)
-  invisible(add_virus_n_cpp(model, virus, n))
-  
-}
-
-#' @export
-add_virus_n.epiworld_sir <- function(model, virus, n) {
-  
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 2, removed = 2)
-  invisible(add_virus_n_cpp(model, virus, n))
-  
-}
-
-#' @export
-add_virus_n.epiworld_sirconn <- function(model, virus, n) {
-  
-  stopifnot_virus(virus)
-  add_virus_n.epiworld_sir(model, virus, n)
-  
-}
-
-#' @export
-add_virus_n.epiworld_seir <- function(model, virus, n) {
-  
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 3, removed = 3)
-  invisible(add_virus_n_cpp(model, virus, n))
-  
-}
-
-#' @export
-add_virus_n.epiworld_seirconn <- function(model, virus, n) {
-  
-  stopifnot_virus(virus)
-  add_virus_n.epiworld_seir(model, virus, n)
+  add_virus.epiworld_seird(model, virus)
   
 }
 
@@ -536,5 +487,19 @@ set_incubation_fun <- function(virus, model, vfun) {
   
 }
 
-
+#' @export 
+#' @rdname virus
+#' @param prevalence Numeric scalar. Prevalence of the virus.
+#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is a proportion.
+set_prevalence_virus <- function(virus, prevalence, as_proportion) {
+  
+  stopifnot_virus(virus)
+  invisible(
+    set_prevalence_virus_cpp(
+      virus,
+      as.numeric(prevalence),
+      as.logical(as_proportion)
+      ))
+  
+}
 

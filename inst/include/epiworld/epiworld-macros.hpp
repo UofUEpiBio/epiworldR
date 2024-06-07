@@ -101,4 +101,7 @@
     [](epiworld::Model<tseq>* m) -> void
 
 
+#define EPI_NEW_ENTITYTOAGENTFUN(funname,tseq) inline void \
+    (funname)(epiworld::Entity<tseq> & e, epiworld::Model<tseq> * m)
+
 #endif

@@ -455,6 +455,11 @@ inline VirusPtr<TSeq> & Agent<TSeq>::get_virus() {
     return virus;
 }
 
+template<typename TSeq>
+inline const VirusPtr<TSeq> & Agent<TSeq>::get_virus() const {
+    return virus;
+}
+
 
 template<typename TSeq>
 inline Tools<TSeq> Agent<TSeq>::get_tools() {

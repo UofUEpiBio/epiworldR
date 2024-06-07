@@ -341,7 +341,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRDCONN<TSeq>::EXPOSED,
         ModelSEIRDCONN<TSeq>::REMOVED,
@@ -352,7 +352,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     virus.set_prob_recovery(&model("Prob. Recovery"));
     virus.set_incubation(&model("Avg. Incubation days"));
     virus.set_prob_death(&model("Death rate"));
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.queuing_off(); // No queuing need
 

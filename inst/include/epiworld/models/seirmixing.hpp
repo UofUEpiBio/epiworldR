@@ -450,7 +450,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRMixing<TSeq>::EXPOSED,
         ModelSEIRMixing<TSeq>::RECOVERED,
@@ -461,7 +461,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     virus.set_prob_recovery(&model("Prob. Recovery"));
     virus.set_incubation(&model("Avg. Incubation days"));
 
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.queuing_off(); // No queuing need
 

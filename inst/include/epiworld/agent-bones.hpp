@@ -218,6 +218,7 @@ public:
     int get_id() const; ///< Id of the individual
 
     VirusPtr<TSeq> & get_virus();
+    const VirusPtr<TSeq> & get_virus() const;
 
     ToolPtr<TSeq> & get_tool(int i);
     Tools<TSeq> get_tools();

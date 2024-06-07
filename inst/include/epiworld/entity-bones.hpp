@@ -49,7 +49,7 @@ private:
     ///@}
 
     int max_capacity = -1;
-    std::string entity_name = "Unknown entity";
+    std::string entity_name = "Unnamed entity";
 
     std::vector< epiworld_double > location = {0.0}; ///< An arbitrary vector for location
 
@@ -59,20 +59,34 @@ private:
     epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
-
 public:
 
     epiworld_double prevalence = 0.0;
     bool prevalence_as_proportion = false;
     EntityToAgentFun<TSeq> dist_fun = nullptr;
 
-    // Entity() = delete;
-    // Entity(Entity<TSeq> & e) = delete;
-    // Entity(const Entity<TSeq> & e);
-    // Entity(Entity && e);
-    Entity(std::string name) : entity_name(name) {};
-    // Entity<TSeq> & operator=(const Entity<TSeq> & e);
-
+    /**
+     * @brief Constructs an Entity object.
+     *
+     * This constructor initializes an Entity object with the specified parameters.
+     *
+     * @param name The name of the entity.
+     * @param preval The prevalence of the entity.
+     * @param as_proportion A flag indicating whether the prevalence is given as a proportion.
+     * @param fun A function pointer to a function that maps the entity to an agent.
+     */
+    Entity(
+        std::string name,
+        epiworld_double preval,
+        bool as_proportion,
+        EntityToAgentFun<TSeq> fun = nullptr
+        ) :
+            entity_name(name),
+            prevalence(preval),
+            prevalence_as_proportion(as_proportion),
+            dist_fun(fun)
+        {};
+    
     void add_agent(Agent<TSeq> & p, Model<TSeq> * model);
     void add_agent(Agent<TSeq> * p, Model<TSeq> * model);
     void rm_agent(size_t idx);
@@ -101,6 +115,13 @@ public:
     bool operator==(const Entity<TSeq> & other) const;
     bool operator!=(const Entity<TSeq> & other) const {return !operator==(other);};
 
+    /** 
+     * @name Entity distribution
+     * 
+     * @details These functions are used for distributing agents among entities.
+     * The idea is to have a flexible way of distributing agents among entities.
+     
+     */
     void distribute();
 
     std::vector< size_t > & get_agents();

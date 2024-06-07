@@ -64,13 +64,13 @@ inline ModelSIR<TSeq>::ModelSIR(
     model.add_param(transmission_rate, "Transmission rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,2);
     
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_infecting(&model("Transmission rate"));
     
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.set_name("Susceptible-Infected-Recovered (SIR)");
 

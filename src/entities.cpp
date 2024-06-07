@@ -106,17 +106,6 @@ int add_entity_cpp(SEXP model, SEXP entity) {
 }
 
 [[cpp11::register]]
-int add_entity_n_cpp(SEXP model, SEXP entity, int n) {
-  
-  cpp11::external_pointer<Model<>> ptr_model(model);
-  cpp11::external_pointer<Entity<>> ptr_entity(entity);
-  
-  ptr_model->add_entity_n(*ptr_entity, static_cast<size_t>(n));
-  
-  return 0;
-}
-
-[[cpp11::register]]
 int rm_entity_cpp(SEXP model, int entity_pos) {
   
   cpp11::external_pointer<Model<>> ptr_model(model);
