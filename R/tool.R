@@ -142,14 +142,31 @@ get_name_tool <- function(tool) {
 
 #' @export
 #' @param tool An object of class `epiworld_tool`
+#' @param proportion Deprecated. Either set the prevalence during the tool
+#' initialization or use `set_prevalence_tool`.
 #' @details 
 #' The `add_tool` function adds the specified tool to the model of class 
 #' [epiworld_model] with specified proportion.
 #' @rdname tool
-add_tool <- function(model, tool) UseMethod("add_tool")
+add_tool <- function(model, tool, proportion) {
+  
+  if (!missing(proportion)) {
+
+    warning(
+      "The 'proportion' argument is deprecated. ",
+      "Use 'set_prevalence_tool' instead."
+      )
+
+    set_prevalence_tool(tool, proportion, TRUE)
+
+  }
+
+  UseMethod("add_tool")
+
+}
 
 #' @export
-add_tool.epiworld_model <- function(model, tool) {
+add_tool.epiworld_model <- function(model, tool, proportion) {
 
   stopifnot_tool(tool)
   add_tool_cpp(model, tool)

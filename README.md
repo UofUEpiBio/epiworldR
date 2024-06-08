@@ -140,8 +140,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 162.00ms
-#> Last run speed      : 30.85 million agents x day / second
+#> Last run elapsed t  : 163.00ms
+#> Last run speed      : 30.49 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -197,7 +197,16 @@ model_seirconn <- ModelSEIRCONN(
   incubation_days     = 7, 
   transmission_rate   = 0.1,
   recovery_rate       = 1/7
-) |> add_virus(virus("COVID-19", 0.01, 0.6, 0.5, 7), .5)
+) |> add_virus(
+    virus(
+      name = "COVID-19",
+      prevalence = 0.01,
+      as_proportion = TRUE,
+      prob_infecting = 0.01,
+      recovery_rate = 0.6,
+      prob_death = 0.5,
+      incubation = 7
+    ))
 
 set.seed(132)
 run(model_seirconn, ndays = 100)
@@ -219,8 +228,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 34.00ms
-#> Last run speed      : 29.33 million agents x day / second
+#> Last run elapsed t  : 36.00ms
+#> Last run speed      : 27.62 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -228,7 +237,7 @@ summary(model_seirconn)
 #> 
 #> Virus(es):
 #>  - COVID-19 (baseline prevalence: 1.00%)
-#>  - COVID-19 (baseline prevalence: 50.00%)
+#>  - COVID-19 (baseline prevalence: 1.00%)
 #> 
 #> Tool(s):
 #>  (none)
@@ -240,15 +249,15 @@ summary(model_seirconn)
 #>  - Prob. Transmission   : 0.1000
 #> 
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  4900 -> 229
-#>   - (1) Exposed     :  5100 -> 8
-#>   - (2) Infected    :     0 -> 27
-#>   - (3) Recovered   :     0 -> 9736
+#>   - (0) Susceptible :  9800 -> 13
+#>   - (1) Exposed     :   200 -> 0
+#>   - (2) Infected    :     0 -> 1
+#>   - (3) Recovered   :     0 -> 9986
 #> 
 #> Transition Probabilities:
-#>  - Susceptible  0.97  0.03  0.00  0.00
+#>  - Susceptible  0.94  0.06  0.00  0.00
 #>  - Exposed      0.00  0.86  0.14  0.00
-#>  - Infected     0.00  0.00  0.78  0.22
+#>  - Infected     0.00  0.00  0.85  0.15
 #>  - Recovered    0.00  0.00  0.00  1.00
 ```
 
@@ -269,13 +278,13 @@ head(plot(repnum))
 
 <img src="man/figures/README-seir-conn-figures-2.png" width="100%" />
 
-    #>   virus_id    virus date      avg  n       sd lb   ub
-    #> 1        0 COVID-19    0 3.671053 76 3.012809  1 12.0
-    #> 2        0 COVID-19    2 2.714286  7 4.347961  0 10.8
-    #> 3        0 COVID-19    3 3.461538 13 4.539005  0 12.8
-    #> 4        0 COVID-19    4 3.307692 13 3.923957  0 12.1
-    #> 5        0 COVID-19    5 2.074074 27 2.615427  0  9.0
-    #> 6        0 COVID-19    6 3.421053 19 2.968647  0  9.1
+    #>   virus_id    virus date      avg  n       sd  lb   ub
+    #> 1        0 COVID-19    0 5.615385 91 4.832228 1.0 17.0
+    #> 2        0 COVID-19    2 5.000000  9 3.605551 0.2 10.4
+    #> 3        0 COVID-19    3 6.000000 13 5.049752 0.0 13.0
+    #> 4        0 COVID-19    4 4.592593 27 3.885469 0.0 12.7
+    #> 5        0 COVID-19    5 4.846154 26 4.920913 0.0 14.5
+    #> 6        0 COVID-19    6 4.236842 38 3.241906 0.0 12.0
 
 ``` r
 
@@ -284,13 +293,13 @@ head(plot_generation_time(model_seirconn))
 
 <img src="man/figures/README-seir-conn-figures-3.png" width="100%" />
 
-    #>   date       avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    2  3.250000  4 1.258306    2.075    4.850 COVID-19        0
-    #> 2    3 11.600000 10 8.733079    2.000   26.975 COVID-19        0
-    #> 3    4 11.545455 11 6.890046    4.000   23.000 COVID-19        0
-    #> 4    5  9.666667 18 8.791707    2.425   30.775 COVID-19        0
-    #> 5    6  9.571429 14 6.618323    2.650   24.450 COVID-19        0
-    #> 6    7 10.045455 22 6.168100    2.525   25.900 COVID-19        0
+    #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
+    #> 1    2 7.125000  8 2.474874      2.7    9.825 COVID-19        0
+    #> 2    3 8.090909 11 7.203534      2.0   23.750 COVID-19        0
+    #> 3    4 6.708333 24 4.338695      2.0   16.425 COVID-19        0
+    #> 4    5 7.428571 21 4.738897      2.0   15.500 COVID-19        0
+    #> 5    6 7.628571 35 4.173345      2.0   15.300 COVID-19        0
+    #> 6    7 6.921053 38 4.675304      2.0   16.150 COVID-19        0
 
 ## SIR Logit
 

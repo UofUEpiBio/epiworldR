@@ -143,13 +143,30 @@ get_name_virus <- function(virus) {
 #' @rdname virus
 #' @param model An object of class `epiworld_model`.
 #' @param virus An object of class `epiworld_virus`
+#' @param proportion Deprecated. Either set the prevalence during the virus
+#' initialization or use `set_prevalence_virus`.
 #' @returns 
 #' - The `add_virus` function does not return a value, instead it adds the 
 #' virus of choice to the model object of class [epiworld_model].
-add_virus <- function(model, virus) UseMethod("add_virus")
+add_virus <- function(model, virus, proportion) {
+
+  if (!missing(proportion)) {
+
+    warning(
+      "The argument 'proportion' is deprecated and will be removed in ",
+      "the next version."
+      )
+
+    set_prevalence_virus(virus, proportion, as_proportion = TRUE)
+
+  }
+
+  UseMethod("add_virus")
+
+}
 
 #' @export
-add_virus.epiworld_model <- function(model, virus) {
+add_virus.epiworld_model <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus_cpp(model, virus)
@@ -158,7 +175,7 @@ add_virus.epiworld_model <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_sir <- function(model, virus) {
+add_virus.epiworld_sir <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 2)
@@ -167,7 +184,7 @@ add_virus.epiworld_sir <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_sird <- function(model, virus) {
+add_virus.epiworld_sird <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 3)
@@ -176,7 +193,7 @@ add_virus.epiworld_sird <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_sirconn <- function(model, virus) {
+add_virus.epiworld_sirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_sir(model, virus)
@@ -184,7 +201,7 @@ add_virus.epiworld_sirconn <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_sirdconn <- function(model, virus) {
+add_virus.epiworld_sirdconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_sird(model, virus)
@@ -193,7 +210,7 @@ add_virus.epiworld_sirdconn <- function(model, virus) {
 
 
 #' @export
-add_virus.epiworld_seir <- function(model, virus) {
+add_virus.epiworld_seir <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 3)
@@ -202,7 +219,7 @@ add_virus.epiworld_seir <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_seird <- function(model, virus) {
+add_virus.epiworld_seird <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 4)
@@ -211,7 +228,7 @@ add_virus.epiworld_seird <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_seirconn <- function(model, virus) {
+add_virus.epiworld_seirconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_seir(model, virus)
@@ -219,7 +236,7 @@ add_virus.epiworld_seirconn <- function(model, virus) {
 }
 
 #' @export
-add_virus.epiworld_seirdconn <- function(model, virus) {
+add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
   
   stopifnot_virus(virus)
   add_virus.epiworld_seird(model, virus)

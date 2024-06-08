@@ -39,7 +39,7 @@ set_name_virus(virus, name)
 
 get_name_virus(virus)
 
-add_virus(model, virus)
+add_virus(model, virus, proportion)
 
 virus_set_state(virus, init, end, removed)
 
@@ -93,6 +93,9 @@ set_prevalence_virus(virus, prevalence, as_proportion)
 \item{virus}{An object of class \code{epiworld_virus}}
 
 \item{model}{An object of class \code{epiworld_model}.}
+
+\item{proportion}{Deprecated. Either set the prevalence during the virus
+initialization or use \code{set_prevalence_virus}.}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}

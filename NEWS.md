@@ -1,4 +1,4 @@
-# epiworldR 0.2-1 (dev)
+# epiworldR 0.3-0 (dev)
 
 * Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
 
@@ -6,7 +6,10 @@
 
 * Refactors `add_tool`, `add_virus`, and `add_entity` simplifying syntax. Now,
   these functions only receive the model and object. Prevalence is 
-  specified in the object itself.
+  specified in the object itself. `add_tool_n` and `add_virus_n` are now
+  deprecated.
+
+* `globalaction_*` are now defunct. Use `globalevent_*` instead.
 
 
 # epiworldR 0.1-0`

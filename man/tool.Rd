@@ -38,7 +38,7 @@ set_name_tool(tool, name)
 
 get_name_tool(tool)
 
-add_tool(model, tool)
+add_tool(model, tool, proportion)
 
 rm_tool(model, tool_pos)
 
@@ -90,6 +90,9 @@ set_prevalence_tool(tool, prevalence, as_proportion)
 \item{tool}{An object of class \code{epiworld_tool}}
 
 \item{model}{Model}
+
+\item{proportion}{Deprecated. Either set the prevalence during the tool
+initialization or use \code{set_prevalence_tool}.}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 
