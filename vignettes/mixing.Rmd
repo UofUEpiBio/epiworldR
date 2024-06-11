@@ -58,7 +58,7 @@ cmatrix <- c(
 With these in hand, we can proceed to create a mixing model. The following code chunk creates a model, an SEIR with mixing, and adds the entities to the model:
 
 ```{r model-build}
-N <- 3e3
+N <- 9e3
 
 flu_model <- ModelSEIRMixing(
   name              = "Flu",
