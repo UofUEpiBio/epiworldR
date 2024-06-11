@@ -635,6 +635,10 @@ inline void Agent<TSeq>::reset()
     this->tools.clear();
     n_tools = 0u;
 
+    this->entities.clear();
+    this->entities_locations.clear();
+    this->n_entities = 0u;
+
     this->state = 0u;
     this->state_prev = 0u;
 
@@ -699,6 +703,30 @@ inline bool Agent<TSeq>::has_virus(const Virus<TSeq> & virus) const
 {
 
     return has_virus(virus.get_id());
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_entity(epiworld_fast_uint t) const
+{
+
+    for (auto & entity : entities)
+        if (entity == t)
+            return true;
+
+    return false;
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_entity(std::string name) const
+{
+
+    for (auto & entity : entities)
+        if (model->get_entity(entity).get_name() == name)
+            return true;
+
+    return false;
 
 }
 
@@ -813,6 +841,9 @@ inline const Entities_const<TSeq> Agent<TSeq>::get_entities() const
 template<typename TSeq>
 inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 {
+    if (n_entities == 0)
+        throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
+
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
@@ -822,6 +853,9 @@ inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 template<typename TSeq>
 inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
 {
+    if (n_entities == 0)
+        throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
+
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 

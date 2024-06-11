@@ -59,11 +59,12 @@ private:
     epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
-public:
-
     epiworld_double prevalence = 0.0;
     bool prevalence_as_proportion = false;
     EntityToAgentFun<TSeq> dist_fun = nullptr;
+
+public:
+
 
     /**
      * @brief Constructs an Entity object.
@@ -127,6 +128,11 @@ public:
     std::vector< size_t > & get_agents();
 
     void print() const;
+
+    void set_prevalence(epiworld_double p, bool as_proportion);
+    epiworld_double get_prevalence() const noexcept;
+    bool get_prevalence_as_proportion() const noexcept;
+    void set_dist_fun(EntityToAgentFun<TSeq> fun);
 
 };
 

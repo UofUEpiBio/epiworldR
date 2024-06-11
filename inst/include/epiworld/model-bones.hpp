@@ -220,7 +220,7 @@ protected:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        ActionFun<TSeq> call_,
+        EventFun<TSeq> call_,
         int idx_agent_,
         int idx_object_
         );

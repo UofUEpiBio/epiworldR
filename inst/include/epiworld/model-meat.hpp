@@ -157,7 +157,7 @@ inline void Model<TSeq>::events_add(
     Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
-    ActionFun<TSeq> call_,
+    EventFun<TSeq> call_,
     int idx_agent_,
     int idx_object_
 ) {
@@ -166,7 +166,7 @@ inline void Model<TSeq>::events_add(
 
     #ifdef EPI_DEBUG
     if (nactions == 0)
-        throw std::logic_error("Actions cannot be zero!!");
+        throw std::logic_error("Events cannot be zero!!");
     #endif
 
     if (nactions > events.size())

@@ -264,6 +264,8 @@ public:
     bool has_virus(epiworld_fast_uint t) const;
     bool has_virus(std::string name) const;
     bool has_virus(const Virus<TSeq> & v) const;
+    bool has_entity(epiworld_fast_uint t) const;
+    bool has_entity(std::string name) const;
 
     void print(Model<TSeq> * model, bool compressed = false) const;
 

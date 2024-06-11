@@ -237,7 +237,7 @@ inline ModelSEIRMixing<TSeq> & ModelSEIRMixing<TSeq>::run(
     int seed
 )
 {
-    
+
     Model<TSeq>::run(ndays, seed);
     return *this;
 

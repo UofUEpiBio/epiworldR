@@ -2,50 +2,101 @@
 #define EPIWORLD_ENTITY_MEAT_HPP
 
 template <typename TSeq = EPI_DEFAULT_TSEQ>
-EPI_NEW_ENTITYTOAGENTFUN(entity_to_unassigned_agents, TSeq)
+inline EntityToAgentFun<TSeq> entity_to_unassigned_agents()
 {
 
-    // Preparing the sampling space
-    std::vector< size_t > idx;
-    for (const auto & a: m->get_agents())
-        if (a.get_n_entities() == 0)
-            idx.push_back(a.get_id());
-    size_t n = idx.size();
+    return [](Entity<TSeq> & e, Model<TSeq> * m) -> void {
 
-    // Figuring out how many to sample
-    int n_to_sample;
-    if (e.prevalence_as_proportion)
-    {
-        n_to_sample = static_cast<int>(std::floor(e.prevalence * n));
-        if (n_to_sample > n)
-            --n_to_sample;
+        
+        // Preparing the sampling space
+        std::vector< size_t > idx;
+        for (const auto & a: m->get_agents())
+            if (a.get_n_entities() == 0)
+                idx.push_back(a.get_id());
+        size_t n = idx.size();
 
-    } else
+        // Figuring out how many to sample
+        int n_to_sample;
+        if (e.get_prevalence_as_proportion())
+        {
+            n_to_sample = static_cast<int>(std::floor(e.get_prevalence() * n));
+            if (n_to_sample > static_cast<int>(n))
+                --n_to_sample;
+
+        } else
+        {
+            n_to_sample = static_cast<int>(e.get_prevalence());
+            if (n_to_sample > static_cast<int>(n))
+                throw std::range_error("There are only " + std::to_string(n) + 
+                " individuals in the population. Cannot add the entity to " +
+                    std::to_string(n_to_sample));
+        }
+
+        int n_left = n;
+        for (int i = 0; i < n_to_sample; ++i)
+        {
+            int loc = static_cast<epiworld_fast_uint>(
+                floor(m->runif() * n_left--)
+                );
+
+            // Correcting for possible overflow
+            if ((loc > 0) && (loc >= n_left))
+                loc = n_left - 1;
+
+            m->get_agent(idx[loc]).add_entity(e, m);
+
+            std::swap(idx[loc], idx[n_left]);
+
+        }
+
+    };
+
+}
+
+template<typename TSeq = int>
+inline EntityToAgentFun<TSeq> entity_to_agent_range(
+    int from,
+    int to,
+    bool to_unassigned = false
+    ) {
+
+    if (to_unassigned)
     {
-        n_to_sample = static_cast<int>(e.prevalence);
-        if (n_to_sample > n)
-            throw std::range_error("There are only " + std::to_string(n) + 
-            " individuals in the population. Cannot add the entity to " +
-                std::to_string(n_to_sample));
+
+        return [from, to](Entity<TSeq> & e, Model<TSeq> * m) -> void {
+
+            auto & agents = m->get_agents();
+            for (size_t i = from; i < to; ++i)
+            {
+                if (agents[i].get_n_entities() == 0)
+                    e.add_agent(&agents[i], m);
+                else
+                    throw std::logic_error(
+                        "Agent " + std::to_string(i) + " already has an entity."
+                    );
+            }
+            
+            return;
+
+        };
+
     }
-
-    int n_left = n;
-    for (size_t i = 0u; i < n_to_sample; ++i)
+    else
     {
-        int loc = static_cast<epiworld_fast_uint>(
-            floor(m->runif() * n_left--)
-            );
 
-        // Correcting for possible overflow
-        if ((loc > 0) && (loc >= n_left))
-            loc = n_left - 1;
+        return [from, to](Entity<TSeq> & e, Model<TSeq> * m) -> void {
 
-        m->get_agent(idx[loc]).add_entity(e, m);
+            auto & agents = m->get_agents();
+            for (size_t i = from; i < to; ++i)
+            {
+                e.add_agent(&agents[i], m);
+            }
+            
+            return;
 
-        std::swap(idx[loc], idx[n_left]);
+        };
 
     }
-
 }
 
 template<typename TSeq>
@@ -215,9 +266,9 @@ inline void Entity<TSeq>::reset()
     sampled_agents_left.clear();
     sampled_agents_left_n = 0u;
 
-    // Removing agents from entities
-    for (size_t i = 0u; i < n_agents; ++i)
-        this->rm_agent(i);
+    this->agents.clear();
+    this->n_agents = 0u;
+    this->agents_location.clear();
 
     return;
 
@@ -291,34 +342,42 @@ inline void Entity<TSeq>::distribute()
     {
 
         // Picking how many
-        int nsampled;
+        int n_to_assign;
         if (prevalence_as_proportion)
         {
-            nsampled = static_cast<int>(std::floor(prevalence * size()));
+            n_to_assign = static_cast<int>(std::floor(prevalence * size()));
         }
         else
         {
-            nsampled = static_cast<int>(prevalence);
+            n_to_assign = static_cast<int>(prevalence);
         }
 
-        if (nsampled > static_cast<int>(model->size()))
+        if (n_to_assign > static_cast<int>(model->size()))
             throw std::range_error("There are only " + std::to_string(model->size()) + 
-            " individuals in the population. Cannot add the entity to " + std::to_string(nsampled));
+            " individuals in the population. Cannot add the entity to " + std::to_string(n_to_assign));
         
         int n_left = n;
         std::iota(idx.begin(), idx.end(), 0);
-        while (nsampled > 0)
+        while ((n_to_assign > 0) && (n_left > 0))
         {
             int loc = static_cast<epiworld_fast_uint>(
                 floor(model->runif() * n_left--)
                 );
-            
-            model->get_agent(idx[loc]).add_entity(
-                *this, this->model, this->state_init, this->queue_init
-                );
-            
-            nsampled--;
 
+            // Correcting for possible overflow
+            if ((loc > 0) && (loc >= n_left))
+                loc = n_left - 1;
+            
+            auto & agent = model->get_agent(idx[loc]);
+
+            if (!agent.has_entity(id))
+            {
+                agent.add_entity(
+                    *this, this->model, this->state_init, this->queue_init
+                    );
+                n_to_assign--;
+            }
+                            
             std::swap(idx[loc], idx[n_left]);
 
         }
@@ -343,6 +402,34 @@ inline void Entity<TSeq>::print() const
         static_cast<int>(id),
         static_cast<int>(n_agents)
     );
+}
+
+template<typename TSeq>
+inline void Entity<TSeq>::set_prevalence(
+    epiworld_double p,
+    bool as_proportion
+)
+{
+    prevalence = p;
+    prevalence_as_proportion = as_proportion;
+}
+
+template<typename TSeq>
+inline epiworld_double Entity<TSeq>::get_prevalence() const noexcept
+{
+    return prevalence;
+}
+
+template<typename TSeq>
+inline bool Entity<TSeq>::get_prevalence_as_proportion() const noexcept
+{
+    return prevalence_as_proportion;
+}
+
+template<typename TSeq>
+inline void Entity<TSeq>::set_dist_fun(EntityToAgentFun<TSeq> fun)
+{
+    dist_fun = fun;
 }
 
 #endif

@@ -91,7 +91,7 @@ template<typename TSeq>
 struct Event;
 
 template<typename TSeq>
-using ActionFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
+using EventFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Decides how to distribute viruses at initialization
@@ -124,7 +124,7 @@ struct Event {
     Entity<TSeq> * entity;
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
-    ActionFun<TSeq> call;
+    EventFun<TSeq> call;
     int idx_agent;
     int idx_object;
 public:
@@ -151,7 +151,7 @@ public:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        ActionFun<TSeq> call_,
+        EventFun<TSeq> call_,
         int idx_agent_,
         int idx_object_
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
