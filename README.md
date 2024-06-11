@@ -78,16 +78,15 @@ install.packages("epiworldR")
 
 # Examples
 
-This R package includes several popular epidemiological models including
-<a
+This R package includes several popular epidemiological models,
+including <a
 href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#Variations_on_the_basic_SIR_model"
 target="_blank">SIS</a>, <a
 href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SIR_model"
 target="_blank">SIR</a>, and <a
 href="https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&amp;oldid=1155757336#The_SEIR_model"
 target="_blank">SEIR</a> using either a fully connected graph (similar
-to a compartmental model) or a user-defined network. Here are some
-examples:
+to a compartmental model) or a user-defined network.
 
 ## SIR model using a random graph
 
@@ -141,8 +140,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 165.00ms
-#> Last run speed      : 30.23 million agents x day / second
+#> Last run elapsed t  : 153.00ms
+#> Last run speed      : 32.61 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -229,8 +228,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 39.00ms
-#> Last run speed      : 25.12 million agents x day / second
+#> Last run elapsed t  : 40.00ms
+#> Last run speed      : 24.55 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -537,7 +536,7 @@ Several alternatives to `epiworldR` exist and provide researchers with a
 range of options, each with its own unique features and strengths,
 enabling the exploration and analysis of infectious disease dynamics
 through agent-based modeling. Below is a manually curated table of
-existing alternatives including ABM \[@ABM\], abmR \[@abmR\], cystiSim
+existing alternatives, including ABM \[@ABM\], abmR \[@abmR\], cystiSim
 \[@cystiSim\], villager \[@villager\], and RNetLogo \[@RNetLogo\].
 
 | Package                                                       | Multiple Viruses | Multiple Tools | Multiple Runs | Global Actions | Built-In Epi Models | Dependencies                                                                                             | Activity                                                                                                               |
@@ -565,7 +564,6 @@ target="_blank"><code>RNetLogo</code></a>.
 
 ## Code of Conduct
 
-Please note that the epiworldR project is released with a [Contributor
-Code of
+The epiworldR project is released with a [Contributor Code of
 Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.

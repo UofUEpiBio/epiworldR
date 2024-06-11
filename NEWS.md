@@ -1,5 +1,7 @@
 # epiworldR 0.3-0 (dev)
 
+* Starting version 0.3-0, `epiworldR` is versioned using the same version as the C++ library, `epiworld`.
+
 * Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
 
 * Ports the `Entity` class. Entities are used to group agents within a model.

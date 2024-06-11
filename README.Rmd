@@ -62,10 +62,10 @@ install.packages("epiworldR")
 
 # Examples
 
-This R package includes several popular epidemiological models including
+This R package includes several popular epidemiological models, including
 [SIS](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#Variations_on_the_basic_SIR_model){target="_blank"},
 [SIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIR_model){target="_blank"}, and
-[SEIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model){target="_blank"} using either a fully connected graph (similar to a compartmental model) or a user-defined network. Here are some examples:
+[SEIR](https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model){target="_blank"} using either a fully connected graph (similar to a compartmental model) or a user-defined network.
 
 ## SIR model using a random graph
 
@@ -274,9 +274,9 @@ citation("epiworldR")
 
 # Existing Alternatives
 
-Several alternatives to `epiworldR` exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].
+Several alternatives to `epiworldR` exist and provide researchers with a range of options, each with its own unique features and strengths, enabling the exploration and analysis of infectious disease dynamics through agent-based modeling. Below is a manually curated table of existing alternatives, including ABM [@ABM], abmR [@abmR], cystiSim [@cystiSim], villager [@villager], and RNetLogo [@RNetLogo].
 
-| Package                                                                     | Multiple Viruses | Multiple Tools | Multiple Runs | Global Actions | Built-In Epi Models | Dependencies                                                                                             | Activity                                                                                                               |
+| Package                                                                     | Multiple Viruses | Multiple Tools | Multiple Runs | Global Actions | Built-In Epi Models |  Dependencies                                                                                             | Activity                                                                                                               |
 |:--------|:--------|:--------|:--------|:--------|---------|:--------|:--------|
 | [**epiworldR**](https://cran.r-project.org/package=epiworldR)               | yes              | yes            | yes           | yes            | yes                 | [![status](https://tinyverse.netlify.com/badge/epiworldR)](https://CRAN.R-project.org/package=epiworldR) | [![Activity](https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR)](https://github.com/UofUEpiBio/epiworldR) |
 | [**ABM**](https://cran.r-project.org/package=ABM)                           | \-               | \-             | \-            | yes            | yes                 | [![status](https://tinyverse.netlify.com/badge/ABM)](https://CRAN.R-project.org/package=ABM)             | [![Activity](https://img.shields.io/github/last-commit/junlingm/ABM)](https://github.com/junlingm/ABM)                 |
@@ -296,4 +296,4 @@ You may want to check out other R packages for agent-based modeling: [`ABM`](htt
 
 ## Code of Conduct
   
-Please note that the epiworldR project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+The epiworldR project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
