@@ -23,8 +23,14 @@ globalaction_set_params(...)
 globalaction_fun(...)
 }
 \arguments{
+\item{model}{Model object of class \code{epiworld_model}.}
+
+\item{tool}{Tool object of class \code{epiworld_tool}.}
+
 \item{n}{Deprecated. Either set the prevalence during the tool/virus
 initialization or use \code{set_prevalence_tool}/\code{set_prevalence_virus}.}
+
+\item{virus}{Virus object of class \code{epiworld_virus}.}
 
 \item{...}{Arguments to be passed to the new function.}
 }
