@@ -15,7 +15,7 @@ set.seed(1231)
 # to check that.
 expect_equal(nrow(get_hist_tool(model)), 0L)
 expect_equal(nrow(get_hist_total(model)), 0L)
-expect_equal(nrow(get_hist_variant(model)), 0L)
+expect_equal(nrow(get_hist_virus(model)), 0L)
 expect_equal(nrow(get_reproductive_number(model)), 0L)
 expect_equal(dim(get_transition_probability(model)), c(3, 3))
 expect_equal(nrow(get_hist_transition_matrix(model)), 0L)

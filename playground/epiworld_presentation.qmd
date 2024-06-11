@@ -90,11 +90,8 @@ agents_smallworld(
   p = .01
   )
 
-# Initializing 
-init(seir, days = 100, seed = 1912)
-
 # Running and printing
-run(seir)
+run(seir, ndays = 100, seed = 1912)
 seir
 
 ```

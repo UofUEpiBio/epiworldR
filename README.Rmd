@@ -20,6 +20,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 [![CRANlogs downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
+[![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://codecov.io/gh/UofUEpiBio/epiworldR)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library [epiworld](https://github.com/UofUEpiBio/epiworld){target="_blank"}. It provides a general framework for modeling disease transmission using [agent-based models](https://en.wikipedia.org/w/index.php?title=Agent-based_model&oldid=1153634802){target="_blank"}. Some of the main features include:

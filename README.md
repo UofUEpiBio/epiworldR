@@ -12,6 +12,7 @@ status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
+[![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://codecov.io/gh/UofUEpiBio/epiworldR)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -140,8 +141,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 163.00ms
-#> Last run speed      : 30.49 million agents x day / second
+#> Last run elapsed t  : 165.00ms
+#> Last run speed      : 30.23 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -228,8 +229,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 36.00ms
-#> Last run speed      : 27.62 million agents x day / second
+#> Last run elapsed t  : 39.00ms
+#> Last run speed      : 25.12 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
