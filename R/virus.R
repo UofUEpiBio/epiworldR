@@ -114,6 +114,17 @@ stopifnot_vfun <- function(vfun) {
   }
 }
 
+stopifnot_virus_distfun <- function(virus_distfun) {
+  if (!inherits(virus_distfun, "epiworld_virus_distfun")) {
+    stop(
+      "The -virus_distfun- object must be of class \"epiworld_virus_distfun\". ",
+      "The object passed to the function is of class(es): ", 
+      paste(class(virus_distfun), collapse = ", ")
+    )
+  }
+}
+
+
 #' @export
 #' @details
 #' The name of the `epiworld_virus` object can be manipulated with the functions
@@ -508,19 +519,53 @@ set_incubation_fun <- function(virus, model, vfun) {
   
 }
 
-#' @export 
+#' @export
 #' @rdname virus
-#' @param prevalence Numeric scalar. Prevalence of the virus.
-#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is a proportion.
-set_prevalence_virus <- function(virus, prevalence, as_proportion) {
+#' @param dist_fun An object of class `epiworld_distribution_virus`.
+set_distribution_virus <- function(virus, dist_fun) {
   
   stopifnot_virus(virus)
-  invisible(
-    set_prevalence_virus_cpp(
-      virus,
-      as.numeric(prevalence),
-      as.logical(as_proportion)
-      ))
+  stopifnot_virus_distfun(dist_fun)
+  invisible(set_distribution_virus_cpp(virus, dist_fun))
   
 }
 
+#' @export
+#' @rdname virus
+#' @details The `distribute_virus_randomly` function is a factory function
+#' used to randomly distribute the virus in the model. The prevalence can be set
+#' as a proportion or as a number of agents. The resulting function can then be
+#' passed to `set_distribution_virus`.
+#' @param prevalence Numeric scalar. Prevalence of the virus.
+#' @param as_proportion Logical scalar. If `TRUE`, the prevalence is set as a
+#' proportion of the total number of agents in the model.
+#' @return 
+#' - The `distribute_virus_randomly` function returns a function that can be
+#' used to distribute the virus in the model.
+distribute_virus_randomly <- function(
+  prevalence,
+  as_proportion
+) {
+
+  structure(
+    distribute_virus_randomly_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
+    ),
+    class = "epiworld_distribution_virus"
+  )
+
+}
+
+#' @export
+#' @rdname virus
+#' @param agents_id Integer vector. Indices of the agents that will receive the
+#' virus.
+distribute_virus_set <- function(agents_ids) {
+  
+  structure(
+    distribute_virus_set_cpp(as.vector(agents_id)),
+    class = "epiworld_distribution_virus"
+  )
+  
+}

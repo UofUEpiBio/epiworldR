@@ -269,20 +269,59 @@ SEXP set_name_virus_cpp(SEXP virus, std::string name) {
 }
 
 [[cpp11::register]]
-SEXP set_prevalence_virus_cpp(
-  SEXP virus,
-  double prevalence,
-  bool as_proportion
-  ) {
+SEXP set_distribution_virus_cpp(SEXP virus, SEXP dist) {
 
-  external_pointer<Virus<>>(virus)->set_prevalence(
-    prevalence, as_proportion
+  external_pointer<VirusToAgentFun<>> distfun(dist);
+
+  external_pointer<Virus<>>(virus)->set_distribution(
+    *distfun
     );
-    
+
   return virus;
 
 }
 
+[[cpp11::register]]
+SEXP distribute_virus_randomly_cpp(
+  double prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_randomly(
+        prevalence, as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
+
+[[cpp11::register]]
+SEXP distribute_virus_to_set_cpp(
+  integers agents_ids
+) {
+
+    // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_to_set(ids)
+    )
+  );
+
+  return distfun;
+
+}
 
 
 #undef WrapVirus

@@ -55,16 +55,15 @@ private:
     epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
 
     // Information about how distribution works
-    epiworld_double prevalence = 0.0;
-    bool prevalence_as_proportion = false;
     VirusToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
+    Virus(std::string name = "unknown virus");
+
     Virus(
         std::string name = "unknown virus",
         epiworld_double prevalence = 0.0,
-        bool prevalence_as_proportion = false,
-        VirusToAgentFun<TSeq> dist_fun = nullptr
+        bool as_proportion = true
         );
 
     void mutate(Model<TSeq> * model);
@@ -170,11 +169,8 @@ public:
      * @brief Get information about the prevalence of the virus
      */
     ///@{
-    epiworld_double get_prevalence() const;
-    void set_prevalence(epiworld_double prevalence, bool as_proportion);
-    bool get_prevalence_as_proportion() const;
     void distribute(Model<TSeq> * model);
-    void set_dist_fun(VirusToAgentFun<TSeq> fun);
+    void set_distribution(VirusToAgentFun<TSeq> fun);
     ///@}
 
 

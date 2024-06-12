@@ -116,6 +116,16 @@ stopifnot_tfun <- function(tfun) {
   }
 }
 
+stopifnot_tool_distfun <- function(tool_distfun) {
+  if (!inherits(tool_distfun, "epiworld_tool_distfun")) {
+    stop(
+      "The -tool_distfun- object must be of class \"epiworld_tool_distfun\". ",
+      "The object passed to the function is of class(es): ", 
+      paste(class(tool_distfun), collapse = ", ")
+    )
+  }
+}
+
 #' @export
 #' @details
 #' The name of the `epiworld_tool` object can be manipulated with the functions
@@ -487,17 +497,62 @@ print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
 }
 
 #' @export 
+#' @details
+#' The `set_distribution_tool` function assigns a distribution function to the
+#' specified tool of class [epiworld_tool]. The distribution function can be
+#' created using the functions [distribute_tool_randomly()] and
+#' [distribute_tool_to_set()].
 #' @rdname tool
-#' @param prevalence Numeric scalar. Prevalence of the tool.
-#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is a proportion.
-set_prevalence_tool <- function(tool, prevalence, as_proportion) {
-  
+set_distribution_tool <- function(tool, distfun) {
+
   stopifnot_tool(tool)
-  invisible(set_prevalence_tool_cpp(
-    tool,
-    as.double(prevalence),
-    as.logical(as_proportion)
-    ))
+  stopifnot_tool_distfun(distfun)
+  invisible(set_distribution_tool_cpp(tool, distfun))
 
 }
 
+#' @export
+#' @rdname tool
+#' @details 
+#' The `distribute_tool_randomly` function creates a distribution function that
+#' randomly assigns the tool to a proportion of the population.
+#' @return 
+#' - The `distribute_tool_randomly` function returns a distribution function of
+#' class `epiworld_tool_distfun`.
+distribute_tool_randomly <- function(
+  prevalence,
+  as_proportion
+) {
+
+  structure(
+    distribute_tool_randomly_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}
+
+#' @export
+#' @rdname tool
+#' @details 
+#' The `distribute_tool_to_set` function creates a distribution function that
+#' assigns the tool to a set of agents.
+#' @param agents_ids Integer vector. Indices of the agents to which the tool
+#' will be assigned.
+#' @return
+#' - The `distribute_tool_to_set` function returns a distribution function of
+#' class `epiworld_tool_distfun`.
+distribute_tool_to_set <- function(
+  agents_ids
+) {
+
+  structure(
+    distribute_tool_to_set_cpp(
+      agents_ids
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}

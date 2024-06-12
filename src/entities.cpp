@@ -178,6 +178,20 @@ int print_entity_cpp(SEXP entity) {
   return 0;
 }
 
+[[cpp11::register]]
+SEXP set_distribution_entity_cpp(
+  SEXP entity,
+  SEXP fun
+) {
+
+  external_pointer<Entity<>> entity_ptr(entity);
+  external_pointer<EntityToAgentFun<>> fun_ptr(fun);
+
+  entity_ptr->set_distribution(*fun_ptr);
+
+  return entity;
+
+}
 // [[cpp11::register]]
 // int entity_set_name_cpp(SEXP entity, std::string name) {
 //   cpp11::external_pointer<Entity<>>(entity)->set_name(name);

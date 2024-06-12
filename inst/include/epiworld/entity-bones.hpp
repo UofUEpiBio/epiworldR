@@ -59,8 +59,6 @@ private:
     epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
-    epiworld_double prevalence = 0.0;
-    bool prevalence_as_proportion = false;
     EntityToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
@@ -72,19 +70,13 @@ public:
      * This constructor initializes an Entity object with the specified parameters.
      *
      * @param name The name of the entity.
-     * @param preval The prevalence of the entity.
-     * @param as_proportion A flag indicating whether the prevalence is given as a proportion.
      * @param fun A function pointer to a function that maps the entity to an agent.
      */
     Entity(
         std::string name,
-        epiworld_double preval,
-        bool as_proportion,
         EntityToAgentFun<TSeq> fun = nullptr
         ) :
             entity_name(name),
-            prevalence(preval),
-            prevalence_as_proportion(as_proportion),
             dist_fun(fun)
         {};
     
@@ -128,11 +120,7 @@ public:
     std::vector< size_t > & get_agents();
 
     void print() const;
-
-    void set_prevalence(epiworld_double p, bool as_proportion);
-    epiworld_double get_prevalence() const noexcept;
-    bool get_prevalence_as_proportion() const noexcept;
-    void set_dist_fun(EntityToAgentFun<TSeq> fun);
+    void set_distribution(EntityToAgentFun<TSeq> fun);
 
 };
 

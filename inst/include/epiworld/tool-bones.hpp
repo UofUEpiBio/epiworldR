@@ -50,17 +50,15 @@ private:
 
     void set_agent(Agent<TSeq> * p, size_t idx);
 
-    epiworld_double prevalence = 0.0;
-    bool prevalence_as_proportion = false;
     ToolToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
+    Tool(std::string name = "unknown tool");
     Tool(
-        std::string name = "unknown tool",
-        epiworld_double prevalence = 0.0,
-        bool prevalence_as_proportion = false,
-        ToolToAgentFun<TSeq> dist_fun = nullptr
-        );
+        std::string name,
+        epiworld_double prevalence,
+        bool as_proportion
+    );
 
     void set_sequence(TSeq d);
     void set_sequence(std::shared_ptr<TSeq> d);
@@ -116,11 +114,7 @@ public:
     void print() const;
 
     void distribute(Model<TSeq> * model);
-
-    void set_prevalence(epiworld_double p, bool as_proportion = false);
-    epiworld_double get_prevalence() const;
-    bool get_prevalence_as_proportion() const;
-    void set_dist_fun(ToolToAgentFun<TSeq> fun);
+    void set_distribution(ToolToAgentFun<TSeq> fun);
 
 };
 

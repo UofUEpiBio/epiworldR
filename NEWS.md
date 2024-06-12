@@ -1,4 +1,4 @@
-# epiworldR 0.3-0 (dev)
+# epiworldR 0.3-2 (dev)
 
 * Starting version 0.3-0, `epiworldR` is versioned using the same version as the C++ library, `epiworld`.
 
@@ -12,6 +12,9 @@
   deprecated.
 
 * `globalaction_*` are now defunct. Use `globalevent_*` instead.
+
+* New functions to specify how viruses, tools, and entities are distributed
+  among agents: `distribute_viruses`, `distribute_tools`, and `distribute_entities`.
 
 
 # epiworldR 0.1-0`

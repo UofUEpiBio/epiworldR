@@ -43,7 +43,8 @@ public:
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param avg_incubation_days The average incubation period of the disease in the model.
      * @param recovery_rate The recovery rate of the disease in the model.
-     * @param contact_matrix The contact matrix between entities in the model.
+     * @param contact_matrix The contact matrix between entities in the model. Specified in
+     * column-major order.
      */
     ModelSEIRMixing(
         ModelSEIRMixing<TSeq> & model,

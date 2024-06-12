@@ -282,19 +282,66 @@ SEXP print_agent_tools_cpp(SEXP tools) {
 }
 
 [[cpp11::register]]
-SEXP set_prevalence_tool_cpp(
+SEXP set_distribution_tool_cpp(
   SEXP tool,
-  double prob,
-  bool as_proportion
+  SEXP model,
+  SEXP tfun
   ) {
-
-  external_pointer<Tool<>>(tool)->set_prevalence(
-    prob,
-    as_proportion
-    );
-
+  
+  WrapTool(toolptr)(tool);
+  external_pointer<Model<>> mptr(model);
+  external_pointer<ToolToAgentFun<>> tfunptr(tfun);
+  
+  toolptr->set_distribution(*tfunptr);
+  
   return tool;
-
+  
 }
+
+[[cpp11::register]]
+SEXP distribute_tool_randomly_cpp(
+  double prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<ToolToAgentFun<>> res(
+      new ToolToAgentFun<>(
+          distribute_tool_randomly(
+            prevalence,
+            as_proportion
+          )
+      )
+  );
+  
+  return res;
+  
+}
+
+[[cpp11::register]]
+SEXP distribute_tool_to_set_cpp(
+  integers agents_ids
+) {
+
+  // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
+
+
+  external_pointer<ToolToAgentFun<>> res(
+      new ToolToAgentFun<>(
+          distribute_tool_to_set(ids)
+      )
+  );
+  
+  return res;
+  
+}
+
+
 
 #undef WrapTool
