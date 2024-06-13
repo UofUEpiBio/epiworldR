@@ -21,7 +21,9 @@
 \alias{set_incubation}
 \alias{set_incubation_ptr}
 \alias{set_incubation_fun}
-\alias{set_prevalence_virus}
+\alias{set_distribution_virus}
+\alias{distribute_virus_randomly}
+\alias{distribute_virus_set}
 \title{Virus design}
 \usage{
 virus(
@@ -71,14 +73,19 @@ set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
 
-set_prevalence_virus(virus, prevalence, as_proportion)
+set_distribution_virus(virus, dist_fun)
+
+distribute_virus_randomly(prevalence, as_proportion)
+
+distribute_virus_set(agents_ids)
 }
 \arguments{
 \item{name}{of the virus}
 
 \item{prevalence}{Numeric scalar. Prevalence of the virus.}
 
-\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is a proportion.}
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the prevalence is set as a
+proportion of the total number of agents in the model.}
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
@@ -114,6 +121,11 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
+
+\item{dist_fun}{An object of class \code{epiworld_distribution_virus}.}
+
+\item{agents_id}{Integer vector. Indices of the agents that will receive the
+virus.}
 }
 \value{
 \itemize{
@@ -163,6 +175,11 @@ assigns a probability to death for the specified virus of class
 \item The \code{set_incubation} function does not return a value, but instead
 assigns an incubation period to the specified virus of class \link{epiworld_virus}.
 }
+
+\itemize{
+\item The \code{distribute_virus_randomly} function returns a function that can be
+used to distribute the virus in the model.
+}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,
@@ -184,6 +201,11 @@ In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
 \code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
 the virus. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
+
+The \code{distribute_virus_randomly} function is a factory function
+used to randomly distribute the virus in the model. The prevalence can be set
+as a proportion or as a number of agents. The resulting function can then be
+passed to \code{set_distribution_virus}.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(

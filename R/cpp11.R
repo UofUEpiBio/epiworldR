@@ -112,8 +112,8 @@ get_entity_cpp <- function(entities, idx) {
   .Call(`_epiworldR_get_entity_cpp`, entities, idx)
 }
 
-entity_cpp <- function(name, preval, as_proportion) {
-  .Call(`_epiworldR_entity_cpp`, name, preval, as_proportion)
+entity_cpp <- function(name, preval, as_proportion, to_unassigned) {
+  .Call(`_epiworldR_entity_cpp`, name, preval, as_proportion, to_unassigned)
 }
 
 get_entity_size_cpp <- function(entity) {
@@ -150,6 +150,18 @@ entity_get_agents_cpp <- function(entity) {
 
 print_entity_cpp <- function(entity) {
   .Call(`_epiworldR_print_entity_cpp`, entity)
+}
+
+set_distribution_entity_cpp <- function(entity, fun) {
+  .Call(`_epiworldR_set_distribution_entity_cpp`, entity, fun)
+}
+
+distribute_entity_randomly_cpp <- function(prevalence, as_proportion, to_unassigned) {
+  .Call(`_epiworldR_distribute_entity_randomly_cpp`, prevalence, as_proportion, to_unassigned)
+}
+
+distribute_entity_to_set_cpp <- function(agents_ids) {
+  .Call(`_epiworldR_distribute_entity_to_set_cpp`, agents_ids)
 }
 
 ModelSURV_cpp <- function(name, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
@@ -404,8 +416,16 @@ print_agent_tools_cpp <- function(tools) {
   .Call(`_epiworldR_print_agent_tools_cpp`, tools)
 }
 
-set_prevalence_tool_cpp <- function(tool, prob, as_proportion) {
-  .Call(`_epiworldR_set_prevalence_tool_cpp`, tool, prob, as_proportion)
+set_distribution_tool_cpp <- function(tool, model, tfun) {
+  .Call(`_epiworldR_set_distribution_tool_cpp`, tool, model, tfun)
+}
+
+distribute_tool_randomly_cpp <- function(prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_tool_randomly_cpp`, prevalence, as_proportion)
+}
+
+distribute_tool_to_set_cpp <- function(agents_ids) {
+  .Call(`_epiworldR_distribute_tool_to_set_cpp`, agents_ids)
 }
 
 virus_cpp <- function(name, prevalence, as_proportion, prob_infecting, prob_recovery, prob_death, post_immunity, incubation) {
@@ -488,6 +508,14 @@ set_name_virus_cpp <- function(virus, name) {
   .Call(`_epiworldR_set_name_virus_cpp`, virus, name)
 }
 
-set_prevalence_virus_cpp <- function(virus, prevalence, as_proportion) {
-  .Call(`_epiworldR_set_prevalence_virus_cpp`, virus, prevalence, as_proportion)
+set_distribution_virus_cpp <- function(virus, dist) {
+  .Call(`_epiworldR_set_distribution_virus_cpp`, virus, dist)
+}
+
+distribute_virus_randomly_cpp <- function(prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_virus_randomly_cpp`, prevalence, as_proportion)
+}
+
+distribute_virus_to_set_cpp <- function(agents_ids) {
+  .Call(`_epiworldR_distribute_virus_to_set_cpp`, agents_ids)
 }

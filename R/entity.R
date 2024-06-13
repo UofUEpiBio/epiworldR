@@ -5,6 +5,12 @@ stopifnot_entity <- function(entity) {
   }
 }
 
+stopifnot_entity_distfun <- function(dist_fun) {
+  if (!inherits(dist_fun, "epiworld_distribution_entity")) {
+    stop("Argument 'dist_fun' must be a distribution function.")
+  }
+}
+
 #' Get entities
 #' 
 #' Entities in `epiworld` are objects that can contain agents.
@@ -89,13 +95,14 @@ print.epiworld_entities <- function(x, ...) {
 #' @return 
 #' - The function `entity` creates an entity object.
 #' @rdname entities
-entity <- function(name, prevalence, as_proportion) {
+entity <- function(name, prevalence, as_proportion, to_unassigned = TRUE) {
 
   structure(
     entity_cpp(
       name,
       as.double(prevalence),
-      as.logical(as_proportion)
+      as.logical(as_proportion),
+      as.logical(to_unassigned)
       ),
     class = "epiworld_entity"
   )
@@ -231,4 +238,58 @@ entity_get_agents <- function(entity) {
 print.epiworld_entity <- function(x, ...) {
   print_entity_cpp(x)
   invisible(x)
+}
+
+#' @export
+#' @param prevalence Numeric scalar. Prevalence of the entity.
+#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
+#' as a proportion.
+#' @rdname entities
+distribute_entity_randomly <- function(
+  prevalence,
+  as_proportion,
+  to_unassigned = TRUE
+) {
+
+  structure(
+      distribute_entity_randomly_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion),
+      as.logical(to_unassigned)
+    ),
+    class = "epiworld_distribution_entity"
+  )
+
+}
+
+#' @export
+#' @param agents_ids Integer vector. Ids of the agents to distribute.
+#' @rdname entities
+distribute_entity_to_set <- function(
+  agents_ids
+) {
+
+  structure(
+    distribute_entity_a_set_cpp(
+      as.integer(agents_ids)
+    ),
+    class = "epiworld_distribution_entity"
+  )
+
+}
+
+#' @export 
+#' @rdname entities
+#' @param dist_fun Distribution function object of class `epiworld_distribution_entity`.
+set_distribution_entity <- function(
+  entity,
+  dist_fun
+) {
+
+  stopifnot_entity(entity)
+  stopifnot_entity_distfun(dist_fun)
+  set_distribution_entity_cpp(entity, distribution)
+
+  invisible(entity)
+
 }

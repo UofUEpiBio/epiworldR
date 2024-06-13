@@ -13,13 +13,16 @@
 \alias{add_entity}
 \alias{load_agents_entities_ties}
 \alias{entity_get_agents}
+\alias{distribute_entity_randomly}
+\alias{distribute_entity_to_set}
+\alias{set_distribution_entity}
 \title{Get entities}
 \usage{
 get_entities(model)
 
 \method{[}{epiworld_entities}(x, i)
 
-entity(name, prevalence, as_proportion)
+entity(name, prevalence, as_proportion, to_unassigned = TRUE)
 
 get_entity_size(entity)
 
@@ -36,6 +39,12 @@ add_entity(model, entity)
 load_agents_entities_ties(model, agents_id, entities_id)
 
 entity_get_agents(entity)
+
+distribute_entity_randomly(prevalence, as_proportion, to_unassigned = TRUE)
+
+distribute_entity_to_set(agents_ids)
+
+set_distribution_entity(entity, dist_fun)
 }
 \arguments{
 \item{model}{Model object of class \code{epiworld_model}.}
@@ -62,6 +71,10 @@ as a proportion.}
 \item{agents_id}{Integer vector.}
 
 \item{entities_id}{Integer vector.}
+
+\item{agents_ids}{Integer vector. Ids of the agents to distribute.}
+
+\item{dist_fun}{Distribution function object of class \code{epiworld_distribution_entity}.}
 }
 \value{
 \itemize{

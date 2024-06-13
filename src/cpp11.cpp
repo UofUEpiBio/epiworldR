@@ -202,10 +202,10 @@ extern "C" SEXP _epiworldR_get_entity_cpp(SEXP entities, SEXP idx) {
   END_CPP11
 }
 // entities.cpp
-SEXP entity_cpp(std::string name, double preval, bool as_proportion);
-extern "C" SEXP _epiworldR_entity_cpp(SEXP name, SEXP preval, SEXP as_proportion) {
+SEXP entity_cpp(std::string name, double preval, bool as_proportion, bool to_unassigned);
+extern "C" SEXP _epiworldR_entity_cpp(SEXP name, SEXP preval, SEXP as_proportion, SEXP to_unassigned) {
   BEGIN_CPP11
-    return cpp11::as_sexp(entity_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(preval), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+    return cpp11::as_sexp(entity_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(preval), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion), cpp11::as_cpp<cpp11::decay_t<bool>>(to_unassigned)));
   END_CPP11
 }
 // entities.cpp
@@ -269,6 +269,27 @@ int print_entity_cpp(SEXP entity);
 extern "C" SEXP _epiworldR_print_entity_cpp(SEXP entity) {
   BEGIN_CPP11
     return cpp11::as_sexp(print_entity_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity)));
+  END_CPP11
+}
+// entities.cpp
+SEXP set_distribution_entity_cpp(SEXP entity, SEXP fun);
+extern "C" SEXP _epiworldR_set_distribution_entity_cpp(SEXP entity, SEXP fun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_distribution_entity_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity), cpp11::as_cpp<cpp11::decay_t<SEXP>>(fun)));
+  END_CPP11
+}
+// entities.cpp
+SEXP distribute_entity_randomly_cpp(double prevalence, bool as_proportion, bool to_unassigned);
+extern "C" SEXP _epiworldR_distribute_entity_randomly_cpp(SEXP prevalence, SEXP as_proportion, SEXP to_unassigned) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_entity_randomly_cpp(cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion), cpp11::as_cpp<cpp11::decay_t<bool>>(to_unassigned)));
+  END_CPP11
+}
+// entities.cpp
+SEXP distribute_entity_to_set_cpp(integers agents_ids);
+extern "C" SEXP _epiworldR_distribute_entity_to_set_cpp(SEXP agents_ids) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_entity_to_set_cpp(cpp11::as_cpp<cpp11::decay_t<integers>>(agents_ids)));
   END_CPP11
 }
 // epimodels.cpp
@@ -713,10 +734,24 @@ extern "C" SEXP _epiworldR_print_agent_tools_cpp(SEXP tools) {
   END_CPP11
 }
 // tool.cpp
-SEXP set_prevalence_tool_cpp(SEXP tool, double prob, bool as_proportion);
-extern "C" SEXP _epiworldR_set_prevalence_tool_cpp(SEXP tool, SEXP prob, SEXP as_proportion) {
+SEXP set_distribution_tool_cpp(SEXP tool, SEXP model, SEXP tfun);
+extern "C" SEXP _epiworldR_set_distribution_tool_cpp(SEXP tool, SEXP model, SEXP tfun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_prevalence_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<double>>(prob), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+    return cpp11::as_sexp(set_distribution_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(tfun)));
+  END_CPP11
+}
+// tool.cpp
+SEXP distribute_tool_randomly_cpp(double prevalence, bool as_proportion);
+extern "C" SEXP _epiworldR_distribute_tool_randomly_cpp(SEXP prevalence, SEXP as_proportion) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_tool_randomly_cpp(cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+  END_CPP11
+}
+// tool.cpp
+SEXP distribute_tool_to_set_cpp(integers agents_ids);
+extern "C" SEXP _epiworldR_distribute_tool_to_set_cpp(SEXP agents_ids) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_tool_to_set_cpp(cpp11::as_cpp<cpp11::decay_t<integers>>(agents_ids)));
   END_CPP11
 }
 // virus.cpp
@@ -860,10 +895,24 @@ extern "C" SEXP _epiworldR_set_name_virus_cpp(SEXP virus, SEXP name) {
   END_CPP11
 }
 // virus.cpp
-SEXP set_prevalence_virus_cpp(SEXP virus, double prevalence, bool as_proportion);
-extern "C" SEXP _epiworldR_set_prevalence_virus_cpp(SEXP virus, SEXP prevalence, SEXP as_proportion) {
+SEXP set_distribution_virus_cpp(SEXP virus, SEXP dist);
+extern "C" SEXP _epiworldR_set_distribution_virus_cpp(SEXP virus, SEXP dist) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_prevalence_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+    return cpp11::as_sexp(set_distribution_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<SEXP>>(dist)));
+  END_CPP11
+}
+// virus.cpp
+SEXP distribute_virus_randomly_cpp(double prevalence, bool as_proportion);
+extern "C" SEXP _epiworldR_distribute_virus_randomly_cpp(SEXP prevalence, SEXP as_proportion) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_virus_randomly_cpp(cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+  END_CPP11
+}
+// virus.cpp
+SEXP distribute_virus_to_set_cpp(integers agents_ids);
+extern "C" SEXP _epiworldR_distribute_virus_to_set_cpp(SEXP agents_ids) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(distribute_virus_to_set_cpp(cpp11::as_cpp<cpp11::decay_t<integers>>(agents_ids)));
   END_CPP11
 }
 
@@ -894,8 +943,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
+    {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},
+    {"_epiworldR_distribute_entity_to_set_cpp",         (DL_FUNC) &_epiworldR_distribute_entity_to_set_cpp,          1},
+    {"_epiworldR_distribute_tool_randomly_cpp",         (DL_FUNC) &_epiworldR_distribute_tool_randomly_cpp,          2},
+    {"_epiworldR_distribute_tool_to_set_cpp",           (DL_FUNC) &_epiworldR_distribute_tool_to_set_cpp,            1},
+    {"_epiworldR_distribute_virus_randomly_cpp",        (DL_FUNC) &_epiworldR_distribute_virus_randomly_cpp,         2},
+    {"_epiworldR_distribute_virus_to_set_cpp",          (DL_FUNC) &_epiworldR_distribute_virus_to_set_cpp,           1},
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
-    {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            3},
+    {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},
     {"_epiworldR_entity_get_agents_cpp",                (DL_FUNC) &_epiworldR_entity_get_agents_cpp,                 1},
     {"_epiworldR_entity_rm_agent_cpp",                  (DL_FUNC) &_epiworldR_entity_rm_agent_cpp,                   2},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
@@ -957,6 +1012,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},
+    {"_epiworldR_set_distribution_entity_cpp",          (DL_FUNC) &_epiworldR_set_distribution_entity_cpp,           2},
+    {"_epiworldR_set_distribution_tool_cpp",            (DL_FUNC) &_epiworldR_set_distribution_tool_cpp,             3},
+    {"_epiworldR_set_distribution_virus_cpp",           (DL_FUNC) &_epiworldR_set_distribution_virus_cpp,            2},
     {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
     {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},
     {"_epiworldR_set_incubation_ptr_cpp",               (DL_FUNC) &_epiworldR_set_incubation_ptr_cpp,                3},
@@ -964,8 +1022,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},
     {"_epiworldR_set_param_cpp",                        (DL_FUNC) &_epiworldR_set_param_cpp,                         3},
-    {"_epiworldR_set_prevalence_tool_cpp",              (DL_FUNC) &_epiworldR_set_prevalence_tool_cpp,               3},
-    {"_epiworldR_set_prevalence_virus_cpp",             (DL_FUNC) &_epiworldR_set_prevalence_virus_cpp,              3},
     {"_epiworldR_set_prob_death_cpp",                   (DL_FUNC) &_epiworldR_set_prob_death_cpp,                    2},
     {"_epiworldR_set_prob_death_fun_cpp",               (DL_FUNC) &_epiworldR_set_prob_death_fun_cpp,                3},
     {"_epiworldR_set_prob_death_ptr_cpp",               (DL_FUNC) &_epiworldR_set_prob_death_ptr_cpp,                3},

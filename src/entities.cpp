@@ -49,15 +49,19 @@ SEXP get_entity_cpp(
 SEXP entity_cpp(
   std::string name,
   double preval,
-  bool as_proportion
+  bool as_proportion,
+  bool to_unassigned
 ) {
   
   cpp11::external_pointer<Entity<>> ptr(
     new Entity<>(
       name,
-      preval,
-      as_proportion
+      distribute_entity_randomly<>(
+        preval,
+        as_proportion,
+        to_unassigned
       )
+    )
   );
   
   return ptr;
@@ -192,6 +196,52 @@ SEXP set_distribution_entity_cpp(
   return entity;
 
 }
+
+[[cpp11::register]]
+SEXP distribute_entity_randomly_cpp(
+  double prevalence,
+  bool as_proportion,
+  bool to_unassigned
+) {
+
+  external_pointer<EntityToAgentFun<>> res(
+    new EntityToAgentFun<>(
+      distribute_entity_randomly<>(
+        prevalence,
+        as_proportion,
+        to_unassigned
+      )
+    )
+  );
+
+  return res;
+
+}
+
+[[cpp11::register]]
+SEXP distribute_entity_to_set_cpp(
+  integers agents_ids
+) {
+
+  // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
+
+  external_pointer<EntityToAgentFun<>> res(
+    new EntityToAgentFun<>(
+      distribute_entity_to_set(ids)
+    )
+  );
+
+  return res;
+
+}
+
 // [[cpp11::register]]
 // int entity_set_name_cpp(SEXP entity, std::string name) {
 //   cpp11::external_pointer<Entity<>>(entity)->set_name(name);

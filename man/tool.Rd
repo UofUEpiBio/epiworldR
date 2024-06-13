@@ -21,7 +21,9 @@
 \alias{set_death_reduction_ptr}
 \alias{set_death_reduction_fun}
 \alias{print.epiworld_agents_tools}
-\alias{set_prevalence_tool}
+\alias{set_distribution_tool}
+\alias{distribute_tool_randomly}
+\alias{distribute_tool_to_set}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -70,14 +72,14 @@ set_death_reduction_fun(tool, model, tfun)
 
 \method{print}{epiworld_agents_tools}(x, max_print = 10, ...)
 
-set_prevalence_tool(tool, prevalence, as_proportion)
+set_distribution_tool(tool, distfun)
+
+distribute_tool_randomly(prevalence, as_proportion)
+
+distribute_tool_to_set(agents_ids)
 }
 \arguments{
 \item{name}{Name of the tool}
-
-\item{prevalence}{Numeric scalar. Prevalence of the tool.}
-
-\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is a proportion.}
 
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
@@ -114,6 +116,9 @@ will be added to the tool (see details).}
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
 
 \item{...}{Currently ignored.}
+
+\item{agents_ids}{Integer vector. Indices of the agents to which the tool
+will be assigned.}
 }
 \value{
 \itemize{
@@ -153,6 +158,16 @@ to the specified tool of class \link{epiworld_tool}.
 \item The \code{set_death_reduction} function assigns a probability decrease
 to the specified tool of class \link{epiworld_tool}.
 }
+
+\itemize{
+\item The \code{distribute_tool_randomly} function returns a distribution function of
+class \code{epiworld_tool_distfun}.
+}
+
+\itemize{
+\item The \code{distribute_tool_to_set} function returns a distribution function of
+class \code{epiworld_tool_distfun}.
+}
 }
 \description{
 Tools are functions that affect how agents react to the virus. They can be
@@ -171,6 +186,17 @@ In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_r
 \code{set_death_reduction_ptr}, the corresponding parameters are passed as a pointer to
 the tool. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
+
+The \code{set_distribution_tool} function assigns a distribution function to the
+specified tool of class \link{epiworld_tool}. The distribution function can be
+created using the functions \code{\link[=distribute_tool_randomly]{distribute_tool_randomly()}} and
+\code{\link[=distribute_tool_to_set]{distribute_tool_to_set()}}.
+
+The \code{distribute_tool_randomly} function creates a distribution function that
+randomly assigns the tool to a proportion of the population.
+
+The \code{distribute_tool_to_set} function creates a distribution function that
+assigns the tool to a set of agents.
 }
 \examples{
 # Simple model
