@@ -311,7 +311,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     epiworld::VirusFun<TSeq> ptransmitfun = [](
         epiworld::Agent<TSeq> * p,
-        epiworld::Virus<TSeq> & v,
+        epiworld::Virus<TSeq> &,
         epiworld::Model<TSeq> * m
         ) -> epiworld_double
     {

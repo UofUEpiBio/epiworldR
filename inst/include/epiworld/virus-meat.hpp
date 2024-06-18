@@ -58,8 +58,8 @@ inline VirusFun<TSeq> virus_fun_logit(
 
     VirusFun<TSeq> fun_infect = [coefs_f,vars](
         Agent<TSeq> * agent,
-        Virus<TSeq> & virus,
-        Model<TSeq> * model
+        Virus<TSeq> &,
+        Model<TSeq> *
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();
