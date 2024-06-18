@@ -1929,47 +1929,6 @@ inline void Model<TSeq>::reset() {
 // Too big to keep here
 #include "model-meat-print.hpp"
 
-template<typename TSeq>
-inline Model<TSeq> && Model<TSeq>::clone() const {
-
-    // Step 1: Regen the individuals and make sure that:
-    //  - Neighbors point to the right place
-    //  - DB is pointing to the right place
-    Model<TSeq> res(*this);
-
-    // Removing old neighbors
-    for (auto & p: res.population)
-        p.neighbors.clear();
-    
-    // Rechecking individuals
-    for (epiworld_fast_uint p = 0u; p < size(); ++p)
-    {
-        // Making room
-        const Agent<TSeq> & agent_this = population[p];
-        Agent<TSeq> & agent_res  = res.population[p];
-
-        // Agent pointing to the right model and agent
-        agent_res.model         = &res;
-        agent_res.viruses.agent = &agent_res;
-        agent_res.tools.agent   = &agent_res;
-
-        // Readding
-        std::vector< Agent<TSeq> * > neigh = agent_this.neighbors;
-        for (epiworld_fast_uint n = 0u; n < neigh.size(); ++n)
-        {
-            // Point to the right neighbors
-            int loc = res.population_ids[neigh[n]->get_id()];
-            agent_res.add_neighbor(res.population[loc], true, true);
-
-        }
-
-    }
-
-    return res;
-
-}
-
-
 
 template<typename TSeq>
 inline void Model<TSeq>::add_state(

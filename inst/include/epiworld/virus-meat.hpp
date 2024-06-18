@@ -56,7 +56,7 @@ inline VirusFun<TSeq> virus_fun_logit(
     for (auto c: coefs)
         coefs_f.push_back(static_cast<epiworld_double>(c));
 
-    VirusFun<TSeq> fun_infect = [coefs_f,vars,logit](
+    VirusFun<TSeq> fun_infect = [coefs_f,vars](
         Agent<TSeq> * agent,
         Virus<TSeq> & virus,
         Model<TSeq> * model

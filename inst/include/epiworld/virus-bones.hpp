@@ -61,9 +61,9 @@ public:
     Virus(std::string name = "unknown virus");
 
     Virus(
-        std::string name = "unknown virus",
-        epiworld_double prevalence = 0.0,
-        bool as_proportion = true
+        std::string name,
+        epiworld_double prevalence,
+        bool as_proportion
         );
 
     void mutate(Model<TSeq> * model);

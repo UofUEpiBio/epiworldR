@@ -533,8 +533,6 @@ public:
     virtual void reset();
     const Model<TSeq> & print(bool lite = false) const;
 
-    Model<TSeq> && clone() const;
-
     /**
      * @name Manage state (states) in the model
      * 
