@@ -5,9 +5,9 @@ stopifnot_entity <- function(entity) {
   }
 }
 
-stopifnot_entity_distfun <- function(dist_fun) {
-  if (!inherits(dist_fun, "epiworld_distribution_entity")) {
-    stop("Argument 'dist_fun' must be a distribution function.")
+stopifnot_entity_distfun <- function(distfun) {
+  if (!inherits(distfun, "epiworld_distribution_entity")) {
+    stop("Argument 'distfun' must be a distribution function.")
   }
 }
 
@@ -92,6 +92,8 @@ print.epiworld_entities <- function(x, ...) {
 #' @param prevalence Numeric scalar. Prevalence of the entity.
 #' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
 #' as a proportion.
+#' @param to_unassigned Logical scalar. If `TRUE`, the entity is added to the
+#' unassigned pool.
 #' @return 
 #' - The function `entity` creates an entity object.
 #' @rdname entities
@@ -280,14 +282,14 @@ distribute_entity_to_set <- function(
 
 #' @export 
 #' @rdname entities
-#' @param dist_fun Distribution function object of class `epiworld_distribution_entity`.
+#' @param distfun Distribution function object of class `epiworld_distribution_entity`.
 set_distribution_entity <- function(
   entity,
-  dist_fun
+  distfun
 ) {
 
   stopifnot_entity(entity)
-  stopifnot_entity_distfun(dist_fun)
+  stopifnot_entity_distfun(distfun)
   set_distribution_entity_cpp(entity, distribution)
 
   invisible(entity)

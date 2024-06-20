@@ -44,7 +44,7 @@ distribute_entity_randomly(prevalence, as_proportion, to_unassigned = TRUE)
 
 distribute_entity_to_set(agents_ids)
 
-set_distribution_entity(entity, dist_fun)
+set_distribution_entity(entity, distfun)
 }
 \arguments{
 \item{model}{Model object of class \code{epiworld_model}.}
@@ -60,6 +60,9 @@ set_distribution_entity(entity, dist_fun)
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
 as a proportion.}
 
+\item{to_unassigned}{Logical scalar. If \code{TRUE}, the entity is added to the
+unassigned pool.}
+
 \item{entity}{Entity object of class \code{epiworld_entity}.}
 
 \item{agent}{Agent object of class \code{epiworld_agent}.}
@@ -74,7 +77,7 @@ as a proportion.}
 
 \item{agents_ids}{Integer vector. Ids of the agents to distribute.}
 
-\item{dist_fun}{Distribution function object of class \code{epiworld_distribution_entity}.}
+\item{distfun}{Distribution function object of class \code{epiworld_distribution_entity}.}
 }
 \value{
 \itemize{

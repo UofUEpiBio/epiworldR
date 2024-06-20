@@ -284,13 +284,11 @@ SEXP print_agent_tools_cpp(SEXP tools) {
 [[cpp11::register]]
 SEXP set_distribution_tool_cpp(
   SEXP tool,
-  SEXP model,
-  SEXP tfun
+  SEXP distfun
   ) {
   
   WrapTool(toolptr)(tool);
-  external_pointer<Model<>> mptr(model);
-  external_pointer<ToolToAgentFun<>> tfunptr(tfun);
+  external_pointer<ToolToAgentFun<>> tfunptr(distfun);
   
   toolptr->set_distribution(*tfunptr);
   

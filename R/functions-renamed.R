@@ -10,15 +10,21 @@
 #' @name epiworldR-deprecated
 NULL
 
-#' @param n Deprecated. Either set the prevalence during the tool/virus
-#' initialization or use `set_prevalence_tool`/`set_prevalence_virus`.
+#' @param n Deprecated. 
 #' @export 
 #' @rdname epiworldR-deprecated
 add_tool_n <- function(model, tool, n) {
 
   .Deprecated(new = "add_tool")
 
-  set_prevalence_tool(tool, n, as_proportion = FALSE)
+  set_distribution_tool(
+    tool,
+    distfun = distribute_tool_randomly(
+      prevalence = n,
+      as_proportion = TRUE
+    )
+  )
+  
   add_tool(model, tool)
 
 }
@@ -28,7 +34,15 @@ add_tool_n <- function(model, tool, n) {
 add_virus_n <- function(model, virus, n) {
 
   .Deprecated(new = "add_virus")
-  set_prevalence_virus(virus, n, as_proportion = FALSE)
+
+  set_distribution_virus(
+    virus = virus,
+    distfun = distribute_virus_randomly(
+      prevalence = n,
+      as_proportion = TRUE
+      )
+  )
+
   add_virus(model, virus)
 
 }

@@ -734,10 +734,10 @@ extern "C" SEXP _epiworldR_print_agent_tools_cpp(SEXP tools) {
   END_CPP11
 }
 // tool.cpp
-SEXP set_distribution_tool_cpp(SEXP tool, SEXP model, SEXP tfun);
-extern "C" SEXP _epiworldR_set_distribution_tool_cpp(SEXP tool, SEXP model, SEXP tfun) {
+SEXP set_distribution_tool_cpp(SEXP tool, SEXP distfun);
+extern "C" SEXP _epiworldR_set_distribution_tool_cpp(SEXP tool, SEXP distfun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_distribution_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(tfun)));
+    return cpp11::as_sexp(set_distribution_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<SEXP>>(distfun)));
   END_CPP11
 }
 // tool.cpp
@@ -1013,7 +1013,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},
     {"_epiworldR_set_distribution_entity_cpp",          (DL_FUNC) &_epiworldR_set_distribution_entity_cpp,           2},
-    {"_epiworldR_set_distribution_tool_cpp",            (DL_FUNC) &_epiworldR_set_distribution_tool_cpp,             3},
+    {"_epiworldR_set_distribution_tool_cpp",            (DL_FUNC) &_epiworldR_set_distribution_tool_cpp,             2},
     {"_epiworldR_set_distribution_virus_cpp",           (DL_FUNC) &_epiworldR_set_distribution_virus_cpp,            2},
     {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
     {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},

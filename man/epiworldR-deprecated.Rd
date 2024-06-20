@@ -27,8 +27,7 @@ globalaction_fun(...)
 
 \item{tool}{Tool object of class \code{epiworld_tool}.}
 
-\item{n}{Deprecated. Either set the prevalence during the tool/virus
-initialization or use \code{set_prevalence_tool}/\code{set_prevalence_virus}.}
+\item{n}{Deprecated.}
 
 \item{virus}{Virus object of class \code{epiworld_virus}.}
 

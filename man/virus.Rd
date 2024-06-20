@@ -73,7 +73,7 @@ set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
 
-set_distribution_virus(virus, dist_fun)
+set_distribution_virus(virus, distfun)
 
 distribute_virus_randomly(prevalence, as_proportion)
 
@@ -101,8 +101,7 @@ proportion of the total number of agents in the model.}
 
 \item{model}{An object of class \code{epiworld_model}.}
 
-\item{proportion}{Deprecated. Either set the prevalence during the virus
-initialization or use \code{set_prevalence_virus}.}
+\item{proportion}{Deprecated.}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
@@ -122,9 +121,9 @@ will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
 
-\item{dist_fun}{An object of class \code{epiworld_distribution_virus}.}
+\item{distfun}{An object of class \code{epiworld_distribution_virus}.}
 
-\item{agents_id}{Integer vector. Indices of the agents that will receive the
+\item{agents_ids}{Integer vector. Indices of the agents that will receive the
 virus.}
 }
 \value{
@@ -231,7 +230,7 @@ run(mseirconn, ndays = 100, seed = 992)
 mseirconn
 
 rm_virus(mseirconn, 0) # Removing the first virus from the model object
-set_prevalence_virus(delta, 100, as_proportion = FALSE)
+set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
 add_virus(mseirconn, delta) 
 
 # Setting parameters for the delta virus manually

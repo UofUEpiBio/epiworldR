@@ -47,7 +47,8 @@
 #' 
 #' # To declare a certain number of individuals with the tool
 #' rm_tool(model_sirconn, 0) # Removing epitool from the model
-#' set_prevalence_tool(epitool, 0.1, TRUE) # Setting prevalence to 0.1
+#' # Setting prevalence to 0.1
+#' set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
 #' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' 
@@ -152,8 +153,7 @@ get_name_tool <- function(tool) {
 
 #' @export
 #' @param tool An object of class `epiworld_tool`
-#' @param proportion Deprecated. Either set the prevalence during the tool
-#' initialization or use `set_prevalence_tool`.
+#' @param proportion Deprecated.
 #' @details 
 #' The `add_tool` function adds the specified tool to the model of class 
 #' [epiworld_model] with specified proportion.
@@ -164,10 +164,13 @@ add_tool <- function(model, tool, proportion) {
 
     warning(
       "The 'proportion' argument is deprecated. ",
-      "Use 'set_prevalence_tool' instead."
+      "Use 'set_distribution_tool' instead."
       )
 
-    set_prevalence_tool(tool, proportion, TRUE)
+    set_distribution_tool(
+      tool,
+      distribute_tool_randomly(proportion, TRUE)
+    )
 
   }
 
@@ -502,12 +505,13 @@ print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
 #' specified tool of class [epiworld_tool]. The distribution function can be
 #' created using the functions [distribute_tool_randomly()] and
 #' [distribute_tool_to_set()].
+#' @param distfun An object of class `epiworld_tool_distfun`.
 #' @rdname tool
 set_distribution_tool <- function(tool, distfun) {
 
   stopifnot_tool(tool)
   stopifnot_tool_distfun(distfun)
-  invisible(set_distribution_tool_cpp(tool, distfun))
+  invisible(set_distribution_tool_cpp(tool = tool, distfun = distfun))
 
 }
 
@@ -516,6 +520,9 @@ set_distribution_tool <- function(tool, distfun) {
 #' @details 
 #' The `distribute_tool_randomly` function creates a distribution function that
 #' randomly assigns the tool to a proportion of the population.
+#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
+#' as a proportion of the total number of agents in the model.
+#' @param prevalence Numeric scalar. Prevalence of the tool.
 #' @return 
 #' - The `distribute_tool_randomly` function returns a distribution function of
 #' class `epiworld_tool_distfun`.

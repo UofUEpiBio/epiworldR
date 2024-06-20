@@ -26,9 +26,9 @@ flu_model <- ModelSEIRMixing(
 
 # Adding the entities 
 flu_model |>
-  add_entity_n(e1) |>
-  add_entity_n(e2) |>
-  add_entity_n(e3)
+  add_entity(e1) |>
+  add_entity(e2) |>
+  add_entity(e3)
 
 run(flu_model, ndays = 100, seed = 1233)
 summary(flu_model)

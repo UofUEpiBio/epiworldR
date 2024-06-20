@@ -43,7 +43,7 @@
 #' mseirconn
 #' 
 #' rm_virus(mseirconn, 0) # Removing the first virus from the model object
-#' set_prevalence_virus(delta, 100, as_proportion = FALSE)
+#' set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
 #' add_virus(mseirconn, delta) 
 #' 
 #' # Setting parameters for the delta virus manually
@@ -154,8 +154,7 @@ get_name_virus <- function(virus) {
 #' @rdname virus
 #' @param model An object of class `epiworld_model`.
 #' @param virus An object of class `epiworld_virus`
-#' @param proportion Deprecated. Either set the prevalence during the virus
-#' initialization or use `set_prevalence_virus`.
+#' @param proportion Deprecated. 
 #' @returns 
 #' - The `add_virus` function does not return a value, instead it adds the 
 #' virus of choice to the model object of class [epiworld_model].
@@ -168,7 +167,10 @@ add_virus <- function(model, virus, proportion) {
       "the next version."
       )
 
-    set_prevalence_virus(virus, proportion, as_proportion = TRUE)
+    set_distribution_virus(
+      virus=virus,
+      distfun=distribute_virus_randomly(proportion, as_proportion = TRUE)
+    )
 
   }
 
@@ -521,12 +523,12 @@ set_incubation_fun <- function(virus, model, vfun) {
 
 #' @export
 #' @rdname virus
-#' @param dist_fun An object of class `epiworld_distribution_virus`.
-set_distribution_virus <- function(virus, dist_fun) {
+#' @param distfun An object of class `epiworld_distribution_virus`.
+set_distribution_virus <- function(virus, distfun) {
   
   stopifnot_virus(virus)
-  stopifnot_virus_distfun(dist_fun)
-  invisible(set_distribution_virus_cpp(virus, dist_fun))
+  stopifnot_virus_distfun(distfun)
+  invisible(set_distribution_virus_cpp(virus, distfun))
   
 }
 
@@ -552,20 +554,20 @@ distribute_virus_randomly <- function(
       as.double(prevalence),
       as.logical(as_proportion)
     ),
-    class = "epiworld_distribution_virus"
+    class = "epiworld_virus_distfun"
   )
 
 }
 
 #' @export
 #' @rdname virus
-#' @param agents_id Integer vector. Indices of the agents that will receive the
+#' @param agents_ids Integer vector. Indices of the agents that will receive the
 #' virus.
 distribute_virus_set <- function(agents_ids) {
   
   structure(
     distribute_virus_set_cpp(as.vector(agents_id)),
-    class = "epiworld_distribution_virus"
+    class = "epiworld_virus_distfun"
   )
   
 }

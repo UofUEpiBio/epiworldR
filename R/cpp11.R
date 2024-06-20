@@ -416,8 +416,8 @@ print_agent_tools_cpp <- function(tools) {
   .Call(`_epiworldR_print_agent_tools_cpp`, tools)
 }
 
-set_distribution_tool_cpp <- function(tool, model, tfun) {
-  .Call(`_epiworldR_set_distribution_tool_cpp`, tool, model, tfun)
+set_distribution_tool_cpp <- function(tool, distfun) {
+  .Call(`_epiworldR_set_distribution_tool_cpp`, tool, distfun)
 }
 
 distribute_tool_randomly_cpp <- function(prevalence, as_proportion) {

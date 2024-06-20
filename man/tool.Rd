@@ -81,6 +81,11 @@ distribute_tool_to_set(agents_ids)
 \arguments{
 \item{name}{Name of the tool}
 
+\item{prevalence}{Numeric scalar. Prevalence of the tool.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
+as a proportion of the total number of agents in the model.}
+
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
 \item{transmission_reduction}{Numeric. Proportion it reduces transmission.}
@@ -93,8 +98,7 @@ distribute_tool_to_set(agents_ids)
 
 \item{model}{Model}
 
-\item{proportion}{Deprecated. Either set the prevalence during the tool
-initialization or use \code{set_prevalence_tool}.}
+\item{proportion}{Deprecated.}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 
@@ -116,6 +120,8 @@ will be added to the tool (see details).}
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
 
 \item{...}{Currently ignored.}
+
+\item{distfun}{An object of class \code{epiworld_tool_distfun}.}
 
 \item{agents_ids}{Integer vector. Indices of the agents to which the tool
 will be assigned.}
@@ -234,7 +240,8 @@ plot(model_sirconn)
 
 # To declare a certain number of individuals with the tool
 rm_tool(model_sirconn, 0) # Removing epitool from the model
-set_prevalence_tool(epitool, 0.1, TRUE) # Setting prevalence to 0.1
+# Setting prevalence to 0.1
+set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
 add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
 

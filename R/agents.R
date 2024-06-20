@@ -19,7 +19,6 @@ stopifnot_agent <- function(x) {
 #' @param d,directed Logical scalar. Whether the graph is directed or not.
 #' @param p Probability of rewiring.
 #' @export
-#' @aliases agents
 #' @return
 #' - The 'agents_smallworld' function returns a model with the agents 
 #' loaded.
