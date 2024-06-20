@@ -566,7 +566,7 @@ distribute_virus_randomly <- function(
 distribute_virus_set <- function(agents_ids) {
   
   structure(
-    distribute_virus_set_cpp(as.vector(agents_id)),
+    distribute_virus_to_set_cpp(as.vector(agents_ids)),
     class = "epiworld_virus_distfun"
   )
   

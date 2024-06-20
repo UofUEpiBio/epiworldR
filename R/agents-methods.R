@@ -38,11 +38,11 @@
 #' x[0] # Print information about the first agent. Substitute the agent of 
 #'      # interest's position where '0' is. 
 #' @name agents
-get_agents <- function(x, ...) UseMethod("get_agents")
+get_agents <- function(model, ...) UseMethod("get_agents")
 
 #' @export 
 #' @rdname agents
-get_agents.epiworld_model <- function(model) {
+get_agents.epiworld_model <- function(model, ...) {
   
   res <- get_agents_cpp(model)
   

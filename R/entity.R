@@ -270,9 +270,9 @@ distribute_entity_randomly <- function(
 distribute_entity_to_set <- function(
   agents_ids
 ) {
-
+  
   structure(
-    distribute_entity_a_set_cpp(
+    distribute_entity_to_set_cpp(
       as.integer(agents_ids)
     ),
     class = "epiworld_distribution_entity"
@@ -290,7 +290,7 @@ set_distribution_entity <- function(
 
   stopifnot_entity(entity)
   stopifnot_entity_distfun(distfun)
-  set_distribution_entity_cpp(entity, distribution)
+  set_distribution_entity_cpp(entity, distfun)
 
   invisible(entity)
 
