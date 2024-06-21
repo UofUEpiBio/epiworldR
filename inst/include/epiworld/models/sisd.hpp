@@ -20,7 +20,7 @@ public:
 
     ModelSISD(
         ModelSISD<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate,
@@ -28,7 +28,7 @@ public:
     );
 
     ModelSISD(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate,
@@ -40,7 +40,7 @@ public:
 template<typename TSeq>
 inline ModelSISD<TSeq>::ModelSISD(
     ModelSISD<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,
@@ -76,7 +76,7 @@ inline ModelSISD<TSeq>::ModelSISD(
 
 template<typename TSeq>
 inline ModelSISD<TSeq>::ModelSISD(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,

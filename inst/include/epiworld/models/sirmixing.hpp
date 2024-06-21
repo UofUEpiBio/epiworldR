@@ -45,7 +45,7 @@ public:
      */
     ModelSIRMixing(
         ModelSIRMixing<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -66,7 +66,7 @@ public:
      * @param contact_matrix The contact matrix between entities in the model.
      */
     ModelSIRMixing(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -275,7 +275,7 @@ inline Model<TSeq> * ModelSIRMixing<TSeq>::clone_ptr()
 template<typename TSeq>
 inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     ModelSIRMixing<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -451,7 +451,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
 template<typename TSeq>
 inline ModelSIRMixing<TSeq>::ModelSIRMixing(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,

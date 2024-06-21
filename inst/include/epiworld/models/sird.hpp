@@ -25,7 +25,7 @@ public:
     ///@{
     ModelSIRD(
         ModelSIRD<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate, 
@@ -33,7 +33,7 @@ public:
     );
 
     ModelSIRD(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate, 
@@ -57,7 +57,7 @@ public:
 template<typename TSeq>
 inline ModelSIRD<TSeq>::ModelSIRD(
     ModelSIRD<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate, 
@@ -94,7 +94,7 @@ inline ModelSIRD<TSeq>::ModelSIRD(
 
 template<typename TSeq>
 inline ModelSIRD<TSeq>::ModelSIRD(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,

@@ -31,7 +31,7 @@ public:
    */
   ModelSEIRD(
     ModelSEIRD<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -50,7 +50,7 @@ public:
    * @param death_rate Death rate of the disease.
    */
   ModelSEIRD(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -145,7 +145,7 @@ public:
 template<typename TSeq>
 inline ModelSEIRD<TSeq>::ModelSEIRD(
     ModelSEIRD<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -187,7 +187,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
 
 template<typename TSeq>
 inline ModelSEIRD<TSeq>::ModelSEIRD(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,

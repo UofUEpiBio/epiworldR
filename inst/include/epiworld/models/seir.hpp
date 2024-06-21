@@ -25,7 +25,7 @@ public:
 
     ModelSEIR(
         ModelSEIR<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -33,7 +33,7 @@ public:
     );
 
     ModelSEIR(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -84,7 +84,7 @@ public:
 template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
     ModelSEIR<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -122,7 +122,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
 template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,

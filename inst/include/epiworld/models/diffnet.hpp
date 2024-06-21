@@ -20,7 +20,7 @@ public:
 
     ModelDiffNet(
         ModelDiffNet<TSeq> & model,
-        std::string innovation_name,
+        const std::string & innovation_name,
         epiworld_double prevalence,
         epiworld_double prob_adopt,
         bool normalize_exposure = true,
@@ -31,7 +31,7 @@ public:
     );
 
     ModelDiffNet(
-        std::string innovation_name,
+        const std::string & innovation_name,
         epiworld_double prevalence,
         epiworld_double prob_adopt,
         bool normalize_exposure = true,
@@ -52,7 +52,7 @@ public:
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
     ModelDiffNet<TSeq> & model,
-    std::string innovation_name,
+    const std::string & innovation_name,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
     bool normalize_exposure,
@@ -180,7 +180,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
 
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
-    std::string innovation_name,
+    const std::string & innovation_name,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
     bool normalize_exposure,

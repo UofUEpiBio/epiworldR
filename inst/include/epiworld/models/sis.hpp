@@ -22,14 +22,14 @@ public:
 
     ModelSIS(
         ModelSIS<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
     );
 
     ModelSIS(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -40,7 +40,7 @@ public:
 template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
     ModelSIS<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
@@ -73,7 +73,7 @@ inline ModelSIS<TSeq>::ModelSIS(
 
 template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate

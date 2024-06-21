@@ -23,7 +23,7 @@ inline void Entity<TSeq>::add_agent(
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::rm_agent(size_t idx)
+inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 {
     if (idx >= n_agents)
         throw std::out_of_range(
@@ -89,7 +89,7 @@ inline typename std::vector< Agent<TSeq> * >::const_iterator Entity<TSeq>::end()
 }
 
 template<typename TSeq>
-inline Agent<TSeq> * Entity<TSeq>::operator[](size_t i)
+size_t Entity<TSeq>::operator[](size_t i)
 {
     if (n_agents <= i)
         throw std::logic_error(
@@ -97,7 +97,7 @@ inline Agent<TSeq> * Entity<TSeq>::operator[](size_t i)
             std::to_string(n_agents) + " <= " + std::to_string(i)
             );
 
-    return &model->get_agents()[i];
+    return i;
 }
 
 template<typename TSeq>
@@ -227,7 +227,7 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::distribute()
+inline void Entity<TSeq>::distribute(Model<TSeq> * model)
 {
 
     if (dist_fun)

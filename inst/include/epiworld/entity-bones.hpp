@@ -24,8 +24,6 @@ class Entity {
     friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
     friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
-
-    Model<TSeq> * model;
     
     int id = -1;
     std::vector< size_t > agents;   ///< Vector of agents
@@ -82,7 +80,7 @@ public:
     
     void add_agent(Agent<TSeq> & p, Model<TSeq> * model);
     void add_agent(Agent<TSeq> * p, Model<TSeq> * model);
-    void rm_agent(size_t idx);
+    void rm_agent(size_t idx, Model<TSeq> * model);
     size_t size() const noexcept;
     void set_location(std::vector< epiworld_double > loc);
     std::vector< epiworld_double > & get_location();
@@ -93,7 +91,7 @@ public:
     typename std::vector< Agent<TSeq> * >::const_iterator begin() const;
     typename std::vector< Agent<TSeq> * >::const_iterator end() const;
 
-    Agent<TSeq> * operator[](size_t i);
+    size_t operator[](size_t i);
 
     int get_id() const noexcept;
     const std::string & get_name() const noexcept;
@@ -115,7 +113,7 @@ public:
      * The idea is to have a flexible way of distributing agents among entities.
      
      */
-    void distribute();
+    void distribute(Model<TSeq> * model);
 
     std::vector< size_t > & get_agents();
 

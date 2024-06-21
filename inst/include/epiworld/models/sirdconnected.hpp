@@ -19,7 +19,7 @@ public:
 
     ModelSIRDCONN(
         ModelSIRDCONN<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -29,7 +29,7 @@ public:
     );
 
     ModelSIRDCONN(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -116,7 +116,7 @@ inline Model<TSeq> * ModelSIRDCONN<TSeq>::clone_ptr()
 template<typename TSeq>
 inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
     ModelSIRDCONN<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -310,7 +310,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
 
 template<typename TSeq>
 inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,

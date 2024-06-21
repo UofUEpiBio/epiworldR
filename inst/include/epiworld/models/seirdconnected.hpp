@@ -20,7 +20,7 @@ public:
 
     ModelSEIRDCONN(
         ModelSEIRDCONN<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -31,7 +31,7 @@ public:
     );
     
     ModelSEIRDCONN(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -142,7 +142,7 @@ inline Model<TSeq> * ModelSEIRDCONN<TSeq>::clone_ptr()
 template<typename TSeq>
 inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     ModelSEIRDCONN<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -367,7 +367,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
 template<typename TSeq>
 inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,

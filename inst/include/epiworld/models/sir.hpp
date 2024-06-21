@@ -19,14 +19,14 @@ public:
 
     ModelSIR(
         ModelSIR<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
     );
 
     ModelSIR(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -47,7 +47,7 @@ public:
 template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
     ModelSIR<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
@@ -80,7 +80,7 @@ inline ModelSIR<TSeq>::ModelSIR(
 
 template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate

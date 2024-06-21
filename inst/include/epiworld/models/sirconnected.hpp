@@ -21,7 +21,7 @@ public:
 
     ModelSIRCONN(
         ModelSIRCONN<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -30,7 +30,7 @@ public:
     );
 
     ModelSIRCONN(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -143,7 +143,7 @@ inline Model<TSeq> * ModelSIRCONN<TSeq>::clone_ptr()
 template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     ModelSIRCONN<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -324,7 +324,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
 template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,

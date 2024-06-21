@@ -411,13 +411,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
         for (auto & p : population_backup)
             p.model = this;
 
-    for (auto & e : entities)
-        e.model = this;
-
-    if (entities_backup.size() != 0u)
-        for (auto & e : entities_backup)
-            e.model = this;
-
     // Pointing to the right place. This needs
     // to be done afterwards since the state zero is set as a function
     // of the population.
@@ -776,7 +769,7 @@ inline void Model<TSeq>::dist_entities()
     for (auto & entity: entities)
     {
 
-        entity.distribute();
+        entity.distribute(this);
 
         // Apply the events
         events_run();
@@ -960,7 +953,6 @@ template<typename TSeq>
 inline void Model<TSeq>::add_entity(Entity<TSeq> e)
 {
 
-    e.model = this;
     e.id = entities.size();
     entities.push_back(e);
 

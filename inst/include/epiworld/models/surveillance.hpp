@@ -62,7 +62,7 @@ public:
 
     ModelSURV(
         ModelSURV<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint prevalence               = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
@@ -78,7 +78,7 @@ public:
     );
 
     ModelSURV(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint prevalence         = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
@@ -99,7 +99,7 @@ public:
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
     ModelSURV<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint prevalence,
     epiworld_double efficacy_vax,
     epiworld_double latent_period,
@@ -350,7 +350,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint prevalence,
     epiworld_double efficacy_vax,
     epiworld_double latent_period,

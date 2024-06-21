@@ -54,7 +54,7 @@ public:
     */
     ModelSIRLogit(
         ModelSIRLogit<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         double * data,
         size_t ncols,
         std::vector< double > coefs_infect,
@@ -67,7 +67,7 @@ public:
     );
 
     ModelSIRLogit(
-        std::string vname,
+        const std::string & vname,
         double * data,
         size_t ncols,
         std::vector< double > coefs_infect,
@@ -168,7 +168,7 @@ inline void ModelSIRLogit<TSeq>::reset()
 template<typename TSeq>
 inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     ModelSIRLogit<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     double * data,
     size_t ncols,
     std::vector< double > coefs_infect,
@@ -321,7 +321,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
 template<typename TSeq>
 inline ModelSIRLogit<TSeq>::ModelSIRLogit(
-    std::string vname,
+    const std::string & vname,
     double * data,
     size_t ncols,
     std::vector< double > coefs_infect,
