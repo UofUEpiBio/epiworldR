@@ -22,14 +22,14 @@ public:
 
     ModelSIS(
         ModelSIS<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
     );
 
     ModelSIS(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -40,7 +40,7 @@ public:
 template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
     ModelSIS<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
@@ -58,14 +58,14 @@ inline ModelSIS<TSeq>::ModelSIS(
     model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(ModelSIS<TSeq>::INFECTED, ModelSIS<TSeq>::SUSCEPTIBLE, ModelSIS<TSeq>::SUSCEPTIBLE);
     
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_death(0.0);
     
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     return;
 
@@ -73,7 +73,7 @@ inline ModelSIS<TSeq>::ModelSIS(
 
 template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate

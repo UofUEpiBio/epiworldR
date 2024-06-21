@@ -29,16 +29,13 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
 
         // Figuring out information about the viruses
         double tot = 0.0;
-        const auto & vpreval = model->get_prevalence_virus();
-        const auto & vprop   = model->get_prevalence_virus_as_proportion();
         double n   = static_cast<double>(model->size());
-        for (size_t i = 0u; i < model->get_n_viruses(); ++i)
+        for (const auto & agent: model->get_agents())
         {
-            if (vprop[i])
-                tot += vpreval[i];
-            else
-                tot += vpreval[i] / n;
+            if (agent.get_virus() != nullptr)
+                tot += 1.0;
         }
+        tot /= n;
 
         // Putting the total into context
         double tot_left = 1.0 - tot;
@@ -105,16 +102,13 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
 
         // Figuring out information about the viruses
         double tot = 0.0;
-        const auto & vpreval = model->get_prevalence_virus();
-        const auto & vprop   = model->get_prevalence_virus_as_proportion();
         double n   = static_cast<double>(model->size());
-        for (size_t i = 0u; i < model->get_n_viruses(); ++i)
+        for (const auto & agent: model->get_agents())
         {
-            if (vprop[i])
-                tot += vpreval[i];
-            else
-                tot += vpreval[i] / n;
+            if (agent.get_virus() != nullptr)
+                tot += 1.0;
         }
+        tot /= n;
 
         // Putting the total into context
         double tot_left = 1.0 - tot;
@@ -185,16 +179,13 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
 
         // Figuring out information about the viruses
         double tot = 0.0;
-        const auto & vpreval = model->get_prevalence_virus();
-        const auto & vprop   = model->get_prevalence_virus_as_proportion();
         double n   = static_cast<double>(model->size());
-        for (size_t i = 0u; i < model->get_n_viruses(); ++i)
+        for (const auto & agent: model->get_agents())
         {
-            if (vprop[i])
-                tot += vpreval[i];
-            else
-                tot += vpreval[i] / n;
+            if (agent.get_virus() != nullptr)
+                tot += 1.0;
         }
+        tot /= n;
 
         // Putting the total into context
         double tot_left = 1.0 - tot;
@@ -269,16 +260,14 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
 
         // Figuring out information about the viruses
         double tot = 0.0;
-        const auto & vpreval = model->get_prevalence_virus();
-        const auto & vprop   = model->get_prevalence_virus_as_proportion();
         double n   = static_cast<double>(model->size());
-        for (size_t i = 0u; i < model->get_n_viruses(); ++i)
+
+        for (const auto & agent: model->get_agents())
         {
-            if (vprop[i])
-                tot += vpreval[i];
-            else
-                tot += vpreval[i] / n;
+            if (agent.get_virus() != nullptr)
+                tot += 1.0;
         }
+        tot /= n;
 
         // Putting the total into context
         double tot_left = 1.0 - tot;

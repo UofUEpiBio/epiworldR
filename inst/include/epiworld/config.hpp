@@ -75,7 +75,7 @@ using MixerFun = std::function<epiworld_double(Agent<TSeq>*,VirusPtr<TSeq>,Model
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using MutFun = std::function<bool(Agent<TSeq>*,Virus<TSeq>&,Model<TSeq>*)>;
 
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 using PostRecoveryFun = std::function<void(Agent<TSeq>*,Virus<TSeq>&,Model<TSeq>*)>;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
@@ -90,25 +90,25 @@ using GlobalFun = std::function<void(Model<TSeq>*)>;
 template<typename TSeq>
 struct Event;
 
-template<typename TSeq>
-using ActionFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+using EventFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Decides how to distribute viruses at initialization
  */
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 using VirusToAgentFun = std::function<void(Virus<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Decides how to distribute tools at initialization
  */
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 using ToolToAgentFun = std::function<void(Tool<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Decides how to distribute entities at initialization
  */
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 using EntityToAgentFun = std::function<void(Entity<TSeq>&,Model<TSeq>*)>;
 
 /**
@@ -116,7 +116,7 @@ using EntityToAgentFun = std::function<void(Entity<TSeq>&,Model<TSeq>*)>;
  * 
  * @tparam TSeq 
  */
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 struct Event {
     Agent<TSeq> * agent;
     VirusPtr<TSeq> virus;
@@ -124,7 +124,7 @@ struct Event {
     Entity<TSeq> * entity;
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
-    ActionFun<TSeq> call;
+    EventFun<TSeq> call;
     int idx_agent;
     int idx_object;
 public:
@@ -151,7 +151,7 @@ public:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        ActionFun<TSeq> call_,
+        EventFun<TSeq> call_,
         int idx_agent_,
         int idx_object_
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),

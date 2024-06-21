@@ -2,12 +2,18 @@
 % Please edit documentation in R/functions-renamed.R, R/global-actions.R
 \name{epiworldR-deprecated}
 \alias{epiworldR-deprecated}
+\alias{add_tool_n}
+\alias{add_virus_n}
 \alias{globalaction_tool}
 \alias{globalaction_tool_logit}
 \alias{globalaction_set_params}
 \alias{globalaction_fun}
-\title{Deprecated functions in epiworldR}
+\title{Deprecated and removed functions in epiworldR}
 \usage{
+add_tool_n(model, tool, n)
+
+add_virus_n(model, virus, n)
+
 globalaction_tool(...)
 
 globalaction_tool_logit(...)
@@ -17,6 +23,14 @@ globalaction_set_params(...)
 globalaction_fun(...)
 }
 \arguments{
+\item{model}{Model object of class \code{epiworld_model}.}
+
+\item{tool}{Tool object of class \code{epiworld_tool}.}
+
+\item{n}{Deprecated.}
+
+\item{virus}{Virus object of class \code{epiworld_virus}.}
+
 \item{...}{Arguments to be passed to the new function.}
 }
 \description{

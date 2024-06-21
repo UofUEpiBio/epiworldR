@@ -62,7 +62,7 @@ public:
 
     ModelSURV(
         ModelSURV<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint prevalence               = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
@@ -78,7 +78,7 @@ public:
     );
 
     ModelSURV(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint prevalence         = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
@@ -99,7 +99,7 @@ public:
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
     ModelSURV<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint prevalence,
     epiworld_double efficacy_vax,
     epiworld_double latent_period,
@@ -304,14 +304,14 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_param(prob_noreinfect, "Prob. no reinfect");
 
     // Virus ------------------------------------------------------------------
-    epiworld::Virus<TSeq> covid("Covid19");
+    epiworld::Virus<TSeq> covid("Covid19", prevalence, false);
     covid.set_state(LATENT, RECOVERED, REMOVED);
     covid.set_post_immunity(&model("Prob. no reinfect"));
     covid.set_prob_death(&model("Prob. death"));
 
     epiworld::VirusFun<TSeq> ptransmitfun = [](
         epiworld::Agent<TSeq> * p,
-        epiworld::Virus<TSeq> & v,
+        epiworld::Virus<TSeq> &,
         epiworld::Model<TSeq> * m
         ) -> epiworld_double
     {
@@ -330,17 +330,17 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     covid.set_prob_infecting_fun(ptransmitfun);
     
-    model.add_virus_n(covid, prevalence);
+    model.add_virus(covid);
 
     model.set_user_data({"nsampled", "ndetected", "ndetected_asympt", "nasymptomatic"});
     model.add_globalevent(surveillance_program, "Surveilance program", -1);
    
     // Vaccine tool -----------------------------------------------------------
-    epiworld::Tool<TSeq> vax("Vaccine");
+    epiworld::Tool<TSeq> vax("Vaccine", prop_vaccinated, true);
     vax.set_susceptibility_reduction(&model("Vax efficacy"));
     vax.set_transmission_reduction(&model("Vax redux transmission"));
     
-    model.add_tool(vax, prop_vaccinated);
+    model.add_tool(vax);
 
     model.set_name("Surveillance");
 
@@ -350,7 +350,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint prevalence,
     epiworld_double efficacy_vax,
     epiworld_double latent_period,

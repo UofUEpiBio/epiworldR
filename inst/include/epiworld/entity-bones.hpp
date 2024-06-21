@@ -24,8 +24,6 @@ class Entity {
     friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
     friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
-
-    Model<TSeq> * model;
     
     int id = -1;
     std::vector< size_t > agents;   ///< Vector of agents
@@ -49,7 +47,7 @@ private:
     ///@}
 
     int max_capacity = -1;
-    std::string entity_name = "Unknown entity";
+    std::string entity_name = "Unnamed entity";
 
     std::vector< epiworld_double > location = {0.0}; ///< An arbitrary vector for location
 
@@ -59,18 +57,30 @@ private:
     epiworld_fast_int queue_init = 0; ///< Change of state when added to agent.
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
+    EntityToAgentFun<TSeq> dist_fun = nullptr;
+
 public:
 
-    // Entity() = delete;
-    // Entity(Entity<TSeq> & e) = delete;
-    // Entity(const Entity<TSeq> & e);
-    // Entity(Entity && e);
-    Entity(std::string name) : entity_name(name) {};
-    // Entity<TSeq> & operator=(const Entity<TSeq> & e);
 
+    /**
+     * @brief Constructs an Entity object.
+     *
+     * This constructor initializes an Entity object with the specified parameters.
+     *
+     * @param name The name of the entity.
+     * @param fun A function pointer to a function that maps the entity to an agent.
+     */
+    Entity(
+        std::string name,
+        EntityToAgentFun<TSeq> fun = nullptr
+        ) :
+            entity_name(name),
+            dist_fun(fun)
+        {};
+    
     void add_agent(Agent<TSeq> & p, Model<TSeq> * model);
     void add_agent(Agent<TSeq> * p, Model<TSeq> * model);
-    void rm_agent(size_t idx);
+    void rm_agent(size_t idx, Model<TSeq> * model);
     size_t size() const noexcept;
     void set_location(std::vector< epiworld_double > loc);
     std::vector< epiworld_double > & get_location();
@@ -81,7 +91,7 @@ public:
     typename std::vector< Agent<TSeq> * >::const_iterator begin() const;
     typename std::vector< Agent<TSeq> * >::const_iterator end() const;
 
-    Agent<TSeq> * operator[](size_t i);
+    size_t operator[](size_t i);
 
     int get_id() const noexcept;
     const std::string & get_name() const noexcept;
@@ -95,6 +105,20 @@ public:
 
     bool operator==(const Entity<TSeq> & other) const;
     bool operator!=(const Entity<TSeq> & other) const {return !operator==(other);};
+
+    /** 
+     * @name Entity distribution
+     * 
+     * @details These functions are used for distributing agents among entities.
+     * The idea is to have a flexible way of distributing agents among entities.
+     
+     */
+    void distribute(Model<TSeq> * model);
+
+    std::vector< size_t > & get_agents();
+
+    void print() const;
+    void set_distribution(EntityToAgentFun<TSeq> fun);
 
 };
 

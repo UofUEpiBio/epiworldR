@@ -32,6 +32,7 @@ find_scale <- function(x) {
 #' @importFrom graphics legend
 plot_epi <- function(x, main = "", counts_scale, ...) UseMethod("plot_epi")
 
+#' @export
 plot_epi.epiworld_model <- function(
     x, main = "",
     counts_scale,
@@ -47,6 +48,7 @@ plot_epi.epiworld_model <- function(
   
 }
 
+#' @export
 plot_epi.epiworld_hist_virus <- function(
     x, main = "",
     counts_scale,
@@ -62,6 +64,7 @@ plot_epi.epiworld_hist_virus <- function(
   
 }
 
+#' @export
 plot_epi.epiworld_hist <- function(
     x, main = "",
     counts_scale,

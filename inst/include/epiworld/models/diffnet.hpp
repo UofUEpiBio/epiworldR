@@ -20,7 +20,7 @@ public:
 
     ModelDiffNet(
         ModelDiffNet<TSeq> & model,
-        std::string innovation_name,
+        const std::string & innovation_name,
         epiworld_double prevalence,
         epiworld_double prob_adopt,
         bool normalize_exposure = true,
@@ -31,7 +31,7 @@ public:
     );
 
     ModelDiffNet(
-        std::string innovation_name,
+        const std::string & innovation_name,
         epiworld_double prevalence,
         epiworld_double prob_adopt,
         bool normalize_exposure = true,
@@ -52,7 +52,7 @@ public:
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
     ModelDiffNet<TSeq> & model,
-    std::string innovation_name,
+    const std::string & innovation_name,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
     bool normalize_exposure,
@@ -164,12 +164,12 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     model.add_param(prob_adopt, parname);
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> innovation(innovation_name);
+    epiworld::Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
     innovation.set_prob_infecting(&model(parname));
     
-    model.add_virus(innovation, prevalence);
+    model.add_virus(innovation);
 
     model.set_name(
         std::string("Diffusion of Innovations - ") + innovation_name);
@@ -180,7 +180,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
 
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
-    std::string innovation_name,
+    const std::string & innovation_name,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
     bool normalize_exposure,

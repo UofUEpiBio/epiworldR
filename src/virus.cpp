@@ -15,6 +15,8 @@ using namespace epiworld;
 [[cpp11::register]]
 SEXP virus_cpp(
     std::string name,
+    double prevalence,
+    bool as_proportion,
     double prob_infecting,
     double prob_recovery,
     double prob_death,
@@ -22,7 +24,9 @@ SEXP virus_cpp(
     double incubation
     ) {
   
-  WrapVirus(virus)(new epiworld::Virus<int>(name));
+  WrapVirus(virus)(new epiworld::Virus<int>(
+    name, prevalence, as_proportion
+    ));
   
   virus->set_prob_infecting(prob_infecting);
   virus->set_prob_recovery(prob_recovery);
@@ -55,22 +59,10 @@ SEXP virus_set_state_cpp(
 }
 
 [[cpp11::register]]
-SEXP add_virus_cpp(SEXP m, SEXP v, double preval) {
+SEXP add_virus_cpp(SEXP m, SEXP v) {
   
   external_pointer<epiworld::Model<>>(m)->add_virus(
-    *external_pointer<epiworld::Virus<>>(v),
-    preval
-  );
-  
-  return m;
-}
-
-[[cpp11::register]]
-SEXP add_virus_n_cpp(SEXP m, SEXP v, size_t preval) {
-  
-  external_pointer<Model<>>(m)->add_virus_n(
-      *external_pointer<Virus<>>(v),
-      preval
+    *external_pointer<epiworld::Virus<>>(v)
   );
   
   return m;
@@ -274,6 +266,61 @@ std::string get_name_virus_cpp(SEXP virus) {
 SEXP set_name_virus_cpp(SEXP virus, std::string name) {
   external_pointer<Virus<>>(virus)->set_name(name);
   return virus;
+}
+
+[[cpp11::register]]
+SEXP set_distribution_virus_cpp(SEXP virus, SEXP dist) {
+
+  external_pointer<VirusToAgentFun<>> distfun(dist);
+
+  external_pointer<Virus<>>(virus)->set_distribution(
+    *distfun
+    );
+
+  return virus;
+
+}
+
+[[cpp11::register]]
+SEXP distribute_virus_randomly_cpp(
+  double prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_randomly(
+        prevalence, as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
+
+[[cpp11::register]]
+SEXP distribute_virus_to_set_cpp(
+  integers agents_ids
+) {
+
+    // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_to_set(ids)
+    )
+  );
+
+  return distfun;
+
 }
 
 

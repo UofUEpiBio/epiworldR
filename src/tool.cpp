@@ -15,13 +15,19 @@ using namespace epiworld;
 [[cpp11::register]]
 SEXP tool_cpp(
     std::string name,
+    double prevalence,
+    bool as_proportion,
     double susceptibility_reduction,
     double transmission_reduction,
     double recovery_enhancer,
     double death_reduction
     ) {
   
-  WrapTool(tool)(new epiworld::Tool<int>(name));
+  WrapTool(tool)(new epiworld::Tool<int>(
+    name,
+    prevalence,
+    as_proportion
+    ));
   
   if (susceptibility_reduction > 0)
     tool->set_susceptibility_reduction(susceptibility_reduction);
@@ -41,22 +47,10 @@ SEXP tool_cpp(
 }
   
 [[cpp11::register]]
-int add_tool_cpp(SEXP m, SEXP t, double preval) {
+int add_tool_cpp(SEXP m, SEXP t) {
   
   cpp11::external_pointer<epiworld::Model<>>(m)->add_tool(
-    *cpp11::external_pointer<epiworld::Tool<>>(t),
-    preval
-  );
-  
-  return 0;
-}
-
-[[cpp11::register]]
-int add_tool_n_cpp(SEXP m, SEXP t, size_t preval) {
-  
-  cpp11::external_pointer<epiworld::Model<>>(m)->add_tool_n(
-      *cpp11::external_pointer<epiworld::Tool<>>(t),
-      preval
+    *cpp11::external_pointer<epiworld::Tool<>>(t)
   );
   
   return 0;
@@ -280,12 +274,72 @@ cpp11::writable::list get_agents_tools_cpp(SEXP model) {
   
 }
 
-
 [[cpp11::register]]
 SEXP print_agent_tools_cpp(SEXP tools) {
   external_pointer<Tools<>> vptr(tools);
   vptr->print();
   return tools;
 }
+
+[[cpp11::register]]
+SEXP set_distribution_tool_cpp(
+  SEXP tool,
+  SEXP distfun
+  ) {
   
+  WrapTool(toolptr)(tool);
+  external_pointer<ToolToAgentFun<>> tfunptr(distfun);
+  
+  toolptr->set_distribution(*tfunptr);
+  
+  return tool;
+  
+}
+
+[[cpp11::register]]
+SEXP distribute_tool_randomly_cpp(
+  double prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<ToolToAgentFun<>> res(
+      new ToolToAgentFun<>(
+          distribute_tool_randomly(
+            prevalence,
+            as_proportion
+          )
+      )
+  );
+  
+  return res;
+  
+}
+
+[[cpp11::register]]
+SEXP distribute_tool_to_set_cpp(
+  integers agents_ids
+) {
+
+  // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
+
+
+  external_pointer<ToolToAgentFun<>> res(
+      new ToolToAgentFun<>(
+          distribute_tool_to_set(ids)
+      )
+  );
+  
+  return res;
+  
+}
+
+
+
 #undef WrapTool

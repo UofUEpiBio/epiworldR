@@ -25,7 +25,7 @@ public:
 
     ModelSEIR(
         ModelSEIR<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -33,7 +33,7 @@ public:
     );
 
     ModelSEIR(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -84,7 +84,7 @@ public:
 template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
     ModelSEIR<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -104,7 +104,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
     virus.set_prob_infecting(&model("Transmission rate"));
@@ -112,7 +112,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     virus.set_prob_recovery(&model("Recovery rate"));
     
     // Adding the tool and the virus
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
     
     model.set_name("Susceptible-Exposed-Infected-Removed (SEIR)");
 
@@ -122,7 +122,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 
 template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,

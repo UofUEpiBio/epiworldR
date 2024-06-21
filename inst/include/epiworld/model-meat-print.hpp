@@ -143,6 +143,8 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     for (size_t i = 0u; i < n_viruses_model; ++i)
     {    
 
+        
+        const auto & virus = viruses[i];
         if ((n_viruses_model > 10) && (i >= 10))
         {
             printf_epiworld(" ...and %i more viruses...\n",
@@ -155,32 +157,16 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
         if (i < n_viruses_model)
         {
 
-            if (prevalence_virus_as_proportion[i])
-            {
-
-                printf_epiworld(
-                    " - %s (baseline prevalence: %.2f%%)\n",
-                    viruses[i]->get_name().c_str(),
-                    prevalence_virus[i] * 100.00
-                );
-
-            }
-            else
-            {
-
-                printf_epiworld(
-                    " - %s (baseline prevalence: %i seeds)\n",
-                    viruses[i]->get_name().c_str(),
-                    static_cast<int>(prevalence_virus[i])
-                );
-
-            }
+            printf_epiworld(
+                " - %s\n",
+                virus->get_name().c_str()
+            );
 
         } else {
 
             printf_epiworld(
                 " - %s (originated in the model...)\n",
-                viruses[i]->get_name().c_str()
+                virus->get_name().c_str()
             );
 
         }
@@ -204,6 +190,7 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     size_t n_tools_model = tools.size();
     for (size_t i = 0u; i < tools.size(); ++i)
     {   
+        const auto & tool = tools[i];
 
         if ((n_tools_model > 10) && (i >= 10))
         {
@@ -216,32 +203,17 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
 
         if (i < n_tools_model)
         {
-            if (prevalence_tool_as_proportion[i])
-            {
+            printf_epiworld(
+                " - %s\n",
+                tool->get_name().c_str()
+                );
 
-                printf_epiworld(
-                    " - %s (baseline prevalence: %.2f%%)\n",
-                    tools[i]->get_name().c_str(),
-                    prevalence_tool[i] * 100.0
-                    );
-
-            }
-            else
-            {
-
-                printf_epiworld(
-                    " - %s (baseline prevalence: %i seeds)\n",
-                    tools[i]->get_name().c_str(),
-                    static_cast<int>(prevalence_tool[i])
-                    );
-
-            }
 
         } else {
 
             printf_epiworld(
                 " - %s (originated in the model...)\n",
-                tools[i]->get_name().c_str()
+                tool->get_name().c_str()
             );
 
         }

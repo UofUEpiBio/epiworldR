@@ -23,6 +23,8 @@
 #' # Creating a tool
 #' epitool <- tool(
 #'   name = "Vaccine",
+#'   prevalence = 0,
+#'   as_proportion = FALSE,
 #'   susceptibility_reduction = .9,
 #'   transmission_reduction = .5,
 #'   recovery_enhancer = .5, 
@@ -89,12 +91,10 @@ globalevent_tool <- function(
 #' @rdname epiworldR-deprecated
 globalaction_tool <- function(...) {
 
-  .Deprecated(
+  .Defunct(
     new = "globalevent_tool"
-    )  
+    )
 
-  globalevent_tool(...)
-  
 }
 
 #' @export
@@ -132,7 +132,7 @@ globalevent_tool_logit <- function(
 #' @rdname epiworldR-deprecated
 globalaction_tool_logit <- function(...) {
 
-  .Deprecated(
+  .Defunct(
     new = "globalevent_tool_logit"
     )  
 
@@ -170,7 +170,8 @@ globalevent_set_params <- function(
 #' @rdname epiworldR-deprecated
 globalaction_set_params <- function(...) {
 
-  .Deprecated(
+
+  .Defunct(
     new = "globalevent_set_params"
     )  
 
@@ -232,7 +233,7 @@ globalevent_fun <- function(
 #' @rdname epiworldR-deprecated
 globalaction_fun <- function(...) {
 
-  .Deprecated(
+  .Defunct(
     new = "globalevent_fun"
     )  
 
@@ -274,7 +275,7 @@ print.epiworld_globalevent <- function(x, ...) {
 add_globalevent <- function(model, action) {
   
   if (length(attr(action, "tool")))
-    add_tool_n(model, attr(action, "tool"), 0)
+    add_tool(model, attr(action, "tool"))
 
   invisible(add_globalevent_cpp(model, action))
 

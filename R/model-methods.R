@@ -96,7 +96,7 @@ stopifnot_model <- function(model) {
 #' get_virus(model_sirconn, 0) # Returns information about the first virus in 
 #'                             # the model (index begins at 0).
 #' 
-#' add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1), proportion = .5)                            
+#' add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1, prevalence = 0.5, as_prop = TRUE))                            
 #' get_tool(model_sirconn, 0) # Returns information about the first tool in the 
 #'                            # model. In this case, there are no tools so an 
 #'                            # error message will occur. 

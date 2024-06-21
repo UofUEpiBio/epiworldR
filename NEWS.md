@@ -1,3 +1,22 @@
+# epiworldR 0.3-2 (dev)
+
+* Starting version 0.3-0, `epiworldR` is versioned using the same version as the C++ library, `epiworld`.
+
+* Adds the new mixing models `ModelSIRMixing` and `ModelSEIRMixing`.
+
+* Ports the `Entity` class. Entities are used to group agents within a model.
+
+* Refactors `add_tool`, `add_virus`, and `add_entity` simplifying syntax. Now,
+  these functions only receive the model and object. Prevalence is 
+  specified in the object itself. `add_tool_n` and `add_virus_n` are now
+  deprecated.
+
+* `globalaction_*` are now defunct. Use `globalevent_*` instead.
+
+* New functions to specify how viruses, tools, and entities are distributed
+  among agents: `distribute_viruses`, `distribute_tools`, and `distribute_entities`.
+
+
 # epiworldR 0.1-0`
 
 * Force model to update agents' states when running a simulation.

@@ -242,7 +242,7 @@ inline void Agent<TSeq>::add_entity(
                 -1, -1
             );
 
-        // default_add_entity(a, model); /* passing model makes nothing */
+        default_add_entity(a, model); /* passing model makes nothing */
 
     }
 
@@ -332,12 +332,19 @@ inline void Agent<TSeq>::rm_entity(
             "There is entity to remove here!"
         );
 
-    CHECK_COALESCE_(state_new, model->entities[entity_idx].state_post, state);
-    CHECK_COALESCE_(queue, model->entities[entity_idx].queue_post, Queue<TSeq>::NoOne);
+    CHECK_COALESCE_(state_new, model->get_entity(entity_idx).state_post, state);
+    CHECK_COALESCE_(queue, model->get_entity(entity_idx).queue_post, Queue<TSeq>::NoOne);
 
     model->events_add(
-        this, nullptr, nullptr, model->entities[entity_idx], state_new, queue, 
-        default_rm_entity<TSeq>, entities_locations[entity_idx], entity_idx
+        this,
+        nullptr,
+        nullptr,
+        &model->get_entity(entity_idx),
+        state_new,
+        queue, 
+        default_rm_entity<TSeq>,
+        entities_locations[entity_idx],
+        entity_idx
     );
 }
 
@@ -354,22 +361,35 @@ inline void Agent<TSeq>::rm_entity(
     int entity_idx = -1;
     for (size_t i = 0u; i < n_entities; ++i)
     {
-        if (entities[i] == entity->get_id())
+        if (static_cast<int>(entities[i]) == entity.get_id())
+        {
             entity_idx = i;
+            break;
+        }
     }
 
     if (entity_idx == -1)
         throw std::logic_error(
-            "The agent " + std::to_string(id) + " is not associated with entity \"" +
-            entity.get_name() + "\"."
+            std::string("The agent ") +
+            std::to_string(id) +
+            std::string(" is not associated with entity \"") +
+            entity.get_name() +
+            std::string("\".")
             );
 
     CHECK_COALESCE_(state_new, entity.state_post, state);
     CHECK_COALESCE_(queue, entity.queue_post, Queue<TSeq>::NoOne);
 
     model->events_add(
-        this, nullptr, nullptr, entities[entity_idx], state_new, queue, 
-        default_rm_entity<TSeq>, entities_locations[entity_idx], entity_idx
+        this,
+        nullptr,
+        nullptr,
+        &model->entities[entity.get_id()],
+        state_new,
+        queue, 
+        default_rm_entity<TSeq>,
+        entities_locations[entity_idx],
+        entity_idx
     );
 }
 
@@ -432,6 +452,11 @@ inline int Agent<TSeq>::get_id() const
 
 template<typename TSeq>
 inline VirusPtr<TSeq> & Agent<TSeq>::get_virus() {
+    return virus;
+}
+
+template<typename TSeq>
+inline const VirusPtr<TSeq> & Agent<TSeq>::get_virus() const {
     return virus;
 }
 
@@ -610,6 +635,10 @@ inline void Agent<TSeq>::reset()
     this->tools.clear();
     n_tools = 0u;
 
+    this->entities.clear();
+    this->entities_locations.clear();
+    this->n_entities = 0u;
+
     this->state = 0u;
     this->state_prev = 0u;
 
@@ -674,6 +703,30 @@ inline bool Agent<TSeq>::has_virus(const Virus<TSeq> & virus) const
 {
 
     return has_virus(virus.get_id());
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_entity(epiworld_fast_uint t) const
+{
+
+    for (auto & entity : entities)
+        if (entity == t)
+            return true;
+
+    return false;
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_entity(std::string name) const
+{
+
+    for (auto & entity : entities)
+        if (model->get_entity(entity).get_name() == name)
+            return true;
+
+    return false;
 
 }
 
@@ -788,19 +841,25 @@ inline const Entities_const<TSeq> Agent<TSeq>::get_entities() const
 template<typename TSeq>
 inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 {
+    if (n_entities == 0)
+        throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
+
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[entities[i]];
+    return model->get_entity(entities[i]);
 }
 
 template<typename TSeq>
 inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
 {
+    if (n_entities == 0)
+        throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
+
     if (i >= n_entities)
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->entities[entities[i]];
+    return model->get_entity(entities[i]);
 }
 
 template<typename TSeq>

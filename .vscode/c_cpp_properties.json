@@ -7,7 +7,8 @@
                 "/usr/local/include",
                 "/usr/lib/R/site-library/cpp11/include",
                 "/usr/lib/R/site-library/Rcpp/include",
-                "/usr/share/R/include"
+                "/usr/share/R/include",
+                "inst/include/epiworld"
             ],
             "intelliSenseMode": "linux-gcc-x64",
             "compilerPath": "/usr/bin/gcc",

@@ -54,8 +54,17 @@ private:
     epiworld_fast_int queue_post    = -Queue<TSeq>::Everyone; ///< Change of state when removed from agent.
     epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
 
+    // Information about how distribution works
+    VirusToAgentFun<TSeq> dist_fun = nullptr;
+
 public:
     Virus(std::string name = "unknown virus");
+
+    Virus(
+        std::string name,
+        epiworld_double prevalence,
+        bool as_proportion
+        );
 
     void mutate(Model<TSeq> * model);
     void set_mutation(MutFun<TSeq> fun);
@@ -155,6 +164,15 @@ public:
     bool operator!=(const Virus<TSeq> & other) const {return !operator==(other);};
 
     void print() const;
+
+    /**
+     * @brief Get information about the prevalence of the virus
+     */
+    ///@{
+    void distribute(Model<TSeq> * model);
+    void set_distribution(VirusToAgentFun<TSeq> fun);
+    ///@}
+
 
 };
 

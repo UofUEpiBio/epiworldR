@@ -6,7 +6,6 @@
 \alias{set_name_tool}
 \alias{get_name_tool}
 \alias{add_tool}
-\alias{add_tool_n}
 \alias{rm_tool}
 \alias{tool_fun_logit}
 \alias{set_susceptibility_reduction}
@@ -22,10 +21,15 @@
 \alias{set_death_reduction_ptr}
 \alias{set_death_reduction_fun}
 \alias{print.epiworld_agents_tools}
+\alias{set_distribution_tool}
+\alias{distribute_tool_randomly}
+\alias{distribute_tool_to_set}
 \title{Tools in epiworld}
 \usage{
 tool(
   name,
+  prevalence,
+  as_proportion,
   susceptibility_reduction,
   transmission_reduction,
   recovery_enhancer,
@@ -37,8 +41,6 @@ set_name_tool(tool, name)
 get_name_tool(tool)
 
 add_tool(model, tool, proportion)
-
-add_tool_n(model, tool, n)
 
 rm_tool(model, tool_pos)
 
@@ -69,9 +71,20 @@ set_death_reduction_ptr(tool, model, param)
 set_death_reduction_fun(tool, model, tfun)
 
 \method{print}{epiworld_agents_tools}(x, max_print = 10, ...)
+
+set_distribution_tool(tool, distfun)
+
+distribute_tool_randomly(prevalence, as_proportion)
+
+distribute_tool_to_set(agents_ids)
 }
 \arguments{
 \item{name}{Name of the tool}
+
+\item{prevalence}{Numeric scalar. Prevalence of the tool.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
+as a proportion of the total number of agents in the model.}
 
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
@@ -85,9 +98,7 @@ set_death_reduction_fun(tool, model, tfun)
 
 \item{model}{Model}
 
-\item{proportion}{In the case of \code{add_tool}, a proportion, otherwise, an integer.}
-
-\item{n}{A positive integer. Number of agents to initially have the tool.}
+\item{proportion}{Deprecated.}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 
@@ -109,6 +120,11 @@ will be added to the tool (see details).}
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
 
 \item{...}{Currently ignored.}
+
+\item{distfun}{An object of class \code{epiworld_tool_distfun}.}
+
+\item{agents_ids}{Integer vector. Indices of the agents to which the tool
+will be assigned.}
 }
 \value{
 \itemize{
@@ -123,11 +139,6 @@ will be added to the tool (see details).}
 \itemize{
 \item The \code{get_name_tool} function returns the name of the tool of class
 \link{epiworld_tool}.
-}
-
-\itemize{
-\item The \code{add_tool_n} function adds the specified tool to the model of class
-\link{epiworld_model} with specified count n.
 }
 
 \itemize{
@@ -153,6 +164,16 @@ to the specified tool of class \link{epiworld_tool}.
 \item The \code{set_death_reduction} function assigns a probability decrease
 to the specified tool of class \link{epiworld_tool}.
 }
+
+\itemize{
+\item The \code{distribute_tool_randomly} function returns a distribution function of
+class \code{epiworld_tool_distfun}.
+}
+
+\itemize{
+\item The \code{distribute_tool_to_set} function returns a distribution function of
+class \code{epiworld_tool_distfun}.
+}
 }
 \description{
 Tools are functions that affect how agents react to the virus. They can be
@@ -171,6 +192,17 @@ In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_r
 \code{set_death_reduction_ptr}, the corresponding parameters are passed as a pointer to
 the tool. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
+
+The \code{set_distribution_tool} function assigns a distribution function to the
+specified tool of class \link{epiworld_tool}. The distribution function can be
+created using the functions \code{\link[=distribute_tool_randomly]{distribute_tool_randomly()}} and
+\code{\link[=distribute_tool_to_set]{distribute_tool_to_set()}}.
+
+The \code{distribute_tool_randomly} function creates a distribution function that
+randomly assigns the tool to a proportion of the population.
+
+The \code{distribute_tool_to_set} function creates a distribution function that
+assigns the tool to a set of agents.
 }
 \examples{
 # Simple model
@@ -189,6 +221,8 @@ plot(model_sirconn)
 
 epitool <- tool(
   name = "Vaccine",
+  prevalence = 0.5,
+  as_proportion = TRUE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5, 
@@ -199,14 +233,16 @@ epitool
 
 set_name_tool(epitool, 'Pfizer') # Assigning name to the tool
 get_name_tool(epitool) # Returning the name of the tool
-add_tool(model_sirconn, epitool, .5)
+add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
 
 # To declare a certain number of individuals with the tool
 rm_tool(model_sirconn, 0) # Removing epitool from the model
-add_tool_n(model_sirconn, epitool, 5500)
+# Setting prevalence to 0.1
+set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
+add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
 
 # Adjusting probabilities due to tool
@@ -214,6 +250,9 @@ set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction
 set_transmission_reduction(epitool, 0.2) # Transmission reduction
 set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
 set_death_reduction(epitool, 0.05) # Probability reduction of death
+
+rm_tool(model_sirconn, 0) 
+add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 
 
@@ -235,13 +274,15 @@ agents_smallworld(
 # Creating a tool
 mask_wearing <- tool(
   name = "Mask",
+  prevalence               = 0.5,
+  as_proportion            = TRUE,
   susceptibility_reduction = 0.0,
   transmission_reduction   = 0.3, # Only transmission
   recovery_enhancer        = 0.0,
   death_reduction          = 0.0
 )
 
-add_tool(sir, mask_wearing, .5)
+add_tool(sir, mask_wearing)
 
 run(sir, ndays = 50, seed = 11)
 hist_0 <- get_hist_total(sir)

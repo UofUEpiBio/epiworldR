@@ -6,7 +6,6 @@
 \alias{set_name_virus}
 \alias{get_name_virus}
 \alias{add_virus}
-\alias{add_virus_n}
 \alias{virus_set_state}
 \alias{rm_virus}
 \alias{virus_fun_logit}
@@ -22,10 +21,15 @@
 \alias{set_incubation}
 \alias{set_incubation_ptr}
 \alias{set_incubation_fun}
+\alias{set_distribution_virus}
+\alias{distribute_virus_randomly}
+\alias{distribute_virus_set}
 \title{Virus design}
 \usage{
 virus(
   name,
+  prevalence,
+  as_proportion,
   prob_infecting,
   recovery_rate = 0.5,
   prob_death = 0,
@@ -38,8 +42,6 @@ set_name_virus(virus, name)
 get_name_virus(virus)
 
 add_virus(model, virus, proportion)
-
-add_virus_n(model, virus, n)
 
 virus_set_state(virus, init, end, removed)
 
@@ -70,9 +72,20 @@ set_incubation(virus, incubation)
 set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
+
+set_distribution_virus(virus, distfun)
+
+distribute_virus_randomly(prevalence, as_proportion)
+
+distribute_virus_set(agents_ids)
 }
 \arguments{
 \item{name}{of the virus}
+
+\item{prevalence}{Numeric scalar. Prevalence of the virus.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the prevalence is set as a
+proportion of the total number of agents in the model.}
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
@@ -88,9 +101,7 @@ set_incubation_fun(virus, model, vfun)
 
 \item{model}{An object of class \code{epiworld_model}.}
 
-\item{proportion}{In the case of \code{add_virus}, a proportion, otherwise, an integer.}
-
-\item{n}{A positive integer. Initial count of agents to have the virus.}
+\item{proportion}{Deprecated.}
 
 \item{init, end, removed}{states after acquiring a virus, removing a virus,
 and removing the agent as a result of the virus, respectively.}
@@ -109,6 +120,11 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
+
+\item{distfun}{An object of class \code{epiworld_distribution_virus}.}
+
+\item{agents_ids}{Integer vector. Indices of the agents that will receive the
+virus.}
 }
 \value{
 \itemize{
@@ -124,12 +140,6 @@ a name to the virus of choice.
 \itemize{
 \item The \code{add_virus} function does not return a value, instead it adds the
 virus of choice to the model object of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{add_virus_n} function does not return a value, but instead adds a
-specified number of agents with the virus of choice to the model object
-of class \link{epiworld_model}.
 }
 
 \itemize{
@@ -164,6 +174,11 @@ assigns a probability to death for the specified virus of class
 \item The \code{set_incubation} function does not return a value, but instead
 assigns an incubation period to the specified virus of class \link{epiworld_virus}.
 }
+
+\itemize{
+\item The \code{distribute_virus_randomly} function returns a function that can be
+used to distribute the virus in the model.
+}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,
@@ -185,6 +200,11 @@ In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
 \code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
 the virus. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
+
+The \code{distribute_virus_randomly} function is a factory function
+used to randomly distribute the virus in the model. The prevalence can be set
+as a proportion or as a number of agents. The resulting function can then be
+passed to \code{set_distribution_virus}.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(
@@ -197,10 +217,12 @@ mseirconn <- ModelSEIRCONN(
   recovery_rate       = 0.99
 )
 
-delta <- virus("Delta Variant", 0, .5, .2, .01)
+delta <- virus(
+  "Delta Variant", 0, .5, .2, .01, prevalence = 0.3, as_proportion = TRUE
+)
 
 # Adding virus and setting/getting virus name
-add_virus(mseirconn, delta, .3)
+add_virus(mseirconn, delta)
 set_name_virus(delta, "COVID-19 Strain")
 get_name_virus(delta)
 
@@ -208,8 +230,8 @@ run(mseirconn, ndays = 100, seed = 992)
 mseirconn
 
 rm_virus(mseirconn, 0) # Removing the first virus from the model object
-add_virus_n(mseirconn, delta, 100) # Setting initial count of delta virus
-                                   # to n = 100
+set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
+add_virus(mseirconn, delta) 
 
 # Setting parameters for the delta virus manually
 set_prob_infecting(delta, 0.5)
@@ -221,7 +243,9 @@ run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
 # 1: Infected
 # 2: Recovered
 # 3: Dead
-delta2 <- virus("Delta Variant 2", 0, .5, .2, .01)
+delta2 <- virus(
+  "Delta Variant 2", 0, .5, .2, .01, prevalence = 0, as_proportion = TRUE
+)
 virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(

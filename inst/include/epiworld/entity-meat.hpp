@@ -23,7 +23,7 @@ inline void Entity<TSeq>::add_agent(
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::rm_agent(size_t idx)
+inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 {
     if (idx >= n_agents)
         throw std::out_of_range(
@@ -31,7 +31,7 @@ inline void Entity<TSeq>::rm_agent(size_t idx)
             " out of " + std::to_string(n_agents)
             );
 
-    model->population[idx].rm_entity(*this);
+    model->get_agents()[agents[idx]].rm_entity(*this, model);
 
     return;
 }
@@ -89,12 +89,15 @@ inline typename std::vector< Agent<TSeq> * >::const_iterator Entity<TSeq>::end()
 }
 
 template<typename TSeq>
-inline Agent<TSeq> * Entity<TSeq>::operator[](size_t i)
+size_t Entity<TSeq>::operator[](size_t i)
 {
     if (n_agents <= i)
-        throw std::logic_error("There are not that many agents in this entity.");
+        throw std::logic_error(
+            "There are not that many agents in this entity. " +
+            std::to_string(n_agents) + " <= " + std::to_string(i)
+            );
 
-    return &model->get_agents()[i];
+    return i;
 }
 
 template<typename TSeq>
@@ -164,6 +167,13 @@ inline void Entity<TSeq>::reset()
     sampled_agents_n = 0u;
     sampled_agents_left.clear();
     sampled_agents_left_n = 0u;
+
+    this->agents.clear();
+    this->n_agents = 0u;
+    this->agents_location.clear();
+
+    return;
+
 }
 
 template<typename TSeq>
@@ -214,6 +224,43 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
 
     return true;
 
+}
+
+template<typename TSeq>
+inline void Entity<TSeq>::distribute(Model<TSeq> * model)
+{
+
+    if (dist_fun)
+    {
+
+        dist_fun(*this, model);
+
+    }
+
+}
+
+template<typename TSeq>
+inline std::vector< size_t > & Entity<TSeq>::get_agents()
+{
+    return agents;
+}
+
+template<typename TSeq>
+inline void Entity<TSeq>::print() const
+{
+
+    printf_epiworld(
+        "Entity '%s' (id %i) with %i agents.\n",
+        this->entity_name.c_str(),
+        static_cast<int>(id),
+        static_cast<int>(n_agents)
+    );
+}
+
+template<typename TSeq>
+inline void Entity<TSeq>::set_distribution(EntityToAgentFun<TSeq> fun)
+{
+    dist_fun = fun;
 }
 
 #endif
