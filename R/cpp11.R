@@ -124,10 +124,6 @@ entity_add_agent_cpp <- function(entity, agent, model) {
   .Call(`_epiworldR_entity_add_agent_cpp`, entity, agent, model)
 }
 
-entity_rm_agent_cpp <- function(entity, idx) {
-  .Call(`_epiworldR_entity_rm_agent_cpp`, entity, idx)
-}
-
 get_entity_name_cpp <- function(entity) {
   .Call(`_epiworldR_get_entity_name_cpp`, entity)
 }

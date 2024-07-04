@@ -8,7 +8,6 @@
 \alias{get_entity_size}
 \alias{get_entity_name}
 \alias{entity_add_agent}
-\alias{entity_rm_agent}
 \alias{rm_entity}
 \alias{add_entity}
 \alias{load_agents_entities_ties}
@@ -29,8 +28,6 @@ get_entity_size(entity)
 get_entity_name(entity)
 
 entity_add_agent(entity, agent, model = attr(entity, "model"))
-
-entity_rm_agent(entity, agent_id)
 
 rm_entity(model, id)
 
@@ -67,8 +64,6 @@ unassigned pool.}
 
 \item{agent}{Agent object of class \code{epiworld_agent}.}
 
-\item{agent_id}{Integer scalar. Agent id to remove from the entity.}
-
 \item{id}{Integer scalar. Entity id to remove (starting from zero).}
 
 \item{agents_id}{Integer vector.}
@@ -94,10 +89,6 @@ unassigned pool.}
 
 \itemize{
 \item The function \code{entity_add_agent} adds an agent to the entity.
-}
-
-\itemize{
-\item The function \code{entity_rm_agent} removes an agent from the entity.
 }
 
 \itemize{

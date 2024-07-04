@@ -223,13 +223,6 @@ extern "C" SEXP _epiworldR_entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP mo
   END_CPP11
 }
 // entities.cpp
-int entity_rm_agent_cpp(SEXP entity, int idx);
-extern "C" SEXP _epiworldR_entity_rm_agent_cpp(SEXP entity, SEXP idx) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(entity_rm_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(entity), cpp11::as_cpp<cpp11::decay_t<int>>(idx)));
-  END_CPP11
-}
-// entities.cpp
 std::string get_entity_name_cpp(SEXP entity);
 extern "C" SEXP _epiworldR_get_entity_name_cpp(SEXP entity) {
   BEGIN_CPP11
@@ -952,7 +945,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
     {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},
     {"_epiworldR_entity_get_agents_cpp",                (DL_FUNC) &_epiworldR_entity_get_agents_cpp,                 1},
-    {"_epiworldR_entity_rm_agent_cpp",                  (DL_FUNC) &_epiworldR_entity_rm_agent_cpp,                   2},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},

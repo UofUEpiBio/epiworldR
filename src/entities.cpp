@@ -87,19 +87,6 @@ int entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model) {
 }
 
 [[cpp11::register]]
-int entity_rm_agent_cpp(
-  SEXP entity,
-  int idx
-  ) {
-  
-  cpp11::external_pointer<Entity<>> ptr(entity);
-  
-  ptr->rm_agent(static_cast<size_t>(idx)); 
-  
-  return 0;
-}
-
-[[cpp11::register]]
 std::string get_entity_name_cpp(SEXP entity) {
   return cpp11::external_pointer<Entity<>>(entity)->get_name();
 }
