@@ -1,6 +1,7 @@
 # Capture the current value of the version of the package in DESCRIPTION
 VERSION := $(shell grep Version DESCRIPTION | sed -e 's/Version: //')
 
+
 build: 
 	cd .. && R CMD build epiworldR
 

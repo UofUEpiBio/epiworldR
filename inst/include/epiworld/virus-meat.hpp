@@ -56,10 +56,10 @@ inline VirusFun<TSeq> virus_fun_logit(
     for (auto c: coefs)
         coefs_f.push_back(static_cast<epiworld_double>(c));
 
-    VirusFun<TSeq> fun_infect = [coefs_f,vars,logit](
+    VirusFun<TSeq> fun_infect = [coefs_f,vars](
         Agent<TSeq> * agent,
-        Virus<TSeq> & virus,
-        Model<TSeq> * model
+        Virus<TSeq> &,
+        Model<TSeq> *
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();
@@ -80,8 +80,25 @@ inline VirusFun<TSeq> virus_fun_logit(
 }
 
 template<typename TSeq>
-inline Virus<TSeq>::Virus(std::string name) {
+inline Virus<TSeq>::Virus(
+    std::string name
+    ) {
     set_name(name);
+}
+
+template<typename TSeq>
+inline Virus<TSeq>::Virus(
+    std::string name,
+    epiworld_double prevalence,
+    bool prevalence_as_proportion
+    ) {
+    set_name(name);
+    set_distribution(
+        distribute_virus_randomly<TSeq>(
+            prevalence,
+            prevalence_as_proportion
+        )
+    );
 }
 
 template<typename TSeq>
@@ -684,6 +701,25 @@ inline void Virus<TSeq>::print() const
     printf_epiworld("queue_post    : %i\n", static_cast<int>(queue_post));
     printf_epiworld("queue_removed : %i\n", static_cast<int>(queue_removed));
 
+}
+
+template<typename TSeq>
+inline void Virus<TSeq>::distribute(Model<TSeq> * model)
+{
+
+    if (dist_fun)
+    {
+
+        dist_fun(*this, model);
+
+    }
+
+}
+
+template<typename TSeq>
+inline void Virus<TSeq>::set_distribution(VirusToAgentFun<TSeq> fun)
+{
+    dist_fun = fun;
 }
 
 #endif

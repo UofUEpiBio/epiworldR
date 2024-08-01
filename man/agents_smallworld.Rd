@@ -2,7 +2,6 @@
 % Please edit documentation in R/agents.R, R/tool.R
 \name{agents_smallworld}
 \alias{agents_smallworld}
-\alias{agents}
 \alias{agents_from_edgelist}
 \alias{get_network}
 \alias{network}

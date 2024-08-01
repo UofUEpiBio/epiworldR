@@ -20,7 +20,7 @@ public:
 
     ModelSEIRCONN(
         ModelSEIRCONN<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -30,7 +30,7 @@ public:
     );
     
     ModelSEIRCONN(
-        std::string vname,
+        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -136,7 +136,7 @@ inline Model<TSeq> * ModelSEIRCONN<TSeq>::clone_ptr()
 template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     ModelSEIRCONN<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -322,7 +322,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRCONN<TSeq>::EXPOSED,
         ModelSEIRCONN<TSeq>::RECOVERED,
@@ -333,7 +333,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     virus.set_prob_recovery(&model("Prob. Recovery"));
     virus.set_incubation(&model("Avg. Incubation days"));
 
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.queuing_off(); // No queuing need
 
@@ -348,7 +348,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
 template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
-    std::string vname,
+    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,

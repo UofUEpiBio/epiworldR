@@ -19,14 +19,14 @@ public:
 
     ModelSIR(
         ModelSIR<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
     );
 
     ModelSIR(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -47,7 +47,7 @@ public:
 template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
     ModelSIR<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
@@ -64,13 +64,13 @@ inline ModelSIR<TSeq>::ModelSIR(
     model.add_param(transmission_rate, "Transmission rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,2);
     
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_infecting(&model("Transmission rate"));
     
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.set_name("Susceptible-Infected-Recovered (SIR)");
 
@@ -80,7 +80,7 @@ inline ModelSIR<TSeq>::ModelSIR(
 
 template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate

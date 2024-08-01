@@ -37,7 +37,12 @@
 #'                                         
 #' x[0] # Print information about the first agent. Substitute the agent of 
 #'      # interest's position where '0' is. 
-get_agents <- function(model) {
+#' @name agents
+get_agents <- function(model, ...) UseMethod("get_agents")
+
+#' @export 
+#' @rdname agents
+get_agents.epiworld_model <- function(model, ...) {
   
   res <- get_agents_cpp(model)
   
@@ -52,7 +57,7 @@ get_agents <- function(model) {
 #' @param x An object of class [epiworld_agents]
 #' @param i Index (id) of the agent (from 0 to `n-1`)
 #' @export
-#' @rdname get_agents
+#' @rdname agents
 #' @return
 #' - The `[` method returns an object of class [epiworld_agent].
 #' @aliases epiworld_agent
@@ -82,7 +87,7 @@ get_agents <- function(model) {
 #' @returns 
 #' - The `print` function returns information about each individual agent of 
 #' class [epiworld_agent].
-#' @rdname get_agents
+#' @rdname agents
 print.epiworld_agent <- function(x, compressed = FALSE, ...) {
   
   invisible(print_agent_cpp(x, attr(x, "model"), compressed))
@@ -91,7 +96,7 @@ print.epiworld_agent <- function(x, compressed = FALSE, ...) {
 
 #' @export
 #' @param max_print Integer scalar. Maximum number of agents to print.
-#' @rdname get_agents
+#' @rdname agents
 print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
   
   model <- attr(x, "model")
@@ -113,7 +118,7 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
 #' @export
 #' @returns 
 #' - The `get_state` function returns the state of the [epiworld_agents] object.
-#' @rdname get_agents
+#' @rdname agents
 get_state <- function(x) {
   get_state_agent_cpp(x)
 }

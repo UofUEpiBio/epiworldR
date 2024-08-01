@@ -20,7 +20,7 @@ public:
 
     ModelSISD(
         ModelSISD<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate,
@@ -28,7 +28,7 @@ public:
     );
 
     ModelSISD(
-        std::string vname,
+        const std::string & vname,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate,
@@ -40,7 +40,7 @@ public:
 template<typename TSeq>
 inline ModelSISD<TSeq>::ModelSISD(
     ModelSISD<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,
@@ -61,14 +61,14 @@ inline ModelSISD<TSeq>::ModelSISD(
     model.add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,0,2);
     
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_death(0.01);
     
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     return;
 
@@ -76,7 +76,7 @@ inline ModelSISD<TSeq>::ModelSISD(
 
 template<typename TSeq>
 inline ModelSISD<TSeq>::ModelSISD(
-    std::string vname,
+    const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,

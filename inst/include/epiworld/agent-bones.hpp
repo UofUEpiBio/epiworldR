@@ -102,9 +102,9 @@ private:
     std::vector< ToolPtr<TSeq> > tools;
     epiworld_fast_uint n_tools = 0u;
 
-    std::vector< Agent<TSeq> * > sampled_agents;
+    std::vector< Agent<TSeq> * > sampled_agents = {};
     size_t sampled_agents_n      = 0u;
-    std::vector< size_t > sampled_agents_left;
+    std::vector< size_t > sampled_agents_left = {};
     size_t sampled_agents_left_n = 0u;
     int date_last_build_sample   = -99;
 
@@ -218,6 +218,7 @@ public:
     int get_id() const; ///< Id of the individual
 
     VirusPtr<TSeq> & get_virus();
+    const VirusPtr<TSeq> & get_virus() const;
 
     ToolPtr<TSeq> & get_tool(int i);
     Tools<TSeq> get_tools();
@@ -263,6 +264,8 @@ public:
     bool has_virus(epiworld_fast_uint t) const;
     bool has_virus(std::string name) const;
     bool has_virus(const Virus<TSeq> & v) const;
+    bool has_entity(epiworld_fast_uint t) const;
+    bool has_entity(std::string name) const;
 
     void print(Model<TSeq> * model, bool compressed = false) const;
 

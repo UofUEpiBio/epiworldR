@@ -28,6 +28,8 @@
 #' 
 #' epitool <- tool(
 #'   name = "Vaccine",
+#'   prevalence = 0.5,
+#'   as_proportion = TRUE,
 #'   susceptibility_reduction = .9,
 #'   transmission_reduction = .5,
 #'   recovery_enhancer = .5, 
@@ -38,14 +40,16 @@
 #' 
 #' set_name_tool(epitool, 'Pfizer') # Assigning name to the tool
 #' get_name_tool(epitool) # Returning the name of the tool
-#' add_tool(model_sirconn, epitool, .5)
+#' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' plot(model_sirconn)
 #' 
 #' # To declare a certain number of individuals with the tool
 #' rm_tool(model_sirconn, 0) # Removing epitool from the model
-#' add_tool_n(model_sirconn, epitool, 5500)
+#' # Setting prevalence to 0.1
+#' set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
+#' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' 
 #' # Adjusting probabilities due to tool
@@ -53,6 +57,9 @@
 #' set_transmission_reduction(epitool, 0.2) # Transmission reduction
 #' set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
 #' set_death_reduction(epitool, 0.05) # Probability reduction of death
+#' 
+#' rm_tool(model_sirconn, 0) 
+#' add_tool(model_sirconn, epitool)
 #' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #' 
 #' @export
@@ -61,6 +68,8 @@
 #' @aliases epiworld_tool
 tool <- function(
     name,
+    prevalence,
+    as_proportion,
     susceptibility_reduction,
     transmission_reduction,
     recovery_enhancer,
@@ -70,6 +79,8 @@ tool <- function(
   structure(
     tool_cpp(
       name,
+      prevalence,
+      as_proportion,
       susceptibility_reduction,
       transmission_reduction,
       recovery_enhancer,
@@ -106,6 +117,16 @@ stopifnot_tfun <- function(tfun) {
   }
 }
 
+stopifnot_tool_distfun <- function(tool_distfun) {
+  if (!inherits(tool_distfun, "epiworld_tool_distfun")) {
+    stop(
+      "The -tool_distfun- object must be of class \"epiworld_tool_distfun\". ",
+      "The object passed to the function is of class(es): ", 
+      paste(class(tool_distfun), collapse = ", ")
+    )
+  }
+}
+
 #' @export
 #' @details
 #' The name of the `epiworld_tool` object can be manipulated with the functions
@@ -132,35 +153,36 @@ get_name_tool <- function(tool) {
 
 #' @export
 #' @param tool An object of class `epiworld_tool`
-#' @param proportion In the case of `add_tool`, a proportion, otherwise, an integer.
+#' @param proportion Deprecated.
 #' @details 
 #' The `add_tool` function adds the specified tool to the model of class 
 #' [epiworld_model] with specified proportion.
 #' @rdname tool
-add_tool <- function(model, tool, proportion) UseMethod("add_tool")
+add_tool <- function(model, tool, proportion) {
+  
+  if (!missing(proportion)) {
+
+    warning(
+      "The 'proportion' argument is deprecated. ",
+      "Use 'set_distribution_tool' instead."
+      )
+
+    set_distribution_tool(
+      tool,
+      distribute_tool_randomly(proportion, TRUE)
+    )
+
+  }
+
+  UseMethod("add_tool")
+
+}
 
 #' @export
 add_tool.epiworld_model <- function(model, tool, proportion) {
 
   stopifnot_tool(tool)
-  add_tool_cpp(model, tool, as.double(proportion))
-  invisible(model)
-
-}
-
-#' @export
-#' @rdname tool
-#' @returns 
-#' - The `add_tool_n` function adds the specified tool to the model of class 
-#' [epiworld_model] with specified count n.
-#' @param n A positive integer. Number of agents to initially have the tool.
-add_tool_n <- function(model, tool, n) UseMethod("add_tool_n")
-
-#' @export
-add_tool_n.epiworld_model <- function(model, tool, n) {
-
-  stopifnot_tool(tool)
-  add_tool_n_cpp(model, tool, as.integer(n))
+  add_tool_cpp(model, tool)
   invisible(model)
 
 }
@@ -204,13 +226,15 @@ rm_tool <- function(model, tool_pos) {
 #' # Creating a tool
 #' mask_wearing <- tool(
 #'   name = "Mask",
+#'   prevalence               = 0.5,
+#'   as_proportion            = TRUE,
 #'   susceptibility_reduction = 0.0,
 #'   transmission_reduction   = 0.3, # Only transmission
 #'   recovery_enhancer        = 0.0,
 #'   death_reduction          = 0.0
 #' )
 #' 
-#' add_tool(sir, mask_wearing, .5)
+#' add_tool(sir, mask_wearing)
 #' 
 #' run(sir, ndays = 50, seed = 11)
 #' hist_0 <- get_hist_total(sir)
@@ -343,7 +367,7 @@ set_susceptibility_reduction_fun <- function(tool, model, tfun) {
 set_transmission_reduction <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_transmission_reduction_cpp(tool, as.double(prob))
+  invisible(set_transmission_reduction_cpp(tool, as.double(prob)))
   
 }
 
@@ -353,7 +377,7 @@ set_transmission_reduction_ptr <- function(tool, model, param) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  set_transmission_reduction_ptr_cpp(tool, model, param)
+  invisible(set_transmission_reduction_ptr_cpp(tool, model, param))
   
 }
 
@@ -364,7 +388,7 @@ set_transmission_reduction_fun <- function(tool, model, tfun) {
   stopifnot_tool(tool)
   stopifnot_model(model)
   stopifnot_tfun(tfun)
-  set_transmission_reduction_fun_cpp(tool, model, tfun)
+  invisible(set_transmission_reduction_fun_cpp(tool, model, tfun))
 }
 
 # Recovery enhancer ------------------------------------------------------------
@@ -377,7 +401,7 @@ set_transmission_reduction_fun <- function(tool, model, tfun) {
 set_recovery_enhancer <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_recovery_enhancer_cpp(tool, as.double(prob))
+  invisible(set_recovery_enhancer_cpp(tool, as.double(prob)))
   
 }
 
@@ -387,7 +411,7 @@ set_recovery_enhancer_ptr <- function(tool, model, param) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  set_recovery_enhancer_ptr_cpp(tool, model, param)
+  invisible(set_recovery_enhancer_ptr_cpp(tool, model, param))
   
 }
 
@@ -398,7 +422,7 @@ set_recovery_enhancer_fun <- function(tool, model, tfun) {
   stopifnot_tool(tool)
   stopifnot_model(model)
   stopifnot_tfun(tfun)
-  set_recovery_enhancer_fun_cpp(tool, model, tfun)
+  invisible(set_recovery_enhancer_fun_cpp(tool, model, tfun))
   
 }
 
@@ -412,7 +436,7 @@ set_recovery_enhancer_fun <- function(tool, model, tfun) {
 set_death_reduction <- function(tool, prob) {
   
   stopifnot_tool(tool)
-  set_death_reduction_cpp(tool, as.double(prob))
+  invisible(set_death_reduction_cpp(tool, as.double(prob)))
   
 }
 
@@ -422,7 +446,7 @@ set_death_reduction_ptr <- function(tool, model, param) {
   
   stopifnot_tool(tool)
   stopifnot_model(model)
-  set_death_reduction_ptr_cpp(tool, model, param)
+  invisible(set_death_reduction_ptr_cpp(tool, model, param))
   
 }
 
@@ -433,7 +457,7 @@ set_death_reduction_fun <- function(tool, model, tfun) {
   stopifnot_tool(tool)
   stopifnot_model(model)
   stopifnot_tfun(tfun)
-  set_death_reduction_fun_cpp(tool, model, tfun)
+  invisible(set_death_reduction_fun_cpp(tool, model, tfun))
   
 }
 
@@ -475,5 +499,67 @@ print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
   
 }
 
+#' @export 
+#' @details
+#' The `set_distribution_tool` function assigns a distribution function to the
+#' specified tool of class [epiworld_tool]. The distribution function can be
+#' created using the functions [distribute_tool_randomly()] and
+#' [distribute_tool_to_set()].
+#' @param distfun An object of class `epiworld_tool_distfun`.
+#' @rdname tool
+set_distribution_tool <- function(tool, distfun) {
 
+  stopifnot_tool(tool)
+  stopifnot_tool_distfun(distfun)
+  invisible(set_distribution_tool_cpp(tool = tool, distfun = distfun))
 
+}
+
+#' @export
+#' @rdname tool
+#' @details 
+#' The `distribute_tool_randomly` function creates a distribution function that
+#' randomly assigns the tool to a proportion of the population.
+#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
+#' as a proportion of the total number of agents in the model.
+#' @param prevalence Numeric scalar. Prevalence of the tool.
+#' @return 
+#' - The `distribute_tool_randomly` function returns a distribution function of
+#' class `epiworld_tool_distfun`.
+distribute_tool_randomly <- function(
+  prevalence,
+  as_proportion
+) {
+
+  structure(
+    distribute_tool_randomly_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}
+
+#' @export
+#' @rdname tool
+#' @details 
+#' The `distribute_tool_to_set` function creates a distribution function that
+#' assigns the tool to a set of agents.
+#' @param agents_ids Integer vector. Indices of the agents to which the tool
+#' will be assigned.
+#' @return
+#' - The `distribute_tool_to_set` function returns a distribution function of
+#' class `epiworld_tool_distfun`.
+distribute_tool_to_set <- function(
+  agents_ids
+) {
+
+  structure(
+    distribute_tool_to_set_cpp(
+      agents_ids
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}

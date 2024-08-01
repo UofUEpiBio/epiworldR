@@ -19,6 +19,8 @@ namespace epimodels {
     #include "seirdconnected.hpp"
     #include "sirlogit.hpp"
     #include "diffnet.hpp"
+    #include "seirmixing.hpp"
+    #include "sirmixing.hpp"
 
 
 }

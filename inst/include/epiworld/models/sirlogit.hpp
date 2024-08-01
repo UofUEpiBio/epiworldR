@@ -54,7 +54,7 @@ public:
     */
     ModelSIRLogit(
         ModelSIRLogit<TSeq> & model,
-        std::string vname,
+        const std::string & vname,
         double * data,
         size_t ncols,
         std::vector< double > coefs_infect,
@@ -67,7 +67,7 @@ public:
     );
 
     ModelSIRLogit(
-        std::string vname,
+        const std::string & vname,
         double * data,
         size_t ncols,
         std::vector< double > coefs_infect,
@@ -168,7 +168,7 @@ inline void ModelSIRLogit<TSeq>::reset()
 template<typename TSeq>
 inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     ModelSIRLogit<TSeq> & model,
-    std::string vname,
+    const std::string & vname,
     double * data,
     size_t ncols,
     std::vector< double > coefs_infect,
@@ -299,7 +299,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     // model.add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname);
+    epiworld::Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSIRLogit<TSeq>::INFECTED,
         ModelSIRLogit<TSeq>::RECOVERED,
@@ -311,7 +311,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
     // virus.set_prob
 
-    model.add_virus(virus, prevalence);
+    model.add_virus(virus);
 
     model.set_name("Susceptible-Infected-Removed (SIR) (logit)");
 
@@ -321,7 +321,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
 template<typename TSeq>
 inline ModelSIRLogit<TSeq>::ModelSIRLogit(
-    std::string vname,
+    const std::string & vname,
     double * data,
     size_t ncols,
     std::vector< double > coefs_infect,
