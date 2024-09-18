@@ -34,3 +34,4 @@ README\.html
 
 paper\..+
 docker
+\.devcontainer

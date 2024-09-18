@@ -137,8 +137,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 147.00ms
-#> Last run speed      : 33.83 million agents x day / second
+#> Last run elapsed t  : 134.00ms
+#> Last run speed      : 37.07 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:
@@ -219,8 +219,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 80.00ms
-#> Last run speed      : 12.38 million agents x day / second
+#> Last run elapsed t  : 81.00ms
+#> Last run speed      : 12.21 million agents x day / second
 #> Rewiring            : off
 #> 
 #> Global events:

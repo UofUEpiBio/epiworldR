@@ -13,3 +13,6 @@ RUN \
   dpkg -i pandoc-3.2.1-1-amd64.deb
 
 RUN install2.r cpp11 rmarkdown roxygen2 tinytest data.table netplot
+
+RUN apt install -y --no-install-recommends libxml2-dev && \
+  install2.r languageserver
