@@ -1,111 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>/articles/getting-started.html</loc>
-  </url>
-  <url>
-    <loc>/articles/implementation.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/run-multiple.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/paper.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelDiffNet.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSEIR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSEIRCONN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSEIRD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSEIRDCONN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIRCONN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIRD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIRDCONN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIRLogit.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSIS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSISD.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ModelSURV.html</loc>
-  </url>
-  <url>
-    <loc>/reference/agents_smallworld.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epiworld-data.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epiworld-methods.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epiworldR-deprecated.html</loc>
-  </url>
-  <url>
-    <loc>/reference/epiworldR-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/get_agents.html</loc>
-  </url>
-  <url>
-    <loc>/reference/global-actions.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/run_multiple.html</loc>
-  </url>
-  <url>
-    <loc>/reference/tool.html</loc>
-  </url>
-  <url>
-    <loc>/reference/virus.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/getting-started.html</loc></url>
+<url><loc>/articles/implementation.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/mixing.html</loc></url>
+<url><loc>/articles/run-multiple.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/paper.html</loc></url>
+<url><loc>/reference/ModelDiffNet.html</loc></url>
+<url><loc>/reference/ModelSEIR.html</loc></url>
+<url><loc>/reference/ModelSEIRCONN.html</loc></url>
+<url><loc>/reference/ModelSEIRD.html</loc></url>
+<url><loc>/reference/ModelSEIRDCONN.html</loc></url>
+<url><loc>/reference/ModelSEIRMixing.html</loc></url>
+<url><loc>/reference/ModelSIR.html</loc></url>
+<url><loc>/reference/ModelSIRCONN.html</loc></url>
+<url><loc>/reference/ModelSIRD.html</loc></url>
+<url><loc>/reference/ModelSIRDCONN.html</loc></url>
+<url><loc>/reference/ModelSIRLogit.html</loc></url>
+<url><loc>/reference/ModelSIRMixing.html</loc></url>
+<url><loc>/reference/ModelSIS.html</loc></url>
+<url><loc>/reference/ModelSISD.html</loc></url>
+<url><loc>/reference/ModelSURV.html</loc></url>
+<url><loc>/reference/agents.html</loc></url>
+<url><loc>/reference/agents_smallworld.html</loc></url>
+<url><loc>/reference/entities.html</loc></url>
+<url><loc>/reference/epiworld-data.html</loc></url>
+<url><loc>/reference/epiworld-methods.html</loc></url>
+<url><loc>/reference/epiworldR-deprecated.html</loc></url>
+<url><loc>/reference/epiworldR-package.html</loc></url>
+<url><loc>/reference/global-actions.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/run_multiple.html</loc></url>
+<url><loc>/reference/tool.html</loc></url>
+<url><loc>/reference/virus.html</loc></url>
 </urlset>
+
