@@ -1,8 +1,8 @@
-FROM rocker/r-base:latest
+FROM rocker/r-devel:latest
 
-RUN \
-  echo 'options(repos=c(CRAN="https://cloud.r-project.org"))' >> ~/.Rprofile && \
-  Rscript --vanilla -e 'getOption("repos")'
+# RUN \
+#   echo 'options(repos=c(CRAN="https://cloud.r-project.org"))' >> ~/.Rprofile && \
+#   Rscript --vanilla -e 'getOption("repos")'
 
 # Adding Git
 RUN apt-get update && apt-get install -y --no-install-recommends git
@@ -14,5 +14,7 @@ RUN \
 
 RUN install2.r cpp11 rmarkdown roxygen2 tinytest data.table netplot
 
-RUN apt install -y --no-install-recommends libxml2-dev && \
+RUN apt-get install -y --no-install-recommends && \
   install2.r languageserver
+
+CMD ["bash"]
