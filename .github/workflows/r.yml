@@ -30,7 +30,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: windows-latest, r: 'devel', http-user-agent: 'release'}
-          # Use older ubuntu to maximise backward compatibility
+          # se older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel'}
@@ -72,13 +72,17 @@ jobs:
           check-dir: '"check"'
           error-on: '"warning"'
 
-      # Upload the built package as an artifact
+      - name: Build the package
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' | matrix.config.r == 'devel') }}
+        run: R CMD build .
+
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' }}
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' | matrix.config.r == 'devel') }}
         with:
-          name: ${{ matrix.config.os }}-pkg
-          path: ${{ github.workspace }}/*.tar.gz
-      
+          name: epiworldR-built-package-${{ runner.os }}
+          path: epiworldR_*.tar.gz
+          retention-days: 7
+          
   epiworldShiny:
     runs-on: ubuntu-latest
     container: rocker/tidyverse:4.4.0
