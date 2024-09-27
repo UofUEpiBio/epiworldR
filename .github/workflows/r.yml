@@ -75,7 +75,45 @@ jobs:
           name: ${{ matrix.config.os }}-pkg
           path: ${{ github.workspace }}/*.tar.gz
       
+  epiworldShiny:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:4.4.0
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'UofUEpiBio/epiworldRShiny'
+          ref: 'main'
+          fetch-depth: 1
+
+      - name: Install dependencies
+        run: |
+          install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
+          installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
       
+      - name: Check the package
+        run: |
+          R CMD build .
+          R CMD check epiworldRShiny_*tar.gz
+
+  epiworldRShiny-cran:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:4.4.0
+
+    steps:
+      - name: Get epiworldRShiny
+        run: |
+          wget \
+            https://cran.r-project.org/src/contrib/epiworldRShiny_0.1-0.tar.gz
+
+      - name: Install dependencies
+        run: |
+          install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
+          installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
+      
+      - name: Check the package
+        run: |
+          R CMD check epiworldRShiny_*tar.gz
 
         
           
