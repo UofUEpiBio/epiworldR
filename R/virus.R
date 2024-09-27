@@ -77,7 +77,7 @@ virus <- function(
   if (missing(prevalence)) {
 
     warning(
-      "Starting version 0.3-0, the 'prevalence' argument is required."
+      "Starting version 0.3-0, the 'prevalence' argument is required.",
       " It will be set to be 0.5. Next versions will fail with an error."
       )
 
