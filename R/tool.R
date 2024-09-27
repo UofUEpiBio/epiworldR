@@ -191,12 +191,12 @@ add_tool <- function(model, tool, proportion) {
       distfun = distribute_tool_randomly(proportion, TRUE)
     )
 
-  } else if (attr(tool, "uses_deprecated")) {
+  } else if (isTRUE(attr(tool, "uses_deprecated"))) {
 
     set_distribution_tool(
       tool = tool,
       distfun = distribute_tool_randomly(
-        proportion = attr(tool, "deprecated_args")$prevalence,
+        prevalence = attr(tool, "deprecated_args")$prevalence,
         as_proportion = attr(tool, "deprecated_args")$as_proportion
       )
     )

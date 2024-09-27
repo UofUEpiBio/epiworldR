@@ -191,12 +191,12 @@ add_virus <- function(model, virus, proportion) {
       distfun=distribute_virus_randomly(proportion, as_proportion = TRUE)
     )
 
-  } else if (attr(tool, "uses_deprecated")) {
+  } else if (isTRUE(attr(tool, "uses_deprecated"))) {
 
     set_distribution_virus(
       virus = tool,
       distfun = distribute_virus_randomly(
-        proportion = attr(tool, "deprecated_args")$prevalence,
+        prevalence = attr(tool, "deprecated_args")$prevalence,
         as_proportion = attr(tool, "deprecated_args")$as_proportion
       )
     )
