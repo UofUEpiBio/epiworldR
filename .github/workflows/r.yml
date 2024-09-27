@@ -12,10 +12,10 @@ on:
 
 name: R-CMD-check-final
 
+env: 
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
-  
-  env: 
-    GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
