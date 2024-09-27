@@ -63,15 +63,29 @@
 #' @export
 #' @aliases epiworld_virus
 virus <- function(
-    name,
-    prevalence,
-    as_proportion,
-    prob_infecting,
-    recovery_rate = 0.5,
-    prob_death    = 0.0,
-    post_immunity = -1.0,
-    incubation    = 7.0
-    ) {
+  name,
+  prevalence,
+  as_proportion,
+  prob_infecting,
+  recovery_rate = 0.5,
+  prob_death    = 0.0,
+  post_immunity = -1.0,
+  incubation    = 7.0
+  ) {
+
+  uses_deprecated <- FALSE
+  if (missing(prevalence)) {
+
+    warning(
+      "Starting version 0.3-0, the 'prevalence' argument is required."
+      " It will be set to be 0.5. Next versions will fail with an error."
+      )
+
+    prevalence <- 0.5
+    as_proportion <- TRUE
+    uses_deprecated <- TRUE
+
+  }
   
   structure(
     virus_cpp(
@@ -84,7 +98,12 @@ virus <- function(
       post_immunity,
       incubation
       ),
-    class = "epiworld_virus"
+    class = "epiworld_virus",
+    uses_deprecated = uses_deprecated,
+    deprecated_args = list(
+      prevalence = prevalence,
+      as_proportion = as_proportion
+    )
   )
   
 }
@@ -170,6 +189,16 @@ add_virus <- function(model, virus, proportion) {
     set_distribution_virus(
       virus=virus,
       distfun=distribute_virus_randomly(proportion, as_proportion = TRUE)
+    )
+
+  } else if (attr(tool, "uses_deprecated")) {
+
+    set_distribution_virus(
+      virus = tool,
+      distfun = distribute_virus_randomly(
+        proportion = attr(tool, "deprecated_args")$prevalence,
+        as_proportion = attr(tool, "deprecated_args")$as_proportion
+      )
     )
 
   }
