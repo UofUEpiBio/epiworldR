@@ -98,7 +98,7 @@ jobs:
       - name: Check the package
         run: |
           R CMD build .
-          R CMD check epiworldRShiny_*tar.gz
+          R CMD check  --no-manual epiworldRShiny_*tar.gz
 
   epiworldRShiny-cran:
     runs-on: ubuntu-latest
@@ -117,7 +117,7 @@ jobs:
       
       - name: Check the package
         run: |
-          R CMD check epiworldRShiny_*tar.gz
+          R CMD check --no-manual epiworldRShiny_*tar.gz
 
         
           
