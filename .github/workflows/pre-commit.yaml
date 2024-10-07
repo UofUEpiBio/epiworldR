@@ -32,10 +32,12 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit-${{ hashFiles('./.pre-commit-config.yaml') }}
 
+      - name: Install pre-commit
+        run: pip install pre-commit
+
       - name: Setup pre-commit
         if: steps.cache-pre-commit.outputs.cache-hit != 'true'
         run: |
-          pip install pre-commit
           pre-commit install --install-hooks
         shell: bash
 
