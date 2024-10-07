@@ -21,8 +21,7 @@ repos:
           [
             '--ignore-start="^# styler: off$"',
             '--ignore-stop="^# styler: on$"',
-            '--strict=FALSE',
-            '--cache-root=""'
+            '--strict=FALSE'
           ]
         exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
       - id: readme-rmd-rendered
