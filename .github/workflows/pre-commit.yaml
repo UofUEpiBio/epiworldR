@@ -10,6 +10,7 @@ on:
 
 jobs:
   pre-commit:
+    name: Pre-commit
     runs-on: ubuntu-latest
 
     steps:
@@ -18,6 +19,12 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v3
+
+      - name: Install styler
+        run: |
+          options(repos = c(CRAN = "https://packagemanager.posit.co/cran/latest"))
+          install.packages("styler")
+        shell: Rscript --vanilla -e {0}
 
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.1
