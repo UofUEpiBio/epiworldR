@@ -38,7 +38,7 @@ check: build
 	cd .. && R CMD check epiworldR_*.tar.gz
 
 clean: 
-	Rscript --vanilla -e 'devtools::clean_dll()'
+	rm -f src/*.dll src/*.so src/*.o
 	sed -i -E 's/@useDynLib\s+[a-zA-Z]+/@useDynLib epiworldR/g' R/epiworldR-package.R
 	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldR/g' NAMESPACE
 	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION 
@@ -46,7 +46,7 @@ clean:
 	sed -i -E 's/^library\(epiworldRdev\)/library(epiworldR)/g' README.*
 
 docs:
-	Rscript --vanilla -e 'devtools::document()'
+	Rscript --vanilla -e 'roxygen2::roxigenize()'
 
 .PHONY: build update check clean docs docker-debug
 

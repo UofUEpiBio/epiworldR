@@ -1,4 +1,4 @@
-# epiworldR 0.3-2 (dev)
+# epiworldR 0.3-2
 
 * Starting version 0.3-0, `epiworldR` is versioned using the same version as the C++ library, `epiworld`.
 
@@ -17,7 +17,7 @@
   among agents: `distribute_viruses`, `distribute_tools`, and `distribute_entities`.
 
 
-# epiworldR 0.1-0`
+# epiworldR 0.1-0
 
 * Force model to update agents' states when running a simulation.
   This was causing issues when calling `run_multiple()` after a single
