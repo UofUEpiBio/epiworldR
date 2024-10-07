@@ -32,6 +32,12 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
 
+      # Notice this step depends on what
+      # https://github.com/lorenzwalthert/precommit has as
+      # R version in renv.lock. GHA ubuntu-latest runner comes
+      # with R 4.4.1, which is the same as in renv.lock. If that
+      # changes, caching will not work as it will be loading a
+      # different version of R.
       - name: Setup pre-commit
         if: steps.cache-pre-commit.outputs.cache-hit != 'true'
         run: |

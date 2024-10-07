@@ -14,6 +14,8 @@ repos:
         exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
 
 -   repo: https://github.com/lorenzwalthert/precommit
+    # This version of precommit uses R 4.4.1 (renv.lock)
+    # See the pre-commit.yaml workflow file for more details.
     rev: v0.4.3
     hooks:
       - id: style-files
