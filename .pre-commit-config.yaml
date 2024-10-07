@@ -14,14 +14,17 @@ repos:
         exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
 
 -   repo: https://github.com/lorenzwalthert/precommit
-    rev: v0.4.2
+    # This version of precommit uses R 4.4.1 (renv.lock)
+    # See the pre-commit.yaml workflow file for more details.
+    rev: v0.4.3
     hooks:
       - id: style-files
         args:
           [
             '--ignore-start="^# styler: off$"',
             '--ignore-stop="^# styler: on$"',
-            '--strict=FALSE'
+            '--strict=FALSE',
+            '--cache-root=styler-perm'
           ]
         exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
       - id: readme-rmd-rendered

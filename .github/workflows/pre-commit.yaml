@@ -10,6 +10,9 @@ on:
 
 jobs:
   pre-commit:
+
+    name: Pre-commit
+
     runs-on: ubuntu-latest
 
     steps:
@@ -19,5 +22,18 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
 
+      - name: Cache R packages for pre-commit (live in renv)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/R/renv
+          key: r-precommit-cache|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      # Notice this step depends on what
+      # https://github.com/lorenzwalthert/precommit has as
+      # R version in renv.lock. GHA ubuntu-latest runner comes
+      # with R 4.4.1, which is the same as in renv.lock. If that
+      # changes, caching will not work as it will be loading a
+      # different version of R.
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.1
