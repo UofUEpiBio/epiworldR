@@ -1,5 +1,5 @@
 #' SURV model
-#' 
+#'
 #'
 #' @param name String. Name of the virus.
 #' @param prevalence Initial number of individuals with the virus.
@@ -18,11 +18,11 @@
 #' the chances of becoming infected.
 #' @param surveillance_prob Double. Probability of testing an agent.
 #' @param transmission_rate Double. Raw transmission probability.
-#' @param prob_death Double. Raw probability of death for symptomatic 
+#' @param prob_death Double. Raw probability of death for symptomatic
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
-#' @param x Object of class SURV. 
-#' @param ... Currently ignore. 
+#' @param x Object of class SURV.
+#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @aliases epiworld_surv
@@ -52,37 +52,37 @@
 #'   k = 5,
 #'   d = FALSE,
 #'   p = .01
-#'   )
-#'   
+#' )
+#'
 #' # Running and printing
 #' run(model_surv, ndays = 100, seed = 1912)
-#' model_surv 
-#' 
+#' model_surv
+#'
 #' # Plotting
 #' plot(model_surv, main = "SURV Model")
-#' 
+#'
 #' @seealso epiworld-methods
 ModelSURV <- function(
-    name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms, 
-    prop_vaccinated, prop_vax_redux_transm, prop_vax_redux_infect, 
-    surveillance_prob, transmission_rate, prob_death, prob_noreinfect  
-) {
-  
+    name, prevalence, efficacy_vax, latent_period, infect_period, prob_symptoms,
+    prop_vaccinated, prop_vax_redux_transm, prop_vax_redux_infect,
+    surveillance_prob, transmission_rate, prob_death, prob_noreinfect
+    ) {
+
   structure(
-    ModelSURV_cpp(name, prevalence, efficacy_vax, latent_period, infect_period, 
-                  prob_symptoms, prop_vaccinated, prop_vax_redux_transm, 
-                  prop_vax_redux_infect, surveillance_prob, transmission_rate, 
-                  prob_death, prob_noreinfect),
+    ModelSURV_cpp(name, prevalence, efficacy_vax, latent_period, infect_period,
+      prob_symptoms, prop_vaccinated, prop_vax_redux_transm,
+      prop_vax_redux_infect, surveillance_prob, transmission_rate,
+      prob_death, prob_noreinfect),
     class = c("epiworld_surv", "epiworld_model")
   )
-  
+
 }
 
 #' @rdname ModelSURV
 #' @export
-#' @returns The `plot` function returns a plot of the SURV model of class 
+#' @returns The `plot` function returns a plot of the SURV model of class
 #' [epiworld_model].
 #' @param main Title of the plot.
 plot.epiworld_surv <- function(x, main = get_name(x), ...) { # col = NULL
- plot_epi(x, main = main, ...)
+  plot_epi(x, main = main, ...)
 }

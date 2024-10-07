@@ -12,9 +12,9 @@ using namespace epiworld;
 SEXP get_entities_cpp(
   SEXP model
 ) {
-  
+
   // Making some room
-  
+
   cpp11::external_pointer<Model<>> ptr(model);
 
   cpp11::writable::list res;
@@ -23,9 +23,9 @@ SEXP get_entities_cpp(
     cpp11::external_pointer<Entity<>> entity(&i, false);
     res.push_back(entity);
   }
-  
+
   return res;
-  
+
 }
 
 [[cpp11::register]]
@@ -33,15 +33,15 @@ SEXP get_entity_cpp(
   SEXP entities,
   int idx
 ) {
-  
+
   cpp11::external_pointer<std::vector< Entity<>> > ptr(entities);
-  
+
   cpp11::external_pointer<Entity<>> entity(
     &ptr->at(static_cast<size_t>(idx)), false
   );
-  
+
   return entity;
-  
+
 }
 
 
@@ -52,7 +52,7 @@ SEXP entity_cpp(
   bool as_proportion,
   bool to_unassigned
 ) {
-  
+
   cpp11::external_pointer<Entity<>> ptr(
     new Entity<>(
       name,
@@ -63,9 +63,9 @@ SEXP entity_cpp(
       )
     )
   );
-  
+
   return ptr;
-  
+
 }
 
 [[cpp11::register]]
@@ -76,13 +76,13 @@ int get_entity_size_cpp(SEXP entity) {
 
 [[cpp11::register]]
 int entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model) {
-  
+
   cpp11::external_pointer<Entity<>> ptr(entity);
   cpp11::external_pointer<Agent<>> ptr_agent(agent);
   cpp11::external_pointer<Model<>> ptr_model(model);
-  
+
   ptr->add_agent(&(*ptr_agent), &(*ptr_model));
-  
+
   return 0;
 }
 
@@ -96,24 +96,24 @@ int add_entity_cpp(
   SEXP model,
   SEXP entity
   ) {
-  
+
   cpp11::external_pointer<Model<>> ptr_model(model);
   cpp11::external_pointer<Entity<>> ptr_entity(entity);
-  
+
   ptr_model->add_entity(*ptr_entity);
-  
+
   return 0;
 }
 
 [[cpp11::register]]
 int rm_entity_cpp(SEXP model, int entity_pos) {
-  
+
   cpp11::external_pointer<Model<>> ptr_model(model);
-  
+
   ptr_model->rm_entity(
     static_cast<size_t>(entity_pos)
   );
-  
+
   return 0;
 }
 
@@ -142,12 +142,12 @@ int load_agents_entities_ties_cpp(
 
 [[cpp11::register]]
 cpp11::data_frame entity_get_agents_cpp(SEXP entity) {
-  
+
   cpp11::external_pointer<Entity<>> ptr(entity);
-  
+
   cpp11::writable::integers agent;
   cpp11::writable::integers entity_id;
-  
+
   int id = static_cast<int>(ptr->get_id());
   auto agents_ids = ptr->get_agents();
   size_t nagents = ptr->size();
@@ -160,7 +160,7 @@ cpp11::data_frame entity_get_agents_cpp(SEXP entity) {
     "agent"_nm = agent,
     "entity"_nm = entity_id
   });
-  
+
 }
 
 [[cpp11::register]]
@@ -234,4 +234,3 @@ SEXP distribute_entity_to_set_cpp(
 //   cpp11::external_pointer<Entity<>>(entity)->set_name(name);
 //   return 0;
 // }
-

@@ -81,49 +81,48 @@ Schools as entities: tbd
 library(epiworldR)
 seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, infectiousness = 0.9, incubation_days = 4, recovery = 0.3)
 
-# Adding a Small world population 
+# Adding a Small world population
 agents_smallworld(
   seir,
   n = 200000,
   k = 5,
   d = FALSE,
   p = .01
-  )
+)
 
 # Running and printing
 run(seir, ndays = 100, seed = 1912)
 seir
-
 ```
 
 ## Visualization
 
 ```{r}
 x <- get_hist_total(seir)
-x$counts <- x$counts/1000
-x <- x[x$date < 50,]
+x$counts <- x$counts / 1000
+x <- x[x$date < 50, ]
 
 with(
-  x[x$status == "Susceptible",],
+  x[x$status == "Susceptible", ],
   plot(
     x = date, y = counts, type = "l", col = "blue", ylim = range(x$counts),
     ylab = "Population (thousands)", xlab = "days", main = "SEIR model")
-  )
+)
 
 with(
-  x[x$status == "Exposed",],
+  x[x$status == "Exposed", ],
   lines(x = date, y = counts, col = "purple")
-  )
+)
 
 with(
-  x[x$status == "Infected",],
+  x[x$status == "Infected", ],
   lines(x = date, y = counts, col = "red")
-  )
+)
 
 with(
-  x[x$status == "Removed",],
+  x[x$status == "Removed", ],
   lines(x = date, y = counts, col = "darkgreen")
-  )
+)
 
 legend(
   "right",
@@ -132,5 +131,5 @@ legend(
   lty    = 1,
   lwd    = 2,
   bty    = "n"
-  )
+)
 ```

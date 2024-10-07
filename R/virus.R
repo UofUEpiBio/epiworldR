@@ -1,9 +1,9 @@
 #' Virus design
-#' 
+#'
 #' Viruses can be considered to be anything that can be transmitted (e.g.,
-#' diseases, as well as ideas.) Most models in epiworldR can feature multiple 
+#' diseases, as well as ideas.) Most models in epiworldR can feature multiple
 #' viruses.
-#' 
+#'
 #' @param name of the virus
 #' @param post_immunity Numeric scalar. Post immunity (prob of re-infection).
 #' @param prob_infecting Numeric scalar. Probability of infection (transmission).
@@ -14,44 +14,44 @@
 #' @details
 #' The [virus()] function can be used to initialize a virus. Virus features can
 #' then be modified using the functions `set_prob_*`.
-#' 
+#'
 #' The function [virus_fun_logit()] creates a "virus function" that can be
 #' evaluated for transmission, recovery, and death. As the name sugests, it
 #' computes those probabilities using a logit function (see examples).
-#' 
-#' @examples 
+#'
+#' @examples
 #' mseirconn <- ModelSEIRCONN(
 #'   name                = "COVID-19",
-#'   prevalence          = 0.01, 
+#'   prevalence          = 0.01,
 #'   n                   = 10000,
-#'   contact_rate        = 4, 
-#'   incubation_days     = 7, 
+#'   contact_rate        = 4,
+#'   incubation_days     = 7,
 #'   transmission_rate   = 0.5,
 #'   recovery_rate       = 0.99
 #' )
-#' 
+#'
 #' delta <- virus(
 #'   "Delta Variant", 0, .5, .2, .01, prevalence = 0.3, as_proportion = TRUE
 #' )
-#' 
+#'
 #' # Adding virus and setting/getting virus name
 #' add_virus(mseirconn, delta)
 #' set_name_virus(delta, "COVID-19 Strain")
 #' get_name_virus(delta)
-#' 
+#'
 #' run(mseirconn, ndays = 100, seed = 992)
 #' mseirconn
-#' 
+#'
 #' rm_virus(mseirconn, 0) # Removing the first virus from the model object
 #' set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
-#' add_virus(mseirconn, delta) 
-#' 
+#' add_virus(mseirconn, delta)
+#'
 #' # Setting parameters for the delta virus manually
 #' set_prob_infecting(delta, 0.5)
 #' set_prob_recovery(delta, 0.9)
 #' set_prob_death(delta, 0.01)
 #' run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
-#' 
+#'
 #' # If the states were (for example):
 #' # 1: Infected
 #' # 2: Recovered
@@ -63,15 +63,15 @@
 #' @export
 #' @aliases epiworld_virus
 virus <- function(
-  name,
-  prevalence,
-  as_proportion,
-  prob_infecting,
-  recovery_rate = 0.5,
-  prob_death    = 0.0,
-  post_immunity = -1.0,
-  incubation    = 7.0
-  ) {
+    name,
+    prevalence,
+    as_proportion,
+    prob_infecting,
+    recovery_rate = 0.5,
+    prob_death    = 0.0,
+    post_immunity = -1.0,
+    incubation    = 7.0
+    ) {
 
   uses_deprecated <- FALSE
   if (missing(prevalence)) {
@@ -79,14 +79,14 @@ virus <- function(
     warning(
       "Starting version 0.3-0, the 'prevalence' argument is required.",
       " It will be set to be 0.5. Next versions will fail with an error."
-      )
+    )
 
     prevalence <- 0.5
     as_proportion <- TRUE
     uses_deprecated <- TRUE
 
   }
-  
+
   structure(
     virus_cpp(
       name,
@@ -97,7 +97,7 @@ virus <- function(
       prob_death,
       post_immunity,
       incubation
-      ),
+    ),
     class = "epiworld_virus",
     uses_deprecated = uses_deprecated,
     deprecated_args = list(
@@ -105,7 +105,7 @@ virus <- function(
       as_proportion = as_proportion
     )
   )
-  
+
 }
 
 #' @export
@@ -117,7 +117,7 @@ stopifnot_virus <- function(virus) {
   if (!inherits(virus, "epiworld_virus")) {
     stop(
       "The -virus- object must be of class \"epiworld_virus\". ",
-      "The object passed to the function is of class(es): ", 
+      "The object passed to the function is of class(es): ",
       paste(class(virus), collapse = ", ")
     )
   }
@@ -127,7 +127,7 @@ stopifnot_vfun <- function(vfun) {
   if (!inherits(vfun, "epiworld_virus_fun")) {
     stop(
       "The -vfun- object must be of class \"epiworld_virus_fun\". ",
-      "The object passed to the function is of class(es): ", 
+      "The object passed to the function is of class(es): ",
       paste(class(vfun), collapse = ", ")
     )
   }
@@ -137,7 +137,7 @@ stopifnot_virus_distfun <- function(virus_distfun) {
   if (!inherits(virus_distfun, "epiworld_virus_distfun")) {
     stop(
       "The -virus_distfun- object must be of class \"epiworld_virus_distfun\". ",
-      "The object passed to the function is of class(es): ", 
+      "The object passed to the function is of class(es): ",
       paste(class(virus_distfun), collapse = ", ")
     )
   }
@@ -148,9 +148,9 @@ stopifnot_virus_distfun <- function(virus_distfun) {
 #' @details
 #' The name of the `epiworld_virus` object can be manipulated with the functions
 #' [set_name_virus()] and [get_name_virus()].
-#' @returns 
-#' - The `set_name_virus` function does not return a value, but merely assigns 
-#' a name to the virus of choice. 
+#' @returns
+#' - The `set_name_virus` function does not return a value, but merely assigns
+#' a name to the virus of choice.
 #' @rdname virus
 set_name_virus <- function(virus, name) {
   stopifnot_virus(virus)
@@ -158,24 +158,24 @@ set_name_virus <- function(virus, name) {
 }
 
 #' @export
-#' @returns 
-#' - The `get_name_virus` function returns the name of the virus of class 
+#' @returns
+#' - The `get_name_virus` function returns the name of the virus of class
 #' [epiworld_virus].
 #' @rdname virus
 get_name_virus <- function(virus) {
   stopifnot_virus(virus)
   get_name_virus_cpp(virus)
 }
-  
+
 # Virus add --------------------------------------------------------------------
 
 #' @export
 #' @rdname virus
 #' @param model An object of class `epiworld_model`.
 #' @param virus An object of class `epiworld_virus`
-#' @param proportion Deprecated. 
-#' @returns 
-#' - The `add_virus` function does not return a value, instead it adds the 
+#' @param proportion Deprecated.
+#' @returns
+#' - The `add_virus` function does not return a value, instead it adds the
 #' virus of choice to the model object of class [epiworld_model].
 add_virus <- function(model, virus, proportion) {
 
@@ -184,11 +184,11 @@ add_virus <- function(model, virus, proportion) {
     warning(
       "The argument 'proportion' is deprecated and will be removed in ",
       "the next version."
-      )
+    )
 
     set_distribution_virus(
-      virus=virus,
-      distfun=distribute_virus_randomly(proportion, as_proportion = TRUE)
+      virus = virus,
+      distfun = distribute_virus_randomly(proportion, as_proportion = TRUE)
     )
 
   } else if (isTRUE(attr(tool, "uses_deprecated"))) {
@@ -209,80 +209,80 @@ add_virus <- function(model, virus, proportion) {
 
 #' @export
 add_virus.epiworld_model <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   add_virus_cpp(model, virus)
   invisible(model)
-  
+
 }
 
 #' @export
 add_virus.epiworld_sir <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 2)
   invisible(add_virus_cpp(model, virus))
-  
+
 }
 
 #' @export
 add_virus.epiworld_sird <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 2, removed = 3)
   invisible(add_virus_cpp(model, virus))
-  
+
 }
 
 #' @export
 add_virus.epiworld_sirconn <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   add_virus.epiworld_sir(model, virus)
-  
+
 }
 
 #' @export
 add_virus.epiworld_sirdconn <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   add_virus.epiworld_sird(model, virus)
-  
+
 }
 
 
 #' @export
 add_virus.epiworld_seir <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 3)
   invisible(add_virus_cpp(model, virus))
-  
+
 }
 
 #' @export
 add_virus.epiworld_seird <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   virus_set_state(virus, init = 1, end = 3, removed = 4)
   invisible(add_virus_cpp(model, virus))
-  
+
 }
 
 #' @export
 add_virus.epiworld_seirconn <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   add_virus.epiworld_seir(model, virus)
-  
+
 }
 
 #' @export
 add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
-  
+
   stopifnot_virus(virus)
   add_virus.epiworld_seird(model, virus)
-  
+
 }
 
 # Virus MISC -------------------------------------------------------------------
@@ -291,26 +291,26 @@ add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
 #' @rdname virus
 #' @param init,end,removed states after acquiring a virus, removing a virus,
 #' and removing the agent as a result of the virus, respectively.
-#' @returns 
-#' - The `virus_set_state` function does not return a value but assigns 
+#' @returns
+#' - The `virus_set_state` function does not return a value but assigns
 #' epidemiological properties to the specified virus of class [epiworld_virus].
 virus_set_state <- function(virus, init, end, removed) {
-  
+
   stopifnot_virus(virus)
   invisible(virus_set_state_cpp(virus, init, end, removed))
-  
+
 }
 
 #' @export
-#' @returns 
-#' - The `rm_virus` function does not return a value, but instead removes 
+#' @returns
+#' - The `rm_virus` function does not return a value, but instead removes
 #' a specified virus from the model of class [epiworld_model].
 #' @rdname virus
 rm_virus <- function(model, virus_pos) {
-  
+
   stopifnot_model(model)
   invisible(rm_virus_cpp(model, virus_pos))
-  
+
 }
 
 # Virus functions --------------------------------------------------------------
@@ -324,10 +324,10 @@ rm_virus <- function(model, virus_pos) {
 #' @examples
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
-#'   name = "COVID-19", prevalence = 0.01, 
+#'   name = "COVID-19", prevalence = 0.01,
 #'   transmission_rate = 0.9, recovery = 0.1
-#'   )
-#' 
+#' )
+#'
 #' # Adding a small world population
 #' agents_smallworld(
 #'   sir,
@@ -336,44 +336,43 @@ rm_virus <- function(model, virus_pos) {
 #'   d = FALSE,
 #'   p = .01
 #' )
-#' 
+#'
 #' run(sir, ndays = 50, seed = 11)
 #' plot(sir)
-#' 
+#'
 #' # And adding features
 #' dat <- cbind(
 #'   female = sample.int(2, 10000, replace = TRUE) - 1,
 #'   x      = rnorm(10000)
 #' )
-#' 
+#'
 #' set_agents_data(sir, dat)
-#' 
+#'
 #' # Creating the logit function
 #' vfun <- virus_fun_logit(
 #'   vars  = c(0L, 1L),
 #'   coefs = c(-1, 1),
 #'   model = sir
 #' )
-#' 
+#'
 #' # The infection prob is lower
-#' hist(plogis(dat %*% rbind(-1,1)))
-#' 
+#' hist(plogis(dat %*% rbind(-1, 1)))
+#'
 #' vfun # printing
-#' 
+#'
 #' set_prob_infecting_fun(
 #'   virus = get_virus(sir, 0),
 #'   model = sir,
 #'   vfun  = vfun
-#'   )
-#'   
+#' )
+#'
 #' run(sir, ndays = 50, seed = 11)
 #' plot(sir)
-#' 
-#' 
+#'
 virus_fun_logit <- function(vars, coefs, model) {
-  
+
   stopifnot_model(model)
-  
+
   structure(
     virus_fun_logit_cpp(vars, coefs, model),
     class   = "epiworld_virus_fun",
@@ -382,12 +381,12 @@ virus_fun_logit <- function(vars, coefs, model) {
     coefs   = coefs,
     model   = model
   )
-  
+
 }
 
 #' @export
 print.epiworld_virus_fun <- function(x, ...) {
-  
+
   cat("An epiworld_virus_function object.\n")
   cat("(model: ", get_name(attr(x, "model")), ")\n", sep = "")
   cat("This function was built using -virus_fun_logit()-. and it features ")
@@ -397,27 +396,27 @@ print.epiworld_virus_fun <- function(x, ...) {
       " % 2i: %5.2f",
       attr(x, "vars"),
       attr(x, "coefs")
-      ), collapse = "\n"
+    ), collapse = "\n"
     ), "\n"
   )
-  
+
   invisible(x)
-  
+
 }
 
 
 #' @export
 #' @param prob Numeric scalar. A probability (between zero and one).
-#' @returns 
-#' - The `set_prob_infecting` function does not return a value, but instead 
-#' assigns a probability to infection for the specified virus of class 
+#' @returns
+#' - The `set_prob_infecting` function does not return a value, but instead
+#' assigns a probability to infection for the specified virus of class
 #' [epiworld_virus].
 #' @rdname virus
 set_prob_infecting <- function(virus, prob) {
-  
+
   stopifnot_virus(virus)
   invisible(set_prob_infecting_cpp(virus, as.numeric(prob)))
-  
+
 }
 
 #' @export
@@ -430,52 +429,52 @@ set_prob_infecting <- function(virus, prob) {
 #' read directly from the `model` object, so changes will be reflected.
 #' @rdname virus
 set_prob_infecting_ptr <- function(virus, model, param) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   invisible(set_prob_infecting_ptr_cpp(virus, model, param))
-  
+
 }
 
 #' @export
 #' @param vfun An object of class `epiworld_virus_fun`.
 #' @rdname virus
 set_prob_infecting_fun <- function(virus, model, vfun) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
   invisible(set_prob_infecting_fun_cpp(virus, model, vfun))
-  
+
 }
 
 #' @export
-#' @returns 
-#' - The `set_prob_recovery` function does not return a value, but instead 
-#' assigns a probability to recovery for the specified virus of class 
+#' @returns
+#' - The `set_prob_recovery` function does not return a value, but instead
+#' assigns a probability to recovery for the specified virus of class
 #' [epiworld_virus].
 #' @rdname virus
 set_prob_recovery <- function(virus, prob) {
-  
+
   stopifnot_virus(virus)
   invisible(set_prob_recovery_cpp(virus, as.numeric(prob)))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_prob_recovery_ptr <- function(virus, model, param) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   invisible(set_prob_recovery_ptr_cpp(virus, model, param))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_prob_recovery_fun <- function(virus, model, vfun) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
@@ -484,81 +483,81 @@ set_prob_recovery_fun <- function(virus, model, vfun) {
 }
 
 #' @export
-#' @returns 
-#' - The `set_prob_death` function does not return a value, but instead 
-#' assigns a probability to death for the specified virus of class 
+#' @returns
+#' - The `set_prob_death` function does not return a value, but instead
+#' assigns a probability to death for the specified virus of class
 #' [epiworld_virus].
 #' @rdname virus
 set_prob_death <- function(virus, prob) {
-  
+
   stopifnot_virus(virus)
   invisible(set_prob_death_cpp(virus, as.numeric(prob)))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_prob_death_ptr <- function(virus, model, param) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   invisible(set_prob_death_ptr_cpp(virus, model, param))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_prob_death_fun <- function(virus, model, vfun) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
   invisible(set_prob_death_fun_cpp(virus, model, vfun))
-  
+
 }
 
-#' @export 
-#' @return 
+#' @export
+#' @return
 #' - The `set_incubation` function does not return a value, but instead
 #' assigns an incubation period to the specified virus of class [epiworld_virus].
 #' @rdname virus
 set_incubation <- function(virus, incubation) {
-  
+
   stopifnot_virus(virus)
   invisible(set_incubation_cpp(virus, as.numeric(incubation)))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_incubation_ptr <- function(virus, model, param) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   invisible(set_incubation_ptr_cpp(virus, model, param))
-  
+
 }
 
 #' @export
 #' @rdname virus
 set_incubation_fun <- function(virus, model, vfun) {
-  
+
   stopifnot_virus(virus)
   stopifnot_model(model)
   stopifnot_vfun(vfun)
   invisible(set_incubation_fun_cpp(virus, model, vfun))
-  
+
 }
 
 #' @export
 #' @rdname virus
 #' @param distfun An object of class `epiworld_distribution_virus`.
 set_distribution_virus <- function(virus, distfun) {
-  
+
   stopifnot_virus(virus)
   stopifnot_virus_distfun(distfun)
   invisible(set_distribution_virus_cpp(virus, distfun))
-  
+
 }
 
 #' @export
@@ -570,13 +569,13 @@ set_distribution_virus <- function(virus, distfun) {
 #' @param prevalence Numeric scalar. Prevalence of the virus.
 #' @param as_proportion Logical scalar. If `TRUE`, the prevalence is set as a
 #' proportion of the total number of agents in the model.
-#' @return 
+#' @return
 #' - The `distribute_virus_randomly` function returns a function that can be
 #' used to distribute the virus in the model.
 distribute_virus_randomly <- function(
-  prevalence,
-  as_proportion
-) {
+    prevalence,
+    as_proportion
+    ) {
 
   structure(
     distribute_virus_randomly_cpp(
@@ -593,10 +592,10 @@ distribute_virus_randomly <- function(
 #' @param agents_ids Integer vector. Indices of the agents that will receive the
 #' virus.
 distribute_virus_set <- function(agents_ids) {
-  
+
   structure(
     distribute_virus_to_set_cpp(as.vector(agents_ids)),
     class = "epiworld_virus_distfun"
   )
-  
+
 }

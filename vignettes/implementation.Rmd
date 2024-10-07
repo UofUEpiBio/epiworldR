@@ -13,9 +13,9 @@ vignette: >
 
 # Introduction
 
-The following vignette provides detailed information about the implementation of `epiworldR`. The package is a wrapper of the C++ package `epiworld`, a framework for building agent-based models.[^where-cpp] 
+The following vignette provides detailed information about the implementation of `epiworldR`. The package is a wrapper of the C++ package `epiworld`, a framework for building agent-based models.[^where-cpp]
 
-[^where-cpp]: The C++ package is available at [https://github.com/UofUEpiBio/epiworld](https://github.com/UofUEpiBio/epiworld). 
+[^where-cpp]: The C++ package is available at [https://github.com/UofUEpiBio/epiworld](https://github.com/UofUEpiBio/epiworld).
 
 # General flow of the models
 
@@ -31,12 +31,12 @@ The core function of `epiworldR` is the `run()` function. This function executes
 
     a.  The state of each agent is updated. States are updated according to
     their corresponding `update_state` function.
-    
+
         Since the model is discrete-time, **state changes are stored as promises**, meaning that agents' states are not updated immediately. Instead, the state is updated at the end of the updates. This is done to avoid updating the state of an agent and then using the updated state to update the state of another agent. For example, if agent $i$ infects agent $j$, then agent $j$ should not be able to infect agent $i$ in the same step.
-        
+
     b. Once the update schedule is laid out, the changes are made effective,
     so, for instance, individuals who became infected during the update will start the next step in the infected state.
-    
+
     c. Global actions are executed. These could also change agents' states, so just like in the previous step, these changes are stored as promises and made effective once all actions have been evaluated.
 
     d. The model's state is recorded in the database, and the `current_date` is incremented by 1.
@@ -69,9 +69,9 @@ Viruses and tools provide a way to adjust how agents move between states.
 Viruses in `epiworldR` contain various baseline probabilities used
 across models, including transmission, recovery, and death.
 On the other hand, tools alter these probabilities by reducing/increasing
-them. Furthermore, tools alter agents' susceptibility, infectiousness, 
+them. Furthermore, tools alter agents' susceptibility, infectiousness,
 recovery, and death probabilities. Currently, tools alter these probabilities
-by a constant factor, 
+by a constant factor,
 
 $$
 p_{ij} = p_{v} \times \left(1 - factor_{host}\right) \times \left(1 - factor_{target}\right)
@@ -85,8 +85,8 @@ $$
 factor_{agent} = 1 - \prod_{t\in tools_{agent}}\left(1 - factor_{t}\right)
 $$
 
-Therefore, for example, a vaccinated agent wearing a mask would have a factor of $1 - (1 - 0.30) \times (1 - 0.5) = 0.65$. 
-The adjusted probabilities principle also applies to recovery rates in the SIR and SEIR models. 
+Therefore, for example, a vaccinated agent wearing a mask would have a factor of $1 - (1 - 0.30) \times (1 - 0.5) = 0.65$.
+The adjusted probabilities principle also applies to recovery rates in the SIR and SEIR models.
 
 ## Transmission in connected models[^models]
 
