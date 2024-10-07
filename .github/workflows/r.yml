@@ -12,7 +12,11 @@ on:
 
 name: R-CMD-check-final
 
+env: 
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
+
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
 
@@ -26,7 +30,7 @@ jobs:
           - {os: windows-latest, r: 'release'}
           - {os: macOS-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: windows-latest, r: 'devel', http-user-agent: 'release'}
-          # Use older ubuntu to maximise backward compatibility
+          # se older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel'}
@@ -68,14 +72,56 @@ jobs:
           check-dir: '"check"'
           error-on: '"warning"'
 
-      # Upload the built package as an artifact
+      - name: Build the package
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') }}
+        run: R CMD build .
+
       - uses: actions/upload-artifact@v4
-        if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release' }}
+        if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') }}
         with:
-          name: ${{ matrix.config.os }}-pkg
-          path: ${{ github.workspace }}/*.tar.gz
+          name: epiworldR-built-package-${{ matrix.config.os }}-${{ matrix.config.r }}
+          path: epiworldR_*.tar.gz
+          retention-days: 7
+          
+  epiworldShiny:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:4.4.0
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'UofUEpiBio/epiworldRShiny'
+          ref: 'main'
+          fetch-depth: 1
+
+      - name: Install dependencies
+        run: |
+          install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
+          installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
       
+      - name: Check the package
+        run: |
+          R CMD build .
+          R CMD check  --no-manual epiworldRShiny_*tar.gz
+
+  epiworldRShiny-cran:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:4.4.0
+
+    steps:
+      - name: Get epiworldRShiny
+        run: |
+          wget \
+            https://cran.r-project.org/src/contrib/epiworldRShiny_0.1-0.tar.gz
+
+      - name: Install dependencies
+        run: |
+          install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
+          installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
       
+      - name: Check the package
+        run: |
+          R CMD check --no-manual epiworldRShiny_*tar.gz
 
         
           

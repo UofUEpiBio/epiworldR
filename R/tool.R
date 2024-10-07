@@ -76,6 +76,20 @@ tool <- function(
     death_reduction
 ) {
 
+  uses_deprecated <- FALSE
+  if (missing(prevalence)) {
+
+    warning(
+      "Starting version 0.3-0, the 'prevalence' argument is required.",
+      " It will be set to be 0.5. Next versions will fail with an error."
+      )
+
+    prevalence <- 0.5
+    as_proportion <- TRUE
+    uses_deprecated <- TRUE
+
+  }
+
   structure(
     tool_cpp(
       name,
@@ -86,7 +100,12 @@ tool <- function(
       recovery_enhancer,
       death_reduction
     ),
-    class = "epiworld_tool"
+    class = "epiworld_tool",
+    uses_deprecated = uses_deprecated,
+    deprecated_args = list(
+      prevalence = prevalence,
+      as_proportion = as_proportion
+    )
   )
     
 }
@@ -168,8 +187,18 @@ add_tool <- function(model, tool, proportion) {
       )
 
     set_distribution_tool(
-      tool,
-      distribute_tool_randomly(proportion, TRUE)
+      tool = tool,
+      distfun = distribute_tool_randomly(proportion, TRUE)
+    )
+
+  } else if (isTRUE(attr(tool, "uses_deprecated"))) {
+
+    set_distribution_tool(
+      tool = tool,
+      distfun = distribute_tool_randomly(
+        prevalence = attr(tool, "deprecated_args")$prevalence,
+        as_proportion = attr(tool, "deprecated_args")$as_proportion
+      )
     )
 
   }
