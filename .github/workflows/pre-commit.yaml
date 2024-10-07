@@ -24,7 +24,7 @@ jobs:
         run: |
           options(repos = c(CRAN = "https://packagemanager.posit.co/cran/latest"))
           install.packages("styler")
-        shell: Rscript --vanilla -e {0}
+        shell: Rscript {0}
 
       - name: Run pre-commit hooks
         uses: pre-commit/action@v3.0.1
