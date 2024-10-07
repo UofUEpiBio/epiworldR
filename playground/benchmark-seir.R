@@ -10,29 +10,29 @@ for (n in ns) {
 
   sir <- epiworldR::ModelSEIR(
     name                = "COVID-19",
-    prevalence          = 0.01, 
-    incubation_days     = 7, 
+    prevalence          = 0.01,
+    incubation_days     = 7,
     transmission_rate   = 0.6,
     recovery_rate       = 0.5
-  ) |> 
+  ) |>
     epiworldR::agents_smallworld(n = n, k = 20, p = 0.0, d = FALSE) |>
     epiworldR::add_virus(
       epiworldR::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
-      ) |>
+    ) |>
     epiworldR::verbose_off()
 
 
   sirfast <- epiworldRdev::ModelSEIR(
     name                = "COVID-19",
-    prevalence          = 0.01, 
-    incubation_days     = 7, 
+    prevalence          = 0.01,
+    incubation_days     = 7,
     transmission_rate   = 0.6,
     recovery_rate       = 0.5
-  ) |> 
+  ) |>
     epiworldRdev::agents_smallworld(n = n, k = 20, p = 0, d = FALSE) |>
     epiworldRdev::add_virus(
       epiworldRdev::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
-      ) |>
+    ) |>
     epiworldRdev::verbose_off()
 
 
@@ -47,4 +47,3 @@ for (n in ns) {
 }
 
 saveRDS(ans, "playground/benchmark-seir.rds")
-

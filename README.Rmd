@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# epiworldR 
+# epiworldR
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
@@ -39,8 +39,8 @@ From the package's description:
 Current available models:
 
 ```{r print-models, echo=FALSE, results='asis'}
-models <- list.files(path="R/", pattern = "Model.*.R", full.names = FALSE) |>
-  gsub(pattern = "(Model.*)\\.R", replacement = "\\1") 
+models <- list.files(path = "R/", pattern = "Model.*.R", full.names = FALSE) |>
+  gsub(pattern = "(Model.*)\\.R", replacement = "\\1")
 
 sprintf("%i. `%s`\n", 1:length(models), models) |>
   cat()
@@ -80,8 +80,8 @@ sir <- ModelSIR(
   prevalence        = .01,
   transmission_rate = .7,
   recovery          = .3
-  ) |>
-  # Adding a Small world population 
+) |>
+  # Adding a Small world population
   agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
   # Running the model for 50 days
   run(ndays = 50, seed = 1912)
@@ -104,22 +104,22 @@ The SEIR model is similar to the SIR model but includes an exposed state. Here, 
 ```{r seir-conn}
 model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
-  prevalence          = 0.01, 
+  prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 10, 
-  incubation_days     = 7, 
+  contact_rate        = 10,
+  incubation_days     = 7,
   transmission_rate   = 0.1,
-  recovery_rate       = 1/7
+  recovery_rate       = 1 / 7
 ) |> add_virus(
-    virus(
-      name = "COVID-19",
-      prevalence = 0.01,
-      as_proportion = TRUE,
-      prob_infecting = 0.01,
-      recovery_rate = 0.6,
-      prob_death = 0.5,
-      incubation = 7
-    ))
+  virus(
+    name = "COVID-19",
+    prevalence = 0.01,
+    as_proportion = TRUE,
+    prob_infecting = 0.01,
+    recovery_rate = 0.6,
+    prob_death = 0.5,
+    incubation = 7
+))
 
 set.seed(132)
 run(model_seirconn, ndays = 100)
@@ -141,9 +141,9 @@ head(plot_generation_time(model_seirconn))
 
 ## SIR Logit
 
-This model provides a more complex transmission and recovery pattern based 
+This model provides a more complex transmission and recovery pattern based
 on agents' features. With it, we can reflect co-morbidities that could change
-the probability of infection and recovery. Here, we simulate a population 
+the probability of infection and recovery. Here, we simulate a population
 including a dataset with two features: an intercept and a binary variable
 `Female`. The probability of infection and recovery are functions of the intercept and
 the `Female` variables. The following code simulates a population of 100,000 agents
@@ -160,7 +160,7 @@ n <- 100000
 X <- cbind(
   Intercept = 1,
   Female    = sample.int(2, n, replace = TRUE) - 1
-  )
+)
 
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
@@ -170,7 +170,7 @@ model_logit <- ModelSIRLogit(
   "covid2",
   data = X,
   coefs_infect      = coef_infect,
-  coefs_recover     = coef_recover, 
+  coefs_recover     = coef_recover,
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
@@ -191,7 +191,7 @@ rn <- get_reproductive_number(model_logit)
 (table(
   X[, "Female"],
   (1:n %in% rn$source)
-) |> prop.table())[,2]
+) |> prop.table())[, 2]
 
 # Looking into the agents
 get_agents(model_logit)
@@ -208,11 +208,11 @@ sir <- ModelSIR(
   prevalence     = .01,
   transmission_rate = .5,
   recovery       = .5
-  ) |>
-    # Adding a Small world population 
-    agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
-    # Running the model for 50 days
-    run(ndays = 50, seed = 1912)
+) |>
+  # Adding a Small world population
+  agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
+  # Running the model for 50 days
+  run(ndays = 50, seed = 1912)
 
 # Transmission network
 net <- get_transmissions(sir)
@@ -221,10 +221,10 @@ net <- get_transmissions(sir)
 library(epiworldR)
 library(netplot)
 x <- igraph::graph_from_edgelist(
-  as.matrix(net[,2:3]) + 1
-  )
+  as.matrix(net[, 2:3]) + 1
+)
 
-nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
+nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex = TRUE)
 ```
 
 ## Multiple simulations
@@ -238,7 +238,7 @@ model_sir <- ModelSIRCONN(
   n = 1000,
   contact_rate = 2,
   transmission_rate = 0.9, recovery_rate = 0.1
-  )
+)
 
 # Generating a saver
 saver <- make_saver("total_hist", "reproductive")
@@ -295,5 +295,5 @@ You may want to check out other R packages for agent-based modeling: [`ABM`](htt
 [`RNetLogo`](https://cran.r-project.org/package=RNetLogo){target="_blank"}.
 
 ## Code of Conduct
-  
+
 The epiworldR project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

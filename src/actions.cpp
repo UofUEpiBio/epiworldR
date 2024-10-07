@@ -28,7 +28,7 @@ SEXP globalevent_tool_logit_cpp(
     cpp11::external_pointer<GlobalEvent<int>> ptr(
         new GlobalEvent<int>(action, name, day)
     );
-    
+
     return ptr;
 
 }
@@ -45,11 +45,11 @@ SEXP globalevent_tool_cpp(
         *cpp11::external_pointer<Tool<int>>(tool),
         prob
     ));
-    
+
     cpp11::external_pointer<GlobalEvent<int>> ptr(
         new GlobalEvent<int>(action, name, day)
     );
-    
+
     return ptr;
 
 }
@@ -66,11 +66,11 @@ SEXP globalevent_set_param_cpp(
         param,
         value
     ));
-    
+
     cpp11::external_pointer<GlobalEvent<int>> ptr(
         new GlobalEvent<int>(action, name, day)
     );
-    
+
     return ptr;
 
 }
@@ -79,13 +79,13 @@ SEXP globalevent_set_param_cpp(
 SEXP print_global_action_cpp(
     SEXP action
 ) {
-  
+
   external_pointer<GlobalEvent<int>> actionptr(action);
-  
+
   actionptr->print();
-  
+
   return action;
-  
+
 }
 
 
@@ -94,14 +94,14 @@ SEXP add_globalevent_cpp(
     SEXP model,
     SEXP action
 ) {
-  
+
   external_pointer<Model<int>> modelptr(model);
   external_pointer<GlobalEvent<int>> actionptr(action);
-  
+
   modelptr->add_globalevent(*actionptr);
-  
+
   return model;
-  
+
 }
 
 [[cpp11::register]]
@@ -109,13 +109,13 @@ SEXP rm_globalevent_cpp(
     SEXP model,
     std::string name
 ) {
-  
+
   external_pointer<Model<int>> modelptr(model);
-  
+
   modelptr->rm_globalevent(name);
-  
+
   return model;
-  
+
 }
 
 [[cpp11::register]]
@@ -124,24 +124,23 @@ SEXP globalevent_fun_cpp(
     std::string name,
     int day
     ) {
-  
+
   GlobalFun<int> fun_call = [fun](Model<int> * model) -> void {
-    
+
     cpp11::external_pointer<Model<int>> modelptr(model, false);
 
     sexp modelptrs(modelptr);
     modelptrs.attr("class") = "epiworld_model";
 
     fun(modelptr);
-    
+
     return;
 
   };
-  
+
   return external_pointer<GlobalEvent<int>>(
     new GlobalEvent<int>(fun_call, name, day)
   );
-  
-  
-}
 
+
+}

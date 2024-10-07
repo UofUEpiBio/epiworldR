@@ -2,7 +2,7 @@
 #' @description
 #' Starting version 0.0-4, epiworld changed how it refered to "actions."
 #' Following more traditional ABMs, actions are now called "events."
-#' 
+#'
 #' @param ... Arguments to be passed to the new function.
 #' @param model Model object of class `epiworld_model`.
 #' @param tool Tool object of class `epiworld_tool`.
@@ -10,8 +10,8 @@
 #' @name epiworldR-deprecated
 NULL
 
-#' @param n Deprecated. 
-#' @export 
+#' @param n Deprecated.
+#' @export
 #' @rdname epiworldR-deprecated
 add_tool_n <- function(model, tool, n) {
 
@@ -24,12 +24,12 @@ add_tool_n <- function(model, tool, n) {
       as_proportion = TRUE
     )
   )
-  
+
   add_tool(model, tool)
 
 }
 
-#' @export 
+#' @export
 #' @rdname epiworldR-deprecated
 add_virus_n <- function(model, virus, n) {
 
@@ -40,7 +40,7 @@ add_virus_n <- function(model, virus, n) {
     distfun = distribute_virus_randomly(
       prevalence = n,
       as_proportion = TRUE
-      )
+    )
   )
 
   add_virus(model, virus)

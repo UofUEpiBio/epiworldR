@@ -12,7 +12,7 @@ on:
 
 name: R-CMD-check-final
 
-env: 
+env:
   GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -82,7 +82,7 @@ jobs:
           name: epiworldR-built-package-${{ matrix.config.os }}-${{ matrix.config.r }}
           path: epiworldR_*.tar.gz
           retention-days: 7
-          
+
   epiworldShiny:
     runs-on: ubuntu-latest
     container: rocker/tidyverse:4.4.0
@@ -98,7 +98,7 @@ jobs:
         run: |
           install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
-      
+
       - name: Check the package
         run: |
           R CMD build .
@@ -118,11 +118,7 @@ jobs:
         run: |
           install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
-      
+
       - name: Check the package
         run: |
           R CMD check --no-manual epiworldRShiny_*tar.gz
-
-        
-          
-

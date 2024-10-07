@@ -10,31 +10,31 @@ for (n in ns) {
 
   sir <- epiworldR::ModelSEIRCONN(
     name                = "COVID-19",
-    prevalence          = 0.01, 
+    prevalence          = 0.01,
     n                   = n,
-    contact_rate        = 4, 
-    incubation_days     = 7, 
+    contact_rate        = 4,
+    incubation_days     = 7,
     transmission_rate   = 0.6,
     recovery_rate       = 0.5
-  ) |> 
+  ) |>
     epiworldR::add_virus(
       epiworldR::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
-      ) |>
+    ) |>
     epiworldR::verbose_off()
 
 
   sirfast <- epiworldRfaster::ModelSEIRCONN(
     name                = "COVID-19",
-    prevalence          = 0.01, 
+    prevalence          = 0.01,
     n                   = n,
-    contact_rate        = 4, 
-    incubation_days     = 7, 
+    contact_rate        = 4,
+    incubation_days     = 7,
     transmission_rate   = 0.6,
     recovery_rate       = 0.5
-  ) |> 
+  ) |>
     epiworldRfaster::add_virus(
       epiworldRfaster::virus("COVID-19-beta", 0.01, 0.6, 0.5, 7), .2
-      ) |>
+    ) |>
     epiworldRfaster::verbose_off()
 
 
@@ -49,4 +49,3 @@ for (n in ns) {
 }
 
 saveRDS(ans, "playground/benchmark-seirconn.rds")
-

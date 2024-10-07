@@ -105,8 +105,8 @@ sir <- ModelSIR(
   prevalence        = .01,
   transmission_rate = .7,
   recovery          = .3
-  ) |>
-  # Adding a Small world population 
+) |>
+  # Adding a Small world population
   agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
   # Running the model for 50 days
   run(ndays = 50, seed = 1912)
@@ -114,6 +114,9 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 sir
 #> ________________________________________________________________________________
@@ -130,39 +133,42 @@ summary(sir)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
-#> 
+#>
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
 #> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 134.00ms
-#> Last run speed      : 37.07 million agents x day / second
+#> Last run elapsed t  : 62.00ms
+#> Last run speed      : 79.47 million agents x day / second
 #> Rewiring            : off
-#> 
+#>
 #> Global events:
 #>  (none)
-#> 
+#>
 #> Virus(es):
 #>  - COVID-19
-#> 
+#>
 #> Tool(s):
 #>  (none)
-#> 
+#>
 #> Model parameters:
 #>  - Recovery rate     : 0.3000
 #>  - Transmission rate : 0.7000
-#> 
+#>
 #> Distribution of the population at time 50:
 #>   - (0) Susceptible :  99000 -> 822
 #>   - (1) Infected    :   1000 -> 415
 #>   - (2) Recovered   :      0 -> 98763
-#> 
+#>
 #> Transition Probabilities:
 #>  - Susceptible  0.91  0.09  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
+```
+
+``` r
 plot(sir)
 ```
 
@@ -185,22 +191,22 @@ agents can transmit the disease to any other agent:
 ``` r
 model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
-  prevalence          = 0.01, 
+  prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 10, 
-  incubation_days     = 7, 
+  contact_rate        = 10,
+  incubation_days     = 7,
   transmission_rate   = 0.1,
-  recovery_rate       = 1/7
+  recovery_rate       = 1 / 7
 ) |> add_virus(
-    virus(
-      name = "COVID-19",
-      prevalence = 0.01,
-      as_proportion = TRUE,
-      prob_infecting = 0.01,
-      recovery_rate = 0.6,
-      prob_death = 0.5,
-      incubation = 7
-    ))
+  virus(
+    name = "COVID-19",
+    prevalence = 0.01,
+    as_proportion = TRUE,
+    prob_infecting = 0.01,
+    recovery_rate = 0.6,
+    prob_death = 0.5,
+    incubation = 7
+))
 
 set.seed(132)
 run(model_seirconn, ndays = 100)
@@ -208,47 +214,50 @@ run(model_seirconn, ndays = 100)
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 summary(model_seirconn)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
-#> 
+#>
 #> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
 #> Population size     : 10000
 #> Agents' data        : (none)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 81.00ms
-#> Last run speed      : 12.21 million agents x day / second
+#> Last run elapsed t  : 15.00ms
+#> Last run speed      : 64.01 million agents x day / second
 #> Rewiring            : off
-#> 
+#>
 #> Global events:
 #>  - Update infected individuals (runs daily)
-#> 
+#>
 #> Virus(es):
 #>  - COVID-19
 #>  - COVID-19
-#> 
+#>
 #> Tool(s):
 #>  (none)
-#> 
+#>
 #> Model parameters:
 #>  - Avg. Incubation days : 7.0000
 #>  - Contact rate         : 10.0000
 #>  - Prob. Recovery       : 0.1429
 #>  - Prob. Transmission   : 0.1000
-#> 
+#>
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  9800 -> 13
+#>   - (0) Susceptible :  9800 -> 11
 #>   - (1) Exposed     :   200 -> 0
-#>   - (2) Infected    :     0 -> 1
+#>   - (2) Infected    :     0 -> 3
 #>   - (3) Recovered   :     0 -> 9986
-#> 
+#>
 #> Transition Probabilities:
 #>  - Susceptible  0.94  0.06  0.00  0.00
-#>  - Exposed      0.00  0.86  0.14  0.00
-#>  - Infected     0.00  0.00  0.85  0.15
+#>  - Exposed      0.00  0.85  0.15  0.00
+#>  - Infected     0.00  0.00  0.86  0.14
 #>  - Recovered    0.00  0.00  0.00  1.00
 ```
 
@@ -269,25 +278,28 @@ head(plot(repnum))
 
 <img src="man/figures/README-seir-conn-figures-2.png" width="100%" />
 
-    #>   virus_id    virus date      avg  n       sd  lb   ub
-    #> 1        0 COVID-19    0 5.615385 91 4.832228 1.0 17.0
-    #> 2        0 COVID-19    2 5.000000  9 3.605551 0.2 10.4
-    #> 3        0 COVID-19    3 6.000000 13 5.049752 0.0 13.0
-    #> 4        0 COVID-19    4 4.592593 27 3.885469 0.0 12.7
-    #> 5        0 COVID-19    5 4.846154 26 4.920913 0.0 14.5
-    #> 6        0 COVID-19    6 4.236842 38 3.241906 0.0 12.0
+    #>   virus_id    virus date      avg  n       sd    lb     ub
+    #> 1        0 COVID-19    0 5.769231 91 5.455022 1.000 20.750
+    #> 2        0 COVID-19    2 6.400000 10 4.880801 0.450 14.875
+    #> 3        0 COVID-19    3 5.166667 18 4.422536 0.425 13.000
+    #> 4        0 COVID-19    4 4.659091 44 3.784566 0.000 12.850
+    #> 5        0 COVID-19    5 5.205882 34 3.273210 0.000 12.175
+    #> 6        0 COVID-19    6 3.137255 51 2.713077 0.000  8.750
 
-    head(plot_generation_time(model_seirconn))
+``` r
+
+head(plot_generation_time(model_seirconn))
+```
 
 <img src="man/figures/README-seir-conn-figures-3.png" width="100%" />
 
     #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    2 7.125000  8 2.474874      2.7    9.825 COVID-19        0
-    #> 2    3 8.090909 11 7.203534      2.0   23.750 COVID-19        0
-    #> 3    4 6.708333 24 4.338695      2.0   16.425 COVID-19        0
-    #> 4    5 7.428571 21 4.738897      2.0   15.500 COVID-19        0
-    #> 5    6 7.628571 35 4.173345      2.0   15.300 COVID-19        0
-    #> 6    7 6.921053 38 4.675304      2.0   16.150 COVID-19        0
+    #> 1    2 4.444444  9 2.185813      2.2    8.000 COVID-19        0
+    #> 2    3 7.411765 17 3.922034      2.4   15.000 COVID-19        0
+    #> 3    4 8.538462 39 7.100208      2.0   22.000 COVID-19        0
+    #> 4    5 6.312500 32 3.905641      2.0   13.225 COVID-19        0
+    #> 5    6 7.200000 40 4.052223      2.0   15.100 COVID-19        0
+    #> 6    7 7.660000 50 4.461216      2.0   17.000 COVID-19        0
 
 ## SIR Logit
 
@@ -311,7 +323,7 @@ n <- 100000
 X <- cbind(
   Intercept = 1,
   Female    = sample.int(2, n, replace = TRUE) - 1
-  )
+)
 
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
@@ -321,7 +333,7 @@ model_logit <- ModelSIRLogit(
   "covid2",
   data = X,
   coefs_infect      = coef_infect,
-  coefs_recover     = coef_recover, 
+  coefs_recover     = coef_recover,
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
@@ -338,6 +350,9 @@ run(model_logit, 50)
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 plot(model_logit)
 ```
 
@@ -351,9 +366,12 @@ rn <- get_reproductive_number(model_logit)
 (table(
   X[, "Female"],
   (1:n %in% rn$source)
-) |> prop.table())[,2]
-#>       0       1 
+) |> prop.table())[, 2]
+#>       0       1
 #> 0.12984 0.14201
+```
+
+``` r
 
 # Looking into the agents
 get_agents(model_logit)
@@ -386,15 +404,18 @@ sir <- ModelSIR(
   prevalence     = .01,
   transmission_rate = .5,
   recovery       = .5
-  ) |>
-    # Adding a Small world population 
-    agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
-    # Running the model for 50 days
-    run(ndays = 50, seed = 1912)
+) |>
+  # Adding a Small world population
+  agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
+  # Running the model for 50 days
+  run(ndays = 50, seed = 1912)
 #> _________________________________________________________________________
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
+```
+
+``` r
 
 # Transmission network
 net <- get_transmissions(sir)
@@ -403,11 +424,14 @@ net <- get_transmissions(sir)
 library(epiworldR)
 library(netplot)
 #> Loading required package: grid
-x <- igraph::graph_from_edgelist(
-  as.matrix(net[,2:3]) + 1
-  )
+```
 
-nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex=TRUE)
+``` r
+x <- igraph::graph_from_edgelist(
+  as.matrix(net[, 2:3]) + 1
+)
+
+nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex = TRUE)
 ```
 
 <img src="man/figures/README-transmission-net-1.png" width="100%" />
@@ -428,7 +452,7 @@ model_sir <- ModelSIRCONN(
   n = 1000,
   contact_rate = 2,
   transmission_rate = 0.9, recovery_rate = 0.1
-  )
+)
 
 # Generating a saver
 saver <- make_saver("total_hist", "reproductive")
@@ -436,11 +460,14 @@ saver <- make_saver("total_hist", "reproductive")
 # Running and printing
 # Notice the use of nthread = 2 to run the simulations in parallel
 run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
-#> Starting multiple runs (50) using 2 thread(s)
+#> Starting multiple runs (50)
 #> _________________________________________________________________________
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
+```
+
+``` r
 
 # Retrieving the results
 ans <- run_multiple_get_results(model_sir)
@@ -450,17 +477,23 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    977
-#> 5       1    1        1    Infected     22
-#> 6       1    1        1   Recovered      1
+#> 4       1    1        1 Susceptible    971
+#> 5       1    1        1    Infected     29
+#> 6       1    1        1   Recovered      0
+```
+
+``` r
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    976                    9  0
-#> 2       1        0 COVID-19    644                    9  0
-#> 3       1        0 COVID-19    608                    9  0
-#> 4       1        0 COVID-19    314                    9  0
-#> 5       1        0 COVID-19     41                    9  0
-#> 6       1        0 COVID-19     32                    9  0
+#> 1       1        0 COVID-19    943                    9  0
+#> 2       1        0 COVID-19     40                    9  0
+#> 3       1        0 COVID-19      6                    9  0
+#> 4       1        0 COVID-19    973                    8  0
+#> 5       1        0 COVID-19    495                    9  0
+#> 6       1        0 COVID-19    480                    8  0
+```
+
+``` r
 
 plot(ans$reproductive)
 ```
@@ -482,16 +515,16 @@ If you use `epiworldR` in your research, please cite it as follows:
 ``` r
 citation("epiworldR")
 #> To cite epiworldR in publications use:
-#> 
+#>
 #>   Meyer, Derek and Vega Yon, George (2023). epiworldR: Fast Agent-Based
 #>   Epi Models. Journal of Open Source Software, 8(90), 5781,
 #>   https://doi.org/10.21105/joss.05781
-#> 
+#>
 #> And the actual R package:
-#> 
-#>   Meyer D, Vega Yon G (2024). _epiworldR: Fast Agent-Based Epi Models_.
+#>
+#>   Meyer D, Vega Yon G (????). _epiworldR: Fast Agent-Based Epi Models_.
 #>   R package version 0.3-2, <https://github.com/UofUEpiBio/epiworldR>.
-#> 
+#>
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set
 #> 'options(citation.bibtex.max=999)'.

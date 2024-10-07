@@ -13,88 +13,85 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5, 
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
   fig.align = "center"
 )
 ```
 
 # Introduction
-The purpose of the "run_multiple" function is to run a specified number of 
+The purpose of the "run_multiple" function is to run a specified number of
 simulations using the same model object. That is, this function makes it
 possible to compare model results across several separate and repeated
-simulations. 
+simulations.
 
-# Example: Simulating a SEIRCONN Model 50 Times 
+# Example: Simulating a SEIRCONN Model 50 Times
 
 ## Setup and Running Model
 
 To use the "run_multiple" function in epiworld, create your epimodel of choice;
-in this case, the example uses a SEIRCONN model for COVID-19, 100000 people, 
-an initial prevalence of 0.0001 (0.01%), a contact rate of 2, probability of 
-transmission 0.5, a total of 7 incubation days, and probability of recovery 
-$\frac{1}{3}$. 
+in this case, the example uses a SEIRCONN model for COVID-19, 100000 people,
+an initial prevalence of 0.0001 (0.01%), a contact rate of 2, probability of
+transmission 0.5, a total of 7 incubation days, and probability of recovery
+$\frac{1}{3}$.
 
 ```{r sirconn-setup}
 library(epiworldR)
 model_seirconn <- ModelSEIRCONN(
   name              = "COVID-19",
-  n                 = 10000, 
-  prevalence        = 0.0001, 
+  n                 = 10000,
+  prevalence        = 0.0001,
   contact_rate      = 2,
   transmission_rate = 0.5,
   incubation_days   = 7,
-  recovery_rate     = 1/3
-  )
-
+  recovery_rate     = 1 / 3
+)
 ```
 
 ## Generating a Saver
 
-Next, generate a saver for the purpose of extracting the "total_hist" and 
-"reproductive" information from the model object. Now, use the 
-"run_multiple" function with the model object, number of desired days to run 
-the simulation, number of simulations to run, and number of threads for 
-parallel computing. 
+Next, generate a saver for the purpose of extracting the "total_hist" and
+"reproductive" information from the model object. Now, use the
+"run_multiple" function with the model object, number of desired days to run
+the simulation, number of simulations to run, and number of threads for
+parallel computing.
 
 ```{r saver-generation}
 # Generating a saver
 saver <- make_saver("total_hist", "reproductive")
 # Running and printing
 run_multiple(model_seirconn, ndays = 50, nsims = 50, saver = saver, nthreads = 2)
-
 ```
 
-Using the "run_multiple_get_results" function, extract the results from the 
-model object that was simulated 50 times for comparison across simulations. 
+Using the "run_multiple_get_results" function, extract the results from the
+model object that was simulated 50 times for comparison across simulations.
 
 ```{r retrieving results}
 # Retrieving the results
 ans <- run_multiple_get_results(model_seirconn)
 head(ans$total_hist)
 head(ans$reproductive)
-
 ```
 
 ## Plotting
 
-To plot the epicurves and reproductive numbers over time using boxplots, extract 
-the results from the model object using "run_multiple_get_results". For this 
-example, the dates are filtered to be less than or equal to 20 to observe the 
-epicurves in the first 20 days. Notice each boxplot in the below table 
-represents the observed values from each of the 50 simulations for each date. 
+To plot the epicurves and reproductive numbers over time using boxplots, extract
+the results from the model object using "run_multiple_get_results". For this
+example, the dates are filtered to be less than or equal to 20 to observe the
+epicurves in the first 20 days. Notice each boxplot in the below table
+represents the observed values from each of the 50 simulations for each date.
 
 ```{r plotting seirconn epicurves}
 seirconn_50 <- run_multiple_get_results(model_seirconn)$total_hist
-seirconn_50 <- seirconn_50[seirconn_50$date <= 20,]
+seirconn_50 <- seirconn_50[seirconn_50$date <= 20, ]
 plot(seirconn_50)
 ```
-  
-To view the a plot of the reproductive number over all 50 days for each of the 
-50 simulations, store the reproductive results to a new object using 
-"run_multiple_get_results", then plot using the "boxplot" function. Notice 
+
+To view the a plot of the reproductive number over all 50 days for each of the
+50 simulations, store the reproductive results to a new object using
+"run_multiple_get_results", then plot using the "boxplot" function. Notice
 each source exposure date displays a boxplot representing the distribution
 of reproductive numbers across all 50 simulations. As expected, the reproductive
-number on average, decreases over time. 
+number on average, decreases over time.
 
 ```{r reproductive number plot}
 seirconn_50_r <- run_multiple_get_results(model_seirconn)$reproductive
@@ -105,7 +102,4 @@ plot(seirconn_50_r)
 #         ylab = "rt",
 #         border = "black",
 #         las = 2)
-
 ```
-
-

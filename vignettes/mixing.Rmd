@@ -40,7 +40,7 @@ This matrix represents the probability of an agent from population $i$ interacti
 
 We will build this model using the `entity` class in epiworld. The following code chunk instantiates three entities and the contact matrix.
 
-```{r entity-matrix-setup} 
+```{r entity-matrix-setup}
 library(epiworldR)
 
 e1 <- entity("Population 1", 3e3, as_proportion = FALSE)
@@ -71,7 +71,7 @@ flu_model <- ModelSEIRMixing(
   contact_matrix    = cmatrix
 )
 
-# Adding the entities 
+# Adding the entities
 flu_model |>
   add_entity(e1) |>
   add_entity(e2) |>
