@@ -4,9 +4,9 @@ Title: Fast Agent-Based Epi Models
 Version: 0.3-2
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut","cre"),
+  email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
   person(given="Derek", family="Meyer", role=c("aut"), 
   email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),
-  email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
   person(given="Susan", family="Holmes", role = "rev", comment =
          c(what = "JOSS reviewer", ORCID="0000-0002-2208-8168")),
   person(given="Abinash", family="Satapathy", role = "rev", comment =
