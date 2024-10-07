@@ -46,4 +46,4 @@ jobs:
         shell: Rscript {0}
 
       - name: Run pre-commit hooks
-        bash: pre-commit run --all-files
+        run: pre-commit run --all-files
