@@ -65,7 +65,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2024-09-20</h4>
+            <h4 data-toc-skip class="date">2024-10-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/run-multiple.Rmd" class="external-link"><code>vignettes/run-multiple.Rmd</code></a></small>
       <div class="d-none name"><code>run-multiple.Rmd</code></div>
@@ -97,13 +97,13 @@ probability of recovery
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
 <span><span class="va">model_seirconn</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ModelSEIRCONN.html">ModelSEIRCONN</a></span><span class="op">(</span></span>
 <span>  name              <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
-<span>  n                 <span class="op">=</span> <span class="fl">10000</span>, </span>
-<span>  prevalence        <span class="op">=</span> <span class="fl">0.0001</span>, </span>
+<span>  n                 <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>  prevalence        <span class="op">=</span> <span class="fl">0.0001</span>,</span>
 <span>  contact_rate      <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  incubation_days   <span class="op">=</span> <span class="fl">7</span>,</span>
-<span>  recovery_rate     <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
+<span>  recovery_rate     <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="generating-a-saver">Generating a Saver<a class="anchor" aria-label="anchor" href="#generating-a-saver"></a>
@@ -157,7 +157,7 @@ days. Notice each boxplot in the below table represents the observed
 values from each of the 50 simulations for each date.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span>
-<span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">seirconn_50</span><span class="op">[</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>,<span class="op">]</span></span>
+<span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">seirconn_50</span><span class="op">[</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">)</span></span></code></pre></div>
 <p><img src="run-multiple_files/figure-html/plotting%20seirconn%20epicurves-1.png" width="80%" style="display: block; margin: auto;"></p>
 <p>To view the a plot of the reproductive number over all 50 days for
@@ -187,7 +187,7 @@ over time.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Derek Meyer, George Vega Yon, Centers for Disease Control and Prevention.</p>
+  <p>Developed by George Vega Yon, Derek Meyer, Centers for Disease Control and Prevention.</p>
 </div>
 
 <div class="pkgdown-footer-right">
