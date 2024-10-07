@@ -3,9 +3,9 @@ Type: Package
 Title: Fast Agent-Based Epi Models
 Version: 0.3-2
 Authors@R: c(
-  person("Derek", "Meyer", role=c("aut","cre"), 
+  person("George", "Vega Yon", role=c("aut","cre"),
+  person("Derek", "Meyer", role=c("aut"), 
   email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),
-  person("George", "Vega Yon", role=c("aut"),
   email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
   person("Susan", "Holmes", role = "rev", comment =
          c(what = "JOSS reviewer", ORCID="0000-0002-2208-8168")),
