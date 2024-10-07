@@ -3,15 +3,15 @@ repos:
     rev: v3.2.0
     hooks:
     -   id: trailing-whitespace
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
     -   id: end-of-file-fixer
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
     -   id: check-yaml
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
     -   id: check-added-large-files
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
     -   id: detect-private-key
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
 
 -   repo: https://github.com/lorenzwalthert/precommit
     rev: v0.4.2
@@ -23,9 +23,9 @@ repos:
             '--ignore-stop="^# styler: on$"',
             '--strict=FALSE'
           ]
-        exclude: ^(inst/|man/|src/cpp11\.cpp|playgroud/|R/cpp11\.R|README\.md)
+        exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
       - id: readme-rmd-rendered
       # - id: lintr
       #   args: [--warn_only]
       #   verbose: true
-      #   exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11\.R|README\.md)
+      #   exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
