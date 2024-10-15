@@ -40,8 +40,8 @@ infection.}
 Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model}{wiki})
 }
 \examples{
-model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01, 
-                     transmission_rate = 0.9, recovery_rate = 0.1)
+model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01,
+  transmission_rate = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
 agents_smallworld(
@@ -50,8 +50,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_sis, ndays = 100, seed = 1912)
 model_sis

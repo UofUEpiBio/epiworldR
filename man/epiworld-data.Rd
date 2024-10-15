@@ -193,7 +193,7 @@ seirconn <- ModelSEIRCONN(
   name              = "Disease",
   n                 = 10000,
   prevalence        = 0.1,
-  contact_rate      = 2.0, 
+  contact_rate      = 2.0,
   transmission_rate = 0.8,
   incubation_days   = 7.0,
   recovery_rate     = 0.3
@@ -204,12 +204,12 @@ set.seed(937)
 run(seirconn, 50)
 
 # Retrieving the transition probability
-get_transition_probability(seirconn) 
+get_transition_probability(seirconn)
 
-# Retrieving date, state, and counts dataframe including any added tools 
+# Retrieving date, state, and counts dataframe including any added tools
 get_hist_tool(seirconn)
 
-# Retrieving overall date, state, and counts dataframe 
+# Retrieving overall date, state, and counts dataframe
 head(get_hist_total(seirconn))
 
 # Retrieving date, state, and counts dataframe by variant
@@ -225,7 +225,7 @@ t_hist <- get_hist_transition_matrix(seirconn)
 head(t_hist)
 
 # And turn it into an array
-as.array(t_hist)[,,1:3]
+as.array(t_hist)[, , 1:3]
 
 # We cam also get (and plot) the incidence, as well as
 # the generation time

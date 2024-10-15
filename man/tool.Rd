@@ -225,13 +225,13 @@ epitool <- tool(
   as_proportion = TRUE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
-  recovery_enhancer = .5, 
+  recovery_enhancer = .5,
   death_reduction = .9
 )
 
 epitool
 
-set_name_tool(epitool, 'Pfizer') # Assigning name to the tool
+set_name_tool(epitool, "Pfizer") # Assigning name to the tool
 get_name_tool(epitool) # Returning the name of the tool
 add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
@@ -246,21 +246,21 @@ add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
 
 # Adjusting probabilities due to tool
-set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction 
+set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction
 set_transmission_reduction(epitool, 0.2) # Transmission reduction
 set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
 set_death_reduction(epitool, 0.05) # Probability reduction of death
 
-rm_tool(model_sirconn, 0) 
+rm_tool(model_sirconn, 0)
 add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 
 
 # Using the logit function --------------
 sir <- ModelSIR(
-  name = "COVID-19", prevalence = 0.01, 
+  name = "COVID-19", prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1
-  )
+)
 
 # Adding a small world population
 agents_smallworld(
@@ -303,7 +303,7 @@ tfun <- tool_fun_logit(
 )
 
 # The infection prob is lower
-hist(plogis(dat \%*\% rbind(.5,1)))
+hist(plogis(dat \%*\% rbind(.5, 1)))
 
 tfun # printing
 
@@ -312,15 +312,16 @@ set_susceptibility_reduction_fun(
   tool  = get_tool(sir, 0),
   model = sir,
   tfun  = tfun
-  )
-  
+)
+
 run(sir, ndays = 50, seed = 11)
 hist_1 <- get_hist_total(sir)
 
 op <- par(mfrow = c(1, 2))
-plot(hist_0); abline(v = 30)
-plot(hist_1); abline(v = 30)
+plot(hist_0)
+abline(v = 30)
+plot(hist_1)
+abline(v = 30)
 par(op)
-
 
 }

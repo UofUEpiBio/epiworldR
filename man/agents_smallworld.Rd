@@ -113,15 +113,15 @@ provided, the agent will be updated with the default values of the virus/tool.
 \examples{
 
 # Initializing SIR model with agents_smallworld
-sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, transmission_rate = 0.9, 
-                recovery_rate = 0.1)
+sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, transmission_rate = 0.9,
+  recovery_rate = 0.1)
 agents_smallworld(
-   sir,
-   n = 1000, 
-   k = 5,
-   d = FALSE,
-   p = .01
- )
+  sir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = .01
+)
 run(sir, ndays = 100, seed = 1912)
 sir
 
@@ -132,7 +132,7 @@ head(net)
 # Simulating a bernoulli graph
 set.seed(333)
 n <- 1000
-g <- matrix(runif(n ^ 2) < .01, nrow = n)
+g <- matrix(runif(n^2) < .01, nrow = n)
 diag(g) <- FALSE
 el <- which(g, arr.ind = TRUE) - 1L
 
@@ -141,8 +141,8 @@ el <- which(g, arr.ind = TRUE) - 1L
 sir <- ModelSIR("COVID-19", .01, .8, .3)
 agents_from_edgelist(
   sir,
-  source = el[,1],
-  target = el[,2],
+  source = el[, 1],
+  target = el[, 2],
   size   = n,
   directed = TRUE
 )

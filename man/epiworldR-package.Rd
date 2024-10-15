@@ -19,11 +19,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
+\strong{Maintainer}: George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
 
 Authors:
 \itemize{
-  \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
+  \item Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
 }
 
 Other contributors:

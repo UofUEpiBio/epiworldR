@@ -67,7 +67,7 @@ model_sirdconn <- ModelSIRDCONN(
   recovery_rate       = 0.5,
   death_rate          = 0.1
 )
-  
+
 # Running and printing
 run(model_sirdconn, ndays = 100, seed = 1912)
 model_sirdconn
