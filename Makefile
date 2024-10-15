@@ -46,7 +46,7 @@ clean:
 	sed -i -E 's/^library\(epiworldRdev\)/library(epiworldR)/g' README.*
 
 docs:
-	Rscript --vanilla -e 'roxygen2::roxigenize()'
+	Rscript --vanilla -e 'roxygen2::roxygenize()'
 
 .PHONY: build update check clean docs docker-debug
 
