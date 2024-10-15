@@ -14,4 +14,3 @@ SEXP LFMCMC_cpp() {
 
     return lfmcmc_ptr;
 }
-
