@@ -220,6 +220,10 @@ ModelSEIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_
   .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix)
 }
 
+LFMCMC_cpp <- function() {
+  .Call(`_epiworldR_LFMCMC_cpp`)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }

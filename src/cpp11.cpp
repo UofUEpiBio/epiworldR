@@ -390,6 +390,13 @@ extern "C" SEXP _epiworldR_ModelSEIRMixing_cpp(SEXP name, SEXP n, SEXP prevalenc
     return cpp11::as_sexp(ModelSEIRMixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
   END_CPP11
 }
+// lfmcmc.cpp
+SEXP LFMCMC_cpp();
+extern "C" SEXP _epiworldR_LFMCMC_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(LFMCMC_cpp());
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -911,6 +918,7 @@ extern "C" SEXP _epiworldR_distribute_virus_to_set_cpp(SEXP agents_ids) {
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
+    {"_epiworldR_LFMCMC_cpp",                           (DL_FUNC) &_epiworldR_LFMCMC_cpp,                            0},
     {"_epiworldR_ModelDiffNet_cpp",                     (DL_FUNC) &_epiworldR_ModelDiffNet_cpp,                      8},
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},

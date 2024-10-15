@@ -8,8 +8,8 @@
 
 [[cpp11::register]]
 SEXP LFMCMC_cpp() {
-    cpp11::external_pointer<epiworld::LFMCMC<>> lfmcmc_ptr(
-        new epiworld::LFMCMC<>()
+    cpp11::external_pointer<epiworld::LFMCMC<std::vector< int >>> lfmcmc_ptr(
+        new epiworld::LFMCMC<std::vector< int >>()
     );
 
     return lfmcmc_ptr;
