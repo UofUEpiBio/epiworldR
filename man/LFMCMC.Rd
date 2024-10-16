@@ -2,6 +2,7 @@
 % Please edit documentation in R/LFMCMC.R
 \name{LFMCMC}
 \alias{LFMCMC}
+\alias{epiworld_lfmcmc}
 \alias{run.epiworld_lfmcmc}
 \alias{set_observed_data.epiworld_lfmcmc}
 \alias{set_proposal_fun.epiworld_lfmcmc}
@@ -12,7 +13,7 @@
 \usage{
 LFMCMC()
 
-\method{run}{epiworld_lfmcmc}(lfmcmc, params_init_, n_samples_, epsilon_)
+\method{run}{epiworld_lfmcmc}(model, params_init_, n_samples_, epsilon_)
 
 set_observed_data.epiworld_lfmcmc(lfmcmc, observed_data_)
 
@@ -25,7 +26,7 @@ set_summary_fun.epiworld_lfmcmc(lfmcmc, fun)
 set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
 }
 \arguments{
-\item{lfmcmc}{LFMCMC model}
+\item{model}{LFMCMC model}
 
 \item{params_init_}{Initial model parameters}
 
@@ -33,12 +34,16 @@ set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
 
 \item{epsilon_}{Epsilon parameter}
 
+\item{lfmcmc}{LFMCMC model}
+
 \item{observed_data_}{Observed data}
 
 \item{fun}{The LFMCMC kernel function}
 }
 \value{
-The model of class \code{epiworld_lfmcmc}
+\itemize{
+\item The \code{LFMCMC}function returns a model of class \link{epiworld_lfmcmc}.
+}
 
 The simulated model of class \code{epiworld_lfmcmc}.
 
@@ -54,4 +59,10 @@ The lfmcmc model with the kernel function added
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
+}
+\details{
+TODO: Detail LFMCMC
+}
+\examples{
+model_lfmcmc <- LFMCMC()
 }
