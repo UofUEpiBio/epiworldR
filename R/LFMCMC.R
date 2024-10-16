@@ -1,7 +1,13 @@
 #' Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 #'
 #'
-#' @returns The model of class `epiworld_lfmcmc`
+#' @aliases epiworld_lfmcmc
+#' @details
+#' TODO: Detail LFMCMC
+#' @returns
+#' - The `LFMCMC`function returns a model of class [epiworld_lfmcmc].
+#' @examples
+#' model_lfmcmc <- LFMCMC()
 #' @export
 LFMCMC <- function() {
   structure(
@@ -11,14 +17,14 @@ LFMCMC <- function() {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
+#' @param model LFMCMC model
 #' @param params_init_ Initial model parameters
 #' @param n_samples_ Number of samples
 #' @param epsilon_ Epsilon parameter
 #' @returns The simulated model of class `epiworld_lfmcmc`.
 #' @export
-run.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
-  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_)
+run.epiworld_lfmcmc <- function(model, params_init_, n_samples_, epsilon_) {
+  run_lfmcmc_cpp(model, params_init_, n_samples_, epsilon_)
   invisible(lfmcmc)
 }
 
