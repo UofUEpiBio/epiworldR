@@ -39,16 +39,16 @@ SEXP run_lfmcmc_cpp(
     return lfmcmc;
 }
 
-
-// [[cpp11::register]]
-// SEXP set_observed_data_cpp(
-//     SEXP lfmcmc,
-//     TData_default & observed_data_
-// ) {
-//     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-//     lfmcmc_ptr->set_observed_data(observed_data_);
-//     return lfmcmc;
-// }
+// observed_data_ should be of type TData
+[[cpp11::register]]
+SEXP set_observed_data_cpp(
+    SEXP lfmcmc,
+    std::vector< int > observed_data_
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->set_observed_data(observed_data_);
+    return lfmcmc;
+}
 
 // [[cpp11::register]]
 // SEXP set_proposal_fun_cpp(

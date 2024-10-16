@@ -15,17 +15,11 @@ run.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
   invisible(lfmcmc)
 }
 
-# #' @export
-# run.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
-#   run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_)
-#   invisible(lfmcmc)
-# }
-
-# #' @export
-# set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
-#   set_observed_data_cpp(lfmcmc, observed_data_)
-#   invisible(lfmcmc)
-# }
+#' @export
+set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
+  set_observed_data_cpp(lfmcmc, observed_data_)
+  invisible(lfmcmc)
+}
 
 # #' @export
 # set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {

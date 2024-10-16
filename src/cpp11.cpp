@@ -404,6 +404,13 @@ extern "C" SEXP _epiworldR_run_lfmcmc_cpp(SEXP lfmcmc, SEXP params_init_, SEXP n
     return cpp11::as_sexp(run_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector<epiworld_double>>>(params_init_), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_samples_), cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(epsilon_)));
   END_CPP11
 }
+// lfmcmc.cpp
+SEXP set_observed_data_cpp(SEXP lfmcmc, std::vector< int > observed_data_);
+extern "C" SEXP _epiworldR_set_observed_data_cpp(SEXP lfmcmc, SEXP observed_data_) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_observed_data_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(observed_data_)));
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -1029,6 +1036,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_name_cpp",                         (DL_FUNC) &_epiworldR_set_name_cpp,                          2},
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},
+    {"_epiworldR_set_observed_data_cpp",                (DL_FUNC) &_epiworldR_set_observed_data_cpp,                 2},
     {"_epiworldR_set_param_cpp",                        (DL_FUNC) &_epiworldR_set_param_cpp,                         3},
     {"_epiworldR_set_prob_death_cpp",                   (DL_FUNC) &_epiworldR_set_prob_death_cpp,                    2},
     {"_epiworldR_set_prob_death_fun_cpp",               (DL_FUNC) &_epiworldR_set_prob_death_fun_cpp,                3},
