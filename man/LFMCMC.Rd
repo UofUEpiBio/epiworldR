@@ -2,10 +2,56 @@
 % Please edit documentation in R/LFMCMC.R
 \name{LFMCMC}
 \alias{LFMCMC}
-\title{LFMCMC}
+\alias{run.epiworld_lfmcmc}
+\alias{set_observed_data.epiworld_lfmcmc}
+\alias{set_proposal_fun.epiworld_lfmcmc}
+\alias{set_simulation_fun.epiworld_lfmcmc}
+\alias{set_summary_fun.epiworld_lfmcmc}
+\alias{set_kernel_fun.epiworld_lfmcmc}
+\title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC()
+
+\method{run}{epiworld_lfmcmc}(lfmcmc, params_init_, n_samples_, epsilon_)
+
+set_observed_data.epiworld_lfmcmc(lfmcmc, observed_data_)
+
+set_proposal_fun.epiworld_lfmcmc(lfmcmc, fun)
+
+set_simulation_fun.epiworld_lfmcmc(lfmcmc, fun)
+
+set_summary_fun.epiworld_lfmcmc(lfmcmc, fun)
+
+set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
+}
+\arguments{
+\item{lfmcmc}{LFMCMC model}
+
+\item{params_init_}{Initial model parameters}
+
+\item{n_samples_}{Number of samples}
+
+\item{epsilon_}{Epsilon parameter}
+
+\item{observed_data_}{Observed data}
+
+\item{fun}{The LFMCMC kernel function}
+}
+\value{
+The model of class \code{epiworld_lfmcmc}
+
+The simulated model of class \code{epiworld_lfmcmc}.
+
+The lfmcmc model with the observed data added
+
+The lfmcmc model with the proposal function added
+
+The lfmcmc model with the simulation function added
+
+The lfmcmc model with the summary function added
+
+The lfmcmc model with the kernel function added
 }
 \description{
-LFMCMC
+Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 }
