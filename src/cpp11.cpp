@@ -397,6 +397,13 @@ extern "C" SEXP _epiworldR_LFMCMC_cpp() {
     return cpp11::as_sexp(LFMCMC_cpp());
   END_CPP11
 }
+// lfmcmc.cpp
+SEXP run_lfmcmc_cpp(SEXP lfmcmc, std::vector<epiworld_double> params_init_, size_t n_samples_, epiworld_double epsilon_);
+extern "C" SEXP _epiworldR_run_lfmcmc_cpp(SEXP lfmcmc, SEXP params_init_, SEXP n_samples_, SEXP epsilon_) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(run_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector<epiworld_double>>>(params_init_), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_samples_), cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(epsilon_)));
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -1007,6 +1014,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_rm_tool_cpp",                          (DL_FUNC) &_epiworldR_rm_tool_cpp,                           2},
     {"_epiworldR_rm_virus_cpp",                         (DL_FUNC) &_epiworldR_rm_virus_cpp,                          2},
     {"_epiworldR_run_cpp",                              (DL_FUNC) &_epiworldR_run_cpp,                               3},
+    {"_epiworldR_run_lfmcmc_cpp",                       (DL_FUNC) &_epiworldR_run_lfmcmc_cpp,                        4},
     {"_epiworldR_run_multiple_cpp",                     (DL_FUNC) &_epiworldR_run_multiple_cpp,                      8},
     {"_epiworldR_set_agents_data_cpp",                  (DL_FUNC) &_epiworldR_set_agents_data_cpp,                   3},
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},

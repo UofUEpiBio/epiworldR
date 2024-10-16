@@ -224,6 +224,10 @@ LFMCMC_cpp <- function() {
   .Call(`_epiworldR_LFMCMC_cpp`)
 }
 
+run_lfmcmc_cpp <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
+  .Call(`_epiworldR_run_lfmcmc_cpp`, lfmcmc, params_init_, n_samples_, epsilon_)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
