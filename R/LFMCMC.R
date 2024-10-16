@@ -21,26 +21,26 @@ set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
   invisible(lfmcmc)
 }
 
-# #' @export
-# set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
-#   set_proposal_fun_cpp(lfmcmc, fun)
-#   invisible(lfmcmc)
-# }
+#' @export
+set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  set_proposal_fun_cpp(lfmcmc, fun)
+  invisible(lfmcmc)
+}
 
-# #' @export
-# set_simulation_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
-#   set_simulation_fun_cpp(lfmcmc, fun)
-#   invisible(lfmcmc)
-# }
+#' @export
+set_simulation_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  set_simulation_fun_cpp(lfmcmc, fun)
+  invisible(lfmcmc)
+}
 
-# #' @export
-# set_summary_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
-#   set_summary_fun_cpp(lfmcmc, fun)
-#   invisible(lfmcmc)
-# }
+#' @export
+set_summary_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  set_summary_fun_cpp(lfmcmc, fun)
+  invisible(lfmcmc)
+}
 
-# #' @export
-# set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
-#   set_kernel_fun_cpp(lfmcmc, fun)
-#   invisible(lfmcmc)
-# }
+#' @export
+set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  set_kernel_fun_cpp(lfmcmc, fun)
+  invisible(lfmcmc)
+}

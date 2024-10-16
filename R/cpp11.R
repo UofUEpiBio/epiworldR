@@ -232,6 +232,22 @@ set_observed_data_cpp <- function(lfmcmc, observed_data_) {
   .Call(`_epiworldR_set_observed_data_cpp`, lfmcmc, observed_data_)
 }
 
+set_proposal_fun_cpp <- function(lfmcmc, fun) {
+  .Call(`_epiworldR_set_proposal_fun_cpp`, lfmcmc, fun)
+}
+
+set_simulation_fun_cpp <- function(lfmcmc, fun) {
+  .Call(`_epiworldR_set_simulation_fun_cpp`, lfmcmc, fun)
+}
+
+set_summary_fun_cpp <- function(lfmcmc, fun) {
+  .Call(`_epiworldR_set_summary_fun_cpp`, lfmcmc, fun)
+}
+
+set_kernel_fun_cpp <- function(lfmcmc, fun) {
+  .Call(`_epiworldR_set_kernel_fun_cpp`, lfmcmc, fun)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
