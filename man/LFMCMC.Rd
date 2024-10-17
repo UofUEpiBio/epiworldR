@@ -53,6 +53,10 @@ set_stats_names.epiworld_lfmcmc(lfmcmc, names)
 \item{s}{The rand engine seed}
 
 \item{names}{The model stats names}
+
+\item{x}{LFMCMC model to print}
+
+\item{...}{Ignored}
 }
 \value{
 \itemize{
@@ -76,6 +80,8 @@ The lfmcmc model with the seed set
 The lfmcmc model with the parameter names added
 
 The lfmcmc model with the stats names added
+
+The lfmcmc model
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
