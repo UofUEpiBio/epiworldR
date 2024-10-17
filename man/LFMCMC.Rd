@@ -3,7 +3,7 @@
 \name{LFMCMC}
 \alias{LFMCMC}
 \alias{epiworld_lfmcmc}
-\alias{run.epiworld_lfmcmc}
+\alias{run_lfmcmc.epiworld_lfmcmc}
 \alias{set_observed_data.epiworld_lfmcmc}
 \alias{set_proposal_fun.epiworld_lfmcmc}
 \alias{set_simulation_fun.epiworld_lfmcmc}
@@ -13,7 +13,7 @@
 \usage{
 LFMCMC()
 
-\method{run}{epiworld_lfmcmc}(model, params_init_, n_samples_, epsilon_)
+run_lfmcmc.epiworld_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_)
 
 set_observed_data.epiworld_lfmcmc(lfmcmc, observed_data_)
 
@@ -26,15 +26,13 @@ set_summary_fun.epiworld_lfmcmc(lfmcmc, fun)
 set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
 }
 \arguments{
-\item{model}{LFMCMC model}
+\item{lfmcmc}{LFMCMC model}
 
 \item{params_init_}{Initial model parameters}
 
 \item{n_samples_}{Number of samples}
 
 \item{epsilon_}{Epsilon parameter}
-
-\item{lfmcmc}{LFMCMC model}
 
 \item{observed_data_}{Observed data}
 

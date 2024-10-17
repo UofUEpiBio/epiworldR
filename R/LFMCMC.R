@@ -17,14 +17,14 @@ LFMCMC <- function() {
 }
 
 #' @rdname LFMCMC
-#' @param model LFMCMC model
+#' @param lfmcmc LFMCMC model
 #' @param params_init_ Initial model parameters
 #' @param n_samples_ Number of samples
 #' @param epsilon_ Epsilon parameter
 #' @returns The simulated model of class `epiworld_lfmcmc`.
 #' @export
-run.epiworld_lfmcmc <- function(model, params_init_, n_samples_, epsilon_) {
-  run_lfmcmc_cpp(model, params_init_, n_samples_, epsilon_)
+run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
+  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_)
   invisible(lfmcmc)
 }
 
