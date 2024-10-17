@@ -97,18 +97,18 @@ kernfun <- function() {
 par0 <- c(.5, .5)
 
 # TODO: make these work
-lfmcmc_model <- LFMCMC() |>
-  set_simulation_fun(simfun) |>
-  set_summary_fun(sumfun) |>
-  set_proposal_fun(propfun) |>
-  set_kernel_fun(kernfun) |>
-  set_observed_data(obs_dat) |>
-  run_lfmcmc(par0, 2000, 1)
+lfmcmc_model <- LFMCMC()
+#   set_simulation_fun(simfun) |>
+#   set_summary_fun(sumfun) |>
+#   set_proposal_fun(propfun) |>
+#   set_kernel_fun(kernfun) |>
+#   set_observed_data(obs_dat) |>
+#   run_lfmcmc(par0, 2000, 1)
 
-lfmcmc_model
+# lfmcmc_model
 
-lfmcmc_model <- seed(lfmcmc_model, model_seed) |>
-  set_par_names(c("Immune recovery", "Infectiousness")) |>
-  set_stats_names(get_states(model_sir)) |>
-  print()
+# lfmcmc_model <- seed(lfmcmc_model, model_seed) |>
+#   set_par_names(c("Immune recovery", "Infectiousness")) |>
+#   set_stats_names(get_states(model_sir)) |>
+#   print()
 ```
