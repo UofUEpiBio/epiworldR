@@ -74,7 +74,7 @@ simfun <- function(params, m) {
   res <- get_today_total(model_sir)
   return(res)
 }
-# Define Summary Function
+# TODO: Define Summary Function
 sumfun <- function(res, dat, m) {
   # if (res.size() == 0)
   #     res.resize(data.size())
@@ -84,17 +84,19 @@ sumfun <- function(res, dat, m) {
 
   # return
 }
-# Define Proposal Function
+# TODO: Define Proposal Function
 propfun <- function(scale, lb, ub) {
 
 }
-# Define Kernel Function
+# TODO: Define Kernel Function
 kernfun <- function() {
 
 }
 
+# Set initial parameters
 par0 <- c(.5, .5)
 
+# TODO: make these work
 # lfmcmc_model <- LFMCMC()
 # set_simulation_fun(lfmcmc_model, simfun)
 # set_summary_fun(lfmcmc_model, sumfun)
@@ -104,6 +106,8 @@ par0 <- c(.5, .5)
 # run_lfmcmc(lfmcmc_model, par0,2000,1)
 
 # lfmcmc_model
+
+# TODO: Add this functionality to LFMCMC in epiworldR (currently not available methods)
 # set_rand_engine(get_rand_endgine(model_sir)) |>
 # set_par_names({"Immune recovery", "Infectiousness"}) |>
 # set_stats_names(get_states(model_sir)) |>
