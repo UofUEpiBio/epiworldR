@@ -1,0 +1,111 @@
+---
+title: "Likelihood Free Markhov Chain Monte Carlo (LFMCMC)"
+author:
+  - Andrew Pulsipher
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LFMCMC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
+  fig.align = "center"
+)
+```
+# Introduction
+The purpose of the "lfmcmc" function is to perform a Likelihood-Free Markhov Chain Monte Carlo simulation.
+
+# Example: Using LFMCMC to calibrate SIR Model
+
+## Setup and Running Model
+Create an SIR Model and add a small world population.
+```{r sir-setup}
+library(epiworldR)
+
+model_seed <- 122
+
+model_sir <- ModelSIR(
+  name = "COVID-19",
+  prevalence = .1,
+  transmission_rate = .1,
+  recovery_rate = .3
+)
+
+agents_smallworld(
+  model_sir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = 0.01
+)
+
+verbose_off(model_sir)
+
+run(
+  model_sir,
+  ndays = 50,
+  seed = model_seed
+)
+
+print(model_sir)
+```
+
+## Extract Observed data
+```{r extract-obs-data}
+obs_data <- get_today_total(model_sir)
+```
+
+## Setup and Run LFMCMC
+```{r lfmcmc-setup}
+# Define Simulation Function
+simfun <- function(params, m) {
+  set_param(model_sir, "Recovery Rate", params[0])
+  set_param(model_sir, "Transmission Rate", params[1])
+  reset(model_sir)
+  run(
+    model_sir,
+    ndays = 50,
+    seed = model_seed
+  )
+  res <- get_today_total(model_sir)
+  return(res)
+}
+# Define Summary Function
+sumfun <- function(res, dat, m) {
+  # if (res.size() == 0)
+  #     res.resize(data.size())
+
+  # for (i in dat.size())
+  #     res[i] = static_cast<float>(dat[i])
+
+  # return
+}
+# Define Proposal Function
+propfun <- function(scale, lb, ub) {
+
+}
+# Define Kernel Function
+kernfun <- function() {
+
+}
+
+par0 <- c(.5, .5)
+
+# lfmcmc_model <- LFMCMC()
+# set_simulation_fun(lfmcmc_model, simfun)
+# set_summary_fun(lfmcmc_model, sumfun)
+# set_proposal_fun(lfmcmc_model, propfun)
+# set_kernel_fun(lfmcmc_model, kernfun)
+# set_observed_data(lfmcmc_model, obs_dat)
+# run_lfmcmc(lfmcmc_model, par0,2000,1)
+
+# lfmcmc_model
+# set_rand_engine(get_rand_endgine(model_sir)) |>
+# set_par_names({"Immune recovery", "Infectiousness"}) |>
+# set_stats_names(get_states(model_sir)) |>
+# print()
+```
