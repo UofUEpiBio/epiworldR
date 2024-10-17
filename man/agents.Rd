@@ -64,29 +64,29 @@ contains all the information about the agents in the model. The
 And the \code{get_state} function returns the state of a single agent.
 }
 \examples{
- 
+
 model_sirconn <- ModelSIRCONN(
-name                = "COVID-19",
-n                   = 10000,
-prevalence          = 0.01,
-contact_rate        = 5,
-transmission_rate   = 0.4,
-recovery_rate       = 0.95
+  name                = "COVID-19",
+  n                   = 10000,
+  prevalence          = 0.01,
+  contact_rate        = 5,
+  transmission_rate   = 0.4,
+  recovery_rate       = 0.95
 )
 
 run(model_sirconn, ndays = 100, seed = 1912)
 
-x <- get_agents(model_sirconn) # Storing all agent information into object of 
-                               # class epiworld_agents
-                             
-print(x, compressed = FALSE, max_print = 5) # Displaying detailed information of 
-                                        # the first 5 agents using 
-                                        # compressed=F. Using compressed=T
-                                        # results in less-detailed 
-                                        # information about each agent. 
-                                        
-x[0] # Print information about the first agent. Substitute the agent of 
-     # interest's position where '0' is. 
+x <- get_agents(model_sirconn) # Storing all agent information into object of
+# class epiworld_agents
+
+print(x, compressed = FALSE, max_print = 5) # Displaying detailed information of
+# the first 5 agents using
+# compressed=F. Using compressed=T
+# results in less-detailed
+# information about each agent.
+
+x[0] # Print information about the first agent. Substitute the agent of
+# interest's position where '0' is.
 }
 \seealso{
 agents

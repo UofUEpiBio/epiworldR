@@ -47,8 +47,8 @@ values: (1) Proportion of non-infected agents who are removed, and (2)
 Proportion of exposed agents to be set as infected.
 }
 \examples{
-model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01, 
-transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4)
+model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01,
+  transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4)
 
 # Adding a small world population
 agents_smallworld(
@@ -57,8 +57,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_seir, ndays = 100, seed = 1912)
 model_seir

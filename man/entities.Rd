@@ -114,13 +114,13 @@ Epiworld entities are especially useful for mixing models, particularly
 \examples{
 # Creating a mixing model
 mymodel <- ModelSIRMixing(
- name = "My model",
- n = 10000,
- prevalence = .001,
- contact_rate = 10,
- transmission_rate = .1,
- recovery_rate = 1/7,
- contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2)
+  name = "My model",
+  n = 10000,
+  prevalence = .001,
+  contact_rate = 10,
+  transmission_rate = .1,
+  recovery_rate = 1 / 7,
+  contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2)
 )
 
 ent1 <- entity("First", 5000, FALSE)

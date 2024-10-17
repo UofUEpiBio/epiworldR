@@ -67,8 +67,8 @@ n <- 10000
 
 # Generating synthetic data on a matrix with 2 columns.
 X <- cbind(
- age = sample(1:100, n, replace = TRUE),
- female = sample.int(2, n, replace = TRUE) - 1
+  age = sample(1:100, n, replace = TRUE),
+  female = sample.int(2, n, replace = TRUE) - 1
 )
 
 adopt_chatgpt <- ModelDiffNet(

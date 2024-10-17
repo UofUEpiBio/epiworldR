@@ -209,10 +209,10 @@ passed to \code{set_distribution_virus}.
 \examples{
 mseirconn <- ModelSEIRCONN(
   name                = "COVID-19",
-  prevalence          = 0.01, 
+  prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 4, 
-  incubation_days     = 7, 
+  contact_rate        = 4,
+  incubation_days     = 7,
   transmission_rate   = 0.5,
   recovery_rate       = 0.99
 )
@@ -231,7 +231,7 @@ mseirconn
 
 rm_virus(mseirconn, 0) # Removing the first virus from the model object
 set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
-add_virus(mseirconn, delta) 
+add_virus(mseirconn, delta)
 
 # Setting parameters for the delta virus manually
 set_prob_infecting(delta, 0.5)
@@ -249,9 +249,9 @@ delta2 <- virus(
 virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(
-  name = "COVID-19", prevalence = 0.01, 
+  name = "COVID-19", prevalence = 0.01,
   transmission_rate = 0.9, recovery = 0.1
-  )
+)
 
 # Adding a small world population
 agents_smallworld(
@@ -281,7 +281,7 @@ vfun <- virus_fun_logit(
 )
 
 # The infection prob is lower
-hist(plogis(dat \%*\% rbind(-1,1)))
+hist(plogis(dat \%*\% rbind(-1, 1)))
 
 vfun # printing
 
@@ -289,10 +289,9 @@ set_prob_infecting_fun(
   virus = get_virus(sir, 0),
   model = sir,
   vfun  = vfun
-  )
-  
+)
+
 run(sir, ndays = 50, seed = 11)
 plot(sir)
-
 
 }

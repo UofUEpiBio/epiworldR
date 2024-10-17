@@ -45,8 +45,8 @@ model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
 }
 \examples{
-model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, 
-                      transmission_rate = 0.9, recovery_rate = 0.1)
+model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01,
+  transmission_rate = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
 agents_smallworld(
@@ -55,8 +55,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_sir, ndays = 100, seed = 1912)
 model_sir
