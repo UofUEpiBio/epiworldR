@@ -109,8 +109,6 @@ set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
 }
 
 #' @rdname LFMCMC
-#' @param x LFMCMC model to print
-#' @returns The lfmcmc model
 #' @export
 print.epiworld_lfmcmc <- function(x, ...) {
   print_lfmcmc_cpp(x)

@@ -107,8 +107,7 @@ par0 <- c(.5, .5)
 
 # lfmcmc_model
 
-# TODO: Add this functionality to LFMCMC in epiworldR (currently not available methods)
-# set_rand_engine(get_rand_endgine(model_sir)) |>
+# seed(lfmcmc_model, model_seed) |>
 # set_par_names({"Immune recovery", "Infectiousness"}) |>
 # set_stats_names(get_states(model_sir)) |>
 # print()
