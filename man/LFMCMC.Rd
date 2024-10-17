@@ -9,6 +9,10 @@
 \alias{set_simulation_fun.epiworld_lfmcmc}
 \alias{set_summary_fun.epiworld_lfmcmc}
 \alias{set_kernel_fun.epiworld_lfmcmc}
+\alias{seed_lfmcmc.epiworld_lfmcmc}
+\alias{set_par_names.epiworld_lfmcmc}
+\alias{set_stats_names.epiworld_lfmcmc}
+\alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC()
@@ -24,6 +28,14 @@ set_simulation_fun.epiworld_lfmcmc(lfmcmc, fun)
 set_summary_fun.epiworld_lfmcmc(lfmcmc, fun)
 
 set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
+
+seed_lfmcmc.epiworld_lfmcmc(lfmcmc, s)
+
+set_par_names.epiworld_lfmcmc(lfmcmc, names)
+
+set_stats_names.epiworld_lfmcmc(lfmcmc, names)
+
+\method{print}{epiworld_lfmcmc}(x, ...)
 }
 \arguments{
 \item{lfmcmc}{LFMCMC model}
@@ -37,6 +49,12 @@ set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
 \item{observed_data_}{Observed data}
 
 \item{fun}{The LFMCMC kernel function}
+
+\item{s}{The rand engine seed}
+
+\item{names}{The model stats names}
+
+\item{x}{LFMCMC model to print}
 }
 \value{
 \itemize{
@@ -54,6 +72,14 @@ The lfmcmc model with the simulation function added
 The lfmcmc model with the summary function added
 
 The lfmcmc model with the kernel function added
+
+The lfmcmc model with the seed set
+
+The lfmcmc model with the parameter names added
+
+The lfmcmc model with the stats names added
+
+The lfmcmc model
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)

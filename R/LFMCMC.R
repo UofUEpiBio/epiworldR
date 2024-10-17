@@ -77,3 +77,42 @@ set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
   set_kernel_fun_cpp(lfmcmc, fun)
   invisible(lfmcmc)
 }
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @param s The rand engine seed
+#' @returns The lfmcmc model with the seed set
+#' @export
+seed_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, s) {
+  seed_lfmcmc_cpp(lfmcmc, s)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @param names The model parameter names
+#' @returns The lfmcmc model with the parameter names added
+#' @export
+set_par_names.epiworld_lfmcmc <- function(lfmcmc, names) {
+  set_par_names_cpp(lfmcmc, names)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @param names The model stats names
+#' @returns The lfmcmc model with the stats names added
+#' @export
+set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
+  set_stats_names_cpp(lfmcmc, names)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param x LFMCMC model to print
+#' @returns The lfmcmc model
+#' @export
+print.epiworld_lfmcmc <- function(x, ...) {
+  print_lfmcmc_cpp(x)
+  invisible(x)
+}

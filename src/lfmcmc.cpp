@@ -90,4 +90,44 @@ SEXP set_kernel_fun_cpp(
     return lfmcmc;
 }
 
+// s should be of type epiworld_fast_uint
+[[cpp11::register]]
+SEXP seed_lfmcmc_cpp(
+    SEXP lfmcmc,
+    unsigned long long int s
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->seed(s);
+    return lfmcmc;
+}
+
+[[cpp11::register]]
+SEXP set_par_names_cpp(
+    SEXP lfmcmc,
+    std::vector< std::string > names
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->set_par_names(names);
+    return lfmcmc;
+}
+
+[[cpp11::register]]
+SEXP set_stats_names_cpp(
+    SEXP lfmcmc,
+    std::vector< std::string > names
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->set_stats_names(names);
+    return lfmcmc;
+}
+
+[[cpp11::register]]
+SEXP print_lfmcmc_cpp(
+    SEXP lfmcmc
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->print();
+    return lfmcmc;
+}
+
 #undef WrapLFMCMC

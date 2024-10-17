@@ -248,6 +248,22 @@ set_kernel_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_kernel_fun_cpp`, lfmcmc, fun)
 }
 
+seed_lfmcmc_cpp <- function(lfmcmc, s) {
+  .Call(`_epiworldR_seed_lfmcmc_cpp`, lfmcmc, s)
+}
+
+set_par_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_par_names_cpp`, lfmcmc, names)
+}
+
+set_stats_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
+}
+
+print_lfmcmc_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
