@@ -97,8 +97,8 @@ kernfun <- function() {
 par0 <- c(.5, .5)
 
 # TODO: make these work
-lfmcmc_model <- LFMCMC() |>
-  set_simulation_fun(simfun)
+lfmcmc_model <- LFMCMC()
+set_simulation_fun(lfmcmc_model, simfun)
 #   set_summary_fun(sumfun) |>
 #   set_proposal_fun(propfun) |>
 #   set_kernel_fun(kernfun) |>
