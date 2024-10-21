@@ -3,37 +3,37 @@
 \name{LFMCMC}
 \alias{LFMCMC}
 \alias{epiworld_lfmcmc}
-\alias{run_lfmcmc.epiworld_lfmcmc}
-\alias{set_observed_data.epiworld_lfmcmc}
-\alias{set_proposal_fun.epiworld_lfmcmc}
-\alias{set_simulation_fun.epiworld_lfmcmc}
-\alias{set_summary_fun.epiworld_lfmcmc}
-\alias{set_kernel_fun.epiworld_lfmcmc}
-\alias{seed_lfmcmc.epiworld_lfmcmc}
-\alias{set_par_names.epiworld_lfmcmc}
-\alias{set_stats_names.epiworld_lfmcmc}
+\alias{run_lfmcmc}
+\alias{set_observed_data}
+\alias{set_proposal_fun}
+\alias{set_simulation_fun}
+\alias{set_summary_fun}
+\alias{set_kernel_fun}
+\alias{seed_lfmcmc}
+\alias{set_par_names}
+\alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC()
 
-run_lfmcmc.epiworld_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_)
+run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_)
 
-set_observed_data.epiworld_lfmcmc(lfmcmc, observed_data_)
+set_observed_data(lfmcmc, observed_data_)
 
-set_proposal_fun.epiworld_lfmcmc(lfmcmc, fun)
+set_proposal_fun(lfmcmc, fun)
 
-set_simulation_fun.epiworld_lfmcmc(lfmcmc, fun)
+set_simulation_fun(lfmcmc, fun)
 
-set_summary_fun.epiworld_lfmcmc(lfmcmc, fun)
+set_summary_fun(lfmcmc, fun)
 
-set_kernel_fun.epiworld_lfmcmc(lfmcmc, fun)
+set_kernel_fun(lfmcmc, fun)
 
-seed_lfmcmc.epiworld_lfmcmc(lfmcmc, s)
+seed_lfmcmc(lfmcmc, s)
 
-set_par_names.epiworld_lfmcmc(lfmcmc, names)
+set_par_names(lfmcmc, names)
 
-set_stats_names.epiworld_lfmcmc(lfmcmc, names)
+set_stats_names(lfmcmc, names)
 
 \method{print}{epiworld_lfmcmc}(x, ...)
 }
