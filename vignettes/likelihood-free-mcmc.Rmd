@@ -59,7 +59,7 @@ print(model_sir)
 obs_data <- get_today_total(model_sir)
 ```
 
-## Setup and Run LFMCMC
+## Setup LFMCMC
 ```{r lfmcmc-setup}
 # Define Simulation Function
 simfun <- function(params, m) {
@@ -95,10 +95,14 @@ kernfun <- function() {
 
 # Set initial parameters
 par0 <- c(.5, .5)
+```
 
+## Run LFMCMC
+```{r lfmcmc-run}
 # TODO: make these work
-lfmcmc_model <- LFMCMC()
-set_simulation_fun(lfmcmc_model, simfun)
+lfmcmc_model <- LFMCMC() |>
+  set_simulation_fun(simfun)
+# set_simulation_fun(lfmcmc_model, simfun)
 #   set_summary_fun(sumfun) |>
 #   set_proposal_fun(propfun) |>
 #   set_kernel_fun(kernfun) |>
