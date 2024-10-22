@@ -62,7 +62,7 @@ SEXP create_LFMCMCSimFun_cpp(
     cpp11::function fun
     ) {
 
-    LFMCMCSimFun<TData_default> fun_call = [fun](std::vector<epiworld_double>& params, LFMCMC<TData_default>* model) {
+    LFMCMCSimFun<TData_default> fun_call = [fun](std::vector<epiworld_double>& params, LFMCMC<TData_default>* model) -> TData_default {
         WrapLFMCMC(lfmcmc_ptr)(model);
         SEXP res = fun(params, lfmcmc_ptr);
         cpp11::external_pointer<TData_default> res_vec(res);
