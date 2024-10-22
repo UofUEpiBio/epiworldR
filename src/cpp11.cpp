@@ -419,6 +419,13 @@ extern "C" SEXP _epiworldR_set_proposal_fun_cpp(SEXP lfmcmc, SEXP fun) {
   END_CPP11
 }
 // lfmcmc.cpp
+SEXP create_LFMCMCSimFun_cpp(cpp11::function fun);
+extern "C" SEXP _epiworldR_create_LFMCMCSimFun_cpp(SEXP fun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(create_LFMCMCSimFun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
+  END_CPP11
+}
+// lfmcmc.cpp
 SEXP set_simulation_fun_cpp(SEXP lfmcmc, SEXP fun);
 extern "C" SEXP _epiworldR_set_simulation_fun_cpp(SEXP lfmcmc, SEXP fun) {
   BEGIN_CPP11
@@ -1014,6 +1021,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
+    {"_epiworldR_create_LFMCMCSimFun_cpp",              (DL_FUNC) &_epiworldR_create_LFMCMCSimFun_cpp,               1},
     {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},
     {"_epiworldR_distribute_entity_to_set_cpp",         (DL_FUNC) &_epiworldR_distribute_entity_to_set_cpp,          1},
     {"_epiworldR_distribute_tool_randomly_cpp",         (DL_FUNC) &_epiworldR_distribute_tool_randomly_cpp,          2},

@@ -236,6 +236,10 @@ set_proposal_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_proposal_fun_cpp`, lfmcmc, fun)
 }
 
+create_LFMCMCSimFun_cpp <- function(fun) {
+  .Call(`_epiworldR_create_LFMCMCSimFun_cpp`, fun)
+}
+
 set_simulation_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_simulation_fun_cpp`, lfmcmc, fun)
 }
