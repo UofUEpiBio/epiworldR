@@ -76,21 +76,21 @@ simfun <- function(params, m) {
 }
 # TODO: Define Summary Function
 sumfun <- function(res, dat, m) {
-  # if (res.size() == 0)
+  # if (length(res) == 0)
   #     res.resize(data.size())
 
   # for (i in dat.size())
   #     res[i] = static_cast<float>(dat[i])
 
-  # return
+  return
 }
 # TODO: Define Proposal Function
-propfun <- function(scale, lb, ub) {
-
+propfun <- function(params_now, params_prev, m) {
+  return
 }
 # TODO: Define Kernel Function
 kernfun <- function() {
-
+  return(1.0)
 }
 
 # Set initial parameters
@@ -101,11 +101,10 @@ par0 <- c(.5, .5)
 ```{r lfmcmc-run}
 # TODO: make these work
 lfmcmc_model <- LFMCMC() |>
-  set_simulation_fun(simfun)
-# set_simulation_fun(lfmcmc_model, simfun)
-#   set_summary_fun(sumfun) |>
-#   set_proposal_fun(propfun) |>
-#   set_kernel_fun(kernfun) |>
+  set_simulation_fun(simfun) |>
+  set_summary_fun(sumfun) |>
+  set_proposal_fun(propfun) |>
+  set_kernel_fun(kernfun)
 #   set_observed_data(obs_dat) |>
 #   run_lfmcmc(par0, 2000, 1)
 

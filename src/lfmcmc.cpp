@@ -46,17 +46,35 @@ SEXP set_observed_data_cpp(
     return lfmcmc;
 }
 
+// LFMCMC Proposal Function
+[[cpp11::register]]
+SEXP create_LFMCMCProposalFun_cpp(
+    cpp11::function fun
+    ) {
+
+    LFMCMCProposalFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& params_now,const std::vector< epiworld_double >& params_prev, LFMCMC<TData_default>* model) -> void {
+        WrapLFMCMC(lfmcmc_ptr)(model);
+        fun(params_now, params_prev, lfmcmc_ptr);
+        return;
+    };
+
+    return cpp11::external_pointer<LFMCMCProposalFun<TData_default>>(
+        new LFMCMCProposalFun<TData_default>(fun_call)
+    );
+}
+
 [[cpp11::register]]
 SEXP set_proposal_fun_cpp(
     SEXP lfmcmc,
     SEXP fun
 ) {
-    cpp11::external_pointer<LFMCMCProposalFun<TData_default>> fun_ptr(fun);
+    cpp11::external_pointer<LFMCMCProposalFun<TData_default>> fun_ptr = create_LFMCMCProposalFun_cpp(fun);
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_proposal_fun(*fun_ptr);
     return lfmcmc;
 }
 
+// LFMCMC Simulation Function
 [[cpp11::register]]
 SEXP create_LFMCMCSimFun_cpp(
     cpp11::function fun
@@ -64,9 +82,8 @@ SEXP create_LFMCMCSimFun_cpp(
 
     LFMCMCSimFun<TData_default> fun_call = [fun](const std::vector<epiworld_double>& params, LFMCMC<TData_default>* model) -> TData_default {
         WrapLFMCMC(lfmcmc_ptr)(model);
-        SEXP res = fun(params, lfmcmc_ptr);
-        cpp11::external_pointer<TData_default> res_vec(res);
-        return *res_vec;
+        cpp11::external_pointer<TData_default> res(fun(params, lfmcmc_ptr));
+        return *res;
     };
 
     return cpp11::external_pointer<LFMCMCSimFun<TData_default>>(
@@ -85,15 +102,50 @@ SEXP set_simulation_fun_cpp(
     return lfmcmc;
 }
 
+// LFMCMC Summary Function
+[[cpp11::register]]
+SEXP create_LFMCMCSummaryFun_cpp(
+    cpp11::function fun
+    ) {
+
+    LFMCMCSummaryFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& res, const TData_default& dat, LFMCMC<TData_default>* model) -> void {
+        WrapLFMCMC(lfmcmc_ptr)(model);
+        fun(res, dat, lfmcmc_ptr);
+        return;
+    };
+
+    return cpp11::external_pointer<LFMCMCSummaryFun<TData_default>>(
+        new LFMCMCSummaryFun<TData_default>(fun_call)
+    );
+}
+
 [[cpp11::register]]
 SEXP set_summary_fun_cpp(
     SEXP lfmcmc,
     SEXP fun
 ) {
-    cpp11::external_pointer<LFMCMCSummaryFun<TData_default>> fun_ptr(fun);
+    cpp11::external_pointer<LFMCMCSummaryFun<TData_default>> fun_ptr = create_LFMCMCSummaryFun_cpp(fun);
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_summary_fun(*fun_ptr);
     return lfmcmc;
+}
+
+// LFMCMC Kernel Function
+// TODO: clean up these really long lines
+[[cpp11::register]]
+SEXP create_LFMCMCKernelFun_cpp(
+    cpp11::function fun
+    ) {
+
+    LFMCMCKernelFun<TData_default> fun_call = [fun](const std::vector< epiworld_double >& stats_now, const std::vector< epiworld_double >& stats_obs, epiworld_double epsilon, LFMCMC<TData_default>* model) -> epiworld_double {
+        WrapLFMCMC(lfmcmc_ptr)(model);
+        cpp11::external_pointer<epiworld_double> res(fun(stats_now, stats_obs, epsilon, lfmcmc_ptr));
+        return *res;
+    };
+
+    return cpp11::external_pointer<LFMCMCKernelFun<TData_default>>(
+        new LFMCMCKernelFun<TData_default>(fun_call)
+    );
 }
 
 [[cpp11::register]]
@@ -101,7 +153,7 @@ SEXP set_kernel_fun_cpp(
     SEXP lfmcmc,
     SEXP fun
 ) {
-    cpp11::external_pointer<LFMCMCKernelFun<TData_default>> fun_ptr(fun);
+    cpp11::external_pointer<LFMCMCKernelFun<TData_default>> fun_ptr = create_LFMCMCKernelFun_cpp(fun);
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_kernel_fun(*fun_ptr);
     return lfmcmc;

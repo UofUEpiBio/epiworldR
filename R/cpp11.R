@@ -232,6 +232,10 @@ set_observed_data_cpp <- function(lfmcmc, observed_data_) {
   .Call(`_epiworldR_set_observed_data_cpp`, lfmcmc, observed_data_)
 }
 
+create_LFMCMCProposalFun_cpp <- function(fun) {
+  .Call(`_epiworldR_create_LFMCMCProposalFun_cpp`, fun)
+}
+
 set_proposal_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_proposal_fun_cpp`, lfmcmc, fun)
 }
@@ -244,8 +248,16 @@ set_simulation_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_simulation_fun_cpp`, lfmcmc, fun)
 }
 
+create_LFMCMCSummaryFun_cpp <- function(fun) {
+  .Call(`_epiworldR_create_LFMCMCSummaryFun_cpp`, fun)
+}
+
 set_summary_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_summary_fun_cpp`, lfmcmc, fun)
+}
+
+create_LFMCMCKernelFun_cpp <- function(fun) {
+  .Call(`_epiworldR_create_LFMCMCKernelFun_cpp`, fun)
 }
 
 set_kernel_fun_cpp <- function(lfmcmc, fun) {
