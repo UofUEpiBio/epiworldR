@@ -14,6 +14,8 @@
 \alias{set_par_names}
 \alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
+\alias{make_proposal_norm_reflective_lfmcmc}
+\alias{make_kernel_fun_gaussian_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model)
@@ -39,6 +41,10 @@ set_par_names(lfmcmc, names)
 set_stats_names(lfmcmc, names)
 
 \method{print}{epiworld_lfmcmc}(x, ...)
+
+make_proposal_norm_reflective_lfmcmc(scale, lb, ub)
+
+make_kernel_fun_gaussian_lfmcmc()
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model}}
@@ -64,6 +70,12 @@ set_stats_names(lfmcmc, names)
 \item{x}{LFMCMC model to print}
 
 \item{...}{Ignored}
+
+\item{scale}{Scale of the normal kernel}
+
+\item{lb}{Lower bound (applies the same to all parameters)}
+
+\item{ub}{Upper bound (applies the same to all parameters)}
 }
 \value{
 \itemize{
@@ -91,6 +103,10 @@ The lfmcmc model with the parameter names added
 The lfmcmc model with the stats names added
 
 The lfmcmc model
+
+The norm reflective LFMCMC proposal function
+
+The gaussian LFMCMC kernel function
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)

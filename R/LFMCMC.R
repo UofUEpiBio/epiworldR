@@ -163,3 +163,20 @@ print.epiworld_lfmcmc <- function(x, ...) {
   print_lfmcmc_cpp(x)
   invisible(x)
 }
+
+#' @rdname LFMCMC
+#' @param scale Scale of the normal kernel
+#' @param lb Lower bound (applies the same to all parameters)
+#' @param ub Upper bound (applies the same to all parameters)
+#' @returns The norm reflective LFMCMC proposal function
+#' @export
+make_proposal_norm_reflective_lfmcmc <- function(scale, lb, ub) {
+  invisible(make_proposal_norm_reflective_cpp(scale, lb, ub))
+}
+
+#' @rdname LFMCMC
+#' @returns The gaussian LFMCMC kernel function
+#' @export
+make_kernel_fun_gaussian_lfmcmc <- function() {
+  invisible(make_kernel_fun_gaussian_cpp())
+}

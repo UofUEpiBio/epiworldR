@@ -502,6 +502,20 @@ extern "C" SEXP _epiworldR_print_lfmcmc_cpp(SEXP lfmcmc) {
     return cpp11::as_sexp(print_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
   END_CPP11
 }
+// lfmcmc.cpp
+SEXP make_proposal_norm_reflective_cpp(epiworld_double scale, epiworld_double lb, epiworld_double ub);
+extern "C" SEXP _epiworldR_make_proposal_norm_reflective_cpp(SEXP scale, SEXP lb, SEXP ub) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(make_proposal_norm_reflective_cpp(cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(scale), cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(lb), cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(ub)));
+  END_CPP11
+}
+// lfmcmc.cpp
+SEXP make_kernel_fun_gaussian_cpp();
+extern "C" SEXP _epiworldR_make_kernel_fun_gaussian_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(make_kernel_fun_gaussian_cpp());
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -1101,6 +1115,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
     {"_epiworldR_load_agents_entities_ties_cpp",        (DL_FUNC) &_epiworldR_load_agents_entities_ties_cpp,         3},
+    {"_epiworldR_make_kernel_fun_gaussian_cpp",         (DL_FUNC) &_epiworldR_make_kernel_fun_gaussian_cpp,          0},
+    {"_epiworldR_make_proposal_norm_reflective_cpp",    (DL_FUNC) &_epiworldR_make_proposal_norm_reflective_cpp,     3},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},

@@ -214,4 +214,106 @@ SEXP print_lfmcmc_cpp(
     return lfmcmc;
 }
 
+// Factory methods
+inline LFMCMCProposalFun<TData_default> make_proposal_norm_reflective(
+    epiworld_double scale,
+    epiworld_double lb,
+    epiworld_double ub
+) {
+
+    LFMCMCProposalFun<TData_default> fun =
+        [scale,lb,ub](
+            std::vector< epiworld_double >& params_now,
+            const std::vector< epiworld_double >& params_prev,
+            LFMCMC<TData_default>* m
+        ) {
+
+        // Making the proposal
+        for (size_t p = 0u; p < m->get_n_parameters(); ++p)
+            params_now[p] = params_prev[p] + m->rnorm() * scale;
+
+        // Checking boundaries
+        epiworld_double d = ub - lb;
+        int odd;
+        epiworld_double d_above, d_below;
+        for (auto & p : params_now)
+        {
+
+            // Correcting if parameter goes above the upper bound
+            if (p > ub)
+            {
+                d_above = p - ub;
+                odd     = static_cast<int>(std::floor(d_above / d)) % 2;
+                d_above = d_above - std::floor(d_above / d) * d;
+
+                p = (lb + d_above) * odd +
+                    (ub - d_above) * (1 - odd);
+
+            // Correcting if parameter goes below upper bound
+            } else if (p < lb)
+            {
+                d_below = lb - p;
+                int odd = static_cast<int>(std::floor(d_below / d)) % 2;
+                d_below = d_below - std::floor(d_below / d) * d;
+
+                p = (ub - d_below) * odd +
+                    (lb + d_below) * (1 - odd);
+            }
+
+        }
+
+        #ifdef EPI_DEBUG
+        for (auto & p : params_now)
+            if (p < lb || p > ub)
+                throw std::range_error("The parameter is out of bounds.");
+        #endif
+
+
+        return;
+
+    };
+
+    return fun;
+}
+
+inline epiworld_double kernel_fun_gaussian(
+    const std::vector< epiworld_double >& stats_now,
+    const std::vector< epiworld_double >& stats_obs,
+    epiworld_double epsilon,
+    LFMCMC<TData_default>* m
+) {
+
+    epiworld_double ans = 0.0;
+    for (size_t p = 0u; p < m->get_n_parameters(); ++p)
+        ans += std::pow(stats_obs[p] - stats_now[p], 2.0);
+
+    return std::exp(
+        -.5 * (ans/std::pow(1 + std::pow(epsilon, 2.0)/3.0, 2.0))
+        ) / sqrt2pi() ;
+
+}
+
+[[cpp11::register]]
+SEXP make_proposal_norm_reflective_cpp(
+    epiworld_double scale,
+    epiworld_double lb,
+    epiworld_double ub
+) {
+    LFMCMCProposalFun<TData_default> propfun = make_proposal_norm_reflective(scale, lb, ub);
+
+    return cpp11::external_pointer<LFMCMCProposalFun<TData_default>>(
+        new LFMCMCProposalFun<TData_default>(propfun)
+    );
+}
+
+[[cpp11::register]]
+SEXP make_kernel_fun_gaussian_cpp() {
+
+    LFMCMCKernelFun<TData_default> kernelfun = kernel_fun_gaussian<TData_default>;
+
+    return cpp11::external_pointer<LFMCMCKernelFun<TData_default>>(
+        new LFMCMCKernelFun<TData_default>(kernelfun)
+    );
+}
+
 #undef WrapLFMCMC

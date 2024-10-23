@@ -56,10 +56,10 @@ print(model_sir)
 
 ## Extract Observed data
 ```{r extract-obs-data}
-obs_data <- as.integer(get_today_total(model_sir))
+obs_data <- unname(as.integer(get_today_total(model_sir)))
 ```
 
-## Setup LFMCMC
+## Setup LFMCMC Functions
 ```{r lfmcmc-setup}
 # Define Simulation Function
 simfun <- function(params, m) {
@@ -74,43 +74,89 @@ simfun <- function(params, m) {
   res <- get_today_total(model_sir)
   return(res)
 }
-# TODO: Define Summary Function
+
+# Define Summary Function
 sumfun <- function(res, dat, m) {
-  # if (length(res) == 0)
-  #     res.resize(data.size())
+  if (length(res) == 0) {
+    res <- numeric(length(dat))
+  }
 
-  # for (i in dat.size())
-  #     res[i] = static_cast<float>(dat[i])
+  for (i in seq_along(dat)) {
+    res[i] <- as.numeric(dat[i])
+  }
 
-  return
+  return()
 }
-# TODO: Define Proposal Function
+
+# Define Proposal Function
 propfun <- function(params_now, params_prev, m) {
-  return
+  # Make proposal norm reflective
+  scale <- as.double(0.5)
+  lb <- as.double(0)
+  ub <- as.double(1)
+
+  # Making the proposal
+  params_now <- params_prev + rnorm(length(params_prev)) * scale
+
+  # Checking boundaries
+  d <- ub - lb
+  for (i in seq_along(params_now)) {
+    # Correcting if parameter goes above the upper bound
+    if (params_now[i] > ub) {
+      d_above <- params_now[i] - ub
+      odd <- floor(d_above / d) %% 2
+      d_above <- d_above - floor(d_above / d) * d
+
+      params_now[i] <- (lb + d_above) * odd + (ub - d_above) * (1 - odd)
+
+      # Correcting if parameter goes below lower bound
+    } else if (params_now[i] < lb) {
+      d_below <- lb - params_now[i]
+      odd <- floor(d_below / d) %% 2
+      d_below <- d_below - floor(d_below / d) * d
+
+      params_now[i] <- (ub - d_below) * odd + (lb + d_below) * (1 - odd)
+    }
+  }
+  return()
 }
-# TODO: Define Kernel Function
-kernfun <- function() {
+
+# Define Kernel Function
+kernfun <- function(
+    stats_now,
+    stats_obs,
+    epsilon,
+    m
+    ) {
+
   return(1.0)
 }
 
 # Set initial parameters
-par0 <- c(.5, .5)
+par0 <- as.double(c(0.5, 0.5))
+```
+
+## Init LFMCMC
+```{r lfmcmc-init}
+lfmcmc_model <- LFMCMC(model_sir) |>
+  set_simulation_fun(simfun) |>
+  set_summary_fun(sumfun) |>
+  set_proposal_fun(make_proposal_norm_reflective_lfmcmc(0.5, 0, 1)) |>
+  set_kernel_fun(make_kernel_fun_gaussian_lfmcmc()) |>
+  set_observed_data(obs_data)
 ```
 
 ## Run LFMCMC
 ```{r lfmcmc-run}
-# TODO: make these work
-lfmcmc_model <- LFMCMC(model_sir) |>
-  set_simulation_fun(simfun) |>
-  set_summary_fun(sumfun) |>
-  set_proposal_fun(propfun) |>
-  set_kernel_fun(kernfun) |>
-  set_observed_data(obs_data)
-# run_lfmcmc(par0, 2000, 1)
+# run_lfmcmc(
+#   lfmcmc = lfmcmc_model,
+#   params_init_ = par0,
+#   n_samples_ = 2000,
+#   epsilon_ = 1.0
+#   )
 
-# lfmcmc_model
+# set_stats_names(lfmcmc_model, get_states(model_sir))
+# set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
-# lfmcmc_model <- set_par_names(c("Immune recovery", "Infectiousness")) |>
-#   set_stats_names(get_states(model_sir)) |>
-#   print()
+print(lfmcmc_model)
 ```
