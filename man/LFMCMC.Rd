@@ -41,6 +41,8 @@ set_stats_names(lfmcmc, names)
 \method{print}{epiworld_lfmcmc}(x, ...)
 }
 \arguments{
+\item{model}{A model of class \link{epiworld_model}}
+
 \item{lfmcmc}{LFMCMC model}
 
 \item{params_init_}{Initial model parameters}
@@ -95,7 +97,6 @@ Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 }
 \details{
 TODO: Detail LFMCMC
-TODO: Add params
 }
 \examples{
 model_lfmcmc <- LFMCMC()

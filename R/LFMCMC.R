@@ -4,7 +4,7 @@
 #' @aliases epiworld_lfmcmc
 #' @details
 #' TODO: Detail LFMCMC
-#' TODO: Add params
+#' @param model A model of class [epiworld_model]
 #' @returns
 #' - The `LFMCMC`function returns a model of class [epiworld_lfmcmc].
 #' @examples
