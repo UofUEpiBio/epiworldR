@@ -16,13 +16,13 @@ using namespace epiworld;
 
 [[cpp11::register]]
 SEXP LFMCMC_cpp(
-    SEXP m
+    SEXP model
 ) {
     WrapLFMCMC(lfmcmc_ptr)(
         new LFMCMC<TData_default>()
     );
 
-    lfmcmc_ptr->set_rand_engine(cpp11::external_pointer<Model<>>(m)->get_rand_endgine());
+    lfmcmc_ptr->set_rand_engine(cpp11::external_pointer<Model<>>(model)->get_rand_endgine());
 
     return lfmcmc_ptr;
 }

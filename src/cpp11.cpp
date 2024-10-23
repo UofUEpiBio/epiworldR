@@ -391,10 +391,10 @@ extern "C" SEXP _epiworldR_ModelSEIRMixing_cpp(SEXP name, SEXP n, SEXP prevalenc
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP LFMCMC_cpp(SEXP m);
-extern "C" SEXP _epiworldR_LFMCMC_cpp(SEXP m) {
+SEXP LFMCMC_cpp(SEXP model);
+extern "C" SEXP _epiworldR_LFMCMC_cpp(SEXP model) {
   BEGIN_CPP11
-    return cpp11::as_sexp(LFMCMC_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m)));
+    return cpp11::as_sexp(LFMCMC_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // lfmcmc.cpp
