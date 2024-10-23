@@ -220,8 +220,8 @@ ModelSEIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_
   .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix)
 }
 
-LFMCMC_cpp <- function() {
-  .Call(`_epiworldR_LFMCMC_cpp`)
+LFMCMC_cpp <- function(m) {
+  .Call(`_epiworldR_LFMCMC_cpp`, m)
 }
 
 run_lfmcmc_cpp <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
@@ -262,6 +262,10 @@ create_LFMCMCKernelFun_cpp <- function(fun) {
 
 set_kernel_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_kernel_fun_cpp`, lfmcmc, fun)
+}
+
+set_rand_engine_lfmcmc_cpp <- function(lfmcmc, eng) {
+  .Call(`_epiworldR_set_rand_engine_lfmcmc_cpp`, lfmcmc, eng)
 }
 
 seed_lfmcmc_cpp <- function(lfmcmc, s) {

@@ -56,7 +56,7 @@ print(model_sir)
 
 ## Extract Observed data
 ```{r extract-obs-data}
-obs_data <- get_today_total(model_sir)
+obs_data <- as.integer(get_today_total(model_sir))
 ```
 
 ## Setup LFMCMC
@@ -100,18 +100,17 @@ par0 <- c(.5, .5)
 ## Run LFMCMC
 ```{r lfmcmc-run}
 # TODO: make these work
-lfmcmc_model <- LFMCMC() |>
+lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simfun) |>
   set_summary_fun(sumfun) |>
   set_proposal_fun(propfun) |>
-  set_kernel_fun(kernfun)
-#   set_observed_data(obs_dat) |>
-#   run_lfmcmc(par0, 2000, 1)
+  set_kernel_fun(kernfun) |>
+  set_observed_data(obs_data)
+# run_lfmcmc(par0, 2000, 1)
 
 # lfmcmc_model
 
-# lfmcmc_model <- seed(lfmcmc_model, model_seed) |>
-#   set_par_names(c("Immune recovery", "Infectiousness")) |>
+# lfmcmc_model <- set_par_names(c("Immune recovery", "Infectiousness")) |>
 #   set_stats_names(get_states(model_sir)) |>
 #   print()
 ```

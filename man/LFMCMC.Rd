@@ -9,13 +9,14 @@
 \alias{set_simulation_fun}
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
+\alias{set_rand_engine_lfmcmc}
 \alias{seed_lfmcmc}
 \alias{set_par_names}
 \alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
-LFMCMC()
+LFMCMC(model)
 
 run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_)
 
@@ -28,6 +29,8 @@ set_simulation_fun(lfmcmc, fun)
 set_summary_fun(lfmcmc, fun)
 
 set_kernel_fun(lfmcmc, fun)
+
+set_rand_engine_lfmcmc(lfmcmc, eng)
 
 seed_lfmcmc(lfmcmc, s)
 
@@ -49,6 +52,8 @@ set_stats_names(lfmcmc, names)
 \item{observed_data_}{Observed data}
 
 \item{fun}{The LFMCMC kernel function}
+
+\item{eng}{The rand engine}
 
 \item{s}{The rand engine seed}
 
@@ -75,6 +80,8 @@ The lfmcmc model with the summary function added
 
 The lfmcmc model with the kernel function added
 
+The lfmcmc model with the engine set
+
 The lfmcmc model with the seed set
 
 The lfmcmc model with the parameter names added
@@ -88,6 +95,7 @@ Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 }
 \details{
 TODO: Detail LFMCMC
+TODO: Add params
 }
 \examples{
 model_lfmcmc <- LFMCMC()

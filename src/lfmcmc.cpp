@@ -15,10 +15,14 @@ using namespace epiworld;
 // https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/math/lfmcmc
 
 [[cpp11::register]]
-SEXP LFMCMC_cpp() {
+SEXP LFMCMC_cpp(
+    SEXP m
+) {
     WrapLFMCMC(lfmcmc_ptr)(
         new LFMCMC<TData_default>()
     );
+
+    lfmcmc_ptr->set_rand_engine(cpp11::external_pointer<Model<>>(m)->get_rand_endgine());
 
     return lfmcmc_ptr;
 }
@@ -131,7 +135,6 @@ SEXP set_summary_fun_cpp(
 }
 
 // LFMCMC Kernel Function
-// TODO: clean up these really long lines
 [[cpp11::register]]
 SEXP create_LFMCMCKernelFun_cpp(
     cpp11::function fun
@@ -156,6 +159,18 @@ SEXP set_kernel_fun_cpp(
     cpp11::external_pointer<LFMCMCKernelFun<TData_default>> fun_ptr = create_LFMCMCKernelFun_cpp(fun);
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_kernel_fun(*fun_ptr);
+    return lfmcmc;
+}
+
+// Rand Engine
+[[cpp11::register]]
+SEXP set_rand_engine_lfmcmc_cpp(
+    SEXP lfmcmc,
+    SEXP eng
+) {
+    cpp11::external_pointer<std::mt19937> eng_ptr(eng);
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    lfmcmc_ptr->set_rand_engine(*eng_ptr);
     return lfmcmc;
 }
 

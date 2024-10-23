@@ -4,14 +4,18 @@
 #' @aliases epiworld_lfmcmc
 #' @details
 #' TODO: Detail LFMCMC
+#' TODO: Add params
 #' @returns
 #' - The `LFMCMC`function returns a model of class [epiworld_lfmcmc].
 #' @examples
 #' model_lfmcmc <- LFMCMC()
 #' @export
-LFMCMC <- function() {
+LFMCMC <- function(model) {
+  if (!inherits(model, "epiworld_model"))
+    stop("model should be of class 'epiworld_model'. It is of class ", class(model))
+
   structure(
-    LFMCMC_cpp(),
+    LFMCMC_cpp(model),
     class = c("epiworld_lfmcmc")
   )
 }
@@ -93,6 +97,19 @@ set_kernel_fun <- function(lfmcmc, fun) UseMethod("set_kernel_fun")
 #' @export
 set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
   set_kernel_fun_cpp(lfmcmc, fun)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @param eng The rand engine
+#' @returns The lfmcmc model with the engine set
+#' @export
+set_rand_engine_lfmcmc <- function(lfmcmc, eng) UseMethod("set_rand_engine_lfmcmc")
+
+#' @export
+set_rand_engine_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, eng) {
+  set_rand_engine_lfmcmc_cpp(lfmcmc, eng)
   invisible(lfmcmc)
 }
 
