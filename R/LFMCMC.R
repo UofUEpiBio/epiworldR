@@ -8,7 +8,9 @@
 #' @returns
 #' - The `LFMCMC`function returns a model of class [epiworld_lfmcmc].
 #' @examples
-#' model_lfmcmc <- LFMCMC()
+#' model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01,
+#'   transmission_rate = 0.9, recovery_rate = 0.1)
+#' model_lfmcmc <- LFMCMC(model_sir)
 #' @export
 LFMCMC <- function(model) {
   if (!inherits(model, "epiworld_model"))

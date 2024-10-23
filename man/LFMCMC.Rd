@@ -99,5 +99,7 @@ Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 TODO: Detail LFMCMC
 }
 \examples{
-model_lfmcmc <- LFMCMC()
+model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01,
+  transmission_rate = 0.9, recovery_rate = 0.1)
+model_lfmcmc <- LFMCMC(model_sir)
 }
