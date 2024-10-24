@@ -86,13 +86,8 @@ SEXP create_LFMCMCSimFun_cpp(
 
     LFMCMCSimFun<TData_default> fun_call = [fun](const std::vector<epiworld_double>& params, LFMCMC<TData_default>* model) -> TData_default {
         WrapLFMCMC(lfmcmc_ptr)(model);
-        // auto res_tmp = cpp11::integers(fun(params, lfmcmc_ptr));
-        // TData_default res;
-        // res.assign(res_tmp.begin(), res_tmp.end());
-        // return res;
-        cpp11::external_pointer<TData_default> res(fun(params, lfmcmc_ptr));
-        return *res;
-
+        TData_default res = cpp11::as_cpp<TData_default>(cpp11::integers(fun(params, lfmcmc_ptr)));
+        return res;
     };
 
     return cpp11::external_pointer<LFMCMCSimFun<TData_default>>(
@@ -119,8 +114,6 @@ SEXP create_LFMCMCSummaryFun_cpp(
 
     LFMCMCSummaryFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& res, const TData_default& dat, LFMCMC<TData_default>* model) -> void {
         WrapLFMCMC(lfmcmc_ptr)(model);
-        // fun(dat, lfmcmc_ptr);
-        // Still throws: Invalid input type, expected 'double' actual 'integer'
         auto res_tmp = cpp11::as_cpp<std::vector< epiworld_double >>(cpp11::doubles(fun(dat, lfmcmc_ptr)));
         res.assign(res_tmp.begin(), res_tmp.end());
         return;
