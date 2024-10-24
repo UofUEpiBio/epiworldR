@@ -57,9 +57,9 @@ proportion of non-infected agents already removed, and (3) proportion of
 non-ifected agents already deceased.
 }
 \examples{
-model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01, 
-transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4, 
-death_rate = 0.01)
+model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01,
+  transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4,
+  death_rate = 0.01)
 
 # Adding a small world population
 agents_smallworld(
@@ -68,8 +68,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_seird, ndays = 100, seed = 1912)
 model_seird

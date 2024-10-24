@@ -1,0 +1,119 @@
+---
+title: "Likelihood Free Markhov Chain Monte Carlo (LFMCMC)"
+author:
+  - Andrew Pulsipher
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LFMCMC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
+  fig.align = "center"
+)
+```
+# Introduction
+The purpose of the "lfmcmc" function is to perform a Likelihood-Free Markhov Chain Monte Carlo simulation.
+
+# Example: Using LFMCMC to calibrate SIR Model
+
+## Setup and Running Model
+Create an SIR Model and add a small world population.
+```{r sir-setup}
+library(epiworldR)
+
+model_seed <- 122
+
+model_sir <- ModelSIR(
+  name = "COVID-19",
+  prevalence = .1,
+  transmission_rate = .1,
+  recovery_rate = .3
+)
+
+agents_smallworld(
+  model_sir,
+  n = 1000,
+  k = 5,
+  d = FALSE,
+  p = 0.01
+)
+
+verbose_off(model_sir)
+
+run(
+  model_sir,
+  ndays = 50,
+  seed = model_seed
+)
+
+print(model_sir)
+```
+
+## Extract Observed data
+```{r extract-obs-data}
+obs_data <- unname(as.integer(get_today_total(model_sir)))
+```
+
+## Setup LFMCMC Functions
+```{r lfmcmc-setup}
+# Define Simulation Function
+simfun <- function(params, m) {
+  set_param(model_sir, "Recovery Rate", params[1])
+  set_param(model_sir, "Transmission Rate", params[2])
+  reset(model_sir)
+  run(
+    model_sir,
+    ndays = 50,
+    seed = model_seed
+  )
+  res <- unname(as.integer(get_today_total(model_sir)))
+  return(res)
+}
+
+# Define Summary Function
+sumfun <- function(res, dat, m) {
+  if (length(res) == 0) {
+    res <- numeric(length(dat))
+  }
+
+  for (i in seq_along(dat)) {
+    res[i] <- as.numeric(dat[i])
+  }
+
+  return()
+}
+```
+
+## Init LFMCMC
+```{r lfmcmc-init}
+lfmcmc_model <- LFMCMC(model_sir) |>
+  set_simulation_fun(simfun) |>
+  set_summary_fun(sumfun) |>
+  set_proposal_fun(make_proposal_norm_reflective_lfmcmc(0.5, 0, 1)) |>
+  set_kernel_fun(make_kernel_fun_gaussian_lfmcmc()) |>
+  set_observed_data(obs_data)
+```
+
+## Run LFMCMC
+```{r lfmcmc-run}
+# Set initial parameters
+par0 <- as.double(c(0.5, 0.5))
+
+# Run LFMCMC
+run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = 2000,
+  epsilon_ = 1.0
+)
+
+# set_stats_names(lfmcmc_model, get_states(model_sir))
+# set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+
+print(lfmcmc_model)
+```

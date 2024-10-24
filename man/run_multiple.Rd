@@ -80,7 +80,7 @@ model_sir <- ModelSIRCONN(
   n = 1000,
   contact_rate = 2,
   transmission_rate = 0.9, recovery_rate = 0.1
-  )
+)
 
 # Generating a saver
 saver <- make_saver("total_hist", "reproductive")
@@ -96,7 +96,7 @@ head(ans$reproductive)
 
 # Plotting
 multi_sir <- run_multiple_get_results(model_sir)$total_hist
-multi_sir <- multi_sir[multi_sir$date <= 20,]
+multi_sir <- multi_sir[multi_sir$date <= 20, ]
 plot(multi_sir)
 
 }

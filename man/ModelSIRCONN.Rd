@@ -62,7 +62,7 @@ model_sirconn <- ModelSIRCONN(
   transmission_rate   = 0.4,
   recovery_rate       = 0.95
 )
-  
+
 # Running and printing
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn

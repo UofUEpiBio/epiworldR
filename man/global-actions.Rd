@@ -117,7 +117,7 @@ epitool <- tool(
   as_proportion = FALSE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
-  recovery_enhancer = .5, 
+  recovery_enhancer = .5,
   death_reduction = .9
 )
 
@@ -159,7 +159,7 @@ model <- ModelSIRCONN(
   contact_rate      = 5,
   transmission_rate = 0.4,
   recovery_rate     = 0.3
-  )
+)
 
 # We create the object where the history of the agents will be stored
 agents_history <- NULL
@@ -167,7 +167,7 @@ agents_history <- NULL
 # This function prints the total number of agents in each state
 # and stores the history of the agents in the object `agents_history`
 hist_saver <- function(m) {
-  
+
   message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
 
   # We use the `<<-` operator to assign the value to the global variable
@@ -175,8 +175,8 @@ hist_saver <- function(m) {
   agents_history <<- cbind(
     agents_history,
     get_agents_states(m)
-    )
-    
+  )
+
 }
 }
 \seealso{
