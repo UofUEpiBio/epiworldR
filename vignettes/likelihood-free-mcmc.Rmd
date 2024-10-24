@@ -63,15 +63,15 @@ obs_data <- unname(as.integer(get_today_total(model_sir)))
 ```{r lfmcmc-setup}
 # Define Simulation Function
 simfun <- function(params, m) {
-  set_param(model_sir, "Recovery Rate", params[0])
-  set_param(model_sir, "Transmission Rate", params[1])
+  set_param(model_sir, "Recovery Rate", params[1])
+  set_param(model_sir, "Transmission Rate", params[2])
   reset(model_sir)
   run(
     model_sir,
     ndays = 50,
     seed = model_seed
   )
-  res <- get_today_total(model_sir)
+  res <- unname(as.integer(get_today_total(model_sir)))
   return(res)
 }
 
@@ -87,9 +87,6 @@ sumfun <- function(res, dat, m) {
 
   return()
 }
-
-# Set initial parameters
-par0 <- as.double(c(0.5, 0.5))
 ```
 
 ## Init LFMCMC
@@ -104,12 +101,16 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 ## Run LFMCMC
 ```{r lfmcmc-run}
-# run_lfmcmc(
-#   lfmcmc = lfmcmc_model,
-#   params_init_ = par0,
-#   n_samples_ = 2000,
-#   epsilon_ = 1.0
-#   )
+# Set initial parameters
+par0 <- as.double(c(0.5, 0.5))
+
+# Run LFMCMC
+run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = 2000,
+  epsilon_ = 1.0
+)
 
 # set_stats_names(lfmcmc_model, get_states(model_sir))
 # set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
