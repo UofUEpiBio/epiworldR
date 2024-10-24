@@ -180,3 +180,21 @@ make_proposal_norm_reflective_lfmcmc <- function(scale, lb, ub) {
 make_kernel_fun_gaussian_lfmcmc <- function() {
   invisible(make_kernel_fun_gaussian_cpp())
 }
+
+#' @rdname LFMCMC
+#' @param lfmcmc The LFMCMC model
+#' @returns The LFMCMC model with proposal function set to norm reflective
+#' @export
+use_proposal_norm_reflective <- function(lfmcmc) {
+  use_proposal_norm_reflective_cpp(lfmcmc)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc The LFMCMC model
+#' @returns The LFMCMC model with kernel function set to gaussian
+#' @export
+use_kernel_fun_gaussian <- function(lfmcmc) {
+  use_kernel_fun_gaussian_cpp(lfmcmc)
+  invisible(lfmcmc)
+}

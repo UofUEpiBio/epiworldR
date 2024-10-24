@@ -77,7 +77,6 @@ simfun <- function(params, m) {
 
 # Define Summary Function
 sumfun <- function(dat, m) {
-
   return(dat)
 }
 ```
@@ -87,22 +86,26 @@ sumfun <- function(dat, m) {
 lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simfun) |>
   set_summary_fun(sumfun) |>
-  set_proposal_fun(make_proposal_norm_reflective_lfmcmc(0.5, 0, 1)) |>
-  set_kernel_fun(make_kernel_fun_gaussian_lfmcmc()) |>
+  use_proposal_norm_reflective() |>
+  use_kernel_fun_gaussian() |>
   set_observed_data(obs_data)
+```
+
+## Set LFMCMC params
+```{r lfmcmc-params}
+# Set initial parameters
+par0 <- as.double(c(0.5, 0.5))
+n_samp <- 2000
+epsil <- as.double(1.0)
 ```
 
 ## Run LFMCMC
 ```{r lfmcmc-run}
-# Set initial parameters
-par0 <- as.double(c(0.5, 0.5))
-
-# Run LFMCMC
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,
-  n_samples_ = 2000,
-  epsilon_ = 1.0
+  n_samples_ = n_samp,
+  epsilon_ = epsil
 )
 
 # set_stats_names(lfmcmc_model, get_states(model_sir))

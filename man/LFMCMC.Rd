@@ -16,6 +16,8 @@
 \alias{print.epiworld_lfmcmc}
 \alias{make_proposal_norm_reflective_lfmcmc}
 \alias{make_kernel_fun_gaussian_lfmcmc}
+\alias{use_proposal_norm_reflective}
+\alias{use_kernel_fun_gaussian}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model)
@@ -45,11 +47,15 @@ set_stats_names(lfmcmc, names)
 make_proposal_norm_reflective_lfmcmc(scale, lb, ub)
 
 make_kernel_fun_gaussian_lfmcmc()
+
+use_proposal_norm_reflective(lfmcmc)
+
+use_kernel_fun_gaussian(lfmcmc)
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model}}
 
-\item{lfmcmc}{LFMCMC model}
+\item{lfmcmc}{The LFMCMC model}
 
 \item{params_init_}{Initial model parameters}
 
@@ -107,6 +113,10 @@ The lfmcmc model
 The norm reflective LFMCMC proposal function
 
 The gaussian LFMCMC kernel function
+
+The LFMCMC model with proposal function set to norm reflective
+
+The LFMCMC model with kernel function set to gaussian
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)

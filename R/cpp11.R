@@ -292,6 +292,14 @@ make_kernel_fun_gaussian_cpp <- function() {
   .Call(`_epiworldR_make_kernel_fun_gaussian_cpp`)
 }
 
+use_proposal_norm_reflective_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_use_proposal_norm_reflective_cpp`, lfmcmc)
+}
+
+use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
