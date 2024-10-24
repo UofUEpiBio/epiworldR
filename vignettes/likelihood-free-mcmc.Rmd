@@ -76,16 +76,9 @@ simfun <- function(params, m) {
 }
 
 # Define Summary Function
-sumfun <- function(res, dat, m) {
-  if (length(res) == 0) {
-    res <- numeric(length(dat))
-  }
+sumfun <- function(dat, m) {
 
-  for (i in seq_along(dat)) {
-    res[i] <- as.numeric(dat[i])
-  }
-
-  return()
+  return(dat)
 }
 ```
 

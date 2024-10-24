@@ -114,7 +114,8 @@ SEXP create_LFMCMCSummaryFun_cpp(
 
     LFMCMCSummaryFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& res, const TData_default& dat, LFMCMC<TData_default>* model) -> void {
         WrapLFMCMC(lfmcmc_ptr)(model);
-        fun(res, dat, lfmcmc_ptr);
+        auto res_tmp = cpp11::doubles(fun(dat, lfmcmc_ptr));
+        res.assign(res_tmp.begin(), res_tmp.end());
         return;
     };
 
