@@ -414,7 +414,7 @@ SEXP use_proposal_norm_reflective_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_proposal_fun(make_proposal_norm_reflective(0.5, 0, 1));
+    lfmcmc_ptr->set_proposal_fun(make_proposal_norm_reflective<std::vector<int>>(.5, 0, 1));
     return lfmcmc;
 }
 
@@ -423,7 +423,7 @@ SEXP use_kernel_fun_gaussian_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_kernel_fun(kernel_fun_gaussian<TData_default>);
+    lfmcmc_ptr->set_kernel_fun(kernel_fun_gaussian<std::vector<int>>);
     return lfmcmc;
 }
 

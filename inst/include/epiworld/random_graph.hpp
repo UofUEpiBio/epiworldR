@@ -5,7 +5,7 @@ class RandGraph {
 
 private:
     std::shared_ptr< std::mt19937 > engine;
-    std::shared_ptr< std::uniform_real_distribution<> > unifd;
+    std::uniform_real_distribution<> unifd;
     int N = 0;
     bool initialized = false;
 
@@ -27,9 +27,6 @@ inline void RandGraph::init(int s) {
 
     engine->seed(s);
 
-    if (!unifd)
-        unifd = std::make_shared< std::uniform_real_distribution<> >(0, 1);
-
     initialized = true;
 
 
@@ -47,7 +44,7 @@ inline epiworld_double RandGraph::runif() {
     if (!initialized)
         throw std::logic_error("The object has not been initialized");
 
-    return (*unifd)(engine);
+    return unifd(*engine);
 
 }
 
