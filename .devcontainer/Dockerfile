@@ -10,6 +10,6 @@ RUN install2.r cpp11 roxygen2 tinytest data.table netplot \
 
 RUN install2.r languageserver
 
-RUN apt-get update && apt-get install --no-install-recommends -y valgrind
+RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb
 
 CMD ["bash"]

@@ -18,8 +18,8 @@
 
 /* Versioning */
 #define EPIWORLD_VERSION_MAJOR 0
-#define EPIWORLD_VERSION_MINOR 3
-#define EPIWORLD_VERSION_PATCH 2
+#define EPIWORLD_VERSION_MINOR 4
+#define EPIWORLD_VERSION_PATCH 1
 
 static const int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
 static const int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
@@ -33,7 +33,7 @@ namespace epiworld {
     #include "misc.hpp"
     #include "progress.hpp"
 
-    // #include "math/summary-stats.hpp"
+    #include "math/distributions.hpp"
 
     #include "math/lfmcmc.hpp"
 

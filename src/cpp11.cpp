@@ -440,13 +440,6 @@ extern "C" SEXP _epiworldR_set_kernel_fun_cpp(SEXP lfmcmc, SEXP fun) {
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP set_rand_engine_lfmcmc_cpp(SEXP lfmcmc, SEXP eng);
-extern "C" SEXP _epiworldR_set_rand_engine_lfmcmc_cpp(SEXP lfmcmc, SEXP eng) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(set_rand_engine_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<SEXP>>(eng)));
-  END_CPP11
-}
-// lfmcmc.cpp
 SEXP seed_lfmcmc_cpp(SEXP lfmcmc, unsigned long long int s);
 extern "C" SEXP _epiworldR_seed_lfmcmc_cpp(SEXP lfmcmc, SEXP s) {
   BEGIN_CPP11
@@ -1145,7 +1138,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_prob_recovery_fun_cpp",            (DL_FUNC) &_epiworldR_set_prob_recovery_fun_cpp,             3},
     {"_epiworldR_set_prob_recovery_ptr_cpp",            (DL_FUNC) &_epiworldR_set_prob_recovery_ptr_cpp,             3},
     {"_epiworldR_set_proposal_fun_cpp",                 (DL_FUNC) &_epiworldR_set_proposal_fun_cpp,                  2},
-    {"_epiworldR_set_rand_engine_lfmcmc_cpp",           (DL_FUNC) &_epiworldR_set_rand_engine_lfmcmc_cpp,            2},
     {"_epiworldR_set_recovery_enhancer_cpp",            (DL_FUNC) &_epiworldR_set_recovery_enhancer_cpp,             2},
     {"_epiworldR_set_recovery_enhancer_fun_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_fun_cpp,         3},
     {"_epiworldR_set_recovery_enhancer_ptr_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_ptr_cpp,         3},

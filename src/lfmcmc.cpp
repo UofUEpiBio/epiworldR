@@ -255,16 +255,16 @@ SEXP set_kernel_fun_cpp(
 }
 
 // Rand Engine
-[[cpp11::register]]
-SEXP set_rand_engine_lfmcmc_cpp(
-    SEXP lfmcmc,
-    SEXP eng
-) {
-    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    cpp11::external_pointer<std::mt19937> eng_ptr(eng);
-    lfmcmc_ptr->set_rand_engine(*eng_ptr);
-    return lfmcmc;
-}
+// [[cpp11::register]]
+// SEXP set_rand_engine_lfmcmc_cpp(
+//     SEXP lfmcmc,
+//     SEXP eng
+// ) {
+//     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+//     cpp11::external_pointer<std::mt19937> eng_ptr(eng);
+//     lfmcmc_ptr->set_rand_engine(*eng_ptr);
+//     return lfmcmc;
+// }
 
 // s should be of type epiworld_fast_uint
 [[cpp11::register]]

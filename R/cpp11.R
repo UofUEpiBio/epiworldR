@@ -248,10 +248,6 @@ set_kernel_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_kernel_fun_cpp`, lfmcmc, fun)
 }
 
-set_rand_engine_lfmcmc_cpp <- function(lfmcmc, eng) {
-  .Call(`_epiworldR_set_rand_engine_lfmcmc_cpp`, lfmcmc, eng)
-}
-
 seed_lfmcmc_cpp <- function(lfmcmc, s) {
   .Call(`_epiworldR_seed_lfmcmc_cpp`, lfmcmc, s)
 }

@@ -63,9 +63,9 @@ obs_data <- unname(as.integer(get_today_total(model_sir)))
 ```{r lfmcmc-setup}
 # Define Simulation Function
 simfun <- function(params, m) {
-  set_param(model_sir, "Recovery Rate", params[1])
-  set_param(model_sir, "Transmission Rate", params[2])
-  reset(model_sir)
+  set_param(model_sir, "Recovery rate", params[1])
+  set_param(model_sir, "Transmission rate", params[2])
+
   run(
     model_sir,
     ndays = 50,

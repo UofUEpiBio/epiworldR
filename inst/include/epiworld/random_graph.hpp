@@ -14,7 +14,7 @@ public:
     RandGraph(int N_) : N(N_) {};
 
     void init(int s);
-    void set_rand_engine(std::mt19937 & e);
+    void set_rand_engine(std::shared_ptr< std::mt19937 > & e);
     epiworld_double runif();
 
 };
@@ -35,10 +35,10 @@ inline void RandGraph::init(int s) {
 
 }
 
-inline void RandGraph::set_rand_engine(std::mt19937 & e)
+inline void RandGraph::set_rand_engine(std::shared_ptr< std::mt19937 > & e)
 {
 
-    engine = std::make_shared< std::mt19937 >(e);
+    engine = e;
 
 }
 
