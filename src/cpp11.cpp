@@ -412,59 +412,31 @@ extern "C" SEXP _epiworldR_set_observed_data_cpp(SEXP lfmcmc, SEXP observed_data
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP create_LFMCMCProposalFun_cpp(cpp11::function fun);
-extern "C" SEXP _epiworldR_create_LFMCMCProposalFun_cpp(SEXP fun) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(create_LFMCMCProposalFun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
-  END_CPP11
-}
-// lfmcmc.cpp
-SEXP set_proposal_fun_cpp(SEXP lfmcmc, SEXP fun);
+SEXP set_proposal_fun_cpp(SEXP lfmcmc, cpp11::function fun);
 extern "C" SEXP _epiworldR_set_proposal_fun_cpp(SEXP lfmcmc, SEXP fun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_proposal_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<SEXP>>(fun)));
+    return cpp11::as_sexp(set_proposal_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP create_LFMCMCSimFun_cpp(cpp11::function fun);
-extern "C" SEXP _epiworldR_create_LFMCMCSimFun_cpp(SEXP fun) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(create_LFMCMCSimFun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
-  END_CPP11
-}
-// lfmcmc.cpp
-SEXP set_simulation_fun_cpp(SEXP lfmcmc, SEXP fun);
+SEXP set_simulation_fun_cpp(SEXP lfmcmc, cpp11::function fun);
 extern "C" SEXP _epiworldR_set_simulation_fun_cpp(SEXP lfmcmc, SEXP fun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_simulation_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<SEXP>>(fun)));
+    return cpp11::as_sexp(set_simulation_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP create_LFMCMCSummaryFun_cpp(cpp11::function fun);
-extern "C" SEXP _epiworldR_create_LFMCMCSummaryFun_cpp(SEXP fun) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(create_LFMCMCSummaryFun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
-  END_CPP11
-}
-// lfmcmc.cpp
-SEXP set_summary_fun_cpp(SEXP lfmcmc, SEXP fun);
+SEXP set_summary_fun_cpp(SEXP lfmcmc, cpp11::function fun);
 extern "C" SEXP _epiworldR_set_summary_fun_cpp(SEXP lfmcmc, SEXP fun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_summary_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<SEXP>>(fun)));
+    return cpp11::as_sexp(set_summary_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP create_LFMCMCKernelFun_cpp(cpp11::function fun);
-extern "C" SEXP _epiworldR_create_LFMCMCKernelFun_cpp(SEXP fun) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(create_LFMCMCKernelFun_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
-  END_CPP11
-}
-// lfmcmc.cpp
-SEXP set_kernel_fun_cpp(SEXP lfmcmc, SEXP fun);
+SEXP set_kernel_fun_cpp(SEXP lfmcmc, cpp11::function fun);
 extern "C" SEXP _epiworldR_set_kernel_fun_cpp(SEXP lfmcmc, SEXP fun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_kernel_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<SEXP>>(fun)));
+    return cpp11::as_sexp(set_kernel_fun_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<cpp11::function>>(fun)));
   END_CPP11
 }
 // lfmcmc.cpp
@@ -1077,10 +1049,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
-    {"_epiworldR_create_LFMCMCKernelFun_cpp",           (DL_FUNC) &_epiworldR_create_LFMCMCKernelFun_cpp,            1},
-    {"_epiworldR_create_LFMCMCProposalFun_cpp",         (DL_FUNC) &_epiworldR_create_LFMCMCProposalFun_cpp,          1},
-    {"_epiworldR_create_LFMCMCSimFun_cpp",              (DL_FUNC) &_epiworldR_create_LFMCMCSimFun_cpp,               1},
-    {"_epiworldR_create_LFMCMCSummaryFun_cpp",          (DL_FUNC) &_epiworldR_create_LFMCMCSummaryFun_cpp,           1},
     {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},
     {"_epiworldR_distribute_entity_to_set_cpp",         (DL_FUNC) &_epiworldR_distribute_entity_to_set_cpp,          1},
     {"_epiworldR_distribute_tool_randomly_cpp",         (DL_FUNC) &_epiworldR_distribute_tool_randomly_cpp,          2},
