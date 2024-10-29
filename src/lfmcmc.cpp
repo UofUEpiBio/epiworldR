@@ -23,7 +23,8 @@ SEXP LFMCMC_cpp(
         new LFMCMC<TData_default>()
     );
 
-    lfmcmc_ptr->set_rand_engine(cpp11::external_pointer<Model<>>(model)->get_rand_endgine());
+    cpp11::external_pointer<Model<int>> modelptr(model);
+    lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
 
     return lfmcmc_ptr;
 }
