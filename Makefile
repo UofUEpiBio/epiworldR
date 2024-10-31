@@ -48,11 +48,12 @@ clean:
 docs:
 	Rscript --vanilla -e 'roxygen2::roxygenize()'
 
-.PHONY: build update check clean docs docker-debug
-
 checkv: build
 	R CMD check --as-cran --use-valgrind epiworldR*.tar.gz
 
+# Builds and installs without vignettes
 dev: clean
 	R CMD build --no-build-vignettes .
 	R CMD INSTALL epiworldR_$(VERSION).tar.gz
+
+.PHONY: build update check clean docs docker-debug dev
