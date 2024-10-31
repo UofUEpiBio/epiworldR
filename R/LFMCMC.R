@@ -104,19 +104,6 @@ set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param eng The rand engine
-#' @returns The lfmcmc model with the engine set
-#' @export
-set_rand_engine_lfmcmc <- function(lfmcmc, eng) UseMethod("set_rand_engine_lfmcmc")
-
-#' @export
-set_rand_engine_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, eng) {
-  set_rand_engine_lfmcmc_cpp(lfmcmc, eng)
-  invisible(lfmcmc)
-}
-
-#' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
 #' @param s The rand engine seed
 #' @returns The lfmcmc model with the seed set
 #' @export
@@ -162,23 +149,6 @@ set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
 print.epiworld_lfmcmc <- function(x, ...) {
   print_lfmcmc_cpp(x)
   invisible(x)
-}
-
-#' @rdname LFMCMC
-#' @param scale Scale of the normal kernel
-#' @param lb Lower bound (applies the same to all parameters)
-#' @param ub Upper bound (applies the same to all parameters)
-#' @returns The norm reflective LFMCMC proposal function
-#' @export
-make_proposal_norm_reflective_lfmcmc <- function(scale, lb, ub) {
-  invisible(make_proposal_norm_reflective_cpp(scale, lb, ub))
-}
-
-#' @rdname LFMCMC
-#' @returns The gaussian LFMCMC kernel function
-#' @export
-make_kernel_fun_gaussian_lfmcmc <- function() {
-  invisible(make_kernel_fun_gaussian_cpp())
 }
 
 #' @rdname LFMCMC

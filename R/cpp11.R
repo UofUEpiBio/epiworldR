@@ -236,6 +236,10 @@ set_proposal_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_proposal_fun_cpp`, lfmcmc, fun)
 }
 
+use_proposal_norm_reflective_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_use_proposal_norm_reflective_cpp`, lfmcmc)
+}
+
 set_simulation_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_simulation_fun_cpp`, lfmcmc, fun)
 }
@@ -248,6 +252,10 @@ set_kernel_fun_cpp <- function(lfmcmc, fun) {
   .Call(`_epiworldR_set_kernel_fun_cpp`, lfmcmc, fun)
 }
 
+use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
+}
+
 set_par_names_cpp <- function(lfmcmc, names) {
   .Call(`_epiworldR_set_par_names_cpp`, lfmcmc, names)
 }
@@ -258,22 +266,6 @@ set_stats_names_cpp <- function(lfmcmc, names) {
 
 print_lfmcmc_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc)
-}
-
-make_proposal_norm_reflective_cpp <- function(scale, lb, ub) {
-  .Call(`_epiworldR_make_proposal_norm_reflective_cpp`, scale, lb, ub)
-}
-
-make_kernel_fun_gaussian_cpp <- function() {
-  .Call(`_epiworldR_make_kernel_fun_gaussian_cpp`)
-}
-
-use_proposal_norm_reflective_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_use_proposal_norm_reflective_cpp`, lfmcmc)
-}
-
-use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
 }
 
 print_cpp <- function(m, lite) {

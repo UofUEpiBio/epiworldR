@@ -72,13 +72,6 @@ simfun <- function(params, m) {
     ndays = 50
   )
 
-  # if (i %% 10 == 0) {
-  #   print(model_sir)
-  # }
-
-  # if (i %% 100 == 0) {
-  #   stop("Debugging!")
-  # }
   res <- unname(as.integer(get_today_total(model_sir)))
   return(res)
 }

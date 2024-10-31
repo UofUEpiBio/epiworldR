@@ -9,13 +9,10 @@
 \alias{set_simulation_fun}
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
-\alias{set_rand_engine_lfmcmc}
 \alias{seed_lfmcmc}
 \alias{set_par_names}
 \alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
-\alias{make_proposal_norm_reflective_lfmcmc}
-\alias{make_kernel_fun_gaussian_lfmcmc}
 \alias{use_proposal_norm_reflective}
 \alias{use_kernel_fun_gaussian}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
@@ -34,8 +31,6 @@ set_summary_fun(lfmcmc, fun)
 
 set_kernel_fun(lfmcmc, fun)
 
-set_rand_engine_lfmcmc(lfmcmc, eng)
-
 seed_lfmcmc(lfmcmc, s)
 
 set_par_names(lfmcmc, names)
@@ -43,10 +38,6 @@ set_par_names(lfmcmc, names)
 set_stats_names(lfmcmc, names)
 
 \method{print}{epiworld_lfmcmc}(x, ...)
-
-make_proposal_norm_reflective_lfmcmc(scale, lb, ub)
-
-make_kernel_fun_gaussian_lfmcmc()
 
 use_proposal_norm_reflective(lfmcmc)
 
@@ -67,8 +58,6 @@ use_kernel_fun_gaussian(lfmcmc)
 
 \item{fun}{The LFMCMC kernel function}
 
-\item{eng}{The rand engine}
-
 \item{s}{The rand engine seed}
 
 \item{names}{The model stats names}
@@ -76,12 +65,6 @@ use_kernel_fun_gaussian(lfmcmc)
 \item{x}{LFMCMC model to print}
 
 \item{...}{Ignored}
-
-\item{scale}{Scale of the normal kernel}
-
-\item{lb}{Lower bound (applies the same to all parameters)}
-
-\item{ub}{Upper bound (applies the same to all parameters)}
 }
 \value{
 \itemize{
@@ -100,8 +83,6 @@ The lfmcmc model with the summary function added
 
 The lfmcmc model with the kernel function added
 
-The lfmcmc model with the engine set
-
 The lfmcmc model with the seed set
 
 The lfmcmc model with the parameter names added
@@ -109,10 +90,6 @@ The lfmcmc model with the parameter names added
 The lfmcmc model with the stats names added
 
 The lfmcmc model
-
-The norm reflective LFMCMC proposal function
-
-The gaussian LFMCMC kernel function
 
 The LFMCMC model with proposal function set to norm reflective
 
