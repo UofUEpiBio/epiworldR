@@ -2,6 +2,7 @@
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/r_vector.hpp"
 #include "cpp11/sexp.hpp"
+#include <iostream>
 
 #include "epiworld-common.h"
 
@@ -26,6 +27,9 @@ SEXP LFMCMC_cpp(
     cpp11::external_pointer<Model<int>> modelptr(model);
     lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
 
+    // std::cout << "Engine of model : " << modelptr->get_rand_endgine() << std::endl;
+    // std::cout << "Engine of lfmcmc: " << lfmcmc_ptr->get_rand_endgine() << std::endl;
+
     return lfmcmc_ptr;
 }
 
@@ -37,7 +41,9 @@ SEXP run_lfmcmc_cpp(
     epiworld_double epsilon_
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    Rprintf("Running LFMCMC\n");
     lfmcmc_ptr->run(params_init_, n_samples_, epsilon_);
+    Rprintf("LFMCMC Finished\n");
     return lfmcmc;
 }
 
@@ -76,19 +82,7 @@ SEXP set_proposal_fun_cpp(
     cpp11::function fun
 ) {
 
-    LFMCMCProposalFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& params_now,const std::vector< epiworld_double >& params_prev, LFMCMC<TData_default>* model) -> void {
-        WrapLFMCMC(model_ptr)(model);
-        fun(params_now, params_prev, model_ptr);
-        return;
-    };
-
-    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-
-    // TODO: Uncomment if needed, delete otherwise
-    // cpp11::external_pointer<LFMCMCProposalFun<TData_default>> fun_ptr = create_LFMCMCProposalFun_cpp(fun);
-    // lfmcmc_ptr->set_proposal_fun(*fun_ptr);
-
-    lfmcmc_ptr->set_proposal_fun(fun_call);
+    cpp11::stop("Un implemented");
 
     return lfmcmc;
 }
@@ -117,16 +111,16 @@ SEXP set_simulation_fun_cpp(
     cpp11::function fun
 ) {
 
-    LFMCMCSimFun<TData_default> fun_call = [fun](const std::vector<epiworld_double>& params, LFMCMC<TData_default>* model) -> TData_default {
-        WrapLFMCMC(model_ptr)(model);
+    LFMCMCSimFun<TData_default> fun_call = [fun](
+        const std::vector<epiworld_double>& params,
+        LFMCMC<TData_default>*
+        ) -> TData_default {
 
-        // TODO: This was added because of a similar construct in actions.cpp 'globalevent_fun_cpp()'
-        //       It doesn't appear to help at all, so might be removable
-        cpp11::sexp modelptrs(model_ptr);
-        modelptrs.attr("class") = "epiworld_lfmcmc";
+        auto params_doubles = cpp11::doubles(params);
 
-        TData_default res = cpp11::as_cpp<TData_default>(cpp11::integers(fun(params, model_ptr)));
-        return res;
+        return cpp11::as_cpp<TData_default>(
+            cpp11::integers(fun(params_doubles, params_doubles))
+            );
     };
 
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
@@ -165,13 +159,11 @@ SEXP set_summary_fun_cpp(
     cpp11::function fun
 ) {
 
-    LFMCMCSummaryFun<TData_default> fun_call = [fun](std::vector< epiworld_double >& res, const TData_default& dat, LFMCMC<TData_default>* model) -> void {
-        WrapLFMCMC(model_ptr)(model);
-
-        // TODO: This was added because of a similar construct in actions.cpp 'globalevent_fun_cpp()'
-        //       It doesn't appear to help at all, so might be removable
-        cpp11::sexp modelptrs(model_ptr);
-        modelptrs.attr("class") = "epiworld_lfmcmc";
+    LFMCMCSummaryFun<TData_default> fun_call = [fun](
+        std::vector< epiworld_double >& res,
+        const TData_default& dat,
+        LFMCMC<TData_default>*
+        ) -> void {
 
         // TODO: This was added because the memory error seemed linked to the assignment of the 'res' vector
         //       It comes from the example summary function in the main epiworld (C++) repo
@@ -188,16 +180,15 @@ SEXP set_summary_fun_cpp(
         //       I used integers instead because the errors I was seeing reminded me that 'fun()' as defined in the vignette
         //       returns a vector<int> ('dat')
         //       Adding this code resolved the errors I was seeing, but other errors persist so it is possible it wasn't the root cause
-        auto res_1 = fun(dat, model_ptr);
-        auto res_2 = cpp11::integers(res_1);
+        auto dat_int = cpp11::integers(dat);
+        auto res_1 = cpp11::integers(fun(dat_int, dat_int));
 
         // TODO: This is also taken from the example summary function in the main epiworld (C++) repo
         //       I added it to see if it resolved some of the errors associated with 'res' and having the correct type ('double' instead of 'int')
         //       Adding this code resolved some errors I was seeing, but other errors persist so it is possible it wasn't the root cause
         //       This might need to be removed in favor of the '.assign()' operation below
         //      Also, the size_t i < res_2.size() operation throws a warning at compile time, so if it stays, that should be fixed
-        for (size_t i = 0u; i < res_2.size(); ++i)
-            res[i] = static_cast< epiworld_double >(res_2[i]);
+        std::copy(res_1.begin(), res_1.end(), res.begin());
 
         // res.assign(res_2.begin(), res_2.end());
 
@@ -238,19 +229,7 @@ SEXP set_kernel_fun_cpp(
     SEXP lfmcmc,
     cpp11::function fun
 ) {
-    LFMCMCKernelFun<TData_default> fun_call = [fun](const std::vector< epiworld_double >& stats_now, const std::vector< epiworld_double >& stats_obs, epiworld_double epsilon, LFMCMC<TData_default>* model) -> epiworld_double {
-        WrapLFMCMC(model_ptr)(model);
-        cpp11::external_pointer<epiworld_double> res(fun(stats_now, stats_obs, epsilon, model_ptr));
-        return *res;
-    };
-
-    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-
-    // TODO: Uncomment if needed, delete otherwise
-    // cpp11::external_pointer<LFMCMCKernelFun<TData_default>> fun_ptr = create_LFMCMCKernelFun_cpp(fun);
-    // lfmcmc_ptr->set_kernel_fun(*fun_ptr);
-
-    lfmcmc_ptr->set_kernel_fun(fun_call);
+    cpp11::stop("Unimplemented");
 
     return lfmcmc;
 }
@@ -266,17 +245,6 @@ SEXP set_kernel_fun_cpp(
 //     lfmcmc_ptr->set_rand_engine(*eng_ptr);
 //     return lfmcmc;
 // }
-
-// s should be of type epiworld_fast_uint
-[[cpp11::register]]
-SEXP seed_lfmcmc_cpp(
-    SEXP lfmcmc,
-    unsigned long long int s
-) {
-    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->seed(s);
-    return lfmcmc;
-}
 
 [[cpp11::register]]
 SEXP set_par_names_cpp(
@@ -307,84 +275,6 @@ SEXP print_lfmcmc_cpp(
     return lfmcmc;
 }
 
-// Factory methods
-inline LFMCMCProposalFun<TData_default> make_proposal_norm_reflective(
-    epiworld_double scale,
-    epiworld_double lb,
-    epiworld_double ub
-) {
-
-    LFMCMCProposalFun<TData_default> fun =
-        [scale,lb,ub](
-            std::vector< epiworld_double >& params_now,
-            const std::vector< epiworld_double >& params_prev,
-            LFMCMC<TData_default>* m
-        ) {
-
-        // Making the proposal
-        for (size_t p = 0u; p < m->get_n_parameters(); ++p)
-            params_now[p] = params_prev[p] + m->rnorm() * scale;
-
-        // Checking boundaries
-        epiworld_double d = ub - lb;
-        int odd;
-        epiworld_double d_above, d_below;
-        for (auto & p : params_now)
-        {
-
-            // Correcting if parameter goes above the upper bound
-            if (p > ub)
-            {
-                d_above = p - ub;
-                odd     = static_cast<int>(std::floor(d_above / d)) % 2;
-                d_above = d_above - std::floor(d_above / d) * d;
-
-                p = (lb + d_above) * odd +
-                    (ub - d_above) * (1 - odd);
-
-            // Correcting if parameter goes below upper bound
-            } else if (p < lb)
-            {
-                d_below = lb - p;
-                int odd = static_cast<int>(std::floor(d_below / d)) % 2;
-                d_below = d_below - std::floor(d_below / d) * d;
-
-                p = (ub - d_below) * odd +
-                    (lb + d_below) * (1 - odd);
-            }
-
-        }
-
-        #ifdef EPI_DEBUG
-        for (auto & p : params_now)
-            if (p < lb || p > ub)
-                throw std::range_error("The parameter is out of bounds.");
-        #endif
-
-
-        return;
-
-    };
-
-    return fun;
-}
-
-inline epiworld_double kernel_fun_gaussian(
-    const std::vector< epiworld_double >& stats_now,
-    const std::vector< epiworld_double >& stats_obs,
-    epiworld_double epsilon,
-    LFMCMC<TData_default>* m
-) {
-
-    epiworld_double ans = 0.0;
-    for (size_t p = 0u; p < m->get_n_parameters(); ++p)
-        ans += std::pow(stats_obs[p] - stats_now[p], 2.0);
-
-    return std::exp(
-        -.5 * (ans/std::pow(1 + std::pow(epsilon, 2.0)/3.0, 2.0))
-        ) / sqrt2pi() ;
-
-}
 
 [[cpp11::register]]
 SEXP make_proposal_norm_reflective_cpp(
@@ -392,7 +282,8 @@ SEXP make_proposal_norm_reflective_cpp(
     epiworld_double lb,
     epiworld_double ub
 ) {
-    LFMCMCProposalFun<TData_default> propfun = make_proposal_norm_reflective(scale, lb, ub);
+    LFMCMCProposalFun<TData_default> propfun =
+        make_proposal_norm_reflective<TData_default>(scale, lb, ub);
 
     return cpp11::external_pointer<LFMCMCProposalFun<TData_default>>(
         new LFMCMCProposalFun<TData_default>(propfun)

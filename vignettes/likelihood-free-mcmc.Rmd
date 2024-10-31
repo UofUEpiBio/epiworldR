@@ -51,7 +51,7 @@ run(
   seed = model_seed
 )
 
-print(model_sir)
+summary(model_sir)
 ```
 
 ## Extract Observed data
@@ -63,14 +63,22 @@ obs_data <- unname(as.integer(get_today_total(model_sir)))
 ```{r lfmcmc-setup}
 # Define Simulation Function
 simfun <- function(params, m) {
+
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
 
   run(
     model_sir,
-    ndays = 50,
-    seed = model_seed
+    ndays = 50
   )
+
+  # if (i %% 10 == 0) {
+  #   print(model_sir)
+  # }
+
+  # if (i %% 100 == 0) {
+  #   stop("Debugging!")
+  # }
   res <- unname(as.integer(get_today_total(model_sir)))
   return(res)
 }
@@ -94,7 +102,7 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 ## Set LFMCMC params
 ```{r lfmcmc-params}
 # Set initial parameters
-par0 <- as.double(c(0.5, 0.5))
+par0 <- as.double(c(0.1, 0.5))
 n_samp <- 2000
 epsil <- as.double(1.0)
 ```
@@ -108,8 +116,8 @@ run_lfmcmc(
   epsilon_ = epsil
 )
 
-# set_stats_names(lfmcmc_model, get_states(model_sir))
-# set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+set_stats_names(lfmcmc_model, get_states(model_sir))
+set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
 ```
