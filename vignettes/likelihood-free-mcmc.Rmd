@@ -31,7 +31,7 @@ model_seed <- 122
 model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .1,
-  transmission_rate = .1,
+  transmission_rate = .9,
   recovery_rate = .3
 )
 
