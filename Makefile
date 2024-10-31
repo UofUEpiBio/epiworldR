@@ -52,3 +52,7 @@ docs:
 
 checkv: build
 	R CMD check --as-cran --use-valgrind epiworldR*.tar.gz
+
+dev: clean
+	R CMD build --no-build-vignettes .
+	R CMD INSTALL epiworldR_$(VERSION).tar.gz
