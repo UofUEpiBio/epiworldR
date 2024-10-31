@@ -206,7 +206,7 @@ public:
      * @param eng 
      */
     ///@{
-    void set_rand_engine(const std::shared_ptr< std::mt19937 > & eng);
+    void set_rand_engine(std::shared_ptr< std::mt19937 > & eng);
     std::shared_ptr< std::mt19937 > & get_rand_endgine();
     void seed(epiworld_fast_uint s);
     void set_rand_gamma(epiworld_double alpha, epiworld_double beta);
