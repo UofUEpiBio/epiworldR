@@ -27,13 +27,15 @@ LFMCMC <- function(model) {
 #' @param params_init_ Initial model parameters
 #' @param n_samples_ Number of samples
 #' @param epsilon_ Epsilon parameter
+#' @param seed Random engine seed
 #' @returns The simulated model of class `epiworld_lfmcmc`.
 #' @export
-run_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) UseMethod("run_lfmcmc")
+run_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) UseMethod("run_lfmcmc")
 
 #' @export
-run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
-  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_)
+run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) {
+  if (length(seed)) set.seed(seed)
+  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_, sample.int(1e4, 1))
   invisible(lfmcmc)
 }
 

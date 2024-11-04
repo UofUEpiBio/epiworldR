@@ -18,7 +18,7 @@
 \usage{
 LFMCMC(model)
 
-run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_)
+run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL)
 
 set_observed_data(lfmcmc, observed_data_)
 
@@ -50,6 +50,8 @@ use_kernel_fun_gaussian(lfmcmc)
 \item{n_samples_}{Number of samples}
 
 \item{epsilon_}{Epsilon parameter}
+
+\item{seed}{Random engine seed}
 
 \item{observed_data_}{Observed data}
 

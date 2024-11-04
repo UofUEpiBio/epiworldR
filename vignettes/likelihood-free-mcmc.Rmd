@@ -101,7 +101,8 @@ run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,
   n_samples_ = n_samp,
-  epsilon_ = epsil
+  epsilon_ = epsil,
+  seed = model_seed
 )
 
 # Print the results

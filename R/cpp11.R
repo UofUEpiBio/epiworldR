@@ -224,8 +224,8 @@ LFMCMC_cpp <- function(model) {
   .Call(`_epiworldR_LFMCMC_cpp`, model)
 }
 
-run_lfmcmc_cpp <- function(lfmcmc, params_init_, n_samples_, epsilon_) {
-  .Call(`_epiworldR_run_lfmcmc_cpp`, lfmcmc, params_init_, n_samples_, epsilon_)
+run_lfmcmc_cpp <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed) {
+  .Call(`_epiworldR_run_lfmcmc_cpp`, lfmcmc, params_init_, n_samples_, epsilon_, seed)
 }
 
 set_observed_data_cpp <- function(lfmcmc, observed_data_) {

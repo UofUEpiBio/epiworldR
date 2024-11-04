@@ -35,10 +35,11 @@ SEXP run_lfmcmc_cpp(
     SEXP lfmcmc,
     std::vector<epiworld_double> params_init_,
     size_t n_samples_,
-    epiworld_double epsilon_
+    epiworld_double epsilon_,
+    int seed
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->run(params_init_, n_samples_, epsilon_);
+    lfmcmc_ptr->run(params_init_, n_samples_, epsilon_, seed);
     return lfmcmc;
 }
 
