@@ -72,7 +72,28 @@ SEXP set_proposal_fun_cpp(
     cpp11::function fun
 ) {
 
-    cpp11::stop("Un implemented");
+    LFMCMCProposalFun<TData_default> fun_call = [fun](
+        std::vector< epiworld_double >& params_now,
+        const std::vector< epiworld_double >& params_prev,
+        LFMCMC<TData_default>*
+        ) -> void {
+
+        auto params_doubles = cpp11::doubles(params_prev);
+
+        auto res_tmp = cpp11::doubles(fun(params_doubles));
+
+        std::copy(
+            res_tmp.begin(),
+            res_tmp.end(),
+            params_now.begin()
+            );
+
+        return;
+    };
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+
+    lfmcmc_ptr->set_proposal_fun(fun_call);
 
     return lfmcmc;
 }

@@ -80,6 +80,12 @@ sumfun <- function(dat) {
   return(dat)
 }
 
+# Define the LFMCMC proposal function
+propfun <- function(params_prev) {
+  res <- params_prev + rnorm(length(params_prev), )
+  return(res)
+}
+
 # Define the LFMCMC kernel function
 # - Based on kernel_fun_uniform from lfmcmc-meat.hpp
 kernelfun <- function(stats_now, stats_obs, epsilon) {
@@ -95,7 +101,7 @@ kernelfun <- function(stats_now, stats_obs, epsilon) {
 lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simfun) |>
   set_summary_fun(sumfun) |>
-  use_proposal_norm_reflective() |>
+  set_proposal_fun(propfun) |>
   set_kernel_fun(kernelfun) |>
   set_observed_data(obs_data)
 ```
