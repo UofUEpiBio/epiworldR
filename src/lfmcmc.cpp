@@ -147,7 +147,25 @@ SEXP set_kernel_fun_cpp(
     SEXP lfmcmc,
     cpp11::function fun
 ) {
-    cpp11::stop("Unimplemented");
+
+    LFMCMCKernelFun<TData_default> fun_call = [fun](
+        const std::vector< epiworld_double >& stats_now,
+        const std::vector< epiworld_double >& stats_obs,
+        epiworld_double epsilon,
+        LFMCMC<TData_default>*
+        ) -> epiworld_double {
+
+        auto stats_now_doubles = cpp11::doubles(stats_now);
+        auto stats_obs_doubles = cpp11::doubles(stats_obs);
+
+        return cpp11::as_cpp<epiworld_double>(
+            fun(stats_now_doubles, stats_obs_doubles, epsilon)
+            );
+    };
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+
+    lfmcmc_ptr->set_kernel_fun(fun_call);
 
     return lfmcmc;
 }
