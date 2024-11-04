@@ -47,10 +47,10 @@ SIR Logistic model
 set.seed(2223)
 n <- 100000
 
-# Creating the data to use for the "ModelSIRLogit" function. It contains 
-# information on the sex of each agent and will be used to determine 
-# differences in disease progression between males and females. Note that 
-# the number of rows in these data are identical to n (100000). 
+# Creating the data to use for the "ModelSIRLogit" function. It contains
+# information on the sex of each agent and will be used to determine
+# differences in disease progression between males and females. Note that
+# the number of rows in these data are identical to n (100000).
 X <- cbind(
   Intercept = 1,
   Female    = sample.int(2, n, replace = TRUE) - 1
@@ -60,12 +60,12 @@ X <- cbind(
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
 
-# Feed all above information into the "ModelSIRLogit" function. 
+# Feed all above information into the "ModelSIRLogit" function.
 model_logit <- ModelSIRLogit(
   "covid2",
   data = X,
   coefs_infect      = coef_infect,
-  coefs_recover     = coef_recover, 
+  coefs_recover     = coef_recover,
   coef_infect_cols  = 1L:ncol(X),
   coef_recover_cols = 1L:ncol(X),
   prob_infection = .8,
@@ -82,11 +82,11 @@ plot(model_logit)
 # Females are supposed to be more likely to become infected.
 rn <- get_reproductive_number(model_logit)
 
-# Probability of infection for males and females. 
+# Probability of infection for males and females.
 (table(
   X[, "Female"],
   (1:n \%in\% rn$source)
-) |> prop.table())[,2]
+) |> prop.table())[, 2]
 
 # Looking into the individual agents.
 get_agents(model_logit)

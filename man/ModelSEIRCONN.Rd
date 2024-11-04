@@ -57,14 +57,14 @@ This is equivalent to a compartmental model (\href{https://en.wikipedia.org/w/in
 # An example with COVID-19
 model_seirconn <- ModelSEIRCONN(
   name                = "COVID-19",
-  prevalence          = 0.01, 
+  prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 2, 
-  incubation_days     = 7, 
+  contact_rate        = 2,
+  incubation_days     = 7,
   transmission_rate   = 0.5,
   recovery_rate       = 0.3
 )
-  
+
 # Running and printing
 run(model_seirconn, ndays = 100, seed = 1912)
 model_seirconn
@@ -72,7 +72,7 @@ model_seirconn
 plot(model_seirconn)
 
 # Adding the flu
-flu <- virus("Flu", .9, 1/7, prevalence = 0.001, as_proportion = TRUE)
+flu <- virus("Flu", .9, 1 / 7, prevalence = 0.001, as_proportion = TRUE)
 add_virus(model_seirconn, flu)
 
 #' # Running and printing

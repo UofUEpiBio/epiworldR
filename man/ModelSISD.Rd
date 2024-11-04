@@ -43,12 +43,12 @@ Susceptible-Infected-Susceptible-Deceased model (SISD) (\href{https://en.wikiped
 }
 \examples{
 model_sisd <- ModelSISD(
-               name = "COVID-19", 
-               prevalence = 0.01, 
-               transmission_rate = 0.9, 
-               recovery_rate = 0.1, 
-               death_rate = 0.01
-             )
+  name = "COVID-19",
+  prevalence = 0.01,
+  transmission_rate = 0.9,
+  recovery_rate = 0.1,
+  death_rate = 0.01
+)
 
 # Adding a small world population
 agents_smallworld(
@@ -57,8 +57,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_sisd, ndays = 100, seed = 1912)
 model_sisd

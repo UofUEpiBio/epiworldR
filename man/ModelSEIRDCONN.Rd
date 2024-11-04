@@ -67,15 +67,15 @@ non-ifected agents already deceased.
 # An example with COVID-19
 model_seirdconn <- ModelSEIRDCONN(
   name                = "COVID-19",
-  prevalence          = 0.01, 
+  prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 2, 
-  incubation_days     = 7, 
+  contact_rate        = 2,
+  incubation_days     = 7,
   transmission_rate   = 0.5,
   recovery_rate       = 0.3,
   death_rate          = 0.01
 )
-  
+
 # Running and printing
 run(model_seirdconn, ndays = 100, seed = 1912)
 model_seirdconn
@@ -84,7 +84,7 @@ plot(model_seirdconn)
 
 # Adding the flu
 flu <- virus(
-  "Flu", prob_infecting = .3, recovery_rate = 1/7,
+  "Flu", prob_infecting = .3, recovery_rate = 1 / 7,
   prob_death = 0.001,
   prevalence = 0.001, as_proportion = TRUE
 )
