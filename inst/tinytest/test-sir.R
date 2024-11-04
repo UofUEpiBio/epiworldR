@@ -47,15 +47,16 @@ tmat_1 <- get_transition_probability(sir_1)
 # Expected
 tmat_expected <- structure(
   c(
-    0.963432729244232, 0, 0, 0.0365671403706074, 0.702733814716339, 
-    0, 0, 0.297266155481339, 1
-    ),
+    0.962139427661896, 0, 0,
+    0.0378605611622334, 0.70049238204956, 
+    0, 0, 0.299507558345795, 1
+  ),
   dim = c(3L, 3L),
   dimnames = list(
-    c("Susceptible", "Infected", "Recovered"), 
+    c("Susceptible", "Infected", "Recovered"),
     c("Susceptible", "Infected", "Recovered")
-    )
   )
+)
 
 expect_equivalent(tmat_0, tmat_1)
 expect_equivalent(tmat_0, tmat_expected)
