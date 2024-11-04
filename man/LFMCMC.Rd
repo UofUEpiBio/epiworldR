@@ -97,8 +97,8 @@ Performs a Likelihood-Free Markhov Chain Monte Carlo simulation
 \examples{
 ## Setup an SIR model to use in the simulation
 model_seed <- 122
-model_sir <- ModelSIR(name = "COVID-19", prevalence = .1, 
- transmission_rate = .9, recovery_rate = .3)
+model_sir <- ModelSIR(name = "COVID-19", prevalence = .1,
+  transmission_rate = .9, recovery_rate = .3)
 agents_smallworld(
   model_sir,
   n = 1000,
