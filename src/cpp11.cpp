@@ -454,6 +454,13 @@ extern "C" SEXP _epiworldR_use_kernel_fun_gaussian_cpp(SEXP lfmcmc) {
   END_CPP11
 }
 // lfmcmc.cpp
+SEXP seed_lfmcmc_cpp(SEXP lfmcmc, unsigned long long int s);
+extern "C" SEXP _epiworldR_seed_lfmcmc_cpp(SEXP lfmcmc, SEXP s) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(seed_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<unsigned long long int>>(s)));
+  END_CPP11
+}
+// lfmcmc.cpp
 SEXP set_par_names_cpp(SEXP lfmcmc, std::vector< std::string > names);
 extern "C" SEXP _epiworldR_set_par_names_cpp(SEXP lfmcmc, SEXP names) {
   BEGIN_CPP11
@@ -1087,6 +1094,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_cpp",                              (DL_FUNC) &_epiworldR_run_cpp,                               3},
     {"_epiworldR_run_lfmcmc_cpp",                       (DL_FUNC) &_epiworldR_run_lfmcmc_cpp,                        4},
     {"_epiworldR_run_multiple_cpp",                     (DL_FUNC) &_epiworldR_run_multiple_cpp,                      8},
+    {"_epiworldR_seed_lfmcmc_cpp",                      (DL_FUNC) &_epiworldR_seed_lfmcmc_cpp,                       2},
     {"_epiworldR_set_agents_data_cpp",                  (DL_FUNC) &_epiworldR_set_agents_data_cpp,                   3},
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
