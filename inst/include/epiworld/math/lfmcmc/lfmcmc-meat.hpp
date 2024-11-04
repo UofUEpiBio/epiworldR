@@ -205,7 +205,8 @@ template<typename TData>
 inline void LFMCMC<TData>::run(
     std::vector< epiworld_double > params_init_,
     size_t n_samples_,
-    epiworld_double epsilon_
+    epiworld_double epsilon_,
+    int seed
     )
 {
 
@@ -217,6 +218,9 @@ inline void LFMCMC<TData>::run(
     epsilon      = epsilon_;
     params_init  = params_init_;
     n_parameters = params_init_.size();
+
+    if (seed >= 0)
+        this->seed(seed);
 
     params_now.resize(n_parameters);
     params_prev.resize(n_parameters);

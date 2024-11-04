@@ -187,7 +187,8 @@ public:
     void run(
         std::vector< epiworld_double > param_init,
         size_t n_samples_,
-        epiworld_double epsilon_
+        epiworld_double epsilon_,
+        int seed = -1
         );
 
     LFMCMC() {};
