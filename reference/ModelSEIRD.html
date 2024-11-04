@@ -139,9 +139,9 @@ non-ifected agents already deceased.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model_seird</span> <span class="op">&lt;-</span> <span class="fu">ModelSEIRD</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
-<span class="r-in"><span>transmission_rate <span class="op">=</span> <span class="fl">0.9</span>, recovery_rate <span class="op">=</span> <span class="fl">0.1</span>, incubation_days <span class="op">=</span> <span class="fl">4</span>, </span></span>
-<span class="r-in"><span>death_rate <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">model_seird</span> <span class="op">&lt;-</span> <span class="fu">ModelSEIRD</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>, recovery_rate <span class="op">=</span> <span class="fl">0.1</span>, incubation_days <span class="op">=</span> <span class="fl">4</span>,</span></span>
+<span class="r-in"><span>  death_rate <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span></span></span>
@@ -150,8 +150,8 @@ non-ifected agents already deceased.</p>
 <span class="r-in"><span>  k <span class="op">=</span> <span class="fl">5</span>,</span></span>
 <span class="r-in"><span>  d <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>  p <span class="op">=</span> <span class="fl">.01</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_seird</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
@@ -163,7 +163,7 @@ non-ifected agents already deceased.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible-Exposed-Infected-Removed-Deceased (SEIRD)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> It features 100000 agents, 1 virus(es), and 0 tool(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The model has 5 states.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 1961 Susceptible, 388 Exposed, 1358 Infected, 88223 Removed, and 8070 Deceased.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 2671 Susceptible, 379 Exposed, 1357 Infected, 87665 Removed, and 7928 Deceased.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_seird</span>, main <span class="op">=</span> <span class="st">"SEIRD Model"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelSEIRD-1.png" alt="" width="700" height="433"></span>

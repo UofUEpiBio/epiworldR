@@ -155,15 +155,15 @@ non-ifected agents already deceased.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># An example with COVID-19</span></span></span>
 <span class="r-in"><span><span class="va">model_seirdconn</span> <span class="op">&lt;-</span> <span class="fu">ModelSEIRDCONN</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  name                <span class="op">=</span> <span class="st">"COVID-19"</span>,</span></span>
-<span class="r-in"><span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
+<span class="r-in"><span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
 <span class="r-in"><span>  n                   <span class="op">=</span> <span class="fl">10000</span>,</span></span>
-<span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">2</span>, </span></span>
-<span class="r-in"><span>  incubation_days     <span class="op">=</span> <span class="fl">7</span>, </span></span>
+<span class="r-in"><span>  contact_rate        <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>  incubation_days     <span class="op">=</span> <span class="fl">7</span>,</span></span>
 <span class="r-in"><span>  transmission_rate   <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
 <span class="r-in"><span>  recovery_rate       <span class="op">=</span> <span class="fl">0.3</span>,</span></span>
 <span class="r-in"><span>  death_rate          <span class="op">=</span> <span class="fl">0.01</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Running and printing</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_seirdconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
@@ -175,14 +175,14 @@ non-ifected agents already deceased.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> It features 10000 agents, 1 virus(es), and 0 tool(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The model has 5 states.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 474 Susceptible, 4 Exposed, 1 Infected, 9330 Removed, and 191 Deceased.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 490 Susceptible, 2 Exposed, 1 Infected, 9280 Removed, and 227 Deceased.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_seirdconn</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelSEIRDCONN-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding the flu</span></span></span>
 <span class="r-in"><span><span class="va">flu</span> <span class="op">&lt;-</span> <span class="fu"><a href="virus.html">virus</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">.3</span>, recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">7</span>,</span></span>
+<span class="r-in"><span>  <span class="st">"Flu"</span>, prob_infecting <span class="op">=</span> <span class="fl">.3</span>, recovery_rate <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">7</span>,</span></span>
 <span class="r-in"><span>  prob_death <span class="op">=</span> <span class="fl">0.001</span>,</span></span>
 <span class="r-in"><span>  prevalence <span class="op">=</span> <span class="fl">0.001</span>, as_proportion <span class="op">=</span> <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -199,7 +199,7 @@ non-ifected agents already deceased.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> It features 10000 agents, 2 virus(es), and 0 tool(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The model has 5 states.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 398 Susceptible, 6 Exposed, 4 Infected, 9379 Removed, and 213 Deceased.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 449 Susceptible, 8 Exposed, 8 Infected, 9331 Removed, and 204 Deceased.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_seirdconn</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelSEIRDCONN-2.png" alt="" width="700" height="433"></span>

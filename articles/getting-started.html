@@ -65,7 +65,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2024-10-15</h4>
+            <h4 data-toc-skip class="date">2024-11-04</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -175,8 +175,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 100.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 24.86 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 112.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 22.32 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -194,21 +194,21 @@ model_sir.</p>
 <span><span class="co">#&gt;  - Transmission rate : 0.5000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible : 49995 -&gt; 3245</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible : 49995 -&gt; 3276</span></span>
 <span><span class="co">#&gt;   - (1) Infected    :     5 -&gt; 1</span></span>
-<span><span class="co">#&gt;   - (2) Recovered   :     0 -&gt; 46754</span></span>
+<span><span class="co">#&gt;   - (2) Recovered   :     0 -&gt; 46723</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
 <span><span class="co">#&gt;  - Susceptible  0.95  0.05  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.68  0.32</span></span>
+<span><span class="co">#&gt;  - Infected     0.00  0.69  0.31</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <p>There are two additional sections included in the summary after
 running the model. First, we see the distribution of the population at
 time 50. This section describes the flow of agents from each state (SIR)
 after 50 days. In the example, you’ll see the number of agents in the
-susceptible state decreased from 49,995 to 3,245, the number of agents
+susceptible state decreased from 49,995 to 3,276, the number of agents
 in the infected state increased from 5 to 1, and recovered agents
-increased to 46,754 after 50 days. The counts for these states will
+increased to 46,723 after 50 days. The counts for these states will
 change based on model parameters or simulation run-time. The
 transmission probabilities section outputs a 3x3 matrix that describes
 the probability of moving from one state to another. For example, in the
@@ -265,8 +265,8 @@ counts.</p>
 <span><span class="co">#&gt; 1    0 Susceptible  49995</span></span>
 <span><span class="co">#&gt; 2    0    Infected      5</span></span>
 <span><span class="co">#&gt; 3    0   Recovered      0</span></span>
-<span><span class="co">#&gt; 4    1 Susceptible  49987</span></span>
-<span><span class="co">#&gt; 5    1    Infected     13</span></span>
+<span><span class="co">#&gt; 4    1 Susceptible  49988</span></span>
+<span><span class="co">#&gt; 5    1    Infected     12</span></span>
 <span><span class="co">#&gt; 6    1   Recovered      0</span></span></code></pre></div>
 <p>An essential statistic in epidemiological models is the reproductive
 number:</p>
@@ -274,12 +274,12 @@ number:</p>
 <code class="sourceCode R"><span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   virus_id    virus source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1        0 COVID-19  34927                   48  0</span></span>
-<span><span class="co">#&gt; 2        0 COVID-19   2868                   45  0</span></span>
-<span><span class="co">#&gt; 3        0 COVID-19   6747                   42  0</span></span>
-<span><span class="co">#&gt; 4        0 COVID-19  35511                   41  0</span></span>
-<span><span class="co">#&gt; 5        0 COVID-19   3593                   41  0</span></span>
-<span><span class="co">#&gt; 6        0 COVID-19  41396                   40  0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1        0 COVID-19   7312                   44  0</span></span>
+<span><span class="co">#&gt; 2        0 COVID-19  46328                   43  0</span></span>
+<span><span class="co">#&gt; 3        0 COVID-19  43475                   42  0</span></span>
+<span><span class="co">#&gt; 4        0 COVID-19  23672                   42  0</span></span>
+<span><span class="co">#&gt; 5        0 COVID-19  18224                   42  1</span></span>
+<span><span class="co">#&gt; 6        0 COVID-19  48317                   41  2</span></span></code></pre></div>
 <p>epiworldR has a method to plot the reproductive number automatically.
 The function takes the average of values in the above table for each
 date and repeats until all data have been accounted for.</p>
@@ -288,8 +288,8 @@ date and repeats until all data have been accounted for.</p>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">date</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="co"># Reproductive number on day 10</span></span>
-<span><span class="co">#&gt;    virus_id    virus date      avg   n       sd lb ub</span></span>
-<span><span class="co">#&gt; 11        0 COVID-19   10 2.366379 696 2.096099  0  7</span></span></code></pre></div>
+<span><span class="co">#&gt;    virus_id    virus date      avg   n      sd lb    ub</span></span>
+<span><span class="co">#&gt; 11        0 COVID-19   10 2.603175 630 2.29425  0 8.275</span></span></code></pre></div>
 <p>Another typical piece of information is the daily incidence. This is
 the number of new cases per day. In epiworldR, we can get the incidence
 by looking at the daily transitions between states. Although the
@@ -337,7 +337,7 @@ sections.</p>
 <span><span class="co">#&gt; Susceptible-Infected-Removed (SIR) (connected)</span></span>
 <span><span class="co">#&gt; It features 50000 agents, 2 virus(es), and 0 tool(s).</span></span>
 <span><span class="co">#&gt; The model has 3 states.</span></span>
-<span><span class="co">#&gt; The final distribution is: 3227 Susceptible, 3 Infected, and 46770 Recovered.</span></span></code></pre></div>
+<span><span class="co">#&gt; The final distribution is: 3285 Susceptible, 3 Infected, and 46712 Recovered.</span></span></code></pre></div>
 <p>Plotting the previous model (including the flu) yields the following.
 Notice the presence of two reproductive numbers plotted over time.
 Variant 0 refers to COVID-19, and virus 1 refers to the flu.</p>

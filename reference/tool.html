@@ -269,7 +269,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span>  as_proportion <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>  susceptibility_reduction <span class="op">=</span> <span class="fl">.9</span>,</span></span>
 <span class="r-in"><span>  transmission_reduction <span class="op">=</span> <span class="fl">.5</span>,</span></span>
-<span class="r-in"><span>  recovery_enhancer <span class="op">=</span> <span class="fl">.5</span>, </span></span>
+<span class="r-in"><span>  recovery_enhancer <span class="op">=</span> <span class="fl">.5</span>,</span></span>
 <span class="r-in"><span>  death_reduction <span class="op">=</span> <span class="fl">.9</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -281,7 +281,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> queue_init : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> queue_post : 0</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">set_name_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="st">'Pfizer'</span><span class="op">)</span> <span class="co"># Assigning name to the tool</span></span></span>
+<span class="r-in"><span><span class="fu">set_name_tool</span><span class="op">(</span><span class="va">epitool</span>, <span class="st">"Pfizer"</span><span class="op">)</span> <span class="co"># Assigning name to the tool</span></span></span>
 <span class="r-in"><span><span class="fu">get_name_tool</span><span class="op">(</span><span class="va">epitool</span><span class="op">)</span> <span class="co"># Returning the name of the tool</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Pfizer"</span>
 <span class="r-in"><span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">epitool</span><span class="op">)</span></span></span>
@@ -295,7 +295,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible-Infected-Removed (SIR) (connected)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> It features 10000 agents, 1 virus(es), and 1 tool(s).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> The model has 3 states.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 8546 Susceptible, 0 Infected, and 1454 Recovered.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 8804 Susceptible, 0 Infected, and 1196 Recovered.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="tool-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -311,7 +311,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adjusting probabilities due to tool</span></span></span>
-<span class="r-in"><span><span class="fu">set_susceptibility_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="co"># Susceptibility reduction </span></span></span>
+<span class="r-in"><span><span class="fu">set_susceptibility_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.1</span><span class="op">)</span> <span class="co"># Susceptibility reduction</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Tool       : Pfizer</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Id         : 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> state_init : -99</span>
@@ -322,7 +322,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span><span class="fu">set_recovery_enhancer</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.15</span><span class="op">)</span> <span class="co"># Probability increase of recovery</span></span></span>
 <span class="r-in"><span><span class="fu">set_death_reduction</span><span class="op">(</span><span class="va">epitool</span>, <span class="fl">0.05</span><span class="op">)</span> <span class="co"># Probability reduction of death</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="fl">0</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">rm_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">add_tool</span><span class="op">(</span><span class="va">model_sirconn</span>, <span class="va">epitool</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span> <span class="co"># Run model to view changes</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
@@ -333,9 +333,9 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using the logit function --------------</span></span></span>
 <span class="r-in"><span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>, </span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>, prevalence <span class="op">=</span> <span class="fl">0.01</span>,</span></span>
 <span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>, recovery_rate <span class="op">=</span> <span class="fl">0.1</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Adding a small world population</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span></span></span>
@@ -382,7 +382,7 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The infection prob is lower</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">dat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fl">.5</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="va">dat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fl">.5</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="tool-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tfun</span> <span class="co"># printing</span></span></span>
@@ -397,8 +397,8 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span>  tool  <span class="op">=</span> <span class="fu"><a href="epiworld-methods.html">get_tool</a></span><span class="op">(</span><span class="va">sir</span>, <span class="fl">0</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  model <span class="op">=</span> <span class="va">sir</span>,</span></span>
 <span class="r-in"><span>  tfun  <span class="op">=</span> <span class="va">tfun</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">sir</span>, ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">11</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
@@ -407,11 +407,12 @@ assigns the tool to a set of agents.</p>
 <span class="r-in"><span><span class="va">hist_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="epiworld-data.html">get_hist_total</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_0</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_1</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_0</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">hist_1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="tool-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

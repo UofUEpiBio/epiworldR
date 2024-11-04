@@ -218,7 +218,7 @@ plotting.</p>
 <span class="r-in"><span>  name              <span class="op">=</span> <span class="st">"Disease"</span>,</span></span>
 <span class="r-in"><span>  n                 <span class="op">=</span> <span class="fl">10000</span>,</span></span>
 <span class="r-in"><span>  prevalence        <span class="op">=</span> <span class="fl">0.1</span>,</span></span>
-<span class="r-in"><span>  contact_rate      <span class="op">=</span> <span class="fl">2.0</span>, </span></span>
+<span class="r-in"><span>  contact_rate      <span class="op">=</span> <span class="fl">2.0</span>,</span></span>
 <span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">0.8</span>,</span></span>
 <span class="r-in"><span>  incubation_days   <span class="op">=</span> <span class="fl">7.0</span>,</span></span>
 <span class="r-in"><span>  recovery_rate     <span class="op">=</span> <span class="fl">0.3</span></span></span>
@@ -233,19 +233,19 @@ plotting.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving the transition probability</span></span></span>
-<span class="r-in"><span><span class="fu">get_transition_probability</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="fu">get_transition_probability</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible   Exposed  Infected Recovered</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible   0.9028099 0.0971901 0.0000000 0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Exposed       0.0000000 0.8584473 0.1415526 0.0000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Infected      0.0000000 0.0000000 0.7000978 0.2999022</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Recovered     0.0000000 0.0000000 0.0000000 1.0000000</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Retrieving date, state, and counts dataframe including any added tools </span></span></span>
+<span class="r-in"><span><span class="co"># Retrieving date, state, and counts dataframe including any added tools</span></span></span>
 <span class="r-in"><span><span class="fu">get_hist_tool</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] date    tool_id tool    state   counts </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Retrieving overall date, state, and counts dataframe </span></span></span>
+<span class="r-in"><span><span class="co"># Retrieving overall date, state, and counts dataframe</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">get_hist_total</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   date       state counts</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    0 Susceptible   9000</span>
@@ -283,7 +283,7 @@ plotting.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6     Exposed     Exposed    0      0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># And turn it into an array</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">t_hist</span><span class="op">)</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">as.array</a></span><span class="op">(</span><span class="va">t_hist</span><span class="op">)</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> , , 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible Exposed Infected Recovered</span>

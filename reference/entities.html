@@ -158,13 +158,13 @@ in the entity (ids).</p></li>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Creating a mixing model</span></span></span>
 <span class="r-in"><span><span class="va">mymodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="ModelSIRMixing.html">ModelSIRMixing</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span> name <span class="op">=</span> <span class="st">"My model"</span>,</span></span>
-<span class="r-in"><span> n <span class="op">=</span> <span class="fl">10000</span>,</span></span>
-<span class="r-in"><span> prevalence <span class="op">=</span> <span class="fl">.001</span>,</span></span>
-<span class="r-in"><span> contact_rate <span class="op">=</span> <span class="fl">10</span>,</span></span>
-<span class="r-in"><span> transmission_rate <span class="op">=</span> <span class="fl">.1</span>,</span></span>
-<span class="r-in"><span> recovery_rate <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">7</span>,</span></span>
-<span class="r-in"><span> contact_matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.9</span>, <span class="fl">.1</span>, <span class="fl">.1</span>, <span class="fl">.9</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  name <span class="op">=</span> <span class="st">"My model"</span>,</span></span>
+<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">10000</span>,</span></span>
+<span class="r-in"><span>  prevalence <span class="op">=</span> <span class="fl">.001</span>,</span></span>
+<span class="r-in"><span>  contact_rate <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span>  transmission_rate <span class="op">=</span> <span class="fl">.1</span>,</span></span>
+<span class="r-in"><span>  recovery_rate <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">7</span>,</span></span>
+<span class="r-in"><span>  contact_matrix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.9</span>, <span class="fl">.1</span>, <span class="fl">.1</span>, <span class="fl">.9</span><span class="op">)</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ent1</span> <span class="op">&lt;-</span> <span class="fu">entity</span><span class="op">(</span><span class="st">"First"</span>, <span class="fl">5000</span>, <span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -191,8 +191,8 @@ in the entity (ids).</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses   : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 66.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 15.06 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 68.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 14.61 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global events:</span>
@@ -210,13 +210,13 @@ in the entity (ids).</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission : 0.1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9990 -&gt; 384</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Infected    :    10 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Recovered   :     0 -&gt; 9616</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible :  9990 -&gt; 373</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Infected    :    10 -&gt; 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Recovered   :     0 -&gt; 9626</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.97  0.03  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.85  0.15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.87  0.13</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
