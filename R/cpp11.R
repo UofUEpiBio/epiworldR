@@ -256,10 +256,6 @@ use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
 }
 
-seed_lfmcmc_cpp <- function(lfmcmc, s) {
-  .Call(`_epiworldR_seed_lfmcmc_cpp`, lfmcmc, s)
-}
-
 set_par_names_cpp <- function(lfmcmc, names) {
   .Call(`_epiworldR_set_par_names_cpp`, lfmcmc, names)
 }

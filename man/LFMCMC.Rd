@@ -9,7 +9,6 @@
 \alias{set_simulation_fun}
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
-\alias{seed_lfmcmc}
 \alias{set_par_names}
 \alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
@@ -30,8 +29,6 @@ set_simulation_fun(lfmcmc, fun)
 set_summary_fun(lfmcmc, fun)
 
 set_kernel_fun(lfmcmc, fun)
-
-seed_lfmcmc(lfmcmc, s)
 
 set_par_names(lfmcmc, names)
 
@@ -58,8 +55,6 @@ use_kernel_fun_gaussian(lfmcmc)
 
 \item{fun}{The LFMCMC kernel function}
 
-\item{s}{The rand engine seed}
-
 \item{names}{The model stats names}
 
 \item{x}{LFMCMC model to print}
@@ -82,8 +77,6 @@ The lfmcmc model with the simulation function added
 The lfmcmc model with the summary function added
 
 The lfmcmc model with the kernel function added
-
-The lfmcmc model with the seed set
 
 The lfmcmc model with the parameter names added
 

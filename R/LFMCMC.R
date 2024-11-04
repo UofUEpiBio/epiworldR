@@ -104,19 +104,6 @@ set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param s The rand engine seed
-#' @returns The lfmcmc model with the seed set
-#' @export
-seed_lfmcmc <- function(lfmcmc, s) UseMethod("seed_lfmcmc")
-
-#' @export
-seed_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, s) {
-  seed_lfmcmc_cpp(lfmcmc, s)
-  invisible(lfmcmc)
-}
-
-#' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
 #' @param names The model parameter names
 #' @returns The lfmcmc model with the parameter names added
 #' @export
