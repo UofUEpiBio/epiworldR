@@ -49,11 +49,11 @@ non-ifected agents already deceased.
 }
 \examples{
 model_sird <- ModelSIRD(
- name              = "COVID-19",
- prevalence        = 0.01, 
- transmission_rate = 0.9,
- recovery_rate     = 0.1,
- death_rate        = 0.01
+  name              = "COVID-19",
+  prevalence        = 0.01,
+  transmission_rate = 0.9,
+  recovery_rate     = 0.1,
+  death_rate        = 0.01
 )
 
 # Adding a small world population
@@ -63,8 +63,8 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_sird, ndays = 100, seed = 1912)
 model_sird

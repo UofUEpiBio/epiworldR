@@ -17,7 +17,7 @@ stopifnot_model <- function(model) {
 #'
 #' @param x An object of class `epiworld_model`.
 #' @param ndays Number of days (steps) of the simulation.
-#' @param seed Seed to set for initializing random number generator.
+#' @param seed Seed to set for initializing random number generator (passed to [set.seed()]).
 #' @param model Model object.
 #' @export
 #' @name epiworld-methods
@@ -157,11 +157,12 @@ verbose_on.epiworld_model <- function(x) {
 #' @returns
 #' - The `run` function returns the simulated model of class `epiworld_model`.
 #' @rdname epiworld-methods
-run <- function(model, ndays, seed = sample.int(1e4, 1)) UseMethod("run")
+run <- function(model, ndays, seed = NULL) UseMethod("run")
 
 #' @export
-run.epiworld_model <- function(model, ndays, seed = sample.int(1e4, 1)) {
-  run_cpp(model, ndays, seed)
+run.epiworld_model <- function(model, ndays, seed = NULL) {
+  if (length(seed)) set.seed(seed)
+  run_cpp(model, ndays, sample.int(1e4, 1))
   invisible(model)
 }
 

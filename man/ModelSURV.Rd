@@ -99,11 +99,11 @@ agents_smallworld(
   k = 5,
   d = FALSE,
   p = .01
-  )
-  
+)
+
 # Running and printing
 run(model_surv, ndays = 100, seed = 1912)
-model_surv 
+model_surv
 
 # Plotting
 plot(model_surv, main = "SURV Model")
