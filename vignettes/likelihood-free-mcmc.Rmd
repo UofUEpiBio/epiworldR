@@ -61,7 +61,7 @@ summary(model_sir)
 obs_data <- unname(as.integer(get_today_total(model_sir)))
 
 # Define the LFMCMC simulation function
-simfun <- function(params, m) {
+simfun <- function(params) {
 
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
@@ -76,7 +76,7 @@ simfun <- function(params, m) {
 }
 
 # Define the LFMCMC summary function
-sumfun <- function(dat, m) {
+sumfun <- function(dat) {
   return(dat)
 }
 

@@ -38,9 +38,7 @@ SEXP run_lfmcmc_cpp(
     epiworld_double epsilon_
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    Rprintf("Running LFMCMC\n");
     lfmcmc_ptr->run(params_init_, n_samples_, epsilon_);
-    Rprintf("LFMCMC Finished\n");
     return lfmcmc;
 }
 
@@ -90,7 +88,7 @@ SEXP set_simulation_fun_cpp(
         auto params_doubles = cpp11::doubles(params);
 
         return cpp11::as_cpp<TData_default>(
-            cpp11::integers(fun(params_doubles, params_doubles))
+            cpp11::integers(fun(params_doubles))
             );
     };
 
@@ -118,7 +116,7 @@ SEXP set_summary_fun_cpp(
             res.resize(dat.size());
 
         auto dat_int = cpp11::integers(dat);
-        auto res_tmp = cpp11::integers(fun(dat_int, dat_int));
+        auto res_tmp = cpp11::integers(fun(dat_int));
 
         std::copy(res_tmp.begin(), res_tmp.end(), res.begin());
 
