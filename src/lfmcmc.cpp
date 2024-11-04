@@ -111,7 +111,6 @@ SEXP set_summary_fun_cpp(
         LFMCMC<TData_default>*
         ) -> void {
 
-        // TODO: Check if this is necessary
         if (res.size() == 0u)
             res.resize(dat.size());
 

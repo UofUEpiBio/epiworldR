@@ -86,8 +86,7 @@ lfmcmc_model <- LFMCMC(model_sir) |>
   set_summary_fun(sumfun) |>
   use_proposal_norm_reflective() |>
   use_kernel_fun_gaussian() |>
-  set_observed_data(obs_data) |>
-  seed_lfmcmc(model_seed)
+  set_observed_data(obs_data)
 ```
 
 ## Run LFMCMC simulation
