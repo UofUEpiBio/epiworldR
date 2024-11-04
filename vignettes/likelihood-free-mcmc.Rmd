@@ -19,10 +19,11 @@ knitr::opts_chunk$set(
 # Introduction
 The purpose of the "lfmcmc" function is to perform a Likelihood-Free Markhov Chain Monte Carlo simulation.
 
-# Example: Using LFMCMC to calibrate SIR Model
+# Example: Using LFMCMC to calibrate an SIR Model
 
-## Setup and Running Model
+## Setup and Running the Model
 Create an SIR Model and add a small world population.
+Then, run the model.
 ```{r sir-setup}
 library(epiworldR)
 
@@ -54,14 +55,12 @@ run(
 summary(model_sir)
 ```
 
-## Extract Observed data
-```{r extract-obs-data}
-obs_data <- unname(as.integer(get_today_total(model_sir)))
-```
-
-## Setup LFMCMC Functions
+## Setup LFMCMC
 ```{r lfmcmc-setup}
-# Define Simulation Function
+# Extract the observed data from the model
+obs_data <- unname(as.integer(get_today_total(model_sir)))
+
+# Define the LFMCMC simulation function
 simfun <- function(params, m) {
 
   set_param(model_sir, "Recovery rate", params[1])
@@ -76,14 +75,12 @@ simfun <- function(params, m) {
   return(res)
 }
 
-# Define Summary Function
+# Define the LFMCMC summary function
 sumfun <- function(dat, m) {
   return(dat)
 }
-```
 
-## Init LFMCMC
-```{r lfmcmc-init}
+# Create the LFMCMC model using a norm reflective proposal function and a Gaussian kernel function
 lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simfun) |>
   set_summary_fun(sumfun) |>
@@ -92,16 +89,14 @@ lfmcmc_model <- LFMCMC(model_sir) |>
   set_observed_data(obs_data)
 ```
 
-## Set LFMCMC params
-```{r lfmcmc-params}
+## Run LFMCMC simulation
+```{r lfmcmc-run}
 # Set initial parameters
 par0 <- as.double(c(0.1, 0.5))
 n_samp <- 2000
 epsil <- as.double(1.0)
-```
 
-## Run LFMCMC
-```{r lfmcmc-run}
+# Run the LFMCMC simulation
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,
@@ -109,6 +104,7 @@ run_lfmcmc(
   epsilon_ = epsil
 )
 
+# Print the results
 set_stats_names(lfmcmc_model, get_states(model_sir))
 set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
