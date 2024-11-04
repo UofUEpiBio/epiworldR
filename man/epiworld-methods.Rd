@@ -35,7 +35,7 @@ verbose_off(x)
 
 verbose_on(x)
 
-run(model, ndays, seed = sample.int(10000, 1))
+run(model, ndays, seed = NULL)
 
 \method{summary}{epiworld_model}(object, ...)
 
@@ -78,7 +78,7 @@ clone_model(model)
 
 \item{ndays}{Number of days (steps) of the simulation.}
 
-\item{seed}{Seed to set for initializing random number generator.}
+\item{seed}{Seed to set for initializing random number generator (passed to \code{\link[=set.seed]{set.seed()}}).}
 
 \item{object}{Object of class \code{epiworld_model}.}
 
