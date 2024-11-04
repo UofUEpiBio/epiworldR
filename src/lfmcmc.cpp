@@ -16,6 +16,10 @@ using namespace epiworld;
 // LFMCMC definitions:
 // https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/math/lfmcmc
 
+// *************************************
+// LFMCMC Function
+// *************************************
+
 [[cpp11::register]]
 SEXP LFMCMC_cpp(
     SEXP model
@@ -30,6 +34,10 @@ SEXP LFMCMC_cpp(
     return lfmcmc_ptr;
 }
 
+// *************************************
+// LFMCMC Run Function
+// *************************************
+
 [[cpp11::register]]
 SEXP run_lfmcmc_cpp(
     SEXP lfmcmc,
@@ -42,6 +50,10 @@ SEXP run_lfmcmc_cpp(
     lfmcmc_ptr->run(params_init_, n_samples_, epsilon_, seed);
     return lfmcmc;
 }
+
+// *************************************
+// LFMCMC Setup Functions
+// *************************************
 
 // observed_data_ should be of type TData
 [[cpp11::register]]
@@ -149,6 +161,10 @@ SEXP use_kernel_fun_gaussian_cpp(
     lfmcmc_ptr->set_kernel_fun(kernel_fun_gaussian<std::vector<int>>);
     return lfmcmc;
 }
+
+// *************************************
+// LFMCMC Printing Functions
+// *************************************
 
 [[cpp11::register]]
 SEXP set_par_names_cpp(
