@@ -66,6 +66,15 @@ set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
+#' @param lfmcmc The LFMCMC model
+#' @returns The LFMCMC model with proposal function set to norm reflective
+#' @export
+use_proposal_norm_reflective <- function(lfmcmc) {
+  use_proposal_norm_reflective_cpp(lfmcmc)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
 #' @param fun The LFMCMC simulation function
 #' @returns The lfmcmc model with the simulation function added
@@ -105,6 +114,15 @@ set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
+#' @param lfmcmc The LFMCMC model
+#' @returns The LFMCMC model with kernel function set to gaussian
+#' @export
+use_kernel_fun_gaussian <- function(lfmcmc) {
+  use_kernel_fun_gaussian_cpp(lfmcmc)
+  invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
 #' @param names The model parameter names
 #' @returns The lfmcmc model with the parameter names added
@@ -138,22 +156,4 @@ set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
 print.epiworld_lfmcmc <- function(x, ...) {
   print_lfmcmc_cpp(x)
   invisible(x)
-}
-
-#' @rdname LFMCMC
-#' @param lfmcmc The LFMCMC model
-#' @returns The LFMCMC model with proposal function set to norm reflective
-#' @export
-use_proposal_norm_reflective <- function(lfmcmc) {
-  use_proposal_norm_reflective_cpp(lfmcmc)
-  invisible(lfmcmc)
-}
-
-#' @rdname LFMCMC
-#' @param lfmcmc The LFMCMC model
-#' @returns The LFMCMC model with kernel function set to gaussian
-#' @export
-use_kernel_fun_gaussian <- function(lfmcmc) {
-  use_kernel_fun_gaussian_cpp(lfmcmc)
-  invisible(lfmcmc)
 }

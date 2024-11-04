@@ -6,14 +6,14 @@
 \alias{run_lfmcmc}
 \alias{set_observed_data}
 \alias{set_proposal_fun}
+\alias{use_proposal_norm_reflective}
 \alias{set_simulation_fun}
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
+\alias{use_kernel_fun_gaussian}
 \alias{set_par_names}
 \alias{set_stats_names}
 \alias{print.epiworld_lfmcmc}
-\alias{use_proposal_norm_reflective}
-\alias{use_kernel_fun_gaussian}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model)
@@ -24,26 +24,26 @@ set_observed_data(lfmcmc, observed_data_)
 
 set_proposal_fun(lfmcmc, fun)
 
+use_proposal_norm_reflective(lfmcmc)
+
 set_simulation_fun(lfmcmc, fun)
 
 set_summary_fun(lfmcmc, fun)
 
 set_kernel_fun(lfmcmc, fun)
 
+use_kernel_fun_gaussian(lfmcmc)
+
 set_par_names(lfmcmc, names)
 
 set_stats_names(lfmcmc, names)
 
 \method{print}{epiworld_lfmcmc}(x, ...)
-
-use_proposal_norm_reflective(lfmcmc)
-
-use_kernel_fun_gaussian(lfmcmc)
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model}}
 
-\item{lfmcmc}{The LFMCMC model}
+\item{lfmcmc}{LFMCMC model}
 
 \item{params_init_}{Initial model parameters}
 
@@ -74,21 +74,21 @@ The lfmcmc model with the observed data added
 
 The lfmcmc model with the proposal function added
 
+The LFMCMC model with proposal function set to norm reflective
+
 The lfmcmc model with the simulation function added
 
 The lfmcmc model with the summary function added
 
 The lfmcmc model with the kernel function added
 
+The LFMCMC model with kernel function set to gaussian
+
 The lfmcmc model with the parameter names added
 
 The lfmcmc model with the stats names added
 
 The lfmcmc model
-
-The LFMCMC model with proposal function set to norm reflective
-
-The LFMCMC model with kernel function set to gaussian
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
