@@ -81,6 +81,7 @@ sumfun <- function(dat) {
 }
 
 # Define the LFMCMC proposal function
+# - Based on proposal_fun_normal from lfmcmc-meat.hpp
 propfun <- function(params_prev) {
   res <- params_prev + rnorm(length(params_prev), )
   return(res)
@@ -97,7 +98,7 @@ kernelfun <- function(stats_now, stats_obs, epsilon) {
   return(ifelse(sqrt(ans) < epsilon, 1.0, 0.0))
 }
 
-# Create the LFMCMC model using a norm reflective proposal function and a Gaussian kernel function
+# Create the LFMCMC model
 lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simfun) |>
   set_summary_fun(sumfun) |>
