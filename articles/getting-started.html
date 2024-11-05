@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4-3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a></li>
     <li><a class="dropdown-item" href="../articles/implementation.html">Implementation details of epiworldR</a></li>
+    <li><a class="dropdown-item" href="../articles/likelihood-free-mcmc.html">Likelihood Free Markhov Chain Monte Carlo (LFMCMC)</a></li>
     <li><a class="dropdown-item" href="../articles/mixing.html">Mixing models</a></li>
     <li><a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a></li>
   </ul>
@@ -65,7 +66,7 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2024-11-04</h4>
+            <h4 data-toc-skip class="date">2024-11-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/getting-started.Rmd" class="external-link"><code>vignettes/getting-started.Rmd</code></a></small>
       <div class="d-none name"><code>getting-started.Rmd</code></div>
@@ -175,8 +176,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 98.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 25.48 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 97.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 25.55 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -288,8 +289,8 @@ date and repeats until all data have been accounted for.</p>
 <p><img src="getting-started_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">date</span> <span class="op">==</span> <span class="fl">10</span><span class="op">)</span> <span class="co"># Reproductive number on day 10</span></span>
-<span><span class="co">#&gt;    virus_id    virus date      avg   n      sd lb    ub</span></span>
-<span><span class="co">#&gt; 11        0 COVID-19   10 2.603175 630 2.29425  0 8.275</span></span></code></pre></div>
+<span><span class="co">#&gt;    virus_id    virus date      avg   n      sd lb ub</span></span>
+<span><span class="co">#&gt; 11        0 COVID-19   10 2.601587 630 2.29016  0  8</span></span></code></pre></div>
 <p>Another typical piece of information is the daily incidence. This is
 the number of new cases per day. In epiworldR, we can get the incidence
 by looking at the daily transitions between states. Although the

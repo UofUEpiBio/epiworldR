@@ -11,7 +11,7 @@ the process."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4-3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,7 @@ the process."></head><body>
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a></li>
     <li><a class="dropdown-item" href="../articles/implementation.html">Implementation details of epiworldR</a></li>
+    <li><a class="dropdown-item" href="../articles/likelihood-free-mcmc.html">Likelihood Free Markhov Chain Monte Carlo (LFMCMC)</a></li>
     <li><a class="dropdown-item" href="../articles/mixing.html">Mixing models</a></li>
     <li><a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a></li>
   </ul></li>
@@ -155,17 +156,17 @@ data specified by <code>make_saver</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       1    0        1 Susceptible    990</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    0        1    Infected     10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3       1    0        1   Recovered      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1        1 Susceptible    972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1        1    Infected     26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1        1   Recovered      2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1        1 Susceptible    981</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1        1    Infected     18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1        1   Recovered      1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num virus_id    virus source source_exposure_date rt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1        0 COVID-19    353                   11  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1        0 COVID-19    989                    9  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1        0 COVID-19    984                    9  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1        0 COVID-19    999                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1        0 COVID-19    975                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    868                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1        0 COVID-19    519                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1        0 COVID-19    152                    9  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1        0 COVID-19    949                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1        0 COVID-19    921                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1        0 COVID-19    855                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    816                    8  0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
 <span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span></span>

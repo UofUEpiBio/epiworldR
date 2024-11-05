@@ -6,12 +6,14 @@
 <url><loc>/articles/getting-started.html</loc></url>
 <url><loc>/articles/implementation.html</loc></url>
 <url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/likelihood-free-mcmc.html</loc></url>
 <url><loc>/articles/mixing.html</loc></url>
 <url><loc>/articles/run-multiple.html</loc></url>
 <url><loc>/authors.html</loc></url>
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/paper.html</loc></url>
+<url><loc>/reference/LFMCMC.html</loc></url>
 <url><loc>/reference/ModelDiffNet.html</loc></url>
 <url><loc>/reference/ModelSEIR.html</loc></url>
 <url><loc>/reference/ModelSEIRCONN.html</loc></url>

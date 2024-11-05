@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3-2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4-3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,6 +20,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a></li>
     <li><a class="dropdown-item" href="../articles/implementation.html">Implementation details of epiworldR</a></li>
+    <li><a class="dropdown-item" href="../articles/likelihood-free-mcmc.html">Likelihood Free Markhov Chain Monte Carlo (LFMCMC)</a></li>
     <li><a class="dropdown-item" href="../articles/mixing.html">Mixing models</a></li>
     <li><a class="dropdown-item" href="../articles/run-multiple.html">Run Multiple</a></li>
   </ul></li>
@@ -175,21 +176,21 @@
 <span class="r-in"><span>  <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">rn</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       0       1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0.12984 0.14201 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 0.13466 0.14878 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Looking into the individual agents.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 0, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 6, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 7, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 0, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 1, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 2, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 3, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 4, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 5, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 6, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 7, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Agent: 9, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ... 99990 more agents ...</span>
 </code></pre></div>
     </div>
