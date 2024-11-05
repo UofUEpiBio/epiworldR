@@ -52,7 +52,7 @@ inline void LFMCMC<TData>::print()
     printf_epiworld("___________________________________________\n\n");
     printf_epiworld("LIKELIHOOD-FREE MARKOV CHAIN MONTE CARLO\n\n");
 
-    printf_epiworld("N Samples : %ld\n", n_samples);
+    printf_epiworld("N Samples : %zu\n", n_samples);
 
     std::string abbr;
     epiworld_double elapsed;

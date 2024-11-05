@@ -205,7 +205,8 @@ template<typename TData>
 inline void LFMCMC<TData>::run(
     std::vector< epiworld_double > params_init_,
     size_t n_samples_,
-    epiworld_double epsilon_
+    epiworld_double epsilon_,
+    int seed
     )
 {
 
@@ -218,6 +219,9 @@ inline void LFMCMC<TData>::run(
     params_init  = params_init_;
     n_parameters = params_init_.size();
 
+    if (seed >= 0)
+        this->seed(seed);
+
     params_now.resize(n_parameters);
     params_prev.resize(n_parameters);
 
@@ -228,7 +232,7 @@ inline void LFMCMC<TData>::run(
     params_now  = params_init;
 
     // Computing the baseline sufficient statistics
-    summary_fun(observed_stats, *observed_data, this);
+    summary_fun(observed_stats, observed_data, this);
     n_statistics = observed_stats.size();
 
     // Reserving size
@@ -378,9 +382,9 @@ inline void LFMCMC<TData>::seed(epiworld_fast_uint s) {
 }
 
 template<typename TData>
-inline void LFMCMC<TData>::set_rand_engine(std::mt19937 & eng)
+inline void LFMCMC<TData>::set_rand_engine(std::shared_ptr< std::mt19937 > & eng)
 {
-    engine = &eng;
+    engine = eng;
 }
 
 template<typename TData>
@@ -390,9 +394,9 @@ inline void LFMCMC<TData>::set_rand_gamma(epiworld_double alpha, epiworld_double
 }
 
 template<typename TData>
-inline std::mt19937 & LFMCMC<TData>::get_rand_endgine()
+inline std::shared_ptr< std::mt19937 > & LFMCMC<TData>::get_rand_endgine()
 {
-    return *engine;
+    return engine;
 }
 
 // Step 1: Simulate data

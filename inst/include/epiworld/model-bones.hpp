@@ -140,7 +140,7 @@ protected:
     std::vector< Entity<TSeq> > entities = {}; 
     std::vector< Entity<TSeq> > entities_backup = {};
 
-    std::mt19937 engine;
+    std::shared_ptr< std::mt19937 > engine = std::make_shared< std::mt19937 >();
     
     std::uniform_real_distribution<> runifd      =
         std::uniform_real_distribution<> (0.0, 1.0);
@@ -261,17 +261,6 @@ public:
 
     virtual ~Model() {};
 
-    void clone_population(
-        std::vector< Agent<TSeq> > & other_population,
-        std::vector< Entity<TSeq> > & other_entities,
-        Model<TSeq> * other_model,
-        bool & other_directed
-    ) const ;
-
-    void clone_population(
-        const Model<TSeq> & other_model
-    );
-
     /**
      * @name Set the backup object
      * @details `backup` can be used to restore the entire object
@@ -285,6 +274,7 @@ public:
     ///@}
 
     DataBase<TSeq> & get_db();
+    const DataBase<TSeq> & get_db() const;
     epiworld_double & operator()(std::string pname);
 
     size_t size() const;
@@ -296,8 +286,8 @@ public:
      * @param s Seed
      */
     ///@{
-    void set_rand_engine(std::mt19937 & eng);
-    std::mt19937 & get_rand_endgine();
+    void set_rand_engine(std::shared_ptr< std::mt19937 > & eng);
+    std::shared_ptr< std::mt19937 > & get_rand_endgine();
     void seed(size_t s);
     void set_rand_norm(epiworld_double mean, epiworld_double sd);
     void set_rand_unif(epiworld_double a, epiworld_double b);
@@ -609,7 +599,7 @@ public:
     // void set_param(size_t k, epiworld_double val);
     void set_param(std::string pname, epiworld_double val);
     // epiworld_double par(epiworld_fast_uint k);
-    epiworld_double par(std::string pname);
+    epiworld_double par(std::string pname) const;
     ///@}
 
     void get_elapsed(

@@ -20,3 +20,6 @@ src/Makevars
 images
 inst/doc
 docs
+
+config.log
+config.status

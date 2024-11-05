@@ -227,7 +227,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
         // How many will we find
         std::binomial_distribution<> bdist(m->size(), m->par("Surveilance prob."));
-        int nsampled = bdist(m->get_rand_endgine());
+        int nsampled = bdist(*m->get_rand_endgine());
 
         int to_go = nsampled + 1;
 

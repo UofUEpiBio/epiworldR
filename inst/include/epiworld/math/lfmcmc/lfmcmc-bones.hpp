@@ -116,7 +116,7 @@ class LFMCMC {
 private:
 
     // Random number sampling
-    std::mt19937 * engine = nullptr;
+    std::shared_ptr< std::mt19937 > engine = nullptr;
     
     std::shared_ptr< std::uniform_real_distribution<> > runifd =
         std::make_shared< std::uniform_real_distribution<> >(0.0, 1.0);
@@ -128,7 +128,7 @@ private:
         std::make_shared< std::gamma_distribution<> >();
 
     // Process data
-    TData * observed_data;
+    TData observed_data;
     
     // Information about the size of the problem
     size_t n_samples;
@@ -187,14 +187,15 @@ public:
     void run(
         std::vector< epiworld_double > param_init,
         size_t n_samples_,
-        epiworld_double epsilon_
+        epiworld_double epsilon_,
+        int seed = -1
         );
 
     LFMCMC() {};
-    LFMCMC(TData & observed_data_) : observed_data(&observed_data_) {};
+    LFMCMC(const TData & observed_data_) : observed_data(observed_data_) {};
     ~LFMCMC() {};
 
-    void set_observed_data(TData & observed_data_) {observed_data = &observed_data_;};
+    void set_observed_data(const TData & observed_data_) {observed_data = observed_data_;};
     void set_proposal_fun(LFMCMCProposalFun<TData> fun);
     void set_simulation_fun(LFMCMCSimFun<TData> fun);
     void set_summary_fun(LFMCMCSummaryFun<TData> fun);
@@ -206,8 +207,8 @@ public:
      * @param eng 
      */
     ///@{
-    void set_rand_engine(std::mt19937 & eng);
-    std::mt19937 & get_rand_endgine();
+    void set_rand_engine(std::shared_ptr< std::mt19937 > & eng);
+    std::shared_ptr< std::mt19937 > & get_rand_endgine();
     void seed(epiworld_fast_uint s);
     void set_rand_gamma(epiworld_double alpha, epiworld_double beta);
     epiworld_double runif();

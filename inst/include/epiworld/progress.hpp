@@ -31,9 +31,16 @@ public:
 inline Progress::Progress(int n_, int width_) {
 
 
+    if (n_ < 0)
+        throw std::invalid_argument("n must be greater or equal than 0.");
+
+    if (width_ <= 0)
+        throw std::invalid_argument("width must be greater than 0");
+
     width     = std::max(7, width_ - 7);
     n         = n_;
-    step_size = static_cast<epiworld_double>(width)/static_cast<epiworld_double>(n);
+    step_size = n == 0? width : static_cast<epiworld_double>(width)/
+        static_cast<epiworld_double>(n);
     last_loc  = 0;
     i         = 0;
 
@@ -58,10 +65,9 @@ inline void Progress::next() {
 
     cur_loc = std::floor((++i) * step_size);
 
-
     #ifndef EPI_DEBUG
     for (int j = 0; j < (cur_loc - last_loc); ++j)
-    {
+    { 
         printf_epiworld("|");
     }
     #endif
