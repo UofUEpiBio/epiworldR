@@ -19,16 +19,16 @@ test_tmat_matches_expected <- function(tmat) {
 }
 
 # Create small world population SIR Model --------------------------------------
-sir_0 <- ModelSIR(
+expect_silent(sir_0 <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
   transmission_rate = .9,
   recovery_rate = .3
-)
+))
 
 # Check model initialization
-expect_inherits(sir_0,"epiworld_sir")
-expect_inherits(sir_0,"epiworld_model")
+expect_inherits(sir_0, "epiworld_sir")
+expect_inherits(sir_0, "epiworld_model")
 expect_silent(agents_smallworld(
   sir_0,
   n = 50000,

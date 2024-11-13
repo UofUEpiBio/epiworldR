@@ -10,8 +10,12 @@ agents_smallworld(model_sir, n = 1000, k = 5, d = FALSE, p = 0.01)
 verbose_off(model_sir)
 run(model_sir, ndays = 50, seed = model_seed)
 
+# Check bad init of LFMCMC model -----------------------------------------------
+expect_error(lfmcmc_bad <- LFMCMC(), 'argument "model" is missing')
+expect_error(lfmcmc_bad <- LFMCMC(c("not_a_model")), "model should be of class 'epiworld_model'")
+
 # Create LFMCMC model ----------------------------------------------------------
-lfmcmc_model <- LFMCMC(model_sir)
+expect_silent(lfmcmc_model <- LFMCMC(model_sir))
 
 # Check initialization
 expect_inherits(lfmcmc_model, "epiworld_lfmcmc")
@@ -48,7 +52,7 @@ expect_silent(set_summary_fun(lfmcmc_model, sumfun))
 expect_silent(set_proposal_fun(lfmcmc_model, propfun))
 expect_silent(set_kernel_fun(lfmcmc_model, kernelfun))
 
-# Create LFMCMC simulation -----------------------------------------------------
+# Run LFMCMC simulation --------------------------------------------------------
 # Initial parameters
 par0 <- as.double(c(0.1, 0.5))
 n_samp <- 2000
@@ -66,3 +70,49 @@ expect_silent(set_stats_names(lfmcmc_model, get_states(model_sir)))
 expect_silent(set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
 
 expect_stdout(print(lfmcmc_model))
+
+# Check LFMCMC using factory functions -----------------------------------------
+expect_silent(use_proposal_norm_reflective(lfmcmc_model))
+expect_silent(use_kernel_fun_gaussian(lfmcmc_model))
+
+expect_silent(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = n_samp,
+  epsilon_ = epsil,
+  seed = model_seed
+))
+
+# Check running LFMCMC with missing parameters ---------------------------------
+expect_silent(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = n_samp,
+  epsilon_ = epsil
+))
+
+expect_error(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = n_samp
+))
+
+expect_error(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  epsilon_ = epsil
+))
+
+expect_error(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  n_samples_ = n_samp,
+  epsilon_ = epsil
+))
+
+expect_error(run_lfmcmc(
+  params_init_ = par0,
+  n_samples_ = n_samp,
+  epsilon_ = epsil
+))
+
+expect_error(run_lfmcmc(lfmcmc = lfmcmc_model))
