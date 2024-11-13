@@ -1,6 +1,6 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-sir.R")
 
-# Create function to test transition probability matrix ------------------------
+# Function to test transition probability matrix ------------------------
 test_tmat_matches_expected <- function(tmat) {
   tmat_expected <- structure(
     c(
