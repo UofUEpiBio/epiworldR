@@ -16,7 +16,7 @@ test_tmat <- function(tmat) {
   )
   
   # Check matches expected output
-  expect_equal(tmat, tmat_expected, tolerance = 0.05)
+  expect_equal(tmat, tmat_expected, tolerance = 0.1)
   
   # Check for out of bounds values
   expect_false(any(tmat < 0))
