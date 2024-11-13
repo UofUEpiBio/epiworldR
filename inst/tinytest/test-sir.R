@@ -12,8 +12,7 @@ sir_0 <- ModelSIR(
 expect_inherits(sir_0,"epiworld_sir")
 expect_inherits(sir_0,"epiworld_model")
 # Check can't plot before model is run
-# TODO: Is this actually expected behavior?
-expect_error(plot(sir_0))
+expect_warning(expect_error(plot(sir_0)))
 
 expect_silent(agents_smallworld(
   sir_0,
@@ -30,8 +29,7 @@ queuing_off(sir_0)
 verbose_off(sir_0)
 run(sir_0, ndays = 50, seed = 1912)
 
-# Check plots without errors or warnings
-# TODO: Fix this check, it produces warnings but succeeds
+# Check plots without issue after running model
 expect_silent(plot(sir_0))
 
 tmat_0 <- get_transition_probability(sir_0)
