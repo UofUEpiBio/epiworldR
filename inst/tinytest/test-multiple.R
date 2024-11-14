@@ -27,7 +27,7 @@ saver <- make_saver(
 run_multiple(
   model_seircon,
   ndays=days,
-  nsim=nsims,
+  nsims=nsims,
   seed=1972,
   saver=saver,
   nthreads = 2L
