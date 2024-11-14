@@ -601,6 +601,13 @@ extern "C" SEXP _epiworldR_get_ndays_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
+int today_cpp(SEXP model);
+extern "C" SEXP _epiworldR_today_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(today_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
 int get_n_replicates_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_n_replicates_cpp(SEXP model) {
   BEGIN_CPP11
@@ -1127,6 +1134,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_transmission_reduction_fun_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_fun_cpp,    3},
     {"_epiworldR_set_transmission_reduction_ptr_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_ptr_cpp,    3},
     {"_epiworldR_size_cpp",                             (DL_FUNC) &_epiworldR_size_cpp,                              1},
+    {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              7},
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},
     {"_epiworldR_use_kernel_fun_gaussian_cpp",          (DL_FUNC) &_epiworldR_use_kernel_fun_gaussian_cpp,           1},

@@ -17,6 +17,7 @@
 \alias{get_n_viruses}
 \alias{get_n_tools}
 \alias{get_ndays}
+\alias{today}
 \alias{get_n_replicates}
 \alias{size}
 \alias{set_agents_data}
@@ -54,6 +55,8 @@ get_n_viruses(x)
 get_n_tools(x)
 
 get_ndays(x)
+
+today(x)
 
 get_n_replicates(x)
 
@@ -148,6 +151,10 @@ of \code{epiworld_model}.
 
 \itemize{
 \item \code{get_ndays} returns the number of days of the model.
+}
+
+\itemize{
+\item \code{today} returns the current model day
 }
 
 \itemize{
@@ -253,6 +260,10 @@ get_n_tools(model_sirconn) # Returns the number of tools in the model. In
 
 get_ndays(model_sirconn) # Returns the length of the simulation in days. This
 # will match "ndays" within the "run" function.
+
+today(model_sirconn) # Returns the current day of the simulation. This will 
+# match "get_ndays()" if run at the end of a simulation, but will differ if run
+# during a simulation
 
 get_n_replicates(model_sirconn) # Returns the number of replicates of the
 # model.

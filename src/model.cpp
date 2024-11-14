@@ -225,6 +225,14 @@ int get_ndays_cpp(SEXP model) {
 }
 
 [[cpp11::register]]
+int today_cpp(SEXP model) {
+
+  external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->today());
+
+}
+
+[[cpp11::register]]
 int get_n_replicates_cpp(SEXP model) {
 
   external_pointer<Model<>> ptr(model);

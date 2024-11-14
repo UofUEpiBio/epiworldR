@@ -340,6 +340,10 @@ get_ndays_cpp <- function(model) {
   .Call(`_epiworldR_get_ndays_cpp`, model)
 }
 
+today_cpp <- function(model) {
+  .Call(`_epiworldR_today_cpp`, model)
+}
+
 get_n_replicates_cpp <- function(model) {
   .Call(`_epiworldR_get_n_replicates_cpp`, model)
 }
