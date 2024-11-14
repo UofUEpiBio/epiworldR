@@ -11,6 +11,7 @@ expect_silent(sis_0 <- ModelSIS(
 # Check model initialization
 expect_inherits(sis_0, "epiworld_sis")
 expect_inherits(sis_0, "epiworld_model")
+expect_length(class(sis_0), 2)
 expect_silent(agents_smallworld(
   sis_0,
   n = 2000,

@@ -29,6 +29,7 @@ expect_silent(sir_0 <- ModelSIR(
 # Check model initialization
 expect_inherits(sir_0, "epiworld_sir")
 expect_inherits(sir_0, "epiworld_model")
+expect_length(class(sir_0), 2)
 expect_silent(agents_smallworld(
   sir_0,
   n = 50000,

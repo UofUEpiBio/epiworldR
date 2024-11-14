@@ -19,6 +19,7 @@ expect_silent(lfmcmc_model <- LFMCMC(model_sir))
 
 # Check initialization
 expect_inherits(lfmcmc_model, "epiworld_lfmcmc")
+expect_length(class(lfmcmc_model), 1)
 
 # Extract observed data from the model
 obs_data <- unname(as.integer(get_today_total(model_sir)))

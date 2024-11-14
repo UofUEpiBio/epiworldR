@@ -36,6 +36,7 @@ expect_silent(sirconn_0 <- ModelSIRCONN(
 # Check model initialization
 expect_inherits(sirconn_0, "epiworld_sirconn")
 expect_inherits(sirconn_0, "epiworld_model")
+expect_length(class(sirconn_0), 2)
 
 # Check model run with queuing -------------------------------------------------
 expect_silent(verbose_off(sirconn_0))
