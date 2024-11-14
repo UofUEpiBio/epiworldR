@@ -53,5 +53,3 @@ expect_warning(tool_1 <- tool(
 ))
 
 expect_true(attributes(tool_1)$uses_deprecated)
-
-
