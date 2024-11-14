@@ -40,6 +40,7 @@ expect_length(class(sirconn_0), 2)
 
 # Check model run with queuing -------------------------------------------------
 expect_silent(verbose_off(sirconn_0))
+expect_warning(queuing_on(sirconn_0))
 expect_warning(expect_error(plot(sirconn_0))) # Plot fails before model is run
 expect_silent(run(sirconn_0, ndays = 100, seed = 131))
 expect_silent(plot(sirconn_0)) # Plot succeeds after model is run
