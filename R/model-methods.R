@@ -80,6 +80,10 @@ stopifnot_model <- function(model) {
 #' get_ndays(model_sirconn) # Returns the length of the simulation in days. This
 #' # will match "ndays" within the "run" function.
 #'
+#' today(model_sirconn) # Returns the current day of the simulation. This will
+#' # match "get_ndays()" if run at the end of a simulation, but will differ if run
+#' # during a simulation
+#'
 #' get_n_replicates(model_sirconn) # Returns the number of replicates of the
 #' # model.
 #'
@@ -273,6 +277,16 @@ get_ndays <- function(x) UseMethod("get_ndays")
 
 #' @export
 get_ndays.epiworld_model <- function(x) get_ndays_cpp(x)
+
+
+#' @export
+#' @rdname epiworld-methods
+#' @returns
+#' - `today` returns the current model day
+today <- function(x) UseMethod("today")
+
+#' @export
+today.epiworld_model <- function(x) today_cpp(x)
 
 
 #' @export
