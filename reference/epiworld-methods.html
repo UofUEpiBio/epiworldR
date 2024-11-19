@@ -73,6 +73,11 @@ and running the simulation.</p>
 <span></span>
 <span><span class="fu">get_param</span><span class="op">(</span><span class="va">x</span>, <span class="va">pname</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">add_param</span><span class="op">(</span><span class="va">x</span>, <span class="va">pname</span>, <span class="va">pval</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'epiworld_model'</span></span>
+<span><span class="fu">add_param</span><span class="op">(</span><span class="va">x</span>, <span class="va">pname</span>, <span class="va">pval</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">set_param</span><span class="op">(</span><span class="va">x</span>, <span class="va">pname</span>, <span class="va">pval</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_name</span><span class="op">(</span><span class="va">x</span>, <span class="va">mname</span><span class="op">)</span></span>
@@ -173,6 +178,7 @@ distributed (see details).</p></dd>
 </ul><ul><li><p>The <code>get_states</code> function returns the unique states found in a model.</p></li>
 </ul><ul><li><p>The <code>get_param</code> function returns a selected parameter from the model object
 of class <code>epiworld_model</code>.</p></li>
+</ul><ul><li><p><code>add_param</code> returns the model with the added parameter invisibly.</p></li>
 </ul><ul><li><p>The <code>set_param</code> function does not return a value but instead alters a
 parameter value.</p></li>
 </ul><ul><li><p>The <code>set_name</code> function does not return a value but instead alters an object

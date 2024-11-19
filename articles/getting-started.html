@@ -176,8 +176,8 @@ model_sir.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 97.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 25.75 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 101.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 24.67 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -232,22 +232,23 @@ backward; an agent cannot become susceptible again after infection.</p>
 functions that can be called using the epiworld model object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/methods.html" class="external-link">methods</a></span><span class="op">(</span>class <span class="op">=</span> <span class="st">"epiworld_model"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] add_tool                   add_virus                 </span></span>
-<span><span class="co">#&gt;  [3] agents_from_edgelist       agents_smallworld         </span></span>
-<span><span class="co">#&gt;  [5] get_agents                 get_hist_tool             </span></span>
-<span><span class="co">#&gt;  [7] get_hist_total             get_hist_transition_matrix</span></span>
-<span><span class="co">#&gt;  [9] get_hist_virus             get_n_replicates          </span></span>
-<span><span class="co">#&gt; [11] get_n_tools                get_n_viruses             </span></span>
-<span><span class="co">#&gt; [13] get_name                   get_ndays                 </span></span>
-<span><span class="co">#&gt; [15] get_param                  get_reproductive_number   </span></span>
-<span><span class="co">#&gt; [17] get_states                 get_today_total           </span></span>
-<span><span class="co">#&gt; [19] get_transition_probability get_transmissions         </span></span>
-<span><span class="co">#&gt; [21] print                      queuing_off               </span></span>
-<span><span class="co">#&gt; [23] queuing_on                 run_multiple              </span></span>
-<span><span class="co">#&gt; [25] run                        set_name                  </span></span>
-<span><span class="co">#&gt; [27] set_param                  size                      </span></span>
-<span><span class="co">#&gt; [29] summary                    today                     </span></span>
-<span><span class="co">#&gt; [31] verbose_off                verbose_on                </span></span>
+<span><span class="co">#&gt;  [1] add_param                  add_tool                  </span></span>
+<span><span class="co">#&gt;  [3] add_virus                  agents_from_edgelist      </span></span>
+<span><span class="co">#&gt;  [5] agents_smallworld          get_agents                </span></span>
+<span><span class="co">#&gt;  [7] get_hist_tool              get_hist_total            </span></span>
+<span><span class="co">#&gt;  [9] get_hist_transition_matrix get_hist_virus            </span></span>
+<span><span class="co">#&gt; [11] get_n_replicates           get_n_tools               </span></span>
+<span><span class="co">#&gt; [13] get_n_viruses              get_name                  </span></span>
+<span><span class="co">#&gt; [15] get_ndays                  get_param                 </span></span>
+<span><span class="co">#&gt; [17] get_reproductive_number    get_states                </span></span>
+<span><span class="co">#&gt; [19] get_today_total            get_transition_probability</span></span>
+<span><span class="co">#&gt; [21] get_transmissions          print                     </span></span>
+<span><span class="co">#&gt; [23] queuing_off                queuing_on                </span></span>
+<span><span class="co">#&gt; [25] run_multiple               run                       </span></span>
+<span><span class="co">#&gt; [27] set_name                   set_param                 </span></span>
+<span><span class="co">#&gt; [29] size                       summary                   </span></span>
+<span><span class="co">#&gt; [31] today                      verbose_off               </span></span>
+<span><span class="co">#&gt; [33] verbose_on                </span></span>
 <span><span class="co">#&gt; see '?methods' for accessing help and source code</span></span></code></pre></div>
 <p>To demonstrate, start with the basic plot and get_hist_total
 functions.</p>
