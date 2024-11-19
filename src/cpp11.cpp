@@ -545,6 +545,13 @@ extern "C" SEXP _epiworldR_set_param_cpp(SEXP model, SEXP pname, SEXP val) {
   END_CPP11
 }
 // model.cpp
+SEXP add_param_cpp(SEXP model, std::string pname, double val);
+extern "C" SEXP _epiworldR_add_param_cpp(SEXP model, SEXP pname, SEXP val) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_param_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname), cpp11::as_cpp<cpp11::decay_t<double>>(val)));
+  END_CPP11
+}
+// model.cpp
 SEXP set_name_cpp(SEXP model, std::string mname);
 extern "C" SEXP _epiworldR_set_name_cpp(SEXP model, SEXP mname) {
   BEGIN_CPP11
@@ -1020,6 +1027,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
     {"_epiworldR_add_entity_cpp",                       (DL_FUNC) &_epiworldR_add_entity_cpp,                        2},
     {"_epiworldR_add_globalevent_cpp",                  (DL_FUNC) &_epiworldR_add_globalevent_cpp,                   2},
+    {"_epiworldR_add_param_cpp",                        (DL_FUNC) &_epiworldR_add_param_cpp,                         3},
     {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    5},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          2},
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},

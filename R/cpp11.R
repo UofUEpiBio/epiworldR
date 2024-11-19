@@ -308,6 +308,10 @@ set_param_cpp <- function(model, pname, val) {
   .Call(`_epiworldR_set_param_cpp`, model, pname, val)
 }
 
+add_param_cpp <- function(model, pname, val) {
+  .Call(`_epiworldR_add_param_cpp`, model, pname, val)
+}
+
 set_name_cpp <- function(model, mname) {
   .Call(`_epiworldR_set_name_cpp`, model, mname)
 }

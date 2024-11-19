@@ -11,6 +11,8 @@
 \alias{summary.epiworld_model}
 \alias{get_states}
 \alias{get_param}
+\alias{add_param}
+\alias{add_param.epiworld_model}
 \alias{set_param}
 \alias{set_name}
 \alias{get_name}
@@ -43,6 +45,10 @@ run(model, ndays, seed = NULL)
 get_states(x)
 
 get_param(x, pname)
+
+add_param(x, pname, pval)
+
+\method{add_param}{epiworld_model}(x, pname, pval)
 
 set_param(x, pname, pval)
 
@@ -125,6 +131,10 @@ distributed (see details).}
 \itemize{
 \item The \code{get_param} function returns a selected parameter from the model object
 of class \code{epiworld_model}.
+}
+
+\itemize{
+\item \code{add_param} returns the model with the added parameter invisibly.
 }
 
 \itemize{
