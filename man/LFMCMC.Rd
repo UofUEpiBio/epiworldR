@@ -13,6 +13,8 @@
 \alias{use_kernel_fun_gaussian}
 \alias{set_par_names}
 \alias{set_stats_names}
+\alias{get_params_mean}
+\alias{get_stats_mean}
 \alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
@@ -37,6 +39,10 @@ use_kernel_fun_gaussian(lfmcmc)
 set_par_names(lfmcmc, names)
 
 set_stats_names(lfmcmc, names)
+
+get_params_mean(lfmcmc)
+
+get_stats_mean(lfmcmc)
 
 \method{print}{epiworld_lfmcmc}(x, ...)
 }
@@ -85,6 +91,10 @@ The LFMCMC model with kernel function set to gaussian
 The lfmcmc model with the parameter names added
 
 The lfmcmc model with the stats names added
+
+The param means for the given lfmcmc model
+
+The stats means for the given lfmcmc model
 
 The lfmcmc model
 }
@@ -155,4 +165,8 @@ set_stats_names(lfmcmc_model, get_states(model_sir))
 set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
+
+get_stats_mean(lfmcmc_model)
+get_params_mean(lfmcmc_model)
+
 }
