@@ -2,6 +2,7 @@
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/r_vector.hpp"
 #include "cpp11/sexp.hpp"
+#include "cpp11/doubles.hpp"
 #include <iostream>
 
 #include "epiworld-common.h"
@@ -223,6 +224,22 @@ SEXP set_stats_names_cpp(
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_stats_names(names);
     return lfmcmc;
+}
+
+[[cpp11::register]]
+cpp11::writable::doubles get_params_mean_cpp(
+    SEXP lfmcmc
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return cpp11::doubles(lfmcmc_ptr->get_params_mean());
+}
+
+[[cpp11::register]]
+cpp11::writable::doubles get_stats_mean_cpp(
+    SEXP lfmcmc
+) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return cpp11::doubles(lfmcmc_ptr->get_stats_mean());
 }
 
 [[cpp11::register]]

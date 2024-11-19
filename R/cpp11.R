@@ -264,6 +264,14 @@ set_stats_names_cpp <- function(lfmcmc, names) {
   .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
 }
 
+get_params_mean_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_params_mean_cpp`, lfmcmc)
+}
+
+get_stats_mean_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_stats_mean_cpp`, lfmcmc)
+}
+
 print_lfmcmc_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc)
 }
