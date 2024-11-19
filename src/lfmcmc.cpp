@@ -145,11 +145,11 @@ SEXP set_summary_fun_cpp(
         LFMCMC<TData_default>*
         ) -> void {
 
-        if (res.size() == 0u)
-            res.resize(dat.size());
-
         auto dat_int = cpp11::integers(dat);
         auto res_tmp = cpp11::integers(fun(dat_int));
+
+        if (res.size() == 0u)
+            res.resize(res_tmp.size());
 
         std::copy(res_tmp.begin(), res_tmp.end(), res.begin());
 
