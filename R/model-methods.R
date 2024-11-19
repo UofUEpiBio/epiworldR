@@ -207,6 +207,19 @@ get_param.epiworld_model <- function(x, pname) {
 
 
 #' @export
+#' @rdname epiworld-methods
+#' @returns
+#' - `add_param` returns the model with the added parameter invisibly.
+add_param <- function(x, pname, pval) UseMethod("add_param")
+
+#' @export
+#' @rdname epiworld-methods
+add_param.epiworld_model <- function(x, pname, pval) {
+  invisible(add_param_cpp(x, pname, pval))
+}
+
+
+#' @export
 #' @param pval Numeric. Value of the parameter.
 #' @returns
 #' - The `set_param` function does not return a value but instead alters a
@@ -217,7 +230,6 @@ set_param <- function(x, pname, pval) UseMethod("set_param")
 #' @export
 set_param.epiworld_model <- function(x, pname, pval) {
   invisible(set_param_cpp(x, pname, pval))
-  invisible(x)
 }
 
 #' @export
