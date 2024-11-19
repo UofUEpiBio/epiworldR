@@ -69,6 +69,10 @@
 <span></span>
 <span><span class="fu">set_stats_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">get_params_mean</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_stats_mean</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for class 'epiworld_lfmcmc'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -134,6 +138,8 @@
 <p>The LFMCMC model with kernel function set to gaussian</p>
 <p>The lfmcmc model with the parameter names added</p>
 <p>The lfmcmc model with the stats names added</p>
+<p>The param means for the given lfmcmc model</p>
+<p>The stats means for the given lfmcmc model</p>
 <p>The lfmcmc model</p>
     </div>
     <div class="section level2">
@@ -220,6 +226,12 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>   -Recovered   :   995.71 [  998.00,  1000.00] (Observed:  1000.00)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ___________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">get_stats_mean</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.2215   0.0655 995.7130</span>
+<span class="r-in"><span><span class="fu">get_params_mean</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.4481647 0.8513273</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
