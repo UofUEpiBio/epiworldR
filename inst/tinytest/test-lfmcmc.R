@@ -72,6 +72,9 @@ expect_silent(set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness")
 
 expect_stdout(print(lfmcmc_model))
 
+expect_equal(get_stats_mean(lfmcmc_model), c(4.45, 2.6135, 992.4365))
+expect_equal(get_params_mean(lfmcmc_model), c(11.58421, 18.96851), tolerance = 0.00001)
+
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
 expect_silent(use_kernel_fun_gaussian(lfmcmc_model))

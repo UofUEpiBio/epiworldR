@@ -68,6 +68,10 @@
 #' set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 #'
 #' print(lfmcmc_model)
+#'
+#' get_stats_mean(lfmcmc_model)
+#' get_params_mean(lfmcmc_model)
+#'
 #' @export
 LFMCMC <- function(model) {
   if (!inherits(model, "epiworld_model"))
@@ -203,6 +207,28 @@ set_stats_names <- function(lfmcmc, names) UseMethod("set_stats_names")
 set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
   set_stats_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @returns The param means for the given lfmcmc model
+#' @export
+get_params_mean <- function(lfmcmc) UseMethod("get_params_mean")
+
+#' @export
+get_params_mean.epiworld_lfmcmc <- function(lfmcmc) {
+  get_params_mean_cpp(lfmcmc)
+}
+
+#' @rdname LFMCMC
+#' @param lfmcmc LFMCMC model
+#' @returns The stats means for the given lfmcmc model
+#' @export
+get_stats_mean <- function(lfmcmc) UseMethod("get_stats_mean")
+
+#' @export
+get_stats_mean.epiworld_lfmcmc <- function(lfmcmc) {
+  get_stats_mean_cpp(lfmcmc)
 }
 
 #' @rdname LFMCMC

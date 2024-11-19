@@ -468,6 +468,20 @@ extern "C" SEXP _epiworldR_set_stats_names_cpp(SEXP lfmcmc, SEXP names) {
   END_CPP11
 }
 // lfmcmc.cpp
+cpp11::writable::doubles get_params_mean_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_get_params_mean_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_params_mean_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
+// lfmcmc.cpp
+cpp11::writable::doubles get_stats_mean_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_get_stats_mean_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_stats_mean_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
+// lfmcmc.cpp
 SEXP print_lfmcmc_cpp(SEXP lfmcmc);
 extern "C" SEXP _epiworldR_print_lfmcmc_cpp(SEXP lfmcmc) {
   BEGIN_CPP11
@@ -1068,9 +1082,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_ndays_cpp",                        (DL_FUNC) &_epiworldR_get_ndays_cpp,                         1},
     {"_epiworldR_get_network_cpp",                      (DL_FUNC) &_epiworldR_get_network_cpp,                       1},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
+    {"_epiworldR_get_params_mean_cpp",                  (DL_FUNC) &_epiworldR_get_params_mean_cpp,                   1},
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
     {"_epiworldR_get_state_agent_cpp",                  (DL_FUNC) &_epiworldR_get_state_agent_cpp,                   1},
     {"_epiworldR_get_states_cpp",                       (DL_FUNC) &_epiworldR_get_states_cpp,                        1},
+    {"_epiworldR_get_stats_mean_cpp",                   (DL_FUNC) &_epiworldR_get_stats_mean_cpp,                    1},
     {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},

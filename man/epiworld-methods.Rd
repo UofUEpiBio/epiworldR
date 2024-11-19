@@ -271,7 +271,7 @@ get_n_tools(model_sirconn) # Returns the number of tools in the model. In
 get_ndays(model_sirconn) # Returns the length of the simulation in days. This
 # will match "ndays" within the "run" function.
 
-today(model_sirconn) # Returns the current day of the simulation. This will 
+today(model_sirconn) # Returns the current day of the simulation. This will
 # match "get_ndays()" if run at the end of a simulation, but will differ if run
 # during a simulation
 
