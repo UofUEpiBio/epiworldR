@@ -29,8 +29,13 @@ SEXP LFMCMC_cpp(
         new LFMCMC<TData_default>()
     );
 
-    cpp11::external_pointer<Model<int>> modelptr(model);
-    lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
+    if (Rf_inherits(model, "epiworld_model")) {
+        cpp11::external_pointer<Model<int>> modelptr(model);
+        lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
+    } else {
+        auto new_ptr = std::make_shared<std::mt19937>(std::mt19937());
+        lfmcmc_ptr->set_rand_engine(new_ptr);
+    }
 
     return lfmcmc_ptr;
 }

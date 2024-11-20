@@ -1,10 +1,12 @@
 #' Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 #'
-#'
 #' @aliases epiworld_lfmcmc
+#' @param model A model of class [epiworld_model] or `NULL` (see details).
 #' @details
-#' Performs a Likelihood-Free Markhov Chain Monte Carlo simulation
-#' @param model A model of class [epiworld_model]
+#' Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
+#' `model` is not `NULL`, the model uses the same random-number generator
+#' engine as the model. Otherwise, when `model` is `NULL`, a new random-number
+#' generator engine is created.
 #' @returns
 #' The `LFMCMC` function returns a model of class [epiworld_lfmcmc].
 #' @examples
@@ -73,14 +75,19 @@
 #' get_params_mean(lfmcmc_model)
 #'
 #' @export
-LFMCMC <- function(model) {
-  if (!inherits(model, "epiworld_model"))
-    stop("model should be of class 'epiworld_model'. It is of class ", class(model))
+LFMCMC <- function(model = NULL) {
+
+  if ((length(model) > 0) && !inherits(model, "epiworld_model"))
+    stop(
+      "model should be of class 'epiworld_model'. It is of class ",
+      paste(class(model), collapse = "\", ")
+    )
 
   structure(
     LFMCMC_cpp(model),
     class = c("epiworld_lfmcmc")
   )
+
 }
 
 #' @rdname LFMCMC
@@ -91,13 +98,28 @@ LFMCMC <- function(model) {
 #' @param seed Random engine seed
 #' @returns The simulated model of class [epiworld_lfmcmc].
 #' @export
-run_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) UseMethod("run_lfmcmc")
+run_lfmcmc <- function(
+    lfmcmc, params_init_, n_samples_, epsilon_,
+    seed = NULL
+    ) {
+  UseMethod("run_lfmcmc")
+}
 
 #' @export
-run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) {
-  if (length(seed)) set.seed(seed)
-  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_, sample.int(1e4, 1))
+run_lfmcmc.epiworld_lfmcmc <- function(
+    lfmcmc, params_init_, n_samples_, epsilon_,
+    seed = NULL
+    ) {
+
+  if (length(seed))
+    set.seed(seed)
+
+  run_lfmcmc_cpp(
+    lfmcmc, params_init_, n_samples_, epsilon_, sample.int(1e4, 1)
+  )
+
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -105,7 +127,11 @@ run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon
 #' @param observed_data_ Observed data
 #' @returns The lfmcmc model with the observed data added
 #' @export
-set_observed_data <- function(lfmcmc, observed_data_) UseMethod("set_observed_data")
+set_observed_data <- function(
+    lfmcmc, observed_data_
+    ) {
+  UseMethod("set_observed_data")
+}
 
 #' @export
 set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {

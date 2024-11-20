@@ -1,3 +1,21 @@
+# epiworldR 0.4-3 (development version)
+
+## New features
+
+* The package now includes the `LFMCMC` module that implements
+  the likelihood-free Markov Chain Monte Carlo algorithm. This
+  module is used to estimate the parameters of the models.
+
+* The new function `add_param()` allows the user to add parameters
+  to the model.
+
+* The new function `rm_globalevent()` allows the user to remove
+  global events from the model.
+
+* The function `today()` returns the current day (step) of the
+  simulation.
+
+
 # epiworldR 0.3-2
 
 * Starting version 0.3-0, `epiworldR` is versioned using the same version as the C++ library, `epiworld`.

@@ -18,7 +18,7 @@
 \alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
-LFMCMC(model)
+LFMCMC(model = NULL)
 
 run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL)
 
@@ -47,7 +47,7 @@ get_stats_mean(lfmcmc)
 \method{print}{epiworld_lfmcmc}(x, ...)
 }
 \arguments{
-\item{model}{A model of class \link{epiworld_model}}
+\item{model}{A model of class \link{epiworld_model} or \code{NULL} (see details).}
 
 \item{lfmcmc}{LFMCMC model}
 
@@ -102,7 +102,10 @@ The lfmcmc model
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 }
 \details{
-Performs a Likelihood-Free Markhov Chain Monte Carlo simulation
+Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
+\code{model} is not \code{NULL}, the model uses the same random-number generator
+engine as the model. Otherwise, when \code{model} is \code{NULL}, a new random-number
+generator engine is created.
 }
 \examples{
 ## Setup an SIR model to use in the simulation
