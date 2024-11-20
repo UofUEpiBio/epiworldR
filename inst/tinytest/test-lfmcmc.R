@@ -5,13 +5,15 @@ model_seed <- 122
 
 # Create and run SIR Model for LFMCMC simulation -------------------------------
 model_sir <- ModelSIR(name = "COVID-19", prevalence = .1, 
-                      transmission_rate = .9, recovery_rate = .3)
+                      transmission_rate = .3, recovery_rate = .3)
 agents_smallworld(model_sir, n = 1000, k = 5, d = FALSE, p = 0.01)
 verbose_off(model_sir)
 run(model_sir, ndays = 50, seed = model_seed)
 
+# Check init of LFMCMC model without epiworld model ----------------------------
+expect_silent(lfmcmc_nomodel <- LFMCMC())
+
 # Check bad init of LFMCMC model -----------------------------------------------
-expect_error(lfmcmc_bad <- LFMCMC(), 'argument "model" is missing')
 expect_error(lfmcmc_bad <- LFMCMC(c("not_a_model")), "model should be of class 'epiworld_model'")
 
 # Create LFMCMC model ----------------------------------------------------------
@@ -22,7 +24,7 @@ expect_inherits(lfmcmc_model, "epiworld_lfmcmc")
 expect_length(class(lfmcmc_model), 1)
 
 # Extract observed data from the model
-obs_data <- unname(as.integer(get_today_total(model_sir)))
+obs_data <- get_today_total(model_sir)
 
 expect_silent(set_observed_data(lfmcmc_model, obs_data))
 
@@ -31,20 +33,19 @@ simfun <- function(params) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
-  res <- unname(as.integer(get_today_total(model_sir)))
+  res <- get_today_total(model_sir)
   return(res)
 }
 
 sumfun <- function(dat) { return(dat) }
 
 propfun <- function(params_prev) {
-  res <- params_prev + rnorm(length(params_prev), )
+  res <- plogis(qlogis(params_prev) + rnorm(length(params_prev)))
   return(res)
 }
 
 kernelfun <- function(stats_now, stats_obs, epsilon) {
-  ans <- sum(mapply(function(v1, v2) (v1 - v2)^2, stats_obs, stats_now))
-  return(ifelse(sqrt(ans) < epsilon, 1.0, 0.0))
+  dnorm(sqrt(sum((stats_now - stats_obs)^2)))
 }
 
 # Check adding functions to LFMCMC
@@ -72,8 +73,8 @@ expect_silent(set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness")
 
 expect_stdout(print(lfmcmc_model))
 
-expect_equal(get_stats_mean(lfmcmc_model), c(4.45, 2.6135, 992.4365))
-expect_equal(get_params_mean(lfmcmc_model), c(11.58421, 18.96851), tolerance = 0.00001)
+expect_equal(get_stats_mean(lfmcmc_model), c(284.7140, 0.8485, 713.9375))
+expect_equal(get_params_mean(lfmcmc_model), c(0.3132901, 0.2782186), tolerance = 0.00001)
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
