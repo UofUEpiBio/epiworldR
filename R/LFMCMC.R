@@ -52,9 +52,9 @@
 #'
 #' ## Run LFMCMC simulation
 #' # Set initial parameters
-#' par0 <- as.double(c(0.1, 0.5))
+#' par0 <- c(0.1, 0.5)
 #' n_samp <- 2000
-#' epsil <- as.double(1.0)
+#' epsil <- 1.0
 #'
 #' # Run the LFMCMC simulation
 #' run_lfmcmc(
@@ -92,9 +92,9 @@ LFMCMC <- function(model = NULL) {
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param params_init_ Initial model parameters
-#' @param n_samples_ Number of samples
-#' @param epsilon_ Epsilon parameter
+#' @param params_init_ Initial model parameters, treated as double
+#' @param n_samples_ Number of samples, treated as integer
+#' @param epsilon_ Epsilon parameter, treated as double
 #' @param seed Random engine seed
 #' @returns The simulated model of class [epiworld_lfmcmc].
 #' @export
@@ -128,7 +128,7 @@ run_lfmcmc.epiworld_lfmcmc <- function(
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param observed_data_ Observed data
+#' @param observed_data_ Observed data, treated as double
 #' @returns The lfmcmc model with the observed data added
 #' @export
 set_observed_data <- function(

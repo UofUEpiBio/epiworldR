@@ -105,9 +105,9 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 ## Run LFMCMC simulation
 ```{r lfmcmc-run}
 # Set initial parameters
-par0 <- as.double(c(0.1, 0.5))
+par0 <- c(0.1, 0.5)
 n_samp <- 2000
-epsil <- as.double(1.0)
+epsil <- 1.0
 
 # Run the LFMCMC simulation
 run_lfmcmc(

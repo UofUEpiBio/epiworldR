@@ -51,15 +51,15 @@ get_stats_mean(lfmcmc)
 
 \item{lfmcmc}{LFMCMC model}
 
-\item{params_init_}{Initial model parameters}
+\item{params_init_}{Initial model parameters, treated as double}
 
-\item{n_samples_}{Number of samples}
+\item{n_samples_}{Number of samples, treated as integer}
 
-\item{epsilon_}{Epsilon parameter}
+\item{epsilon_}{Epsilon parameter, treated as double}
 
 \item{seed}{Random engine seed}
 
-\item{observed_data_}{Observed data}
+\item{observed_data_}{Observed data, treated as double}
 
 \item{fun}{The LFMCMC kernel function}
 
@@ -150,9 +150,9 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 ## Run LFMCMC simulation
 # Set initial parameters
-par0 <- as.double(c(0.1, 0.5))
+par0 <- c(0.1, 0.5)
 n_samp <- 2000
-epsil <- as.double(1.0)
+epsil <- 1.0
 
 # Run the LFMCMC simulation
 run_lfmcmc(
