@@ -398,17 +398,17 @@ extern "C" SEXP _epiworldR_LFMCMC_cpp(SEXP model) {
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP run_lfmcmc_cpp(SEXP lfmcmc, std::vector<epiworld_double> params_init_, size_t n_samples_, epiworld_double epsilon_, int seed);
+SEXP run_lfmcmc_cpp(SEXP lfmcmc, std::vector<double> params_init_, size_t n_samples_, double epsilon_, int seed);
 extern "C" SEXP _epiworldR_run_lfmcmc_cpp(SEXP lfmcmc, SEXP params_init_, SEXP n_samples_, SEXP epsilon_, SEXP seed) {
   BEGIN_CPP11
-    return cpp11::as_sexp(run_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector<epiworld_double>>>(params_init_), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_samples_), cpp11::as_cpp<cpp11::decay_t<epiworld_double>>(epsilon_), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
+    return cpp11::as_sexp(run_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector<double>>>(params_init_), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_samples_), cpp11::as_cpp<cpp11::decay_t<double>>(epsilon_), cpp11::as_cpp<cpp11::decay_t<int>>(seed)));
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP set_observed_data_cpp(SEXP lfmcmc, std::vector< int > observed_data_);
+SEXP set_observed_data_cpp(SEXP lfmcmc, std::vector< double > observed_data_);
 extern "C" SEXP _epiworldR_set_observed_data_cpp(SEXP lfmcmc, SEXP observed_data_) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_observed_data_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(observed_data_)));
+    return cpp11::as_sexp(set_observed_data_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(observed_data_)));
   END_CPP11
 }
 // lfmcmc.cpp

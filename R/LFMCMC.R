@@ -115,7 +115,11 @@ run_lfmcmc.epiworld_lfmcmc <- function(
     set.seed(seed)
 
   run_lfmcmc_cpp(
-    lfmcmc, params_init_, n_samples_, epsilon_, sample.int(1e4, 1)
+    lfmcmc,
+    as.double(params_init_),
+    as.integer(n_samples_),
+    as.double(epsilon_),
+    sample.int(1e4, 1)
   )
 
   invisible(lfmcmc)
@@ -135,7 +139,10 @@ set_observed_data <- function(
 
 #' @export
 set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
-  set_observed_data_cpp(lfmcmc, observed_data_)
+  set_observed_data_cpp(
+    lfmcmc,
+    as.double(observed_data_)
+  )
   invisible(lfmcmc)
 }
 
