@@ -90,11 +90,6 @@ propfun <- function(params_prev) {
 # Define the LFMCMC kernel function
 # - Based on kernel_fun_uniform from lfmcmc-meat.hpp
 kernelfun <- function(stats_now, stats_obs, epsilon) {
-
-  ans <- sum(mapply(function(v1, v2) (v1 - v2)^2,
-    stats_obs,
-    stats_now))
-
   dnorm(sqrt(sum((stats_now - stats_obs)^2)))
 }
 
