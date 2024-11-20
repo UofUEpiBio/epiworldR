@@ -124,14 +124,14 @@ run(model_sir, ndays = 50, seed = model_seed)
 
 ## Setup LFMCMC
 # Extract the observed data from the model
-obs_data <- unname(as.integer(get_today_total(model_sir)))
+obs_data <- get_today_total(model_sir)
 
 # Define the simulation function
 simfun <- function(params) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
-  res <- unname(as.integer(get_today_total(model_sir)))
+  res <- get_today_total(model_sir)
   return(res)
 }
 
