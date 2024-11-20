@@ -7,6 +7,8 @@ Authors@R: c(
   email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
   person(given="Derek", family="Meyer", role=c("aut"),
   email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),
+  person(given="Andrew", family="Pulsipher", role=c("aut"),
+  email="pulsipher.a@gmail.com", comment = c(ORCID = "0000-0002-0773-3210")),
   person(given="Susan", family="Holmes", role = "rev", comment =
          c(what = "JOSS reviewer", ORCID="0000-0002-2208-8168")),
   person(given="Abinash", family="Satapathy", role = "rev", comment =
