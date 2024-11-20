@@ -9,7 +9,7 @@
 
 using namespace epiworld;
 
-#define TData_default std::vector< int >
+#define TData_default std::vector< double >
 
 #define WrapLFMCMC(a) \
     cpp11::external_pointer<LFMCMC<TData_default>> (a)
@@ -29,8 +29,13 @@ SEXP LFMCMC_cpp(
         new LFMCMC<TData_default>()
     );
 
-    cpp11::external_pointer<Model<int>> modelptr(model);
-    lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
+    if (Rf_inherits(model, "epiworld_model")) {
+        cpp11::external_pointer<Model<int>> modelptr(model);
+        lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
+    } else {
+        auto new_ptr = std::make_shared<std::mt19937>(std::mt19937());
+        lfmcmc_ptr->set_rand_engine(new_ptr);
+    }
 
     return lfmcmc_ptr;
 }
@@ -42,9 +47,9 @@ SEXP LFMCMC_cpp(
 [[cpp11::register]]
 SEXP run_lfmcmc_cpp(
     SEXP lfmcmc,
-    std::vector<epiworld_double> params_init_,
+    std::vector<double> params_init_,
     size_t n_samples_,
-    epiworld_double epsilon_,
+    double epsilon_,
     int seed
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
@@ -60,7 +65,7 @@ SEXP run_lfmcmc_cpp(
 [[cpp11::register]]
 SEXP set_observed_data_cpp(
     SEXP lfmcmc,
-    std::vector< int > observed_data_
+    std::vector< double > observed_data_
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
     lfmcmc_ptr->set_observed_data(observed_data_);
@@ -105,7 +110,7 @@ SEXP use_proposal_norm_reflective_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_proposal_fun(make_proposal_norm_reflective<std::vector<int>>(.5, 0, 1));
+    lfmcmc_ptr->set_proposal_fun(make_proposal_norm_reflective<std::vector<double>>(.5, 0, 1));
     return lfmcmc;
 }
 
@@ -123,7 +128,7 @@ SEXP set_simulation_fun_cpp(
         auto params_doubles = cpp11::doubles(params);
 
         return cpp11::as_cpp<TData_default>(
-            cpp11::integers(fun(params_doubles))
+            cpp11::doubles(fun(params_doubles))
             );
     };
 
@@ -146,8 +151,8 @@ SEXP set_summary_fun_cpp(
         LFMCMC<TData_default>*
         ) -> void {
 
-        auto dat_int = cpp11::integers(dat);
-        auto res_tmp = cpp11::integers(fun(dat_int));
+        auto dat_int = cpp11::doubles(dat);
+        auto res_tmp = cpp11::doubles(fun(dat_int));
 
         if (res.size() == 0u)
             res.resize(res_tmp.size());
@@ -198,7 +203,7 @@ SEXP use_kernel_fun_gaussian_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_kernel_fun(kernel_fun_gaussian<std::vector<int>>);
+    lfmcmc_ptr->set_kernel_fun(kernel_fun_gaussian<std::vector<double>>);
     return lfmcmc;
 }
 
