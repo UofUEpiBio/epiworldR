@@ -23,3 +23,5 @@ docs
 
 config.log
 config.status
+
+.vscode

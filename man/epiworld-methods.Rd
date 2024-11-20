@@ -11,12 +11,15 @@
 \alias{summary.epiworld_model}
 \alias{get_states}
 \alias{get_param}
+\alias{add_param}
+\alias{add_param.epiworld_model}
 \alias{set_param}
 \alias{set_name}
 \alias{get_name}
 \alias{get_n_viruses}
 \alias{get_n_tools}
 \alias{get_ndays}
+\alias{today}
 \alias{get_n_replicates}
 \alias{size}
 \alias{set_agents_data}
@@ -43,6 +46,10 @@ get_states(x)
 
 get_param(x, pname)
 
+add_param(x, pname, pval)
+
+\method{add_param}{epiworld_model}(x, pname, pval)
+
 set_param(x, pname, pval)
 
 set_name(x, mname)
@@ -54,6 +61,8 @@ get_n_viruses(x)
 get_n_tools(x)
 
 get_ndays(x)
+
+today(x)
 
 get_n_replicates(x)
 
@@ -125,6 +134,10 @@ of class \code{epiworld_model}.
 }
 
 \itemize{
+\item \code{add_param} returns the model with the added parameter invisibly.
+}
+
+\itemize{
 \item The \code{set_param} function does not return a value but instead alters a
 parameter value.
 }
@@ -148,6 +161,10 @@ of \code{epiworld_model}.
 
 \itemize{
 \item \code{get_ndays} returns the number of days of the model.
+}
+
+\itemize{
+\item \code{today} returns the current model day
 }
 
 \itemize{
@@ -253,6 +270,10 @@ get_n_tools(model_sirconn) # Returns the number of tools in the model. In
 
 get_ndays(model_sirconn) # Returns the length of the simulation in days. This
 # will match "ndays" within the "run" function.
+
+today(model_sirconn) # Returns the current day of the simulation. This will
+# match "get_ndays()" if run at the end of a simulation, but will differ if run
+# during a simulation
 
 get_n_replicates(model_sirconn) # Returns the number of replicates of the
 # model.

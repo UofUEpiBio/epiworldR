@@ -160,6 +160,15 @@ SEXP set_param_cpp(SEXP model, std::string pname, double val) {
 }
 
 [[cpp11::register]]
+SEXP add_param_cpp(SEXP model, std::string pname, double val) {
+
+  external_pointer<Model<>> ptr(model);
+  ptr->add_param(val, pname);
+
+  return model;
+}
+
+[[cpp11::register]]
 SEXP set_name_cpp(SEXP model, std::string mname) {
   external_pointer<Model<>> ptr(model);
   ptr->set_name(mname);
@@ -221,6 +230,14 @@ int get_ndays_cpp(SEXP model) {
 
   external_pointer<Model<>> ptr(model);
   return static_cast<int>(ptr->get_ndays());
+
+}
+
+[[cpp11::register]]
+int today_cpp(SEXP model) {
+
+  external_pointer<Model<>> ptr(model);
+  return static_cast<int>(ptr->today());
 
 }
 

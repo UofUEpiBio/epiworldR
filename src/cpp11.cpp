@@ -468,6 +468,20 @@ extern "C" SEXP _epiworldR_set_stats_names_cpp(SEXP lfmcmc, SEXP names) {
   END_CPP11
 }
 // lfmcmc.cpp
+cpp11::writable::doubles get_params_mean_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_get_params_mean_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_params_mean_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
+// lfmcmc.cpp
+cpp11::writable::doubles get_stats_mean_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_get_stats_mean_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_stats_mean_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
+// lfmcmc.cpp
 SEXP print_lfmcmc_cpp(SEXP lfmcmc);
 extern "C" SEXP _epiworldR_print_lfmcmc_cpp(SEXP lfmcmc) {
   BEGIN_CPP11
@@ -545,6 +559,13 @@ extern "C" SEXP _epiworldR_set_param_cpp(SEXP model, SEXP pname, SEXP val) {
   END_CPP11
 }
 // model.cpp
+SEXP add_param_cpp(SEXP model, std::string pname, double val);
+extern "C" SEXP _epiworldR_add_param_cpp(SEXP model, SEXP pname, SEXP val) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_param_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname), cpp11::as_cpp<cpp11::decay_t<double>>(val)));
+  END_CPP11
+}
+// model.cpp
 SEXP set_name_cpp(SEXP model, std::string mname);
 extern "C" SEXP _epiworldR_set_name_cpp(SEXP model, SEXP mname) {
   BEGIN_CPP11
@@ -598,6 +619,13 @@ int get_ndays_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_ndays_cpp(SEXP model) {
   BEGIN_CPP11
     return cpp11::as_sexp(get_ndays_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+int today_cpp(SEXP model);
+extern "C" SEXP _epiworldR_today_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(today_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // model.cpp
@@ -1013,6 +1041,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
     {"_epiworldR_add_entity_cpp",                       (DL_FUNC) &_epiworldR_add_entity_cpp,                        2},
     {"_epiworldR_add_globalevent_cpp",                  (DL_FUNC) &_epiworldR_add_globalevent_cpp,                   2},
+    {"_epiworldR_add_param_cpp",                        (DL_FUNC) &_epiworldR_add_param_cpp,                         3},
     {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    5},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          2},
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
@@ -1053,9 +1082,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_ndays_cpp",                        (DL_FUNC) &_epiworldR_get_ndays_cpp,                         1},
     {"_epiworldR_get_network_cpp",                      (DL_FUNC) &_epiworldR_get_network_cpp,                       1},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
+    {"_epiworldR_get_params_mean_cpp",                  (DL_FUNC) &_epiworldR_get_params_mean_cpp,                   1},
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
     {"_epiworldR_get_state_agent_cpp",                  (DL_FUNC) &_epiworldR_get_state_agent_cpp,                   1},
     {"_epiworldR_get_states_cpp",                       (DL_FUNC) &_epiworldR_get_states_cpp,                        1},
+    {"_epiworldR_get_stats_mean_cpp",                   (DL_FUNC) &_epiworldR_get_stats_mean_cpp,                    1},
     {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
@@ -1127,6 +1158,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_transmission_reduction_fun_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_fun_cpp,    3},
     {"_epiworldR_set_transmission_reduction_ptr_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_ptr_cpp,    3},
     {"_epiworldR_size_cpp",                             (DL_FUNC) &_epiworldR_size_cpp,                              1},
+    {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              7},
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},
     {"_epiworldR_use_kernel_fun_gaussian_cpp",          (DL_FUNC) &_epiworldR_use_kernel_fun_gaussian_cpp,           1},

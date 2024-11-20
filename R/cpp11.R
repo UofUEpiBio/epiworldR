@@ -264,6 +264,14 @@ set_stats_names_cpp <- function(lfmcmc, names) {
   .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
 }
 
+get_params_mean_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_params_mean_cpp`, lfmcmc)
+}
+
+get_stats_mean_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_stats_mean_cpp`, lfmcmc)
+}
+
 print_lfmcmc_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc)
 }
@@ -308,6 +316,10 @@ set_param_cpp <- function(model, pname, val) {
   .Call(`_epiworldR_set_param_cpp`, model, pname, val)
 }
 
+add_param_cpp <- function(model, pname, val) {
+  .Call(`_epiworldR_add_param_cpp`, model, pname, val)
+}
+
 set_name_cpp <- function(model, mname) {
   .Call(`_epiworldR_set_name_cpp`, model, mname)
 }
@@ -338,6 +350,10 @@ get_n_tools_cpp <- function(model) {
 
 get_ndays_cpp <- function(model) {
   .Call(`_epiworldR_get_ndays_cpp`, model)
+}
+
+today_cpp <- function(model) {
+  .Call(`_epiworldR_today_cpp`, model)
 }
 
 get_n_replicates_cpp <- function(model) {

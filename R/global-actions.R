@@ -1,14 +1,15 @@
 
-#' Global Actions
+#' Global Events
 #'
-#' Global actions are functions that are executed at each time step of the
+#' Global events are functions that are executed at each time step of the
 #' simulation. They are useful for implementing interventions, such as
 #' vaccination, isolation, and social distancing by means of tools.
 #'
 #' @export
 #' @param prob Numeric scalar. A probability between 0 and 1.
 #' @param tool An object of class [tool].
-#' @name global-actions
+#' @name global-events
+#' @aliases global-actions
 #' @examples
 #' # Simple model
 #' model_sirconn <- ModelSIRCONN(
@@ -32,7 +33,7 @@
 #' )
 #'
 #'
-#' # Adding a global action
+#' # Adding a global event
 #' vaccine_day_20 <- globalevent_tool(epitool, .2, day = 20)
 #' add_globalevent(model_sirconn, vaccine_day_20)
 #'
@@ -98,7 +99,7 @@ globalaction_tool <- function(...) {
 }
 
 #' @export
-#' @rdname global-actions
+#' @rdname global-events
 #' @param vars Integer vector. The position of the variables in the model.
 #' @param coefs Numeric vector. The coefficients of the logistic regression.
 #' @details The function `globalevent_tool_logit` allows to specify a logistic
@@ -143,7 +144,7 @@ globalaction_tool_logit <- function(...) {
 #' @export
 #' @param param Character scalar. The name of the parameter to be set.
 #' @param value Numeric scalar. The value of the parameter.
-#' @rdname global-actions
+#' @rdname global-events
 #' @details The function `globalevent_set_param` allows to set a parameter of
 #' the model. The parameter is specified by its name `param` and the value by
 #' `value`.
@@ -180,7 +181,7 @@ globalaction_set_params <- function(...) {
 }
 
 #' @export
-#' @rdname global-actions
+#' @rdname global-events
 #' @param fun Function. The function to be executed.
 #' @details The function `globalevent_fun` allows to specify a function to be
 #' executed at a given day. The function object must receive an object of class
@@ -258,11 +259,15 @@ print.epiworld_globalevent <- function(x, ...) {
 }
 
 #' @export
-#' @param action A global action.
+#' @param action (Deprecated) use `event` instead.
+#' @param event The event to be added or removed. If it is to add, then
+#' it should be an object of class `epiworld_globalevent`. If it is to remove,
+#' it should be an integer with the position of the event in the model
+#' (starting from zero).
 #' @param day Integer. The day (step) at which the action is executed (see details).
 #' @param model An object of class [epiworld_model].
 #' @param name Character scalar. The name of the action.
-#' @rdname global-actions
+#' @rdname global-events
 #' @seealso epiworld-model
 #' @details The function `add_globalevent` adds a global action to a model.
 #' The model checks for actions to be executed at each time step. If the added
@@ -271,12 +276,31 @@ print.epiworld_globalevent <- function(x, ...) {
 #' the action is executed at the specified time step.
 #' @returns
 #' - The function `add_globalevent` returns the model with the added
-#' action.
-add_globalevent <- function(model, action) {
+#' event
+add_globalevent <- function(model, event, action = NULL) {
 
-  if (length(attr(action, "tool")))
-    add_tool(model, attr(action, "tool"))
+  if (missing(event) && !missing(action)) {
+    event <- action
+    warning("The argument `action` is deprecated. Use `event` instead.")
+  }
 
-  invisible(add_globalevent_cpp(model, action))
+  stopifnot_model(model)
+
+  if (length(attr(event, "tool")))
+    add_tool(model, attr(event, "tool"))
+
+  invisible(add_globalevent_cpp(model, event))
+
+}
+
+#' @export
+#' @rdname global-events
+#' @returns
+#' - The function `rm_globalevent` returns the model with the removed
+#' event.
+rm_globalevent <- function(model, event) {
+
+  stopifnot_model(model)
+  invisible(rm_globalevent_cpp(model, event))
 
 }
