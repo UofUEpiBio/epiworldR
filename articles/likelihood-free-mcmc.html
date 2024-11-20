@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Pulsipher</h4>
             
-            <h4 data-toc-skip class="date">2024-11-19</h4>
+            <h4 data-toc-skip class="date">2024-11-20</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/likelihood-free-mcmc.Rmd" class="external-link"><code>vignettes/likelihood-free-mcmc.Rmd</code></a></small>
       <div class="d-none name"><code>likelihood-free-mcmc.Rmd</code></div>
@@ -94,7 +94,7 @@ model.</p>
 <span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
 <span>  prevalence <span class="op">=</span> <span class="fl">.1</span>,</span>
-<span>  transmission_rate <span class="op">=</span> <span class="fl">.9</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">.3</span>,</span>
 <span>  recovery_rate <span class="op">=</span> <span class="fl">.3</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -125,8 +125,8 @@ model.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 863.00µs</span></span>
-<span><span class="co">#&gt; Last run speed      : 57.94 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 737.00µs</span></span>
+<span><span class="co">#&gt; Last run speed      : 67.84 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -140,16 +140,16 @@ model.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
 <span><span class="co">#&gt;  - Recovery rate     : 0.3000</span></span>
-<span><span class="co">#&gt;  - Transmission rate : 0.9000</span></span>
+<span><span class="co">#&gt;  - Transmission rate : 0.3000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible :  900 -&gt; 0</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible :  900 -&gt; 285</span></span>
 <span><span class="co">#&gt;   - (1) Infected    :  100 -&gt; 0</span></span>
-<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 1000</span></span>
+<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 715</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.62  0.38  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.69  0.31</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.98  0.02  0.00</span></span>
+<span><span class="co">#&gt;  - Infected     0.00  0.71  0.29</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -157,7 +157,7 @@ model.</p>
 </h3>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the observed data from the model</span></span>
-<span><span class="va">obs_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">obs_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Define the LFMCMC simulation function</span></span>
 <span><span class="va">simfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
@@ -170,8 +170,8 @@ model.</p>
 <span>    ndays <span class="op">=</span> <span class="fl">50</span></span>
 <span>  <span class="op">)</span></span>
 <span></span>
-<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unname.html" class="external-link">unname</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
+<span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Define the LFMCMC summary function</span></span>
@@ -182,19 +182,14 @@ model.</p>
 <span><span class="co"># Define the LFMCMC proposal function</span></span>
 <span><span class="co"># - Based on proposal_fun_normal from lfmcmc-meat.hpp</span></span>
 <span><span class="va">propfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params_prev</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="va">params_prev</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">params_prev</span><span class="op">)</span>, <span class="op">)</span></span>
+<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">qlogis</a></span><span class="op">(</span><span class="va">params_prev</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">params_prev</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Define the LFMCMC kernel function</span></span>
 <span><span class="co"># - Based on kernel_fun_uniform from lfmcmc-meat.hpp</span></span>
 <span><span class="va">kernelfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">stats_now</span>, <span class="va">stats_obs</span>, <span class="va">epsilon</span><span class="op">)</span> <span class="op">{</span></span>
-<span></span>
-<span>  <span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/mapply.html" class="external-link">mapply</a></span><span class="op">(</span><span class="kw">function</span><span class="op">(</span><span class="va">v1</span>, <span class="va">v2</span><span class="op">)</span> <span class="op">(</span><span class="va">v1</span> <span class="op">-</span> <span class="va">v2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>,</span>
-<span>    <span class="va">stats_obs</span>,</span>
-<span>    <span class="va">stats_now</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">ans</span><span class="op">)</span> <span class="op">&lt;</span> <span class="va">epsilon</span>, <span class="fl">1.0</span>, <span class="fl">0.0</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">stats_now</span> <span class="op">-</span> <span class="va">stats_obs</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Create the LFMCMC model</span></span>
@@ -210,9 +205,9 @@ model.</p>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Set initial parameters</span></span>
-<span><span class="va">par0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">par0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span></span>
 <span><span class="va">n_samp</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
-<span><span class="va">epsil</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double</a></span><span class="op">(</span><span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">epsil</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
 <span></span>
 <span><span class="co"># Run the LFMCMC simulation</span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">run_lfmcmc</a></span><span class="op">(</span></span>
@@ -236,13 +231,13 @@ model.</p>
 <span><span class="co">#&gt; Elapsed t : 1.00s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameters:</span></span>
-<span><span class="co">#&gt;   -Immune recovery :  11.58 [  0.63,  23.19] (initial :   0.10)</span></span>
-<span><span class="co">#&gt;   -Infectiousness  :  18.97 [  1.22,  49.18] (initial :   0.50)</span></span>
+<span><span class="co">#&gt;   -Immune recovery :  0.31 [ 0.19,  0.40] (initial :  0.10)</span></span>
+<span><span class="co">#&gt;   -Infectiousness  :  0.28 [ 0.19,  0.33] (initial :  0.50)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Statistics:</span></span>
-<span><span class="co">#&gt;   -Susceptible :     4.45 [    0.00,     0.00] (Observed:     0.00)</span></span>
-<span><span class="co">#&gt;   -Infected    :     2.61 [    0.00,     0.00] (Observed:     0.00)</span></span>
-<span><span class="co">#&gt;   -Recovered   :   992.44 [ 1000.00,  1000.00] (Observed:  1000.00)</span></span>
+<span><span class="co">#&gt;   -Susceptible :  284.71 [ 272.00,  307.00] (Observed:  285.00)</span></span>
+<span><span class="co">#&gt;   -Infected    :    0.85 [   0.00,    0.00] (Observed:    0.00)</span></span>
+<span><span class="co">#&gt;   -Recovered   :  713.94 [ 693.00,  728.00] (Observed:  715.00)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span></code></pre></div>
 </div>
 </div>
@@ -253,7 +248,7 @@ model.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by George Vega Yon, Derek Meyer, Centers for Disease Control and Prevention.</p>
+  <p>Developed by George Vega Yon, Derek Meyer, Andrew Pulsipher, Centers for Disease Control and Prevention.</p>
 </div>
 
 <div class="pkgdown-footer-right">
