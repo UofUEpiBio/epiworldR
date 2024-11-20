@@ -32,7 +32,7 @@ model_seed <- 122
 model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .1,
-  transmission_rate = .9,
+  transmission_rate = .3,
   recovery_rate = .3
 )
 
@@ -58,7 +58,7 @@ summary(model_sir)
 ## Setup LFMCMC
 ```{r lfmcmc-setup}
 # Extract the observed data from the model
-obs_data <- unname(as.integer(get_today_total(model_sir)))
+obs_data <- get_today_total(model_sir)
 
 # Define the LFMCMC simulation function
 simfun <- function(params) {
@@ -71,8 +71,8 @@ simfun <- function(params) {
     ndays = 50
   )
 
-  res <- unname(as.integer(get_today_total(model_sir)))
-  return(res)
+  get_today_total(model_sir)
+
 }
 
 # Define the LFMCMC summary function
@@ -83,7 +83,7 @@ sumfun <- function(dat) {
 # Define the LFMCMC proposal function
 # - Based on proposal_fun_normal from lfmcmc-meat.hpp
 propfun <- function(params_prev) {
-  res <- params_prev + rnorm(length(params_prev), )
+  res <- plogis(qlogis(params_prev) + rnorm(length(params_prev)))
   return(res)
 }
 
@@ -95,7 +95,7 @@ kernelfun <- function(stats_now, stats_obs, epsilon) {
     stats_obs,
     stats_now))
 
-  return(ifelse(sqrt(ans) < epsilon, 1.0, 0.0))
+  dnorm(sqrt(sum((stats_now - stats_obs)^2)))
 }
 
 # Create the LFMCMC model
