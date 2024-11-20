@@ -88,6 +88,22 @@ expect_silent(run_lfmcmc(
   seed = model_seed
 ))
 
+# Check LFMCMC coerces parameters and observed data to correct types -----------
+obs_data_int <- as.integer(obs_data)
+expect_silent(set_observed_data(lfmcmc_model, obs_data_int))
+
+par0_int <- as.integer(c(1, 5))
+n_samp_double <- as.double(2000.0)
+epsil_int <- as.integer(1)
+
+expect_silent(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = n_samp,
+  epsilon_ = epsil,
+  seed = model_seed
+))
+
 # Check running LFMCMC with missing parameters ---------------------------------
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
