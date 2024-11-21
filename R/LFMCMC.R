@@ -1,10 +1,12 @@
 #' Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 #'
-#'
 #' @aliases epiworld_lfmcmc
+#' @param model A model of class [epiworld_model] or `NULL` (see details).
 #' @details
-#' Performs a Likelihood-Free Markhov Chain Monte Carlo simulation
-#' @param model A model of class [epiworld_model]
+#' Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
+#' `model` is not `NULL`, the model uses the same random-number generator
+#' engine as the model. Otherwise, when `model` is `NULL`, a new random-number
+#' generator engine is created.
 #' @returns
 #' The `LFMCMC` function returns a model of class [epiworld_lfmcmc].
 #' @examples
@@ -24,14 +26,14 @@
 #'
 #' ## Setup LFMCMC
 #' # Extract the observed data from the model
-#' obs_data <- unname(as.integer(get_today_total(model_sir)))
+#' obs_data <- get_today_total(model_sir)
 #'
 #' # Define the simulation function
 #' simfun <- function(params) {
 #'   set_param(model_sir, "Recovery rate", params[1])
 #'   set_param(model_sir, "Transmission rate", params[2])
 #'   run(model_sir, ndays = 50)
-#'   res <- unname(as.integer(get_today_total(model_sir)))
+#'   res <- get_today_total(model_sir)
 #'   return(res)
 #' }
 #'
@@ -50,9 +52,9 @@
 #'
 #' ## Run LFMCMC simulation
 #' # Set initial parameters
-#' par0 <- as.double(c(0.1, 0.5))
+#' par0 <- c(0.1, 0.5)
 #' n_samp <- 2000
-#' epsil <- as.double(1.0)
+#' epsil <- 1.0
 #'
 #' # Run the LFMCMC simulation
 #' run_lfmcmc(
@@ -73,43 +75,74 @@
 #' get_params_mean(lfmcmc_model)
 #'
 #' @export
-LFMCMC <- function(model) {
-  if (!inherits(model, "epiworld_model"))
-    stop("model should be of class 'epiworld_model'. It is of class ", class(model))
+LFMCMC <- function(model = NULL) {
+
+  if ((length(model) > 0) && !inherits(model, "epiworld_model"))
+    stop(
+      "model should be of class 'epiworld_model'. It is of class ",
+      paste(class(model), collapse = "\", ")
+    )
 
   structure(
     LFMCMC_cpp(model),
     class = c("epiworld_lfmcmc")
   )
+
 }
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param params_init_ Initial model parameters
-#' @param n_samples_ Number of samples
-#' @param epsilon_ Epsilon parameter
+#' @param params_init_ Initial model parameters, treated as double
+#' @param n_samples_ Number of samples, treated as integer
+#' @param epsilon_ Epsilon parameter, treated as double
 #' @param seed Random engine seed
 #' @returns The simulated model of class [epiworld_lfmcmc].
 #' @export
-run_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) UseMethod("run_lfmcmc")
+run_lfmcmc <- function(
+    lfmcmc, params_init_, n_samples_, epsilon_,
+    seed = NULL
+    ) {
+  UseMethod("run_lfmcmc")
+}
 
 #' @export
-run_lfmcmc.epiworld_lfmcmc <- function(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL) {
-  if (length(seed)) set.seed(seed)
-  run_lfmcmc_cpp(lfmcmc, params_init_, n_samples_, epsilon_, sample.int(1e4, 1))
+run_lfmcmc.epiworld_lfmcmc <- function(
+    lfmcmc, params_init_, n_samples_, epsilon_,
+    seed = NULL
+    ) {
+
+  if (length(seed))
+    set.seed(seed)
+
+  run_lfmcmc_cpp(
+    lfmcmc,
+    as.double(params_init_),
+    as.integer(n_samples_),
+    as.double(epsilon_),
+    sample.int(1e4, 1)
+  )
+
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param observed_data_ Observed data
+#' @param observed_data_ Observed data, treated as double
 #' @returns The lfmcmc model with the observed data added
 #' @export
-set_observed_data <- function(lfmcmc, observed_data_) UseMethod("set_observed_data")
+set_observed_data <- function(
+    lfmcmc, observed_data_
+    ) {
+  UseMethod("set_observed_data")
+}
 
 #' @export
 set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
-  set_observed_data_cpp(lfmcmc, observed_data_)
+  set_observed_data_cpp(
+    lfmcmc,
+    as.double(observed_data_)
+  )
   invisible(lfmcmc)
 }
 

@@ -18,7 +18,7 @@
 \alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
-LFMCMC(model)
+LFMCMC(model = NULL)
 
 run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL)
 
@@ -47,19 +47,19 @@ get_stats_mean(lfmcmc)
 \method{print}{epiworld_lfmcmc}(x, ...)
 }
 \arguments{
-\item{model}{A model of class \link{epiworld_model}}
+\item{model}{A model of class \link{epiworld_model} or \code{NULL} (see details).}
 
 \item{lfmcmc}{LFMCMC model}
 
-\item{params_init_}{Initial model parameters}
+\item{params_init_}{Initial model parameters, treated as double}
 
-\item{n_samples_}{Number of samples}
+\item{n_samples_}{Number of samples, treated as integer}
 
-\item{epsilon_}{Epsilon parameter}
+\item{epsilon_}{Epsilon parameter, treated as double}
 
 \item{seed}{Random engine seed}
 
-\item{observed_data_}{Observed data}
+\item{observed_data_}{Observed data, treated as double}
 
 \item{fun}{The LFMCMC kernel function}
 
@@ -102,7 +102,10 @@ The lfmcmc model
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 }
 \details{
-Performs a Likelihood-Free Markhov Chain Monte Carlo simulation
+Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
+\code{model} is not \code{NULL}, the model uses the same random-number generator
+engine as the model. Otherwise, when \code{model} is \code{NULL}, a new random-number
+generator engine is created.
 }
 \examples{
 ## Setup an SIR model to use in the simulation
@@ -121,14 +124,14 @@ run(model_sir, ndays = 50, seed = model_seed)
 
 ## Setup LFMCMC
 # Extract the observed data from the model
-obs_data <- unname(as.integer(get_today_total(model_sir)))
+obs_data <- get_today_total(model_sir)
 
 # Define the simulation function
 simfun <- function(params) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
-  res <- unname(as.integer(get_today_total(model_sir)))
+  res <- get_today_total(model_sir)
   return(res)
 }
 
@@ -147,9 +150,9 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 ## Run LFMCMC simulation
 # Set initial parameters
-par0 <- as.double(c(0.1, 0.5))
+par0 <- c(0.1, 0.5)
 n_samp <- 2000
-epsil <- as.double(1.0)
+epsil <- 1.0
 
 # Run the LFMCMC simulation
 run_lfmcmc(
