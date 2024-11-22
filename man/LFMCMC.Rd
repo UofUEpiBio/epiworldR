@@ -16,6 +16,12 @@
 \alias{get_params_mean}
 \alias{get_stats_mean}
 \alias{print.epiworld_lfmcmc}
+\alias{get_accepted_params}
+\alias{get_accepted_stats}
+\alias{get_statistics_hist}
+\alias{get_n_parameters}
+\alias{get_n_statistics}
+\alias{get_n_samples}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model = NULL)
@@ -44,7 +50,19 @@ get_params_mean(lfmcmc)
 
 get_stats_mean(lfmcmc)
 
-\method{print}{epiworld_lfmcmc}(x, ...)
+\method{print}{epiworld_lfmcmc}(x, burnin = 0, ...)
+
+get_accepted_params(lfmcmc)
+
+get_accepted_stats(lfmcmc)
+
+get_statistics_hist(lfmcmc)
+
+get_n_parameters(lfmcmc)
+
+get_n_statistics(lfmcmc)
+
+get_n_samples(lfmcmc)
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model} or \code{NULL} (see details).}
@@ -66,6 +84,8 @@ get_stats_mean(lfmcmc)
 \item{names}{The model stats names}
 
 \item{x}{LFMCMC model to print}
+
+\item{burnin}{Integer. Number of samples to discard as burnin before computing the summary.}
 
 \item{...}{Ignored}
 }
@@ -97,6 +117,31 @@ The param means for the given lfmcmc model
 The stats means for the given lfmcmc model
 
 The lfmcmc model
+
+\itemize{
+\item The function \code{get_accepted_params} returns a matrix of accepted
+parameters for the given LFMCMC model. with the number of rows equal to the
+number of samples and the number of columns equal to the number of
+parameters.
+}
+
+\itemize{
+\item The function \code{get_accepted_stats} returns a matrix of accepted statistics
+for the given LFMCMC model. with the number of rows equal to the number of
+samples and the number of columns equal to the number of statistics.
+}
+
+\itemize{
+\item The function \code{get_statistics_hist} returns a matrix of statistics
+for the given LFMCMC model. with the number of rows equal to the number of
+samples and the number of columns equal to the number of statistics.
+}
+
+\itemize{
+\item The functions \code{get_n_parameters}, \code{get_n_statistics}, and \code{get_n_samples}
+return the number of parameters, statistics, and samples for the given
+LFMCMC model, respectively.
+}
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)

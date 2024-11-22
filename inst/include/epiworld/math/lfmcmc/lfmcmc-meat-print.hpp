@@ -2,29 +2,46 @@
 #define LFMCMC_MEAT_PRINT_HPP
 
 template<typename TData>
-inline void LFMCMC<TData>::print()
+inline void LFMCMC<TData>::print(size_t burnin) const
 {
+
     std::vector< epiworld_double > summ_params(n_parameters * 3, 0.0);
     std::vector< epiworld_double > summ_stats(n_statistics * 3, 0.0);
+
+    size_t n_samples_print = n_samples;
+    if (burnin > 0)
+    {
+        if (burnin >= n_samples)
+            throw std::length_error(
+                "The burnin is greater than the number of samples."
+                );
+
+        n_samples_print = n_samples - burnin;
+
+    }
+
+    epiworld_double n_samples_dbl = static_cast< epiworld_double >(
+        n_samples_print
+        );
 
     for (size_t k = 0u; k < n_parameters; ++k)
     {
 
         // Retrieving the relevant parameter
-        std::vector< epiworld_double > par_i(n_samples);
-        for (size_t i = 0u; i < n_samples; ++i)
+        std::vector< epiworld_double > par_i(n_samples_print);
+        for (size_t i = burnin; i < n_samples; ++i)
         {
             par_i[i] = accepted_params[i * n_parameters + k];
-            summ_params[k * 3] += par_i[i]/n_samples;
+            summ_params[k * 3] += par_i[i]/n_samples_dbl;
         }
 
         // Computing the 95% Credible interval
         std::sort(par_i.begin(), par_i.end());
 
         summ_params[k * 3 + 1u] = 
-            par_i[std::floor(.025 * static_cast<epiworld_double>(n_samples))];
+            par_i[std::floor(.025 * n_samples_dbl)];
         summ_params[k * 3 + 2u] = 
-            par_i[std::floor(.975 * static_cast<epiworld_double>(n_samples))];
+            par_i[std::floor(.975 * n_samples_dbl)];
 
     }
 
@@ -32,20 +49,20 @@ inline void LFMCMC<TData>::print()
     {
 
         // Retrieving the relevant parameter
-        std::vector< epiworld_double > stat_k(n_samples);
-        for (size_t i = 0u; i < n_samples; ++i)
+        std::vector< epiworld_double > stat_k(n_samples_print);
+        for (size_t i = burnin; i < n_samples; ++i)
         {
             stat_k[i] = accepted_stats[i * n_statistics + k];
-            summ_stats[k * 3] += stat_k[i]/n_samples;
+            summ_stats[k * 3] += stat_k[i]/n_samples_dbl;
         }
 
         // Computing the 95% Credible interval
         std::sort(stat_k.begin(), stat_k.end());
 
         summ_stats[k * 3 + 1u] = 
-            stat_k[std::floor(.025 * static_cast<epiworld_double>(n_samples))];
+            stat_k[std::floor(.025 * n_samples_dbl)];
         summ_stats[k * 3 + 2u] = 
-            stat_k[std::floor(.975 * static_cast<epiworld_double>(n_samples))];
+            stat_k[std::floor(.975 * n_samples_dbl)];
 
     }
 

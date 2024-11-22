@@ -177,7 +177,7 @@ private:
         epiworld_double * last_elapsed,
         std::string * unit_abbr,
         bool print
-    );
+    ) const;
 
     void chrono_start();
     void chrono_end();
@@ -235,13 +235,17 @@ public:
     const std::vector< epiworld_double > & get_drawn_prob() {return drawn_prob;};
     std::vector< TData > * get_sampled_data() {return sampled_data;};
 
+    const std::vector< epiworld_double > & get_accepted_params() {return accepted_params;};
+    const std::vector< epiworld_double > & get_accepted_stats() {return accepted_stats;};
+
+
     void set_par_names(std::vector< std::string > names);
     void set_stats_names(std::vector< std::string > names);
 
     std::vector< epiworld_double > get_params_mean();
     std::vector< epiworld_double > get_stats_mean();
 
-    void print() ;
+    void print(size_t burnin = 0u) const;
 
 };
 

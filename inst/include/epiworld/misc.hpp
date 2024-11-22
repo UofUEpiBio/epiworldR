@@ -124,7 +124,7 @@ inline bool IN(const Ta & a, const std::vector< Ta > & b) noexcept
  * @return int If -1 then it means that none got sampled, otherwise the index
  * of the entry that got drawn.
  */
-template<typename TSeq, typename TDbl>
+template<typename TSeq = EPI_DEFAULT_TSEQ, typename TDbl = epiworld_double >
 inline int roulette(
     const std::vector< TDbl > & probs,
     Model<TSeq> * m

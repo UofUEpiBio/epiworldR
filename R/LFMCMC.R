@@ -1,3 +1,13 @@
+stopifnot_lfmcmc <- function(x) {
+  # Catching the value of x
+  nam <- match.call()$x
+
+  if (!inherits(x, "epiworld_lfmcmc"))
+    stop(nam, " must be an object of class epiworld_lfmcmc")
+
+}
+
+
 #' Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 #'
 #' @aliases epiworld_lfmcmc
@@ -102,14 +112,8 @@ run_lfmcmc <- function(
     lfmcmc, params_init_, n_samples_, epsilon_,
     seed = NULL
     ) {
-  UseMethod("run_lfmcmc")
-}
 
-#' @export
-run_lfmcmc.epiworld_lfmcmc <- function(
-    lfmcmc, params_init_, n_samples_, epsilon_,
-    seed = NULL
-    ) {
+  stopifnot_lfmcmc(lfmcmc)
 
   if (length(seed))
     set.seed(seed)
@@ -131,32 +135,29 @@ run_lfmcmc.epiworld_lfmcmc <- function(
 #' @param observed_data_ Observed data, treated as double
 #' @returns The lfmcmc model with the observed data added
 #' @export
-set_observed_data <- function(
-    lfmcmc, observed_data_
-    ) {
-  UseMethod("set_observed_data")
-}
+set_observed_data <- function(lfmcmc, observed_data_) {
 
-#' @export
-set_observed_data.epiworld_lfmcmc <- function(lfmcmc, observed_data_) {
+  stopifnot_lfmcmc(lfmcmc)
+
   set_observed_data_cpp(
     lfmcmc,
     as.double(observed_data_)
   )
+
   invisible(lfmcmc)
 }
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
 #' @param fun The LFMCMC proposal function
+#' @export
 #' @returns The lfmcmc model with the proposal function added
-#' @export
-set_proposal_fun <- function(lfmcmc, fun) UseMethod("set_proposal_fun")
+set_proposal_fun <- function(lfmcmc, fun) {
 
-#' @export
-set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  stopifnot_lfmcmc(lfmcmc)
   set_proposal_fun_cpp(lfmcmc, fun)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -164,8 +165,11 @@ set_proposal_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 #' @returns The LFMCMC model with proposal function set to norm reflective
 #' @export
 use_proposal_norm_reflective <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
   use_proposal_norm_reflective_cpp(lfmcmc)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -173,12 +177,12 @@ use_proposal_norm_reflective <- function(lfmcmc) {
 #' @param fun The LFMCMC simulation function
 #' @returns The lfmcmc model with the simulation function added
 #' @export
-set_simulation_fun <- function(lfmcmc, fun) UseMethod("set_simulation_fun")
+set_simulation_fun <- function(lfmcmc, fun) {
 
-#' @export
-set_simulation_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  stopifnot_lfmcmc(lfmcmc)
   set_simulation_fun_cpp(lfmcmc, fun)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -186,12 +190,12 @@ set_simulation_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 #' @param fun The LFMCMC sumamry function
 #' @returns The lfmcmc model with the summary function added
 #' @export
-set_summary_fun <- function(lfmcmc, fun) UseMethod("set_summary_fun")
+set_summary_fun <- function(lfmcmc, fun) {
 
-#' @export
-set_summary_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  stopifnot_lfmcmc(lfmcmc)
   set_summary_fun_cpp(lfmcmc, fun)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -199,12 +203,12 @@ set_summary_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 #' @param fun The LFMCMC kernel function
 #' @returns The lfmcmc model with the kernel function added
 #' @export
-set_kernel_fun <- function(lfmcmc, fun) UseMethod("set_kernel_fun")
+set_kernel_fun <- function(lfmcmc, fun) {
 
-#' @export
-set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
+  stopifnot_lfmcmc(lfmcmc)
   set_kernel_fun_cpp(lfmcmc, fun)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -212,8 +216,11 @@ set_kernel_fun.epiworld_lfmcmc <- function(lfmcmc, fun) {
 #' @returns The LFMCMC model with kernel function set to gaussian
 #' @export
 use_kernel_fun_gaussian <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
   use_kernel_fun_gaussian_cpp(lfmcmc)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -221,12 +228,12 @@ use_kernel_fun_gaussian <- function(lfmcmc) {
 #' @param names The model parameter names
 #' @returns The lfmcmc model with the parameter names added
 #' @export
-set_par_names <- function(lfmcmc, names) UseMethod("set_par_names")
+set_par_names <- function(lfmcmc, names) {
 
-#' @export
-set_par_names.epiworld_lfmcmc <- function(lfmcmc, names) {
+  stopifnot_lfmcmc(lfmcmc)
   set_par_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
@@ -234,42 +241,144 @@ set_par_names.epiworld_lfmcmc <- function(lfmcmc, names) {
 #' @param names The model stats names
 #' @returns The lfmcmc model with the stats names added
 #' @export
-set_stats_names <- function(lfmcmc, names) UseMethod("set_stats_names")
+set_stats_names <- function(lfmcmc, names) {
 
-#' @export
-set_stats_names.epiworld_lfmcmc <- function(lfmcmc, names) {
+  stopifnot_lfmcmc(lfmcmc)
   set_stats_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
 #' @returns The param means for the given lfmcmc model
 #' @export
-get_params_mean <- function(lfmcmc) UseMethod("get_params_mean")
+get_params_mean <- function(lfmcmc) {
 
-#' @export
-get_params_mean.epiworld_lfmcmc <- function(lfmcmc) {
+  stopifnot_lfmcmc(lfmcmc)
   get_params_mean_cpp(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
 #' @returns The stats means for the given lfmcmc model
 #' @export
-get_stats_mean <- function(lfmcmc) UseMethod("get_stats_mean")
+get_stats_mean <- function(lfmcmc) {
 
-#' @export
-get_stats_mean.epiworld_lfmcmc <- function(lfmcmc) {
+  stopifnot_lfmcmc(lfmcmc)
   get_stats_mean_cpp(lfmcmc)
+
 }
 
 #' @rdname LFMCMC
 #' @param x LFMCMC model to print
 #' @param ... Ignored
+#' @param burnin Integer. Number of samples to discard as burnin before computing the summary.
 #' @returns The lfmcmc model
 #' @export
-print.epiworld_lfmcmc <- function(x, ...) {
-  print_lfmcmc_cpp(x)
+print.epiworld_lfmcmc <- function(x, burnin = 0, ...) {
+
+  if (!is.numeric(burnin))
+    stop("The 'burnin' argument must be an integer.")
+
+  if (burnin < 0)
+    stop("The 'burnin' argument must be a non-negative integer.")
+
+  print_lfmcmc_cpp(x, burnin = burnin)
   invisible(x)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_accepted_params` returns a matrix of accepted
+#' parameters for the given LFMCMC model. with the number of rows equal to the
+#' number of samples and the number of columns equal to the number of
+#' parameters.
+get_accepted_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  a_params <- get_accepted_params_cpp(lfmcmc)
+  n_params <- get_n_parameters(lfmcmc)
+
+  matrix(
+    a_params,
+    ncol = n_params,
+    byrow = TRUE
+  )
+
+}
+
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_accepted_stats` returns a matrix of accepted statistics
+#' for the given LFMCMC model. with the number of rows equal to the number of
+#' samples and the number of columns equal to the number of statistics.
+get_accepted_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  a_stats <- get_accepted_stats_cpp(lfmcmc)
+  n_stats <- get_n_statistics(lfmcmc)
+
+  matrix(
+    a_stats,
+    ncol = n_stats,
+    byrow = TRUE
+  )
+
+}
+
+#' @export
+#' @rdname LFMCMC
+#' @returns
+#' - The function `get_statistics_hist` returns a matrix of statistics
+#' for the given LFMCMC model. with the number of rows equal to the number of
+#' samples and the number of columns equal to the number of statistics.
+get_statistics_hist <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  stats <- get_statistics_hist_cpp(lfmcmc)
+  n_stats <- get_n_statistics(lfmcmc)
+
+  matrix(
+    stats,
+    ncol = n_stats,
+    byrow = TRUE
+  )
+
+}
+
+#' @export
+#' @rdname LFMCMC
+#' @returns
+#' - The functions `get_n_parameters`, `get_n_statistics`, and `get_n_samples`
+#' return the number of parameters, statistics, and samples for the given
+#' LFMCMC model, respectively.
+get_n_parameters <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_parameters_cpp(lfmcmc)
+
+}
+
+#' @export
+#' @rdname LFMCMC
+get_n_statistics <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_statistics_cpp(lfmcmc)
+
+}
+
+#' @export
+#' @rdname LFMCMC
+get_n_samples <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_samples_cpp(lfmcmc)
+
 }

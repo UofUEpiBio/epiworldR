@@ -249,11 +249,60 @@ cpp11::writable::doubles get_stats_mean_cpp(
 
 [[cpp11::register]]
 SEXP print_lfmcmc_cpp(
-    SEXP lfmcmc
+    SEXP lfmcmc,
+    int burnin
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->print();
+    lfmcmc_ptr->print(static_cast<size_t>(burnin));
     return lfmcmc;
+}
+
+[[cpp11::register]]
+SEXP get_statistics_hist_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return cpp11::doubles(lfmcmc_ptr->get_statistics_hist());
+
+}
+
+[[cpp11::register]]
+SEXP get_accepted_params_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return cpp11::doubles(lfmcmc_ptr->get_accepted_params());
+
+}
+
+[[cpp11::register]]
+SEXP get_accepted_stats_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return cpp11::doubles(lfmcmc_ptr->get_accepted_stats());
+
+}
+
+[[cpp11::register]]
+int get_n_samples_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return static_cast<int>(lfmcmc_ptr->get_n_samples());
+
+}
+
+[[cpp11::register]]
+int get_n_statistics_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return static_cast<int>(lfmcmc_ptr->get_n_statistics());
+
+}
+
+[[cpp11::register]]
+int get_n_parameters_cpp(SEXP lfmcmc) {
+
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+    return static_cast<int>(lfmcmc_ptr->get_n_parameters());
+
 }
 
 #undef WrapLFMCMC

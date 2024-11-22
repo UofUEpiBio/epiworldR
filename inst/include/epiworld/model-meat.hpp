@@ -714,7 +714,7 @@ template<typename TSeq>
 inline epiworld_double & Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())
-        throw std::range_error("The parameter "+ pname + "is not in the model.");
+        throw std::range_error("The parameter '"+ pname + "' is not in the model.");
 
     return parameters[pname];
 
