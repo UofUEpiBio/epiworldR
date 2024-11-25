@@ -249,14 +249,16 @@ inline void LFMCMC<TData>::run(
 
     std::vector< epiworld_double > proposed_stats_i;
     summary_fun(proposed_stats_i, data_i, this);
-    accepted_params_prob[0u] = kernel_fun(proposed_stats_i, observed_stats, epsilon, this);
+    accepted_params_prob[0u] = kernel_fun(
+        proposed_stats_i, observed_stats, epsilon, this
+        );
 
     // Recording statistics
     for (size_t i = 0u; i < n_statistics; ++i)
         sampled_stats[i] = proposed_stats_i[i];
 
-    for (size_t k = 0u; k < n_statistics; ++k)
-        accepted_params[k] = proposed_stats_i[k];
+    for (size_t k = 0u; k < n_parameters; ++k)
+        accepted_params[k] = params_init[k];
    
     for (size_t i = 1u; i < n_samples; ++i)
     {
@@ -274,7 +276,10 @@ inline void LFMCMC<TData>::run(
         summary_fun(proposed_stats_i, data_i, this);
 
         // Step 4: Compute the hastings ratio using the kernel function
-        epiworld_double hr = kernel_fun(proposed_stats_i, observed_stats, epsilon, this);
+        epiworld_double hr = kernel_fun(
+            proposed_stats_i, observed_stats, epsilon, this
+            );
+
         sampled_stats_prob[i] = hr;
 
         // Storing data
@@ -282,7 +287,7 @@ inline void LFMCMC<TData>::run(
             sampled_stats[i * n_statistics + k] = proposed_stats_i[k];
         
         // Running Hastings ratio
-        epiworld_double r      = runif();
+        epiworld_double r = runif();
         drawn_prob[i] = r;
 
         // Step 5: Update if likely
@@ -418,7 +423,7 @@ inline void LFMCMC<TData>::get_elapsed(
     epiworld_double * last_elapsed,
     std::string * unit_abbr,
     bool print
-) {
+) const {
 
     // Preparing the result
     epiworld_double elapsed;

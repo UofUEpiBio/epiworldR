@@ -272,8 +272,32 @@ get_stats_mean_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_get_stats_mean_cpp`, lfmcmc)
 }
 
-print_lfmcmc_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc)
+print_lfmcmc_cpp <- function(lfmcmc, burnin) {
+  .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc, burnin)
+}
+
+get_statistics_hist_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_statistics_hist_cpp`, lfmcmc)
+}
+
+get_accepted_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_accepted_params_cpp`, lfmcmc)
+}
+
+get_accepted_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_accepted_stats_cpp`, lfmcmc)
+}
+
+get_n_samples_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_n_samples_cpp`, lfmcmc)
+}
+
+get_n_statistics_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_n_statistics_cpp`, lfmcmc)
+}
+
+get_n_parameters_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_n_parameters_cpp`, lfmcmc)
 }
 
 print_cpp <- function(m, lite) {
