@@ -71,10 +71,27 @@ expect_silent(run_lfmcmc(
 expect_silent(set_stats_names(lfmcmc_model, get_states(model_sir)))
 expect_silent(set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
 
+# Check printing LFMCMC --------------------------------------------------------
 expect_stdout(print(lfmcmc_model))
+expect_stdout(print(lfmcmc_model, burnin = n_samp / 2))
+expect_error(print(lfmcmc_model, burnin = n_samp), "burnin is greater than or equal to the number of samples")
+expect_error(print(lfmcmc_model, burnin = n_samp + 50), "burnin is greater than or equal to the number of samples")
+expect_error(print(lfmcmc_model, burnin = -n_samp / 2), "argument must be a non-negative integer")
+expect_error(print(lfmcmc_model, burnin = "n_samp"), "argument must be an integer")
 
-expect_equal(get_stats_mean(lfmcmc_model), c(284.7140, 0.8485, 713.9375))
-expect_equal(get_params_mean(lfmcmc_model), c(0.3132901, 0.2782186), tolerance = 0.00001)
+# Check LFMCMC getters ---------------------------------------------------------
+expect_equal(get_n_samples(lfmcmc_model), n_samp)
+
+expected_stats_mean <- c(284.7140, 0.8485, 713.9375)
+expect_equal(get_stats_mean(lfmcmc_model), expected_stats_mean)
+expect_equal(get_n_statistics(lfmcmc_model), length(expected_stats_mean))
+
+expected_params_mean <- c(0.3133401, 0.2749686)
+expect_equal(get_params_mean(lfmcmc_model), expected_params_mean, tolerance = 0.0001)
+expect_equal(get_n_parameters(lfmcmc_model), length(expected_params_mean))
+
+expect_equal(dim(get_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
+expect_equal(dim(get_statistics_hist(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
@@ -194,3 +211,36 @@ expect_equivalent(
   c(-5, 2.5),
   tolerance = 0.1
 )
+
+# Check functions fail when not passing an LFMCMC object -----------------------
+# Target is 56 tests
+expected_error_msg <- "must be an object of class epiworld_lfmcmc"
+not_lfmcmc <- c("NOT LFMCMC")
+
+expect_error(run_lfmcmc(not_lfmcmc,
+                        params_init_ = par0_int,
+                        n_samples_ = n_samp_double,
+                        epsilon_ = epsil_int,
+                        seed = model_seed
+                        ), expected_error_msg)
+
+expect_error(set_observed_data(not_lfmcmc, obs_data), expected_error_msg)
+
+expect_error(set_proposal_fun(not_lfmcmc, propfun), expected_error_msg)
+expect_error(use_proposal_norm_reflective(not_lfmcmc), expected_error_msg)
+expect_error(set_simulation_fun(not_lfmcmc, simfun), expected_error_msg)
+expect_error(set_summary_fun(not_lfmcmc, sumfun), expected_error_msg)
+expect_error(set_kernel_fun(not_lfmcmc, kernelfun), expected_error_msg)
+expect_error(use_kernel_fun_gaussian(not_lfmcmc), expected_error_msg)
+
+expect_error(set_par_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
+expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
+
+expect_error(get_params_mean(not_lfmcmc), expected_error_msg)
+expect_error(get_stats_mean(not_lfmcmc), expected_error_msg)
+expect_error(get_accepted_params(not_lfmcmc), expected_error_msg)
+expect_error(get_accepted_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_statistics_hist(not_lfmcmc), expected_error_msg)
+expect_error(get_n_parameters(not_lfmcmc), expected_error_msg)
+expect_error(get_n_statistics(not_lfmcmc), expected_error_msg)
+expect_error(get_n_samples(not_lfmcmc), expected_error_msg)
