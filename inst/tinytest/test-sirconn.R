@@ -40,7 +40,7 @@ expect_length(class(sirconn_0), 2)
 
 # Check model run with queuing -------------------------------------------------
 expect_silent(verbose_off(sirconn_0))
-expect_warning(queuing_on(sirconn_0))
+expect_warning(queuing_on(sirconn_0), "SIR Connected models do not have queue.")
 expect_warning(expect_error(plot(sirconn_0))) # Plot fails before model is run
 expect_silent(run(sirconn_0, ndays = 100, seed = 131))
 expect_silent(plot(sirconn_0)) # Plot succeeds after model is run
@@ -51,7 +51,7 @@ tmat_queuing <- get_transition_probability(sirconn_0)
 test_tmat(tmat_queuing)
 
 # Check model run without queuing ----------------------------------------------
-expect_silent(queuing_off(sirconn_0))
+expect_warning(queuing_off(sirconn_0), "SIR Connected models do not have queue.")
 run(sirconn_0, ndays = 100, seed = 131)
 
 hist_noqueuing <- get_hist_total(sirconn_0)
