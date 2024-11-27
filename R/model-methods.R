@@ -128,6 +128,18 @@ queuing_on.epiworld_model <- function(x) {
 queuing_off <- function(x) UseMethod("queuing_off")
 
 #' @export
+queuing_off.epiworld_sirconn <- function(x) {
+  warning("SIR Connected models do not have queue.")
+  invisible(x)
+}
+
+#' @export
+queuing_off.epiworld_seirconn <- function(x) {
+  warning("SEIR Connected models do not have queue.")
+  invisible(x)
+}
+
+#' @export
 queuing_off.epiworld_model <- function(x) {
   invisible(queuing_off_cpp(x))
 }
