@@ -24,7 +24,7 @@ expect_silent(agents_smallworld(
 # Check model run --------------------------------------------------------------
 expect_silent(verbose_off(sird_0))
 expect_silent(initial_states(sird_0, c(.05, .05)))
-expect_warning(expect_error(plot(sird_0))) # Plot fails before model is run
+expect_error(plot(sird_0), "model must be run before it can be plotted")
 expect_silent(run(sird_0, ndays = 100, seed = 1231))
 expect_silent(plot(sird_0)) # Plot succeeds after model is run
 
