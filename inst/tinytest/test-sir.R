@@ -40,7 +40,7 @@ expect_silent(agents_smallworld(
 
 # Check model run with queuing -------------------------------------------------
 expect_silent(verbose_off(sir_0))
-expect_warning(expect_error(plot(sir_0))) # Plot fails before model is run
+expect_error(plot(sir_0), "model must be run before it can be plotted")
 expect_silent(run(sir_0, ndays = 50, seed = 1912))
 expect_silent(plot(sir_0)) # Plot succeeds after model is run
 
