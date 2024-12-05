@@ -79,19 +79,19 @@ SEXP set_proposal_fun_cpp(
 ) {
 
     LFMCMCProposalFun<TData_default> fun_call = [fun](
-        std::vector< epiworld_double >& params_now,
-        const std::vector< epiworld_double >& params_prev,
+        std::vector< epiworld_double >& new_params,
+        const std::vector< epiworld_double >& old_params,
         LFMCMC<TData_default>*
         ) -> void {
 
-        auto params_doubles = cpp11::doubles(params_prev);
+        auto params_doubles = cpp11::doubles(old_params);
 
         auto res_tmp = cpp11::doubles(fun(params_doubles));
 
         std::copy(
             res_tmp.begin(),
             res_tmp.end(),
-            params_now.begin()
+            new_params.begin()
             );
 
         return;
@@ -176,17 +176,17 @@ SEXP set_kernel_fun_cpp(
 ) {
 
     LFMCMCKernelFun<TData_default> fun_call = [fun](
-        const std::vector< epiworld_double >& stats_now,
-        const std::vector< epiworld_double >& stats_obs,
+        const std::vector< epiworld_double >& simulated_stats,
+        const std::vector< epiworld_double >& observed_stats,
         epiworld_double epsilon,
         LFMCMC<TData_default>*
         ) -> epiworld_double {
 
-        auto stats_now_doubles = cpp11::doubles(stats_now);
-        auto stats_obs_doubles = cpp11::doubles(stats_obs);
+        auto sim_stats_doubles = cpp11::doubles(simulated_stats);
+        auto obs_stats_doubles = cpp11::doubles(observed_stats);
 
         return cpp11::as_cpp<epiworld_double>(
-            fun(stats_now_doubles, stats_obs_doubles, epsilon)
+            fun(sim_stats_doubles, obs_stats_doubles, epsilon)
             );
     };
 
@@ -212,39 +212,39 @@ SEXP use_kernel_fun_gaussian_cpp(
 // *************************************
 
 [[cpp11::register]]
-SEXP set_par_names_cpp(
+SEXP set_param_names_cpp(
     SEXP lfmcmc,
     std::vector< std::string > names
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_par_names(names);
+    lfmcmc_ptr->set_param_names(names);
     return lfmcmc;
 }
 
 [[cpp11::register]]
-SEXP set_stats_names_cpp(
+SEXP set_stat_names_cpp(
     SEXP lfmcmc,
     std::vector< std::string > names
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_stats_names(names);
+    lfmcmc_ptr->set_stat_names(names);
     return lfmcmc;
 }
 
 [[cpp11::register]]
-cpp11::writable::doubles get_params_mean_cpp(
+cpp11::writable::doubles get_mean_params_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    return cpp11::doubles(lfmcmc_ptr->get_params_mean());
+    return cpp11::doubles(lfmcmc_ptr->get_mean_params());
 }
 
 [[cpp11::register]]
-cpp11::writable::doubles get_stats_mean_cpp(
+cpp11::writable::doubles get_mean_stats_cpp(
     SEXP lfmcmc
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    return cpp11::doubles(lfmcmc_ptr->get_stats_mean());
+    return cpp11::doubles(lfmcmc_ptr->get_mean_stats());
 }
 
 [[cpp11::register]]
@@ -258,10 +258,10 @@ SEXP print_lfmcmc_cpp(
 }
 
 [[cpp11::register]]
-SEXP get_statistics_hist_cpp(SEXP lfmcmc) {
+SEXP get_sample_stats_cpp(SEXP lfmcmc) {
 
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    return cpp11::doubles(lfmcmc_ptr->get_statistics_hist());
+    return cpp11::doubles(lfmcmc_ptr->get_sample_stats());
 
 }
 
@@ -290,18 +290,18 @@ int get_n_samples_cpp(SEXP lfmcmc) {
 }
 
 [[cpp11::register]]
-int get_n_statistics_cpp(SEXP lfmcmc) {
+int get_n_stats_cpp(SEXP lfmcmc) {
 
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    return static_cast<int>(lfmcmc_ptr->get_n_statistics());
+    return static_cast<int>(lfmcmc_ptr->get_n_stats());
 
 }
 
 [[cpp11::register]]
-int get_n_parameters_cpp(SEXP lfmcmc) {
+int get_n_params_cpp(SEXP lfmcmc) {
 
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    return static_cast<int>(lfmcmc_ptr->get_n_parameters());
+    return static_cast<int>(lfmcmc_ptr->get_n_params());
 
 }
 
