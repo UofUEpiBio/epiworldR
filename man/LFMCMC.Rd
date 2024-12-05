@@ -11,16 +11,16 @@
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
 \alias{use_kernel_fun_gaussian}
-\alias{set_par_names}
-\alias{set_stats_names}
-\alias{get_params_mean}
-\alias{get_stats_mean}
+\alias{set_param_names}
+\alias{set_stat_names}
+\alias{get_mean_params}
+\alias{get_mean_stats}
 \alias{print.epiworld_lfmcmc}
 \alias{get_accepted_params}
 \alias{get_accepted_stats}
-\alias{get_statistics_hist}
-\alias{get_n_parameters}
-\alias{get_n_statistics}
+\alias{get_sample_stats}
+\alias{get_n_params}
+\alias{get_n_stats}
 \alias{get_n_samples}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
@@ -42,13 +42,13 @@ set_kernel_fun(lfmcmc, fun)
 
 use_kernel_fun_gaussian(lfmcmc)
 
-set_par_names(lfmcmc, names)
+set_param_names(lfmcmc, names)
 
-set_stats_names(lfmcmc, names)
+set_stat_names(lfmcmc, names)
 
-get_params_mean(lfmcmc)
+get_mean_params(lfmcmc)
 
-get_stats_mean(lfmcmc)
+get_mean_stats(lfmcmc)
 
 \method{print}{epiworld_lfmcmc}(x, burnin = 0, ...)
 
@@ -56,11 +56,11 @@ get_accepted_params(lfmcmc)
 
 get_accepted_stats(lfmcmc)
 
-get_statistics_hist(lfmcmc)
+get_sample_stats(lfmcmc)
 
-get_n_parameters(lfmcmc)
+get_n_params(lfmcmc)
 
-get_n_statistics(lfmcmc)
+get_n_stats(lfmcmc)
 
 get_n_samples(lfmcmc)
 }
@@ -132,13 +132,13 @@ samples and the number of columns equal to the number of statistics.
 }
 
 \itemize{
-\item The function \code{get_statistics_hist} returns a matrix of statistics
+\item The function \code{get_sample_stats} returns a matrix of statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.
 }
 
 \itemize{
-\item The functions \code{get_n_parameters}, \code{get_n_statistics}, and \code{get_n_samples}
+\item The functions \code{get_n_params}, \code{get_n_stats}, and \code{get_n_samples}
 return the number of parameters, statistics, and samples for the given
 LFMCMC model, respectively.
 }
@@ -209,12 +209,12 @@ run_lfmcmc(
 )
 
 # Print the results
-set_stats_names(lfmcmc_model, get_states(model_sir))
-set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+set_stat_names(lfmcmc_model, get_states(model_sir))
+set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
 
-get_stats_mean(lfmcmc_model)
-get_params_mean(lfmcmc_model)
+get_mean_stats(lfmcmc_model)
+get_mean_params(lfmcmc_model)
 
 }
