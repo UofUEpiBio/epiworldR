@@ -76,13 +76,13 @@ stopifnot_lfmcmc <- function(x) {
 #' )
 #'
 #' # Print the results
-#' set_stats_names(lfmcmc_model, get_states(model_sir))
-#' set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+#' set_stat_names(lfmcmc_model, get_states(model_sir))
+#' set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 #'
 #' print(lfmcmc_model)
 #'
-#' get_stats_mean(lfmcmc_model)
-#' get_params_mean(lfmcmc_model)
+#' get_mean_stats(lfmcmc_model)
+#' get_mean_params(lfmcmc_model)
 #'
 #' @export
 LFMCMC <- function(model = NULL) {
@@ -228,10 +228,10 @@ use_kernel_fun_gaussian <- function(lfmcmc) {
 #' @param names The model parameter names
 #' @returns The lfmcmc model with the parameter names added
 #' @export
-set_par_names <- function(lfmcmc, names) {
+set_param_names <- function(lfmcmc, names) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_par_names_cpp(lfmcmc, names)
+  set_param_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
 
 }
@@ -241,10 +241,10 @@ set_par_names <- function(lfmcmc, names) {
 #' @param names The model stats names
 #' @returns The lfmcmc model with the stats names added
 #' @export
-set_stats_names <- function(lfmcmc, names) {
+set_stat_names <- function(lfmcmc, names) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_stats_names_cpp(lfmcmc, names)
+  set_stat_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
 
 }
@@ -253,10 +253,10 @@ set_stats_names <- function(lfmcmc, names) {
 #' @param lfmcmc LFMCMC model
 #' @returns The param means for the given lfmcmc model
 #' @export
-get_params_mean <- function(lfmcmc) {
+get_mean_params <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  get_params_mean_cpp(lfmcmc)
+  get_mean_params_cpp(lfmcmc)
 
 }
 
@@ -264,10 +264,10 @@ get_params_mean <- function(lfmcmc) {
 #' @param lfmcmc LFMCMC model
 #' @returns The stats means for the given lfmcmc model
 #' @export
-get_stats_mean <- function(lfmcmc) {
+get_mean_stats <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  get_stats_mean_cpp(lfmcmc)
+  get_mean_stats_cpp(lfmcmc)
 
 }
 
@@ -301,7 +301,7 @@ get_accepted_params <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
   a_params <- get_accepted_params_cpp(lfmcmc)
-  n_params <- get_n_parameters(lfmcmc)
+  n_params <- get_n_params(lfmcmc)
 
   matrix(
     a_params,
@@ -322,7 +322,7 @@ get_accepted_stats <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
   a_stats <- get_accepted_stats_cpp(lfmcmc)
-  n_stats <- get_n_statistics(lfmcmc)
+  n_stats <- get_n_stats(lfmcmc)
 
   matrix(
     a_stats,
@@ -335,14 +335,14 @@ get_accepted_stats <- function(lfmcmc) {
 #' @export
 #' @rdname LFMCMC
 #' @returns
-#' - The function `get_statistics_hist` returns a matrix of statistics
+#' - The function `get_sample_stats` returns a matrix of statistics
 #' for the given LFMCMC model. with the number of rows equal to the number of
 #' samples and the number of columns equal to the number of statistics.
-get_statistics_hist <- function(lfmcmc) {
+get_sample_stats <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  stats <- get_statistics_hist_cpp(lfmcmc)
-  n_stats <- get_n_statistics(lfmcmc)
+  stats <- get_sample_stats_cpp(lfmcmc)
+  n_stats <- get_n_stats(lfmcmc)
 
   matrix(
     stats,
@@ -355,22 +355,22 @@ get_statistics_hist <- function(lfmcmc) {
 #' @export
 #' @rdname LFMCMC
 #' @returns
-#' - The functions `get_n_parameters`, `get_n_statistics`, and `get_n_samples`
+#' - The functions `get_n_params`, `get_n_stats`, and `get_n_samples`
 #' return the number of parameters, statistics, and samples for the given
 #' LFMCMC model, respectively.
-get_n_parameters <- function(lfmcmc) {
+get_n_params <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  get_n_parameters_cpp(lfmcmc)
+  get_n_params_cpp(lfmcmc)
 
 }
 
 #' @export
 #' @rdname LFMCMC
-get_n_statistics <- function(lfmcmc) {
+get_n_stats <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  get_n_statistics_cpp(lfmcmc)
+  get_n_stats_cpp(lfmcmc)
 
 }
 

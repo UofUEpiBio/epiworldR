@@ -39,13 +39,13 @@ simfun <- function(params) {
 
 sumfun <- function(dat) { return(dat) }
 
-propfun <- function(params_prev) {
-  res <- plogis(qlogis(params_prev) + rnorm(length(params_prev)))
+propfun <- function(old_params) {
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
 
-kernelfun <- function(stats_now, stats_obs, epsilon) {
-  dnorm(sqrt(sum((stats_now - stats_obs)^2)))
+kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+  dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 
 # Check adding functions to LFMCMC
@@ -68,8 +68,8 @@ expect_silent(run_lfmcmc(
   seed = model_seed
 ))
 
-expect_silent(set_stats_names(lfmcmc_model, get_states(model_sir)))
-expect_silent(set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
+expect_silent(set_stat_names(lfmcmc_model, get_states(model_sir)))
+expect_silent(set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
 
 # Check printing LFMCMC --------------------------------------------------------
 expect_stdout(print(lfmcmc_model))
@@ -83,15 +83,15 @@ expect_error(print(lfmcmc_model, burnin = "n_samp"), "argument must be an intege
 expect_equal(get_n_samples(lfmcmc_model), n_samp)
 
 expected_stats_mean <- c(284.7140, 0.8485, 713.9375)
-expect_equal(get_stats_mean(lfmcmc_model), expected_stats_mean)
-expect_equal(get_n_statistics(lfmcmc_model), length(expected_stats_mean))
+expect_equal(get_mean_stats(lfmcmc_model), expected_stats_mean)
+expect_equal(get_n_stats(lfmcmc_model), length(expected_stats_mean))
 
 expected_params_mean <- c(0.3133401, 0.2749686)
-expect_equal(get_params_mean(lfmcmc_model), expected_params_mean, tolerance = 0.0001)
-expect_equal(get_n_parameters(lfmcmc_model), length(expected_params_mean))
+expect_equal(get_mean_params(lfmcmc_model), expected_params_mean, tolerance = 0.0001)
+expect_equal(get_n_params(lfmcmc_model), length(expected_params_mean))
 
 expect_equal(dim(get_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
-expect_equal(dim(get_statistics_hist(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
+expect_equal(dim(get_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
@@ -181,9 +181,9 @@ propfun <- function(par) {
   return(par_new)
 }
 
-kernelfun <- function(stats_now, stats_obs, epsilon) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon) {
 
-  dnorm(sqrt(sum((stats_obs - stats_now)^2)))
+  dnorm(sqrt(sum((observed_stats - simulated_stats)^2)))
   
 }
 
@@ -204,7 +204,7 @@ x <- run_lfmcmc(
   seed = model_seed
 )
 
-x_means <- get_params_mean(x)
+x_means <- get_mean_params(x)
 
 expect_equivalent(
   x_means,
@@ -233,14 +233,14 @@ expect_error(set_summary_fun(not_lfmcmc, sumfun), expected_error_msg)
 expect_error(set_kernel_fun(not_lfmcmc, kernelfun), expected_error_msg)
 expect_error(use_kernel_fun_gaussian(not_lfmcmc), expected_error_msg)
 
-expect_error(set_par_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
-expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
+expect_error(set_param_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
+expect_error(set_stat_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
 
-expect_error(get_params_mean(not_lfmcmc), expected_error_msg)
-expect_error(get_stats_mean(not_lfmcmc), expected_error_msg)
+expect_error(get_mean_params(not_lfmcmc), expected_error_msg)
+expect_error(get_mean_stats(not_lfmcmc), expected_error_msg)
 expect_error(get_accepted_params(not_lfmcmc), expected_error_msg)
 expect_error(get_accepted_stats(not_lfmcmc), expected_error_msg)
-expect_error(get_statistics_hist(not_lfmcmc), expected_error_msg)
-expect_error(get_n_parameters(not_lfmcmc), expected_error_msg)
-expect_error(get_n_statistics(not_lfmcmc), expected_error_msg)
+expect_error(get_sample_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_n_params(not_lfmcmc), expected_error_msg)
+expect_error(get_n_stats(not_lfmcmc), expected_error_msg)
 expect_error(get_n_samples(not_lfmcmc), expected_error_msg)
