@@ -73,7 +73,8 @@ inline void LFMCMC<TData>::print(size_t burnin) const
     printf_epiworld("___________________________________________\n\n");
     printf_epiworld("LIKELIHOOD-FREE MARKOV CHAIN MONTE CARLO\n\n");
 
-    printf_epiworld("N Samples : %zu\n", m_n_samples);
+    printf_epiworld("N Samples (total) : %zu\n", m_n_samples);
+    printf_epiworld("N Samples (after burn-in period) : %zu\n", m_n_samples - burnin);
 
     std::string abbr;
     epiworld_double elapsed;

@@ -205,8 +205,8 @@ public:
     void set_summary_fun(LFMCMCSummaryFun<TData> fun);
     void set_kernel_fun(LFMCMCKernelFun<TData> fun);
 
-    void set_param_names(std::vector< std::string > names);
-    void set_stat_names(std::vector< std::string > names);
+    void set_params_names(std::vector< std::string > names);
+    void set_stats_names(std::vector< std::string > names);
     
     /**
      * @name Random number generation
