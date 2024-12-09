@@ -212,22 +212,22 @@ SEXP use_kernel_fun_gaussian_cpp(
 // *************************************
 
 [[cpp11::register]]
-SEXP set_param_names_cpp(
+SEXP set_params_names_cpp(
     SEXP lfmcmc,
     std::vector< std::string > names
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_param_names(names);
+    lfmcmc_ptr->set_params_names(names);
     return lfmcmc;
 }
 
 [[cpp11::register]]
-SEXP set_stat_names_cpp(
+SEXP set_stats_names_cpp(
     SEXP lfmcmc,
     std::vector< std::string > names
 ) {
     WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
-    lfmcmc_ptr->set_stat_names(names);
+    lfmcmc_ptr->set_stats_names(names);
     return lfmcmc;
 }
 

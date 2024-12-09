@@ -256,12 +256,12 @@ use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
 }
 
-set_param_names_cpp <- function(lfmcmc, names) {
-  .Call(`_epiworldR_set_param_names_cpp`, lfmcmc, names)
+set_params_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_params_names_cpp`, lfmcmc, names)
 }
 
-set_stat_names_cpp <- function(lfmcmc, names) {
-  .Call(`_epiworldR_set_stat_names_cpp`, lfmcmc, names)
+set_stats_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
 }
 
 get_mean_params_cpp <- function(lfmcmc) {

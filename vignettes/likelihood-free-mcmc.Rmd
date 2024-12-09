@@ -117,8 +117,8 @@ run_lfmcmc(
 )
 
 # Print the results
-set_stat_names(lfmcmc_model, get_states(model_sir))
-set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+set_stats_names(lfmcmc_model, get_states(model_sir))
+set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
 ```

@@ -454,17 +454,17 @@ extern "C" SEXP _epiworldR_use_kernel_fun_gaussian_cpp(SEXP lfmcmc) {
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP set_param_names_cpp(SEXP lfmcmc, std::vector< std::string > names);
-extern "C" SEXP _epiworldR_set_param_names_cpp(SEXP lfmcmc, SEXP names) {
+SEXP set_params_names_cpp(SEXP lfmcmc, std::vector< std::string > names);
+extern "C" SEXP _epiworldR_set_params_names_cpp(SEXP lfmcmc, SEXP names) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_param_names_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< std::string >>>(names)));
+    return cpp11::as_sexp(set_params_names_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< std::string >>>(names)));
   END_CPP11
 }
 // lfmcmc.cpp
-SEXP set_stat_names_cpp(SEXP lfmcmc, std::vector< std::string > names);
-extern "C" SEXP _epiworldR_set_stat_names_cpp(SEXP lfmcmc, SEXP names) {
+SEXP set_stats_names_cpp(SEXP lfmcmc, std::vector< std::string > names);
+extern "C" SEXP _epiworldR_set_stats_names_cpp(SEXP lfmcmc, SEXP names) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_stat_names_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< std::string >>>(names)));
+    return cpp11::as_sexp(set_stats_names_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc), cpp11::as_cpp<cpp11::decay_t<std::vector< std::string >>>(names)));
   END_CPP11
 }
 // lfmcmc.cpp
@@ -1182,7 +1182,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},
     {"_epiworldR_set_observed_data_cpp",                (DL_FUNC) &_epiworldR_set_observed_data_cpp,                 2},
     {"_epiworldR_set_param_cpp",                        (DL_FUNC) &_epiworldR_set_param_cpp,                         3},
-    {"_epiworldR_set_param_names_cpp",                  (DL_FUNC) &_epiworldR_set_param_names_cpp,                   2},
+    {"_epiworldR_set_params_names_cpp",                 (DL_FUNC) &_epiworldR_set_params_names_cpp,                  2},
     {"_epiworldR_set_prob_death_cpp",                   (DL_FUNC) &_epiworldR_set_prob_death_cpp,                    2},
     {"_epiworldR_set_prob_death_fun_cpp",               (DL_FUNC) &_epiworldR_set_prob_death_fun_cpp,                3},
     {"_epiworldR_set_prob_death_ptr_cpp",               (DL_FUNC) &_epiworldR_set_prob_death_ptr_cpp,                3},
@@ -1197,7 +1197,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_recovery_enhancer_fun_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_fun_cpp,         3},
     {"_epiworldR_set_recovery_enhancer_ptr_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_ptr_cpp,         3},
     {"_epiworldR_set_simulation_fun_cpp",               (DL_FUNC) &_epiworldR_set_simulation_fun_cpp,                2},
-    {"_epiworldR_set_stat_names_cpp",                   (DL_FUNC) &_epiworldR_set_stat_names_cpp,                    2},
+    {"_epiworldR_set_stats_names_cpp",                  (DL_FUNC) &_epiworldR_set_stats_names_cpp,                   2},
     {"_epiworldR_set_summary_fun_cpp",                  (DL_FUNC) &_epiworldR_set_summary_fun_cpp,                   2},
     {"_epiworldR_set_susceptibility_reduction_cpp",     (DL_FUNC) &_epiworldR_set_susceptibility_reduction_cpp,      2},
     {"_epiworldR_set_susceptibility_reduction_fun_cpp", (DL_FUNC) &_epiworldR_set_susceptibility_reduction_fun_cpp,  3},

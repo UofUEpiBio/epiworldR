@@ -11,8 +11,8 @@
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
 \alias{use_kernel_fun_gaussian}
-\alias{set_param_names}
-\alias{set_stat_names}
+\alias{set_params_names}
+\alias{set_stats_names}
 \alias{get_mean_params}
 \alias{get_mean_stats}
 \alias{print.epiworld_lfmcmc}
@@ -42,9 +42,9 @@ set_kernel_fun(lfmcmc, fun)
 
 use_kernel_fun_gaussian(lfmcmc)
 
-set_param_names(lfmcmc, names)
+set_params_names(lfmcmc, names)
 
-set_stat_names(lfmcmc, names)
+set_stats_names(lfmcmc, names)
 
 get_mean_params(lfmcmc)
 
@@ -209,8 +209,8 @@ run_lfmcmc(
 )
 
 # Print the results
-set_stat_names(lfmcmc_model, get_states(model_sir))
-set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+set_stats_names(lfmcmc_model, get_states(model_sir))
+set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
 

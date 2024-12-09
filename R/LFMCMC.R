@@ -76,8 +76,8 @@ stopifnot_lfmcmc <- function(x) {
 #' )
 #'
 #' # Print the results
-#' set_stat_names(lfmcmc_model, get_states(model_sir))
-#' set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+#' set_stats_names(lfmcmc_model, get_states(model_sir))
+#' set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 #'
 #' print(lfmcmc_model)
 #'
@@ -228,10 +228,10 @@ use_kernel_fun_gaussian <- function(lfmcmc) {
 #' @param names The model parameter names
 #' @returns The lfmcmc model with the parameter names added
 #' @export
-set_param_names <- function(lfmcmc, names) {
+set_params_names <- function(lfmcmc, names) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_param_names_cpp(lfmcmc, names)
+  set_params_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
 
 }
@@ -241,10 +241,10 @@ set_param_names <- function(lfmcmc, names) {
 #' @param names The model stats names
 #' @returns The lfmcmc model with the stats names added
 #' @export
-set_stat_names <- function(lfmcmc, names) {
+set_stats_names <- function(lfmcmc, names) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_stat_names_cpp(lfmcmc, names)
+  set_stats_names_cpp(lfmcmc, names)
   invisible(lfmcmc)
 
 }

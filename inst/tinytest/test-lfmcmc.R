@@ -68,8 +68,8 @@ expect_silent(run_lfmcmc(
   seed = model_seed
 ))
 
-expect_silent(set_stat_names(lfmcmc_model, get_states(model_sir)))
-expect_silent(set_param_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
+expect_silent(set_stats_names(lfmcmc_model, get_states(model_sir)))
+expect_silent(set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
 
 # Check printing LFMCMC --------------------------------------------------------
 expect_stdout(print(lfmcmc_model))
@@ -233,8 +233,8 @@ expect_error(set_summary_fun(not_lfmcmc, sumfun), expected_error_msg)
 expect_error(set_kernel_fun(not_lfmcmc, kernelfun), expected_error_msg)
 expect_error(use_kernel_fun_gaussian(not_lfmcmc), expected_error_msg)
 
-expect_error(set_param_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
-expect_error(set_stat_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
+expect_error(set_params_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
+expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
 
 expect_error(get_mean_params(not_lfmcmc), expected_error_msg)
 expect_error(get_mean_stats(not_lfmcmc), expected_error_msg)
