@@ -81,16 +81,14 @@ sumfun <- function(dat) {
 }
 
 # Define the LFMCMC proposal function
-# - Based on proposal_fun_normal from lfmcmc-meat.hpp
-propfun <- function(params_prev) {
-  res <- plogis(qlogis(params_prev) + rnorm(length(params_prev)))
+propfun <- function(old_params) {
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
 
 # Define the LFMCMC kernel function
-# - Based on kernel_fun_uniform from lfmcmc-meat.hpp
-kernelfun <- function(stats_now, stats_obs, epsilon) {
-  dnorm(sqrt(sum((stats_now - stats_obs)^2)))
+kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+  dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 
 # Create the LFMCMC model
@@ -120,7 +118,7 @@ run_lfmcmc(
 
 # Print the results
 set_stats_names(lfmcmc_model, get_states(model_sir))
-set_par_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
+set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)
 ```
