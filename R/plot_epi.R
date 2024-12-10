@@ -38,6 +38,9 @@ plot_epi.epiworld_model <- function(
     counts_scale,
     ...
     ) {
+  # Check if model has been run
+  if (length(get_hist_total(x)$counts) <= 0)
+    stop("The model must be run before it can be plotted.")
 
   plot_epi(
     x = get_hist_total(x),

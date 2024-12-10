@@ -22,7 +22,7 @@ expect_silent(agents_smallworld(
 
 # Check model run --------------------------------------------------------------
 expect_silent(verbose_off(sis_0))
-expect_warning(expect_error(plot(sis_0))) # Plot fails before model is run
+expect_error(plot(sis_0), "model must be run before it can be plotted")
 expect_silent(run_multiple(
   sis_0,
   ndays=100,
