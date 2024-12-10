@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5-0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,13 +65,13 @@
 <span></span>
 <span><span class="fu">use_kernel_fun_gaussian</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_par_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
+<span><span class="fu">set_params_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_stats_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_params_mean</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_mean_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_stats_mean</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_mean_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'epiworld_lfmcmc'</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, burnin <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -80,11 +80,11 @@
 <span></span>
 <span><span class="fu">get_accepted_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_statistics_hist</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_sample_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_n_parameters</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_n_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_n_statistics</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_n_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_n_samples</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -164,10 +164,10 @@ parameters.</p></li>
 </ul><ul><li><p>The function <code>get_accepted_stats</code> returns a matrix of accepted statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.</p></li>
-</ul><ul><li><p>The function <code>get_statistics_hist</code> returns a matrix of statistics
+</ul><ul><li><p>The function <code>get_sample_stats</code> returns a matrix of statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.</p></li>
-</ul><ul><li><p>The functions <code>get_n_parameters</code>, <code>get_n_statistics</code>, and <code>get_n_samples</code>
+</ul><ul><li><p>The functions <code>get_n_params</code>, <code>get_n_stats</code>, and <code>get_n_samples</code>
 return the number of parameters, statistics, and samples for the given
 LFMCMC model, respectively.</p></li>
 </ul></div>
@@ -238,14 +238,15 @@ generator engine is created.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Print the results</span></span></span>
 <span class="r-in"><span><span class="fu">set_stats_names</span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="epiworld-methods.html">get_states</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">set_par_names</span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Immune recovery"</span>, <span class="st">"Infectiousness"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">set_params_names</span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Immune recovery"</span>, <span class="st">"Infectiousness"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ___________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LIKELIHOOD-FREE MARKOV CHAIN MONTE CARLO</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> N Samples : 2000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N Samples (total) : 2000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> N Samples (after burn-in period) : 2000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Elapsed t : 1.00s</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Parameters:</span>
@@ -259,9 +260,9 @@ generator engine is created.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ___________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">get_stats_mean</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_mean_stats</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.2215   0.0655 995.7130</span>
-<span class="r-in"><span><span class="fu">get_params_mean</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_mean_params</span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.4482147 0.8480773</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
