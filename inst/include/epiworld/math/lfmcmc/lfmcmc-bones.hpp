@@ -170,6 +170,7 @@ private:
     std::chrono::time_point<std::chrono::steady_clock> m_start_time;
     std::chrono::time_point<std::chrono::steady_clock> m_end_time;
 
+    // Timing
     // std::chrono::milliseconds
     std::chrono::duration<epiworld_double,std::micro> m_elapsed_time = 
         std::chrono::duration<epiworld_double,std::micro>::zero();
@@ -183,6 +184,10 @@ private:
 
     void chrono_start();
     void chrono_end();
+
+    // Progress
+    bool verbose = true;
+    Progress progress_bar;
     
 public:
 
@@ -254,6 +259,8 @@ public:
     std::vector< epiworld_double > get_mean_stats();
 
     // Printing
+    LFMCMC<TData> & verbose_off();
+    LFMCMC<TData> & verbose_on();
     void print(size_t burnin = 0u) const;
 
 };
