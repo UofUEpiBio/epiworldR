@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Pulsipher</h4>
             
-            <h4 data-toc-skip class="date">2024-12-10</h4>
+            <h4 data-toc-skip class="date">2024-12-12</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/likelihood-free-mcmc.Rmd" class="external-link"><code>vignettes/likelihood-free-mcmc.Rmd</code></a></small>
       <div class="d-none name"><code>likelihood-free-mcmc.Rmd</code></div>
@@ -125,8 +125,8 @@ model.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 717.00µs</span></span>
-<span><span class="co">#&gt; Last run speed      : 69.74 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 716.00µs</span></span>
+<span><span class="co">#&gt; Last run speed      : 69.83 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -208,6 +208,7 @@ model.</p>
 <span><span class="va">epsil</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
 <span></span>
 <span><span class="co"># Run the LFMCMC simulation</span></span>
+<span><span class="fu"><a href="../reference/epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">run_lfmcmc</a></span><span class="op">(</span></span>
 <span>  lfmcmc <span class="op">=</span> <span class="va">lfmcmc_model</span>,</span>
 <span>  params_init_ <span class="op">=</span> <span class="va">par0</span>,</span>
