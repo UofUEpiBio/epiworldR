@@ -179,14 +179,19 @@ SEXP set_kernel_fun_cpp(
         const std::vector< epiworld_double >& simulated_stats,
         const std::vector< epiworld_double >& observed_stats,
         epiworld_double epsilon,
-        LFMCMC<TData_default>*
+        LFMCMC<TData_default> * lfmcmc_obj
         ) -> epiworld_double {
 
         auto sim_stats_doubles = cpp11::doubles(simulated_stats);
         auto obs_stats_doubles = cpp11::doubles(observed_stats);
 
+        cpp11::external_pointer<LFMCMC<TData_default>> lfmcmc_ptr(
+            lfmcmc_obj,
+            false
+            );
+
         return cpp11::as_cpp<epiworld_double>(
-            fun(sim_stats_doubles, obs_stats_doubles, epsilon)
+            fun(sim_stats_doubles, obs_stats_doubles, epsilon, lfmcmc_ptr)
             );
     };
 
