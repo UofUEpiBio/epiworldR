@@ -148,11 +148,13 @@ SEXP set_summary_fun_cpp(
     LFMCMCSummaryFun<TData_default> fun_call = [fun](
         std::vector< epiworld_double >& res,
         const TData_default& dat,
-        LFMCMC<TData_default>*
+        LFMCMC<TData_default>* lfmcmc_obj
         ) -> void {
 
         auto dat_int = cpp11::doubles(dat);
-        auto res_tmp = cpp11::doubles(fun(dat_int));
+        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
+        auto res_tmp = cpp11::doubles(fun(dat_int, lfmcmc_ptr));
+
 
         if (res.size() == 0u)
             res.resize(res_tmp.size());
@@ -185,10 +187,7 @@ SEXP set_kernel_fun_cpp(
         auto sim_stats_doubles = cpp11::doubles(simulated_stats);
         auto obs_stats_doubles = cpp11::doubles(observed_stats);
 
-        cpp11::external_pointer<LFMCMC<TData_default>> lfmcmc_ptr(
-            lfmcmc_obj,
-            false
-            );
+        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
 
         return cpp11::as_cpp<epiworld_double>(
             fun(sim_stats_doubles, obs_stats_doubles, epsilon, lfmcmc_ptr)

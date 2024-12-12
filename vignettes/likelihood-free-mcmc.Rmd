@@ -108,7 +108,7 @@ For our example, since the population distribution is already a summary of the d
 With more complicated use cases, you might instead compute summary statistics such as the mean or standard deviation.
 
 ```{r sumfun}
-summary_fun <- function(data) {
+summary_fun <- function(data, model) {
   return(data)
 }
 ```
@@ -126,8 +126,9 @@ proposal_fun <- function(old_params) {
 The **kernel function** effectively scores the results of the latest simulation run against the observed data, by comparing the summary statistics from `summary_fun` for each.
 LFMCMC uses the kernel score and the Hastings Ratio to determine whether or not to accept the parameters for that run.
 In our example, since `summary_fun` simply passes the data through, `simulated_stats` and `observed_stats` are our simulated and observed data respectively.
+
 ```{r kernfun}
-kernel_fun <- function(simulated_stats, observed_stats, epsilon) {
+kernel_fun <- function(simulated_stats, observed_stats, epsilon, model) {
   dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 ```
