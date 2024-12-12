@@ -31,7 +31,7 @@ README\.html
 
 # Adding gitattributes
 \.gitattributes
-\.pre-commit-config.yaml
+\.pre-commit-config\.yaml
 
 paper\..+
 docker

@@ -29,7 +29,7 @@ obs_data <- get_today_total(model_sir)
 expect_silent(set_observed_data(lfmcmc_model, obs_data))
 
 # Define LFMCMC functions
-simfun <- function(params) {
+simfun <- function(params, model) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
@@ -37,14 +37,14 @@ simfun <- function(params) {
   return(res)
 }
 
-sumfun <- function(dat) { return(dat) }
+sumfun <- function(dat, model) { return(dat) }
 
-propfun <- function(old_params) {
+propfun <- function(old_params, model) {
   res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, model) {
   dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 
@@ -62,9 +62,9 @@ epsil <- 1.0
 
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 
@@ -99,9 +99,9 @@ expect_silent(use_kernel_fun_gaussian(lfmcmc_model))
 
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 
@@ -115,42 +115,42 @@ epsil_int <- as.integer(1)
 
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0_int,
-  n_samples_ = n_samp_double,
-  epsilon_ = epsil_int,
+  params_init = par0_int,
+  n_samples = n_samp_double,
+  epsilon = epsil_int,
   seed = model_seed
 ))
 
 # Check running LFMCMC with missing parameters ---------------------------------
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp
+  params_init = par0,
+  n_samples = n_samp
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  epsilon_ = epsil
+  params_init = par0,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(lfmcmc = lfmcmc_model))
@@ -161,15 +161,15 @@ set.seed(model_seed)
 Y <- rnorm(2000, mean = -5, sd = 2.5)
 
 # Define LFMCMC functions
-simfun <- function(par) {
+simfun <- function(par, model) {
   rnorm(2000, mean = par[1], sd = par[2])
 }
 
-sumfun <- function(x) {
+sumfun <- function(x, model) {
   c(mean(x), sd(x))
 }
 
-propfun <- function(par) {
+propfun <- function(par, model) {
   
   par_new <- par + rnorm(2, sd = 0.1)
 
@@ -181,7 +181,7 @@ propfun <- function(par) {
   return(par_new)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, model) {
 
   dnorm(sqrt(sum((observed_stats - simulated_stats)^2)))
   
@@ -198,9 +198,9 @@ lfmcmc_model <- LFMCMC() |>
 # Run LFMCMC
 x <- run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = c(0, 1),
-  n_samples_ = 3000,
-  epsilon_ = 1.0,
+  params_init = c(0, 1),
+  n_samples = 3000,
+  epsilon = 1.0,
   seed = model_seed
 )
 
@@ -218,9 +218,9 @@ expected_error_msg <- "must be an object of class epiworld_lfmcmc"
 not_lfmcmc <- c("NOT LFMCMC")
 
 expect_error(run_lfmcmc(not_lfmcmc,
-                        params_init_ = par0_int,
-                        n_samples_ = n_samp_double,
-                        epsilon_ = epsil_int,
+                        params_init = par0_int,
+                        n_samples = n_samp_double,
+                        epsilon = epsil_int,
                         seed = model_seed
                         ), expected_error_msg)
 

@@ -14,8 +14,12 @@ using namespace epiworld;
 #define WrapLFMCMC(a) \
     cpp11::external_pointer<LFMCMC<TData_default>> (a)
 
-#define SetClassAttr(a) \
-    attr((a), "class") = "epiworld_lfmcmc"
+inline cpp11::sexp lfmcmc_as_sexp(LFMCMC<TData_default> * lfmcmc) {
+    WrapLFMCMC(lfmcmc_ptr)(lfmcmc, false);
+    cpp11::sexp lfmcmc_ptr_s(lfmcmc_ptr);
+    lfmcmc_ptr_s.attr("class") = "epiworld_lfmcmc";
+    return lfmcmc_ptr_s;
+}
 
 // LFMCMC definitions:
 // https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/math/lfmcmc
@@ -88,8 +92,7 @@ SEXP set_proposal_fun_cpp(
         ) -> void {
 
         auto params_doubles = cpp11::doubles(old_params);
-        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
-        SetClassAttr(lfmcmc_ptr);
+        auto lfmcmc_ptr = lfmcmc_as_sexp(lfmcmc_obj);
         auto res_tmp = cpp11::doubles(fun(params_doubles, lfmcmc_ptr));
 
         std::copy(
@@ -130,8 +133,7 @@ SEXP set_simulation_fun_cpp(
         ) -> TData_default {
 
         auto params_doubles = cpp11::doubles(params);
-        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
-        SetClassAttr(lfmcmc_ptr);
+        auto lfmcmc_ptr = lfmcmc_as_sexp(lfmcmc_obj);
         return cpp11::as_cpp<TData_default>(
             cpp11::doubles(fun(params_doubles, lfmcmc_ptr))
             );
@@ -157,8 +159,7 @@ SEXP set_summary_fun_cpp(
         ) -> void {
 
         auto dat_int = cpp11::doubles(dat);
-        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
-        SetClassAttr(lfmcmc_ptr);
+        auto lfmcmc_ptr = lfmcmc_as_sexp(lfmcmc_obj);
         auto res_tmp = cpp11::doubles(fun(dat_int, lfmcmc_ptr));
 
 
@@ -193,8 +194,7 @@ SEXP set_kernel_fun_cpp(
         auto sim_stats_doubles = cpp11::doubles(simulated_stats);
         auto obs_stats_doubles = cpp11::doubles(observed_stats);
 
-        WrapLFMCMC(lfmcmc_ptr)(lfmcmc_obj, false);
-        SetClassAttr(lfmcmc_ptr);
+        auto lfmcmc_ptr = lfmcmc_as_sexp(lfmcmc_obj);
 
         return cpp11::as_cpp<epiworld_double>(
             fun(sim_stats_doubles, obs_stats_doubles, epsilon, lfmcmc_ptr)
@@ -317,4 +317,3 @@ int get_n_params_cpp(SEXP lfmcmc) {
 }
 
 #undef WrapLFMCMC
-#undef SetClassAttr
