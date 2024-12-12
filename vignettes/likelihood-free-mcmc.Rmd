@@ -108,6 +108,7 @@ n_samp <- 2000
 epsil <- 1.0
 
 # Run the LFMCMC simulation
+verbose_off(lfmcmc_model)
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,

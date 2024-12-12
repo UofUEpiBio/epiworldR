@@ -22,6 +22,7 @@
 \alias{get_n_params}
 \alias{get_n_stats}
 \alias{get_n_samples}
+\alias{verbose_off.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model = NULL)
@@ -63,6 +64,8 @@ get_n_params(lfmcmc)
 get_n_stats(lfmcmc)
 
 get_n_samples(lfmcmc)
+
+\method{verbose_off}{epiworld_lfmcmc}(x)
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model} or \code{NULL} (see details).}
@@ -142,6 +145,11 @@ samples and the number of columns equal to the number of statistics.
 return the number of parameters, statistics, and samples for the given
 LFMCMC model, respectively.
 }
+
+\itemize{
+\item The \code{verbose_on} and \code{verbose_off} functions return the same model, however
+\code{verbose_off} returns the model with no progress bar.
+}
 }
 \description{
 Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
@@ -151,6 +159,9 @@ Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
 \code{model} is not \code{NULL}, the model uses the same random-number generator
 engine as the model. Otherwise, when \code{model} is \code{NULL}, a new random-number
 generator engine is created.
+
+The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing
+progress on screen, respectively. Both functions return the model (\code{x}) invisibly.
 }
 \examples{
 ## Setup an SIR model to use in the simulation
@@ -200,6 +211,7 @@ n_samp <- 2000
 epsil <- 1.0
 
 # Run the LFMCMC simulation
+verbose_off(lfmcmc_model)
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,

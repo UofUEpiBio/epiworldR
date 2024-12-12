@@ -300,6 +300,14 @@ get_n_params_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_get_n_params_cpp`, lfmcmc)
 }
 
+verbose_off_lfmcmc_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_verbose_off_lfmcmc_cpp`, lfmcmc)
+}
+
+verbose_on_lfmcmc_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_verbose_on_lfmcmc_cpp`, lfmcmc)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }

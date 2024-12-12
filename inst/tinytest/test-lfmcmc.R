@@ -60,6 +60,7 @@ par0 <- c(0.1, 0.5)
 n_samp <- 2000
 epsil <- 1.0
 
+expect_silent(verbose_off(lfmcmc_model))
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = par0,
@@ -78,6 +79,17 @@ expect_error(print(lfmcmc_model, burnin = n_samp), "burnin is greater than or eq
 expect_error(print(lfmcmc_model, burnin = n_samp + 50), "burnin is greater than or equal to the number of samples")
 expect_error(print(lfmcmc_model, burnin = -n_samp / 2), "argument must be a non-negative integer")
 expect_error(print(lfmcmc_model, burnin = "n_samp"), "argument must be an integer")
+
+# Check verbose_on -------------------------------------------------------------
+expect_silent(verbose_on(lfmcmc_model))
+expect_stdout(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init_ = par0,
+  n_samples_ = n_samp,
+  epsilon_ = epsil,
+  seed = model_seed
+))
+verbose_off(lfmcmc_model)
 
 # Check LFMCMC getters ---------------------------------------------------------
 expect_equal(get_n_samples(lfmcmc_model), n_samp)
@@ -196,6 +208,7 @@ lfmcmc_model <- LFMCMC() |>
   set_observed_data(Y)
 
 # Run LFMCMC
+verbose_off(lfmcmc_model)
 x <- run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init_ = c(0, 1),
