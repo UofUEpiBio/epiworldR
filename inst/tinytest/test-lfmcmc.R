@@ -286,7 +286,6 @@ expect_equivalent(
 )
 
 # Check functions fail when not passing an LFMCMC object -----------------------
-# Target is 56 tests
 expected_error_msg <- "must be an object of class epiworld_lfmcmc"
 not_lfmcmc <- c("NOT LFMCMC")
 
@@ -311,9 +310,25 @@ expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_
 
 expect_error(get_mean_params(not_lfmcmc), expected_error_msg)
 expect_error(get_mean_stats(not_lfmcmc), expected_error_msg)
+
+expect_error(get_initial_params(not_lfmcmc), expected_error_msg)
+expect_error(get_current_proposed_params(not_lfmcmc), expected_error_msg)
+expect_error(get_current_accepted_params(not_lfmcmc), expected_error_msg)
+expect_error(get_current_proposed_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_current_accepted_stats(not_lfmcmc), expected_error_msg)
+
+expect_error(get_observed_stats(not_lfmcmc), expected_error_msg)
+
+expect_error(get_all_sample_params(not_lfmcmc), expected_error_msg)
+expect_error(get_all_sample_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_all_sample_acceptance(not_lfmcmc), expected_error_msg)
+expect_error(get_all_sample_drawn_prob(not_lfmcmc), expected_error_msg)
+expect_error(get_all_sample_kernel_scores(not_lfmcmc), expected_error_msg)
+
 expect_error(get_all_accepted_params(not_lfmcmc), expected_error_msg)
 expect_error(get_all_accepted_stats(not_lfmcmc), expected_error_msg)
-expect_error(get_all_sample_stats(not_lfmcmc), expected_error_msg)
-expect_error(get_n_params(not_lfmcmc), expected_error_msg)
-expect_error(get_n_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_all_accepted_kernel_scores(not_lfmcmc), expected_error_msg)
+
 expect_error(get_n_samples(not_lfmcmc), expected_error_msg)
+expect_error(get_n_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_n_params(not_lfmcmc), expected_error_msg)
