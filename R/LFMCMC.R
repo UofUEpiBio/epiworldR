@@ -334,20 +334,20 @@ get_all_sample_params <- function(lfmcmc) {
 
 }
 
-#' @rdname LFMCMC
 #' @export
+#' @rdname LFMCMC
 #' @returns
-#' - The function `get_all_sample_stats` returns a matrix of sample statistics
+#' - The function `get_all_sample_stats` returns a matrix of statistics
 #' for the given LFMCMC model. with the number of rows equal to the number of
 #' samples and the number of columns equal to the number of statistics.
 get_all_sample_stats <- function(lfmcmc) {
 
   stopifnot_lfmcmc(lfmcmc)
-  a_stats <- get_all_sample_stats_cpp(lfmcmc)
+  stats <- get_all_sample_stats_cpp(lfmcmc)
   n_stats <- get_n_stats(lfmcmc)
 
   matrix(
-    a_stats,
+    stats,
     ncol = n_stats,
     byrow = TRUE
   )
@@ -426,26 +426,6 @@ get_all_accepted_stats <- function(lfmcmc) {
 
   matrix(
     a_stats,
-    ncol = n_stats,
-    byrow = TRUE
-  )
-
-}
-
-#' @export
-#' @rdname LFMCMC
-#' @returns
-#' - The function `get_all_sample_stats` returns a matrix of statistics
-#' for the given LFMCMC model. with the number of rows equal to the number of
-#' samples and the number of columns equal to the number of statistics.
-get_all_sample_stats <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  stats <- get_all_sample_stats_cpp(lfmcmc)
-  n_stats <- get_n_stats(lfmcmc)
-
-  matrix(
-    stats,
     ncol = n_stats,
     byrow = TRUE
   )
