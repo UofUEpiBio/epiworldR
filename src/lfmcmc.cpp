@@ -316,4 +316,22 @@ int get_n_params_cpp(SEXP lfmcmc) {
 
 }
 
+[[cpp11::register]]
+SEXP verbose_off_lfmcmc_cpp(SEXP lfmcmc) {
+
+  WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+  lfmcmc_ptr->verbose_off();
+  return lfmcmc;
+
+}
+
+[[cpp11::register]]
+SEXP verbose_on_lfmcmc_cpp(SEXP lfmcmc) {
+
+  WrapLFMCMC(lfmcmc_ptr)(lfmcmc);
+  lfmcmc_ptr->verbose_on();
+  return lfmcmc;
+
+}
+
 #undef WrapLFMCMC

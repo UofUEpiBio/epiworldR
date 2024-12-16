@@ -77,6 +77,7 @@ stopifnot_lfmcmc <- function(x) {
 #' epsil <- 1.0
 #'
 #' # Run the LFMCMC simulation
+#' verbose_off(lfmcmc_model)
 #' run_lfmcmc(
 #'   lfmcmc = lfmcmc_model,
 #'   params_init = par0,
@@ -375,4 +376,23 @@ get_n_samples <- function(lfmcmc) {
   stopifnot_lfmcmc(lfmcmc)
   get_n_samples_cpp(lfmcmc)
 
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The `verbose_on` and `verbose_off` functions return the same model, however
+#' `verbose_off` returns the model with no progress bar.
+#' @details
+#' The `verbose_on` and `verbose_off` functions activate and deactivate printing
+#' progress on screen, respectively. Both functions return the model (`x`) invisibly.
+
+#' @export
+verbose_off.epiworld_lfmcmc <- function(x) {
+  invisible(verbose_off_lfmcmc_cpp(x))
+}
+
+#' @export
+verbose_on.epiworld_lfmcmc <- function(x) {
+  invisible(verbose_on_lfmcmc_cpp(x))
 }

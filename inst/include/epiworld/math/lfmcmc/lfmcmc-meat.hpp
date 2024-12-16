@@ -263,6 +263,13 @@ inline void LFMCMC<TData>::run(
     for (size_t k = 0u; k < m_n_params; ++k)
         m_accepted_params[k] = m_initial_params[k];
    
+    // Init progress bar
+    progress_bar = Progress(m_n_samples, 80);
+    if (verbose) { 
+        progress_bar.next(); 
+    }
+
+    // Run LFMCMC
     for (size_t i = 1u; i < m_n_samples; ++i)
     {
         // Step 1: Generate a proposal and store it in m_current_params
@@ -319,6 +326,9 @@ inline void LFMCMC<TData>::run(
         for (size_t k = 0u; k < m_n_params; ++k)
             m_accepted_params[i * m_n_params + k] = m_previous_params[k];
 
+        if (verbose) { 
+            progress_bar.next(); 
+        }
     }
 
     // End timing
@@ -542,6 +552,20 @@ inline std::vector< epiworld_double > LFMCMC<TData>::get_mean_stats()
 
     return res;
 
+}
+
+template<typename TData>
+inline LFMCMC<TData> & LFMCMC<TData>::verbose_off()
+{
+    verbose = false;
+    return *this;
+}
+
+template<typename TData>
+inline LFMCMC<TData> & LFMCMC<TData>::verbose_on()
+{
+    verbose = true;
+    return *this;
 }
 
 #endif

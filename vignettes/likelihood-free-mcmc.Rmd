@@ -147,6 +147,9 @@ initial_params <- c(0.1, 0.5)
 epsilon <- 1.0
 n_samples <- 2000
 
+# Run the LFMCMC simulation
+verbose_off(lfmcmc_model)
+
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init = initial_params,

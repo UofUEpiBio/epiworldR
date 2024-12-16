@@ -530,6 +530,20 @@ extern "C" SEXP _epiworldR_get_n_params_cpp(SEXP lfmcmc) {
     return cpp11::as_sexp(get_n_params_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
   END_CPP11
 }
+// lfmcmc.cpp
+SEXP verbose_off_lfmcmc_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_verbose_off_lfmcmc_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(verbose_off_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
+// lfmcmc.cpp
+SEXP verbose_on_lfmcmc_cpp(SEXP lfmcmc);
+extern "C" SEXP _epiworldR_verbose_on_lfmcmc_cpp(SEXP lfmcmc) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(verbose_on_lfmcmc_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(lfmcmc)));
+  END_CPP11
+}
 // model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
@@ -1212,7 +1226,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_use_kernel_fun_gaussian_cpp",          (DL_FUNC) &_epiworldR_use_kernel_fun_gaussian_cpp,           1},
     {"_epiworldR_use_proposal_norm_reflective_cpp",     (DL_FUNC) &_epiworldR_use_proposal_norm_reflective_cpp,      1},
     {"_epiworldR_verbose_off_cpp",                      (DL_FUNC) &_epiworldR_verbose_off_cpp,                       1},
+    {"_epiworldR_verbose_off_lfmcmc_cpp",               (DL_FUNC) &_epiworldR_verbose_off_lfmcmc_cpp,                1},
     {"_epiworldR_verbose_on_cpp",                       (DL_FUNC) &_epiworldR_verbose_on_cpp,                        1},
+    {"_epiworldR_verbose_on_lfmcmc_cpp",                (DL_FUNC) &_epiworldR_verbose_on_lfmcmc_cpp,                 1},
     {"_epiworldR_virus_cpp",                            (DL_FUNC) &_epiworldR_virus_cpp,                             8},
     {"_epiworldR_virus_fun_logit_cpp",                  (DL_FUNC) &_epiworldR_virus_fun_logit_cpp,                   3},
     {"_epiworldR_virus_set_state_cpp",                  (DL_FUNC) &_epiworldR_virus_set_state_cpp,                   4},
