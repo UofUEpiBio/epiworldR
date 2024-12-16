@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Pulsipher</h4>
             
-            <h4 data-toc-skip class="date">2024-12-12</h4>
+            <h4 data-toc-skip class="date">2024-12-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/likelihood-free-mcmc.Rmd" class="external-link"><code>vignettes/likelihood-free-mcmc.Rmd</code></a></small>
       <div class="d-none name"><code>likelihood-free-mcmc.Rmd</code></div>
@@ -75,17 +75,33 @@ Pulsipher</h4>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The purpose of the “lfmcmc” function is to perform a Likelihood-Free
-Markhov Chain Monte Carlo simulation.</p>
+<p>The purpose of the “LFMCMC” class in epiworldR is to perform a
+Likelihood-Free Markhov Chain Monte Carlo (LFMCMC) simulation. LFMCMC is
+used to approximate models where the likelihood function is either
+unavailable or computationally expensive. This example assumes a general
+understanding of LFMCMC. To learn more about it, see the Handbook of
+Markhov Chain Monte Carlo by Brooks et al. <a href="https://doi.org/10.1201/b10905" class="external-link uri">https://doi.org/10.1201/b10905</a>.</p>
+<p>In this example, we use LFMCMC to recover the parameters of an SIR
+model.</p>
 </div>
 <div class="section level2">
-<h2 id="example-using-lfmcmc-to-calibrate-an-sir-model">Example: Using LFMCMC to calibrate an SIR Model<a class="anchor" aria-label="anchor" href="#example-using-lfmcmc-to-calibrate-an-sir-model"></a>
+<h2 id="setup-the-sir-model">Setup The SIR Model<a class="anchor" aria-label="anchor" href="#setup-the-sir-model"></a>
 </h2>
-<div class="section level3">
-<h3 id="setup-and-running-the-model">Setup and Running the Model<a class="anchor" aria-label="anchor" href="#setup-and-running-the-model"></a>
-</h3>
-<p>Create an SIR Model and add a small world population. Then, run the
-model.</p>
+<p>Our SIR model will have the following characteristics:</p>
+<ul>
+<li>
+<strong>Virus Name:</strong> COVID-19</li>
+<li>
+<strong>Initial Virus Prevalence:</strong> 0.1</li>
+<li>
+<strong>Recovery Rate:</strong> 0.3</li>
+<li>
+<strong>Transmission Rate:</strong> 0.3</li>
+<li>
+<strong>Number of Agents:</strong> 1,000</li>
+</ul>
+<p>We use the <code>ModelSIR</code> and <code>agents_smallworld</code>
+functions to construct the model in epiworldR.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
 <span></span>
@@ -104,9 +120,10 @@ model.</p>
 <span>  k <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  d <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  p <span class="op">=</span> <span class="fl">0.01</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Then we run the model for 50 days and print the results.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/epiworld-methods.html">run</a></span><span class="op">(</span></span>
 <span>  <span class="va">model_sir</span>,</span>
@@ -125,8 +142,8 @@ model.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 716.00µs</span></span>
-<span><span class="co">#&gt; Last run speed      : 69.83 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 738.00µs</span></span>
+<span><span class="co">#&gt; Last run speed      : 67.75 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -151,16 +168,32 @@ model.</p>
 <span><span class="co">#&gt;  - Susceptible  0.98  0.02  0.00</span></span>
 <span><span class="co">#&gt;  - Infected     0.00  0.71  0.29</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
+<p>Note the “Model parameters” and the “Distribution of the population
+at time 50” from the above output. Our goal is to recover the model
+parameters (Recovery and Transmission rates) through LFMCMC. We
+accomplish this by comparing the population distribution from each
+simulation run to the “observed” distribution from our model. We get
+this distribution using the <code>get_today_total</code> function in
+epiworldR.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">model_sir_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></code></pre></div>
+<p>For practical cases, you would use observed data, instead of a model
+simulation. We use a simulation in our example to show the accuracy of
+LFMCMC in recovering the model parameters. Whenever we use the term
+“observed data” below, we are referring to the model distribution
+(<code>model_sir_data</code>).</p>
 </div>
-<div class="section level3">
-<h3 id="setup-lfmcmc">Setup LFMCMC<a class="anchor" aria-label="anchor" href="#setup-lfmcmc"></a>
-</h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Extract the observed data from the model</span></span>
-<span><span class="va">obs_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Define the LFMCMC simulation function</span></span>
-<span><span class="va">simfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="section level2">
+<h2 id="setup-lfmcmc">Setup LFMCMC<a class="anchor" aria-label="anchor" href="#setup-lfmcmc"></a>
+</h2>
+<p>In epiworldR, LFMCMC requires four functions:</p>
+<p>The <strong>simulation function</strong> runs a model with a given
+set of parameters and produces output that matches the structure of our
+observed data. For our example, we set the Recovery and Transmission
+rate parameters, run an SIR model for 50 days, and return the
+distribution of the population at the end of the run.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">simulation_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span></span>
 <span>  <span class="fu"><a href="../reference/epiworld-methods.html">set_param</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="st">"Recovery rate"</span>, <span class="va">params</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="../reference/epiworld-methods.html">set_param</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="st">"Transmission rate"</span>, <span class="va">params</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span>
@@ -172,74 +205,111 @@ model.</p>
 <span></span>
 <span>  <span class="fu"><a href="../reference/epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Define the LFMCMC summary function</span></span>
-<span><span class="va">sumfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Define the LFMCMC proposal function</span></span>
-<span><span class="va">propfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The <strong>summary function</strong> extracts summary statistics
+from the given data. This should produce the same output format for both
+the observed data and the simulated data from
+<code>simulation_fun</code>. For our example, since the population
+distribution is already a summary of the data, our summary function
+simply passes that data through. With more complicated use cases, you
+might instead compute summary statistics such as the mean or standard
+deviation.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">summary_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">data</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The <strong>proposal function</strong> returns a new set of
+parameters, which it is “proposing” parameters for the LFMCMC algorithm
+to try in the simulation function. In our example, it takes the
+parameters from the previous run (<code>old_params</code>) and does a
+random step away from those values.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">proposal_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">old_params</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">qlogis</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Define the LFMCMC kernel function</span></span>
-<span><span class="va">kernelfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">simulated_stats</span>, <span class="va">observed_stats</span>, <span class="va">epsilon</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>The <strong>kernel function</strong> effectively scores the results
+of the latest simulation run against the observed data, by comparing the
+summary statistics from <code>summary_fun</code> for each. LFMCMC uses
+the kernel score and the Hastings Ratio to determine whether or not to
+accept the parameters for that run. In our example, since
+<code>summary_fun</code> simply passes the data through,
+<code>simulated_stats</code> and <code>observed_stats</code> are our
+simulated and observed data respectively.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">kernel_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">simulated_stats</span>, <span class="va">observed_stats</span>, <span class="va">epsilon</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">simulated_stats</span> <span class="op">-</span> <span class="va">observed_stats</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="co"># Create the LFMCMC model</span></span>
-<span><span class="va">lfmcmc_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LFMCMC.html">LFMCMC</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_simulation_fun</a></span><span class="op">(</span><span class="va">simfun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_summary_fun</a></span><span class="op">(</span><span class="va">sumfun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_proposal_fun</a></span><span class="op">(</span><span class="va">propfun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_kernel_fun</a></span><span class="op">(</span><span class="va">kernelfun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_observed_data</a></span><span class="op">(</span><span class="va">obs_data</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">}</span></span></code></pre></div>
+<p>With all four functions defined, we can initialize the simulation
+object using the <code>LFMCMC</code> function in epiworldR along with
+the appropriate setter functions.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">lfmcmc_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LFMCMC.html">LFMCMC</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_simulation_fun</a></span><span class="op">(</span><span class="va">simulation_fun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_summary_fun</a></span><span class="op">(</span><span class="va">summary_fun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_proposal_fun</a></span><span class="op">(</span><span class="va">proposal_fun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_kernel_fun</a></span><span class="op">(</span><span class="va">kernel_fun</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="../reference/LFMCMC.html">set_observed_data</a></span><span class="op">(</span><span class="va">model_sir_data</span><span class="op">)</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="run-lfmcmc-simulation">Run LFMCMC simulation<a class="anchor" aria-label="anchor" href="#run-lfmcmc-simulation"></a>
-</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Set initial parameters</span></span>
-<span><span class="va">par0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span></span>
-<span><span class="va">n_samp</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
-<span><span class="va">epsil</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<div class="section level2">
+<h2 id="run-lfmcmc-simulation">Run LFMCMC Simulation<a class="anchor" aria-label="anchor" href="#run-lfmcmc-simulation"></a>
+</h2>
+<p>To run LFMCMC, we need to set the initial model parameters. For our
+example, we use an initial Recovery rate of 0.1 and an initial
+Transmission rate of 0.5. We set the kernel epsilon to 1.0 and run the
+simulation for 2,000 samples (iterations) using the
+<code>run_lfmcmc</code> function.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">initial_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<span><span class="va">epsilon</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<span><span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
 <span></span>
 <span><span class="co"># Run the LFMCMC simulation</span></span>
 <span><span class="fu"><a href="../reference/epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">run_lfmcmc</a></span><span class="op">(</span></span>
 <span>  lfmcmc <span class="op">=</span> <span class="va">lfmcmc_model</span>,</span>
-<span>  params_init_ <span class="op">=</span> <span class="va">par0</span>,</span>
-<span>  n_samples_ <span class="op">=</span> <span class="va">n_samp</span>,</span>
-<span>  epsilon_ <span class="op">=</span> <span class="va">epsil</span>,</span>
+<span>  params_init <span class="op">=</span> <span class="va">initial_params</span>,</span>
+<span>  n_samples <span class="op">=</span> <span class="va">n_samples</span>,</span>
+<span>  epsilon <span class="op">=</span> <span class="va">epsilon</span>,</span>
 <span>  seed <span class="op">=</span> <span class="va">model_seed</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Print the results</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
+</h2>
+<p>To make the printed results easier to read, we use the
+<code>set_params_names</code> and <code>set_stats_names</code> functions
+before calling <code>print</code>. We also use a burn-in period of 500
+samples.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/LFMCMC.html">set_params_names</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Recovery rate"</span>, <span class="st">"Transmission rate"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">set_stats_names</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="../reference/epiworld-methods.html">get_states</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/LFMCMC.html">set_params_names</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Immune recovery"</span>, <span class="st">"Infectiousness"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, burnin <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; LIKELIHOOD-FREE MARKOV CHAIN MONTE CARLO</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; N Samples (total) : 2000</span></span>
-<span><span class="co">#&gt; N Samples (after burn-in period) : 2000</span></span>
+<span><span class="co">#&gt; N Samples (after burn-in period) : 1500</span></span>
 <span><span class="co">#&gt; Elapsed t : 1.00s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameters:</span></span>
-<span><span class="co">#&gt;   -Immune recovery :  0.31 [ 0.19,  0.40] (initial :  0.10)</span></span>
-<span><span class="co">#&gt;   -Infectiousness  :  0.27 [ 0.19,  0.33] (initial :  0.50)</span></span>
+<span><span class="co">#&gt;   -Recovery rate     :  0.33 [ 0.21,  0.40] (initial :  0.10)</span></span>
+<span><span class="co">#&gt;   -Transmission rate :  0.28 [ 0.19,  0.33] (initial :  0.50)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Statistics:</span></span>
-<span><span class="co">#&gt;   -Susceptible :  284.71 [ 272.00,  307.00] (Observed:  285.00)</span></span>
-<span><span class="co">#&gt;   -Infected    :    0.85 [   0.00,    0.00] (Observed:    0.00)</span></span>
-<span><span class="co">#&gt;   -Recovered   :  713.94 [ 693.00,  728.00] (Observed:  715.00)</span></span>
+<span><span class="co">#&gt;   -Susceptible :  285.15 [ 284.00,  286.00] (Observed:  285.00)</span></span>
+<span><span class="co">#&gt;   -Infected    :    0.00 [   0.00,    0.00] (Observed:    0.00)</span></span>
+<span><span class="co">#&gt;   -Recovered   :  714.85 [ 714.00,  716.00] (Observed:  715.00)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span></code></pre></div>
-</div>
+<p>Recall that the observed data came from a model with a Recovery rate
+of 0.3 and a Transmission rate of 0.3. As the above output shows, LFMCMC
+made a close approximation of the parameters, which resulted in a close
+approximation of the observed population distribution. This example
+highlights the effectiveness of using LFMCMC for highly complex
+models.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,9 +49,9 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">LFMCMC</span><span class="op">(</span>model <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">run_lfmcmc</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">params_init_</span>, <span class="va">n_samples_</span>, <span class="va">epsilon_</span>, seed <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="fu">run_lfmcmc</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">params_init</span>, <span class="va">n_samples</span>, <span class="va">epsilon</span>, seed <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_observed_data</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">observed_data_</span><span class="op">)</span></span>
+<span><span class="fu">set_observed_data</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">observed_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">set_proposal_fun</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">fun</span><span class="op">)</span></span>
 <span></span>
@@ -65,31 +65,53 @@
 <span></span>
 <span><span class="fu">use_kernel_fun_gaussian</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">set_params_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">set_stats_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu">get_mean_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_mean_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for class 'epiworld_lfmcmc'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, burnin <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">get_initial_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_accepted_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_current_proposed_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_accepted_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_current_accepted_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_sample_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_current_proposed_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_n_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_current_accepted_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">get_n_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span><span class="fu">get_observed_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_sample_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_sample_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_sample_acceptance</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_sample_drawn_prob</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_sample_kernel_scores</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_accepted_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_accepted_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_all_accepted_kernel_scores</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">get_n_samples</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">get_n_stats</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">get_n_params</span><span class="op">(</span><span class="va">lfmcmc</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for class 'epiworld_lfmcmc'</span></span>
-<span><span class="fu"><a href="epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_params_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">set_stats_names</span><span class="op">(</span><span class="va">lfmcmc</span>, <span class="va">names</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'epiworld_lfmcmc'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">x</span>, burnin <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -104,15 +126,15 @@
 <dd><p>LFMCMC model</p></dd>
 
 
-<dt id="arg-params-init-">params_init_<a class="anchor" aria-label="anchor" href="#arg-params-init-"></a></dt>
+<dt id="arg-params-init">params_init<a class="anchor" aria-label="anchor" href="#arg-params-init"></a></dt>
 <dd><p>Initial model parameters, treated as double</p></dd>
 
 
-<dt id="arg-n-samples-">n_samples_<a class="anchor" aria-label="anchor" href="#arg-n-samples-"></a></dt>
+<dt id="arg-n-samples">n_samples<a class="anchor" aria-label="anchor" href="#arg-n-samples"></a></dt>
 <dd><p>Number of samples, treated as integer</p></dd>
 
 
-<dt id="arg-epsilon-">epsilon_<a class="anchor" aria-label="anchor" href="#arg-epsilon-"></a></dt>
+<dt id="arg-epsilon">epsilon<a class="anchor" aria-label="anchor" href="#arg-epsilon"></a></dt>
 <dd><p>Epsilon parameter, treated as double</p></dd>
 
 
@@ -120,24 +142,25 @@
 <dd><p>Random engine seed</p></dd>
 
 
-<dt id="arg-observed-data-">observed_data_<a class="anchor" aria-label="anchor" href="#arg-observed-data-"></a></dt>
-<dd><p>Observed data, treated as double</p></dd>
+<dt id="arg-observed-data">observed_data<a class="anchor" aria-label="anchor" href="#arg-observed-data"></a></dt>
+<dd><p>Observed data, treated as double.</p></dd>
 
 
 <dt id="arg-fun">fun<a class="anchor" aria-label="anchor" href="#arg-fun"></a></dt>
-<dd><p>The LFMCMC kernel function</p></dd>
-
-
-<dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
-<dd><p>The model stats names</p></dd>
+<dd><p>A function (see details).</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>LFMCMC model to print</p></dd>
 
 
+<dt id="arg-names">names<a class="anchor" aria-label="anchor" href="#arg-names"></a></dt>
+<dd><p>Character vector of names.</p></dd>
+
+
 <dt id="arg-burnin">burnin<a class="anchor" aria-label="anchor" href="#arg-burnin"></a></dt>
-<dd><p>Integer. Number of samples to discard as burnin before computing the summary.</p></dd>
+<dd><p>Integer. Number of samples to discard as burnin before
+computing the summary.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -148,33 +171,51 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The <code>LFMCMC</code> function returns a model of class epiworld_lfmcmc.</p>
 <p>The simulated model of class epiworld_lfmcmc.</p>
-<p>The lfmcmc model with the observed data added</p>
-<p>The lfmcmc model with the proposal function added</p>
-<p>The LFMCMC model with proposal function set to norm reflective</p>
-<p>The lfmcmc model with the simulation function added</p>
-<p>The lfmcmc model with the summary function added</p>
-<p>The lfmcmc model with the kernel function added</p>
-<p>The LFMCMC model with kernel function set to gaussian</p>
-<p>The lfmcmc model with the parameter names added</p>
-<p>The lfmcmc model with the stats names added</p>
-<p>The param means for the given lfmcmc model</p>
-<p>The stats means for the given lfmcmc model</p>
-<p>The lfmcmc model</p>
-<ul><li><p>The function <code>get_accepted_params</code> returns a matrix of accepted
+<ul><li><p><code>use_kernel_fun_gaussian</code>: The LFMCMC model with kernel function set to
+gaussian.</p></li>
+</ul><ul><li><p><code>get_mean_params</code>: The param means for the given lfmcmc model.</p></li>
+</ul><ul><li><p><code>get_mean_stats</code>: The stats means for the given lfmcmc model.</p></li>
+</ul><ul><li><p>The function <code>get_initial_params</code> returns the initial parameters
+for the given LFMCMC model.</p></li>
+</ul><ul><li><p>The function <code>get_current_proposed_params</code> returns the proposed parameters
+for the next LFMCMC sample.</p></li>
+</ul><ul><li><p>The function <code>get_current_accepted_params</code> returns the most recently accepted
+parameters (the current state of the LFMCMC)</p></li>
+</ul><ul><li><p>The function <code>get_current_proposed_stats</code> returns the statistics
+from the simulation run with the proposed parameters</p></li>
+</ul><ul><li><p>The function <code>get_current_accepted_stats</code> returns the statistics
+from the most recently accepted parameters</p></li>
+</ul><ul><li><p>The function <code>get_observed_stats</code> returns the statistics
+for the observed data</p></li>
+</ul><ul><li><p>The function <code>get_all_sample_params</code> returns a matrix of sample
 parameters for the given LFMCMC model. with the number of rows equal to the
 number of samples and the number of columns equal to the number of
 parameters.</p></li>
-</ul><ul><li><p>The function <code>get_accepted_stats</code> returns a matrix of accepted statistics
+</ul><ul><li><p>The function <code>get_all_sample_stats</code> returns a matrix of statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.</p></li>
-</ul><ul><li><p>The function <code>get_sample_stats</code> returns a matrix of statistics
+</ul><ul><li><p>The function <code>get_all_sample_acceptance</code> returns a vector of boolean flags
+which indicate whether a given sample was accepted</p></li>
+</ul><ul><li><p>The function <code>get_all_sample_drawn_prob</code> returns a vector of drawn probabilities
+for each sample</p></li>
+</ul><ul><li><p>The function <code>get_all_sample_kernel_scores</code> returns a vector of kernel scores for
+each sample</p></li>
+</ul><ul><li><p>The function <code>get_all_accepted_params</code> returns a matrix of accepted
+parameters for the given LFMCMC model. with the number of rows equal to the
+number of samples and the number of columns equal to the number of
+parameters.</p></li>
+</ul><ul><li><p>The function <code>get_all_accepted_stats</code> returns a matrix of accepted statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.</p></li>
-</ul><ul><li><p>The functions <code>get_n_params</code>, <code>get_n_stats</code>, and <code>get_n_samples</code>
-return the number of parameters, statistics, and samples for the given
+</ul><ul><li><p>The function <code>get_all_accepted_kernel_scores</code> returns a vector of kernel scores for
+each accepted sample</p></li>
+</ul><ul><li><p>The functions <code>get_n_samples</code>, <code>get_n_stats</code>, and <code>get_n_params</code>
+return the number of samples, statistics, and parameters for the given
 LFMCMC model, respectively.</p></li>
 </ul><ul><li><p>The <code>verbose_on</code> and <code>verbose_off</code> functions return the same model, however
 <code>verbose_off</code> returns the model with no progress bar.</p></li>
+</ul><ul><li><p><code>set_params_names</code>: The lfmcmc model with the parameter names added.</p></li>
+</ul><ul><li><p><code>set_stats_names</code>: The lfmcmc model with the stats names added.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -182,7 +223,13 @@ LFMCMC model, respectively.</p></li>
 <code>model</code> is not <code>NULL</code>, the model uses the same random-number generator
 engine as the model. Otherwise, when <code>model</code> is <code>NULL</code>, a new random-number
 generator engine is created.</p>
-<p>The <code>verbose_on</code> and <code>verbose_off</code> functions activate and deactivate printing
+<p>The functions passed to the LFMCMC object have different arguments depending
+on the object:</p><ul><li><p><code>set_proposal_fun</code>: A vector of parameters and the model.</p></li>
+<li><p><code>set_simulation_fun</code>: A vector of parameters and the model.</p></li>
+<li><p><code>set_summary_fun</code>: A vector of simulated data and the model.</p></li>
+<li><p><code>set_kernel_fun</code>: A vector of simulated statistics, observed statistics,
+epsilon, and the model.</p></li>
+</ul><p>The <code>verbose_on</code> and <code>verbose_off</code> functions activate and deactivate printing
 progress on screen, respectively. Both functions return the model (<code>x</code>) invisibly.</p>
     </div>
 
@@ -207,7 +254,7 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <span class="r-in"><span><span class="va">obs_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="epiworld-data.html">get_today_total</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Define the simulation function</span></span></span>
-<span class="r-in"><span><span class="va">simfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">simfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">params</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="epiworld-methods.html">set_param</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="st">"Recovery rate"</span>, <span class="va">params</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="epiworld-methods.html">set_param</a></span><span class="op">(</span><span class="va">model_sir</span>, <span class="st">"Transmission rate"</span>, <span class="va">params</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_sir</span>, ndays <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
@@ -216,7 +263,7 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Define the summary function</span></span></span>
-<span class="r-in"><span><span class="va">sumfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dat</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">sumfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">dat</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
@@ -238,9 +285,9 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">run_lfmcmc</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  lfmcmc <span class="op">=</span> <span class="va">lfmcmc_model</span>,</span></span>
-<span class="r-in"><span>  params_init_ <span class="op">=</span> <span class="va">par0</span>,</span></span>
-<span class="r-in"><span>  n_samples_ <span class="op">=</span> <span class="va">n_samp</span>,</span></span>
-<span class="r-in"><span>  epsilon_ <span class="op">=</span> <span class="va">epsil</span>,</span></span>
+<span class="r-in"><span>  params_init <span class="op">=</span> <span class="va">par0</span>,</span></span>
+<span class="r-in"><span>  n_samples <span class="op">=</span> <span class="va">n_samp</span>,</span></span>
+<span class="r-in"><span>  epsilon <span class="op">=</span> <span class="va">epsil</span>,</span></span>
 <span class="r-in"><span>  seed <span class="op">=</span> <span class="va">model_seed</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
