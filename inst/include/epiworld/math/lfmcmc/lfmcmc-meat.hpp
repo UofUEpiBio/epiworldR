@@ -243,6 +243,7 @@ inline void LFMCMC<TData>::run(
     m_current_accepted_stats.resize(m_n_stats);
     m_all_sample_drawn_prob.resize(m_n_samples);
     m_all_sample_acceptance.resize(m_n_samples, false);
+    m_all_sample_params.resize(m_n_samples * m_n_params);
     m_all_sample_stats.resize(m_n_samples * m_n_stats);
     m_all_sample_kernel_scores.resize(m_n_samples);
 
@@ -265,6 +266,9 @@ inline void LFMCMC<TData>::run(
 
     for (size_t k = 0u; k < m_n_params; ++k)
         m_all_accepted_params[k] = m_initial_params[k];
+    
+    for (size_t k = 0u; k < m_n_params; ++k)
+        m_all_sample_params[k] = m_initial_params[k];
    
     // Init progress bar
     progress_bar = Progress(m_n_samples, 80);
@@ -296,6 +300,9 @@ inline void LFMCMC<TData>::run(
         m_all_sample_kernel_scores[i] = hr;
 
         // Storing data
+        for (size_t k = 0u; k < m_n_params; ++k)
+            m_all_sample_params[i * m_n_params + k] = m_current_proposed_params[k];
+
         for (size_t k = 0u; k < m_n_stats; ++k)
             m_all_sample_stats[i * m_n_stats + k] = m_current_proposed_stats[k];
         

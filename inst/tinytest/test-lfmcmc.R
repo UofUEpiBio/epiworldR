@@ -111,14 +111,13 @@ expect_equal(get_current_proposed_stats(lfmcmc_model), c(572, 0, 428))
 expect_equal(get_current_accepted_stats(lfmcmc_model), c(286, 0, 714))
 
 expect_equal(dim(get_all_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
+expect_equal(dim(get_all_sample_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
 expect_equal(dim(get_all_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
 
 expect_equal(length(get_all_sample_acceptance(lfmcmc_model)), n_samp)
 expect_equal(length(get_all_sample_drawn_prob(lfmcmc_model)), n_samp)
 expect_equal(length(get_all_sample_kernel_scores(lfmcmc_model)), n_samp)
 expect_equal(length(get_all_accepted_kernel_scores(lfmcmc_model)), n_samp)
-
-# print(head(get_all_sample_params(lfmcmc_model)))
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
