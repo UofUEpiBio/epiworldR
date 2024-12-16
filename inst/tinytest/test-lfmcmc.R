@@ -102,8 +102,8 @@ expected_params_mean <- c(0.3133401, 0.2749686)
 expect_equal(get_mean_params(lfmcmc_model), expected_params_mean, tolerance = 0.0001)
 expect_equal(get_n_params(lfmcmc_model), length(expected_params_mean))
 
-expect_equal(dim(get_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
-expect_equal(dim(get_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
+expect_equal(dim(get_all_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
+expect_equal(dim(get_all_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
@@ -311,9 +311,9 @@ expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_
 
 expect_error(get_mean_params(not_lfmcmc), expected_error_msg)
 expect_error(get_mean_stats(not_lfmcmc), expected_error_msg)
-expect_error(get_accepted_params(not_lfmcmc), expected_error_msg)
-expect_error(get_accepted_stats(not_lfmcmc), expected_error_msg)
-expect_error(get_sample_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_all_accepted_params(not_lfmcmc), expected_error_msg)
+expect_error(get_all_accepted_stats(not_lfmcmc), expected_error_msg)
+expect_error(get_all_sample_stats(not_lfmcmc), expected_error_msg)
 expect_error(get_n_params(not_lfmcmc), expected_error_msg)
 expect_error(get_n_stats(not_lfmcmc), expected_error_msg)
 expect_error(get_n_samples(not_lfmcmc), expected_error_msg)
