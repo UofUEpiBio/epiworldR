@@ -155,6 +155,66 @@ expect_error(run_lfmcmc(
 
 expect_error(run_lfmcmc(lfmcmc = lfmcmc_model))
 
+# Check LFMCMC functions get lfmcmc_obj ----------------------------------------
+check_lfmcmc_obj <- function(lfmcmc_obj) {
+  # Verify lfmcmc_obj is valid
+  if(!inherits(lfmcmc_obj, "epiworld_lfmcmc")) {
+    stop("lfmcmc_obj isn't of class [epiworld_lfmcmc]")
+  }
+  # Verify lfmcmc_obj is the same as the parent LFMCMC
+  if (get_n_samples(lfmcmc_obj) != n_samp) {
+    stop("lfmcmc_obj isn't the same as its parent")
+  }
+}
+
+# Define LFMCMC functions
+simfun <- function(params, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+
+  # Proceed normally
+  set_param(model_sir, "Recovery rate", params[1])
+  set_param(model_sir, "Transmission rate", params[2])
+  run(model_sir, ndays = 50)
+  res <- get_today_total(model_sir)
+  return(res)
+}
+
+sumfun <- function(dat, lfmcmc_obj) { 
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  return(dat) 
+}
+
+propfun <- function(old_params, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
+  return(res)
+}
+
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
+}
+
+# Check adding functions to LFMCMC
+expect_silent(set_simulation_fun(lfmcmc_model, simfun))
+expect_silent(set_summary_fun(lfmcmc_model, sumfun))
+expect_silent(set_proposal_fun(lfmcmc_model, propfun))
+expect_silent(set_kernel_fun(lfmcmc_model, kernelfun))
+
+expect_silent(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
+  seed = model_seed
+))
+
 # Check running LFMCMC without epiworld model ----------------------------------
 model_seed <- 4222
 set.seed(model_seed)
