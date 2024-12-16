@@ -446,9 +446,9 @@ get_all_accepted_kernel_scores <- function(lfmcmc) {
 
 #' @export
 #' @rdname LFMCMC
-#' #' @returns
+#' @returns
 #' - The functions `get_n_samples`, `get_n_stats`, and `get_n_params`
-#' return the number of parameters, statistics, and samples for the given
+#' return the number of samples, statistics, and parameters for the given
 #' LFMCMC model, respectively.
 get_n_samples <- function(lfmcmc) {
 

@@ -11,18 +11,29 @@
 \alias{set_summary_fun}
 \alias{set_kernel_fun}
 \alias{use_kernel_fun_gaussian}
-\alias{set_params_names}
-\alias{set_stats_names}
 \alias{get_mean_params}
 \alias{get_mean_stats}
-\alias{print.epiworld_lfmcmc}
-\alias{get_accepted_params}
-\alias{get_accepted_stats}
-\alias{get_sample_stats}
-\alias{get_n_params}
-\alias{get_n_stats}
+\alias{get_initial_params}
+\alias{get_current_proposed_params}
+\alias{get_current_accepted_params}
+\alias{get_current_proposed_stats}
+\alias{get_current_accepted_stats}
+\alias{get_observed_stats}
+\alias{get_all_sample_params}
+\alias{get_all_sample_stats}
+\alias{get_all_sample_acceptance}
+\alias{get_all_sample_drawn_prob}
+\alias{get_all_sample_kernel_scores}
+\alias{get_all_accepted_params}
+\alias{get_all_accepted_stats}
+\alias{get_all_accepted_kernel_scores}
 \alias{get_n_samples}
+\alias{get_n_stats}
+\alias{get_n_params}
 \alias{verbose_off.epiworld_lfmcmc}
+\alias{set_params_names}
+\alias{set_stats_names}
+\alias{print.epiworld_lfmcmc}
 \title{Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)}
 \usage{
 LFMCMC(model = NULL)
@@ -43,29 +54,51 @@ set_kernel_fun(lfmcmc, fun)
 
 use_kernel_fun_gaussian(lfmcmc)
 
-set_params_names(lfmcmc, names)
-
-set_stats_names(lfmcmc, names)
-
 get_mean_params(lfmcmc)
 
 get_mean_stats(lfmcmc)
 
-\method{print}{epiworld_lfmcmc}(x, burnin = 0, ...)
+get_initial_params(lfmcmc)
 
-get_accepted_params(lfmcmc)
+get_current_proposed_params(lfmcmc)
 
-get_accepted_stats(lfmcmc)
+get_current_accepted_params(lfmcmc)
 
-get_sample_stats(lfmcmc)
+get_current_proposed_stats(lfmcmc)
 
-get_n_params(lfmcmc)
+get_current_accepted_stats(lfmcmc)
 
-get_n_stats(lfmcmc)
+get_observed_stats(lfmcmc)
+
+get_all_sample_params(lfmcmc)
+
+get_all_sample_stats(lfmcmc)
+
+get_all_sample_acceptance(lfmcmc)
+
+get_all_sample_drawn_prob(lfmcmc)
+
+get_all_sample_kernel_scores(lfmcmc)
+
+get_all_accepted_params(lfmcmc)
+
+get_all_accepted_stats(lfmcmc)
+
+get_all_accepted_kernel_scores(lfmcmc)
 
 get_n_samples(lfmcmc)
 
+get_n_stats(lfmcmc)
+
+get_n_params(lfmcmc)
+
 \method{verbose_off}{epiworld_lfmcmc}(x)
+
+set_params_names(lfmcmc, names)
+
+set_stats_names(lfmcmc, names)
+
+\method{print}{epiworld_lfmcmc}(x, burnin = 0, ...)
 }
 \arguments{
 \item{model}{A model of class \link{epiworld_model} or \code{NULL} (see details).}
@@ -84,9 +117,9 @@ get_n_samples(lfmcmc)
 
 \item{fun}{A function (see details).}
 
-\item{names}{Character vector of names.}
-
 \item{x}{LFMCMC model to print}
+
+\item{names}{Character vector of names.}
 
 \item{burnin}{Integer. Number of samples to discard as burnin before
 computing the summary.}
@@ -104,14 +137,6 @@ gaussian.
 }
 
 \itemize{
-\item \code{set_params_names}: The lfmcmc model with the parameter names added.
-}
-
-\itemize{
-\item \code{set_stats_names}: The lfmcmc model with the stats names added.
-}
-
-\itemize{
 \item \code{get_mean_params}: The param means for the given lfmcmc model.
 }
 
@@ -120,33 +145,98 @@ gaussian.
 }
 
 \itemize{
-\item The function \code{get_accepted_params} returns a matrix of accepted
+\item The function \code{get_initial_params} returns the initial parameters
+for the given LFMCMC model.
+}
+
+\itemize{
+\item The function \code{get_current_proposed_params} returns the proposed parameters
+for the next LFMCMC sample.
+}
+
+\itemize{
+\item The function \code{get_current_accepted_params} returns the most recently accepted
+parameters (the current state of the LFMCMC)
+}
+
+\itemize{
+\item The function \code{get_current_proposed_stats} returns the statistics
+from the simulation run with the proposed parameters
+}
+
+\itemize{
+\item The function \code{get_current_accepted_stats} returns the statistics
+from the most recently accepted parameters
+}
+
+\itemize{
+\item The function \code{get_observed_stats} returns the statistics
+for the observed data
+}
+
+\itemize{
+\item The function \code{get_all_sample_params} returns a matrix of sample
 parameters for the given LFMCMC model. with the number of rows equal to the
 number of samples and the number of columns equal to the number of
 parameters.
 }
 
 \itemize{
-\item The function \code{get_accepted_stats} returns a matrix of accepted statistics
+\item The function \code{get_all_sample_stats} returns a matrix of statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.
 }
 
 \itemize{
-\item The function \code{get_sample_stats} returns a matrix of statistics
+\item The function \code{get_all_sample_acceptance} returns a vector of boolean flags
+which indicate whether a given sample was accepted
+}
+
+\itemize{
+\item The function \code{get_all_sample_drawn_prob} returns a vector of drawn probabilities
+for each sample
+}
+
+\itemize{
+\item The function \code{get_all_sample_kernel_scores} returns a vector of kernel scores for
+each sample
+}
+
+\itemize{
+\item The function \code{get_all_accepted_params} returns a matrix of accepted
+parameters for the given LFMCMC model. with the number of rows equal to the
+number of samples and the number of columns equal to the number of
+parameters.
+}
+
+\itemize{
+\item The function \code{get_all_accepted_stats} returns a matrix of accepted statistics
 for the given LFMCMC model. with the number of rows equal to the number of
 samples and the number of columns equal to the number of statistics.
 }
 
 \itemize{
-\item The functions \code{get_n_params}, \code{get_n_stats}, and \code{get_n_samples}
-return the number of parameters, statistics, and samples for the given
+\item The function \code{get_all_accepted_kernel_scores} returns a vector of kernel scores for
+each accepted sample
+}
+
+\itemize{
+\item The functions \code{get_n_samples}, \code{get_n_stats}, and \code{get_n_params}
+return the number of samples, statistics, and parameters for the given
 LFMCMC model, respectively.
 }
 
 \itemize{
 \item The \code{verbose_on} and \code{verbose_off} functions return the same model, however
 \code{verbose_off} returns the model with no progress bar.
+}
+
+\itemize{
+\item \code{set_params_names}: The lfmcmc model with the parameter names added.
+}
+
+\itemize{
+\item \code{set_stats_names}: The lfmcmc model with the stats names added.
 }
 }
 \description{
