@@ -180,7 +180,7 @@ run(model_sir, ndays = 50, seed = model_seed)
 obs_data <- get_today_total(model_sir)
 
 # Define the simulation function
-simfun <- function(params, model) {
+simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
@@ -189,7 +189,7 @@ simfun <- function(params, model) {
 }
 
 # Define the summary function
-sumfun <- function(dat, model) {
+sumfun <- function(dat, lfmcmc_obj) {
   return(dat)
 }
 

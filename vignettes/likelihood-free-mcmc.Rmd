@@ -77,7 +77,7 @@ Note the "Model parameters" and the "Distribution of the population at time 50" 
 model_sir_data <- get_today_total(model_sir)
 ```
 
-For practical cases, you would use observed data, instead of a model simulation. We use a simulation in our example to show the accuracy of LFMCMC in recovering the model parameters. Whenever we use the term "observed data" below, we are referring to the model distribution ().
+For practical cases, you would use observed data, instead of a model simulation. We use a simulation in our example to show the accuracy of LFMCMC in recovering the model parameters. Whenever we use the term "observed data" below, we are referring to the model distribution (`model_sir_data`).
 
 # Setup LFMCMC
 
@@ -86,7 +86,7 @@ In epiworldR, LFMCMC requires four functions:
 The **simulation function** runs a model with a given set of parameters and produces output that matches the structure of our observed data. For our example, we set the Recovery and Transmission rate parameters, run an SIR model for 50 days, and return the distribution of the population at the end of the run.
 
 ```{r simfun}
-simulation_fun <- function(params, model) {
+simulation_fun <- function(params, lfmcmc_obj) {
 
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
@@ -105,7 +105,7 @@ The **summary function** extracts summary statistics from the given data.
 This should produce the same output format for both the observed data and the simulated data from `simulation_fun`. For our example, since the population distribution is already a summary of the data, our summary function simply passes that data through. With more complicated use cases, you might instead compute summary statistics such as the mean or standard deviation.
 
 ```{r sumfun}
-summary_fun <- function(data, model) {
+summary_fun <- function(data, lfmcmc_obj) {
   return(data)
 }
 ```
@@ -113,7 +113,7 @@ summary_fun <- function(data, model) {
 The **proposal function** returns a new set of parameters, which it is "proposing" parameters for the LFMCMC algorithm to try in the simulation function. In our example, it takes the parameters from the previous run (`old_params`) and does a random step away from those values.
 
 ```{r propfun}
-proposal_fun <- function(old_params, model) {
+proposal_fun <- function(old_params, lfmcmc_obj) {
   res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
@@ -122,7 +122,7 @@ proposal_fun <- function(old_params, model) {
 The **kernel function** effectively scores the results of the latest simulation run against the observed data, by comparing the summary statistics from `summary_fun` for each. LFMCMC uses the kernel score and the Hastings Ratio to determine whether or not to accept the parameters for that run. In our example, since `summary_fun` simply passes the data through, `simulated_stats` and `observed_stats` are our simulated and observed data respectively.
 
 ```{r kernfun}
-kernel_fun <- function(simulated_stats, observed_stats, epsilon, model) {
+kernel_fun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
   dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 ```

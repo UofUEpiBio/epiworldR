@@ -29,7 +29,7 @@ obs_data <- get_today_total(model_sir)
 expect_silent(set_observed_data(lfmcmc_model, obs_data))
 
 # Define LFMCMC functions
-simfun <- function(params, model) {
+simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
@@ -37,14 +37,14 @@ simfun <- function(params, model) {
   return(res)
 }
 
-sumfun <- function(dat, model) { return(dat) }
+sumfun <- function(dat, lfmcmc_obj) { return(dat) }
 
-propfun <- function(old_params, model) {
+propfun <- function(old_params, lfmcmc_obj) {
   res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon, model) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
   dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 
@@ -161,15 +161,15 @@ set.seed(model_seed)
 Y <- rnorm(2000, mean = -5, sd = 2.5)
 
 # Define LFMCMC functions
-simfun <- function(par, model) {
+simfun <- function(par, lfmcmc_obj) {
   rnorm(2000, mean = par[1], sd = par[2])
 }
 
-sumfun <- function(x, model) {
+sumfun <- function(x, lfmcmc_obj) {
   c(mean(x), sd(x))
 }
 
-propfun <- function(par, model) {
+propfun <- function(par, lfmcmc_obj) {
   
   par_new <- par + rnorm(2, sd = 0.1)
 
@@ -181,7 +181,7 @@ propfun <- function(par, model) {
   return(par_new)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon, model) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
 
   dnorm(sqrt(sum((observed_stats - simulated_stats)^2)))
   
