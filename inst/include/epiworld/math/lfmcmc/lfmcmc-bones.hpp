@@ -239,25 +239,25 @@ public:
     size_t get_n_params() const {return m_n_params;};
     epiworld_double get_epsilon() const {return m_epsilon;};
 
-    const std::vector< epiworld_double > & get_initial_params() {return m_initial_params;};
-    const std::vector< epiworld_double > & get_current_proposed_params() {return m_current_proposed_params;};
-    const std::vector< epiworld_double > & get_current_accepted_params() {return m_current_accepted_params;};
-    const std::vector< epiworld_double > & get_current_proposed_stats() {return m_current_proposed_stats;};
-    const std::vector< epiworld_double > & get_current_accepted_stats() {return m_current_accepted_stats;};
+    const std::vector< epiworld_double > & get_initial_params() const {return m_initial_params;};
+    const std::vector< epiworld_double > & get_current_proposed_params() const {return m_current_proposed_params;};
+    const std::vector< epiworld_double > & get_current_accepted_params() const {return m_current_accepted_params;};
+    const std::vector< epiworld_double > & get_current_proposed_stats() const {return m_current_proposed_stats;};
+    const std::vector< epiworld_double > & get_current_accepted_stats() const {return m_current_accepted_stats;};
 
-    const std::vector< epiworld_double > & get_observed_stats() {return m_observed_stats;};
+    const std::vector< epiworld_double > & get_observed_stats() const {return m_observed_stats;};
 
-    const std::vector< epiworld_double > & get_all_sample_params() {return m_all_sample_params;};
-    const std::vector< epiworld_double > & get_all_sample_stats() {return m_all_sample_stats;};
-    const std::vector< bool >            & get_all_sample_acceptance() {return m_all_sample_acceptance;};
-    const std::vector< epiworld_double > & get_all_sample_drawn_prob() {return m_all_sample_drawn_prob;};
-    const std::vector< epiworld_double > & get_all_sample_kernel_scores() {return m_all_sample_kernel_scores;};
+    const std::vector< epiworld_double > & get_all_sample_params() const {return m_all_sample_params;};
+    const std::vector< epiworld_double > & get_all_sample_stats() const {return m_all_sample_stats;};
+    const std::vector< bool >            & get_all_sample_acceptance() const {return m_all_sample_acceptance;};
+    const std::vector< epiworld_double > & get_all_sample_drawn_prob() const {return m_all_sample_drawn_prob;};
+    const std::vector< epiworld_double > & get_all_sample_kernel_scores() const {return m_all_sample_kernel_scores;};
 
-    const std::vector< epiworld_double > & get_all_accepted_params() {return m_all_accepted_params;};
-    const std::vector< epiworld_double > & get_all_accepted_stats() {return m_all_accepted_stats;};
-    const std::vector< epiworld_double > & get_all_accepted_kernel_scores() {return m_all_accepted_kernel_scores;};
+    const std::vector< epiworld_double > & get_all_accepted_params() const {return m_all_accepted_params;};
+    const std::vector< epiworld_double > & get_all_accepted_stats() const {return m_all_accepted_stats;};
+    const std::vector< epiworld_double > & get_all_accepted_kernel_scores() const {return m_all_accepted_kernel_scores;};
     
-    std::vector< TData > * get_simulated_data() {return m_simulated_data;};
+    std::vector< TData > * get_simulated_data() const {return m_simulated_data;};
 
     std::vector< epiworld_double > get_mean_params();
     std::vector< epiworld_double > get_mean_stats();
