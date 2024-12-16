@@ -22,6 +22,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
 
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.0'
+
       - name: Cache R packages for pre-commit (live in renv)
         uses: actions/cache@v4
         with:

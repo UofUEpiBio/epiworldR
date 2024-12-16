@@ -29,7 +29,7 @@ obs_data <- get_today_total(model_sir)
 expect_silent(set_observed_data(lfmcmc_model, obs_data))
 
 # Define LFMCMC functions
-simfun <- function(params) {
+simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
@@ -37,14 +37,14 @@ simfun <- function(params) {
   return(res)
 }
 
-sumfun <- function(dat) { return(dat) }
+sumfun <- function(dat, lfmcmc_obj) { return(dat) }
 
-propfun <- function(old_params) {
+propfun <- function(old_params, lfmcmc_obj) {
   res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
   return(res)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
   dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
 }
 
@@ -63,9 +63,9 @@ epsil <- 1.0
 expect_silent(verbose_off(lfmcmc_model))
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 
@@ -84,9 +84,9 @@ expect_error(print(lfmcmc_model, burnin = "n_samp"), "argument must be an intege
 expect_silent(verbose_on(lfmcmc_model))
 expect_stdout(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 verbose_off(lfmcmc_model)
@@ -111,9 +111,9 @@ expect_silent(use_kernel_fun_gaussian(lfmcmc_model))
 
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 
@@ -127,45 +127,105 @@ epsil_int <- as.integer(1)
 
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0_int,
-  n_samples_ = n_samp_double,
-  epsilon_ = epsil_int,
+  params_init = par0_int,
+  n_samples = n_samp_double,
+  epsilon = epsil_int,
   seed = model_seed
 ))
 
 # Check running LFMCMC with missing parameters ---------------------------------
 expect_silent(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp
+  params_init = par0,
+  n_samples = n_samp
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  epsilon_ = epsil
+  params_init = par0,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil
 ))
 
 expect_error(run_lfmcmc(lfmcmc = lfmcmc_model))
+
+# Check LFMCMC functions get lfmcmc_obj ----------------------------------------
+check_lfmcmc_obj <- function(lfmcmc_obj) {
+  # Verify lfmcmc_obj is valid
+  if(!inherits(lfmcmc_obj, "epiworld_lfmcmc")) {
+    stop("lfmcmc_obj isn't of class [epiworld_lfmcmc]")
+  }
+  # Verify lfmcmc_obj is the same as the parent LFMCMC
+  if (get_n_samples(lfmcmc_obj) != n_samp) {
+    stop("lfmcmc_obj isn't the same as its parent")
+  }
+}
+
+# Define LFMCMC functions
+simfun <- function(params, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+
+  # Proceed normally
+  set_param(model_sir, "Recovery rate", params[1])
+  set_param(model_sir, "Transmission rate", params[2])
+  run(model_sir, ndays = 50)
+  res <- get_today_total(model_sir)
+  return(res)
+}
+
+sumfun <- function(dat, lfmcmc_obj) { 
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  return(dat) 
+}
+
+propfun <- function(old_params, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
+  return(res)
+}
+
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
+  check_lfmcmc_obj(lfmcmc_obj)
+  
+  # Proceed normally
+  dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
+}
+
+# Check adding functions to LFMCMC
+expect_silent(set_simulation_fun(lfmcmc_model, simfun))
+expect_silent(set_summary_fun(lfmcmc_model, sumfun))
+expect_silent(set_proposal_fun(lfmcmc_model, propfun))
+expect_silent(set_kernel_fun(lfmcmc_model, kernelfun))
+
+expect_silent(run_lfmcmc(
+  lfmcmc = lfmcmc_model,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
+  seed = model_seed
+))
 
 # Check running LFMCMC without epiworld model ----------------------------------
 model_seed <- 4222
@@ -173,15 +233,15 @@ set.seed(model_seed)
 Y <- rnorm(2000, mean = -5, sd = 2.5)
 
 # Define LFMCMC functions
-simfun <- function(par) {
+simfun <- function(par, lfmcmc_obj) {
   rnorm(2000, mean = par[1], sd = par[2])
 }
 
-sumfun <- function(x) {
+sumfun <- function(x, lfmcmc_obj) {
   c(mean(x), sd(x))
 }
 
-propfun <- function(par) {
+propfun <- function(par, lfmcmc_obj) {
   
   par_new <- par + rnorm(2, sd = 0.1)
 
@@ -193,7 +253,7 @@ propfun <- function(par) {
   return(par_new)
 }
 
-kernelfun <- function(simulated_stats, observed_stats, epsilon) {
+kernelfun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
 
   dnorm(sqrt(sum((observed_stats - simulated_stats)^2)))
   
@@ -211,9 +271,9 @@ lfmcmc_model <- LFMCMC() |>
 verbose_off(lfmcmc_model)
 x <- run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = c(0, 1),
-  n_samples_ = 3000,
-  epsilon_ = 1.0,
+  params_init = c(0, 1),
+  n_samples = 3000,
+  epsilon = 1.0,
   seed = model_seed
 )
 
@@ -231,9 +291,9 @@ expected_error_msg <- "must be an object of class epiworld_lfmcmc"
 not_lfmcmc <- c("NOT LFMCMC")
 
 expect_error(run_lfmcmc(not_lfmcmc,
-                        params_init_ = par0_int,
-                        n_samples_ = n_samp_double,
-                        epsilon_ = epsil_int,
+                        params_init = par0_int,
+                        n_samples = n_samp_double,
+                        epsilon = epsil_int,
                         seed = model_seed
                         ), expected_error_msg)
 

@@ -12,11 +12,21 @@ stopifnot_lfmcmc <- function(x) {
 #'
 #' @aliases epiworld_lfmcmc
 #' @param model A model of class [epiworld_model] or `NULL` (see details).
+#' @param fun A function (see details).
 #' @details
 #' Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
 #' `model` is not `NULL`, the model uses the same random-number generator
 #' engine as the model. Otherwise, when `model` is `NULL`, a new random-number
 #' generator engine is created.
+#'
+#' The functions passed to the LFMCMC object have different arguments depending
+#' on the object:
+#' - `set_proposal_fun`: A vector of parameters and the model.
+#' - `set_simulation_fun`: A vector of parameters and the model.
+#' - `set_summary_fun`: A vector of simulated data and the model.
+#' - `set_kernel_fun`: A vector of simulated statistics, observed statistics,
+#' epsilon, and the model.
+#'
 #' @returns
 #' The `LFMCMC` function returns a model of class [epiworld_lfmcmc].
 #' @examples
@@ -39,7 +49,7 @@ stopifnot_lfmcmc <- function(x) {
 #' obs_data <- get_today_total(model_sir)
 #'
 #' # Define the simulation function
-#' simfun <- function(params) {
+#' simfun <- function(params, lfmcmc_obj) {
 #'   set_param(model_sir, "Recovery rate", params[1])
 #'   set_param(model_sir, "Transmission rate", params[2])
 #'   run(model_sir, ndays = 50)
@@ -48,7 +58,7 @@ stopifnot_lfmcmc <- function(x) {
 #' }
 #'
 #' # Define the summary function
-#' sumfun <- function(dat) {
+#' sumfun <- function(dat, lfmcmc_obj) {
 #'   return(dat)
 #' }
 #'
@@ -70,9 +80,9 @@ stopifnot_lfmcmc <- function(x) {
 #' verbose_off(lfmcmc_model)
 #' run_lfmcmc(
 #'   lfmcmc = lfmcmc_model,
-#'   params_init_ = par0,
-#'   n_samples_ = n_samp,
-#'   epsilon_ = epsil,
+#'   params_init = par0,
+#'   n_samples = n_samp,
+#'   epsilon = epsil,
 #'   seed = model_seed
 #' )
 #'
@@ -103,14 +113,14 @@ LFMCMC <- function(model = NULL) {
 
 #' @rdname LFMCMC
 #' @param lfmcmc LFMCMC model
-#' @param params_init_ Initial model parameters, treated as double
-#' @param n_samples_ Number of samples, treated as integer
-#' @param epsilon_ Epsilon parameter, treated as double
+#' @param params_init Initial model parameters, treated as double
+#' @param n_samples Number of samples, treated as integer
+#' @param epsilon Epsilon parameter, treated as double
 #' @param seed Random engine seed
 #' @returns The simulated model of class [epiworld_lfmcmc].
 #' @export
 run_lfmcmc <- function(
-    lfmcmc, params_init_, n_samples_, epsilon_,
+    lfmcmc, params_init, n_samples, epsilon,
     seed = NULL
     ) {
 
@@ -121,9 +131,9 @@ run_lfmcmc <- function(
 
   run_lfmcmc_cpp(
     lfmcmc,
-    as.double(params_init_),
-    as.integer(n_samples_),
-    as.double(epsilon_),
+    as.double(params_init),
+    as.integer(n_samples),
+    as.double(epsilon),
     sample.int(1e4, 1)
   )
 
@@ -132,27 +142,22 @@ run_lfmcmc <- function(
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param observed_data_ Observed data, treated as double
-#' @returns The lfmcmc model with the observed data added
+#' @param observed_data Observed data, treated as double.
 #' @export
-set_observed_data <- function(lfmcmc, observed_data_) {
+set_observed_data <- function(lfmcmc, observed_data) {
 
   stopifnot_lfmcmc(lfmcmc)
 
   set_observed_data_cpp(
     lfmcmc,
-    as.double(observed_data_)
+    as.double(observed_data)
   )
 
   invisible(lfmcmc)
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param fun The LFMCMC proposal function
 #' @export
-#' @returns The lfmcmc model with the proposal function added
 set_proposal_fun <- function(lfmcmc, fun) {
 
   stopifnot_lfmcmc(lfmcmc)
@@ -162,8 +167,6 @@ set_proposal_fun <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc The LFMCMC model
-#' @returns The LFMCMC model with proposal function set to norm reflective
 #' @export
 use_proposal_norm_reflective <- function(lfmcmc) {
 
@@ -174,9 +177,6 @@ use_proposal_norm_reflective <- function(lfmcmc) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param fun The LFMCMC simulation function
-#' @returns The lfmcmc model with the simulation function added
 #' @export
 set_simulation_fun <- function(lfmcmc, fun) {
 
@@ -187,9 +187,6 @@ set_simulation_fun <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param fun The LFMCMC sumamry function
-#' @returns The lfmcmc model with the summary function added
 #' @export
 set_summary_fun <- function(lfmcmc, fun) {
 
@@ -200,9 +197,6 @@ set_summary_fun <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param fun The LFMCMC kernel function
-#' @returns The lfmcmc model with the kernel function added
 #' @export
 set_kernel_fun <- function(lfmcmc, fun) {
 
@@ -213,8 +207,9 @@ set_kernel_fun <- function(lfmcmc, fun) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc The LFMCMC model
-#' @returns The LFMCMC model with kernel function set to gaussian
+#' @returns
+#' - `use_kernel_fun_gaussian`: The LFMCMC model with kernel function set to
+#' gaussian.
 #' @export
 use_kernel_fun_gaussian <- function(lfmcmc) {
 
@@ -225,9 +220,9 @@ use_kernel_fun_gaussian <- function(lfmcmc) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param names The model parameter names
-#' @returns The lfmcmc model with the parameter names added
+#' @param names Character vector of names.
+#' @returns
+#' - `set_params_names`: The lfmcmc model with the parameter names added.
 #' @export
 set_params_names <- function(lfmcmc, names) {
 
@@ -238,9 +233,8 @@ set_params_names <- function(lfmcmc, names) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @param names The model stats names
-#' @returns The lfmcmc model with the stats names added
+#' @returns
+#' - `set_stats_names`: The lfmcmc model with the stats names added.
 #' @export
 set_stats_names <- function(lfmcmc, names) {
 
@@ -251,8 +245,8 @@ set_stats_names <- function(lfmcmc, names) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @returns The param means for the given lfmcmc model
+#' @returns
+#' - `get_mean_params`: The param means for the given lfmcmc model.
 #' @export
 get_mean_params <- function(lfmcmc) {
 
@@ -262,8 +256,8 @@ get_mean_params <- function(lfmcmc) {
 }
 
 #' @rdname LFMCMC
-#' @param lfmcmc LFMCMC model
-#' @returns The stats means for the given lfmcmc model
+#' @returns
+#' - `get_mean_stats`: The stats means for the given lfmcmc model.
 #' @export
 get_mean_stats <- function(lfmcmc) {
 
@@ -275,8 +269,8 @@ get_mean_stats <- function(lfmcmc) {
 #' @rdname LFMCMC
 #' @param x LFMCMC model to print
 #' @param ... Ignored
-#' @param burnin Integer. Number of samples to discard as burnin before computing the summary.
-#' @returns The lfmcmc model
+#' @param burnin Integer. Number of samples to discard as burnin before
+#' computing the summary.
 #' @export
 print.epiworld_lfmcmc <- function(x, burnin = 0, ...) {
 
