@@ -26,9 +26,9 @@
 \usage{
 LFMCMC(model = NULL)
 
-run_lfmcmc(lfmcmc, params_init_, n_samples_, epsilon_, seed = NULL)
+run_lfmcmc(lfmcmc, params_init, n_samples, epsilon, seed = NULL)
 
-set_observed_data(lfmcmc, observed_data_)
+set_observed_data(lfmcmc, observed_data)
 
 set_proposal_fun(lfmcmc, fun)
 
@@ -69,23 +69,24 @@ get_n_samples(lfmcmc)
 
 \item{lfmcmc}{LFMCMC model}
 
-\item{params_init_}{Initial model parameters, treated as double}
+\item{params_init}{Initial model parameters, treated as double}
 
-\item{n_samples_}{Number of samples, treated as integer}
+\item{n_samples}{Number of samples, treated as integer}
 
-\item{epsilon_}{Epsilon parameter, treated as double}
+\item{epsilon}{Epsilon parameter, treated as double}
 
 \item{seed}{Random engine seed}
 
-\item{observed_data_}{Observed data, treated as double}
+\item{observed_data}{Observed data, treated as double.}
 
-\item{fun}{The LFMCMC kernel function}
+\item{fun}{A function (see details).}
 
-\item{names}{The model stats names}
+\item{names}{Character vector of names.}
 
 \item{x}{LFMCMC model to print}
 
-\item{burnin}{Integer. Number of samples to discard as burnin before computing the summary.}
+\item{burnin}{Integer. Number of samples to discard as burnin before
+computing the summary.}
 
 \item{...}{Ignored}
 }
@@ -94,29 +95,26 @@ The \code{LFMCMC} function returns a model of class \link{epiworld_lfmcmc}.
 
 The simulated model of class \link{epiworld_lfmcmc}.
 
-The lfmcmc model with the observed data added
+\itemize{
+\item \code{use_kernel_fun_gaussian}: The LFMCMC model with kernel function set to
+gaussian.
+}
 
-The lfmcmc model with the proposal function added
+\itemize{
+\item \code{set_params_names}: The lfmcmc model with the parameter names added.
+}
 
-The LFMCMC model with proposal function set to norm reflective
+\itemize{
+\item \code{set_stats_names}: The lfmcmc model with the stats names added.
+}
 
-The lfmcmc model with the simulation function added
+\itemize{
+\item \code{get_mean_params}: The param means for the given lfmcmc model.
+}
 
-The lfmcmc model with the summary function added
-
-The lfmcmc model with the kernel function added
-
-The LFMCMC model with kernel function set to gaussian
-
-The lfmcmc model with the parameter names added
-
-The lfmcmc model with the stats names added
-
-The param means for the given lfmcmc model
-
-The stats means for the given lfmcmc model
-
-The lfmcmc model
+\itemize{
+\item \code{get_mean_stats}: The stats means for the given lfmcmc model.
+}
 
 \itemize{
 \item The function \code{get_accepted_params} returns a matrix of accepted
@@ -151,6 +149,16 @@ Performs a Likelihood-Free Markhov Chain Monte Carlo simulation. When
 \code{model} is not \code{NULL}, the model uses the same random-number generator
 engine as the model. Otherwise, when \code{model} is \code{NULL}, a new random-number
 generator engine is created.
+
+The functions passed to the LFMCMC object have different arguments depending
+on the object:
+\itemize{
+\item \code{set_proposal_fun}: A vector of parameters and the model.
+\item \code{set_simulation_fun}: A vector of parameters and the model.
+\item \code{set_summary_fun}: A vector of simulated data and the model.
+\item \code{set_kernel_fun}: A vector of simulated statistics, observed statistics,
+epsilon, and the model.
+}
 }
 \examples{
 ## Setup an SIR model to use in the simulation
@@ -172,7 +180,7 @@ run(model_sir, ndays = 50, seed = model_seed)
 obs_data <- get_today_total(model_sir)
 
 # Define the simulation function
-simfun <- function(params) {
+simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission rate", params[2])
   run(model_sir, ndays = 50)
@@ -181,7 +189,7 @@ simfun <- function(params) {
 }
 
 # Define the summary function
-sumfun <- function(dat) {
+sumfun <- function(dat, lfmcmc_obj) {
   return(dat)
 }
 
@@ -202,9 +210,9 @@ epsil <- 1.0
 # Run the LFMCMC simulation
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 )
 
