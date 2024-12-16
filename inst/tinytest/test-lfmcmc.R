@@ -92,7 +92,10 @@ expect_stdout(run_lfmcmc(
 verbose_off(lfmcmc_model)
 
 # Check LFMCMC getters ---------------------------------------------------------
+expect_equal(get_initial_params(lfmcmc_model), par0)
 expect_equal(get_n_samples(lfmcmc_model), n_samp)
+
+expect_equal(get_observed_stats(lfmcmc_model), c(285, 0, 715))
 
 expected_stats_mean <- c(284.7140, 0.8485, 713.9375)
 expect_equal(get_mean_stats(lfmcmc_model), expected_stats_mean)
@@ -102,8 +105,20 @@ expected_params_mean <- c(0.3133401, 0.2749686)
 expect_equal(get_mean_params(lfmcmc_model), expected_params_mean, tolerance = 0.0001)
 expect_equal(get_n_params(lfmcmc_model), length(expected_params_mean))
 
+expect_equal(get_current_proposed_params(lfmcmc_model), c(0.2699802, 0.1585232), tolerance = 0.00001)
+expect_equal(get_current_accepted_params(lfmcmc_model), c(0.3618486, 0.2823181), tolerance = 0.00001)
+expect_equal(get_current_proposed_stats(lfmcmc_model), c(572, 0, 428))
+expect_equal(get_current_accepted_stats(lfmcmc_model), c(286, 0, 714))
+
 expect_equal(dim(get_all_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
 expect_equal(dim(get_all_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
+
+expect_equal(length(get_all_sample_acceptance(lfmcmc_model)), n_samp)
+expect_equal(length(get_all_sample_drawn_prob(lfmcmc_model)), n_samp)
+expect_equal(length(get_all_sample_kernel_scores(lfmcmc_model)), n_samp)
+expect_equal(length(get_all_accepted_kernel_scores(lfmcmc_model)), n_samp)
+
+# print(head(get_all_sample_params(lfmcmc_model)))
 
 # Check LFMCMC using factory functions -----------------------------------------
 expect_silent(use_proposal_norm_reflective(lfmcmc_model))
