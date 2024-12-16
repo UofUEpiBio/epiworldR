@@ -220,6 +220,281 @@ use_kernel_fun_gaussian <- function(lfmcmc) {
 }
 
 #' @rdname LFMCMC
+#' @returns
+#' - `get_mean_params`: The param means for the given lfmcmc model.
+#' @export
+get_mean_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_mean_params_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @returns
+#' - `get_mean_stats`: The stats means for the given lfmcmc model.
+#' @export
+get_mean_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_mean_stats_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_initial_params` returns the initial parameters
+#' for the given LFMCMC model.
+get_initial_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_initial_params_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_current_proposed_params` returns the proposed parameters
+#' for the next LFMCMC sample.
+get_current_proposed_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_current_proposed_params_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_current_accepted_params` returns the most recently accepted
+#' parameters (the current state of the LFMCMC)
+get_current_accepted_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_current_accepted_params_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_current_proposed_stats` returns the statistics
+#' from the simulation run with the proposed parameters
+get_current_proposed_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_current_proposed_stats_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_current_accepted_stats` returns the statistics
+#' from the most recently accepted parameters
+get_current_accepted_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_current_accepted_stats_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_observed_stats` returns the statistics
+#' for the observed data
+get_observed_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_observed_stats_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_sample_params` returns a matrix of sample
+#' parameters for the given LFMCMC model. with the number of rows equal to the
+#' number of samples and the number of columns equal to the number of
+#' parameters.
+get_all_sample_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  a_params <- get_all_sample_params_cpp(lfmcmc)
+  n_params <- get_n_params(lfmcmc)
+
+  matrix(
+    a_params,
+    ncol = n_params,
+    byrow = TRUE
+  )
+
+}
+
+#' @export
+#' @rdname LFMCMC
+#' @returns
+#' - The function `get_all_sample_stats` returns a matrix of statistics
+#' for the given LFMCMC model. with the number of rows equal to the number of
+#' samples and the number of columns equal to the number of statistics.
+get_all_sample_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  stats <- get_all_sample_stats_cpp(lfmcmc)
+  n_stats <- get_n_stats(lfmcmc)
+
+  matrix(
+    stats,
+    ncol = n_stats,
+    byrow = TRUE
+  )
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_sample_acceptance` returns a vector of boolean flags
+#' which indicate whether a given sample was accepted
+get_all_sample_acceptance <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_all_sample_acceptance_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_sample_drawn_prob` returns a vector of drawn probabilities
+#' for each sample
+get_all_sample_drawn_prob <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_all_sample_drawn_prob_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_sample_kernel_scores` returns a vector of kernel scores for
+#' each sample
+get_all_sample_kernel_scores <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_all_sample_kernel_scores_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_accepted_params` returns a matrix of accepted
+#' parameters for the given LFMCMC model. with the number of rows equal to the
+#' number of samples and the number of columns equal to the number of
+#' parameters.
+get_all_accepted_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  a_params <- get_all_accepted_params_cpp(lfmcmc)
+  n_params <- get_n_params(lfmcmc)
+
+  matrix(
+    a_params,
+    ncol = n_params,
+    byrow = TRUE
+  )
+
+}
+
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_accepted_stats` returns a matrix of accepted statistics
+#' for the given LFMCMC model. with the number of rows equal to the number of
+#' samples and the number of columns equal to the number of statistics.
+get_all_accepted_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  a_stats <- get_all_accepted_stats_cpp(lfmcmc)
+  n_stats <- get_n_stats(lfmcmc)
+
+  matrix(
+    a_stats,
+    ncol = n_stats,
+    byrow = TRUE
+  )
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The function `get_all_accepted_kernel_scores` returns a vector of kernel scores for
+#' each accepted sample
+get_all_accepted_kernel_scores <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_all_accepted_kernel_scores_cpp(lfmcmc)
+
+}
+
+#' @export
+#' @rdname LFMCMC
+#' @returns
+#' - The functions `get_n_samples`, `get_n_stats`, and `get_n_params`
+#' return the number of samples, statistics, and parameters for the given
+#' LFMCMC model, respectively.
+get_n_samples <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_samples_cpp(lfmcmc)
+
+}
+
+#' @export
+#' @rdname LFMCMC
+get_n_stats <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_stats_cpp(lfmcmc)
+
+}
+
+#' @export
+#' @rdname LFMCMC
+get_n_params <- function(lfmcmc) {
+
+  stopifnot_lfmcmc(lfmcmc)
+  get_n_params_cpp(lfmcmc)
+
+}
+
+#' @rdname LFMCMC
+#' @export
+#' @returns
+#' - The `verbose_on` and `verbose_off` functions return the same model, however
+#' `verbose_off` returns the model with no progress bar.
+#' @details
+#' The `verbose_on` and `verbose_off` functions activate and deactivate printing
+#' progress on screen, respectively. Both functions return the model (`x`) invisibly.
+
+#' @export
+verbose_off.epiworld_lfmcmc <- function(x) {
+  invisible(verbose_off_lfmcmc_cpp(x))
+}
+
+#' @export
+verbose_on.epiworld_lfmcmc <- function(x) {
+  invisible(verbose_on_lfmcmc_cpp(x))
+}
+
+#' @rdname LFMCMC
 #' @param names Character vector of names.
 #' @returns
 #' - `set_params_names`: The lfmcmc model with the parameter names added.
@@ -245,28 +520,6 @@ set_stats_names <- function(lfmcmc, names) {
 }
 
 #' @rdname LFMCMC
-#' @returns
-#' - `get_mean_params`: The param means for the given lfmcmc model.
-#' @export
-get_mean_params <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  get_mean_params_cpp(lfmcmc)
-
-}
-
-#' @rdname LFMCMC
-#' @returns
-#' - `get_mean_stats`: The stats means for the given lfmcmc model.
-#' @export
-get_mean_stats <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  get_mean_stats_cpp(lfmcmc)
-
-}
-
-#' @rdname LFMCMC
 #' @param x LFMCMC model to print
 #' @param ... Ignored
 #' @param burnin Integer. Number of samples to discard as burnin before
@@ -283,116 +536,4 @@ print.epiworld_lfmcmc <- function(x, burnin = 0, ...) {
   print_lfmcmc_cpp(x, burnin = burnin)
   invisible(x)
 
-}
-
-#' @rdname LFMCMC
-#' @export
-#' @returns
-#' - The function `get_accepted_params` returns a matrix of accepted
-#' parameters for the given LFMCMC model. with the number of rows equal to the
-#' number of samples and the number of columns equal to the number of
-#' parameters.
-get_accepted_params <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  a_params <- get_accepted_params_cpp(lfmcmc)
-  n_params <- get_n_params(lfmcmc)
-
-  matrix(
-    a_params,
-    ncol = n_params,
-    byrow = TRUE
-  )
-
-}
-
-
-#' @rdname LFMCMC
-#' @export
-#' @returns
-#' - The function `get_accepted_stats` returns a matrix of accepted statistics
-#' for the given LFMCMC model. with the number of rows equal to the number of
-#' samples and the number of columns equal to the number of statistics.
-get_accepted_stats <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  a_stats <- get_accepted_stats_cpp(lfmcmc)
-  n_stats <- get_n_stats(lfmcmc)
-
-  matrix(
-    a_stats,
-    ncol = n_stats,
-    byrow = TRUE
-  )
-
-}
-
-#' @export
-#' @rdname LFMCMC
-#' @returns
-#' - The function `get_sample_stats` returns a matrix of statistics
-#' for the given LFMCMC model. with the number of rows equal to the number of
-#' samples and the number of columns equal to the number of statistics.
-get_sample_stats <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  stats <- get_sample_stats_cpp(lfmcmc)
-  n_stats <- get_n_stats(lfmcmc)
-
-  matrix(
-    stats,
-    ncol = n_stats,
-    byrow = TRUE
-  )
-
-}
-
-#' @export
-#' @rdname LFMCMC
-#' @returns
-#' - The functions `get_n_params`, `get_n_stats`, and `get_n_samples`
-#' return the number of parameters, statistics, and samples for the given
-#' LFMCMC model, respectively.
-get_n_params <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  get_n_params_cpp(lfmcmc)
-
-}
-
-#' @export
-#' @rdname LFMCMC
-get_n_stats <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  get_n_stats_cpp(lfmcmc)
-
-}
-
-#' @export
-#' @rdname LFMCMC
-get_n_samples <- function(lfmcmc) {
-
-  stopifnot_lfmcmc(lfmcmc)
-  get_n_samples_cpp(lfmcmc)
-
-}
-
-#' @rdname LFMCMC
-#' @export
-#' @returns
-#' - The `verbose_on` and `verbose_off` functions return the same model, however
-#' `verbose_off` returns the model with no progress bar.
-#' @details
-#' The `verbose_on` and `verbose_off` functions activate and deactivate printing
-#' progress on screen, respectively. Both functions return the model (`x`) invisibly.
-
-#' @export
-verbose_off.epiworld_lfmcmc <- function(x) {
-  invisible(verbose_off_lfmcmc_cpp(x))
-}
-
-#' @export
-verbose_on.epiworld_lfmcmc <- function(x) {
-  invisible(verbose_on_lfmcmc_cpp(x))
 }

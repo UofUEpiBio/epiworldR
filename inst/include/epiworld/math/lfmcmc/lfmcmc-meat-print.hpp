@@ -35,7 +35,7 @@ inline void LFMCMC<TData>::print(size_t burnin) const
         std::vector< epiworld_double > par_i(n_samples_print);
         for (size_t i = burnin; i < m_n_samples; ++i)
         {
-            par_i[i-burnin] = m_accepted_params[i * m_n_params + k];
+            par_i[i-burnin] = m_all_accepted_params[i * m_n_params + k];
             summ_params[k * 3] += par_i[i-burnin]/n_samples_dbl;
         }
 
@@ -57,7 +57,7 @@ inline void LFMCMC<TData>::print(size_t burnin) const
         std::vector< epiworld_double > stat_k(n_samples_print);
         for (size_t i = burnin; i < m_n_samples; ++i)
         {
-            stat_k[i-burnin] = m_accepted_stats[i * m_n_stats + k];
+            stat_k[i-burnin] = m_all_accepted_stats[i * m_n_stats + k];
             summ_stats[k * 3] += stat_k[i-burnin]/n_samples_dbl;
         }
 

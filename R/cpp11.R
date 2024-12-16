@@ -256,14 +256,6 @@ use_kernel_fun_gaussian_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_use_kernel_fun_gaussian_cpp`, lfmcmc)
 }
 
-set_params_names_cpp <- function(lfmcmc, names) {
-  .Call(`_epiworldR_set_params_names_cpp`, lfmcmc, names)
-}
-
-set_stats_names_cpp <- function(lfmcmc, names) {
-  .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
-}
-
 get_mean_params_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_get_mean_params_cpp`, lfmcmc)
 }
@@ -272,20 +264,60 @@ get_mean_stats_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_get_mean_stats_cpp`, lfmcmc)
 }
 
-print_lfmcmc_cpp <- function(lfmcmc, burnin) {
-  .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc, burnin)
+get_initial_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_initial_params_cpp`, lfmcmc)
 }
 
-get_sample_stats_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_get_sample_stats_cpp`, lfmcmc)
+get_current_proposed_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_current_proposed_params_cpp`, lfmcmc)
 }
 
-get_accepted_params_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_get_accepted_params_cpp`, lfmcmc)
+get_current_accepted_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_current_accepted_params_cpp`, lfmcmc)
 }
 
-get_accepted_stats_cpp <- function(lfmcmc) {
-  .Call(`_epiworldR_get_accepted_stats_cpp`, lfmcmc)
+get_current_proposed_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_current_proposed_stats_cpp`, lfmcmc)
+}
+
+get_current_accepted_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_current_accepted_stats_cpp`, lfmcmc)
+}
+
+get_observed_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_observed_stats_cpp`, lfmcmc)
+}
+
+get_all_sample_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_sample_params_cpp`, lfmcmc)
+}
+
+get_all_sample_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_sample_stats_cpp`, lfmcmc)
+}
+
+get_all_sample_acceptance_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_sample_acceptance_cpp`, lfmcmc)
+}
+
+get_all_sample_drawn_prob_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_sample_drawn_prob_cpp`, lfmcmc)
+}
+
+get_all_sample_kernel_scores_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_sample_kernel_scores_cpp`, lfmcmc)
+}
+
+get_all_accepted_params_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_accepted_params_cpp`, lfmcmc)
+}
+
+get_all_accepted_stats_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_accepted_stats_cpp`, lfmcmc)
+}
+
+get_all_accepted_kernel_scores_cpp <- function(lfmcmc) {
+  .Call(`_epiworldR_get_all_accepted_kernel_scores_cpp`, lfmcmc)
 }
 
 get_n_samples_cpp <- function(lfmcmc) {
@@ -306,6 +338,18 @@ verbose_off_lfmcmc_cpp <- function(lfmcmc) {
 
 verbose_on_lfmcmc_cpp <- function(lfmcmc) {
   .Call(`_epiworldR_verbose_on_lfmcmc_cpp`, lfmcmc)
+}
+
+set_params_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_params_names_cpp`, lfmcmc, names)
+}
+
+set_stats_names_cpp <- function(lfmcmc, names) {
+  .Call(`_epiworldR_set_stats_names_cpp`, lfmcmc, names)
+}
+
+print_lfmcmc_cpp <- function(lfmcmc, burnin) {
+  .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc, burnin)
 }
 
 print_cpp <- function(m, lite) {
