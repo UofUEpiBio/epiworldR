@@ -84,9 +84,9 @@ expect_error(print(lfmcmc_model, burnin = "n_samp"), "argument must be an intege
 expect_silent(verbose_on(lfmcmc_model))
 expect_stdout(run_lfmcmc(
   lfmcmc = lfmcmc_model,
-  params_init_ = par0,
-  n_samples_ = n_samp,
-  epsilon_ = epsil,
+  params_init = par0,
+  n_samples = n_samp,
+  epsilon = epsil,
   seed = model_seed
 ))
 verbose_off(lfmcmc_model)
