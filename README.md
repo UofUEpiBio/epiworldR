@@ -133,7 +133,7 @@ summary(sir)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
-#> 
+#>
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
 #> Agents' data        : (none)
@@ -143,25 +143,25 @@ summary(sir)
 #> Last run elapsed t  : 66.00ms
 #> Last run speed      : 74.96 million agents x day / second
 #> Rewiring            : off
-#> 
+#>
 #> Global events:
 #>  (none)
-#> 
+#>
 #> Virus(es):
 #>  - COVID-19
-#> 
+#>
 #> Tool(s):
 #>  (none)
-#> 
+#>
 #> Model parameters:
 #>  - Recovery rate     : 0.3000
 #>  - Transmission rate : 0.7000
-#> 
+#>
 #> Distribution of the population at time 50:
 #>   - (0) Susceptible :  99000 -> 1209
 #>   - (1) Infected    :   1000 -> 499
 #>   - (2) Recovered   :      0 -> 98292
-#> 
+#>
 #> Transition Probabilities:
 #>  - Susceptible  0.92  0.08  0.00
 #>  - Infected     0.00  0.70  0.30
@@ -221,7 +221,7 @@ summary(model_seirconn)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
 #> SIMULATION STUDY
-#> 
+#>
 #> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
 #> Population size     : 10000
 #> Agents' data        : (none)
@@ -231,29 +231,29 @@ summary(model_seirconn)
 #> Last run elapsed t  : 15.00ms
 #> Last run speed      : 65.69 million agents x day / second
 #> Rewiring            : off
-#> 
+#>
 #> Global events:
 #>  - Update infected individuals (runs daily)
-#> 
+#>
 #> Virus(es):
 #>  - COVID-19
 #>  - COVID-19
-#> 
+#>
 #> Tool(s):
 #>  (none)
-#> 
+#>
 #> Model parameters:
 #>  - Avg. Incubation days : 7.0000
 #>  - Contact rate         : 10.0000
 #>  - Prob. Recovery       : 0.1429
 #>  - Prob. Transmission   : 0.1000
-#> 
+#>
 #> Distribution of the population at time 100:
 #>   - (0) Susceptible :  9800 -> 11
 #>   - (1) Exposed     :   200 -> 0
 #>   - (2) Infected    :     0 -> 3
 #>   - (3) Recovered   :     0 -> 9986
-#> 
+#>
 #> Transition Probabilities:
 #>  - Susceptible  0.94  0.06  0.00  0.00
 #>  - Exposed      0.00  0.85  0.15  0.00
@@ -367,7 +367,7 @@ rn <- get_reproductive_number(model_logit)
   X[, "Female"],
   (1:n %in% rn$source)
 ) |> prop.table())[, 2]
-#>       0       1 
+#>       0       1
 #> 0.13466 0.14878
 ```
 
@@ -515,17 +515,17 @@ If you use `epiworldR` in your research, please cite it as follows:
 ``` r
 citation("epiworldR")
 #> To cite epiworldR in publications use:
-#> 
+#>
 #>   Meyer, Derek and Vega Yon, George (2023). epiworldR: Fast Agent-Based
 #>   Epi Models. Journal of Open Source Software, 8(90), 5781,
 #>   https://doi.org/10.21105/joss.05781
-#> 
+#>
 #> And the actual R package:
-#> 
+#>
 #>   Meyer D, Pulsipher A, Vega Yon G (2024). _epiworldR: Fast Agent-Based
 #>   Epi Models_. R package version 0.6.0.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
-#> 
+#>
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set
 #> 'options(citation.bibtex.max=999)'.

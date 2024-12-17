@@ -14,7 +14,7 @@
 
 * The function `today()` returns the current day (step) of the
   simulation.
-  
+
 ## Misc
 
 * We changed the versioning system. To allow the R package to increase

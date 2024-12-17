@@ -45,7 +45,7 @@ model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
   transmission_rate = .1,
-  recovery_rate = 1/7
+  recovery_rate = 1 / 7
 )
 
 agents_smallworld(
@@ -125,10 +125,10 @@ The **kernel function** effectively scores the results of the latest simulation 
 kernel_fun <- function(
     simulated_stats, observed_stats, epsilon, lfmcmc_obj
     ) {
-  
+
   diff <- ((simulated_stats - observed_stats)^2)^epsilon
   dnorm(sqrt(sum(diff)))
-  
+
 }
 ```
 
@@ -186,7 +186,7 @@ plot(
   col = "tomato",
   xlab = "Step",
   ylab = "Parameter value"
-  )
+)
 
 lines(accepted[, 2], type = "l", lwd = 2, col = "steelblue")
 
