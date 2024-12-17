@@ -123,7 +123,7 @@ sir
 #> Susceptible-Infected-Recovered (SIR)
 #> It features 100000 agents, 1 virus(es), and 0 tool(s).
 #> The model has 3 states.
-#> The final distribution is: 822 Susceptible, 415 Infected, and 98763 Recovered.
+#> The final distribution is: 1209 Susceptible, 499 Infected, and 98292 Recovered.
 ```
 
 Visualizing the outputs
@@ -140,8 +140,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 62.00ms
-#> Last run speed      : 79.47 million agents x day / second
+#> Last run elapsed t  : 66.00ms
+#> Last run speed      : 74.96 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -158,12 +158,12 @@ summary(sir)
 #>  - Transmission rate : 0.7000
 #>
 #> Distribution of the population at time 50:
-#>   - (0) Susceptible :  99000 -> 822
-#>   - (1) Infected    :   1000 -> 415
-#>   - (2) Recovered   :      0 -> 98763
+#>   - (0) Susceptible :  99000 -> 1209
+#>   - (1) Infected    :   1000 -> 499
+#>   - (2) Recovered   :      0 -> 98292
 #>
 #> Transition Probabilities:
-#>  - Susceptible  0.91  0.09  0.00
+#>  - Susceptible  0.92  0.08  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
 ```
@@ -229,7 +229,7 @@ summary(model_seirconn)
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
 #> Last run elapsed t  : 15.00ms
-#> Last run speed      : 64.01 million agents x day / second
+#> Last run speed      : 65.69 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -368,7 +368,7 @@ rn <- get_reproductive_number(model_logit)
   (1:n %in% rn$source)
 ) |> prop.table())[, 2]
 #>       0       1
-#> 0.12984 0.14201
+#> 0.13466 0.14878
 ```
 
 ``` r
@@ -376,16 +376,16 @@ rn <- get_reproductive_number(model_logit)
 # Looking into the agents
 get_agents(model_logit)
 #> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
-#> Agent: 0, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 6, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 7, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 0, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 1, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 2, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 3, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 4, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 5, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 6, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 7, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 9, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> ... 99990 more agents ...
 ```
 
@@ -477,20 +477,20 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    971
-#> 5       1    1        1    Infected     29
+#> 4       1    1        1 Susceptible    974
+#> 5       1    1        1    Infected     26
 #> 6       1    1        1   Recovered      0
 ```
 
 ``` r
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    943                    9  0
-#> 2       1        0 COVID-19     40                    9  0
-#> 3       1        0 COVID-19      6                    9  0
-#> 4       1        0 COVID-19    973                    8  0
-#> 5       1        0 COVID-19    495                    9  0
-#> 6       1        0 COVID-19    480                    8  0
+#> 1       1        0 COVID-19     77                   10  0
+#> 2       1        0 COVID-19    970                    8  0
+#> 3       1        0 COVID-19    895                    8  0
+#> 4       1        0 COVID-19    866                    8  0
+#> 5       1        0 COVID-19    811                    8  0
+#> 6       1        0 COVID-19    752                    8  0
 ```
 
 ``` r
@@ -522,8 +522,9 @@ citation("epiworldR")
 #>
 #> And the actual R package:
 #>
-#>   Meyer D, Vega Yon G (????). _epiworldR: Fast Agent-Based Epi Models_.
-#>   R package version 0.3-2, <https://github.com/UofUEpiBio/epiworldR>.
+#>   Meyer D, Pulsipher A, Vega Yon G (2024). _epiworldR: Fast Agent-Based
+#>   Epi Models_. R package version 0.6.0.0,
+#>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,
 #> bibtex=TRUE)', 'toBibtex(.)', or set

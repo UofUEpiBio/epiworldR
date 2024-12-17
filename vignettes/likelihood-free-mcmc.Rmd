@@ -29,10 +29,10 @@ In this example, we use LFMCMC to recover the parameters of an SIR model.
 Our SIR model will have the following characteristics:
 
 * **Virus Name:** COVID-19
-* **Initial Virus Prevalence:** 0.1
-* **Recovery Rate:** 0.3
-* **Transmission Rate:** 0.3
-* **Number of Agents:** 1,000
+* **Initial Virus Prevalence:** 0.01
+* **Recovery Rate:** 1/7 (0.14)
+* **Transmission Rate:** 0.1
+* **Number of Agents:** 2,000
 
 We use the `ModelSIR` and `agents_smallworld` functions to construct the model in epiworldR.
 
@@ -43,14 +43,14 @@ model_seed <- 122
 
 model_sir <- ModelSIR(
   name = "COVID-19",
-  prevalence = .1,
-  transmission_rate = .3,
-  recovery_rate = .3
+  prevalence = .01,
+  transmission_rate = .1,
+  recovery_rate = 1 / 7
 )
 
 agents_smallworld(
   model_sir,
-  n = 1000,
+  n = 2000,
   k = 5,
   d = FALSE,
   p = 0.01
@@ -114,7 +114,7 @@ The **proposal function** returns a new set of parameters, which it is "proposin
 
 ```{r propfun}
 proposal_fun <- function(old_params, lfmcmc_obj) {
-  res <- plogis(qlogis(old_params) + rnorm(length(old_params)))
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params), sd = .1))
   return(res)
 }
 ```
@@ -122,8 +122,13 @@ proposal_fun <- function(old_params, lfmcmc_obj) {
 The **kernel function** effectively scores the results of the latest simulation run against the observed data, by comparing the summary statistics from `summary_fun` for each. LFMCMC uses the kernel score and the Hastings Ratio to determine whether or not to accept the parameters for that run. In our example, since `summary_fun` simply passes the data through, `simulated_stats` and `observed_stats` are our simulated and observed data respectively.
 
 ```{r kernfun}
-kernel_fun <- function(simulated_stats, observed_stats, epsilon, lfmcmc_obj) {
-  dnorm(sqrt(sum((simulated_stats - observed_stats)^2)))
+kernel_fun <- function(
+    simulated_stats, observed_stats, epsilon, lfmcmc_obj
+    ) {
+
+  diff <- ((simulated_stats - observed_stats)^2)^epsilon
+  dnorm(sqrt(sum(diff)))
+
 }
 ```
 
@@ -140,16 +145,14 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 # Run LFMCMC Simulation
 
-To run LFMCMC, we need to set the initial model parameters. For our example, we use an initial Recovery rate of 0.1 and an initial Transmission rate of 0.5. We set the kernel epsilon to 1.0 and run the simulation for 2,000 samples (iterations) using the `run_lfmcmc` function.
+To run LFMCMC, we need to set the initial model parameters. For our example, we use an initial Recovery rate of 0.3 and an initial Transmission rate of 0.3. We set the kernel epsilon to 1.0 and run the simulation for 2,000 samples (iterations) using the `run_lfmcmc` function.
 
 ```{r lfmcmc-run}
-initial_params <- c(0.1, 0.5)
+initial_params <- c(0.3, 0.3)
 epsilon <- 1.0
 n_samples <- 2000
 
 # Run the LFMCMC simulation
-verbose_off(lfmcmc_model)
-
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init = initial_params,
@@ -160,13 +163,40 @@ run_lfmcmc(
 ```
 
 # Results
-To make the printed results easier to read, we use the `set_params_names` and `set_stats_names` functions before calling `print`. We also use a burn-in period of 500 samples.
+To make the printed results easier to read, we use the `set_params_names` and `set_stats_names` functions before calling `print`. We also use a burn-in period of 1,500 samples.
 
 ```{r lfmcmc-print}
 set_params_names(lfmcmc_model, c("Recovery rate", "Transmission rate"))
 set_stats_names(lfmcmc_model, get_states(model_sir))
 
-print(lfmcmc_model, burnin = 500)
+print(lfmcmc_model, burnin = 1500)
+```
+
+We can also look at the trace of the parameters:
+
+```{r post-dist}
+# Extracting the accepted parameters
+accepted <- get_all_accepted_params(lfmcmc_model)
+
+# Plotting the trace
+plot(
+  accepted[, 1], type = "l", ylim = c(0, 1),
+  main = "Trace of the parameters",
+  lwd = 2,
+  col = "tomato",
+  xlab = "Step",
+  ylab = "Parameter value"
+)
+
+lines(accepted[, 2], type = "l", lwd = 2, col = "steelblue")
+
+legend(
+  "topright",
+  bty = "n",
+  legend = c("Recovery rate", "Transmission rate"),
+  pch    = 20,
+  col    = c("tomato", "steelblue")
+)
 ```
 
 Recall that the observed data came from a model with a Recovery rate of 0.3 and a Transmission rate of 0.3. As the above output shows, LFMCMC made a close approximation of the parameters, which resulted in a close approximation of the observed population distribution. This example highlights the effectiveness of using LFMCMC for highly complex models.
