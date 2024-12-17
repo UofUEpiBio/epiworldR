@@ -1,4 +1,4 @@
-# epiworldR 0.4-3 (development version)
+# epiworldR 0.6.0.0
 
 ## New features
 
@@ -14,6 +14,12 @@
 
 * The function `today()` returns the current day (step) of the
   simulation.
+  
+## Misc
+
+* We changed the versioning system. To allow the R package to increase
+  version number while preserving epiworld (C++) versioning, we added a fourth
+  number that indicates R-only patches (similar to RcppArmadillo).
 
 
 # epiworldR 0.3-2
