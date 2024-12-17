@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,13 +41,17 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.4-3" id="epiworldr-04-3-development-version">epiworldR 0.4-3 (development version)<a class="anchor" aria-label="anchor" href="#epiworldr-04-3-development-version"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.6.0.0" id="epiworldr-0600">epiworldR 0.6.0.0<a class="anchor" aria-label="anchor" href="#epiworldr-0600"></a></h2>
 <div class="section level3">
-<h3 id="new-features-0-4-3">New features<a class="anchor" aria-label="anchor" href="#new-features-0-4-3"></a></h3>
+<h3 id="new-features-0-6-0-0">New features<a class="anchor" aria-label="anchor" href="#new-features-0-6-0-0"></a></h3>
 <ul><li><p>The package now includes the <code>LFMCMC</code> module that implements the likelihood-free Markov Chain Monte Carlo algorithm. This module is used to estimate the parameters of the models.</p></li>
 <li><p>The new function <code><a href="../reference/epiworld-methods.html">add_param()</a></code> allows the user to add parameters to the model.</p></li>
 <li><p>The new function <code><a href="../reference/global-events.html">rm_globalevent()</a></code> allows the user to remove global events from the model.</p></li>
 <li><p>The function <code><a href="../reference/epiworld-methods.html">today()</a></code> returns the current day (step) of the simulation.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="misc-0-6-0-0">Misc<a class="anchor" aria-label="anchor" href="#misc-0-6-0-0"></a></h3>
+<ul><li>We changed the versioning system. To allow the R package to increase version number while preserving epiworld (C++) versioning, we added a fourth number that indicates R-only patches (similar to RcppArmadillo).</li>
 </ul></div>
 </div>
     <div class="section level2">

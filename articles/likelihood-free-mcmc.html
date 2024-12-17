@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Pulsipher</h4>
             
-            <h4 data-toc-skip class="date">2024-12-16</h4>
+            <h4 data-toc-skip class="date">2024-12-17</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/likelihood-free-mcmc.Rmd" class="external-link"><code>vignettes/likelihood-free-mcmc.Rmd</code></a></small>
       <div class="d-none name"><code>likelihood-free-mcmc.Rmd</code></div>
@@ -92,13 +92,13 @@ model.</p>
 <li>
 <strong>Virus Name:</strong> COVID-19</li>
 <li>
-<strong>Initial Virus Prevalence:</strong> 0.1</li>
+<strong>Initial Virus Prevalence:</strong> 0.01</li>
 <li>
-<strong>Recovery Rate:</strong> 0.3</li>
+<strong>Recovery Rate:</strong> 1/7 (0.14)</li>
 <li>
-<strong>Transmission Rate:</strong> 0.3</li>
+<strong>Transmission Rate:</strong> 0.1</li>
 <li>
-<strong>Number of Agents:</strong> 1,000</li>
+<strong>Number of Agents:</strong> 2,000</li>
 </ul>
 <p>We use the <code>ModelSIR</code> and <code>agents_smallworld</code>
 functions to construct the model in epiworldR.</p>
@@ -109,14 +109,14 @@ functions to construct the model in epiworldR.</p>
 <span></span>
 <span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
-<span>  prevalence <span class="op">=</span> <span class="fl">.1</span>,</span>
-<span>  transmission_rate <span class="op">=</span> <span class="fl">.3</span>,</span>
-<span>  recovery_rate <span class="op">=</span> <span class="fl">.3</span></span>
+<span>  prevalence <span class="op">=</span> <span class="fl">.01</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">.1</span>,</span>
+<span>  recovery_rate <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">7</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/agents_smallworld.html">agents_smallworld</a></span><span class="op">(</span></span>
 <span>  <span class="va">model_sir</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  n <span class="op">=</span> <span class="fl">2000</span>,</span>
 <span>  k <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  d <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  p <span class="op">=</span> <span class="fl">0.01</span></span>
@@ -137,13 +137,13 @@ functions to construct the model in epiworldR.</p>
 <span><span class="co">#&gt; SIMULATION STUDY</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Name of the model   : Susceptible-Infected-Recovered (SIR)</span></span>
-<span><span class="co">#&gt; Population size     : 1000</span></span>
+<span><span class="co">#&gt; Population size     : 2000</span></span>
 <span><span class="co">#&gt; Agents' data        : (none)</span></span>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 738.00µs</span></span>
-<span><span class="co">#&gt; Last run speed      : 67.75 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 319.00µs</span></span>
+<span><span class="co">#&gt; Last run speed      : 313.48 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -156,17 +156,17 @@ functions to construct the model in epiworldR.</p>
 <span><span class="co">#&gt;  (none)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Model parameters:</span></span>
-<span><span class="co">#&gt;  - Recovery rate     : 0.3000</span></span>
-<span><span class="co">#&gt;  - Transmission rate : 0.3000</span></span>
+<span><span class="co">#&gt;  - Recovery rate     : 0.1429</span></span>
+<span><span class="co">#&gt;  - Transmission rate : 0.1000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible :  900 -&gt; 285</span></span>
-<span><span class="co">#&gt;   - (1) Infected    :  100 -&gt; 0</span></span>
-<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 715</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible : 1980 -&gt; 1865</span></span>
+<span><span class="co">#&gt;   - (1) Infected    :   20 -&gt; 0</span></span>
+<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 135</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.98  0.02  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.71  0.29</span></span>
+<span><span class="co">#&gt;  - Susceptible  1.00  0.00  0.00</span></span>
+<span><span class="co">#&gt;  - Infected     0.00  0.85  0.15</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <p>Note the “Model parameters” and the “Distribution of the population
 at time 50” from the above output. Our goal is to recover the model
@@ -225,7 +225,7 @@ parameters from the previous run (<code>old_params</code>) and does a
 random step away from those values.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">proposal_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">old_params</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">qlogis</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">qlogis</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">old_params</span><span class="op">)</span>, sd <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>The <strong>kernel function</strong> effectively scores the results
@@ -237,8 +237,13 @@ accept the parameters for that run. In our example, since
 <code>simulated_stats</code> and <code>observed_stats</code> are our
 simulated and observed data respectively.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">kernel_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">simulated_stats</span>, <span class="va">observed_stats</span>, <span class="va">epsilon</span>, <span class="va">lfmcmc_obj</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">simulated_stats</span> <span class="op">-</span> <span class="va">observed_stats</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">kernel_fun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span></span>
+<span>    <span class="va">simulated_stats</span>, <span class="va">observed_stats</span>, <span class="va">epsilon</span>, <span class="va">lfmcmc_obj</span></span>
+<span>    <span class="op">)</span> <span class="op">{</span></span>
+<span></span>
+<span>  <span class="va">diff</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="op">(</span><span class="va">simulated_stats</span> <span class="op">-</span> <span class="va">observed_stats</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">^</span><span class="va">epsilon</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">dnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">diff</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>With all four functions defined, we can initialize the simulation
 object using the <code>LFMCMC</code> function in epiworldR along with
@@ -255,55 +260,80 @@ the appropriate setter functions.</p>
 <h2 id="run-lfmcmc-simulation">Run LFMCMC Simulation<a class="anchor" aria-label="anchor" href="#run-lfmcmc-simulation"></a>
 </h2>
 <p>To run LFMCMC, we need to set the initial model parameters. For our
-example, we use an initial Recovery rate of 0.1 and an initial
-Transmission rate of 0.5. We set the kernel epsilon to 1.0 and run the
+example, we use an initial Recovery rate of 0.3 and an initial
+Transmission rate of 0.3. We set the kernel epsilon to 1.0 and run the
 simulation for 2,000 samples (iterations) using the
 <code>run_lfmcmc</code> function.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">initial_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">initial_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.3</span><span class="op">)</span></span>
 <span><span class="va">epsilon</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
 <span><span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">2000</span></span>
 <span></span>
 <span><span class="co"># Run the LFMCMC simulation</span></span>
-<span><span class="fu"><a href="../reference/epiworld-methods.html">verbose_off</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">run_lfmcmc</a></span><span class="op">(</span></span>
 <span>  lfmcmc <span class="op">=</span> <span class="va">lfmcmc_model</span>,</span>
 <span>  params_init <span class="op">=</span> <span class="va">initial_params</span>,</span>
 <span>  n_samples <span class="op">=</span> <span class="va">n_samples</span>,</span>
 <span>  epsilon <span class="op">=</span> <span class="va">epsilon</span>,</span>
 <span>  seed <span class="op">=</span> <span class="va">model_seed</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; _________________________________________________________________________</span></span>
+<span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="results">Results<a class="anchor" aria-label="anchor" href="#results"></a>
 </h2>
 <p>To make the printed results easier to read, we use the
 <code>set_params_names</code> and <code>set_stats_names</code> functions
-before calling <code>print</code>. We also use a burn-in period of 500
+before calling <code>print</code>. We also use a burn-in period of 1,500
 samples.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/LFMCMC.html">set_params_names</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Recovery rate"</span>, <span class="st">"Transmission rate"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/LFMCMC.html">set_stats_names</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, <span class="fu"><a href="../reference/epiworld-methods.html">get_states</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, burnin <span class="op">=</span> <span class="fl">500</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lfmcmc_model</span>, burnin <span class="op">=</span> <span class="fl">1500</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; LIKELIHOOD-FREE MARKOV CHAIN MONTE CARLO</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; N Samples (total) : 2000</span></span>
-<span><span class="co">#&gt; N Samples (after burn-in period) : 1500</span></span>
-<span><span class="co">#&gt; Elapsed t : 1.00s</span></span>
+<span><span class="co">#&gt; N Samples (after burn-in period) : 500</span></span>
+<span><span class="co">#&gt; Elapsed t : 2.00s</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameters:</span></span>
-<span><span class="co">#&gt;   -Recovery rate     :  0.33 [ 0.21,  0.40] (initial :  0.10)</span></span>
-<span><span class="co">#&gt;   -Transmission rate :  0.28 [ 0.19,  0.33] (initial :  0.50)</span></span>
+<span><span class="co">#&gt;   -Recovery rate     :  0.14 [ 0.13,  0.15] (initial :  0.30)</span></span>
+<span><span class="co">#&gt;   -Transmission rate :  0.09 [ 0.09,  0.10] (initial :  0.30)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Statistics:</span></span>
-<span><span class="co">#&gt;   -Susceptible :  285.15 [ 284.00,  286.00] (Observed:  285.00)</span></span>
-<span><span class="co">#&gt;   -Infected    :    0.00 [   0.00,    0.00] (Observed:    0.00)</span></span>
-<span><span class="co">#&gt;   -Recovered   :  714.85 [ 714.00,  716.00] (Observed:  715.00)</span></span>
+<span><span class="co">#&gt;   -Susceptible :  1865.49 [ 1864.00,  1866.00] (Observed:  1865.00)</span></span>
+<span><span class="co">#&gt;   -Infected    :     0.00 [    0.00,     0.00] (Observed:     0.00)</span></span>
+<span><span class="co">#&gt;   -Recovered   :   134.51 [  134.00,   136.00] (Observed:   135.00)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span></code></pre></div>
+<p>We can also look at the trace of the parameters:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Extracting the accepted parameters</span></span>
+<span><span class="va">accepted</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/LFMCMC.html">get_all_accepted_params</a></span><span class="op">(</span><span class="va">lfmcmc_model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plotting the trace</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">accepted</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"l"</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  main <span class="op">=</span> <span class="st">"Trace of the parameters"</span>,</span>
+<span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"tomato"</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="st">"Step"</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Parameter value"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="va">accepted</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, type <span class="op">=</span> <span class="st">"l"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, col <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  <span class="st">"topright"</span>,</span>
+<span>  bty <span class="op">=</span> <span class="st">"n"</span>,</span>
+<span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Recovery rate"</span>, <span class="st">"Transmission rate"</span><span class="op">)</span>,</span>
+<span>  pch    <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  col    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tomato"</span>, <span class="st">"steelblue"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="likelihood-free-mcmc_files/figure-html/post-dist-1.png" width="80%" style="display: block; margin: auto;"></p>
 <p>Recall that the observed data came from a model with a Recovery rate
 of 0.3 and a Transmission rate of 0.3. As the above output shows, LFMCMC
 made a close approximation of the parameters, which resulted in a close

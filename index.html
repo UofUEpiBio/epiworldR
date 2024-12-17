@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6-0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -135,7 +135,7 @@
 <span><span class="co">#&gt; Susceptible-Infected-Recovered (SIR)</span></span>
 <span><span class="co">#&gt; It features 100000 agents, 1 virus(es), and 0 tool(s).</span></span>
 <span><span class="co">#&gt; The model has 3 states.</span></span>
-<span><span class="co">#&gt; The final distribution is: 822 Susceptible, 415 Infected, and 98763 Recovered.</span></span></code></pre></div>
+<span><span class="co">#&gt; The final distribution is: 1209 Susceptible, 499 Infected, and 98292 Recovered.</span></span></code></pre></div>
 <p>Visualizing the outputs</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
@@ -149,8 +149,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 62.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 79.47 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 66.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 74.96 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -167,12 +167,12 @@
 <span><span class="co">#&gt;  - Transmission rate : 0.7000</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible :  99000 -&gt; 822</span></span>
-<span><span class="co">#&gt;   - (1) Infected    :   1000 -&gt; 415</span></span>
-<span><span class="co">#&gt;   - (2) Recovered   :      0 -&gt; 98763</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible :  99000 -&gt; 1209</span></span>
+<span><span class="co">#&gt;   - (1) Infected    :   1000 -&gt; 499</span></span>
+<span><span class="co">#&gt;   - (2) Recovered   :      0 -&gt; 98292</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.91  0.09  0.00</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.92  0.08  0.00</span></span>
 <span><span class="co">#&gt;  - Infected     0.00  0.70  0.30</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -225,7 +225,7 @@
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 2</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : 15.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 64.01 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run speed      : 65.69 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -337,22 +337,22 @@
 <span>  <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">rn</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       0       1</span></span>
-<span><span class="co">#&gt; 0.12984 0.14201</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.13466 0.14878</span></span></code></pre></div>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Looking into the agents</span></span>
 <span><span class="fu"><a href="reference/agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span></span>
-<span><span class="co">#&gt; Agent: 0, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 6, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 7, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 0, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 1, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 2, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 3, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 4, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 5, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 6, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 7, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
 <span><span class="co">#&gt; Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
-<span><span class="co">#&gt; Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8</span></span>
+<span><span class="co">#&gt; Agent: 9, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8</span></span>
 <span><span class="co">#&gt; ... 99990 more agents ...</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -426,18 +426,18 @@
 <span><span class="co">#&gt; 1       1    0        1 Susceptible    990</span></span>
 <span><span class="co">#&gt; 2       1    0        1    Infected     10</span></span>
 <span><span class="co">#&gt; 3       1    0        1   Recovered      0</span></span>
-<span><span class="co">#&gt; 4       1    1        1 Susceptible    971</span></span>
-<span><span class="co">#&gt; 5       1    1        1    Infected     29</span></span>
+<span><span class="co">#&gt; 4       1    1        1 Susceptible    974</span></span>
+<span><span class="co">#&gt; 5       1    1        1    Infected     26</span></span>
 <span><span class="co">#&gt; 6       1    1        1   Recovered      0</span></span></code></pre></div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
-<span><span class="co">#&gt; 1       1        0 COVID-19    943                    9  0</span></span>
-<span><span class="co">#&gt; 2       1        0 COVID-19     40                    9  0</span></span>
-<span><span class="co">#&gt; 3       1        0 COVID-19      6                    9  0</span></span>
-<span><span class="co">#&gt; 4       1        0 COVID-19    973                    8  0</span></span>
-<span><span class="co">#&gt; 5       1        0 COVID-19    495                    9  0</span></span>
-<span><span class="co">#&gt; 6       1        0 COVID-19    480                    8  0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1       1        0 COVID-19     77                   10  0</span></span>
+<span><span class="co">#&gt; 2       1        0 COVID-19    970                    8  0</span></span>
+<span><span class="co">#&gt; 3       1        0 COVID-19    895                    8  0</span></span>
+<span><span class="co">#&gt; 4       1        0 COVID-19    866                    8  0</span></span>
+<span><span class="co">#&gt; 5       1        0 COVID-19    811                    8  0</span></span>
+<span><span class="co">#&gt; 6       1        0 COVID-19    752                    8  0</span></span></code></pre></div>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
@@ -466,8 +466,9 @@
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; And the actual R package:</span></span>
 <span><span class="co">#&gt;</span></span>
-<span><span class="co">#&gt;   Meyer D, Vega Yon G (????). _epiworldR: Fast Agent-Based Epi Models_.</span></span>
-<span><span class="co">#&gt;   R package version 0.3-2, &lt;https://github.com/UofUEpiBio/epiworldR&gt;.</span></span>
+<span><span class="co">#&gt;   Meyer D, Pulsipher A, Vega Yon G (2024). _epiworldR: Fast Agent-Based</span></span>
+<span><span class="co">#&gt;   Epi Models_. R package version 0.6.0.0,</span></span>
+<span><span class="co">#&gt;   &lt;https://github.com/UofUEpiBio/epiworldR&gt;.</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; To see these entries in BibTeX format, use 'print(&lt;citation&gt;,</span></span>
 <span><span class="co">#&gt; bibtex=TRUE)', 'toBibtex(.)', or set</span></span>
@@ -607,9 +608,9 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>George Vega Yon <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-3171-0844" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>George Vega Yon <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-3171-0844" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Derek Meyer <br><small class="roles"> Author </small> <a href="https://orcid.org/0009-0005-1350-6988" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Andrew Pulsipher <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-0773-3210" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Andrew Pulsipher <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-0773-3210" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Centers for Disease Control and Prevention <br><small class="roles"> Funder </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
