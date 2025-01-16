@@ -19,12 +19,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
+\strong{Maintainer}: Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
 
 Authors:
 \itemize{
+  \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
   \item Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
-  \item Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
 }
 
 Other contributors:
