@@ -1,4 +1,4 @@
-year <- 2024
+year <- 2025
 note <- sprintf("R package version %s", meta$Version)
 
 bibentry(

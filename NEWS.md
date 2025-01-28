@@ -1,6 +1,11 @@
-# epiworldR 0.6.0.0
+# epiworldR 0.6.1.0
 
-## New features
+* Updates to reflect changes in the `epiworld` C++ library (mostly bug fixes)
+
+* Package now requires R version >=4.1.0, because it uses the pipe `|>`
+
+
+# epiworldR 0.6.0.0
 
 * The package now includes the `LFMCMC` module that implements
   the likelihood-free Markov Chain Monte Carlo algorithm. This
@@ -14,8 +19,6 @@
 
 * The function `today()` returns the current day (step) of the
   simulation.
-
-## Misc
 
 * We changed the versioning system. To allow the R package to increase
   version number while preserving epiworld (C++) versioning, we added a fourth
