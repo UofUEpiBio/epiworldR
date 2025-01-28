@@ -4,6 +4,7 @@
 
 * Package now requires R version >=4.1.0, because it uses the pipe `|>`
 
+
 # epiworldR 0.6.0.0
 
 * The package now includes the `LFMCMC` module that implements
