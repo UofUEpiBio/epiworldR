@@ -28,7 +28,7 @@ jobs:
         config:
           - {os: macOS-latest,   r: 'release'}
           - {os: windows-latest, r: 'release'}
-          - {os: macOS-13,       r: 'devel', http-user-agent: 'release'}
+          - {os: macOS-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: windows-latest, r: 'devel', http-user-agent: 'release'}
           # se older ubuntu to maximise backward compatibility
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
