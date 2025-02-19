@@ -13,6 +13,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
+[![ForeSITE Group](https://github.com/EpiForeSITE/software/blob/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
