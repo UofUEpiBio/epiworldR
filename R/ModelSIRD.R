@@ -1,3 +1,15 @@
+stopifnot_string <- function(x, param_name) {
+  if (!is.character(x)) {
+    stop(paste(param_name, " must be a string."))
+  }
+}
+
+stopifnot_double <- function(x, param_name) {
+  if (!is.numeric(x)) {
+    stop(paste(param_name, " must be a double."))
+  }
+}
+
 #' SIRD model
 #' @param name String. Name of the virus.
 #'
@@ -50,6 +62,12 @@
 ModelSIRD <- function(
     name, prevalence, transmission_rate, recovery_rate, death_rate
     ) {
+  # Check inputs
+  stopifnot_string(name, "name")
+  stopifnot_double(prevalence, "prevalence")
+  stopifnot_double(transmission_rate, "transmission_rate")
+  stopifnot_double(recovery_rate, "recovery_rate")
+  stopifnot_double(death_rate, "death_rate")
 
   structure(
     ModelSIRD_cpp(name, prevalence, transmission_rate, recovery_rate, death_rate),

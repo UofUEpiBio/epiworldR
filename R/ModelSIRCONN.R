@@ -1,3 +1,21 @@
+stopifnot_string <- function(x, param_name) {
+  if (!is.character(x)) {
+    stop(paste(param_name, " must be a string."))
+  }
+}
+
+stopifnot_int <- function(x, param_name) {
+  if (!is.numeric(x) || !all.equal(x, as.integer(x))) {
+    stop(paste(param_name, " must be an integer."))
+  }
+}
+
+stopifnot_double <- function(x, param_name) {
+  if (!is.numeric(x)) {
+    stop(paste(param_name, " must be a double."))
+  }
+}
+
 #' Susceptible Infected Removed model (SIR connected)
 #' @param name String. Name of the virus
 #' @param prevalence Double. Initial proportion of individuals with the virus.
@@ -37,6 +55,13 @@
 ModelSIRCONN <- function(
     name, n, prevalence, contact_rate, transmission_rate, recovery_rate
     ) {
+  # Check inputs
+  stopifnot_string(name, "name")
+  stopifnot_int(n, "n")
+  stopifnot_double(prevalence, "prevalence")
+  stopifnot_double(contact_rate, "contact_rate")
+  stopifnot_double(transmission_rate, "transmission_rate")
+  stopifnot_double(recovery_rate, "recovery_rate")
 
   structure(
     ModelSIRCONN_cpp(name, n, prevalence, contact_rate,
