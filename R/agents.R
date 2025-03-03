@@ -1,8 +1,3 @@
-stopifnot_agent <- function(x) {
-  if (!inherits(x, "epiworld_agent"))
-    stop("x must be an object of class epiworld_agent")
-}
-
 #' Load agents to a model
 #'
 #' These functions provide access to the network of the model. The network is

@@ -1,16 +1,3 @@
-
-stopifnot_entity <- function(entity) {
-  if (!inherits(entity, "epiworld_entity")) {
-    stop("Argument 'entity' must be an entity object.")
-  }
-}
-
-stopifnot_entity_distfun <- function(distfun) {
-  if (!inherits(distfun, "epiworld_distribution_entity")) {
-    stop("Argument 'distfun' must be a distribution function.")
-  }
-}
-
 #' Get entities
 #'
 #' Entities in `epiworld` are objects that can contain agents.

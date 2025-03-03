@@ -1,13 +1,3 @@
-stopifnot_lfmcmc <- function(x) {
-  # Catching the value of x
-  nam <- match.call()$x
-
-  if (!inherits(x, "epiworld_lfmcmc"))
-    stop(nam, " must be an object of class epiworld_lfmcmc")
-
-}
-
-
 #' Likelihood-Free Markhov Chain Monte Carlo (LFMCMC)
 #'
 #' @aliases epiworld_lfmcmc

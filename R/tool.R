@@ -116,36 +116,6 @@ print.epiworld_tool <- function(x, ...) {
 }
 
 
-stopifnot_tool <- function(tool) {
-  if (!inherits(tool, "epiworld_tool")) {
-    stop(
-      "The -tool- object must be of class \"epiworld_tool\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(tool), collapse = ", ")
-    )
-  }
-}
-
-stopifnot_tfun <- function(tfun) {
-  if (!inherits(tfun, "epiworld_tool_fun")) {
-    stop(
-      "The -tfun- object must be of class \"epiworld_tool_fun\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(tfun), collapse = ", ")
-    )
-  }
-}
-
-stopifnot_tool_distfun <- function(tool_distfun) {
-  if (!inherits(tool_distfun, "epiworld_tool_distfun")) {
-    stop(
-      "The -tool_distfun- object must be of class \"epiworld_tool_distfun\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(tool_distfun), collapse = ", ")
-    )
-  }
-}
-
 #' @export
 #' @details
 #' The name of the `epiworld_tool` object can be manipulated with the functions

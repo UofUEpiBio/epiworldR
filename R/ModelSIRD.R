@@ -1,15 +1,3 @@
-stopifnot_string <- function(x, param_name) {
-  if (!is.character(x)) {
-    stop(paste(param_name, " must be a string."))
-  }
-}
-
-stopifnot_double <- function(x, param_name) {
-  if (!is.numeric(x)) {
-    stop(paste(param_name, " must be a double."))
-  }
-}
-
 #' SIRD model
 #' @param name String. Name of the virus.
 #'

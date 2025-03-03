@@ -1,21 +1,3 @@
-stopifnot_string <- function(x, param_name) {
-  if (!is.character(x)) {
-    stop(paste(param_name, " must be a string."))
-  }
-}
-
-stopifnot_int <- function(x, param_name) {
-  if (!is.numeric(x) || !all.equal(x, as.integer(x))) {
-    stop(paste(param_name, " must be an integer."))
-  }
-}
-
-stopifnot_double <- function(x, param_name) {
-  if (!is.numeric(x)) {
-    stop(paste(param_name, " must be a double."))
-  }
-}
-
 #' Susceptible Infected Removed model (SIR connected)
 #' @param name String. Name of the virus
 #' @param prevalence Double. Initial proportion of individuals with the virus.
