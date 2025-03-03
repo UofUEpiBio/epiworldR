@@ -1,4 +1,4 @@
-# Test just this file: tinytest::run_test_file("inst/tinytest/test-seird.R")
+# Test just this file: tinytest::run_test_file("inst/tinytest/test-seirconn.R")
 
 # Create SEIRD Model -----------------------------------------------------------
 
@@ -36,7 +36,7 @@ bad_transmission_rate <- NA
 bad_recovery_rate <- NA
 
 expected_error_msg_str <- "must be a string"
-expected_error_msg_int <- "must be am integer"
+expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
 
 expect_error(seirdconn_0 <- ModelSEIRCONN(
