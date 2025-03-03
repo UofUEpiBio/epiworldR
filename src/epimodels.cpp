@@ -59,28 +59,28 @@ SEXP ModelSURV_cpp(
   cpp11::external_pointer<epiworld::epimodels::ModelSEIR<>> (a)
 
 [[cpp11::register]]
-    SEXP ModelSEIR_cpp(
-        std::string name,
-        double prevalence,
-        double transmission_rate,
-        double incubation_days,
-        double recovery_rate
+SEXP ModelSEIR_cpp(
+    std::string name,
+    double prevalence,
+    double transmission_rate,
+    double incubation_days,
+    double recovery_rate
 
-    ) {
+) {
 
-      // Creating a pointer to a ModelSIR model
-      WrapSEIR(ptr)(
-          new epiworld::epimodels::ModelSEIR<>(
-              name,
-              prevalence,
-              transmission_rate,
-              incubation_days,
-              recovery_rate
-          )
-      );
+  // Creating a pointer to a ModelSIR model
+  WrapSEIR(ptr)(
+      new epiworld::epimodels::ModelSEIR<>(
+          name,
+          prevalence,
+          transmission_rate,
+          incubation_days,
+          recovery_rate
+      )
+  );
 
-      return ptr;
-    }
+  return ptr;
+}
 
 #undef WrapSEIR
 
