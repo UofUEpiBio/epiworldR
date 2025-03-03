@@ -38,12 +38,12 @@ ModelSIRCONN <- function(
     name, n, prevalence, contact_rate, transmission_rate, recovery_rate
     ) {
   # Check inputs
-  stopifnot_string(name, "name")
-  stopifnot_int(n, "n")
-  stopifnot_double(prevalence, "prevalence")
-  stopifnot_double(contact_rate, "contact_rate")
-  stopifnot_double(transmission_rate, "transmission_rate")
-  stopifnot_double(recovery_rate, "recovery_rate")
+  stopifnot_string(name)
+  stopifnot_int(n)
+  stopifnot_double(prevalence)
+  stopifnot_double(contact_rate)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(recovery_rate)
 
   structure(
     ModelSIRCONN_cpp(name, n, prevalence, contact_rate,

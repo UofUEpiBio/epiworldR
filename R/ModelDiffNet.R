@@ -64,6 +64,14 @@ ModelDiffNet <- function(
     data_cols          = 1L:ncol(data),
     params             = vector("double")
     ) {
+  # Check input params
+  stopifnot_string(name)
+  stopifnot_double(prevalence)
+  stopifnot_double(prob_adopt)
+  stopifnot_bool(normalize_exposure)
+  stopifany_na(data)
+  stopifnot_numvector(data_cols)
+  stopifnot_numvector(params)
 
   if (length(data) == 0L)
     data_cols <- vector("integer")

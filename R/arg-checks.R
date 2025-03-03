@@ -1,8 +1,22 @@
 # This file contains functions for checking the arguments
 # of the exported package functions.
 
-# Checks if argument x with name "param_name" is a string
-stopifnot_string <- function(x, param_name) {
+# Checks if argued is NA
+stopif_na <- function(x) {
+  if (is.na(x)) {
+    stop(paste(match.call()$x, "must not be NA."))
+  }
+}
+
+# Checks if argument contains NA values
+stopifany_na <- function(x) {
+  if (any(is.na(x))) {
+    stop(paste(match.call()$x, "must not contain NA values."))
+  }
+}
+
+# Checks if argument is a string
+stopifnot_string <- function(x) {
   if (!is.character(x)) {
     stop(
       paste(match.call()$x, "must be a string, but is of class(es): "),
@@ -11,8 +25,8 @@ stopifnot_string <- function(x, param_name) {
   }
 }
 
-# Checks if argument x with name "param_name" is an integer
-stopifnot_int <- function(x, param_name) {
+# Checks if argument is an integer
+stopifnot_int <- function(x) {
   if (!is.numeric(x) || !all.equal(x, as.integer(x))) {
     stop(
       paste(match.call()$x, "must be an integer, but is of class(es): "),
@@ -21,11 +35,35 @@ stopifnot_int <- function(x, param_name) {
   }
 }
 
-# Checks if argument x with name "param_name" is a double
-stopifnot_double <- function(x, param_name) {
+# Checks if argument is a double
+stopifnot_double <- function(x) {
   if (!is.numeric(x)) {
     stop(
       paste(match.call()$x, "must be a double, but is of class(es): "),
+      paste(class(x), collapse = ", ")
+    )
+  }
+}
+
+# Checks if argument is a boolean
+stopifnot_bool <- function(x) {
+  if (is.na(x)) {
+    stop(paste(match.call()$x, "must not be NA."))
+  }
+
+  if (!is.logical(x)) {
+    stop(
+      paste(match.call()$x, "must be a boolean, but is of class(es): "),
+      paste(class(x), collapse = ", ")
+    )
+  }
+}
+
+# Checks if argument is a vector of numeric values
+stopifnot_numvector <- function(x) {
+  if (!is.numeric(x) || !is.vector(x)) {
+    stop(
+      paste(match.call()$x, "must be a numeric vector, but is of class(es): "),
       paste(class(x), collapse = ", ")
     )
   }
