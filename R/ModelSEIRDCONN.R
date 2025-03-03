@@ -61,9 +61,24 @@
 #' plot(model_seirdconn)
 #' @seealso epiworld-methods
 ModelSEIRDCONN <- function(
-    name, n, prevalence, contact_rate, transmission_rate,
-    incubation_days, recovery_rate, death_rate
+    name,
+    n,
+    prevalence,
+    contact_rate,
+    transmission_rate,
+    incubation_days,
+    recovery_rate,
+    death_rate
     ) {
+  # Check input parameters
+  stopifnot_string(name)
+  stopifnot_int(n)
+  stopifnot_double(prevalence)
+  stopifnot_double(contact_rate)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(incubation_days)
+  stopifnot_double(recovery_rate)
+  stopifnot_double(death_rate)
 
   structure(
     ModelSEIRDCONN_cpp(name, n, prevalence, contact_rate,
