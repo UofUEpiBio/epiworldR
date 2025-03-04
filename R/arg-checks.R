@@ -1,7 +1,7 @@
 # This file contains functions for checking the arguments
 # of the exported package functions.
 
-# Checks if argued is NA
+# Checks if argument is NA
 stopif_na <- function(x) {
   if (is.na(x)) {
     stop(paste(match.call()$x, "must not be NA."))
@@ -117,7 +117,6 @@ stopifnot_lfmcmc <- function(x) {
     stop(nam, " must be an object of class epiworld_lfmcmc")
 
 }
-
 
 # Checks if tool object is of class "epiworld_tool"
 stopifnot_tool <- function(tool) {
