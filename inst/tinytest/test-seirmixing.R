@@ -1,4 +1,4 @@
-# Test just this file: tinytest::run_test_file("inst/tinytest/test-mixing.R")
+# Test just this file: tinytest::run_test_file("inst/tinytest/test-seirmixing.R")
 
 library(epiworldR)
 

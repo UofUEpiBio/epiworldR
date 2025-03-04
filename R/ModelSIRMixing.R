@@ -64,9 +64,22 @@
 #'
 #' @seealso epiworld-methods
 ModelSIRMixing <- function(
-    name, n, prevalence, contact_rate, transmission_rate, recovery_rate,
+    name,
+    n,
+    prevalence,
+    contact_rate,
+    transmission_rate,
+    recovery_rate,
     contact_matrix
     ) {
+  # Check input parameters
+  stopifnot_string(name)
+  stopifnot_int(n)
+  stopifnot_double(prevalence)
+  stopifnot_double(contact_rate)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(recovery_rate)
+  stopifany_na(contact_matrix)
 
   structure(
     ModelSIRMixing_cpp(
