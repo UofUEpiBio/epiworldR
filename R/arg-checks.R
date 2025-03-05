@@ -1,12 +1,6 @@
 # This file contains functions for checking the arguments
 # of the exported package functions.
 
-# Checks if argument is NA
-stopif_na <- function(x) {
-  if (is.na(x)) {
-    stop(paste(match.call()$x, "must not be NA."))
-  }
-}
 
 # Checks if argument contains NA values
 stopifany_na <- function(x) {
