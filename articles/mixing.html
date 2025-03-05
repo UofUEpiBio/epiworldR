@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2025-02-27</h4>
+            <h4 data-toc-skip class="date">2025-03-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/mixing.Rmd" class="external-link"><code>vignettes/mixing.Rmd</code></a></small>
       <div class="d-none name"><code>mixing.Rmd</code></div>
@@ -164,7 +164,7 @@ summarizes the results, and plots the incidence curve:</p>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
 <span><span class="co">#&gt; Last run elapsed t  : 108.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 8.28 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run speed      : 8.32 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -208,7 +208,7 @@ occurred during the simulation:</p>
 <span></span>
 <span><span class="va">agents_entities</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="../reference/entities.html">get_entities</a></span><span class="op">(</span><span class="va">flu_model</span><span class="op">)</span>, \<span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="../reference/entities.html">entity_get_agents</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/rbindlist.html" class="external-link">rbindlist</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">agents_entities</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    agent entity</span></span>
@@ -225,7 +225,7 @@ accomplishes this:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieving the transmissions</span></span>
 <span><span class="va">transmissions</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/epiworld-data.html">get_transmissions</a></span><span class="op">(</span><span class="va">flu_model</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/data.table/man/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/data.table.html" class="external-link">data.table</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># We only need the date and the source</span></span>
 <span><span class="va">transmissions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
@@ -257,7 +257,7 @@ accomplishes this:</p>
 each entity. The following code chunk plots the daily incidence for each
 entity:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/data.table/man/setorder.html" class="external-link">setorder</a></span><span class="op">(</span><span class="va">transmissions</span>, <span class="va">date</span>, <span class="va">entity</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdatatable.gitlab.io/data.table/reference/setorder.html" class="external-link">setorder</a></span><span class="op">(</span><span class="va">transmissions</span>, <span class="va">date</span>, <span class="va">entity</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ran</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html" class="external-link">range</a></span><span class="op">(</span><span class="va">transmissions</span><span class="op">$</span><span class="va">N</span><span class="op">)</span></span>
 <span><span class="va">transmissions</span><span class="op">[</span><span class="va">entity</span> <span class="op">==</span> <span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
