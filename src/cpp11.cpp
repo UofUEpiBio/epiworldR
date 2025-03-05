@@ -293,7 +293,7 @@ extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP effica
   END_CPP11
 }
 // epimodels.cpp
-    SEXP ModelSEIR_cpp(std::string name, double prevalence, double transmission_rate, double incubation_days, double recovery_rate);
+SEXP ModelSEIR_cpp(std::string name, double prevalence, double transmission_rate, double incubation_days, double recovery_rate);
 extern "C" SEXP _epiworldR_ModelSEIR_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate) {
   BEGIN_CPP11
     return cpp11::as_sexp(ModelSEIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));

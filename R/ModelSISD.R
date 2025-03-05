@@ -42,7 +42,17 @@
 #'
 #' @seealso epiworld-methods
 ModelSISD <- function(
-    name, prevalence, transmission_rate, recovery_rate, death_rate) {
+    name,
+    prevalence,
+    transmission_rate,
+    recovery_rate,
+    death_rate) {
+  # Check input parameters
+  stopifnot_string(name)
+  stopifnot_double(prevalence)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(recovery_rate)
+  stopifnot_double(death_rate)
 
   structure(
     ModelSISD_cpp(name, prevalence, transmission_rate, recovery_rate, death_rate),

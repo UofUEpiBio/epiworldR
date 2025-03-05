@@ -113,36 +113,6 @@ print.epiworld_virus <- function(x, ...) {
   invisible(print_virus_cpp(x))
 }
 
-stopifnot_virus <- function(virus) {
-  if (!inherits(virus, "epiworld_virus")) {
-    stop(
-      "The -virus- object must be of class \"epiworld_virus\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(virus), collapse = ", ")
-    )
-  }
-}
-
-stopifnot_vfun <- function(vfun) {
-  if (!inherits(vfun, "epiworld_virus_fun")) {
-    stop(
-      "The -vfun- object must be of class \"epiworld_virus_fun\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(vfun), collapse = ", ")
-    )
-  }
-}
-
-stopifnot_virus_distfun <- function(virus_distfun) {
-  if (!inherits(virus_distfun, "epiworld_virus_distfun")) {
-    stop(
-      "The -virus_distfun- object must be of class \"epiworld_virus_distfun\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(virus_distfun), collapse = ", ")
-    )
-  }
-}
-
 
 #' @export
 #' @details

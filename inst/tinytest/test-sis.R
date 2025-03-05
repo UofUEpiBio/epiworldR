@@ -33,3 +33,45 @@ expect_silent(run_multiple(
   nthreads = 1
 ))
 expect_silent(plot(sis_0)) # Plot succeeds after model is run
+
+# Check functions fail with invalid inputs -------------------------------------
+good_name               <- "A Virus"
+good_prevalence         <- 0.1
+good_transmission_rate  <- 0.3
+good_recovery_rate      <- 0.3
+
+bad_name                <- NA
+bad_prevalence          <- NA
+bad_transmission_rate   <- NA
+bad_recovery_rate       <- NA
+
+expected_error_msg_str    <- "must be a string"
+expected_error_msg_double <- "must be a double"
+
+expect_error(sis_0 <- ModelSIS(
+  name                = bad_name,
+  prevalence          = good_prevalence,
+  transmission_rate   = good_transmission_rate,
+  recovery_rate       = good_recovery_rate
+), expected_error_msg_str)
+
+expect_error(sis_0 <- ModelSIS(
+  name                = good_name,
+  prevalence          = bad_prevalence,
+  transmission_rate   = good_transmission_rate,
+  recovery_rate       = good_recovery_rate
+), expected_error_msg_double)
+
+expect_error(sis_0 <- ModelSIS(
+  name                = good_name,
+  prevalence          = good_prevalence,
+  transmission_rate   = bad_transmission_rate,
+  recovery_rate       = good_recovery_rate
+), expected_error_msg_double)
+
+expect_error(sis_0 <- ModelSIS(
+  name                = good_name,
+  prevalence          = good_prevalence,
+  transmission_rate   = good_transmission_rate,
+  recovery_rate       = bad_recovery_rate
+), expected_error_msg_double)

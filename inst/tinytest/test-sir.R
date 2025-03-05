@@ -59,3 +59,45 @@ runtime_noqueuing <- system.time(run(sir_0, ndays = 50, seed = 1912))
 queuing_on(sir_0)
 runtime_queuing <- system.time(run(sir_0, ndays = 50, seed = 1912))
 expect_true(runtime_queuing["elapsed"] < runtime_noqueuing["elapsed"])
+
+# Check functions fail with invalid inputs -------------------------------------
+good_name <- "A Virus"
+good_prevalence <- 0.01
+good_transmission_rate <- 0.9
+good_recovery_rate <- 0.3
+
+bad_name <- NA
+bad_prevalence <- NA
+bad_transmission_rate <- NA
+bad_recovery_rate <- NA
+
+expected_error_msg_str <- "must be a string"
+expected_error_msg_double <- "must be a double"
+
+expect_error(test_model <- ModelSIR(
+  name = bad_name,
+  prevalence = good_prevalence,
+  transmission_rate = good_transmission_rate,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_str)
+
+expect_error(test_model <- ModelSIR(
+  name = good_name,
+  prevalence = bad_prevalence,
+  transmission_rate = good_transmission_rate,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_double)
+
+expect_error(test_model <- ModelSIR(
+  name = good_name,
+  prevalence = good_prevalence,
+  transmission_rate = bad_transmission_rate,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_double)
+
+expect_error(test_model <- ModelSIR(
+  name = good_name,
+  prevalence = good_prevalence,
+  transmission_rate = good_transmission_rate,
+  recovery_rate = bad_recovery_rate
+), expected_error_msg_double)

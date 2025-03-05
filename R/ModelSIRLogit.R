@@ -72,6 +72,16 @@ ModelSIRLogit <- function(
     recovery_rate,
     prevalence
     ) {
+  # Check input parameters
+  stopifnot_string(vname)
+  stopifany_na(data)
+  stopifnot_numvector(coefs_infect)
+  stopifnot_numvector(coefs_recover)
+  stopifnot_numvector(coef_infect_cols)
+  stopifnot_numvector(coef_recover_cols)
+  stopifnot_double(prob_infection)
+  stopifnot_double(recovery_rate)
+  stopifnot_double(prevalence)
 
   structure(
     ModelSIRLogit_cpp(

@@ -49,6 +49,13 @@ ModelSEIRD <- function(
     recovery_rate,
     death_rate
     ) {
+  # Check input parameters
+  stopifnot_string(name)
+  stopifnot_double(prevalence)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(incubation_days)
+  stopifnot_double(recovery_rate)
+  stopifnot_double(death_rate)
 
   structure(
     ModelSEIRD_cpp(

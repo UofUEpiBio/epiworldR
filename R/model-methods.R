@@ -1,13 +1,3 @@
-stopifnot_model <- function(model) {
-  if (!inherits(model, "epiworld_model")) {
-    stop(
-      "The -model- object must be of class \"epiworld_model\". ",
-      "The object passed to the function is of class(es): ",
-      paste(class(model), collapse = ", ")
-    )
-  }
-}
-
 #' Methods for epiworldR objects
 #'
 #' The functions described in this section are methods for objects of class

@@ -45,6 +45,12 @@ ModelSEIR <- function(
     incubation_days,
     recovery_rate
     ) {
+  # Check input parameters
+  stopifnot_string(name)
+  stopifnot_double(prevalence)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(incubation_days)
+  stopifnot_double(recovery_rate)
 
   structure(
     ModelSEIR_cpp(name, prevalence, transmission_rate, incubation_days, recovery_rate),

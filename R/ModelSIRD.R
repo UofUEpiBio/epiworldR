@@ -50,6 +50,12 @@
 ModelSIRD <- function(
     name, prevalence, transmission_rate, recovery_rate, death_rate
     ) {
+  # Check inputs
+  stopifnot_string(name)
+  stopifnot_double(prevalence)
+  stopifnot_double(transmission_rate)
+  stopifnot_double(recovery_rate)
+  stopifnot_double(death_rate)
 
   structure(
     ModelSIRD_cpp(name, prevalence, transmission_rate, recovery_rate, death_rate),
