@@ -332,7 +332,14 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
     {
         ModelSEIRDCONN<TSeq> * model = dynamic_cast<ModelSEIRDCONN<TSeq> *>(m);
-        model->update_infected();
+        
+        if (model == nullptr)
+            throw std::logic_error(
+                std::string("Internal error in the ModelSEIRDCONN model: ") +
+                std::string("The model returns a null pointer.")
+            );
+        else
+            model->update_infected();
         
         return;
     };

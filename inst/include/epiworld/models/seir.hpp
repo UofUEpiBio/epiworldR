@@ -11,7 +11,7 @@
  * @param avg_incubation_days epiworld_double Average incubation days of the virus.
  * @param recovery_rate epiworld_double Recovery rate of the virus.
  */
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSEIR : public epiworld::Model<TSeq>
 {
 
