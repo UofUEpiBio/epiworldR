@@ -10,6 +10,16 @@
     inline void ModelMeaslesQuarantine<TSeq>:: name \
     (epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m)
 
+#define SAMPLE_FROM_PROBS(n, ans) \
+    size_t ans; \
+    epiworld_double p_total = m->runif(); \
+    for (ans = 0u; ans < n; ++ans) \
+    { \
+        if (p_total < m->array_double_tmp[ans]) \
+            break; \
+        m->array_double_tmp[ans + 1] += m->array_double_tmp[ans]; \
+    }
+
 /**
  * @brief Template for a Measles model with quarantine
  * 
@@ -401,7 +411,6 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     )
     {
         model->system_quarantine_triggered = true;
-
         detected = true;
 
     }
@@ -419,10 +428,11 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     );
     #endif
 
-    int which = epiworld::roulette(2, m);
+    // Sampling from the probabilities
+    SAMPLE_FROM_PROBS(2, which);
 
     // Recovers
-    if (which == -1)
+    if (which == 2)
     {
         if (detected)
         {
@@ -468,10 +478,11 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     m->array_double_tmp[0] = 1.0/m->par("Rash days");
     m->array_double_tmp[1] = m->par("Hospitalization rate");
 
-    int which = epiworld::roulette(2, m);
+    // Sampling from the probabilities
+    SAMPLE_FROM_PROBS(2, which);
 
     // Recovers
-    if (which == -1)
+    if (which == 2u)
     {
         if (unquarantine)
         {
@@ -488,13 +499,13 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     }
 
     // If hospitalized, then the agent is removed from the system
-    else if (which == 1)
+    else if (which == 1u)
     {
         p->change_state(m, ModelMeaslesQuarantine::HOSPITALIZED);
     }
     // If neither hospitalized nor recovered, then the agent is
     // still under isolation, unless the quarantine period is over.
-    else if ((which == 0) && unquarantine)
+    else if ((which == 0u) && unquarantine)
     {
         p->change_state(m, ModelMeaslesQuarantine::RASH);
     }
@@ -744,6 +755,7 @@ inline ModelMeaslesQuarantine<TSeq>::ModelMeaslesQuarantine(
 
 }
 
+#undef SAMPLE_FROM_PROBS
 #undef LOCAL_UPDATE_FUN
 #undef GET_MODEL
 #endif
