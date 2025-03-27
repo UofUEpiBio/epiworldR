@@ -406,8 +406,8 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     // How many days since detected  
     bool detected = false;
     if (
-        (m->par("Days undetected") > 0) &&
-        (m->runif() > 1.0/m->par("Days undetected"))
+        (m->par("Days undetected") >= 0) &&
+        (m->runif() < 1.0/m->par("Days undetected"))
     )
     {
         model->system_quarantine_triggered = true;
