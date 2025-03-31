@@ -70,6 +70,7 @@ epiworld-methods
 
 Other Models: 
 \code{\link{ModelDiffNet}()},
+\code{\link{ModelMeaslesQuarantine}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIRDCONN}()},

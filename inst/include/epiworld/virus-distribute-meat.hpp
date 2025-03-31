@@ -62,15 +62,18 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
                 idx.push_back(agent.get_id());
 
         // Picking how many
-        size_t n = model->size();
+        int n = static_cast<int>(model->size());
         int n_available = static_cast<int>(idx.size());
         int n_to_sample;
         if (prevalence_as_proportion)
         {
-            n_to_sample = static_cast<int>(std::floor(prevalence * n));
+            n_to_sample = static_cast<int>(std::floor(
+                prevalence * static_cast< epiworld_double >(n)
+            ));
 
-            if (n_to_sample == static_cast<int>(n))
-                n_to_sample--;
+            // Correcting for possible overflow
+            if (n_to_sample > n)
+                n_to_sample = n;
         }
         else
         {

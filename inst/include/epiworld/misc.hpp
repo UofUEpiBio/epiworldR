@@ -262,4 +262,71 @@ inline int roulette(
 
 }
 
+/**
+ * @brief Read parameters from a yaml file
+ * 
+ * @details
+ * The file should have the following structure:
+ * ```yaml
+ * # Comment
+ * [name of parameter 1]: [value in T]
+ * [name of parameter 2]: [value in T]
+ * ...
+ * ```
+ * 
+ * @tparam T Type of the parameter
+ * @param fn Path to the file containing the parameters
+ * @return std::map<std::string, T> 
+ */
+template <typename T>
+inline std::map< std::string, T > read_yaml(std::string fn)
+{
+
+    std::ifstream paramsfile(fn);
+
+    if (!paramsfile)
+        throw std::logic_error("The file " + fn + " was not found.");
+
+    std::regex pattern("^([^:]+)\\s*[:]\\s*([-]?[0-9]+|[-]?[0-9]*\\.[0-9]+)?\\s*$");
+
+    std::string line;
+    std::smatch match;
+    auto empty = std::sregex_iterator();
+
+    // Making room
+    std::map<std::string, T> parameters;
+
+    while (std::getline(paramsfile, line))
+    {
+
+        // Is it a comment or an empty line?
+        if (std::regex_match(line, std::regex("^([*].+|//.+|#.+|\\s*)$")))
+            continue;
+
+        // Finding the pattern, if it doesn't match, then error
+        std::regex_match(line, match, pattern);
+
+        if (match.empty())
+            throw std::logic_error("Line has invalid format:\n" + line);
+
+        // Capturing the number
+        std::string anumber = match[2u].str() + match[3u].str();
+        T tmp_num = static_cast<T>(
+            std::strtod(anumber.c_str(), nullptr)
+            );
+
+        std::string pname = std::regex_replace(
+            match[1u].str(),
+            std::regex("^\\s+|\\s+$"),
+            "");
+
+        // Adding the parameter to the map
+        parameters[pname] = tmp_num;
+
+    }
+
+    return parameters;
+
+}
+
 #endif
