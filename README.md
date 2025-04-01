@@ -13,7 +13,8 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cra
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
-[![ForeSITE Group](https://github.com/EpiForeSITE/software/blob/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
+[![ForeSITE
+Group](https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg)](https://github.com/EpiForeSITE)
 <!-- badges: end -->
 
 This R package is a wrapper of the C++ library
@@ -115,9 +116,6 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
-```
-
-``` r
 
 sir
 #> ________________________________________________________________________________
@@ -141,8 +139,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 66.00ms
-#> Last run speed      : 74.96 million agents x day / second
+#> Last run elapsed t  : 108.00ms
+#> Last run speed      : 45.93 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -167,9 +165,6 @@ summary(sir)
 #>  - Susceptible  0.92  0.08  0.00
 #>  - Infected     0.00  0.70  0.30
 #>  - Recovered    0.00  0.00  1.00
-```
-
-``` r
 plot(sir)
 ```
 
@@ -215,9 +210,6 @@ run(model_seirconn, ndays = 100)
 #> Running the model...
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
-```
-
-``` r
 summary(model_seirconn)
 #> ________________________________________________________________________________
 #> ________________________________________________________________________________
@@ -229,8 +221,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 15.00ms
-#> Last run speed      : 65.69 million agents x day / second
+#> Last run elapsed t  : 24.00ms
+#> Last run speed      : 41.03 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -287,10 +279,7 @@ head(plot(repnum))
     #> 5        0 COVID-19    5 5.205882 34 3.273210 0.000 12.175
     #> 6        0 COVID-19    6 3.137255 51 2.713077 0.000  8.750
 
-``` r
-
-head(plot_generation_time(model_seirconn))
-```
+    head(plot_generation_time(model_seirconn))
 
 <img src="man/figures/README-seir-conn-figures-3.png" width="100%" />
 
@@ -351,9 +340,6 @@ run(model_logit, 50)
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
-```
-
-``` r
 plot(model_logit)
 ```
 
@@ -370,9 +356,6 @@ rn <- get_reproductive_number(model_logit)
 ) |> prop.table())[, 2]
 #>       0       1
 #> 0.13466 0.14878
-```
-
-``` r
 
 # Looking into the agents
 get_agents(model_logit)
@@ -414,9 +397,6 @@ sir <- ModelSIR(
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> | done.
-```
-
-``` r
 
 # Transmission network
 net <- get_transmissions(sir)
@@ -425,9 +405,6 @@ net <- get_transmissions(sir)
 library(epiworldR)
 library(netplot)
 #> Loading required package: grid
-```
-
-``` r
 x <- igraph::graph_from_edgelist(
   as.matrix(net[, 2:3]) + 1
 )
@@ -466,9 +443,6 @@ run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthread = 2)
 #> _________________________________________________________________________
 #> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #>  done.
-```
-
-``` r
 
 # Retrieving the results
 ans <- run_multiple_get_results(model_sir)
@@ -481,9 +455,6 @@ head(ans$total_hist)
 #> 4       1    1        1 Susceptible    974
 #> 5       1    1        1    Infected     26
 #> 6       1    1        1   Recovered      0
-```
-
-``` r
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
 #> 1       1        0 COVID-19     77                   10  0
@@ -492,9 +463,6 @@ head(ans$reproductive)
 #> 4       1        0 COVID-19    866                    8  0
 #> 5       1        0 COVID-19    811                    8  0
 #> 6       1        0 COVID-19    752                    8  0
-```
-
-``` r
 
 plot(ans$reproductive)
 ```
@@ -523,8 +491,8 @@ citation("epiworldR")
 #>
 #> And the actual R package:
 #>
-#>   Meyer D, Pulsipher A, Vega Yon G (2024). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.6.0.0,
+#>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
+#>   Epi Models_. R package version 0.6.1.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,
@@ -563,6 +531,19 @@ target="_blank"><code>cystiSim</code></a>,
 target="_blank"><code>villager</code></a>, and
 <a href="https://cran.r-project.org/package=RNetLogo"
 target="_blank"><code>RNetLogo</code></a>.
+
+# Contributing to epiworldR
+
+We welcome contributions to the epiworldR package! If you would like to
+contribute, please create a pull request.
+
+Note our use of versioning: Following [Semantic
+Versioning](https://semver.org) the first three version numbers of
+`epiworldR` mirror that of the core C++ library `epiworld`:
+MAJOR.MINOR.PATCH. These three numbers are kept in sync across both
+libraries, however, the R package has an additional version number to
+track changes on the R side that aren’t connected to changes on the C++
+side.
 
 ## Code of Conduct
 
