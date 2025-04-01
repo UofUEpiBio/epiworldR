@@ -127,9 +127,8 @@
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
 <span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
-<span><span class="co">#&gt; | done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; | done.</span></span>
+<span></span>
 <span><span class="va">sir</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; Susceptible-Infected-Recovered (SIR)</span></span>
@@ -137,7 +136,7 @@
 <span><span class="co">#&gt; The model has 3 states.</span></span>
 <span><span class="co">#&gt; The final distribution is: 1209 Susceptible, 499 Infected, and 98292 Recovered.</span></span></code></pre></div>
 <p>Visualizing the outputs</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
@@ -149,8 +148,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 66.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 74.96 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 108.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 45.93 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -174,11 +173,10 @@
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
 <span><span class="co">#&gt;  - Susceptible  0.92  0.08  0.00</span></span>
 <span><span class="co">#&gt;  - Infected     0.00  0.70  0.30</span></span>
-<span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt;  - Recovered    0.00  0.00  1.00</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-sir-figures-1.png" width="100%"></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-sir-figures-2.png" width="100%"></p>
 </div>
@@ -186,7 +184,7 @@
 <h2 id="seir-model-with-a-fully-connected-graph">SEIR model with a fully connected graph<a class="anchor" aria-label="anchor" href="#seir-model-with-a-fully-connected-graph"></a>
 </h2>
 <p>The SEIR model is similar to the SIR model but includes an exposed state. Here, we simulate a population of 10,000 agents with a 0.01 prevalence, a 0.6 transmission rate, a 0.5 recovery rate, and 7 days-incubation period. The population is fully connected, meaning agents can transmit the disease to any other agent:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_seirconn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSEIRCONN.html">ModelSEIRCONN</a></span><span class="op">(</span></span>
 <span>  name                <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
 <span>  prevalence          <span class="op">=</span> <span class="fl">0.01</span>,</span>
@@ -211,9 +209,8 @@
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; Running the model...</span></span>
 <span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
-<span><span class="co">#&gt;  done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  done.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; SIMULATION STUDY</span></span>
@@ -224,8 +221,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 15.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 65.69 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 24.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 41.03 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -256,39 +253,38 @@
 <span><span class="co">#&gt;  - Infected     0.00  0.00  0.86  0.14</span></span>
 <span><span class="co">#&gt;  - Recovered    0.00  0.00  0.00  1.00</span></span></code></pre></div>
 <p>Computing some key statistics</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-seir-conn-figures-1.png" width="100%"></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">repnum</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-seir-conn-figures-2.png" width="100%"></p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg  n       sd    lb     ub</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 5.769231 91 5.455022 1.000 20.750</span></span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 6.400000 10 4.880801 0.450 14.875</span></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 5.166667 18 4.422536 0.425 13.000</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 4.659091 44 3.784566 0.000 12.850</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 5.205882 34 3.273210 0.000 12.175</span></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 3.137255 51 2.713077 0.000  8.750</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="reference/epiworld-data.html">plot_generation_time</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg  n       sd    lb     ub</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 5.769231 91 5.455022 1.000 20.750</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 6.400000 10 4.880801 0.450 14.875</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 5.166667 18 4.422536 0.425 13.000</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 4.659091 44 3.784566 0.000 12.850</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 5.205882 34 3.273210 0.000 12.175</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 3.137255 51 2.713077 0.000  8.750</span></span>
+<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">plot_generation_time</span>(model_seirconn))</span></code></pre></div>
 <p><img src="reference/figures/README-seir-conn-figures-3.png" width="100%"></p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#&gt; 1    2 4.444444  9 2.185813      2.2    8.000 COVID-19        0</span></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co">#&gt; 2    3 7.411765 17 3.922034      2.4   15.000 COVID-19        0</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; 3    4 8.538462 39 7.100208      2.0   22.000 COVID-19        0</span></span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; 4    5 6.312500 32 3.905641      2.0   13.225 COVID-19        0</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a><span class="co">#&gt; 5    6 7.200000 40 4.052223      2.0   15.100 COVID-19        0</span></span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a><span class="co">#&gt; 6    7 7.660000 50 4.461216      2.0   17.000 COVID-19        0</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; 1    2 4.444444  9 2.185813      2.2    8.000 COVID-19        0</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 2    3 7.411765 17 3.922034      2.4   15.000 COVID-19        0</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 3    4 8.538462 39 7.100208      2.0   22.000 COVID-19        0</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 4    5 6.312500 32 3.905641      2.0   13.225 COVID-19        0</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 5    6 7.200000 40 4.052223      2.0   15.100 COVID-19        0</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 6    7 7.660000 50 4.461216      2.0   17.000 COVID-19        0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
 </h2>
 <p>This model provides a more complex transmission and recovery pattern based on agents’ features. With it, we can reflect co-morbidities that could change the probability of infection and recovery. Here, we simulate a population including a dataset with two features: an intercept and a binary variable <code>Female</code>. The probability of infection and recovery are functions of the intercept and the <code>Female</code> variables. The following code simulates a population of 100,000 agents in a small-world network. Each agent is connected to eight other agents. One percent of the population has the virus, with an 80% chance of transmission. Infected individuals recover at a 0.3 rate:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simulating a population of 100,000 agents</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2223</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">100000</span></span>
@@ -323,11 +319,10 @@
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
 <span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
-<span><span class="co">#&gt; | done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; | done.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-logit-model-1.png" width="100%"></p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Females are supposed to be more likely to become infected</span></span>
 <span><span class="va">rn</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_reproductive_number</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
@@ -337,9 +332,8 @@
 <span>  <span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">rn</span><span class="op">$</span><span class="va">source</span><span class="op">)</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/proportions.html" class="external-link">prop.table</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span></span>
 <span><span class="co">#&gt;       0       1</span></span>
-<span><span class="co">#&gt; 0.13466 0.14878</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; 0.13466 0.14878</span></span>
+<span></span>
 <span><span class="co"># Looking into the agents</span></span>
 <span><span class="fu"><a href="reference/agents.html">get_agents</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":</span></span>
@@ -359,7 +353,7 @@
 <h2 id="transmission-network">Transmission network<a class="anchor" aria-label="anchor" href="#transmission-network"></a>
 </h2>
 <p>This example shows how we can draw a transmission network from a simulation. The following code simulates a population of 500 agents in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 50% chance of transmission. Infected individuals recover at a 0.5 rate:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Creating a SIR model</span></span>
 <span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
 <span>  name           <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
@@ -374,18 +368,16 @@
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
 <span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
-<span><span class="co">#&gt; | done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; | done.</span></span>
+<span></span>
 <span><span class="co"># Transmission network</span></span>
 <span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_transmissions</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plotting</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USCCANA/netplot" class="external-link">netplot</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: grid</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span></span>
+<span><span class="co">#&gt; Loading required package: grid</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">igraph</span><span class="fu">::</span><span class="fu"><a href="https://r.igraph.org/reference/graph_from_edgelist.html" class="external-link">graph_from_edgelist</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">net</span><span class="op">[</span>, <span class="fl">2</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -396,7 +388,7 @@
 <h2 id="multiple-simulations">Multiple simulations<a class="anchor" aria-label="anchor" href="#multiple-simulations"></a>
 </h2>
 <p><code>epiworldR</code> supports running multiple simulations using the <code>run_multiple</code> function. The following code simulates 50 SIR models with 1000 agents each. Each agent is connected to ten other agents. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a <code>data.frame</code>:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">model_sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIRCONN.html">ModelSIRCONN</a></span><span class="op">(</span></span>
 <span>  name <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
 <span>  prevalence <span class="op">=</span> <span class="fl">0.01</span>,</span>
@@ -415,9 +407,8 @@
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
-<span><span class="co">#&gt;  done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt;  done.</span></span>
+<span></span>
 <span><span class="co"># Retrieving the results</span></span>
 <span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span>
 <span></span>
@@ -428,18 +419,16 @@
 <span><span class="co">#&gt; 3       1    0        1   Recovered      0</span></span>
 <span><span class="co">#&gt; 4       1    1        1 Susceptible    974</span></span>
 <span><span class="co">#&gt; 5       1    1        1    Infected     26</span></span>
-<span><span class="co">#&gt; 6       1    1        1   Recovered      0</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 6       1    1        1   Recovered      0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num virus_id    virus source source_exposure_date rt</span></span>
 <span><span class="co">#&gt; 1       1        0 COVID-19     77                   10  0</span></span>
 <span><span class="co">#&gt; 2       1        0 COVID-19    970                    8  0</span></span>
 <span><span class="co">#&gt; 3       1        0 COVID-19    895                    8  0</span></span>
 <span><span class="co">#&gt; 4       1        0 COVID-19    866                    8  0</span></span>
 <span><span class="co">#&gt; 5       1        0 COVID-19    811                    8  0</span></span>
-<span><span class="co">#&gt; 6       1        0 COVID-19    752                    8  0</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; 6       1        0 COVID-19    752                    8  0</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-multiple-example-1.png" width="100%"></p>
 </div>
@@ -456,7 +445,7 @@
 <h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h1>
 <p>If you use <code>epiworldR</code> in your research, please cite it as follows:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"epiworldR"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite epiworldR in publications use:</span></span>
 <span><span class="co">#&gt;</span></span>
@@ -466,8 +455,8 @@
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; And the actual R package:</span></span>
 <span><span class="co">#&gt;</span></span>
-<span><span class="co">#&gt;   Meyer D, Pulsipher A, Vega Yon G (2024). _epiworldR: Fast Agent-Based</span></span>
-<span><span class="co">#&gt;   Epi Models_. R package version 0.6.0.0,</span></span>
+<span><span class="co">#&gt;   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based</span></span>
+<span><span class="co">#&gt;   Epi Models_. R package version 0.6.1.0,</span></span>
 <span><span class="co">#&gt;   &lt;https://github.com/UofUEpiBio/epiworldR&gt;.</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; To see these entries in BibTeX format, use 'print(&lt;citation&gt;,</span></span>
@@ -567,6 +556,12 @@
 <h1 id="other-abm-r-packages">Other ABM R packages<a class="anchor" aria-label="anchor" href="#other-abm-r-packages"></a>
 </h1>
 <p>You may want to check out other R packages for agent-based modeling: <a href="https://cran.r-project.org/package=ABM" target="_blank" class="external-link"><code>ABM</code></a>, <a href="https://cran.r-project.org/package=abmR" target="_blank" class="external-link"><code>abmR</code></a>, <a href="https://cran.r-project.org/package=cystiSim" target="_blank" class="external-link"><code>cystiSim</code></a>, <a href="https://cran.r-project.org/package=villager" target="_blank" class="external-link"><code>villager</code></a>, and <a href="https://cran.r-project.org/package=RNetLogo" target="_blank" class="external-link"><code>RNetLogo</code></a>.</p>
+</div>
+<div class="section level1">
+<h1 id="contributing-to-epiworldr">Contributing to epiworldR<a class="anchor" aria-label="anchor" href="#contributing-to-epiworldr"></a>
+</h1>
+<p>We welcome contributions to the epiworldR package! If you would like to contribute, please create a pull request.</p>
+<p>Note our use of versioning: Following <a href="https://semver.org" class="external-link">Semantic Versioning</a> the first three version numbers of <code>epiworldR</code> mirror that of the core C++ library <code>epiworld</code>: MAJOR.MINOR.PATCH. These three numbers are kept in sync across both libraries, however, the R package has an additional version number to track changes on the R side that aren’t connected to changes on the C++ side.</p>
 <div class="section level2">
 <h2 id="code-of-conduct">Code of Conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
 </h2>
@@ -624,7 +619,7 @@
 <li><a href="https://cran.r-project.org/package=epiworldR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/epiworldR" alt="CRANlogs downloads"></a></li>
 <li><a href="https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
 <li><a href="https://app.codecov.io/gh/UofUEpiBio/epiworldR" class="external-link"><img src="https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN" alt="codecov"></a></li>
-<li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/blob/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
+<li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
 </ul>
 </div>
 
