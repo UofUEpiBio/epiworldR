@@ -298,12 +298,7 @@ You may want to check out other R packages for agent-based modeling: [`ABM`](htt
 # Contributing to epiworldR
 
 We welcome contributions to the epiworldR package!
-If you would like to contribute, please create a pull request.
-
-Note our use of versioning:
-Following [Semantic Versioning](https://semver.org) the first three version numbers of `epiworldR` mirror that of the core C++ library `epiworld`: MAJOR.MINOR.PATCH.
-These three numbers are kept in sync across both libraries, however, the R package has an additional version number to track changes on the R side that aren't connected to changes on the C++ side.
-
+If you would like to contribute, please review our [development guidelines](./DEVELOPMENT.md) before creating a pull request.
 
 ## Code of Conduct
 
