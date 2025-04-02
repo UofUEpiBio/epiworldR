@@ -49,11 +49,6 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Fix missing libraries (macOS)
-        if: ${{ matrix.config.os == 'macOS-latest' && matrix.config.r == 'devel' }}
-        run: |
-          brew unlink gettext && brew link --force gettext
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
