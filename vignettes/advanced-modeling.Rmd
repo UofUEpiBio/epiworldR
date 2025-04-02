@@ -1,0 +1,165 @@
+---
+title: "Advanced Modeling - Multiple Diseases, Tools, and Events"
+author:
+  - Andrew Pulsipher
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LFMCMC}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
+  fig.align = "center"
+)
+```
+
+# Introduction
+
+`epiworldR` models can have multiple viruses, tools, and events.
+This vignette walks through an example of an advanced model with multiple interacting pieces.
+
+## Example Scenario: Simultaneous COVID-19 and Flu Outbreaks
+
+The example implements the following scenario:
+
+-   **Diseases:** COVID-19 and Flu
+-   **Population size:** 50,000 agents
+-   **Contact Rate:** 4
+-   **Recovery Rate:** $\frac{1}{4}$ (same for both diseases)
+-   *COVID-19 Parameters*
+    -   **Initial Prevalence:** 0.001
+    -   **Transmission Rate:** 0.5
+-   *Flu Parameters*
+    -   **Initial Prevalence:** 0.001
+    -   **Transmission Rate:** 0.35
+
+We'll go through the process step-by-step. After each step, we'll run the model for 50 days and plot it to illustrate how each added component changes the base model.
+
+### Model Setup
+
+We start with a `ModelSIRCONN` model for COVID-19. We'll add the flu virus and our tools and events to this base model.
+
+```{r create-base-model}
+library(epiworldR)
+
+model_sirconn <- ModelSIRCONN(
+  name              = "COVID-19",
+  n                 = 50000,
+  contact_rate      = 4,
+  recovery_rate     = 1 / 4,
+  prevalence        = 0.001,
+  transmission_rate = 0.5
+)
+```
+
+```{r run-base-model}
+verbose_off(model_sirconn)
+run(model_sirconn, ndays = 50, seed = 1912)
+plot(model_sirconn)
+```
+
+### Add the Flu Virus
+
+Create the second virus using the `virus()` function. The parameter `prob_infecting` is the transmission rate. The parameter `as_proportion` tells the function to interpret the prevalence as a proportion of the population, rather than a fixed value.
+
+```{r create-flu-virus}
+flu_virus <- virus(name = "Flu", prob_infecting = .35, prevalence = 0.001, as_proportion = TRUE)
+```
+
+Add the virus to the model with the `add_virus()` function.
+
+```{r add-flu}
+add_virus(model_sirconn, flu_virus)
+```
+
+```{r run-model-flu}
+run(model_sirconn, ndays = 50, seed = 1912)
+plot(model_sirconn)
+```
+
+### Add a Tool (Vaccine)
+
+In `epiworldR`, agents use tools to fight diseases. Create the vaccine tool using the `tool()` function, with parameters that indicate how the tool modifies the disease parameters. We set our vaccine to reduce the susceptibility of agents by 90%, the transmission rate of infected agents by 50%, and the death rate by 90%. The vaccine further enhances the recovery rate by 50%.
+
+```{r create-vaccine}
+vaccine_tool <- tool(
+  name = "Vaccine",
+  susceptibility_reduction = .9,
+  transmission_reduction = .5,
+  recovery_enhancer = .5,
+  death_reduction = .9,
+  prevalence = 0.5,
+  as_proportion = TRUE
+)
+```
+
+Use the `set_distribution_tool()` function to define the proportion of the population to receive the tool (set here to 50%).
+
+```{r set-vaccine-distribution}
+set_distribution_tool(
+  tool = vaccine_tool,
+  distfun = distribute_tool_randomly(0.5, TRUE)
+)
+```
+
+Add the vaccine to the model using the `add_tool()` function.
+
+```{r add-vaccine}
+add_tool(model_sirconn, vaccine_tool)
+```
+
+```{r run-model-vaccine}
+run(model_sirconn, ndays = 50, seed = 1912)
+plot(model_sirconn)
+```
+
+Note how the vaccine flattens the Infected curve.
+
+### Add Events
+
+In `epiworldR`, all models automatically have a global event that runs each day to update the agents. For this example, we'll add two additional events that represent public health interventions that start partway through the simulation as the dual-disease outbreak begins to gain traction:
+
+-   Beginning on Day 10, a policy of social isolation is adopted which reduces the contact rate to 2
+-   Beginning on Day 20, a TV advertisement is run increasing awareness of the outbreak, reducing the contact rate further to 1.5
+
+Create these events using the `globalevent_set_params()` function, specifying the day to run the event.
+
+```{r set-events}
+isolation_day_10 <- globalevent_set_params("Contact rate", 2, day = 10)
+advertisement_day_20 <- globalevent_set_params("Contact rate", 1.5, day = 20)
+```
+
+Add the events to the model with the `add_globalevent()` function.
+
+```{r add-events}
+add_globalevent(model_sirconn, isolation_day_10)
+add_globalevent(model_sirconn, advertisement_day_20)
+```
+
+```{r run-full-model}
+run(model_sirconn, ndays = 50, seed = 1912)
+plot(model_sirconn)
+```
+
+Note the sharp change to the infected curve corresponding to adoptiong of the social isolation policy.
+
+### Full Model Summary
+
+With our advanced model complete, we can view the summary, noting the events, viruses, and tools we added to the model.
+
+```{r model-summary}
+summary(model_sirconn)
+```
+
+### Reproductive Numbers
+
+The model computes two reproductive numbers, one for each virus.
+
+```{r reproductive-numbers}
+repnum2 <- get_reproductive_number(model_sirconn)
+plot(repnum2, type = "b")
+```
