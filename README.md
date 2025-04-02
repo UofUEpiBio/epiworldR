@@ -139,8 +139,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 108.00ms
-#> Last run speed      : 45.93 million agents x day / second
+#> Last run elapsed t  : 93.00ms
+#> Last run speed      : 53.63 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -221,8 +221,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 24.00ms
-#> Last run speed      : 41.03 million agents x day / second
+#> Last run elapsed t  : 19.00ms
+#> Last run speed      : 50.36 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -535,15 +535,8 @@ target="_blank"><code>RNetLogo</code></a>.
 # Contributing to epiworldR
 
 We welcome contributions to the epiworldR package! If you would like to
-contribute, please create a pull request.
-
-Note our use of versioning: Following [Semantic
-Versioning](https://semver.org) the first three version numbers of
-`epiworldR` mirror that of the core C++ library `epiworld`:
-MAJOR.MINOR.PATCH. These three numbers are kept in sync across both
-libraries, however, the R package has an additional version number to
-track changes on the R side that aren’t connected to changes on the C++
-side.
+contribute, please review our [development guidelines](./DEVELOPMENT.md)
+before creating a pull request.
 
 ## Code of Conduct
 
