@@ -408,3 +408,19 @@ clone_model <- function(model) {
     class = class(model)
   )
 }
+
+#' @rdname epiworld-methods
+#' @export
+#' @param fn_output String. Path to the output file.
+#' @param allow_self_transitions Logical. Whether to allow self-transitions.
+#' @details `draw_mermaid` generates a mermaid diagram of the model. The
+#' diagram is saved in the specified output file (or printed to the standard
+#' output if the filename is empty).
+#' @return
+#' - `draw_mermaid` returns the model that was drawn.
+draw_mermaid <- function(model, fn_output = "", allow_self_transitions = FALSE) {
+  stopifnot_model(model)
+  stopifnot_string(fn_output)
+  stopifnot_bool(allow_self_transitions)
+  invisible(draw_mermaid_cpp(model, fn_output, allow_self_transitions))
+}
