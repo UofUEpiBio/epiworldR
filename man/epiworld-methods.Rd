@@ -81,7 +81,7 @@ initial_states(model, proportions)
 
 clone_model(model)
 
-draw_mermaid(model, fn_output = "", allow_self_transitions = FALSE)
+draw_mermaid(model, output_file = "", allow_self_transitions = FALSE)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -113,7 +113,7 @@ in the model}
 \item{proportions}{Numeric vector. Proportions in which agents will be
 distributed (see details).}
 
-\item{fn_output}{String. Path to the output file.}
+\item{output_file}{String. Path to the output file.}
 
 \item{allow_self_transitions}{Logical. Whether to allow self-transitions.}
 }
