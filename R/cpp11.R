@@ -352,6 +352,22 @@ print_lfmcmc_cpp <- function(lfmcmc, burnin) {
   .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc, burnin)
 }
 
+ModelDiagram_cpp <- function() {
+  .Call(`_epiworldR_ModelDiagram_cpp`)
+}
+
+draw_from_data_cpp <- function(model_diagram, states, tprob, fn_output, self) {
+  .Call(`_epiworldR_draw_from_data_cpp`, model_diagram, states, tprob, fn_output, self)
+}
+
+draw_from_file_cpp <- function(model_diagram, fn_transition, fn_output, self) {
+  .Call(`_epiworldR_draw_from_file_cpp`, model_diagram, fn_transition, fn_output, self)
+}
+
+draw_from_files_cpp <- function(model_diagram, fns_transition, fn_output, self) {
+  .Call(`_epiworldR_draw_from_files_cpp`, model_diagram, fns_transition, fn_output, self)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }

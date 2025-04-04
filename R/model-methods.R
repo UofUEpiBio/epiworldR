@@ -418,7 +418,11 @@ clone_model <- function(model) {
 #' output if the filename is empty).
 #' @return
 #' - `draw_mermaid` returns the model that was drawn.
-draw_mermaid <- function(model, output_file = "", allow_self_transitions = FALSE) {
+draw_mermaid <- function(
+    model,
+    output_file = "",
+    allow_self_transitions = FALSE
+    ) {
   stopifnot_model(model)
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)

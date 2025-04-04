@@ -63,6 +63,17 @@ stopifnot_numvector <- function(x) {
   }
 }
 
+# Checks if argument is a vector of string values
+stopifnot_stringvector <- function(x) {
+  if (!is.character(x) || !is.vector(x)) {
+    stop(
+      paste(match.call()$x, "must be a string vector, but is of class(es): "),
+      paste(class(x), collapse = ", ")
+    )
+  }
+}
+
+
 # Checks if model object is of class "epiworld_model"
 stopifnot_model <- function(model) {
   if (!inherits(model, "epiworld_model")) {
@@ -174,6 +185,16 @@ stopifnot_virus_distfun <- function(virus_distfun) {
       "The -virus_distfun- object must be of class 'epiworld_virus_distfun'. ",
       "The object passed to the function is of class(es): ",
       paste(class(virus_distfun), collapse = ", ")
+    )
+  }
+}
+
+# Checks if argument is of class "epiworld_modeldiagram"
+stopifnot_modeldiagram <- function(x) {
+  if (!inherits(x, "epiworld_modeldiagram")) {
+    stop(
+      paste(match.call()$x, "must be an object of class 'epiworld_modeldiagram', but is of class(es): "),
+      paste(class(x), collapse = ", ")
     )
   }
 }
