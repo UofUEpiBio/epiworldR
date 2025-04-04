@@ -352,6 +352,22 @@ print_lfmcmc_cpp <- function(lfmcmc, burnin) {
   .Call(`_epiworldR_print_lfmcmc_cpp`, lfmcmc, burnin)
 }
 
+ModelDiagram_cpp <- function() {
+  .Call(`_epiworldR_ModelDiagram_cpp`)
+}
+
+draw_from_data_cpp <- function(model_diagram, states, tprob, fn_output, self) {
+  .Call(`_epiworldR_draw_from_data_cpp`, model_diagram, states, tprob, fn_output, self)
+}
+
+draw_from_file_cpp <- function(model_diagram, fn_transition, fn_output, self) {
+  .Call(`_epiworldR_draw_from_file_cpp`, model_diagram, fn_transition, fn_output, self)
+}
+
+draw_from_files_cpp <- function(model_diagram, fns_transition, fn_output, self) {
+  .Call(`_epiworldR_draw_from_files_cpp`, model_diagram, fns_transition, fn_output, self)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
@@ -466,6 +482,10 @@ initial_states_cpp <- function(model, proportions) {
 
 clone_model_cpp <- function(model) {
   .Call(`_epiworldR_clone_model_cpp`, model)
+}
+
+draw_mermaid_cpp <- function(model, fn_output, self) {
+  .Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self)
 }
 
 tool_cpp <- function(name, prevalence, as_proportion, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

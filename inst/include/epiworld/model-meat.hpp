@@ -19,7 +19,7 @@
  * @param transition 
  * @return std::function<void(size_t,Model<TSeq>*)> 
  */
-template<typename TSeq = int>
+template<typename TSeq>
 inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     std::string fmt,
     bool total_hist,
@@ -711,6 +711,24 @@ inline void Model<TSeq>::set_rand_binom(int n, epiworld_double p)
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::set_rand_nbinom(int n, epiworld_double p)
+{ 
+    rnbinomd  = std::negative_binomial_distribution<>(n, p);
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_rand_geom(epiworld_double p)
+{ 
+    rgeomd  = std::geometric_distribution<>(p);
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_rand_poiss(epiworld_double lambda)
+{ 
+    rpoissd  = std::poisson_distribution<>(lambda);
+}
+
+template<typename TSeq>
 inline epiworld_double & Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())
@@ -896,6 +914,48 @@ inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
     rbinomd.param(std::binomial_distribution<>::param_type(n, p));
     epiworld_double ans = rbinomd(*engine);
     rbinomd.param(old_param);
+    return ans;
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rnbinom() {
+    return rnbinomd(*engine);
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rnbinom(int n, epiworld_double p) {
+    auto old_param = rnbinomd.param();
+    rnbinomd.param(std::negative_binomial_distribution<>::param_type(n, p));
+    int ans = rnbinomd(*engine);
+    rnbinomd.param(old_param);
+    return ans;
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rgeom() {
+    return rgeomd(*engine);
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rgeom(epiworld_double p) {
+    auto old_param = rgeomd.param();
+    rgeomd.param(std::geometric_distribution<>::param_type(p));
+    int ans = rgeomd(*engine);
+    rgeomd.param(old_param);
+    return ans;
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rpoiss() {
+    return rpoissd(*engine);
+}
+
+template<typename TSeq>
+inline int Model<TSeq>::rpoiss(epiworld_double lambda) {
+    auto old_param = rpoissd.param();
+    rpoissd.param(std::poisson_distribution<>::param_type(lambda));
+    int ans = rpoissd(*engine);
+    rpoissd.param(old_param);
     return ans;
 }
 
@@ -1279,7 +1339,7 @@ inline Model<TSeq> & Model<TSeq>::run(
 {
 
     if (size() == 0u)
-        throw std::logic_error("There's no agents in this model!");
+        throw std::logic_error("There are no agents in this model!");
 
     if (nstates == 0u)
         throw std::logic_error(
@@ -1975,10 +2035,15 @@ inline void Model<TSeq>::print_state_codes() const
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::add_param(
     epiworld_double initial_value,
-    std::string pname
+    std::string pname,
+    bool overwrite
     ) {
 
     if (parameters.find(pname) == parameters.end())
+        parameters[pname] = initial_value;
+    else if (!overwrite)
+        throw std::logic_error("The parameter " + pname + " already exists.");
+    else
         parameters[pname] = initial_value;
     
     return initial_value;
@@ -1986,48 +2051,15 @@ inline epiworld_double Model<TSeq>::add_param(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::read_params(std::string fn)
+inline Model<TSeq> & Model<TSeq>::read_params(std::string fn, bool overwrite)
 {
 
-    std::ifstream paramsfile(fn);
+    auto params_map = read_yaml<epiworld_double>(fn);
 
-    if (!paramsfile)
-        throw std::logic_error("The file " + fn + " was not found.");
+    for (auto & p : params_map)
+        add_param(p.second, p.first, overwrite);
 
-    std::regex pattern("^([^:]+)\\s*[:]\\s*([0-9]+|[0-9]*\\.[0-9]+)?\\s*$");
-
-    std::string line;
-    std::smatch match;
-    auto empty = std::sregex_iterator();
-
-    while (std::getline(paramsfile, line))
-    {
-
-        // Is it a comment or an empty line?
-        if (std::regex_match(line, std::regex("^([*].+|//.+|#.+|\\s*)$")))
-            continue;
-
-        // Finding the patter, if it doesn't match, then error
-        std::regex_match(line, match, pattern);
-
-        if (match.empty())
-            throw std::logic_error("The line does not match parameters:\n" + line);
-
-        // Capturing the number
-        std::string anumber = match[2u].str() + match[3u].str();
-        epiworld_double tmp_num = static_cast<epiworld_double>(
-            std::strtod(anumber.c_str(), nullptr)
-            );
-
-        add_param(
-            tmp_num,
-            std::regex_replace(
-                match[1u].str(),
-                std::regex("^\\s+|\\s+$"),
-                "")
-        );
-
-    }
+    return *this;
 
 }
 
@@ -2533,6 +2565,25 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     )
     
     return true;
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::draw(
+    const std::string & fn_output,
+    bool self
+) {
+
+    ModelDiagram diagram;
+
+    diagram.draw_from_data(
+        this->get_states(),
+        this->get_db().transition_probability(false),
+        fn_output,
+        self
+    );
+
+    return;
 
 }
 

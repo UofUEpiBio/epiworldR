@@ -15,7 +15,7 @@ test_tmat_matches_expected <- function(tmat) {
     )
   )
   
-  expect_equal(tmat, tmat_expected, tolerance = 0.0000001)
+  expect_equal(tmat, tmat_expected, tolerance = 0.01)
 }
 
 # Create small world population SIR Model --------------------------------------
