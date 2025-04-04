@@ -1,5 +1,6 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-model-methods.R")
 
+# Setup for tests --------------------------------------------------------------
 model <- ModelSIRCONN(
   name = "A Virus",
   n = 10000,
