@@ -3,14 +3,14 @@
 \name{ModelDiagram}
 \alias{ModelDiagram}
 \alias{epiworld_modeldiagram}
-\alias{draw_from_data}
-\alias{draw_from_file}
-\alias{draw_from_files}
+\alias{draw_mermaid_from_data}
+\alias{draw_mermaid_from_file}
+\alias{draw_mermaid_from_files}
 \title{Model Diagram}
 \usage{
 ModelDiagram()
 
-draw_from_data(
+draw_mermaid_from_data(
   model_diagram,
   states,
   transition_probs,
@@ -18,14 +18,14 @@ draw_from_data(
   allow_self_transitions = FALSE
 )
 
-draw_from_file(
+draw_mermaid_from_file(
   model_diagram,
   transitions_file,
   output_file = "",
   allow_self_transitions = FALSE
 )
 
-draw_from_files(
+draw_mermaid_from_files(
   model_diagram,
   transitions_files,
   output_file = "",

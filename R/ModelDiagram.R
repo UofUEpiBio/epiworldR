@@ -22,7 +22,7 @@ ModelDiagram <- function() {
 #' @returns
 #' - The ModelDiagram object.
 #' @export
-draw_from_data <- function(
+draw_mermaid_from_data <- function(
     model_diagram,
     states,
     transition_probs,
@@ -52,7 +52,7 @@ draw_from_data <- function(
 #' @returns
 #' - The ModelDiagram object.
 #' @export
-draw_from_file <- function(
+draw_mermaid_from_file <- function(
     model_diagram,
     transitions_file,
     output_file = "",
@@ -79,7 +79,7 @@ draw_from_file <- function(
 #' @returns
 #' - The ModelDiagram object.
 #' @export
-draw_from_files <- function(
+draw_mermaid_from_files <- function(
     model_diagram,
     transitions_files,
     output_file = "",
