@@ -105,7 +105,6 @@ To make a mermaid diagram of the model states and transition probabilities, use 
 This can be rendered with an R package, such as `DiagrammeR`, but since `DiagrammeR` uses an old version of mermaid.js, we need to modify the output of `draw_mermaid()` slightly to ensure the diagram is displayed correctly.
 
 ```{r mermaid-diagram}
-install.packages("DiagrammeR")
 library(DiagrammeR)
 # Capture the output of the draw_mermaid function
 m_diagram <- capture.output(draw_mermaid(model_sir))
