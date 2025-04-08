@@ -79,7 +79,7 @@ model <- ModelSIRCONN(
   prevalence = .01,
   contact_rate = 4.0,
   transmission_rate = .5,
-  recovery_rate = 1.0/7.0
+  recovery_rate = 1.0 / 7.0
 )
 
 verbose_off(model)
@@ -90,8 +90,8 @@ m_diagram <- ModelDiagram()
 
 # Draw mermaid diagrams from model data
 draw_mermaid_from_data(
-    m_diagram,
-    states = get_states(model),
-    transition_probs = c(get_transition_probability(model))
+  m_diagram,
+  states = get_states(model),
+  transition_probs = c(get_transition_probability(model))
 )
 }
