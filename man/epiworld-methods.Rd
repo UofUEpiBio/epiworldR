@@ -310,4 +310,7 @@ add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1, prevalence = 0.5, as_prop
 get_tool(model_sirconn, 0) # Returns information about the first tool in the
 # model. In this case, there are no tools so an
 # error message will occur.
+
+# Draw a mermaid diagram of the transitions
+draw_mermaid(model_sirconn)
 }

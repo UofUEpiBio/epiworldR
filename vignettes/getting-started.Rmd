@@ -100,6 +100,20 @@ infection.
 
 ## Plot
 
+To make a mermaid diagram of the model states and transition probabilities, use the `draw_mermaid()` function.
+This can be rendered with an R package, such as `DiagrammeR`, but since `DiagrammeR` uses an old version of mermaid.js, we need to modify the output of `draw_mermaid()` slightly to ensure the diagram is displayed correctly.
+
+```{r mermaid-diagram}
+library(DiagrammeR)
+# Capture the output of the draw_mermaid function
+m_diagram <- capture.output(draw_mermaid(model_sir))
+# Modify first line for compatibility with DiagrammeR
+# - Necessary because DiagrammeR uses old version of mermaid.js
+m_diagram[1] <- "graph LR"
+
+mermaid(paste(m_diagram, collapse = "\n"))
+```
+
 ## Extracting information
 
 After running the epiworldR model, below is a list of all the functions that can
