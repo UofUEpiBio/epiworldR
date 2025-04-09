@@ -14,8 +14,8 @@ verbose_off(model)
 run(model, ndays = 50, seed = 1912)
 
 # Check draw_mermaid succeeds with valid inputs --------------------------------
-expect_stdout(draw_mermaid(model))
-expect_stdout(draw_mermaid(model, allow_self_transitions = TRUE))
+expect_silent(draw_mermaid(model))
+expect_silent(draw_mermaid(model, allow_self_transitions = TRUE))
 expect_silent(draw_mermaid(model, output_file = "mermaid_diagram.txt"))
 expect_true(file.exists("mermaid_diagram.txt"))
 file.remove("mermaid_diagram.txt")

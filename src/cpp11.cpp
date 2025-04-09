@@ -849,10 +849,11 @@ extern "C" SEXP _epiworldR_clone_model_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
-SEXP draw_mermaid_cpp(SEXP model, std::string fn_output, bool self);
+void draw_mermaid_cpp(SEXP model, std::string fn_output, bool self);
 extern "C" SEXP _epiworldR_draw_mermaid_cpp(SEXP model, SEXP fn_output, SEXP self) {
   BEGIN_CPP11
-    return cpp11::as_sexp(draw_mermaid_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self)));
+    draw_mermaid_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self));
+    return R_NilValue;
   END_CPP11
 }
 // tool.cpp

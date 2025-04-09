@@ -188,13 +188,3 @@ stopifnot_virus_distfun <- function(virus_distfun) {
     )
   }
 }
-
-# Checks if argument is of class "epiworld_modeldiagram"
-stopifnot_modeldiagram <- function(x) {
-  if (!inherits(x, "epiworld_modeldiagram")) {
-    stop(
-      paste(match.call()$x, "must be an object of class 'epiworld_modeldiagram', but is of class(es): "),
-      paste(class(x), collapse = ", ")
-    )
-  }
-}

@@ -346,7 +346,7 @@ SEXP clone_model_cpp(const SEXP & model) {
 }
 
 [[cpp11::register]]
-SEXP draw_mermaid_cpp(
+void draw_mermaid_cpp(
     SEXP model,
     std::string fn_output,
     bool self
@@ -354,7 +354,5 @@ SEXP draw_mermaid_cpp(
 
   external_pointer<Model<>> modelptr(model);
   modelptr->draw(fn_output, self);
-
-  return model;
 
 }

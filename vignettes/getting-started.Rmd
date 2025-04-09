@@ -107,12 +107,12 @@ This can be rendered with an R package, such as `DiagrammeR`, but since `Diagram
 ```{r mermaid-diagram}
 library(DiagrammeR)
 # Capture the output of the draw_mermaid function
-m_diagram <- capture.output(draw_mermaid(model_sir))
+m_diagram <- draw_mermaid(model_sir)
 # Modify first line for compatibility with DiagrammeR
 # - Necessary because DiagrammeR uses old version of mermaid.js
-m_diagram[1] <- "graph LR"
+m_diagram <- paste0("graph", substring(m_diagram, 10))
 
-mermaid(paste(m_diagram, collapse = "\n"))
+mermaid(m_diagram)
 ```
 
 ## Extracting information

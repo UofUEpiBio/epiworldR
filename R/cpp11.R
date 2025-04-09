@@ -481,7 +481,7 @@ clone_model_cpp <- function(model) {
 }
 
 draw_mermaid_cpp <- function(model, fn_output, self) {
-  .Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self)
+  invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
 }
 
 tool_cpp <- function(name, prevalence, as_proportion, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

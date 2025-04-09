@@ -207,7 +207,7 @@ of \code{epiworld_model}.
 }
 
 \itemize{
-\item \code{draw_mermaid} returns the model that was drawn.
+\item The \code{draw_mermaid} returns the mermaid diagram as a string.
 }
 }
 \description{

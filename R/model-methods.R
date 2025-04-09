@@ -420,7 +420,7 @@ clone_model <- function(model) {
 #' diagram is saved in the specified output file (or printed to the standard
 #' output if the filename is empty).
 #' @return
-#' - `draw_mermaid` returns the model that was drawn.
+#' - The `draw_mermaid` returns the mermaid diagram as a string.
 draw_mermaid <- function(
     model,
     output_file = "",
@@ -429,7 +429,12 @@ draw_mermaid <- function(
   stopifnot_model(model)
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
-  invisible(draw_mermaid_cpp(model, output_file, allow_self_transitions))
-}
 
-# TODO: same here
+  diagram <- capture.output(draw_mermaid_cpp(
+    model,
+    output_file,
+    allow_self_transitions
+  ))
+
+  return(paste(diagram, collapse = "\n"))
+}
