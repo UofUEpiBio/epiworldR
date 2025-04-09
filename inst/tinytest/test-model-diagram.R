@@ -35,6 +35,22 @@ expect_true(file.exists("mermaid_diagram.txt"))
 file.remove("mermaid_diagram.txt")
 expect_false(file.exists("mermaid_diagram.txt"))
 
+# Check draw_mermaid_from_matrix
+expect_silent(draw_mermaid_from_matrix(
+    transition_matrix = get_transition_probability(model)
+))
+expect_silent(draw_mermaid_from_matrix(
+  transition_matrix = get_transition_probability(model),
+  allow_self_transitions = TRUE
+))
+expect_silent(draw_mermaid_from_matrix(
+  transition_matrix = get_transition_probability(model),
+  output_file = "mermaid_diagram.txt"
+))
+expect_true(file.exists("mermaid_diagram.txt"))
+file.remove("mermaid_diagram.txt")
+expect_false(file.exists("mermaid_diagram.txt"))
+
 # Check draw_mermaid_from_file
 test_file <- "test-model-diagram-files/single-file-transitions.txt"
 expect_silent(draw_mermaid_from_file(

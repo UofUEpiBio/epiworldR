@@ -3,6 +3,7 @@
 \name{epiworld-model-diagram}
 \alias{epiworld-model-diagram}
 \alias{draw_mermaid_from_data}
+\alias{draw_mermaid_from_matrix}
 \alias{draw_mermaid_from_file}
 \alias{draw_mermaid_from_files}
 \title{Model Diagram}
@@ -10,6 +11,12 @@
 draw_mermaid_from_data(
   states,
   transition_probs,
+  output_file = "",
+  allow_self_transitions = FALSE
+)
+
+draw_mermaid_from_matrix(
+  transition_matrix,
   output_file = "",
   allow_self_transitions = FALSE
 )
@@ -35,6 +42,8 @@ draw_mermaid_from_files(
 
 \item{allow_self_transitions}{Logical. Whether to allow self-transitions.}
 
+\item{transition_matrix}{Matrix. Contains states and transition probabilities.}
+
 \item{transitions_file}{String. Path to file containing the transition probabilities matrix.}
 
 \item{transitions_files}{String vector. List of files containing transition probabilities matrices from multiple model runs.}
@@ -42,6 +51,11 @@ draw_mermaid_from_files(
 \value{
 \itemize{
 \item The \code{draw_mermaid_from_data} function returns the
+mermaid diagram as a string.
+}
+
+\itemize{
+\item The \code{draw_mermaid_from_matrix} function returns the
 mermaid diagram as a string.
 }
 

@@ -55,6 +55,34 @@ draw_mermaid_from_data <- function(
 }
 
 #' @rdname epiworld-model-diagram
+#' @param transition_matrix Matrix. Contains states and transition probabilities.
+#' @param output_file String. Path to the output file.
+#' @param allow_self_transitions Logical. Whether to allow self-transitions.
+#' @returns
+#' - The `draw_mermaid_from_matrix` function returns the
+#' mermaid diagram as a string.
+#' @export
+draw_mermaid_from_matrix <- function(
+    transition_matrix,
+    output_file = "",
+    allow_self_transitions = FALSE
+    ) {
+
+  m_states <- colnames(transition_matrix)
+  t_probs <- c(transition_matrix)
+
+  stopifnot_string(output_file)
+  stopifnot_bool(allow_self_transitions)
+
+  draw_mermaid_from_data(
+    states = m_states,
+    transition_probs = t_probs,
+    output_file = output_file,
+    allow_self_transitions = allow_self_transitions
+  )
+}
+
+#' @rdname epiworld-model-diagram
 #' @param transitions_file String. Path to file containing the transition probabilities matrix.
 #' @param output_file String. Path to the output file.
 #' @param allow_self_transitions Logical. Whether to allow self-transitions.
