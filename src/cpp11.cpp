@@ -622,31 +622,27 @@ extern "C" SEXP _epiworldR_print_lfmcmc_cpp(SEXP lfmcmc, SEXP burnin) {
   END_CPP11
 }
 // model-diagram.cpp
-SEXP ModelDiagram_cpp();
-extern "C" SEXP _epiworldR_ModelDiagram_cpp() {
+void draw_from_data_cpp(const std::vector< std::string > & states, const std::vector< epiworld_double > & tprob, const std::string & fn_output, bool self);
+extern "C" SEXP _epiworldR_draw_from_data_cpp(SEXP states, SEXP tprob, SEXP fn_output, SEXP self) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelDiagram_cpp());
+    draw_from_data_cpp(cpp11::as_cpp<cpp11::decay_t<const std::vector< std::string > &>>(states), cpp11::as_cpp<cpp11::decay_t<const std::vector< epiworld_double > &>>(tprob), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self));
+    return R_NilValue;
   END_CPP11
 }
 // model-diagram.cpp
-SEXP draw_from_data_cpp(SEXP model_diagram, const std::vector< std::string > & states, const std::vector< epiworld_double > & tprob, const std::string & fn_output, bool self);
-extern "C" SEXP _epiworldR_draw_from_data_cpp(SEXP model_diagram, SEXP states, SEXP tprob, SEXP fn_output, SEXP self) {
+void draw_from_file_cpp(const std::string & fn_transition, const std::string & fn_output, bool self);
+extern "C" SEXP _epiworldR_draw_from_file_cpp(SEXP fn_transition, SEXP fn_output, SEXP self) {
   BEGIN_CPP11
-    return cpp11::as_sexp(draw_from_data_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model_diagram), cpp11::as_cpp<cpp11::decay_t<const std::vector< std::string > &>>(states), cpp11::as_cpp<cpp11::decay_t<const std::vector< epiworld_double > &>>(tprob), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self)));
+    draw_from_file_cpp(cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_transition), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self));
+    return R_NilValue;
   END_CPP11
 }
 // model-diagram.cpp
-SEXP draw_from_file_cpp(SEXP model_diagram, const std::string & fn_transition, const std::string & fn_output, bool self);
-extern "C" SEXP _epiworldR_draw_from_file_cpp(SEXP model_diagram, SEXP fn_transition, SEXP fn_output, SEXP self) {
+void draw_from_files_cpp(const std::vector< std::string > & fns_transition, const std::string & fn_output, bool self);
+extern "C" SEXP _epiworldR_draw_from_files_cpp(SEXP fns_transition, SEXP fn_output, SEXP self) {
   BEGIN_CPP11
-    return cpp11::as_sexp(draw_from_file_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model_diagram), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_transition), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self)));
-  END_CPP11
-}
-// model-diagram.cpp
-SEXP draw_from_files_cpp(SEXP model_diagram, const std::vector< std::string > & fns_transition, const std::string & fn_output, bool self);
-extern "C" SEXP _epiworldR_draw_from_files_cpp(SEXP model_diagram, SEXP fns_transition, SEXP fn_output, SEXP self) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(draw_from_files_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model_diagram), cpp11::as_cpp<cpp11::decay_t<const std::vector< std::string > &>>(fns_transition), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self)));
+    draw_from_files_cpp(cpp11::as_cpp<cpp11::decay_t<const std::vector< std::string > &>>(fns_transition), cpp11::as_cpp<cpp11::decay_t<const std::string &>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self));
+    return R_NilValue;
   END_CPP11
 }
 // model.cpp
@@ -1192,7 +1188,6 @@ extern "C" SEXP _epiworldR_distribute_virus_to_set_cpp(SEXP agents_ids) {
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_LFMCMC_cpp",                           (DL_FUNC) &_epiworldR_LFMCMC_cpp,                            1},
-    {"_epiworldR_ModelDiagram_cpp",                     (DL_FUNC) &_epiworldR_ModelDiagram_cpp,                      0},
     {"_epiworldR_ModelDiffNet_cpp",                     (DL_FUNC) &_epiworldR_ModelDiffNet_cpp,                      8},
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},
@@ -1225,9 +1220,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_distribute_tool_to_set_cpp",           (DL_FUNC) &_epiworldR_distribute_tool_to_set_cpp,            1},
     {"_epiworldR_distribute_virus_randomly_cpp",        (DL_FUNC) &_epiworldR_distribute_virus_randomly_cpp,         2},
     {"_epiworldR_distribute_virus_to_set_cpp",          (DL_FUNC) &_epiworldR_distribute_virus_to_set_cpp,           1},
-    {"_epiworldR_draw_from_data_cpp",                   (DL_FUNC) &_epiworldR_draw_from_data_cpp,                    5},
-    {"_epiworldR_draw_from_file_cpp",                   (DL_FUNC) &_epiworldR_draw_from_file_cpp,                    4},
-    {"_epiworldR_draw_from_files_cpp",                  (DL_FUNC) &_epiworldR_draw_from_files_cpp,                   4},
+    {"_epiworldR_draw_from_data_cpp",                   (DL_FUNC) &_epiworldR_draw_from_data_cpp,                    4},
+    {"_epiworldR_draw_from_file_cpp",                   (DL_FUNC) &_epiworldR_draw_from_file_cpp,                    3},
+    {"_epiworldR_draw_from_files_cpp",                  (DL_FUNC) &_epiworldR_draw_from_files_cpp,                   3},
     {"_epiworldR_draw_mermaid_cpp",                     (DL_FUNC) &_epiworldR_draw_mermaid_cpp,                      3},
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
     {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},

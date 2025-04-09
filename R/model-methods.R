@@ -431,3 +431,5 @@ draw_mermaid <- function(
   stopifnot_bool(allow_self_transitions)
   invisible(draw_mermaid_cpp(model, output_file, allow_self_transitions))
 }
+
+# TODO: same here
