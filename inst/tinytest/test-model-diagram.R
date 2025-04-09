@@ -106,6 +106,19 @@ expect_error(draw_mermaid_from_data(
     allow_self_transitions = "Not a Bool"
 ), "must be a boolean")
 
+# Check draw_mermaid_from_matrix
+expect_error(draw_mermaid_from_matrix(
+    transition_matrix = NA,
+), "must be a string vector")
+expect_error(draw_mermaid_from_matrix(
+    transition_matrix = get_transition_probability(model),
+    output_file = NA
+), "must be a string")
+expect_error(draw_mermaid_from_matrix(
+    transition_matrix = get_transition_probability(model),
+    allow_self_transitions = "Not a Bool"
+), "must be a boolean")
+
 # Check draw_mermaid_from_file
 expect_error(draw_mermaid_from_file(
     transitions_file = NA
