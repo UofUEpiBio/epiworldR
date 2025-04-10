@@ -13,7 +13,7 @@ and running the simulation."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +107,9 @@ and running the simulation.</p>
 <span></span>
 <span><span class="fu">initial_states</span><span class="op">(</span><span class="va">model</span>, <span class="va">proportions</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">clone_model</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">clone_model</span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">draw_mermaid</span><span class="op">(</span><span class="va">model</span>, output_file <span class="op">=</span> <span class="st">""</span>, allow_self_transitions <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -168,6 +170,14 @@ in the model</p></dd>
 <dd><p>Numeric vector. Proportions in which agents will be
 distributed (see details).</p></dd>
 
+
+<dt id="arg-output-file">output_file<a class="anchor" aria-label="anchor" href="#arg-output-file"></a></dt>
+<dd><p>String. Optional path to a file. If provided, the diagram will be written to the file.</p></dd>
+
+
+<dt id="arg-allow-self-transitions">allow_self_transitions<a class="anchor" aria-label="anchor" href="#arg-allow-self-transitions"></a></dt>
+<dd><p>Logical. Whether to allow self-transitions, defaults to FALSE.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -197,6 +207,7 @@ of <code>epiworld_model</code>.</p></li>
 </ul><ul><li><p><code>get_tool</code> returns a <a href="tool.html">tool</a>.</p></li>
 </ul><ul><li><p><code>inital_states</code> returns the model with an updated initial state.</p></li>
 </ul><ul><li><p><code>clone_model</code> returns a copy of the model.</p></li>
+</ul><ul><li><p>The <code>draw_mermaid</code> returns the mermaid diagram as a string.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -205,6 +216,9 @@ progress on screen, respectively. Both functions return the model (<code>x</code
 <p><code>epiworld_model</code> objects are pointers to an underlying C++ class
 in <code>epiworld</code>. To generate a copy of a model, use <code>clone_model</code>, otherwise,
 the assignment operator will only copy the pointer.</p>
+<p><code>draw_mermaid</code> generates a mermaid diagram of the model. The
+diagram is saved in the specified output file (or printed to the standard
+output if the filename is empty).</p>
     </div>
 
     <div class="section level2">
@@ -228,8 +242,7 @@ the assignment operator will only copy the pointer.</p>
 <span class="r-in"><span><span class="fu">run</span><span class="op">(</span><span class="va">model_sirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Verbose - "on" prints the progress bar on the screen while "off"</span></span></span>
 <span class="r-in"><span><span class="co"># deactivates the progress bar. Declare which function you want to implement,</span></span></span>
@@ -320,6 +333,10 @@ the assignment operator will only copy the pointer.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> queue_post : 0</span>
 <span class="r-in"><span><span class="co"># model. In this case, there are no tools so an</span></span></span>
 <span class="r-in"><span><span class="co"># error message will occur.</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Draw a mermaid diagram of the transitions</span></span></span>
+<span class="r-in"><span><span class="fu">draw_mermaid</span><span class="op">(</span><span class="va">model_sirconn</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "flowchart LR\n\ts0[Infected]\n\ts1[Recovered]\n\ts2[Susceptible]\n\ts0 --&gt;|0.950161| s1\n\ts2 --&gt;|0.031401| s0\n"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -13,7 +13,7 @@ number, the generation time, and daily incidence at the virus and tool level."><
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -231,15 +231,14 @@ plotting.</p>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">seirconn</span>, <span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> |Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> | done.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving the transition probability</span></span></span>
 <span class="r-in"><span><span class="fu">get_transition_probability</span><span class="op">(</span><span class="va">seirconn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Susceptible    Exposed  Infected Recovered</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible   0.9028099 0.09719012 0.0000000 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed       0.0000000 0.85844742 0.1415526 0.0000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Infected      0.0000000 0.00000000 0.7000978 0.2999022</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Susceptible   0.9113965 0.08860354 0.0000000 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Exposed       0.0000000 0.85694473 0.1430553 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Infected      0.0000000 0.00000000 0.6974602 0.3025398</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Recovered     0.0000000 0.00000000 0.0000000 1.0000000</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving date, state, and counts dataframe including any added tools</span></span></span>
