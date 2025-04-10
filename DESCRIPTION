@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.6.1.1
+Version: 0.8.0.0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut"),
@@ -33,7 +33,8 @@ Suggests:
     tinytest,
     netplot,
     igraph,
-    data.table
+    data.table,
+    DiagrammeR
 Imports:
     utils
 VignetteBuilder: knitr
