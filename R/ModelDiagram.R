@@ -68,11 +68,26 @@ draw_mermaid_from_matrix <- function(
     allow_self_transitions = FALSE
     ) {
 
-  m_states <- colnames(transition_matrix)
-  t_probs <- c(transition_matrix)
+  stopifany_na(transition_matrix)
+
+  if (nrow(transition_matrix) != ncol(transition_matrix)) {
+    stop(paste0(
+      "Transition matrix must be square, but instead has dimensions: [",
+      nrow(transition_matrix), "x", ncol(transition_matrix), "]"))
+  }
+
+  if (!identical(colnames(transition_matrix), rownames(transition_matrix))) {
+    stop(paste0(
+      "Transition matrix must have the same row and column names, but instead has row names: [",
+      paste(rownames(transition_matrix), collapse = ", "), "] and column names: [",
+      paste(colnames(transition_matrix), collapse = ", "), "]"))
+  }
 
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
+
+  m_states <- colnames(transition_matrix)
+  t_probs <- c(transition_matrix)
 
   draw_mermaid_from_data(
     states = m_states,

@@ -109,7 +109,18 @@ expect_error(draw_mermaid_from_data(
 # Check draw_mermaid_from_matrix
 expect_error(draw_mermaid_from_matrix(
     transition_matrix = NA,
-), "must be a string vector")
+), "must not contain NA values")
+
+mismatch_rowcol_names_matrix <- matrix(1:9, nrow = 3, dimnames = list(c("X","Y","Z"), c("A","B","C")))
+expect_error(draw_mermaid_from_matrix(
+  transition_matrix = mismatch_rowcol_names_matrix ,
+), "must have the same row and column names")
+
+nonsquare_matrix <- matrix(1:8, nrow = 2, ncol = 4)
+expect_error(draw_mermaid_from_matrix(
+  transition_matrix = nonsquare_matrix,
+), "matrix must be square")
+
 expect_error(draw_mermaid_from_matrix(
     transition_matrix = get_transition_probability(model),
     output_file = NA
