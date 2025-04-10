@@ -429,11 +429,24 @@ draw_mermaid <- function(
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
 
-  diagram <- capture.output(draw_mermaid_cpp(
-    model,
-    output_file,
-    allow_self_transitions
-  ))
+  if (output_file != "") {
+    draw_mermaid_cpp(
+      model,
+      output_file,
+      allow_self_transitions
+    )
 
-  return(paste(diagram, collapse = "\n"))
+    message("Diagram written to ", output_file)
+
+    diagram <- readChar(output_file, file.info(output_file)$size)
+    return(diagram)
+  } else {
+    diagram <- capture.output(draw_mermaid_cpp(
+      model,
+      output_file,
+      allow_self_transitions
+    ))
+
+    return(paste(diagram, collapse = "\n"))
+  }
 }

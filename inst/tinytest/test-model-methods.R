@@ -14,9 +14,16 @@ verbose_off(model)
 run(model, ndays = 50, seed = 1912)
 
 # Check draw_mermaid succeeds with valid inputs --------------------------------
-expect_silent(draw_mermaid(model))
-expect_silent(draw_mermaid(model, allow_self_transitions = TRUE))
-expect_silent(draw_mermaid(model, output_file = "mermaid_diagram.txt"))
+expect_silent(md_basic <- draw_mermaid(model))
+expect_silent(md_self <- draw_mermaid(model, allow_self_transitions = TRUE))
+expect_message(md_with_output <- draw_mermaid(
+  model,
+  output_file = "mermaid_diagram.txt"
+), "Diagram written")
+
+expect_false(identical(md_basic, md_self))
+expect_identical(md_basic, md_with_output)
+
 expect_true(file.exists("mermaid_diagram.txt"))
 file.remove("mermaid_diagram.txt")
 expect_false(file.exists("mermaid_diagram.txt"))
