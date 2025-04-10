@@ -72,9 +72,6 @@ inline void Progress::next() {
     }
     #endif
 
-    if (i >= n)
-        end();
-
     last_loc = cur_loc;
 
 }

@@ -63,6 +63,17 @@ stopifnot_numvector <- function(x) {
   }
 }
 
+# Checks if argument is a vector of string values
+stopifnot_stringvector <- function(x) {
+  if (!is.character(x) || !is.vector(x)) {
+    stop(
+      paste(match.call()$x, "must be a string vector, but is of class(es): "),
+      paste(class(x), collapse = ", ")
+    )
+  }
+}
+
+
 # Checks if model object is of class "epiworld_model"
 stopifnot_model <- function(model) {
   if (!inherits(model, "epiworld_model")) {

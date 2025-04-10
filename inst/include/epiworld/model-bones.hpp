@@ -1,5 +1,5 @@
-#ifndef EPIWORLD_MODEL_HPP
-#define EPIWORLD_MODEL_HPP
+#ifndef EPIWORLD_MODEL_BONES_HPP
+#define EPIWORLD_MODEL_BONES_HPP
 
 template<typename TSeq>
 class Agent;
@@ -58,7 +58,7 @@ inline epiworld_double death_reduction_mixer_default(
     Model<TSeq>* m
     );
 
-template<typename TSeq>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     std::string fmt = "%03lu-episimulation.csv",
     bool total_hist = true,
@@ -154,6 +154,12 @@ protected:
         std::exponential_distribution<>();
     std::binomial_distribution<> rbinomd         =
         std::binomial_distribution<>();
+    std::negative_binomial_distribution<> rnbinomd =
+        std::negative_binomial_distribution<>();
+    std::geometric_distribution<> rgeomd          =
+        std::geometric_distribution<>();
+    std::poisson_distribution<> rpoissd           =
+        std::poisson_distribution<>();
 
     std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> rewire_fun;
     epiworld_double rewire_prop = 0.0;
@@ -295,6 +301,9 @@ public:
     void set_rand_gamma(epiworld_double alpha, epiworld_double beta);
     void set_rand_lognormal(epiworld_double mean, epiworld_double shape);
     void set_rand_binom(int n, epiworld_double p);
+    void set_rand_nbinom(int n, epiworld_double p);
+    void set_rand_geom(epiworld_double p);
+    void set_rand_poiss(epiworld_double lambda);
     epiworld_double runif();
     epiworld_double runif(epiworld_double a, epiworld_double b);
     epiworld_double rnorm();
@@ -307,6 +316,12 @@ public:
     epiworld_double rlognormal(epiworld_double mean, epiworld_double shape);
     int rbinom();
     int rbinom(int n, epiworld_double p);
+    int rnbinom();
+    int rnbinom(int n, epiworld_double p);
+    int rgeom();
+    int rgeom(epiworld_double p);
+    int rpoiss();
+    int rpoiss(epiworld_double lambda);
     ///@}
 
     /**
@@ -592,8 +607,10 @@ public:
      * 
      */
     ///@{
-    epiworld_double add_param(epiworld_double initial_val, std::string pname);
-    void read_params(std::string fn);
+    epiworld_double add_param(
+        epiworld_double initial_val, std::string pname, bool overwrite = false
+    );
+    Model<TSeq> & read_params(std::string fn, bool overwrite = false);
     epiworld_double get_param(epiworld_fast_uint k);
     epiworld_double get_param(std::string pname);
     // void set_param(size_t k, epiworld_double val);
@@ -717,6 +734,18 @@ public:
      * @param model_ Model over which it will be executed.
      */
     void events_run();
+
+    /**
+     * @brief Draws a mermaid diagram of the model.
+     * @param model The model to draw.
+     * @param fn_output The name of the file to write the diagram.
+     * If empty, the diagram will be printed to the standard output.
+     * @param self Whether to allow self-transitions.
+     */
+    void draw(
+        const std::string & fn_output = "",
+        bool self = false
+    );
 
 
 };
