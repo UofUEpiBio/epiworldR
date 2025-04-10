@@ -414,8 +414,7 @@ clone_model <- function(model) {
 
 #' @rdname epiworld-methods
 #' @export
-#' @param output_file String. Path to the output file.
-#' @param allow_self_transitions Logical. Whether to allow self-transitions.
+#' @inheritParams epiworld-model-diagram
 #' @details `draw_mermaid` generates a mermaid diagram of the model. The
 #' diagram is saved in the specified output file (or printed to the standard
 #' output if the filename is empty).

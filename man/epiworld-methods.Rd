@@ -113,9 +113,9 @@ in the model}
 \item{proportions}{Numeric vector. Proportions in which agents will be
 distributed (see details).}
 
-\item{output_file}{String. Path to the output file.}
+\item{output_file}{String. Optional path to a file. If provided, the diagram will be written to the file.}
 
-\item{allow_self_transitions}{Logical. Whether to allow self-transitions.}
+\item{allow_self_transitions}{Logical. Whether to allow self-transitions, defaults to FALSE.}
 }
 \value{
 \itemize{
