@@ -4,9 +4,9 @@
 test_tmat <- function(tmat) {
   tmat_expected <- structure(
     c(
-      0.5397, 0, 0,
-      0.4603, 0.8473519, 0,
-      0, 0.1526481, 1
+      0.823433858323328, 0, 0, 
+      0.176566141676672, 0.856971222609989, 0, 
+      0, 0.143028777390011, 1
     ),
     dim = c(3L, 3L),
     dimnames = list(
@@ -16,7 +16,7 @@ test_tmat <- function(tmat) {
   )
   
   # Check matches expected output
-  expect_equal(tmat, tmat_expected, tolerance = 0.5)
+  expect_equal(tmat, tmat_expected, tolerance = 0.1)
   
   # Check for out of bounds values
   expect_false(any(tmat < 0))
