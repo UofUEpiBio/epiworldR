@@ -22,7 +22,8 @@ vaccination, isolation, and social distancing by means of tools."></head><body>
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/advanced-modeling.html">Advanced Modeling - Multiple Diseases, Tools, and Events</a></li>
+    <li><a class="dropdown-item" href="../articles/getting-started.html">Getting started with epiworldR</a></li>
     <li><a class="dropdown-item" href="../articles/implementation.html">Implementation details of epiworldR</a></li>
     <li><a class="dropdown-item" href="../articles/likelihood-free-mcmc.html">Likelihood Free Markhov Chain Monte Carlo (LFMCMC)</a></li>
     <li><a class="dropdown-item" href="../articles/mixing.html">Mixing models</a></li>
@@ -270,6 +271,13 @@ the action is executed at the specified time step.</p>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># We create the global event that will execute the function `hist_saver`</span></span></span>
+<span class="r-in"><span><span class="co"># at each time step</span></span></span>
+<span class="r-in"><span><span class="va">hist_saver_event</span> <span class="op">&lt;-</span> <span class="fu">globalevent_fun</span><span class="op">(</span><span class="va">hist_saver</span>, <span class="st">"Agent History Saver"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># We add the global event to the model</span></span></span>
+<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">add_globalevent</span><span class="op">(</span><span class="va">model</span>, <span class="va">hist_saver_event</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
