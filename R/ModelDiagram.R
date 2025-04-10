@@ -52,6 +52,8 @@ draw_mermaid_from_data <- function(
       allow_self_transitions
     )
 
+    message("Diagram written to ", output_file)
+
     diagram <- readChar(output_file, file.info(output_file)$size)
     return(diagram)
   } else {
@@ -129,6 +131,8 @@ draw_mermaid_from_file <- function(
       allow_self_transitions
     )
 
+    message("Diagram written to ", output_file)
+
     diagram <- readChar(output_file, file.info(output_file)$size)
     return(diagram)
   } else {
@@ -163,6 +167,8 @@ draw_mermaid_from_files <- function(
       output_file,
       allow_self_transitions
     )
+
+    message("Diagram written to ", output_file)
 
     diagram <- readChar(output_file, file.info(output_file)$size)
     return(diagram)
