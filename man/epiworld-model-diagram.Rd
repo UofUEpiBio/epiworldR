@@ -38,11 +38,11 @@ draw_mermaid_from_files(
 
 \item{transition_probs}{Numeric vector. Transition probability matrix}
 
-\item{output_file}{String. Path to the output file.}
+\item{output_file}{String. Optional path to a file. If provided, the diagram will be written to the file.}
 
-\item{allow_self_transitions}{Logical. Whether to allow self-transitions.}
+\item{allow_self_transitions}{Logical. Whether to allow self-transitions, defaults to FALSE.}
 
-\item{transition_matrix}{Matrix. Contains states and transition probabilities.}
+\item{transition_matrix}{Square matrix. Contains states and transition probabilities.}
 
 \item{transitions_file}{String. Path to file containing the transition probabilities matrix.}
 
@@ -70,7 +70,7 @@ mermaid diagram as a string.
 }
 }
 \description{
-Functions described below are helper functions for drawing
+Functions described here are helper functions for drawing
 diagrams from model data. These generate mermaid diagrams from
 transition probability matrices which can then be rendered
 using other packages.

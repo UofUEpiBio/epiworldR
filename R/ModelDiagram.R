@@ -1,6 +1,6 @@
 #' Model Diagram
 #'
-#' Functions described below are helper functions for drawing
+#' Functions described here are helper functions for drawing
 #' diagrams from model data. These generate mermaid diagrams from
 #' transition probability matrices which can then be rendered
 #' using other packages.
@@ -27,8 +27,8 @@
 #' )
 #' @param states String vector. List of model states.
 #' @param transition_probs Numeric vector. Transition probability matrix
-#' @param output_file String. Path to the output file.
-#' @param allow_self_transitions Logical. Whether to allow self-transitions.
+#' @param output_file String. Optional path to a file. If provided, the diagram will be written to the file.
+#' @param allow_self_transitions Logical. Whether to allow self-transitions, defaults to FALSE.
 #' @returns
 #' - The `draw_mermaid_from_data` function returns the
 #' mermaid diagram as a string.
@@ -44,20 +44,30 @@ draw_mermaid_from_data <- function(
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
 
-  diagram <- capture.output(draw_from_data_cpp(
-    states,
-    transition_probs,
-    output_file,
-    allow_self_transitions
-  ))
+  if (output_file != "") {
+    draw_from_data_cpp(
+      states,
+      transition_probs,
+      output_file,
+      allow_self_transitions
+    )
 
-  return(paste(diagram, collapse = "\n"))
+    diagram <- readChar(output_file, file.info(output_file)$size)
+    return(diagram)
+  } else {
+    diagram <- capture.output(draw_from_data_cpp(
+      states,
+      transition_probs,
+      output_file,
+      allow_self_transitions
+    ))
+
+    return(paste(diagram, collapse = "\n"))
+  }
 }
 
 #' @rdname epiworld-model-diagram
-#' @param transition_matrix Matrix. Contains states and transition probabilities.
-#' @param output_file String. Path to the output file.
-#' @param allow_self_transitions Logical. Whether to allow self-transitions.
+#' @param transition_matrix Square matrix. Contains states and transition probabilities.
 #' @returns
 #' - The `draw_mermaid_from_matrix` function returns the
 #' mermaid diagram as a string.
@@ -99,8 +109,6 @@ draw_mermaid_from_matrix <- function(
 
 #' @rdname epiworld-model-diagram
 #' @param transitions_file String. Path to file containing the transition probabilities matrix.
-#' @param output_file String. Path to the output file.
-#' @param allow_self_transitions Logical. Whether to allow self-transitions.
 #' @returns
 #' - The `draw_mermaid_from_file` function returns the
 #' mermaid diagram as a string.
@@ -114,19 +122,28 @@ draw_mermaid_from_file <- function(
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
 
-  diagram <- capture.output(draw_from_file_cpp(
-    transitions_file,
-    output_file,
-    allow_self_transitions
-  ))
+  if (output_file != "") {
+    draw_from_file_cpp(
+      transitions_file,
+      output_file,
+      allow_self_transitions
+    )
 
-  return(paste(diagram, collapse = "\n"))
+    diagram <- readChar(output_file, file.info(output_file)$size)
+    return(diagram)
+  } else {
+    diagram <- capture.output(draw_from_file_cpp(
+      transitions_file,
+      output_file,
+      allow_self_transitions
+    ))
+
+    return(paste(diagram, collapse = "\n"))
+  }
 }
 
 #' @rdname epiworld-model-diagram
 #' @param transitions_files String vector. List of files containing transition probabilities matrices from multiple model runs.
-#' @param output_file String. Path to the output file.
-#' @param allow_self_transitions Logical. Whether to allow self-transitions.
 #' @returns
 #' - The `draw_mermaid_from_files` function returns the
 #' mermaid diagram as a string.
@@ -140,11 +157,22 @@ draw_mermaid_from_files <- function(
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
 
-  diagram <- capture.output(draw_from_files_cpp(
-    transitions_files,
-    output_file,
-    allow_self_transitions
-  ))
+  if (output_file != "") {
+    draw_from_files_cpp(
+      transitions_files,
+      output_file,
+      allow_self_transitions
+    )
 
-  return(paste(diagram, collapse = "\n"))
+    diagram <- readChar(output_file, file.info(output_file)$size)
+    return(diagram)
+  } else {
+    diagram <- capture.output(draw_from_files_cpp(
+      transitions_files,
+      output_file,
+      allow_self_transitions
+    ))
+
+    return(paste(diagram, collapse = "\n"))
+  }
 }

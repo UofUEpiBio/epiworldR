@@ -16,74 +16,112 @@ run(model, ndays = 50, seed = 1912)
 
 # Check draw functions succeed with valid inputs -------------------------------
 
+test_output_file <- "mermaid_diagram.txt"
+
 # Check draw_mermaid_from_data
-expect_silent(draw_mermaid_from_data(
-    states = get_states(model),
-    transition_probs = c(get_transition_probability(model))
+expect_false(identical(
+    draw_mermaid_from_data(
+        states = get_states(model),
+        transition_probs = c(get_transition_probability(model))
+    ),
+    draw_mermaid_from_data(
+        states = get_states(model),
+        transition_probs = c(get_transition_probability(model)),
+        allow_self_transitions = TRUE
+    )
 ))
-expect_silent(draw_mermaid_from_data(
-  states = get_states(model),
-  transition_probs = c(get_transition_probability(model)),
-  allow_self_transitions = TRUE
-))
-expect_silent(draw_mermaid_from_data(
-  states = get_states(model),
-  transition_probs = c(get_transition_probability(model)),
-  output_file = "mermaid_diagram.txt"
-))
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
+
+expect_identical(
+    draw_mermaid_from_data(
+        states = get_states(model),
+        transition_probs = c(get_transition_probability(model))
+    ),
+    draw_mermaid_from_data(
+        states = get_states(model),
+        transition_probs = c(get_transition_probability(model)),
+        output_file = test_output_file
+    )
+)
+
+expect_true(file.exists(test_output_file))
+file.remove(test_output_file)
+expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_matrix
-expect_silent(draw_mermaid_from_matrix(
-    transition_matrix = get_transition_probability(model)
+expect_false(identical(
+    draw_mermaid_from_matrix(
+        transition_matrix = get_transition_probability(model)
+    ),
+    draw_mermaid_from_matrix(
+        transition_matrix = get_transition_probability(model),
+        allow_self_transitions = TRUE
+    )    
 ))
-expect_silent(draw_mermaid_from_matrix(
-  transition_matrix = get_transition_probability(model),
-  allow_self_transitions = TRUE
-))
-expect_silent(draw_mermaid_from_matrix(
-  transition_matrix = get_transition_probability(model),
-  output_file = "mermaid_diagram.txt"
-))
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
+
+expect_identical(
+    draw_mermaid_from_matrix(
+        transition_matrix = get_transition_probability(model)
+    ),
+    draw_mermaid_from_matrix(
+        transition_matrix = get_transition_probability(model),
+        output_file = test_output_file
+    )
+)
+
+expect_true(file.exists(test_output_file))
+file.remove(test_output_file)
+expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_file
 test_file <- "test-model-diagram-files/single-file-transitions.txt"
-expect_silent(draw_mermaid_from_file(
-    transitions_file = test_file
+expect_false(identical(
+    draw_mermaid_from_file(
+        transitions_file = test_file,
+    ),
+    draw_mermaid_from_file(
+        transitions_file = test_file,
+        allow_self_transitions = TRUE
+    )
 ))
-expect_silent(draw_mermaid_from_file(
-    transitions_file = test_file,
-    allow_self_transitions = TRUE
-))
-expect_silent(draw_mermaid_from_file(
-    transitions_file = test_file,
-    output_file = "mermaid_diagram.txt"
-))
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
+
+expect_identical(
+    draw_mermaid_from_file(
+        transitions_file = test_file
+    ), 
+    draw_mermaid_from_file(
+        transitions_file = test_file,
+        output_file = test_output_file
+    )
+)
+expect_true(file.exists(test_output_file))
+file.remove(test_output_file)
+expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_files
 test_files <- paste0("test-model-diagram-files/multiple-files/", list.files("test-model-diagram-files/multiple-files/"))
-expect_silent(draw_mermaid_from_files(
-    transitions_files = test_files
+expect_false(identical(
+    draw_mermaid_from_files(
+        transitions_files = test_files
+    ),
+    draw_mermaid_from_files(
+        transitions_files = test_files,
+        allow_self_transitions = TRUE
+    )
 ))
-expect_silent(draw_mermaid_from_files(
-    transitions_files = test_files,
-    allow_self_transitions = TRUE
-))
-expect_silent(draw_mermaid_from_files(
-    transitions_files = test_files,
-    output_file = "mermaid_diagram.txt"
-))
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
+
+expect_identical(
+    draw_mermaid_from_files(
+        transitions_files = test_files
+    ),
+    draw_mermaid_from_files(
+        transitions_files = test_files,
+        output_file = test_output_file
+    )
+)
+
+expect_true(file.exists(test_output_file))
+file.remove(test_output_file)
+expect_false(file.exists(test_output_file))
 
 # Check functions fail with invalid inputs -------------------------------------
 # Check draw_mermaid_from_data
