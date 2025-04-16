@@ -1,7 +1,7 @@
 #' Measles model with quarantine
 #' The `ModelMeaslesQuarantine` function implements a connected version
 #' of a Measles model with quarantine.
-#' 
+#'
 #' @param n Number of agents in the model.
 #' @param prevalence Initial number of agents with the virus.
 #' @param contact_rate Average number of contacts per step.
@@ -42,23 +42,22 @@
 #'
 #' @seealso epiworld-methods
 ModelMeaslesQuarantine <- function(
-  n,
-  prevalence = 1,
-  contact_rate = 15 / transmission_rate / (rash_period + prodromal_period),
-  transmission_rate = .9,
-  vax_efficacy = .99,
-  vax_improved_recovery = .5,
-  incubation_period = 12,
-  prodromal_period = 4,
-  rash_period = 3,
-  days_undetected = 2,
-  hospitalization_rate = .2,
-  hospitalization_duration = 7,
-  prop_vaccinated = 1 - 1/15,
-  quarantine_days = 21,
-  quarantine_willigness = 1
-  ) {
-
+    n,
+    prevalence = 1,
+    contact_rate = 15 / transmission_rate / (rash_period + prodromal_period),
+    transmission_rate = .9,
+    vax_efficacy = .99,
+    vax_improved_recovery = .5,
+    incubation_period = 12,
+    prodromal_period = 4,
+    rash_period = 3,
+    days_undetected = 2,
+    hospitalization_rate = .2,
+    hospitalization_duration = 7,
+    prop_vaccinated = 1 - 1 / 15,
+    quarantine_days = 21,
+    quarantine_willigness = 1
+    ) {
   # Check input parameters
   stopifnot_int(n)
   stopifnot_int(prevalence)
