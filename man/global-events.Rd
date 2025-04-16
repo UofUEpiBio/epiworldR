@@ -192,6 +192,13 @@ hist_saver <- function(m) {
   )
 
 }
+
+# We create the global event that will execute the function `hist_saver`
+# at each time step
+hist_saver_event <- globalevent_fun(hist_saver, "Agent History Saver")
+
+# We add the global event to the model
+model <- add_globalevent(model, hist_saver_event)
 }
 \seealso{
 epiworld-model

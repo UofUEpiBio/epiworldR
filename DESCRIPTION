@@ -33,7 +33,8 @@ Suggests:
     tinytest,
     netplot,
     igraph,
-    data.table
+    data.table,
+    DiagrammeR
 Imports:
     utils
 VignetteBuilder: knitr
