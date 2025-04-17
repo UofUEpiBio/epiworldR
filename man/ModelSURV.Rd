@@ -54,10 +54,6 @@ the chances of becoming infected.}
 individuals.}
 
 \item{prob_noreinfect}{Double. Probability of no re-infection.}
-
-\item{x}{Object of class SURV.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

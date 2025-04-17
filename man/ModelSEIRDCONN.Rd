@@ -34,10 +34,6 @@ incubation days.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery_rate.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Probability of death.}
-
-\item{x}{Object of class SEIRCONN.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

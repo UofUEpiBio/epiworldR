@@ -5,8 +5,6 @@
 #' @param transmission_rate Numeric scalar between 0 and 1. Probability of
 #' transmission.
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery.
-#' @param x Object of class SIRCONN.
-#' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models

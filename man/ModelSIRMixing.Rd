@@ -30,10 +30,6 @@ transmission.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery.}
 
 \item{contact_matrix}{Matrix of contact rates between individuals.}
-
-\item{x}{Object of class SIRCONN.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

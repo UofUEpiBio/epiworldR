@@ -28,10 +28,6 @@ incubation days.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Rate of death from virus.}
-
-\item{x}{Object of class SEIRD.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

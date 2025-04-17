@@ -7,8 +7,6 @@
 #' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of
 #' infection.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery from virus.
-#' @param x Object of class SIS.
-#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @returns

@@ -18,10 +18,6 @@ infection.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Rate of death from virus.}
-
-\item{x}{Object of class SISD.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

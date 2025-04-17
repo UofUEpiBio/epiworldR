@@ -21,8 +21,6 @@
 #' @param prob_death Double. Raw probability of death for symptomatic
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
-#' @param x Object of class SURV.
-#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @aliases epiworld_surv

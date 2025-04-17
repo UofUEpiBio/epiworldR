@@ -8,8 +8,6 @@
 #' incubation days.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
-#' @param x Object of class SEIRD.
-#' @param ... Currently ignore.
 #' @export
 #' @details
 #' The [initial_states] function allows the user to set the initial state of the

@@ -30,10 +30,6 @@ transmission.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Probability of death.}
-
-\item{x}{Object of class SIRDCONN.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

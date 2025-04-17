@@ -16,10 +16,6 @@ ModelSIS(name, prevalence, transmission_rate, recovery_rate)
 infection.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
-
-\item{x}{Object of class SIS.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

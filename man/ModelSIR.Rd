@@ -16,10 +16,6 @@ ModelSIR(name, prevalence, transmission_rate, recovery_rate)
 infection.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
-
-\item{x}{Object of class SIR.}
-
-\item{...}{Additional arguments passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{

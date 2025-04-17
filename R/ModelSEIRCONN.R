@@ -12,8 +12,6 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of
 #' incubation days.
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery_rate.
-#' @param x Object of class SEIRCONN.
-#' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models

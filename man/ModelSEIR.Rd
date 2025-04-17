@@ -19,10 +19,6 @@ infection.}
 incubation days.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
-
-\item{x}{Object of class SEIR.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{

@@ -18,10 +18,6 @@ infection.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Rate of death from virus.}
-
-\item{x}{Object of class SIR.}
-
-\item{...}{Additional arguments passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{

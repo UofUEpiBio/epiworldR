@@ -7,8 +7,6 @@
 #' @param incubation_days Numeric scalar greater than 0. Average number of
 #' incubation days.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
-#' @param x Object of class SEIR.
-#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @aliases epiworld_seir

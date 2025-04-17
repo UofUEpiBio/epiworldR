@@ -9,8 +9,6 @@
 #' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of
 #' infection.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
-#' @param x Object of class SIR.
-#' @param ... Additional arguments passed to [graphics::plot].
 #' @export
 #' @family Models
 #' @details
