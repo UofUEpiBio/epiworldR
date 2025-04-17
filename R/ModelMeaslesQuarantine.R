@@ -1,4 +1,5 @@
 #' Measles model with quarantine
+#'
 #' The `ModelMeaslesQuarantine` function implements a connected version
 #' of a Measles model with quarantine.
 #'
@@ -41,6 +42,10 @@
 #' plot(model_measles)
 #'
 #' @seealso epiworld-methods
+#' @author
+#' This model was built as a response to the US Measles outbreak in 2025.
+#' This is a collaboration between the University of Utah (ForeSITE center
+#' grant) and the Utah Department of Health and Human Services.
 ModelMeaslesQuarantine <- function(
     n,
     prevalence = 1,
@@ -103,7 +108,8 @@ ModelMeaslesQuarantine <- function(
 #' @param x Object of class [epiworld_measlesquarantine].
 #' @param main Title of the plot
 #' @param ... Passed to [graphics::plot].
-#' @returns The `plot` function returns a plot of the MeaslesQuarantine model of class
+#' @returns
+#' - The `plot` function returns a plot of the MeaslesQuarantine model of class
 #' [epiworld_model].
 plot.epiworld_measlesquarantine <- function(x, main = get_name(x), ...) { # col = NULL
   plot_epi(x, main = main, ...)

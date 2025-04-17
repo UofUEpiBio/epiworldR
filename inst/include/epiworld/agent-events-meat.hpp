@@ -7,21 +7,13 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 
     Agent<TSeq> *  p = a.agent;
     VirusPtr<TSeq> v = a.virus;
-
-    // Has a agent? If so, we need to register the transmission
-    if (v->get_agent())
-    {
-
-        // ... only if not the same agent
-        if (v->get_agent()->get_id() != p->get_id())
-            m->get_db().record_transmission(
-                v->get_agent()->get_id(),
-                p->get_id(),
-                v->get_id(),
-                v->get_date() 
-            );
-
-    }
+    
+    m->get_db().record_transmission(
+        v->get_agent() ? v->get_agent()->get_id() : -1,
+        p->get_id(),
+        v->get_id(),
+        v->get_date() 
+    );
     
     p->virus = std::make_shared< Virus<TSeq> >(*v);
     p->virus->set_date(m->today());

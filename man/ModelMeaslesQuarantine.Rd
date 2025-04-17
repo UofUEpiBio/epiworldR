@@ -4,9 +4,7 @@
 \alias{ModelMeaslesQuarantine}
 \alias{epiworld_measlesquarantine}
 \alias{plot.epiworld_measlesquarantine}
-\title{Measles model with quarantine
-The \code{ModelMeaslesQuarantine} function implements a connected version
-of a Measles model with quarantine.}
+\title{Measles model with quarantine}
 \usage{
 ModelMeaslesQuarantine(
   n,
@@ -70,11 +68,12 @@ ModelMeaslesQuarantine(
 \item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
 }
 
-The \code{plot} function returns a plot of the MeaslesQuarantine model of class
+\itemize{
+\item The \code{plot} function returns a plot of the MeaslesQuarantine model of class
 \link{epiworld_model}.
 }
+}
 \description{
-Measles model with quarantine
 The \code{ModelMeaslesQuarantine} function implements a connected version
 of a Measles model with quarantine.
 }
@@ -118,5 +117,10 @@ Other Models:
 \code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
+}
+\author{
+This model was built as a response to the US Measles outbreak in 2025.
+This is a collaboration between the University of Utah (ForeSITE center
+grant) and the Utah Department of Health and Human Services.
 }
 \concept{Models}
