@@ -491,3 +491,47 @@ SEXP ModelSEIRMixing_cpp(
   return ptr;
 
 }
+
+[[cpp11::register]]
+SEXP ModelMeaslesQuarantine_cpp(
+  unsigned int n,
+  unsigned int prevalence,
+  double contact_rate,
+  double transmission_rate,
+  double vax_efficacy,
+  double vax_reduction_recovery_rate,
+  double incubation_period,
+  double prodromal_period,
+  double rash_period,
+  double days_undetected,
+  double hospitalization_rate,
+  double hospitalization_duration,
+  double prop_vaccinated,
+  unsigned int quarantine_days,
+  double quarantine_willingness
+) {
+
+  // Creating a pointer to a ModelMeaslesQuarantine model
+  cpp11::external_pointer<epiworld::epimodels::ModelMeaslesQuarantine<>> ptr(
+      new epiworld::epimodels::ModelMeaslesQuarantine<>(
+          n,
+          prevalence,
+          contact_rate,
+          transmission_rate,
+          vax_efficacy,
+          vax_reduction_recovery_rate,
+          incubation_period,
+          prodromal_period,
+          rash_period,
+          days_undetected,
+          hospitalization_rate,
+          hospitalization_duration,
+          prop_vaccinated,
+          quarantine_days,
+          quarantine_willingness
+      )
+  );
+
+  return ptr;
+
+}

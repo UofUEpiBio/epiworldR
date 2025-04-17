@@ -8,7 +8,7 @@ FROM rocker/tidyverse:4.4.0
 RUN install2.r cpp11 roxygen2 tinytest data.table netplot \
   devtools decor
 
-RUN install2.r languageserver
+RUN install2.r languageserver httpgd
 
 RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb
 

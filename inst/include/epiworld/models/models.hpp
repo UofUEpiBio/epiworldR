@@ -21,6 +21,7 @@ namespace epimodels {
     #include "diffnet.hpp"
     #include "seirmixing.hpp"
     #include "sirmixing.hpp"
+    #include "measlesquarantine.hpp"
 
 
 }
