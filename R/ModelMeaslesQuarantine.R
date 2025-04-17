@@ -100,9 +100,9 @@ ModelMeaslesQuarantine <- function(
 
 #' @rdname ModelMeaslesQuarantine
 #' @export
+#' @param x Object of class [epiworld_measlesquarantine].
 #' @param main Title of the plot
 #' @param ... Passed to [graphics::plot].
-#' @param x Object of class [epiworld_diffnet].
 #' @returns The `plot` function returns a plot of the MeaslesQuarantine model of class
 #' [epiworld_model].
 plot.epiworld_measlesquarantine <- function(x, main = get_name(x), ...) { # col = NULL

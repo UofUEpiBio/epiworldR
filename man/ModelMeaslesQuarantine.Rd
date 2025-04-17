@@ -59,7 +59,7 @@ ModelMeaslesQuarantine(
 
 \item{quarantine_willingness}{Probability of accepting quarantine.}
 
-\item{x}{Object of class \link{epiworld_diffnet}.}
+\item{x}{Object of class \link{epiworld_measlesquarantine}.}
 
 \item{main}{Title of the plot}
 
