@@ -59,7 +59,11 @@ ModelMeaslesQuarantine(
 
 \item{quarantine_willingness}{Probability of accepting quarantine.}
 
-\item{main}{Title of the plot.}
+\item{x}{Object of class \link{epiworld_diffnet}.}
+
+\item{main}{Title of the plot}
+
+\item{...}{Passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
