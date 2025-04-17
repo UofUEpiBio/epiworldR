@@ -1,5 +1,5 @@
 #' Measles model with quarantine
-#' 
+#'
 #' The `ModelMeaslesQuarantine` function implements a connected version
 #' of a Measles model with quarantine.
 #'
@@ -42,9 +42,9 @@
 #' plot(model_measles)
 #'
 #' @seealso epiworld-methods
-#' @author 
-#' This model was built as a response to the US Measles outbreak in 2025. 
-#' This is a collaboration between the University of Utah (ForeSITE center 
+#' @author
+#' This model was built as a response to the US Measles outbreak in 2025.
+#' This is a collaboration between the University of Utah (ForeSITE center
 #' grant) and the Utah Department of Health and Human Services.
 ModelMeaslesQuarantine <- function(
     n,

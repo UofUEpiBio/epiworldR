@@ -164,7 +164,7 @@ get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
 #' @export
 get_reproductive_number.epiworld_model <- function(x) {
   res <- get_reproductive_number_cpp(x)
-  res <- res[res[["source"]] != -1]
+  res <- res[res[["source"]] != -1, , drop = FALSE]
   class(res) <- c("epiworld_repnum", class(res))
   res
 }
