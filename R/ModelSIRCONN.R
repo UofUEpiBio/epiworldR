@@ -52,12 +52,3 @@ ModelSIRCONN <- function(
   )
 
 }
-
-#' @rdname ModelSIRCONN
-#' @export
-#' @returns The `plot` function returns a plot of the SIRCONN model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sirconn <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
-}

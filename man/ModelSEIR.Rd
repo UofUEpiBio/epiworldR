@@ -3,12 +3,9 @@
 \name{ModelSEIR}
 \alias{ModelSEIR}
 \alias{epiworld_seir}
-\alias{plot.epiworld_seir}
 \title{Susceptible Exposed Infected Recovered model (SEIR)}
 \usage{
 ModelSEIR(name, prevalence, transmission_rate, incubation_days, recovery_rate)
-
-\method{plot}{epiworld_seir}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -25,17 +22,12 @@ incubation days.}
 
 \item{x}{Object of class SEIR.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSEIR}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SEIR model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible Exposed Infected Recovered model (SEIR)

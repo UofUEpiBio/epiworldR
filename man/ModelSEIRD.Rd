@@ -3,7 +3,6 @@
 \name{ModelSEIRD}
 \alias{ModelSEIRD}
 \alias{epiworld_seird}
-\alias{plot.epiworld_seird}
 \title{Susceptible-Exposed-Infected-Recovered-Deceased model (SEIRD)}
 \usage{
 ModelSEIRD(
@@ -14,8 +13,6 @@ ModelSEIRD(
   recovery_rate,
   death_rate
 )
-
-\method{plot}{epiworld_seird}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -34,17 +31,12 @@ incubation days.}
 
 \item{x}{Object of class SEIRD.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSEIRD}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SEIRD model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible-Exposed-Infected-Recovered-Deceased model (SEIRD)

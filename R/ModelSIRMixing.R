@@ -90,12 +90,3 @@ ModelSIRMixing <- function(
   )
 
 }
-
-#' @rdname ModelSIRMixing
-#' @export
-#' @returns The `plot` function returns a plot of the SIRMixing model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sirmixing <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
-}

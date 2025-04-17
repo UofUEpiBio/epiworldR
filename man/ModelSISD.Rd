@@ -3,12 +3,9 @@
 \name{ModelSISD}
 \alias{ModelSISD}
 \alias{epiworld_sisd}
-\alias{plot.epiworld_sisd}
 \title{SISD model}
 \usage{
 ModelSISD(name, prevalence, transmission_rate, recovery_rate, death_rate)
-
-\method{plot}{epiworld_sisd}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -24,18 +21,11 @@ infection.}
 
 \item{x}{Object of class SISD.}
 
-\item{main}{Title of the plot.}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSISD} function returns a model of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{plot} function returns a plot of the SISD model of class
-\link{epiworld_model}.
 }
 }
 \description{

@@ -3,7 +3,6 @@
 \name{ModelSEIRMixing}
 \alias{ModelSEIRMixing}
 \alias{epiworld_seirmixing}
-\alias{plot.epiworld_seirmixing}
 \title{Susceptible Exposed Infected Removed model (SEIR) with mixing}
 \usage{
 ModelSEIRMixing(
@@ -16,8 +15,6 @@ ModelSEIRMixing(
   recovery_rate,
   contact_matrix
 )
-
-\method{plot}{epiworld_seirmixing}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -40,17 +37,12 @@ incubation period.}
 
 \item{x}{Object of class SIRCONN.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSEIRMixing}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SEIRMixing model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible Exposed Infected Removed model (SEIR) with mixing

@@ -3,7 +3,6 @@
 \name{ModelSIRCONN}
 \alias{ModelSIRCONN}
 \alias{epiworld_sirconn}
-\alias{plot.epiworld_sirconn}
 \title{Susceptible Infected Removed model (SIR connected)}
 \usage{
 ModelSIRCONN(
@@ -14,8 +13,6 @@ ModelSIRCONN(
   transmission_rate,
   recovery_rate
 )
-
-\method{plot}{epiworld_sirconn}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -33,17 +30,12 @@ transmission.}
 
 \item{x}{Object of class SIRCONN.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIRCONN}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SIRCONN model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible Infected Removed model (SIR connected)

@@ -73,12 +73,3 @@ ModelSEIRCONN <- function(
   )
 
 }
-
-#' @rdname ModelSEIRCONN
-#' @export
-#' @returns The `plot` function returns a plot of the SEIRCONN model of class
-#' [epiworld_model].
-#' @param main Title of the plot.
-plot.epiworld_seirconn <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
-}

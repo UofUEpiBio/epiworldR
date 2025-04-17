@@ -3,7 +3,6 @@
 \name{ModelSIRMixing}
 \alias{ModelSIRMixing}
 \alias{epiworld_sirmixing}
-\alias{plot.epiworld_sirmixing}
 \title{Susceptible Infected Removed model (SIR) with mixing}
 \usage{
 ModelSIRMixing(
@@ -15,8 +14,6 @@ ModelSIRMixing(
   recovery_rate,
   contact_matrix
 )
-
-\method{plot}{epiworld_sirmixing}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -36,17 +33,12 @@ transmission.}
 
 \item{x}{Object of class SIRCONN.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIRMixing}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SIRMixing model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible Infected Removed model (SIR) with mixing

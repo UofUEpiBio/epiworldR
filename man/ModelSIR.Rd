@@ -3,12 +3,9 @@
 \name{ModelSIR}
 \alias{ModelSIR}
 \alias{epiworld_sir}
-\alias{plot.epiworld_sir}
 \title{SIR model}
 \usage{
 ModelSIR(name, prevalence, transmission_rate, recovery_rate)
-
-\method{plot}{epiworld_sir}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -22,18 +19,11 @@ infection.}
 
 \item{x}{Object of class SIR.}
 
-\item{main}{Title of the plot}
-
 \item{...}{Additional arguments passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIR} function returns a model of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{plot} function returns a plot of the SIR model of class
-\link{epiworld_model}.
 }
 }
 \description{

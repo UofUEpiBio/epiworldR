@@ -3,7 +3,6 @@
 \name{ModelSEIRCONN}
 \alias{ModelSEIRCONN}
 \alias{epiworld_seirconn}
-\alias{plot.epiworld_seirconn}
 \title{Susceptible Exposed Infected Removed model (SEIR connected)}
 \usage{
 ModelSEIRCONN(
@@ -15,8 +14,6 @@ ModelSEIRCONN(
   incubation_days,
   recovery_rate
 )
-
-\method{plot}{epiworld_seirconn}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -37,17 +34,12 @@ incubation days.}
 
 \item{x}{Object of class SEIRCONN.}
 
-\item{main}{Title of the plot.}
-
 \item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSEIRCONN}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SEIRCONN model of class
-\link{epiworld_model}.
 }
 \description{
 The SEIR connected model implements a model where all agents are connected.

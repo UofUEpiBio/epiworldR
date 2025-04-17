@@ -70,12 +70,3 @@ ModelSEIRD <- function(
   )
 
 }
-
-#' @rdname ModelSEIRD
-#' @param main Title of the plot
-#' @returns The `plot` function returns a plot of the SEIRD model of class
-#' [epiworld_model].
-#' @export
-plot.epiworld_seird <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
-}
