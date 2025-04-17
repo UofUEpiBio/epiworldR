@@ -25,7 +25,7 @@
 #' @family Models
 #' @aliases epiworld_measlesquarantine
 #' @returns
-#' - The `ModelSEIRCONN`function returns a model of class [epiworld_model].
+#' - The `ModelMeaslesQuarantine` function returns a model of class [epiworld_model].
 #' @examples
 #' # An in a school with low vaccination
 #' model_measles <- ModelMeaslesQuarantine(

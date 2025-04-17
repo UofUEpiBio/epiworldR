@@ -67,7 +67,7 @@ ModelMeaslesQuarantine(
 }
 \value{
 \itemize{
-\item The \code{ModelSEIRCONN}function returns a model of class \link{epiworld_model}.
+\item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
 }
 
 The \code{plot} function returns a plot of the MeaslesQuarantine model of class
