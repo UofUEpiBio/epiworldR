@@ -23,7 +23,7 @@ ModelMeaslesQuarantine(
   hospitalization_duration = 7,
   prop_vaccinated = 1 - 1/15,
   quarantine_days = 21,
-  quarantine_willigness = 1
+  quarantine_willingness = 1
 )
 
 \method{plot}{epiworld_measlesquarantine}(x, main = get_name(x), ...)
@@ -57,7 +57,7 @@ ModelMeaslesQuarantine(
 
 \item{quarantine_days}{Total duration of quarantine.}
 
-\item{quarantine_willigness}{Probability of accepting quarantine.}
+\item{quarantine_willingness}{Probability of accepting quarantine.}
 
 \item{main}{Title of the plot.}
 }

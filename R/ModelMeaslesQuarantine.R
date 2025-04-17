@@ -16,7 +16,7 @@
 #' @param hospitalization_duration Average number of days in hospital.
 #' @param prop_vaccinated Proportion of the population vaccinated.
 #' @param quarantine_days Total duration of quarantine.
-#' @param quarantine_willigness Probability of accepting quarantine.
+#' @param quarantine_willingness Probability of accepting quarantine.
 #' @details
 #' The basic reproductive number in Measles is estimated to be about 15.
 #' By default, the contact rate of the model is set so that the R0 matches
@@ -56,7 +56,7 @@ ModelMeaslesQuarantine <- function(
     hospitalization_duration = 7,
     prop_vaccinated = 1 - 1 / 15,
     quarantine_days = 21,
-    quarantine_willigness = 1
+    quarantine_willingness = 1
     ) {
   # Check input parameters
   stopifnot_int(n)
@@ -73,7 +73,7 @@ ModelMeaslesQuarantine <- function(
   stopifnot_double(hospitalization_duration)
   stopifnot_double(prop_vaccinated)
   stopifnot_double(quarantine_days)
-  stopifnot_double(quarantine_willigness)
+  stopifnot_double(quarantine_willingness)
 
   structure(
     ModelMeaslesQuarantine_cpp(
@@ -91,7 +91,7 @@ ModelMeaslesQuarantine <- function(
       hospitalization_duration,
       prop_vaccinated,
       quarantine_days,
-      quarantine_willigness
+      quarantine_willingness
     ),
     class = c("epiworld_measlesquarantine", "epiworld_model")
   )
