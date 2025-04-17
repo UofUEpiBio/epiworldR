@@ -252,6 +252,12 @@ public:
     
     /***
      * @brief Record a transmission event
+     * @param i,j Integers. Id of the source and target agents.
+     * @param virus Integer. Id of the virus.
+     * @param i_expo_date Integer. Date when the source agent was infected.
+     * @details
+     * If i is -1, then it means that the agent was assigned a virus at the
+     * beginning of the simulation.
      */
     void record_transmission(int i, int j, int virus, int i_expo_date);
 
@@ -272,6 +278,11 @@ public:
      * virus is allowed to circulate naïvely or not, respectively.
      * 
      * @param fn File where to write out the reproductive number.
+     * @details
+     * In the case of `MapVec_type<int,int>`, the key is a vector of 3 integers:
+     * - Virus id
+     * - Source id
+     * - Date when the source was infected
      */
     ///@{
     MapVec_type<int,int> reproductive_number() const;
