@@ -9,8 +9,6 @@
 #' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of
 #' infection.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
-#' @param x Object of class SIR.
-#' @param ... Additional arguments passed to [graphics::plot].
 #' @export
 #' @family Models
 #' @details
@@ -57,14 +55,4 @@ ModelSIR <- function(
     class = c("epiworld_sir", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSIR
-#' @export
-#' @returns
-#' - The `plot` function returns a plot of the SIR model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sir <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

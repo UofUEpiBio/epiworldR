@@ -93,12 +93,3 @@ ModelDiffNet <- function(
   )
 
 }
-
-#' @rdname ModelDiffNet
-#' @param main Title of the plot
-#' @param ... Passed to [graphics::plot].
-#' @param x Object of class [epiworld_diffnet].
-#' @export
-plot.epiworld_diffnet <- function(x, main = get_name(x), ...) {
-  plot_epi(x, main = main, ...)
-}

@@ -3,12 +3,9 @@
 \name{ModelSIS}
 \alias{ModelSIS}
 \alias{epiworld_sis}
-\alias{plot.epiworld_sis}
 \title{SIS model}
 \usage{
 ModelSIS(name, prevalence, transmission_rate, recovery_rate)
-
-\method{plot}{epiworld_sis}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -19,21 +16,10 @@ ModelSIS(name, prevalence, transmission_rate, recovery_rate)
 infection.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
-
-\item{x}{Object of class SIS.}
-
-\item{main}{Title of the plot.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIS} function returns a model of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{plot} function returns a plot of the SIS model of class
-\link{epiworld_model}.
 }
 }
 \description{

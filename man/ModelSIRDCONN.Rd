@@ -3,7 +3,6 @@
 \name{ModelSIRDCONN}
 \alias{ModelSIRDCONN}
 \alias{epiworld_sirdconn}
-\alias{plot.epiworld_sirdconn}
 \title{Susceptible Infected Removed Deceased model (SIRD connected)}
 \usage{
 ModelSIRDCONN(
@@ -15,8 +14,6 @@ ModelSIRDCONN(
   recovery_rate,
   death_rate
 )
-
-\method{plot}{epiworld_sirdconn}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -33,20 +30,11 @@ transmission.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Probability of death.}
-
-\item{x}{Object of class SIRDCONN.}
-
-\item{main}{Title of the plot}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIRDCONN}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SIRDCONN model of class
-\link{epiworld_model}.
 }
 \description{
 Susceptible Infected Removed Deceased model (SIRD connected)

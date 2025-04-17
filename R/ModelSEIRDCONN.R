@@ -13,8 +13,6 @@
 #' incubation days.
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery_rate.
 #' @param death_rate Numeric scalar between 0 and 1. Probability of death.
-#' @param x Object of class SEIRCONN.
-#' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @export
 #' @details
@@ -87,13 +85,4 @@ ModelSEIRDCONN <- function(
     class = c("epiworld_seirdconn", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSEIRDCONN
-#' @export
-#' @returns The `plot` function returns a plot of the SEIRDCONN model of class
-#' [epiworld_model].
-#' @param main Title of the plot.
-plot.epiworld_seirdconn <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

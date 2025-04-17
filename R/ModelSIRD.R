@@ -10,8 +10,6 @@
 #' infection.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
-#' @param x Object of class SIR.
-#' @param ... Additional arguments passed to [graphics::plot].
 #' @export
 #' @details
 #' The [initial_states] function allows the user to set the initial state of the
@@ -62,14 +60,4 @@ ModelSIRD <- function(
     class = c("epiworld_sird", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSIRD
-#' @export
-#' @returns
-#' - The `plot` function returns a plot of the SIRD model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sird <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

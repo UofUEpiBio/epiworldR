@@ -3,7 +3,6 @@
 \name{ModelSEIRDCONN}
 \alias{ModelSEIRDCONN}
 \alias{epiworld_seirdconn}
-\alias{plot.epiworld_seirdconn}
 \title{Susceptible Exposed Infected Removed Deceased model (SEIRD connected)}
 \usage{
 ModelSEIRDCONN(
@@ -16,8 +15,6 @@ ModelSEIRDCONN(
   recovery_rate,
   death_rate
 )
-
-\method{plot}{epiworld_seirdconn}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -37,20 +34,11 @@ incubation days.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Probability of recovery_rate.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Probability of death.}
-
-\item{x}{Object of class SEIRCONN.}
-
-\item{main}{Title of the plot.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSEIRDCONN}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SEIRDCONN model of class
-\link{epiworld_model}.
 }
 \description{
 The SEIRD connected model implements a model where all agents are connected.

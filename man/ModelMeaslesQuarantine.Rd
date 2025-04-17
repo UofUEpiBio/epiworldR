@@ -3,7 +3,6 @@
 \name{ModelMeaslesQuarantine}
 \alias{ModelMeaslesQuarantine}
 \alias{epiworld_measlesquarantine}
-\alias{plot.epiworld_measlesquarantine}
 \title{Measles model with quarantine
 The \code{ModelMeaslesQuarantine} function implements a connected version
 of a Measles model with quarantine.}
@@ -25,8 +24,6 @@ ModelMeaslesQuarantine(
   quarantine_days = 21,
   quarantine_willingness = 1
 )
-
-\method{plot}{epiworld_measlesquarantine}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{n}{Number of agents in the model.}
@@ -58,20 +55,11 @@ ModelMeaslesQuarantine(
 \item{quarantine_days}{Total duration of quarantine.}
 
 \item{quarantine_willingness}{Probability of accepting quarantine.}
-
-\item{x}{Object of class \link{epiworld_measlesquarantine}.}
-
-\item{main}{Title of the plot}
-
-\item{...}{Passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
 \item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the MeaslesQuarantine model of class
-\link{epiworld_model}.
 }
 \description{
 Measles model with quarantine
