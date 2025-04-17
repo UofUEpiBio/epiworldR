@@ -33,6 +33,7 @@
 #' - The `draw_mermaid_from_data` function returns the
 #' mermaid diagram as a string.
 #' @export
+#' @importFrom utils capture.output
 draw_mermaid_from_data <- function(
     states,
     transition_probs,
@@ -115,6 +116,7 @@ draw_mermaid_from_matrix <- function(
 #' - The `draw_mermaid_from_file` function returns the
 #' mermaid diagram as a string.
 #' @export
+#' @importFrom utils capture.output
 draw_mermaid_from_file <- function(
     transitions_file,
     output_file = "",
@@ -152,6 +154,7 @@ draw_mermaid_from_file <- function(
 #' - The `draw_mermaid_from_files` function returns the
 #' mermaid diagram as a string.
 #' @export
+#' @importFrom utils capture.output
 draw_mermaid_from_files <- function(
     transitions_files,
     output_file = "",
