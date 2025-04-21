@@ -30,6 +30,13 @@ find_scale <- function(x) {
 
 #' @noRd
 #' @importFrom graphics legend
+#' @export
+plot.epiworld_model <- function(x, main = get_name(x), ...) {
+  plot_epi(x, main = main, ...)
+}
+
+#' @noRd
+#' @importFrom graphics legend
 plot_epi <- function(x, main = "", counts_scale, ...) UseMethod("plot_epi")
 
 #' @export

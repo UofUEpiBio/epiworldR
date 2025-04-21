@@ -420,6 +420,7 @@ clone_model <- function(model) {
 #' output if the filename is empty).
 #' @return
 #' - The `draw_mermaid` returns the mermaid diagram as a string.
+#' @importFrom utils capture.output
 draw_mermaid <- function(
     model,
     output_file = "",

@@ -5,8 +5,6 @@
 #' @param transmission_rate Numeric scalar between 0 and 1. Probability of
 #' transmission.
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery.
-#' @param x Object of class SIRCONN.
-#' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models
@@ -51,13 +49,4 @@ ModelSIRCONN <- function(
     class = c("epiworld_sirconn", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSIRCONN
-#' @export
-#' @returns The `plot` function returns a plot of the SIRCONN model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sirconn <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

@@ -3,12 +3,9 @@
 \name{ModelSIRD}
 \alias{ModelSIRD}
 \alias{epiworld_sird}
-\alias{plot.epiworld_sird}
 \title{SIRD model}
 \usage{
 ModelSIRD(name, prevalence, transmission_rate, recovery_rate, death_rate)
-
-\method{plot}{epiworld_sird}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus}
@@ -21,21 +18,10 @@ infection.}
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery_rate from virus.}
 
 \item{death_rate}{Numeric scalar between 0 and 1. Rate of death from virus.}
-
-\item{x}{Object of class SIR.}
-
-\item{main}{Title of the plot}
-
-\item{...}{Additional arguments passed to \link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
 \item The \code{ModelSIRD} function returns a model of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{plot} function returns a plot of the SIRD model of class
-\link{epiworld_model}.
 }
 }
 \description{

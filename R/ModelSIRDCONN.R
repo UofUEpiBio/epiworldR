@@ -6,8 +6,6 @@
 #' transmission.
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery.
 #' @param death_rate Numeric scalar between 0 and 1. Probability of death.
-#' @param x Object of class SIRDCONN.
-#' @param ... Currently ignore.
 #' @param n Number of individuals in the population.
 #' @export
 #' @details
@@ -61,13 +59,4 @@ ModelSIRDCONN <- function(
     class = c("epiworld_sirdconn", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSIRDCONN
-#' @export
-#' @returns The `plot` function returns a plot of the SIRDCONN model of class
-#' [epiworld_model].
-#' @param main Title of the plot
-plot.epiworld_sirdconn <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

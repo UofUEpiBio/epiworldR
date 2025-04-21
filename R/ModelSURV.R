@@ -21,8 +21,6 @@
 #' @param prob_death Double. Raw probability of death for symptomatic
 #' individuals.
 #' @param prob_noreinfect Double. Probability of no re-infection.
-#' @param x Object of class SURV.
-#' @param ... Currently ignore.
 #' @export
 #' @family Models
 #' @aliases epiworld_surv
@@ -100,13 +98,4 @@ ModelSURV <- function(
     class = c("epiworld_surv", "epiworld_model")
   )
 
-}
-
-#' @rdname ModelSURV
-#' @export
-#' @returns The `plot` function returns a plot of the SURV model of class
-#' [epiworld_model].
-#' @param main Title of the plot.
-plot.epiworld_surv <- function(x, main = get_name(x), ...) { # col = NULL
-  plot_epi(x, main = main, ...)
 }

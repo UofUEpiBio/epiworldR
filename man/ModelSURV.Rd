@@ -3,7 +3,6 @@
 \name{ModelSURV}
 \alias{ModelSURV}
 \alias{epiworld_surv}
-\alias{plot.epiworld_surv}
 \title{SURV model}
 \usage{
 ModelSURV(
@@ -21,8 +20,6 @@ ModelSURV(
   prob_death,
   prob_noreinfect
 )
-
-\method{plot}{epiworld_surv}(x, main = get_name(x), ...)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -57,20 +54,11 @@ the chances of becoming infected.}
 individuals.}
 
 \item{prob_noreinfect}{Double. Probability of no re-infection.}
-
-\item{x}{Object of class SURV.}
-
-\item{main}{Title of the plot.}
-
-\item{...}{Currently ignore.}
 }
 \value{
 \itemize{
 \item The \code{ModelSURV}function returns a model of class \link{epiworld_model}.
 }
-
-The \code{plot} function returns a plot of the SURV model of class
-\link{epiworld_model}.
 }
 \description{
 SURV model
