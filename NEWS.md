@@ -1,3 +1,16 @@
+# epiworldR 0.8.1.0
+
+* Added the `ModelMeaslesQuarantine`.
+
+* Fixes an error in the index case calculation of the Rt function. Getting the Rt was not recovering the index cases with no transmissions.
+
+* Adds the capability of drawing a model diagram using `mermaid`.
+
+* Added an advanced usage vignette.
+
+* Adding input parameter checks (more extensive).
+
+
 # epiworldR 0.6.1.0
 
 * Updates to reflect changes in the `epiworld` C++ library (mostly bug fixes)

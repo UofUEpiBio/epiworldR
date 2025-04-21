@@ -60,9 +60,16 @@ ModelMeaslesQuarantine(
 \itemize{
 \item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
 }
+<<<<<<< HEAD
+=======
+
+\itemize{
+\item The \code{plot} function returns a plot of the MeaslesQuarantine model of class
+\link{epiworld_model}.
+>>>>>>> 3b44e5a80642d15a7720661b6a2f36656c8e625a
+}
 }
 \description{
-Measles model with quarantine
 The \code{ModelMeaslesQuarantine} function implements a connected version
 of a Measles model with quarantine.
 }
@@ -106,5 +113,10 @@ Other Models:
 \code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
+}
+\author{
+This model was built as a response to the US Measles outbreak in 2025.
+This is a collaboration between the University of Utah (ForeSITE center
+grant) and the Utah Department of Health and Human Services.
 }
 \concept{Models}
