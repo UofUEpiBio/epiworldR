@@ -3,9 +3,7 @@
 \name{ModelMeaslesQuarantine}
 \alias{ModelMeaslesQuarantine}
 \alias{epiworld_measlesquarantine}
-\title{Measles model with quarantine
-The \code{ModelMeaslesQuarantine} function implements a connected version
-of a Measles model with quarantine.}
+\title{Measles model with quarantine}
 \usage{
 ModelMeaslesQuarantine(
   n,
@@ -59,14 +57,6 @@ ModelMeaslesQuarantine(
 \value{
 \itemize{
 \item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
-}
-<<<<<<< HEAD
-=======
-
-\itemize{
-\item The \code{plot} function returns a plot of the MeaslesQuarantine model of class
-\link{epiworld_model}.
->>>>>>> 3b44e5a80642d15a7720661b6a2f36656c8e625a
 }
 }
 \description{
