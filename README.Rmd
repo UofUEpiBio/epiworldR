@@ -298,7 +298,7 @@ You may want to check out other R packages for agent-based modeling: [`ABM`](htt
 # Contributing to epiworldR
 
 We welcome contributions to the epiworldR package!
-If you would like to contribute, please review our [development guidelines](./DEVELOPMENT.md) before creating a pull request.
+If you would like to contribute, please review our [development guidelines](https://github.com/UofUEpiBio/epiworldR/blob/main/DEVELOPMENT.md) before creating a pull request.
 
 ## Code of Conduct
 

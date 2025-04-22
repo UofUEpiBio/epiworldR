@@ -535,7 +535,7 @@ target="_blank"><code>RNetLogo</code></a>.
 # Contributing to epiworldR
 
 We welcome contributions to the epiworldR package! If you would like to
-contribute, please review our [development guidelines](./DEVELOPMENT.md)
+contribute, please review our [development guidelines](https://github.com/UofUEpiBio/epiworldR/blob/main/DEVELOPMENT.md)
 before creating a pull request.
 
 ## Code of Conduct
