@@ -16,7 +16,7 @@ private:
         epiworld::Agent<TSeq> * agent,
         std::vector< epiworld::Agent<TSeq> * > & sampled_agents
         );
-    double adjusted_contact_rate;
+    std::vector< double > adjusted_contact_rate;
     std::vector< double > contact_matrix;
 
     size_t index(size_t i, size_t j, size_t n) {
@@ -167,8 +167,18 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
     }
 
     // Adjusting contact rate
-    adjusted_contact_rate = Model<TSeq>::get_param("Contact rate") /
-        agents.size();
+    adjusted_contact_rate.clear();
+    adjusted_contact_rate.resize(infected.size(), 0.0);
+
+    for (size_t i = 0u; i < infected.size(); ++i)
+    {
+                
+        adjusted_contact_rate[i] = 
+            Model<TSeq>::get_param("Contact rate") /
+                static_cast< epiworld_double > (this->get_entity(i).size());
+
+    }
+
 
     return;
 
@@ -191,7 +201,7 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
         // How many from this entity?
         int nsamples = epiworld::Model<TSeq>::rbinom(
             infected[g].size(),
-            adjusted_contact_rate * contact_matrix[
+            adjusted_contact_rate[g] * contact_matrix[
                 index(agent_group_id, g, ngroups)
             ]
         );

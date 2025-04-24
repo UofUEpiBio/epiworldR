@@ -1,3 +1,10 @@
+# epiworldR 0.8.1.2
+
+## Bug fixes
+
+* The mixing models were using the wrong sampling scheme for the contact event between agents.
+
+
 # epiworldR 0.8.1.0
 
 ## New Features
