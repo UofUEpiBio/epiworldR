@@ -97,7 +97,7 @@ ModelMeaslesQuarantine <- function(
   stopifnot_double(prop_vaccinated, lb = 0, ub = 1)
   stopifnot_int(quarantine_period, lb = -1)
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
-  stopifnot_int(isolation_days, lb = -1)
+  stopifnot_int(isolation_period, lb = -1)
 
   structure(
     ModelMeaslesQuarantine_cpp(
