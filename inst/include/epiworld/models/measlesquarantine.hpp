@@ -118,9 +118,9 @@ public:
         epiworld_double hospitalization_period,
         // Policy parameters
         epiworld_double prop_vaccinated,
-        epiworld_fast_uint quarantine_period,
+        epiworld_fast_int quarantine_period,
         epiworld_double quarantine_willingness,
-        epiworld_fast_uint isolation_period
+        epiworld_fast_int isolation_period
     );
 
     ModelMeaslesQuarantine(
@@ -139,9 +139,9 @@ public:
         epiworld_double hospitalization_period,
         // Policy parameters
         epiworld_double prop_vaccinated,
-        epiworld_fast_uint quarantine_period,
+        epiworld_fast_int quarantine_period,
         epiworld_double quarantine_willingness,
-        epiworld_fast_uint isolation_period
+        epiworld_fast_int isolation_period
     );
     ///@}
 
@@ -675,9 +675,9 @@ inline ModelMeaslesQuarantine<TSeq>::ModelMeaslesQuarantine(
     epiworld_double hospitalization_period,
     // Policy parameters
     epiworld_double prop_vaccinated,
-    epiworld_fast_uint quarantine_period,
+    epiworld_fast_int quarantine_period,
     epiworld_double quarantine_willingness,
-    epiworld_fast_uint isolation_period
+    epiworld_fast_int isolation_period
 ) {
 
     model.add_state("Susceptible", this->m_update_susceptible);
@@ -776,9 +776,9 @@ inline ModelMeaslesQuarantine<TSeq>::ModelMeaslesQuarantine(
     epiworld_double hospitalization_period,
     // Policy parameters
     epiworld_double prop_vaccinated,
-    epiworld_fast_uint quarantine_period,
+    epiworld_fast_int quarantine_period,
     epiworld_double quarantine_willingness,
-    epiworld_fast_uint isolation_period
+    epiworld_fast_int isolation_period
 
 ) {
 
