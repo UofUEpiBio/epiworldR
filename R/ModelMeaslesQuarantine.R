@@ -14,7 +14,7 @@
 #' @param rash_period Average number of rash days.
 #' @param days_undetected Average number of days undetected.
 #' @param hospitalization_rate Probability of hospitalization.
-#' @param hospitalization_duration Average number of days in hospital.
+#' @param hospitalization_period Average number of days in hospital.
 #' @param prop_vaccinated Proportion of the population vaccinated.
 #' @param quarantine_period Total duration of quarantine.
 #' @param quarantine_willingness Probability of accepting quarantine (
@@ -93,7 +93,7 @@ ModelMeaslesQuarantine <- function(
   stopifnot_double(rash_period, lb = 0)
   stopifnot_double(days_undetected, lb = 0)
   stopifnot_double(hospitalization_rate, lb = 0, ub = 1)
-  stopifnot_double(hospitalization_duration, lb = 0)
+  stopifnot_double(hospitalization_period, lb = 0)
   stopifnot_double(prop_vaccinated, lb = 0, ub = 1)
   stopifnot_int(quarantine_period, lb = -1)
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
@@ -112,7 +112,7 @@ ModelMeaslesQuarantine <- function(
       rash_period,
       days_undetected,
       hospitalization_rate,
-      hospitalization_duration,
+      hospitalization_period,
       prop_vaccinated,
       quarantine_period,
       quarantine_willingness

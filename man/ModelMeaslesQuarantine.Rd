@@ -47,6 +47,8 @@ ModelMeaslesQuarantine(
 
 \item{hospitalization_rate}{Probability of hospitalization.}
 
+\item{hospitalization_period}{Average number of days in hospital.}
+
 \item{prop_vaccinated}{Proportion of the population vaccinated.}
 
 \item{quarantine_period}{Total duration of quarantine.}
@@ -55,8 +57,6 @@ ModelMeaslesQuarantine(
 see details).}
 
 \item{isolation_period}{Average number of days in isolation.}
-
-\item{hospitalization_duration}{Average number of days in hospital.}
 }
 \value{
 \itemize{
