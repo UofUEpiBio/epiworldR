@@ -115,7 +115,8 @@ ModelMeaslesQuarantine <- function(
       hospitalization_period,
       prop_vaccinated,
       quarantine_period,
-      quarantine_willingness
+      quarantine_willingness,
+      isolation_period
     ),
     class = c("epiworld_measlesquarantine", "epiworld_model")
   )
