@@ -16,12 +16,29 @@
 #' @param hospitalization_rate Probability of hospitalization.
 #' @param hospitalization_duration Average number of days in hospital.
 #' @param prop_vaccinated Proportion of the population vaccinated.
-#' @param quarantine_days Total duration of quarantine.
-#' @param quarantine_willingness Probability of accepting quarantine.
+#' @param quarantine_period Total duration of quarantine.
+#' @param quarantine_willingness Probability of accepting quarantine (
+#' see details).
+#' @param isolation_period Average number of days in isolation.
 #' @details
+#' This model can be described as a SEIHR model with isolation and quarantine.
+#' The infectious state is divided into prodromal and rash phases. Furthermore,
+#' the quarantine state includes exposed, susceptible, prodromal, and recovered
+#' states.
+#'
+#' The quarantine process is triggered any time that an agent with rash is
+#' detected. The agent is then isolated and all agents who are unvaccinated are
+#' quarantined. Isolated agents then may be moved out of the isolation in
+#' `isolation_period` days.
+#'
 #' The basic reproductive number in Measles is estimated to be about 15.
 #' By default, the contact rate of the model is set so that the R0 matches
 #' 15.
+#'
+#' When `quarantine_period` is set to -1, the model assumes
+#' there is no quarantine process. The same happens with `isolation_period`.
+#' Since the quarantine process is triggered by an isolation, then
+#' `isolation_period = -1` automatically sets `quarantine_period = -1`.
 #' @export
 #' @family Models
 #' @aliases epiworld_measlesquarantine
@@ -49,7 +66,7 @@
 ModelMeaslesQuarantine <- function(
     n,
     prevalence = 1,
-    contact_rate = 15 / transmission_rate / (rash_period + prodromal_period),
+    contact_rate = 15 / transmission_rate / prodromal_period,
     transmission_rate = .9,
     vax_efficacy = .99,
     vax_improved_recovery = .5,
@@ -58,27 +75,29 @@ ModelMeaslesQuarantine <- function(
     rash_period = 3,
     days_undetected = 2,
     hospitalization_rate = .2,
-    hospitalization_duration = 7,
+    hospitalization_period = 7,
     prop_vaccinated = 1 - 1 / 15,
-    quarantine_days = 21,
-    quarantine_willingness = 1
+    quarantine_period = 21,
+    quarantine_willingness = 1,
+    isolation_period = 4
     ) {
   # Check input parameters
-  stopifnot_int(n)
-  stopifnot_int(prevalence)
-  stopifnot_double(contact_rate)
-  stopifnot_double(transmission_rate)
-  stopifnot_double(vax_efficacy)
-  stopifnot_double(vax_improved_recovery)
-  stopifnot_double(incubation_period)
-  stopifnot_double(prodromal_period)
-  stopifnot_double(rash_period)
-  stopifnot_double(days_undetected)
-  stopifnot_double(hospitalization_rate)
-  stopifnot_double(hospitalization_duration)
-  stopifnot_double(prop_vaccinated)
-  stopifnot_double(quarantine_days)
-  stopifnot_double(quarantine_willingness)
+  stopifnot_int(n, lb = 1)
+  stopifnot_int(prevalence, lb = 0, ub = n)
+  stopifnot_double(contact_rate, lb = 0)
+  stopifnot_double(transmission_rate, lb = 0, ub = 1)
+  stopifnot_double(vax_efficacy, lb = 0, ub = 1)
+  stopifnot_double(vax_improved_recovery, lb = 0, ub = 1)
+  stopifnot_double(incubation_period, lb = 0)
+  stopifnot_double(prodromal_period, lb = 0)
+  stopifnot_double(rash_period, lb = 0)
+  stopifnot_double(days_undetected, lb = 0)
+  stopifnot_double(hospitalization_rate, lb = 0, ub = 1)
+  stopifnot_double(hospitalization_duration, lb = 0)
+  stopifnot_double(prop_vaccinated, lb = 0, ub = 1)
+  stopifnot_int(quarantine_period, lb = -1)
+  stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
+  stopifnot_int(isolation_days, lb = -1)
 
   structure(
     ModelMeaslesQuarantine_cpp(
@@ -95,7 +114,7 @@ ModelMeaslesQuarantine <- function(
       hospitalization_rate,
       hospitalization_duration,
       prop_vaccinated,
-      quarantine_days,
+      quarantine_period,
       quarantine_willingness
     ),
     class = c("epiworld_measlesquarantine", "epiworld_model")

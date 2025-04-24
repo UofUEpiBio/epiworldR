@@ -45,8 +45,8 @@ clean:
 	# sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' man/epiworldR-package.Rd
 	sed -i -E 's/^library\(epiworldRdev\)/library(epiworldR)/g' README.*
 
-docs: clean
-	Rscript --vanilla -e 'roxygen2::roxygenize()'
+docs:
+	Rscript -e 'devtools::document()'
 
 checkv: build
 	R CMD check --as-cran --use-valgrind epiworldR*.tar.gz

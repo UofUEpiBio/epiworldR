@@ -8,7 +8,7 @@
 ModelMeaslesQuarantine(
   n,
   prevalence = 1,
-  contact_rate = 15/transmission_rate/(rash_period + prodromal_period),
+  contact_rate = 15/transmission_rate/prodromal_period,
   transmission_rate = 0.9,
   vax_efficacy = 0.99,
   vax_improved_recovery = 0.5,
@@ -17,10 +17,11 @@ ModelMeaslesQuarantine(
   rash_period = 3,
   days_undetected = 2,
   hospitalization_rate = 0.2,
-  hospitalization_duration = 7,
+  hospitalization_period = 7,
   prop_vaccinated = 1 - 1/15,
-  quarantine_days = 21,
-  quarantine_willingness = 1
+  quarantine_period = 21,
+  quarantine_willingness = 1,
+  isolation_period = 4
 )
 }
 \arguments{
@@ -46,13 +47,16 @@ ModelMeaslesQuarantine(
 
 \item{hospitalization_rate}{Probability of hospitalization.}
 
-\item{hospitalization_duration}{Average number of days in hospital.}
-
 \item{prop_vaccinated}{Proportion of the population vaccinated.}
 
-\item{quarantine_days}{Total duration of quarantine.}
+\item{quarantine_period}{Total duration of quarantine.}
 
-\item{quarantine_willingness}{Probability of accepting quarantine.}
+\item{quarantine_willingness}{Probability of accepting quarantine (
+see details).}
+
+\item{isolation_period}{Average number of days in isolation.}
+
+\item{hospitalization_duration}{Average number of days in hospital.}
 }
 \value{
 \itemize{
@@ -64,9 +68,24 @@ The \code{ModelMeaslesQuarantine} function implements a connected version
 of a Measles model with quarantine.
 }
 \details{
+This model can be described as a SEIHR model with isolation and quarantine.
+The infectious state is divided into prodromal and rash phases. Furthermore,
+the quarantine state includes exposed, susceptible, prodromal, and recovered
+states.
+
+The quarantine process is triggered any time that an agent with rash is
+detected. The agent is then isolated and all agents who are unvaccinated are
+quarantined. Isolated agents then may be moved out of the isolation in
+\code{isolation_period} days.
+
 The basic reproductive number in Measles is estimated to be about 15.
 By default, the contact rate of the model is set so that the R0 matches
 15.
+
+When \code{quarantine_period} is set to -1, the model assumes
+there is no quarantine process. The same happens with \code{isolation_period}.
+Since the quarantine process is triggered by an isolation, then
+\code{isolation_period = -1} automatically sets \code{quarantine_period = -1}.
 }
 \examples{
 # An in a school with low vaccination

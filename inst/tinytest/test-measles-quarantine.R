@@ -12,9 +12,9 @@ good_prodromal_period <- 2
 good_rash_period <- 4
 good_days_undetected <- 3
 good_hospitalization_rate <- 0.5
-good_hospitalization_duration <- 5
+good_hospitalization_period <- 5
 good_prop_vaccinated <- 13 / 15
-good_quarantine_days <- 15
+good_quarantine_period <- 15
 good_quarantine_willingness <- 1
 
 expect_silent(measles_model <- ModelMeaslesQuarantine(
@@ -29,9 +29,9 @@ expect_silent(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ))
 
@@ -58,9 +58,9 @@ bad_prodromal_period <- NA
 bad_rash_period <- NA
 bad_days_undetected <- NA
 bad_hospitalization_rate <- NA
-bad_hospitalization_duration <- NA
+bad_hospitalization_period <- NA
 bad_prop_vaccinated <- NA
-bad_quarantine_days <-  NA
+bad_quarantine_period <-  NA
 bad_quarantine_willingness <- NA
 
 expected_error_msg_int <- "must be an integer"
@@ -78,9 +78,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_int)
 
@@ -96,9 +96,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_int)
 
@@ -114,9 +114,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -132,9 +132,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -150,9 +150,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -168,9 +168,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -186,9 +186,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -204,9 +204,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -222,9 +222,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = bad_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -240,9 +240,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = bad_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -258,9 +258,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = bad_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -276,9 +276,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = bad_hospitalization_duration,
+    hospitalization_period = bad_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -294,9 +294,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = bad_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -312,9 +312,9 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = bad_quarantine_days,
+    quarantine_period = bad_quarantine_period,
     quarantine_willingness = good_quarantine_willingness
 ), expected_error_msg_double)
 
@@ -330,8 +330,8 @@ expect_error(measles_model <- ModelMeaslesQuarantine(
     rash_period = good_rash_period,
     days_undetected = good_days_undetected,
     hospitalization_rate = good_hospitalization_rate,
-    hospitalization_duration = good_hospitalization_duration,
+    hospitalization_period = good_hospitalization_period,
     prop_vaccinated = good_prop_vaccinated,
-    quarantine_days = good_quarantine_days,
+    quarantine_period = good_quarantine_period,
     quarantine_willingness = bad_quarantine_willingness
 ), expected_error_msg_double)

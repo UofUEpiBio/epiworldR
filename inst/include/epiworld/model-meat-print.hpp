@@ -294,17 +294,6 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
                     );
 
         }
-            // else
-            // {
-
-            //     printf_epiworld(
-            //         fmt.c_str(),
-            //         s,
-            //         states_labels[s].c_str(),
-            //         db.today_total[ s ]
-            //         );
-
-            // }
     }
 
     if (today() != 0)

@@ -1210,6 +1210,10 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
     {
         for (size_t s_i = 0; s_i < n_state; ++s_i)
         {
+            // Nothing to normalize if the row is zero
+            if (rowsums[s_i] == 0)
+                continue;
+
             for (size_t s_j = 0; s_j < n_state; ++s_j)
                 res[s_i + s_j * n_state] /= rowsums[s_i];
         }
@@ -1246,7 +1250,10 @@ inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
             printf_epiworld(fmt.c_str(), states_labels[s_i].c_str());
             for (size_t s_j = 0u; s_j < n_state; ++s_j)
             {
-                if (std::isnan(res[s_i + s_j * n_state]))
+                if (
+                    std::isnan(res[s_i + s_j * n_state]) ||
+                    (res[s_i + s_j * n_state] < 1e-10)
+                )
                 {
                     printf_epiworld("     -");
                 } else {

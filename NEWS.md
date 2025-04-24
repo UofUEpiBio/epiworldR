@@ -1,6 +1,10 @@
 # epiworldR 0.8.1.2
 
-## Bug fixes
+## Changes
+
+* In the `ModelMeaslesQuarantine` model, isolated individuals now have a different parameter for the number of days in isolation. Previously, the same parameter was used for both isolated and quarantined individuals. The new parameter is `isolation_period`.
+
+* The `ModelMeaslesQuarantine` model changed a couple of parameter names to improve consistency.
 
 * The mixing models were using the wrong sampling scheme for the contact event between agents.
 
