@@ -36,5 +36,6 @@ Suggests:
     data.table,
     DiagrammeR
 Imports:
-    utils
+    utils,
+    parallel
 VignetteBuilder: knitr

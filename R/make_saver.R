@@ -110,11 +110,16 @@ run_multiple.epiworld_model <- function(
 
 #' @export
 #' @rdname run_multiple
+#' @param nthreads Integer. Number of threads (passed to [parallel::makeCluster()]).
 #' @returns
 #' - The `run_multiple_get_results` function returns a named list with the
 #' data specified by `make_saver`.
 #' @importFrom utils read.table
-run_multiple_get_results <- function(m) {
+#' @importFrom parallel parLapply makeCluster stopCluster detectCores
+run_multiple_get_results <- function(
+    m,
+    nthreads = parallel::detectCores() - 1L
+    ) {
 
   if (!inherits(m, "epiworld_model"))
     stop("-m- must be of class `epiworld_model`.")
@@ -128,6 +133,8 @@ run_multiple_get_results <- function(m) {
   output <- vector("list", length(saver$what))
   names(output) <- saver$what
 
+  cl <- parallel::makeCluster(nthreads)
+  on.exit(parallel::stopCluster(cl))
   for (i in saver$what) {
     # Listing the files
     fnames <- list.files(
@@ -137,15 +144,18 @@ run_multiple_get_results <- function(m) {
     )
 
     # Reading the files
-    output[[i]] <- lapply(fnames, utils::read.table, sep = " ", header = TRUE)
+    output[[i]] <- parallel::parLapply(
+      cl, fnames, utils::read.table, sep = " ", header = TRUE,
+      comment.char = ""
+    )
 
     # Getting number of simulation
-    output[[i]] <- lapply(seq_along(fnames), function(j) {
-      if (nrow(output[[i]][[j]]) > 0)
-        cbind(sim_num = j, output[[i]][[j]])
+    output[[i]] <- parallel::parLapply(cl, seq_along(fnames), \(j, out) {
+      if (nrow(out[[j]]) > 0)
+        cbind(sim_num = j, out[[j]])
       else
         NULL
-    })
+    }, out = output)
 
     # Putting all together
     output[[i]] <- do.call(rbind, output[[i]])
