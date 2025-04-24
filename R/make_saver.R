@@ -150,12 +150,12 @@ run_multiple_get_results <- function(
     )
 
     # Getting number of simulation
-    output[[i]] <- parallel::parLapply(cl, seq_along(fnames), \(j) {
-      if (nrow(out[[j]]) > 0)
-        cbind(sim_num = j, out[[j]])
+    output[[i]] <- lapply(seq_along(fnames), \(j) {
+      if (nrow(output[[i]][[j]]) > 0)
+        cbind(sim_num = j, output[[i]][[j]])
       else
         NULL
-    }, out = output)
+    })
 
     # Putting all together
     output[[i]] <- do.call(rbind, output[[i]])
