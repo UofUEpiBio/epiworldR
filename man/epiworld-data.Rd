@@ -186,6 +186,9 @@ The \code{plot_incidence} function is a wrapper between
 The plot method for the \code{epiworld_hist_transition} class plots the
 daily incidence of each state. The function returns the data frame used for
 plotting.
+
+The function \code{get_transmissions} includes the seeded infections, with the
+\code{source} column coded as \code{-1}.
 }
 \examples{
 # SEIR Connected

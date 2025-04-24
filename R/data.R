@@ -489,6 +489,9 @@ plot.epiworld_hist_transition <- function(
 
 #' @export
 #' @rdname epiworld-data
+#' @details
+#' The function `get_transmissions` includes the seeded infections, with the
+#' `source` column coded as `-1`.
 #' @return
 #' - The function `get_transmissions` returns a `data.frame` with the following
 #' columns: `date`, `source`, `target`, `virus_id`, `virus`, and `source_exposure_date`.

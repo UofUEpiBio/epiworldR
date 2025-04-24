@@ -10,6 +10,7 @@ RUN install2.r cpp11 roxygen2 tinytest data.table netplot \
 
 RUN install2.r languageserver httpgd
 
-RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb
+RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb \
+  libglpk-dev
 
 CMD ["bash"]
