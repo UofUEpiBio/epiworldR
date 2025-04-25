@@ -72,12 +72,13 @@ public:
     static const epiworld_fast_uint RASH                    = 3u;
     static const epiworld_fast_uint ISOLATED                = 4u;
     static const epiworld_fast_uint ISOLATED_RECOVERED      = 5u;
-    static const epiworld_fast_uint QUARANTINED_EXPOSED     = 6u;
-    static const epiworld_fast_uint QUARANTINED_SUSCEPTIBLE = 7u;
-    static const epiworld_fast_uint QUARANTINED_PRODROMAL   = 8u;
-    static const epiworld_fast_uint QUARANTINED_RECOVERED   = 9u;
-    static const epiworld_fast_uint HOSPITALIZED            = 10u;
-    static const epiworld_fast_uint RECOVERED               = 11u;
+    static const epiworld_fast_uint DETECTED_HOSPITALIZED   = 6u;
+    static const epiworld_fast_uint QUARANTINED_EXPOSED     = 7u;
+    static const epiworld_fast_uint QUARANTINED_SUSCEPTIBLE = 8u;
+    static const epiworld_fast_uint QUARANTINED_PRODROMAL   = 9u;
+    static const epiworld_fast_uint QUARANTINED_RECOVERED   = 10u;
+    static const epiworld_fast_uint HOSPITALIZED            = 11u;
+    static const epiworld_fast_uint RECOVERED               = 12u;
     
     // Default constructor
     ModelMeaslesQuarantine() {};
@@ -145,7 +146,7 @@ public:
     );
     ///@}
 
-    std::vector<Agent<TSeq> *> available; ///< Agents available for contact
+    std::vector<Agent<TSeq> *> infectious; ///< Agents infectious for contact
 
     bool system_quarantine_triggered = false;
 
@@ -173,7 +174,7 @@ public:
     void quarantine_agents();
 
     void reset();
-    void update_available();
+    void update_infectious();
 
     Model<TSeq> * clone_ptr();
 
@@ -202,17 +203,8 @@ inline void ModelMeaslesQuarantine<TSeq>::quarantine_agents() {
         auto agent_state = this->get_agent(i).get_state();
 
         // Already quarantined or isolated
-        if (agent_state > RASH)
+        if (agent_state >= RASH)
             continue;
-
-        // Rash is evident, so they go straight to isolation, in all
-        // cases.
-        if ((agent_state == RASH) && (this->par("Isolation period") >= 0))
-        {
-            this->get_agent(i).change_state(this, ISOLATED);
-            this->day_flagged[i] = this->today();
-            continue;
-        }
 
         // If the agent has a vaccine, then no need for quarantine
         if (this->get_agent(i).get_n_tools() != 0u)
@@ -254,7 +246,7 @@ inline void ModelMeaslesQuarantine<TSeq>::m_update_model(Model<TSeq> * m) {
     GET_MODEL(model, m);
     model->quarantine_agents();
     model->events_run();
-    model->update_available();
+    model->update_infectious();
     return;
 
 }
@@ -284,20 +276,41 @@ inline void ModelMeaslesQuarantine<TSeq>::reset() {
 }
 
 template<typename TSeq>
-inline void ModelMeaslesQuarantine<TSeq>::update_available() {
+inline void ModelMeaslesQuarantine<TSeq>::update_infectious() {
 
-    this->available.clear();
+    #ifdef EPI_DEBUG
+    // All agents with state >= EXPOSED should have a virus
+    for (auto & agent: this->get_agents())
+    {
+        auto s = agent.get_state();
+        if (IN(s, {EXPOSED, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED, QUARANTINED_EXPOSED, QUARANTINED_PRODROMAL, HOSPITALIZED}))
+        {
+            if (agent.get_virus() == nullptr)
+                throw std::logic_error("The agent has no virus.");
+        }
+    }
+    #endif
+
+    this->infectious.clear();
+    int n_available = 0;
     for (auto & agent: this->get_agents())
     {
         const auto & s = agent.get_state();
+        if (s == PRODROMAL)
+            this->infectious.push_back(&agent);
+
         if (s < RASH)
-            this->available.push_back(&agent);
+            ++n_available;
+        
     }
 
     // Assumes fixed contact rate throughout the simulation
+    double p_contact = this->par("Contact rate")/
+        static_cast< epiworld_double >(n_available);
+
     this->set_rand_binom(
-        static_cast<int>(this->available.size()),
-        this->par("Contact rate")/ static_cast<double>(available.size())// static_cast<double>(this->size())
+        static_cast<int>(this->infectious.size()),
+        p_contact > 1.0 ? 1.0 : p_contact
     );
 
 }
@@ -323,9 +336,9 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
         return;
 
     GET_MODEL(model, m);
-    size_t n_available = model->available.size();
+    size_t n_infectious = model->infectious.size();
 
-    if (n_available == 0)
+    if (n_infectious == 0)
         return;
 
     // Drawing from the set
@@ -334,7 +347,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
     while (i < ndraw)
     {
         // Picking the actual contacts
-        int which = static_cast<int>(std::floor(n_available * m->runif()));
+        int which = static_cast<int>(std::floor(n_infectious * m->runif()));
 
         /* There is a bug in which runif() returns 1.0. It is rare, but
             * we saw it here. See the Notes section in the C++ manual
@@ -343,10 +356,10 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
             * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
             * 
             */
-        if (which == static_cast<int>(n_available))
+        if (which == static_cast<int>(n_infectious))
             --which;
 
-        epiworld::Agent<> & neighbor = *model->available[which];
+        epiworld::Agent<> & neighbor = *model->infectious[which];
 
         // Can't sample itself
         if (neighbor.get_id() == p->get_id())
@@ -355,13 +368,16 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
         // We successfully drew a contact, so we increment the counter
         i++;
 
-        // No virus, no way to transmit
+        // No virus, the error!!
         if (neighbor.get_virus() == nullptr)
-            continue;
+            throw std::logic_error("The neighbor has no virus.");
 
         // Only prodomal individuals can transmit
         if (neighbor.get_state() != model->PRODROMAL)
-            continue;
+            throw std::logic_error(
+                "The neighbor is not in the prodromal state. The state is: " +
+                std::to_string(neighbor.get_state())
+            );
 
         auto & v = neighbor.get_virus();
 
@@ -461,30 +477,33 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     // Recovers
     if (which == 2)
     {
-        if (detected)
-        {
-            model->day_flagged[p->get_id()] = m->today();
-            p->rm_agent_by_virus(
-                m,
-                ModelMeaslesQuarantine::ISOLATED_RECOVERED
-            );
-
-            // NOT TRACKING WHEN THIS AGENT MOVES OUT OF RECOVERED
-        }
-        else
-            p->rm_agent_by_virus(m, ModelMeaslesQuarantine::RECOVERED);
+        p->rm_agent_by_virus(
+            m,
+            detected ?
+                ModelMeaslesQuarantine::ISOLATED_RECOVERED:
+                ModelMeaslesQuarantine::RECOVERED
+        );
     }
     else if (which == 1)
     {
         // If hospitalized, then the agent is removed from the system
         // effectively
-        p->change_state(m, ModelMeaslesQuarantine::HOSPITALIZED);
+        p->change_state(
+            m,
+            detected ?
+                ModelMeaslesQuarantine::DETECTED_HOSPITALIZED :
+                ModelMeaslesQuarantine::HOSPITALIZED
+            );
     }
     else if (which != 0)
     {
         throw std::logic_error("The roulette returned an unexpected value.");
+    } else if ((which == 0u) && detected)
+    {
+        // If the agent is not hospitalized, then it is moved to
+        // isolation.
+        p->change_state(m, ModelMeaslesQuarantine::ISOLATED);
     }
-
     
 };
 
@@ -617,20 +636,17 @@ LOCAL_UPDATE_FUN(m_update_q_prodromal) {
         (m->par("Quarantine period") <= days_since) ?
         true: false;
     
-    // If they develop rash, then they are isolated and contact
-    // tracing is triggered.
+    // Develops rash?
     if (m->runif() < (1.0/m->par("Prodromal period")))
     {
-        if (unquarantine)
-            p->change_state(m, ModelMeaslesQuarantine::PRODROMAL);
+        model->day_rash_onset[p->get_id()] = m->today();
+        p->change_state(m, ModelMeaslesQuarantine::ISOLATED);
     }
     else
     {
-
-        // If develops rash during quarantine, they are moved to 
-        // isolation right away.
-        p->change_state(m, ModelMeaslesQuarantine::ISOLATED);        
-        model->day_rash_onset[p->get_id()] = m->today();
+        
+        if (unquarantine)
+            p->change_state(m, ModelMeaslesQuarantine::PRODROMAL);
 
     }
 
@@ -688,6 +704,7 @@ inline ModelMeaslesQuarantine<TSeq>::ModelMeaslesQuarantine(
     model.add_state(
         "Isolated Recovered", this->m_update_isolated_recovered
     );
+    model.add_state("Detected Hospitalized", this->m_update_hospitalized);
     model.add_state(
         "Quarantined Exposed", this->m_update_q_exposed
     );
