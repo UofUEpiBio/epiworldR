@@ -66,7 +66,7 @@ private:
 
 public:
 
-    static const epiworld_fast_uint SUSECPTIBLE             = 0u;
+    static const epiworld_fast_uint SUSCEPTIBLE             = 0u;
     static const epiworld_fast_uint EXPOSED                 = 1u;
     static const epiworld_fast_uint PRODROMAL               = 2u;
     static const epiworld_fast_uint RASH                    = 3u;
@@ -218,7 +218,7 @@ inline void ModelMeaslesQuarantine<TSeq>::quarantine_agents() {
         )
         {
 
-            if (agent_state == SUSECPTIBLE)
+            if (agent_state == SUSCEPTIBLE)
                 this->get_agent(i).change_state(this, QUARANTINED_SUSCEPTIBLE);
             else if (agent_state == EXPOSED)
                 this->get_agent(i).change_state(this, QUARANTINED_EXPOSED);
@@ -620,7 +620,7 @@ LOCAL_UPDATE_FUN(m_update_q_susceptible) {
         m->today() - model->day_flagged[p->get_id()];
     
     if (days_since >= m->par("Quarantine period"))
-        p->change_state(m, ModelMeaslesQuarantine::SUSECPTIBLE);
+        p->change_state(m, ModelMeaslesQuarantine::SUSCEPTIBLE);
 
 }
 
