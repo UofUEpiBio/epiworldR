@@ -6,7 +6,11 @@
 
 * The `ModelMeaslesQuarantine` model changed a couple of parameter names to improve consistency.
 
-* The mixing models were using the wrong sampling scheme for the contact event between agents.
+* The mixing models were using the wrong sampling scheme for the contact event between agents. The new implementation allows using the regular basic reproductive number calculation for its calibration.
+
+## Other Changes
+
+* Added more tests to the `ModelMeaslesQuarantine` model.
 
 
 # epiworldR 0.8.1.0

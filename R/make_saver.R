@@ -44,13 +44,13 @@
 #' run_multiple(model_sir, ndays = 100, nsims = 50, saver = saver, nthreads = 2)
 #'
 #' # Retrieving the results
-#' ans <- run_multiple_get_results(model_sir)
+#' ans <- run_multiple_get_results(model_sir, nthreads = 2)
 #'
 #' head(ans$total_hist)
 #' head(ans$reproductive)
 #'
 #' # Plotting
-#' multi_sir <- run_multiple_get_results(model_sir)$total_hist
+#' multi_sir <- ans$total_hist
 #' multi_sir <- multi_sir[multi_sir$date <= 20, ]
 #' plot(multi_sir)
 #'

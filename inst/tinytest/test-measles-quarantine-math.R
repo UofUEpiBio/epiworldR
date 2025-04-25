@@ -27,7 +27,7 @@ for (R0 in R0s) {
     nthreads = 2L
     )
 
-  res <- run_multiple_get_results(model_measles)
+  res <- run_multiple_get_results(model_measles, nthreads = 2L)
 
   # Identifying the date 0
   r0s <- res$reproductive
