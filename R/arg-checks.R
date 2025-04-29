@@ -5,7 +5,11 @@
 # Checks if argument contains NA values
 stopifany_na <- function(x) {
   if (any(is.na(x))) {
-    stop(paste(match.call()$x, "must not contain NA values."))
+    if (length(x) > 1) {
+      stop(paste(match.call()$x, "must not contain NA values."))
+    } else {
+      stop(paste(match.call()$x, "must not be NA."))
+    }
   }
 }
 
@@ -21,7 +25,9 @@ stopifnot_string <- function(x) {
 
 # Checks if argument is an integer
 stopifnot_int <- function(x, lb = NULL, ub = NULL) {
-  if (is.na(x) || !is.numeric(x) || !all.equal(x, as.integer(x))) {
+  stopifany_na(x)
+
+  if (!is.numeric(x) || !all.equal(x, as.integer(x))) {
     stop(
       paste(match.call()$x, "must be an integer, but is of class(es): "),
       paste(class(x), collapse = ", ")
@@ -45,7 +51,9 @@ stopifnot_int <- function(x, lb = NULL, ub = NULL) {
 
 # Checks if argument is a double
 stopifnot_double <- function(x, lb = NULL, ub = NULL) {
-  if (is.na(x) || !is.numeric(x)) {
+  stopifany_na(x)
+
+  if (!is.numeric(x)) {
     stop(
       paste(match.call()$x, "must be a double, but is of class(es): "),
       paste(class(x), collapse = ", ")
