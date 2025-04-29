@@ -9,7 +9,7 @@ of a Measles model with quarantine."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ of a Measles model with quarantine."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Measles model with quarantine</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/ModelMeaslesQuarantine.R" class="external-link"><code>R/ModelMeaslesQuarantine.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/R/ModelMeaslesQuarantine.R" class="external-link"><code>R/ModelMeaslesQuarantine.R</code></a></small>
       <div class="d-none name"><code>ModelMeaslesQuarantine.Rd</code></div>
     </div>
 
@@ -54,7 +54,7 @@ of a Measles model with quarantine.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ModelMeaslesQuarantine</span><span class="op">(</span></span>
 <span>  <span class="va">n</span>,</span>
 <span>  prevalence <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  contact_rate <span class="op">=</span> <span class="fl">15</span><span class="op">/</span><span class="va">transmission_rate</span><span class="op">/</span><span class="op">(</span><span class="va">rash_period</span> <span class="op">+</span> <span class="va">prodromal_period</span><span class="op">)</span>,</span>
+<span>  contact_rate <span class="op">=</span> <span class="fl">15</span><span class="op">/</span><span class="va">transmission_rate</span><span class="op">/</span><span class="va">prodromal_period</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  vax_efficacy <span class="op">=</span> <span class="fl">0.99</span>,</span>
 <span>  vax_improved_recovery <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -63,10 +63,11 @@ of a Measles model with quarantine.</p>
 <span>  rash_period <span class="op">=</span> <span class="fl">3</span>,</span>
 <span>  days_undetected <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  hospitalization_rate <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  hospitalization_duration <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  hospitalization_period <span class="op">=</span> <span class="fl">7</span>,</span>
 <span>  prop_vaccinated <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span><span class="op">/</span><span class="fl">15</span>,</span>
-<span>  quarantine_days <span class="op">=</span> <span class="fl">21</span>,</span>
-<span>  quarantine_willingness <span class="op">=</span> <span class="fl">1</span></span>
+<span>  quarantine_period <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>  quarantine_willingness <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  isolation_period <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -118,7 +119,7 @@ of a Measles model with quarantine.</p>
 <dd><p>Probability of hospitalization.</p></dd>
 
 
-<dt id="arg-hospitalization-duration">hospitalization_duration<a class="anchor" aria-label="anchor" href="#arg-hospitalization-duration"></a></dt>
+<dt id="arg-hospitalization-period">hospitalization_period<a class="anchor" aria-label="anchor" href="#arg-hospitalization-period"></a></dt>
 <dd><p>Average number of days in hospital.</p></dd>
 
 
@@ -126,12 +127,17 @@ of a Measles model with quarantine.</p>
 <dd><p>Proportion of the population vaccinated.</p></dd>
 
 
-<dt id="arg-quarantine-days">quarantine_days<a class="anchor" aria-label="anchor" href="#arg-quarantine-days"></a></dt>
+<dt id="arg-quarantine-period">quarantine_period<a class="anchor" aria-label="anchor" href="#arg-quarantine-period"></a></dt>
 <dd><p>Total duration of quarantine.</p></dd>
 
 
 <dt id="arg-quarantine-willingness">quarantine_willingness<a class="anchor" aria-label="anchor" href="#arg-quarantine-willingness"></a></dt>
-<dd><p>Probability of accepting quarantine.</p></dd>
+<dd><p>Probability of accepting quarantine (
+see details).</p></dd>
+
+
+<dt id="arg-isolation-period">isolation_period<a class="anchor" aria-label="anchor" href="#arg-isolation-period"></a></dt>
+<dd><p>Average number of days in isolation.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -141,9 +147,21 @@ of a Measles model with quarantine.</p>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The basic reproductive number in Measles is estimated to be about 15.
+    <p>This model can be described as a SEIHR model with isolation and quarantine.
+The infectious state is divided into prodromal and rash phases. Furthermore,
+the quarantine state includes exposed, susceptible, prodromal, and recovered
+states.</p>
+<p>The quarantine process is triggered any time that an agent with rash is
+detected. The agent is then isolated and all agents who are unvaccinated are
+quarantined. Isolated agents then may be moved out of the isolation in
+<code>isolation_period</code> days.</p>
+<p>The basic reproductive number in Measles is estimated to be about 15.
 By default, the contact rate of the model is set so that the R0 matches
 15.</p>
+<p>When <code>quarantine_period</code> is set to -1, the model assumes
+there is no quarantine process. The same happens with <code>isolation_period</code>.
+Since the quarantine process is triggered by an isolation, then
+<code>isolation_period = -1</code> automatically sets <code>quarantine_period = -1</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -191,8 +209,8 @@ grant) and the Utah Department of Health and Human Services.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> It features 500 agents, 1 virus(es), and 1 tool(s).</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The model has 11 states.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 350 Susceptible, 0 Exposed, 0 Prodromal, 0 Rash, 0 Isolated, 0 Quarantined Exposed, 131 Quarantined Susceptible, 0 Quarantined Prodromal, 1 Quarantined Recovered, 1 Hospitalized, and 17 Recovered.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The model has 13 states.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> The final distribution is: 498 Susceptible, 0 Exposed, 0 Prodromal, 0 Rash, 0 Isolated, 0 Isolated Recovered, 0 Detected Hospitalized, 0 Quarantined Exposed, 0 Quarantined Susceptible, 0 Quarantined Prodromal, 0 Quarantined Recovered, 0 Hospitalized, and 2 Recovered.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_measles</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelMeaslesQuarantine-1.png" alt="" width="700" height="433"></span>
@@ -208,7 +226,7 @@ grant) and the Utah Department of Health and Human Services.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>

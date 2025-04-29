@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,9 +65,9 @@
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-04-29</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/vignettes/mixing.Rmd" class="external-link"><code>vignettes/mixing.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/mixing.Rmd" class="external-link"><code>vignettes/mixing.Rmd</code></a></small>
       <div class="d-none name"><code>mixing.Rmd</code></div>
     </div>
 
@@ -163,8 +163,8 @@ summarizes the results, and plots the incidence curve:</p>
 <span><span class="co">#&gt; Number of entities  : 3</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 107.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 8.37 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 65.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 13.70 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -183,16 +183,16 @@ summarizes the results, and plots the incidence curve:</p>
 <span><span class="co">#&gt;  - Prob. Transmission   : 0.1000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 100:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible : 8999 -&gt; 137</span></span>
-<span><span class="co">#&gt;   - (1) Exposed     :    1 -&gt; 35</span></span>
-<span><span class="co">#&gt;   - (2) Infected    :    0 -&gt; 139</span></span>
-<span><span class="co">#&gt;   - (3) Recovered   :    0 -&gt; 8689</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible : 8999 -&gt; 1</span></span>
+<span><span class="co">#&gt;   - (1) Exposed     :    1 -&gt; 0</span></span>
+<span><span class="co">#&gt;   - (2) Infected    :    0 -&gt; 2</span></span>
+<span><span class="co">#&gt;   - (3) Recovered   :    0 -&gt; 8997</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.98  0.02  0.00  0.00</span></span>
-<span><span class="co">#&gt;  - Exposed      0.00  0.86  0.14  0.00</span></span>
-<span><span class="co">#&gt;  - Infected     0.00  0.00  0.86  0.14</span></span>
-<span><span class="co">#&gt;  - Recovered    0.00  0.00  0.00  1.00</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.96  0.04     -     -</span></span>
+<span><span class="co">#&gt;  - Exposed         -  0.85  0.15     -</span></span>
+<span><span class="co">#&gt;  - Infected        -     -  0.86  0.14</span></span>
+<span><span class="co">#&gt;  - Recovered       -     -     -  1.00</span></span>
 <span><span class="fu"><a href="../reference/epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">flu_model</span><span class="op">)</span></span></code></pre></div>
 <p><img src="mixing_files/figure-html/model-simulate-1.png" width="80%" style="display: block; margin: auto;"></p>
 </div>
@@ -247,12 +247,12 @@ accomplishes this:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">transmissions</span><span class="op">)</span></span>
 <span><span class="co">#&gt;     date entity     N</span></span>
 <span><span class="co">#&gt;    &lt;int&gt;  &lt;int&gt; &lt;int&gt;</span></span>
-<span><span class="co">#&gt; 1:    75      1    12</span></span>
-<span><span class="co">#&gt; 2:    47      0   114</span></span>
-<span><span class="co">#&gt; 3:    51      0   133</span></span>
-<span><span class="co">#&gt; 4:    52      0   152</span></span>
-<span><span class="co">#&gt; 5:    47      2    74</span></span>
-<span><span class="co">#&gt; 6:    48      2    87</span></span></code></pre></div>
+<span><span class="co">#&gt; 1:    25      2   170</span></span>
+<span><span class="co">#&gt; 2:    26      1   245</span></span>
+<span><span class="co">#&gt; 3:    29      1   241</span></span>
+<span><span class="co">#&gt; 4:    31      1   223</span></span>
+<span><span class="co">#&gt; 5:    25      0   382</span></span>
+<span><span class="co">#&gt; 6:    26      0   338</span></span></code></pre></div>
 <p>With this information, we can now visualize the daily incidence for
 each entity. The following code chunk plots the daily incidence for each
 entity:</p>
@@ -287,7 +287,7 @@ entity:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>

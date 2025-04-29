@@ -11,7 +11,7 @@ the process."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ the process."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Run multiple simulations at once</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/make_saver.R" class="external-link"><code>R/make_saver.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/R/make_saver.R" class="external-link"><code>R/make_saver.R</code></a></small>
       <div class="d-none name"><code>run_multiple.Rd</code></div>
     </div>
 
@@ -65,7 +65,7 @@ the process.</p>
 <span>  nthreads <span class="op">=</span> <span class="fl">1L</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span>
+<span><span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">m</span>, nthreads <span class="op">=</span> <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1L</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">make_saver</span><span class="op">(</span><span class="va">...</span>, fn <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -95,7 +95,7 @@ the process.</p>
 
 
 <dt id="arg-nthreads">nthreads<a class="anchor" aria-label="anchor" href="#arg-nthreads"></a></dt>
-<dd><p>Integer. Number of threads (parallel computing.)</p></dd>
+<dd><p>Integer. Number of threads (passed to <code><a href="https://rdrr.io/r/parallel/makeCluster.html" class="external-link">parallel::makeCluster()</a></code>).</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -149,7 +149,7 @@ data specified by <code>make_saver</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieving the results</span></span></span>
-<span class="r-in"><span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span>, nthreads <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num date nviruses       state counts</span>
@@ -169,7 +169,7 @@ data specified by <code>make_saver</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    816                    8  0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
-<span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="fu">run_multiple_get_results</span><span class="op">(</span><span class="va">model_sir</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span></span>
+<span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span></span></span>
 <span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="va">multi_sir</span><span class="op">[</span><span class="va">multi_sir</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>, <span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">multi_sir</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="run_multiple-1.png" alt="" width="700" height="433"></span>
@@ -186,7 +186,7 @@ data specified by <code>make_saver</code>.</p></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>

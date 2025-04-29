@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Susceptible Exposed Infected Removed model (SEIR) with mixing</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/R/ModelSEIRMixing.R" class="external-link"><code>R/ModelSEIRMixing.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/R/ModelSEIRMixing.R" class="external-link"><code>R/ModelSEIRMixing.R</code></a></small>
       <div class="d-none name"><code>ModelSEIRMixing.Rd</code></div>
     </div>
 
@@ -185,8 +185,8 @@ agents have been removed at the beginning of the simulation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses   : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 110.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 8.13 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 65.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 13.72 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global events:</span>
@@ -205,16 +205,16 @@ agents have been removed at the beginning of the simulation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Prob. Transmission   : 0.1000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible : 8999 -&gt; 137</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Exposed     :    1 -&gt; 35</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Infected    :    0 -&gt; 139</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (3) Recovered   :    0 -&gt; 8689</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (0) Susceptible : 8999 -&gt; 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (1) Exposed     :    1 -&gt; 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (2) Infected    :    0 -&gt; 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (3) Recovered   :    0 -&gt; 8997</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.98  0.02  0.00  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed      0.00  0.86  0.14  0.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected     0.00  0.00  0.86  0.14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered    0.00  0.00  0.00  1.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible  0.96  0.04     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed         -  0.85  0.15     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Infected        -     -  0.86  0.14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered       -     -     -  1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="fu"><a href="epiworld-data.html">plot_incidence</a></span><span class="op">(</span><span class="va">flu_model</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="ModelSEIRMixing-1.png" alt="" width="700" height="433"></span>
@@ -230,7 +230,7 @@ agents have been removed at the beginning of the simulation.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer></div>

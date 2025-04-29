@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,9 +67,9 @@ Meyer</h4>
                         <h4 data-toc-skip class="author">George Vega
 Yon</h4>
             
-            <h4 data-toc-skip class="date">2025-04-23</h4>
+            <h4 data-toc-skip class="date">2025-04-29</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/HEAD/vignettes/run-multiple.Rmd" class="external-link"><code>vignettes/run-multiple.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/run-multiple.Rmd" class="external-link"><code>vignettes/run-multiple.Rmd</code></a></small>
       <div class="d-none name"><code>run-multiple.Rmd</code></div>
     </div>
 
@@ -124,12 +124,12 @@ for parallel computing.</p>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span></code></pre></div>
-<p>Using the “run_multiple_get_results” function, extract the results
-from the model object that was simulated 50 times for comparison across
-simulations.</p>
+<p>Using the “<code>run_multiple_get_results</code>” function, extract
+the results from the model object that was simulated 50 times for
+comparison across simulations.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Retrieving the results</span></span>
-<span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
+<span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span>, nthreads <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   sim_num date nviruses       state counts</span></span>
 <span><span class="co">#&gt; 1       1    0        1 Susceptible   9999</span></span>
@@ -152,24 +152,23 @@ simulations.</p>
 </h3>
 <p>To plot the epicurves and reproductive numbers over time using
 boxplots, extract the results from the model object using
-“run_multiple_get_results”. For this example, the dates are filtered to
-be less than or equal to 20 to observe the epicurves in the first 20
-days. Notice each boxplot in the below table represents the observed
-values from each of the 50 simulations for each date.</p>
+“<code>ans</code>”. For this example, the dates are filtered to be less
+than or equal to 20 to observe the epicurves in the first 20 days.
+Notice each boxplot in the below table represents the observed values
+from each of the 50 simulations for each date.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">total_hist</span></span>
+<code class="sourceCode R"><span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span></span>
 <span><span class="va">seirconn_50</span> <span class="op">&lt;-</span> <span class="va">seirconn_50</span><span class="op">[</span><span class="va">seirconn_50</span><span class="op">$</span><span class="va">date</span> <span class="op">&lt;=</span> <span class="fl">20</span>, <span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">seirconn_50</span><span class="op">)</span></span></code></pre></div>
 <p><img src="run-multiple_files/figure-html/plotting%20seirconn%20epicurves-1.png" width="80%" style="display: block; margin: auto;"></p>
 <p>To view the a plot of the reproductive number over all 50 days for
 each of the 50 simulations, store the reproductive results to a new
-object using “run_multiple_get_results”, then plot using the “boxplot”
-function. Notice each source exposure date displays a boxplot
-representing the distribution of reproductive numbers across all 50
-simulations. As expected, the reproductive number on average, decreases
-over time.</p>
+object using “<code>ans</code>”, then plot using the “boxplot” function.
+Notice each source exposure date displays a boxplot representing the
+distribution of reproductive numbers across all 50 simulations. As
+expected, the reproductive number on average, decreases over time.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">seirconn_50_r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_multiple.html">run_multiple_get_results</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span><span class="op">$</span><span class="va">reproductive</span></span>
+<code class="sourceCode R"><span><span class="va">seirconn_50_r</span> <span class="op">&lt;-</span> <span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">seirconn_50_r</span><span class="op">)</span></span></code></pre></div>
 <p><img src="run-multiple_files/figure-html/reproductive%20number%20plot-1.png" width="80%" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -192,7 +191,7 @@ over time.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
