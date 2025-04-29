@@ -24,6 +24,7 @@ stopifnot_string <- function(x) {
 }
 
 # Checks if argument is an integer
+# - Also optionally checks argument is within range [lb, ub]
 stopifnot_int <- function(x, lb = NULL, ub = NULL) {
   stopifany_na(x)
 
@@ -50,6 +51,7 @@ stopifnot_int <- function(x, lb = NULL, ub = NULL) {
 }
 
 # Checks if argument is a double
+# - Also optionally checks argument is within range [lb, ub]
 stopifnot_double <- function(x, lb = NULL, ub = NULL) {
   stopifany_na(x)
 
