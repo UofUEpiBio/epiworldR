@@ -1,4 +1,4 @@
-# Test just this file: tinytest::run_test_file("inst/tinytest/test-measles-quarantine.R")
+# Test just this file: tinytest::run_test_file("inst/tinytest/test-measles-quarantine-errors.R")
 
 # Create a MeaslesQuarantine Model --------------------------------------------------------
 good_n <- 500
@@ -70,303 +70,80 @@ expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
-    n = bad_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    n = bad_n
 ), expected_error_msg_int)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = bad_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    prevalence = bad_prevalence
 ), expected_error_msg_int)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = bad_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness
+    contact_rate = bad_contact_rate
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = bad_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness
+    transmission_rate = bad_transmission_rate
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = bad_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    vax_efficacy = bad_vax_efficacy
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = bad_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    vax_improved_recovery = bad_vax_improved_recovery
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = bad_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    incubation_period = bad_incubation_period
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = bad_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    prodromal_period = bad_prodromal_period
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = bad_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    rash_period = bad_rash_period
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = bad_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    days_undetected = bad_days_undetected
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = bad_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    hospitalization_rate = bad_hospitalization_rate
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = bad_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    hospitalization_period = bad_hospitalization_period
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = bad_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    prop_vaccinated = bad_prop_vaccinated
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = bad_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
-    isolation_period = good_isolation_period
+    quarantine_period = bad_quarantine_period
 ), expected_error_msg_int)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = bad_quarantine_willingness,
-    isolation_period = good_isolation_period
+    quarantine_willingness = bad_quarantine_willingness
 ), expected_error_msg_double)
 
 expect_error(measles_model <- ModelMeaslesQuarantine(
     n = good_n,
-    prevalence = good_prevalence,
-    contact_rate = good_contact_rate,
-    transmission_rate = good_transmission_rate,
-    vax_efficacy = good_vax_efficacy,
-    vax_improved_recovery = good_vax_improved_recovery,
-    incubation_period = good_incubation_period,
-    prodromal_period = good_prodromal_period,
-    rash_period = good_rash_period,
-    days_undetected = good_days_undetected,
-    hospitalization_rate = good_hospitalization_rate,
-    hospitalization_period = good_hospitalization_period,
-    prop_vaccinated = good_prop_vaccinated,
-    quarantine_period = good_quarantine_period,
-    quarantine_willingness = good_quarantine_willingness,
     isolation_period = bad_isolation_period
 ), expected_error_msg_int)
