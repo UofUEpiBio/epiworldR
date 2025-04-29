@@ -44,12 +44,10 @@ good_transmission_rate <- 0.5
 good_incubation_days <- 4.0
 good_recovery_rate <- 1.0/7.0
 
-bad_name <- NA
-bad_prevalence <- NA
-bad_transmission_rate <- NA
-bad_incubation_days <- NA
-bad_recovery_rate <- NA
+bad_name <- 10
+bad_numeric_input <- "not a number"
 
+expected_error_msg_na <- "must not be NA"
 expected_error_msg_str <- "must be a string"
 expected_error_msg_double <- "must be a double"
 
@@ -63,7 +61,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
-  prevalence = bad_prevalence,
+  prevalence = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
   recovery_rate = good_recovery_rate
@@ -72,7 +70,7 @@ expect_error(seir_0 <- ModelSEIR(
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   prevalence = good_prevalence,
-  transmission_rate = bad_transmission_rate,
+  transmission_rate = bad_numeric_input,
   incubation_days = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
@@ -81,7 +79,7 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
-  incubation_days = bad_incubation_days,
+  incubation_days = bad_numeric_input,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -90,5 +88,46 @@ expect_error(seir_0 <- ModelSEIR(
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
-  recovery_rate = bad_recovery_rate
+  recovery_rate = bad_numeric_input
 ), expected_error_msg_double)
+
+# Check NA
+expect_error(seir_0 <- ModelSEIR(
+  name = NA,
+  prevalence = good_prevalence,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_str)
+
+expect_error(seir_0 <- ModelSEIR(
+  name = good_name,
+  prevalence = NA,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seir_0 <- ModelSEIR(
+  name = good_name,
+  prevalence = good_prevalence,
+  transmission_rate = NA,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seir_0 <- ModelSEIR(
+  name = good_name,
+  prevalence = good_prevalence,
+  transmission_rate = good_transmission_rate,
+  incubation_days = NA,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seir_0 <- ModelSEIR(
+  name = good_name,
+  prevalence = good_prevalence,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = NA
+), expected_error_msg_na)

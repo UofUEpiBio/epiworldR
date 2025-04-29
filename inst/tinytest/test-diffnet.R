@@ -44,80 +44,53 @@ expected_error_msg_numvector <- "must be a numeric vector"
 expect_error(diffnet_0 <- ModelDiffNet(
   name = bad_name,
   prevalence = good_prevalence,
-  prob_adopt = good_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = good_data,
-  data_cols = good_data_cols,
-  params = good_params
+  prob_adopt = good_prob_adopt
 ), expected_error_msg_str)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
   prevalence = bad_prevalence,
-  prob_adopt = good_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = good_data,
-  data_cols = good_data_cols,
-  params = good_params
-), expected_error_msg_double)
+  prob_adopt = good_prob_adopt
+), expected_error_msg_na)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
   prevalence = good_prevalence,
-  prob_adopt = bad_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = good_data,
-  data_cols = good_data_cols,
-  params = good_params
-), expected_error_msg_double)
-
-expect_error(diffnet_0 <- ModelDiffNet(
-  name = good_name,
-  prevalence = good_prevalence,
-  prob_adopt = good_prob_adopt,
-  normalize_exposure = "string_bool",
-  data = good_data,
-  data_cols = good_data_cols,
-  params = good_params
-), expected_error_msg_bool)
-
-expect_error(diffnet_0 <- ModelDiffNet(
-  name = good_name,
-  prevalence = good_prevalence,
-  prob_adopt = good_prob_adopt,
-  normalize_exposure = bad_normalize_exposure,
-  data = good_data,
-  data_cols = good_data_cols,
-  params = good_params
+  prob_adopt = bad_prob_adopt
 ), expected_error_msg_na)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = bad_data,
-  data_cols = good_data_cols,
-  params = good_params
-), expected_error_msg_any_na)
+  normalize_exposure = "string_bool"
+), expected_error_msg_bool)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = good_data,
-  data_cols = bad_data_cols,
-  params = good_params
+  normalize_exposure = bad_normalize_exposure
+), expected_error_msg_na)
+
+expect_error(diffnet_0 <- ModelDiffNet(
+  name = good_name,
+  prevalence = good_prevalence,
+  prob_adopt = good_prob_adopt,
+  data = bad_data
+), expected_error_msg_na)
+
+expect_error(diffnet_0 <- ModelDiffNet(
+  name = good_name,
+  prevalence = good_prevalence,
+  prob_adopt = good_prob_adopt,
+  data_cols = bad_data_cols
 ), expected_error_msg_numvector)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
-  normalize_exposure = good_normalize_exposure,
-  data = good_data,
-  data_cols = good_data_cols,
   params = bad_params
 ), expected_error_msg_numvector)
 

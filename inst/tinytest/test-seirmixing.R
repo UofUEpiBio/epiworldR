@@ -75,15 +75,10 @@ good_recovery_rate <- 1 / 10
 good_incubation_days <- .009
 good_contact_matrix <- cmatrix
 
-bad_name <- NA
-bad_n <- NA
-bad_prevalence <- NA
-bad_contact_rate <- NA
-bad_transmission_rate <- NA
-bad_recovery_rate <- NA
-bad_incubation_days <- NA
-bad_contact_matrix <- NA
+bad_name <- 10
+bad_numeric_input <- "not a number"
 
+expected_error_msg_na <- "must not be NA"
 expected_error_msg_str <- "must be a string"
 expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
@@ -102,7 +97,7 @@ expect_error(test_model <- ModelSEIRMixing(
 
 expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
-  n                 = bad_n,
+  n                 = bad_numeric_input,
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
@@ -114,7 +109,7 @@ expect_error(test_model <- ModelSEIRMixing(
 expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
-  prevalence        = bad_prevalence,
+  prevalence        = bad_numeric_input,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
@@ -126,7 +121,7 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = bad_contact_rate,
+  contact_rate      = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -138,7 +133,7 @@ expect_error(test_model <- ModelSEIRMixing(
   n                 = good_n,
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
-  transmission_rate = bad_transmission_rate,
+  transmission_rate = bad_numeric_input,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
   contact_matrix    = good_contact_matrix
@@ -150,7 +145,7 @@ expect_error(test_model <- ModelSEIRMixing(
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
-  recovery_rate     = bad_recovery_rate,
+  recovery_rate     = bad_numeric_input,
   incubation_days   = good_incubation_days,
   contact_matrix    = good_contact_matrix
 ), expected_error_msg_double)
@@ -162,7 +157,7 @@ expect_error(test_model <- ModelSEIRMixing(
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
-  incubation_days   = bad_incubation_days,
+  incubation_days   = bad_numeric_input,
   contact_matrix    = good_contact_matrix
 ), expected_error_msg_double)
 
@@ -174,5 +169,95 @@ expect_error(test_model <- ModelSEIRMixing(
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
-  contact_matrix    = bad_contact_matrix
+  contact_matrix    = c(1, 0, NA)
 ), expected_error_msg_any_na)
+
+# Check NA
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = NA,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_str)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = NA,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = NA,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = NA,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = NA,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = NA,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = NA,
+  contact_matrix    = good_contact_matrix
+), expected_error_msg_na)
+
+expect_error(test_model <- ModelSEIRMixing(
+  name              = good_name,
+  n                 = good_n,
+  prevalence        = good_prevalence,
+  contact_rate      = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  recovery_rate     = good_recovery_rate,
+  incubation_days   = good_incubation_days,
+  contact_matrix    = NA
+), expected_error_msg_na)

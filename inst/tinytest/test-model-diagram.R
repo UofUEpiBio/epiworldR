@@ -129,7 +129,7 @@ expect_error(draw_mermaid_from_data(
 # Check draw_mermaid_from_matrix
 expect_error(draw_mermaid_from_matrix(
     transition_matrix = NA,
-), "must not contain NA values")
+), "must not be NA")
 
 mismatch_rowcol_names_matrix <- matrix(1:9, nrow = 3, dimnames = list(c("X","Y","Z"), c("A","B","C")))
 expect_error(draw_mermaid_from_matrix(

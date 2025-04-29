@@ -32,15 +32,13 @@ expect_inherits(sirlogit_0, "epiworld_model")
 expect_length(class(sirlogit_0), 2)
 
 # Check functions fail with invalid inputs -------------------------------------
-bad_name                <- NA
-bad_data                <- NA
+bad_name                <- 10
+bad_numeric_input       <- "not a number"
+bad_data                <- c(1, 0, NA)
 bad_coef_infect         <- NA
 bad_coef_recover        <- NA
 bad_coef_infect_cols    <- NA
 bad_coef_recover_cols   <- NA
-bad_prob_infection      <- NA
-bad_recovery_rate       <- NA
-bad_prevalence          <- NA
 
 expected_error_msg_str <- "must be a string"
 expected_error_msg_any_na <- "must not contain NA values"
@@ -126,7 +124,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
   coefs_recover     = good_coef_recover,
   coef_infect_cols  = good_coef_infect_cols,
   coef_recover_cols = good_coef_recover_cols,
-  prob_infection    = bad_prob_infection,
+  prob_infection    = bad_numeric_input,
   recovery_rate     = good_recovery_rate,
   prevalence        = good_prevalence
 ), expected_error_msg_double)
@@ -139,7 +137,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
   coef_infect_cols  = good_coef_infect_cols,
   coef_recover_cols = good_coef_recover_cols,
   prob_infection    = good_prob_infection,
-  recovery_rate     = bad_recovery_rate,
+  recovery_rate     = bad_numeric_input,
   prevalence        = good_prevalence
 ), expected_error_msg_double)
 
@@ -152,5 +150,5 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
   coef_recover_cols = good_coef_recover_cols,
   prob_infection    = good_prob_infection,
   recovery_rate     = good_recovery_rate,
-  prevalence        = bad_prevalence
+  prevalence        = bad_numeric_input
 ), expected_error_msg_double)

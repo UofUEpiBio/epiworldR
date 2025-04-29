@@ -27,14 +27,10 @@ expect_length(class(seirconn_0), 2)
 
 
 # Check functions fail with invalid inputs -------------------------------------
-bad_name <- NA
-bad_n <- NA
-bad_prevalence <- NA
-bad_contact_rate <- NA
-bad_incubation_days <- NA
-bad_transmission_rate <- NA
-bad_recovery_rate <- NA
+bad_name <- 10
+bad_numeric_input <- "not a number"
 
+expected_error_msg_na <- "must not be NA"
 expected_error_msg_str <- "must be a string"
 expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
@@ -51,7 +47,7 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
 
 expect_error(seirconn_0 <- ModelSEIRCONN(
   name = good_name,
-  n = bad_n,
+  n = bad_numeric_input,
   prevalence = good_prevalence,
   contact_rate = good_contact_rate,
   transmission_rate = good_transmission_rate,
@@ -62,7 +58,7 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
 expect_error(seirconn_0 <- ModelSEIRCONN(
   name = good_name,
   n = good_n,
-  prevalence = bad_prevalence,
+  prevalence = bad_numeric_input,
   contact_rate = good_contact_rate,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -73,7 +69,7 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
   name = good_name,
   n = good_n,
   prevalence = good_prevalence,
-  contact_rate = bad_contact_rate,
+  contact_rate = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
   recovery_rate = good_recovery_rate
@@ -84,7 +80,7 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
   n = good_n,
   prevalence = good_prevalence,
   contact_rate = good_contact_rate,
-  transmission_rate = bad_transmission_rate,
+  transmission_rate = bad_numeric_input,
   incubation_days = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
@@ -95,7 +91,7 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
   prevalence = good_prevalence,
   contact_rate = good_contact_rate,
   transmission_rate = good_transmission_rate,
-  incubation_days = bad_incubation_days,
+  incubation_days = bad_numeric_input,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -106,5 +102,76 @@ expect_error(seirconn_0 <- ModelSEIRCONN(
   contact_rate = good_contact_rate,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
-  recovery_rate = bad_recovery_rate
+  recovery_rate = bad_numeric_input
 ), expected_error_msg_double)
+
+# Check NA
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = NA,
+  n = good_n,
+  prevalence = good_prevalence,
+  contact_rate = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_str)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = NA,
+  prevalence = good_prevalence,
+  contact_rate = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = good_n,
+  prevalence = NA,
+  contact_rate = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = good_n,
+  prevalence = good_prevalence,
+  contact_rate = NA,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = good_n,
+  prevalence = good_prevalence,
+  contact_rate = good_contact_rate,
+  transmission_rate = NA,
+  incubation_days = good_incubation_days,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = good_n,
+  prevalence = good_prevalence,
+  contact_rate = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  incubation_days = NA,
+  recovery_rate = good_recovery_rate
+), expected_error_msg_na)
+
+expect_error(seirconn_0 <- ModelSEIRCONN(
+  name = good_name,
+  n = good_n,
+  prevalence = good_prevalence,
+  contact_rate = good_contact_rate,
+  transmission_rate = good_transmission_rate,
+  incubation_days = good_incubation_days,
+  recovery_rate = NA
+), expected_error_msg_na)
