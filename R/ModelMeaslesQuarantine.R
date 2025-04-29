@@ -84,7 +84,7 @@ ModelMeaslesQuarantine <- function(
   # Check input parameters
   stopifnot_int(n, lb = 1)
   stopifnot_int(prevalence, lb = 0, ub = n)
-  stopifnot_double(contact_rate, lb = 0)
+  stopifnot_double(contact_rate, lb = 1e-10, ub = n)
   stopifnot_double(transmission_rate, lb = 0, ub = 1)
   stopifnot_double(vax_efficacy, lb = 0, ub = 1)
   stopifnot_double(vax_improved_recovery, lb = 0, ub = 1)
