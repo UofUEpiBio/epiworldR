@@ -37,19 +37,8 @@ expect_inherits(test_model, "epiworld_model")
 expect_length(class(test_model), 2)
 
 # Check functions fail with invalid inputs -------------------------------------
-bad_name                   <- NA
-bad_prevalence             <- NA
-bad_efficacy_vax           <- NA
-bad_latent_period          <- NA
-bad_infect_period          <- NA
-bad_prob_symptoms          <- NA
-bad_prop_vaccinated        <- NA
-bad_prop_vax_redux_transm  <- NA
-bad_prop_vax_redux_infect  <- NA
-bad_surveillance_prob      <- NA
-bad_transmission_rate      <- NA
-bad_prob_death             <- NA
-bad_prob_noreinfect        <- NA
+bad_name                <- 10
+bad_numeric_input       <- "not a number"
 
 expected_error_msg_str    <- "must be a string"
 expected_error_msg_double <- "must be a double"
@@ -72,7 +61,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
-    prevalence              = bad_prevalence,
+    prevalence              = bad_numeric_input,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
     infect_period           = good_infect_period,
@@ -89,7 +78,7 @@ expect_error(test_model <- ModelSURV(
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
     prevalence              = good_prevalence,
-    efficacy_vax            = bad_efficacy_vax,
+    efficacy_vax            = bad_numeric_input,
     latent_period           = good_latent_period,
     infect_period           = good_infect_period,
     prob_symptoms           = good_prob_symptoms,
@@ -106,7 +95,7 @@ expect_error(test_model <- ModelSURV(
     name                    = good_name,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
-    latent_period           = bad_latent_period,
+    latent_period           = bad_numeric_input,
     infect_period           = good_infect_period,
     prob_symptoms           = good_prob_symptoms,
     prop_vaccinated         = good_prop_vaccinated,
@@ -123,7 +112,7 @@ expect_error(test_model <- ModelSURV(
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
-    infect_period           = bad_infect_period,
+    infect_period           = bad_numeric_input,
     prob_symptoms           = good_prob_symptoms,
     prop_vaccinated         = good_prop_vaccinated,
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
@@ -140,7 +129,7 @@ expect_error(test_model <- ModelSURV(
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
     infect_period           = good_infect_period,
-    prob_symptoms           = bad_prob_symptoms,
+    prob_symptoms           = bad_numeric_input,
     prop_vaccinated         = good_prop_vaccinated,
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
@@ -157,7 +146,7 @@ expect_error(test_model <- ModelSURV(
     latent_period           = good_latent_period,
     infect_period           = good_infect_period,
     prob_symptoms           = good_prob_symptoms,
-    prop_vaccinated         = bad_prop_vaccinated,
+    prop_vaccinated         = bad_numeric_input,
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
@@ -174,7 +163,7 @@ expect_error(test_model <- ModelSURV(
     infect_period           = good_infect_period,
     prob_symptoms           = good_prob_symptoms,
     prop_vaccinated         = good_prop_vaccinated,
-    prop_vax_redux_transm   = bad_prop_vax_redux_transm,
+    prop_vax_redux_transm   = bad_numeric_input,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
     transmission_rate       = good_transmission_rate,
@@ -191,7 +180,7 @@ expect_error(test_model <- ModelSURV(
     prob_symptoms           = good_prob_symptoms,
     prop_vaccinated         = good_prop_vaccinated,
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
-    prop_vax_redux_infect   = bad_prop_vax_redux_infect,
+    prop_vax_redux_infect   = bad_numeric_input,
     surveillance_prob       = good_surveillance_prob,
     transmission_rate       = good_transmission_rate,
     prob_death              = good_prob_death,
@@ -208,7 +197,7 @@ expect_error(test_model <- ModelSURV(
     prop_vaccinated         = good_prop_vaccinated,
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
-    surveillance_prob       = bad_surveillance_prob,
+    surveillance_prob       = bad_numeric_input,
     transmission_rate       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
@@ -225,7 +214,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = bad_transmission_rate,
+    transmission_rate       = bad_numeric_input,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -242,7 +231,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
     transmission_rate       = good_transmission_rate,
-    prob_death              = bad_prob_death,
+    prob_death              = bad_numeric_input,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
 
@@ -259,7 +248,7 @@ expect_error(test_model <- ModelSURV(
     surveillance_prob       = good_surveillance_prob,
     transmission_rate       = good_transmission_rate,
     prob_death              = good_prob_death,
-    prob_noreinfect         = bad_prob_noreinfect
+    prob_noreinfect         = bad_numeric_input
 ), expected_error_msg_double)
 
 

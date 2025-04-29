@@ -505,10 +505,11 @@ SEXP ModelMeaslesQuarantine_cpp(
   double rash_period,
   double days_undetected,
   double hospitalization_rate,
-  double hospitalization_duration,
+  double hospitalization_period,
   double prop_vaccinated,
-  unsigned int quarantine_days,
-  double quarantine_willingness
+  int quarantine_period,
+  double quarantine_willingness,
+  int isolation_period
 ) {
 
   // Creating a pointer to a ModelMeaslesQuarantine model
@@ -525,10 +526,11 @@ SEXP ModelMeaslesQuarantine_cpp(
           rash_period,
           days_undetected,
           hospitalization_rate,
-          hospitalization_duration,
+          hospitalization_period,
           prop_vaccinated,
-          quarantine_days,
-          quarantine_willingness
+          quarantine_period,
+          quarantine_willingness,
+          isolation_period
       )
   );
 

@@ -1,10 +1,12 @@
 ---
-output: github_document
+format: gfm
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.qmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r}
+#| label: setup
+#| echo: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -217,6 +219,7 @@ sir <- ModelSIR(
 
 # Transmission network
 net <- get_transmissions(sir)
+net <- subset(net, source >= 0)
 
 # Plotting
 library(epiworldR)

@@ -28,13 +28,9 @@ expect_inherits(test_model, "epiworld_model")
 expect_length(class(test_model), 2)
 
 # Check functions fail with invalid inputs -------------------------------------
-bad_name               <- NA
-bad_n                  <- NA
-bad_prevalence         <- NA
-bad_contact_rate       <- NA
-bad_transmission_rate  <- NA
-bad_recovery_rate      <- NA
-bad_contact_matrix     <- NA
+bad_name                <- 10
+bad_numeric_input       <- "not a number"
+bad_contact_matrix      <- c(1, 0, NA)
 
 expected_error_msg_str    <- "must be a string"
 expected_error_msg_int    <- "must be an integer"
@@ -53,7 +49,7 @@ expect_error(test_model <- ModelSIRMixing(
 
 expect_error(test_model <- ModelSIRMixing(
   name              = good_name,
-  n                 = bad_n,
+  n                 = bad_numeric_input,
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
@@ -64,7 +60,7 @@ expect_error(test_model <- ModelSIRMixing(
 expect_error(test_model <- ModelSIRMixing(
   name              = good_name,
   n                 = good_n,
-  prevalence        = bad_prevalence,
+  prevalence        = bad_numeric_input,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
@@ -75,7 +71,7 @@ expect_error(test_model <- ModelSIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = bad_contact_rate,
+  contact_rate      = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   contact_matrix    = good_contact_matrix
@@ -86,7 +82,7 @@ expect_error(test_model <- ModelSIRMixing(
   n                 = good_n,
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
-  transmission_rate = bad_transmission_rate,
+  transmission_rate = bad_numeric_input,
   recovery_rate     = good_recovery_rate,
   contact_matrix    = good_contact_matrix
 ), expected_error_msg_double)
@@ -97,7 +93,7 @@ expect_error(test_model <- ModelSIRMixing(
   prevalence        = good_prevalence,
   contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
-  recovery_rate     = bad_recovery_rate,
+  recovery_rate     = bad_numeric_input,
   contact_matrix    = good_contact_matrix
 ), expected_error_msg_double)
 

@@ -40,10 +40,8 @@ good_prevalence         <- 0.1
 good_transmission_rate  <- 0.3
 good_recovery_rate      <- 0.3
 
-bad_name                <- NA
-bad_prevalence          <- NA
-bad_transmission_rate   <- NA
-bad_recovery_rate       <- NA
+bad_name                <- 10
+bad_numeric_input       <- "not a number"
 
 expected_error_msg_str    <- "must be a string"
 expected_error_msg_double <- "must be a double"
@@ -57,7 +55,7 @@ expect_error(sis_0 <- ModelSIS(
 
 expect_error(sis_0 <- ModelSIS(
   name                = good_name,
-  prevalence          = bad_prevalence,
+  prevalence          = bad_numeric_input,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate
 ), expected_error_msg_double)
@@ -65,7 +63,7 @@ expect_error(sis_0 <- ModelSIS(
 expect_error(sis_0 <- ModelSIS(
   name                = good_name,
   prevalence          = good_prevalence,
-  transmission_rate   = bad_transmission_rate,
+  transmission_rate   = bad_numeric_input,
   recovery_rate       = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -73,5 +71,5 @@ expect_error(sis_0 <- ModelSIS(
   name                = good_name,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
-  recovery_rate       = bad_recovery_rate
+  recovery_rate       = bad_numeric_input
 ), expected_error_msg_double)

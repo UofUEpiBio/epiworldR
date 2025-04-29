@@ -33,7 +33,7 @@ run_multiple(
   nthreads = 2L
   )
 
-res1 <- run_multiple_get_results(model_seircon)
+res1 <- run_multiple_get_results(model_seircon, nthreads = 2L)
 
 res1 <- lapply(res1, data.table::as.data.table)
 

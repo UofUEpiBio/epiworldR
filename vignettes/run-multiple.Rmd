@@ -62,12 +62,12 @@ saver <- make_saver("total_hist", "reproductive")
 run_multiple(model_seirconn, ndays = 50, nsims = 50, saver = saver, nthreads = 2)
 ```
 
-Using the "run_multiple_get_results" function, extract the results from the
+Using the "`run_multiple_get_results`" function, extract the results from the
 model object that was simulated 50 times for comparison across simulations.
 
 ```{r retrieving results}
 # Retrieving the results
-ans <- run_multiple_get_results(model_seirconn)
+ans <- run_multiple_get_results(model_seirconn, nthreads = 2)
 head(ans$total_hist)
 head(ans$reproductive)
 ```
@@ -75,26 +75,26 @@ head(ans$reproductive)
 ## Plotting
 
 To plot the epicurves and reproductive numbers over time using boxplots, extract
-the results from the model object using "run_multiple_get_results". For this
+the results from the model object using "`ans`". For this
 example, the dates are filtered to be less than or equal to 20 to observe the
 epicurves in the first 20 days. Notice each boxplot in the below table
 represents the observed values from each of the 50 simulations for each date.
 
 ```{r plotting seirconn epicurves}
-seirconn_50 <- run_multiple_get_results(model_seirconn)$total_hist
+seirconn_50 <- ans$total_hist
 seirconn_50 <- seirconn_50[seirconn_50$date <= 20, ]
 plot(seirconn_50)
 ```
 
 To view the a plot of the reproductive number over all 50 days for each of the
 50 simulations, store the reproductive results to a new object using
-"run_multiple_get_results", then plot using the "boxplot" function. Notice
+"`ans`", then plot using the "boxplot" function. Notice
 each source exposure date displays a boxplot representing the distribution
 of reproductive numbers across all 50 simulations. As expected, the reproductive
 number on average, decreases over time.
 
 ```{r reproductive number plot}
-seirconn_50_r <- run_multiple_get_results(model_seirconn)$reproductive
+seirconn_50_r <- ans$reproductive
 plot(seirconn_50_r)
 # boxplot(rt ~ source_exposure_date, data = seirconn_50_r,
 #         main = "Reproductive Number",
