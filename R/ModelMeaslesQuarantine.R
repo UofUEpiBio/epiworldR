@@ -1,35 +1,44 @@
 #' Measles model with quarantine
 #'
-#' The `ModelMeaslesQuarantine` function implements a connected version
-#' of a Measles model with quarantine.
+#' Implements a Susceptible-Exposed-Infectious-Hospitalized-Recovered (SEIHR)
+#' model for Measles within a school. The model includes isolation of
+#' detected cases and optional quarantine of unvaccinated individuals.
 #'
 #' @param n Number of agents in the model.
 #' @param prevalence Initial number of agents with the virus.
-#' @param contact_rate Average number of contacts per step.
+#' @param contact_rate Average number of contacts per step. Default is set to
+#' match the basic reproductive number (R0) of 15 (see details).
 #' @param transmission_rate Probability of transmission.
 #' @param vax_efficacy Probability of vaccine efficacy.
 #' @param vax_improved_recovery Increase in recovery rate due to vaccination.
 #' @param incubation_period Average number of incubation days.
 #' @param prodromal_period Average number of prodromal days.
 #' @param rash_period Average number of rash days.
-#' @param days_undetected Average number of days undetected.
+#' @param days_undetected Average number of days undetected. Detected cases
+#' are moved to isolation and trigger the quarantine process.
 #' @param hospitalization_rate Probability of hospitalization.
 #' @param hospitalization_period Average number of days in hospital.
 #' @param prop_vaccinated Proportion of the population vaccinated.
 #' @param quarantine_period Total duration of quarantine.
 #' @param quarantine_willingness Probability of accepting quarantine (
 #' see details).
-#' @param isolation_period Average number of days in isolation.
+#' @param isolation_period Total duration of isolation.
 #' @details
 #' This model can be described as a SEIHR model with isolation and quarantine.
 #' The infectious state is divided into prodromal and rash phases. Furthermore,
 #' the quarantine state includes exposed, susceptible, prodromal, and recovered
 #' states.
 #'
+#' The model is a perfect mixing model, meaning that all agents are in contact
+#' with each other. The model is designed to simulate the spread of Measles
+#' within a school setting, where the population is assumed to be homogeneous.
+#'
 #' The quarantine process is triggered any time that an agent with rash is
 #' detected. The agent is then isolated and all agents who are unvaccinated are
-#' quarantined. Isolated agents then may be moved out of the isolation in
-#' `isolation_period` days.
+#' quarantined (if willing). Isolated agents then may be moved out of the
+#' isolation in `isolation_period` days. The quarantine willingness parameter
+#' sets the probability of accepting quarantine. If a quarantined agent develops
+#' rash, they are moved to isolation, which triggers a new quarantine process.
 #'
 #' The basic reproductive number in Measles is estimated to be about 15.
 #' By default, the contact rate of the model is set so that the R0 matches
@@ -39,11 +48,25 @@
 #' there is no quarantine process. The same happens with `isolation_period`.
 #' Since the quarantine process is triggered by an isolation, then
 #' `isolation_period = -1` automatically sets `quarantine_period = -1`.
+#'
+#' @references
+#' Jones, Trahern W, and Katherine Baranowski. 2019. "Measles and Mumps: Old
+#' Diseases, New Outbreaks."
+#'
+#' Liu, Fengchen, Wayne T A Enanoria, Jennifer Zipprich, Seth Blumberg,
+#' Kathleen Harriman, Sarah F Ackley, William D Wheaton, Justine L
+#' Allpress, and Travis C Porco. 2015. "The Role of Vaccination Coverage,
+#' Individual Behaviors, and the Public Health Response in the Control of
+#' Measles Epidemics: An Agent-Based Simulation for California." *BMC
+#' Public Health* 15 (1): 447. \doi{10.1186/s12889-015-1766-6}.
+#'
+#' "Measles Disease Plan." 2019. Utah Department of Health and Human
+#' Services. <https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf>.
 #' @export
 #' @family Models
 #' @aliases epiworld_measlesquarantine
 #' @returns
-#' - The `ModelMeaslesQuarantine` function returns a model of class [epiworld_model].
+#' - The `ModelMeaslesQuarantine` function returns a model of classes [epiworld_model] and `epiworld_measlesquarantine`.
 #' @examples
 #' # An in a school with low vaccination
 #' model_measles <- ModelMeaslesQuarantine(

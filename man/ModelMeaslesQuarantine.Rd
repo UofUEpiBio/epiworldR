@@ -29,7 +29,8 @@ ModelMeaslesQuarantine(
 
 \item{prevalence}{Initial number of agents with the virus.}
 
-\item{contact_rate}{Average number of contacts per step.}
+\item{contact_rate}{Average number of contacts per step. Default is set to
+match the basic reproductive number (R0) of 15 (see details).}
 
 \item{transmission_rate}{Probability of transmission.}
 
@@ -43,7 +44,8 @@ ModelMeaslesQuarantine(
 
 \item{rash_period}{Average number of rash days.}
 
-\item{days_undetected}{Average number of days undetected.}
+\item{days_undetected}{Average number of days undetected. Detected cases
+are moved to isolation and trigger the quarantine process.}
 
 \item{hospitalization_rate}{Probability of hospitalization.}
 
@@ -56,16 +58,17 @@ ModelMeaslesQuarantine(
 \item{quarantine_willingness}{Probability of accepting quarantine (
 see details).}
 
-\item{isolation_period}{Average number of days in isolation.}
+\item{isolation_period}{Total duration of isolation.}
 }
 \value{
 \itemize{
-\item The \code{ModelMeaslesQuarantine} function returns a model of class \link{epiworld_model}.
+\item The \code{ModelMeaslesQuarantine} function returns a model of classes \link{epiworld_model} and \code{epiworld_measlesquarantine}.
 }
 }
 \description{
-The \code{ModelMeaslesQuarantine} function implements a connected version
-of a Measles model with quarantine.
+Implements a Susceptible-Exposed-Infectious-Hospitalized-Recovered (SEIHR)
+model for Measles within a school. The model includes isolation of
+detected cases and optional quarantine of unvaccinated individuals.
 }
 \details{
 This model can be described as a SEIHR model with isolation and quarantine.
@@ -73,10 +76,16 @@ The infectious state is divided into prodromal and rash phases. Furthermore,
 the quarantine state includes exposed, susceptible, prodromal, and recovered
 states.
 
+The model is a perfect mixing model, meaning that all agents are in contact
+with each other. The model is designed to simulate the spread of Measles
+within a school setting, where the population is assumed to be homogeneous.
+
 The quarantine process is triggered any time that an agent with rash is
 detected. The agent is then isolated and all agents who are unvaccinated are
-quarantined. Isolated agents then may be moved out of the isolation in
-\code{isolation_period} days.
+quarantined (if willing). Isolated agents then may be moved out of the
+isolation in \code{isolation_period} days. The quarantine willingness parameter
+sets the probability of accepting quarantine. If a quarantined agent develops
+rash, they are moved to isolation, which triggers a new quarantine process.
 
 The basic reproductive number in Measles is estimated to be about 15.
 By default, the contact rate of the model is set so that the R0 matches
@@ -101,6 +110,20 @@ model_measles
 
 plot(model_measles)
 
+}
+\references{
+Jones, Trahern W, and Katherine Baranowski. 2019. "Measles and Mumps: Old
+Diseases, New Outbreaks."
+
+Liu, Fengchen, Wayne T A Enanoria, Jennifer Zipprich, Seth Blumberg,
+Kathleen Harriman, Sarah F Ackley, William D Wheaton, Justine L
+Allpress, and Travis C Porco. 2015. "The Role of Vaccination Coverage,
+Individual Behaviors, and the Public Health Response in the Control of
+Measles Epidemics: An Agent-Based Simulation for California." \emph{BMC
+Public Health} 15 (1): 447. \doi{10.1186/s12889-015-1766-6}.
+
+"Measles Disease Plan." 2019. Utah Department of Health and Human
+Services. \url{https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf}.
 }
 \seealso{
 epiworld-methods
