@@ -68,3 +68,35 @@ expect_true(
 )
 
 expect_stdout(print(get_agents(abm)), "more agents ...")
+
+###############################################################################
+# Fourth case: A random set of two agents are vaccinated
+# - At least one susceptible always at the end.
+# - If bad luck, the single case doesn't spread (199 susceptible)
+# - Most of the time two susceptible.
+set_distribution_tool(
+  get_tool(abm, 0),
+  distfun = distribute_tool_randomly(1L, FALSE)
+)
+
+set_distribution_virus(
+  get_virus(abm, 0),
+  distfun = distribute_virus_set(2L)
+)
+
+run_multiple(
+  abm,
+  ndays = 50,
+  nsims = 100,
+  seed = 1122,
+  saver = make_saver("total_hist"),
+  nthreads = 2
+)
+
+ans <- run_multiple_get_results(abm, nthreads = 2)$total_hist |>
+  data.table::as.data.table()
+
+ans <- ans[date == 50 & state == "Susceptible"]
+ans[, all(counts %in% c(1, 2, 199))]
+
+
