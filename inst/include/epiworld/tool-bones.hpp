@@ -15,6 +15,21 @@ template<typename TSeq>
 class Tool;
 
 /**
+ * @brief Helper class to store the functions avoiding
+ * multiple shared_pointers (we have only one for the four of these)
+ */
+template<typename TSeq>
+class ToolFunctions {
+public:
+    ToolFun<TSeq> susceptibility_reduction = nullptr;
+    ToolFun<TSeq> transmission_reduction   = nullptr;
+    ToolFun<TSeq> recovery_enhancer        = nullptr;
+    ToolFun<TSeq> death_reduction          = nullptr;
+
+    ToolFunctions() = default;
+};
+
+/**
  * @brief Tools for defending the agent against the virus
  * 
  * @tparam TSeq Type of sequence
@@ -34,13 +49,8 @@ private:
     int id   = -99;
     std::shared_ptr<std::string> tool_name     = nullptr;
     std::shared_ptr<TSeq> sequence             = nullptr;
-    ToolFun<TSeq> susceptibility_reduction_fun = nullptr;
-    ToolFun<TSeq> transmission_reduction_fun   = nullptr;
-    ToolFun<TSeq> recovery_enhancer_fun        = nullptr;
-    ToolFun<TSeq> death_reduction_fun          = nullptr;
-
-    // Setup parameters
-    std::vector< epiworld_double * > params;  
+    std::shared_ptr<ToolFunctions<TSeq>> tool_functions = 
+        std::make_shared< ToolFunctions<TSeq> >();
 
     epiworld_fast_int state_init = -99;
     epiworld_fast_int state_post = -99;

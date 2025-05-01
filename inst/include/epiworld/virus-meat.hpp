@@ -106,8 +106,8 @@ inline void Virus<TSeq>::mutate(
     Model<TSeq> * model
 ) {
 
-    if (mutation_fun)
-        if (mutation_fun(agent, *this, model))
+    if (virus_functions->mutation)
+        if (virus_functions->mutation(agent, *this, model))
             model->get_db().record_virus(*this);
 
     return;
@@ -118,7 +118,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_mutation(
     MutFun<TSeq> fun
 ) {
-    mutation_fun = MutFun<TSeq>(fun);
+    virus_functions->mutation = MutFun<TSeq>(fun);
 }
 
 template<typename TSeq>
@@ -192,8 +192,8 @@ inline epiworld_double Virus<TSeq>::get_prob_infecting(
 )
 {
 
-    if (probability_of_infecting_fun)
-        return probability_of_infecting_fun(agent, *this, model);
+    if (virus_functions->probability_of_infecting)
+        return virus_functions->probability_of_infecting(agent, *this, model);
         
     return EPI_DEFAULT_VIRUS_PROB_INFECTION;
 
@@ -207,8 +207,8 @@ inline epiworld_double Virus<TSeq>::get_prob_recovery(
 )
 {
 
-    if (probability_of_recovery_fun)
-        return probability_of_recovery_fun(agent, *this, model);
+    if (virus_functions->probability_of_recovery)
+        return virus_functions->probability_of_recovery(agent, *this, model);
         
     return EPI_DEFAULT_VIRUS_PROB_RECOVERY;
 
@@ -222,8 +222,8 @@ inline epiworld_double Virus<TSeq>::get_prob_death(
 )
 {
 
-    if (probability_of_death_fun)
-        return probability_of_death_fun(agent, *this, model);
+    if (virus_functions->probability_of_death)
+        return virus_functions->probability_of_death(agent, *this, model);
         
     return EPI_DEFAULT_VIRUS_PROB_DEATH;
 
@@ -235,8 +235,8 @@ inline epiworld_double Virus<TSeq>::get_incubation(
 )
 {
 
-    if (incubation_fun)
-        return incubation_fun(agent, *this, model);
+    if (virus_functions->incubation)
+        return virus_functions->incubation(agent, *this, model);
         
     return EPI_DEFAULT_INCUBATION_DAYS;
 
@@ -245,25 +245,25 @@ inline epiworld_double Virus<TSeq>::get_incubation(
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting_fun(VirusFun<TSeq> fun)
 {
-    probability_of_infecting_fun = fun;
+    virus_functions->probability_of_infecting = fun;
 }
 
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_recovery_fun(VirusFun<TSeq> fun)
 {
-    probability_of_recovery_fun = fun;
+    virus_functions->probability_of_recovery = fun;
 }
 
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_death_fun(VirusFun<TSeq> fun)
 {
-    probability_of_death_fun = fun;
+    virus_functions->probability_of_death = fun;
 }
 
 template<typename TSeq>
 inline void Virus<TSeq>::set_incubation_fun(VirusFun<TSeq> fun)
 {
-    incubation_fun = fun;
+    virus_functions->incubation = fun;
 }
 
 template<typename TSeq>
@@ -275,7 +275,7 @@ inline void Virus<TSeq>::set_prob_infecting(const epiworld_double * prob)
             return *prob;
         };
     
-    probability_of_infecting_fun = tmpfun;
+    virus_functions->probability_of_infecting = tmpfun;
 }
 
 template<typename TSeq>
@@ -287,7 +287,7 @@ inline void Virus<TSeq>::set_prob_recovery(const epiworld_double * prob)
             return *prob;
         };
     
-    probability_of_recovery_fun = tmpfun;
+    virus_functions->probability_of_recovery = tmpfun;
 }
 
 template<typename TSeq>
@@ -299,7 +299,7 @@ inline void Virus<TSeq>::set_prob_death(const epiworld_double * prob)
             return *prob;
         };
     
-    probability_of_death_fun = tmpfun;
+    virus_functions->probability_of_death = tmpfun;
 }
 
 template<typename TSeq>
@@ -311,7 +311,7 @@ inline void Virus<TSeq>::set_incubation(const epiworld_double * prob)
             return *prob;
         };
     
-    incubation_fun = tmpfun;
+    virus_functions->incubation = tmpfun;
 }
 
 template<typename TSeq>
@@ -323,7 +323,7 @@ inline void Virus<TSeq>::set_prob_infecting(epiworld_double prob)
             return prob;
         };
     
-    probability_of_infecting_fun = tmpfun;
+    virus_functions->probability_of_infecting = tmpfun;
 }
 
 template<typename TSeq>
@@ -335,7 +335,7 @@ inline void Virus<TSeq>::set_prob_recovery(epiworld_double prob)
             return prob;
         };
     
-    probability_of_recovery_fun = tmpfun;
+    virus_functions->probability_of_recovery = tmpfun;
 }
 
 template<typename TSeq>
@@ -347,7 +347,7 @@ inline void Virus<TSeq>::set_prob_death(epiworld_double prob)
             return prob;
         };
     
-    probability_of_death_fun = tmpfun;
+    virus_functions->probability_of_death = tmpfun;
 }
 
 template<typename TSeq>
@@ -359,20 +359,20 @@ inline void Virus<TSeq>::set_incubation(epiworld_double prob)
             return prob;
         };
     
-    incubation_fun = tmpfun;
+    virus_functions->incubation = tmpfun;
 }
 
 template<typename TSeq>
 inline void Virus<TSeq>::set_post_recovery(PostRecoveryFun<TSeq> fun)
 {
-    if (post_recovery_fun)
+    if (virus_functions->post_recovery)
     {
         printf_epiworld(
             "Warning: a PostRecoveryFun is alreay in place (overwriting)."
             );
     }
 
-    post_recovery_fun = fun;
+    virus_functions->post_recovery = fun;
 }
 
 template<typename TSeq>
@@ -381,8 +381,8 @@ inline void Virus<TSeq>::post_recovery(
 )
 {
 
-    if (post_recovery_fun)
-        post_recovery_fun(agent, *this, model);    
+    if (virus_functions->post_recovery)
+    virus_functions->post_recovery(agent, *this, model);    
 
     return;
         
@@ -394,7 +394,7 @@ inline void Virus<TSeq>::set_post_immunity(
 )
 {
 
-    if (post_recovery_fun)
+    if (virus_functions->post_recovery)
     {
 
         std::string msg =
@@ -435,7 +435,7 @@ inline void Virus<TSeq>::set_post_immunity(
 
         };
 
-    post_recovery_fun = tmpfun;
+    virus_functions->post_recovery = tmpfun;
 
 }
 
@@ -445,7 +445,7 @@ inline void Virus<TSeq>::set_post_immunity(
 )
 {
 
-    if (post_recovery_fun)
+    if (virus_functions->post_recovery)
     {
 
         std::string msg =
@@ -484,7 +484,7 @@ inline void Virus<TSeq>::set_post_immunity(
 
         };
 
-    post_recovery_fun = tmpfun;
+    virus_functions->post_recovery = tmpfun;
 
 }
 
@@ -508,11 +508,6 @@ inline std::string Virus<TSeq>::get_name() const
     
     return "unknown virus";
 
-}
-
-template<typename TSeq>
-inline std::vector< epiworld_double > & Virus<TSeq>::get_data() {
-    return data;
 }
 
 template<typename TSeq>

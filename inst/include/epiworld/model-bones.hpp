@@ -257,7 +257,6 @@ public:
     
     std::vector<epiworld_double> array_double_tmp;
     std::vector<Virus<TSeq> * > array_virus_tmp;
-    std::vector< int > array_int_tmp;
 
     Model();
     Model(const Model<TSeq> & m);

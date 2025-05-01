@@ -128,8 +128,10 @@ inline epiworld_double Tool<TSeq>::get_susceptibility_reduction(
 )
 {
 
-    if (susceptibility_reduction_fun)
-        return susceptibility_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->susceptibility_reduction)
+        return tool_functions->susceptibility_reduction(
+            *this, this->agent, v, model
+        );
 
     return DEFAULT_TOOL_CONTAGION_REDUCTION;
 
@@ -142,8 +144,10 @@ inline epiworld_double Tool<TSeq>::get_transmission_reduction(
 )
 {
 
-    if (transmission_reduction_fun)
-        return transmission_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->transmission_reduction)
+        return tool_functions->transmission_reduction(
+            *this, this->agent, v, model
+        );
 
     return DEFAULT_TOOL_TRANSMISSION_REDUCTION;
 
@@ -156,8 +160,8 @@ inline epiworld_double Tool<TSeq>::get_recovery_enhancer(
 )
 {
 
-    if (recovery_enhancer_fun)
-        return recovery_enhancer_fun(*this, this->agent, v, model);
+    if (tool_functions->recovery_enhancer)
+        return tool_functions->recovery_enhancer(*this, this->agent, v, model);
 
     return DEFAULT_TOOL_RECOVERY_ENHANCER;
 
@@ -170,8 +174,8 @@ inline epiworld_double Tool<TSeq>::get_death_reduction(
 )
 {
 
-    if (death_reduction_fun)
-        return death_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->death_reduction)
+        return tool_functions->death_reduction(*this, this->agent, v, model);
 
     return DEFAULT_TOOL_DEATH_REDUCTION;
 
@@ -182,7 +186,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    susceptibility_reduction_fun = fun;
+    tool_functions->susceptibility_reduction = fun;
 }
 
 template<typename TSeq>
@@ -190,7 +194,7 @@ inline void Tool<TSeq>::set_transmission_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    transmission_reduction_fun = fun;
+    tool_functions->transmission_reduction = fun;
 }
 
 template<typename TSeq>
@@ -198,7 +202,7 @@ inline void Tool<TSeq>::set_recovery_enhancer_fun(
     ToolFun<TSeq> fun
 )
 {
-    recovery_enhancer_fun = fun;
+    tool_functions->recovery_enhancer = fun;
 }
 
 template<typename TSeq>
@@ -206,7 +210,7 @@ inline void Tool<TSeq>::set_death_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    death_reduction_fun = fun;
+    tool_functions->death_reduction = fun;
 }
 
 template<typename TSeq>
@@ -219,7 +223,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    susceptibility_reduction_fun = tmpfun;
+    tool_functions->susceptibility_reduction = tmpfun;
 
 }
 
@@ -234,7 +238,7 @@ inline void Tool<TSeq>::set_transmission_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    transmission_reduction_fun = tmpfun;
+    tool_functions->transmission_reduction = tmpfun;
 
 }
 
@@ -249,7 +253,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(epiworld_double * prob)
             return *prob;
         };
 
-    recovery_enhancer_fun = tmpfun;
+    tool_functions->recovery_enhancer = tmpfun;
 
 }
 
@@ -264,7 +268,7 @@ inline void Tool<TSeq>::set_death_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    death_reduction_fun = tmpfun;
+    tool_functions->death_reduction = tmpfun;
 
 }
 
@@ -283,7 +287,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(
             return prob;
         };
 
-    susceptibility_reduction_fun = tmpfun;
+    tool_functions->susceptibility_reduction = tmpfun;
 
 }
 
@@ -299,7 +303,7 @@ inline void Tool<TSeq>::set_transmission_reduction(
             return prob;
         };
 
-    transmission_reduction_fun = tmpfun;
+    tool_functions->transmission_reduction = tmpfun;
 
 }
 
@@ -315,7 +319,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(
             return prob;
         };
 
-    recovery_enhancer_fun = tmpfun;
+    tool_functions->recovery_enhancer = tmpfun;
 
 }
 
@@ -331,7 +335,7 @@ inline void Tool<TSeq>::set_death_reduction(
             return prob;
         };
 
-    death_reduction_fun = tmpfun;
+    tool_functions->death_reduction = tmpfun;
 
 }
 

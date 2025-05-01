@@ -10,6 +10,20 @@ class Virus;
 template<typename TSeq>
 class Model;
 
+template<typename TSeq>
+class VirusFunctions {
+public:
+    MutFun<TSeq>          mutation                 = nullptr;
+    PostRecoveryFun<TSeq> post_recovery            = nullptr;
+    VirusFun<TSeq>        probability_of_infecting = nullptr;
+    VirusFun<TSeq>        probability_of_recovery  = nullptr;
+    VirusFun<TSeq>        probability_of_death     = nullptr;
+    VirusFun<TSeq>        incubation               = nullptr;
+
+    VirusFunctions() = default;
+
+};
+
 /**
  * @brief Virus
  * 
@@ -29,23 +43,12 @@ class Virus {
     friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
     
-    Agent<TSeq> * agent       = nullptr;
+    Agent<TSeq> * agent = nullptr;
 
     std::shared_ptr<TSeq> baseline_sequence = nullptr;
     std::shared_ptr<std::string> virus_name = nullptr;
     int date = -99;
-    int id   = -99;
-    bool active = true;
-    MutFun<TSeq>          mutation_fun                 = nullptr;
-    PostRecoveryFun<TSeq> post_recovery_fun            = nullptr;
-    VirusFun<TSeq>        probability_of_infecting_fun = nullptr;
-    VirusFun<TSeq>        probability_of_recovery_fun  = nullptr;
-    VirusFun<TSeq>        probability_of_death_fun     = nullptr;
-    VirusFun<TSeq>        incubation_fun               = nullptr;
-
-    // Setup parameters
-    std::vector< epiworld_double > data = {};
-
+    int id   = -99;    
     epiworld_fast_int state_init    = -99; ///< Change of state when added to agent.
     epiworld_fast_int state_post    = -99; ///< Change of state when removed from agent.
     epiworld_fast_int state_removed = -99; ///< Change of state when agent is removed
@@ -58,6 +61,9 @@ private:
     VirusToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
+    std::shared_ptr< VirusFunctions<TSeq> > virus_functions = 
+    std::make_shared< VirusFunctions<TSeq> >();
+
     Virus(std::string name = "unknown virus");
 
     Virus(
@@ -119,8 +125,6 @@ public:
 
     void set_name(std::string name);
     std::string get_name() const;
-
-    std::vector< epiworld_double > & get_data();
 
     /**
      * @name Get and set the state and queue

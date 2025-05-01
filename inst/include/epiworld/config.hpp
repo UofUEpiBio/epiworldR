@@ -21,7 +21,7 @@
 #endif
 
 #ifndef epiworld_fast_int
-    #define epiworld_fast_int long long int
+    #define epiworld_fast_int int
 #endif
 
 #ifndef epiworld_fast_uint

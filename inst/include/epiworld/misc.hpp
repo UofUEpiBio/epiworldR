@@ -46,7 +46,7 @@ using MapVec_type = std::unordered_map< std::vector< Ta >, Tb, vecHasher<Ta>>;
  * @return TSeq 
  */
 ///@{
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline TSeq default_sequence(int seq_count);
 
 // Making it 'static' so that we don't have problems when including the

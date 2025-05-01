@@ -398,8 +398,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     queue(model.queue),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size()),
-    array_int_tmp(model.array_int_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size())
 {
 
 
@@ -468,8 +467,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size()),
-    array_int_tmp(model.array_int_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size())
 {
 
     db.model = this;
@@ -547,7 +545,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     ));
 
     array_virus_tmp.resize(1024u);
-    array_int_tmp.resize(1024u * 1024);
 
     return *this;
 
@@ -813,23 +810,6 @@ inline void Model<TSeq>::set_backup()
         entities_backup = entities;
 
 }
-
-// template<typename TSeq>
-// inline void Model<TSeq>::restore_backup()
-// {
-
-//     // Restoring the data
-//     population = *population_backup;
-//     entities   = *entities_backup;
-
-//     // And correcting the pointer
-//     for (auto & p : population)
-//         p.model = this;
-
-//     for (auto & e : entities)
-//         e.model = this;
-
-// }
 
 template<typename TSeq>
 inline std::shared_ptr< std::mt19937 > & Model<TSeq>::get_rand_endgine()
@@ -1360,7 +1340,6 @@ inline Model<TSeq> & Model<TSeq>::run(
 
 
     array_virus_tmp.resize(1024);
-    array_int_tmp.resize(1024 * 1024);
 
     // Checking whether the proposed state in/out/removed
     // are valid
@@ -1669,7 +1648,7 @@ inline void Model<TSeq>::mutate_virus() {
     // Checking if any virus has mutation
     size_t nmutates = 0u;
     for (const auto & v: viruses)
-        if (v->mutation_fun)
+        if (v->virus_functions->mutation)
             nmutates++;
 
     if (nmutates == 0u)

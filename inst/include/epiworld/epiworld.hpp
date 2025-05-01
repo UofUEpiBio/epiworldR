@@ -87,9 +87,6 @@ namespace epiworld {
 
     #include "agentssample-bones.hpp"
 
-    #include "groupsampler-bones.hpp"
-    #include "groupsampler-meat.hpp"
-
     #include "models/models.hpp"
 
 }
