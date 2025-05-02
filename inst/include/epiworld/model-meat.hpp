@@ -1460,9 +1460,21 @@ inline void Model<TSeq>::run_multiple(
     omp_set_num_threads(nthreads);
 
     // Generating copies of the model
-    std::vector< Model<TSeq> * > these;
-    for (size_t i = 0; i < static_cast<size_t>(std::max(nthreads - 1, 0)); ++i)
-        these.push_back(clone_ptr());
+    std::vector< Model<TSeq> * > these(
+        std::max(nthreads - 1, 0)
+    );
+
+    #pragma omp parallel for shared(these, nthreads)
+    for (size_t i = 0u; i < static_cast<size_t>(nthreads); ++i)
+    {
+
+        if (i == 0)
+            continue;
+
+        these[i - 1] = clone_ptr();
+
+    }
+        
 
     // Figuring out how many replicates
     std::vector< size_t > nreplicates(nthreads, 0);
@@ -1640,8 +1652,6 @@ inline void Model<TSeq>::update_state() {
     events_run();
     
 }
-
-
 
 template<typename TSeq>
 inline void Model<TSeq>::mutate_virus() {

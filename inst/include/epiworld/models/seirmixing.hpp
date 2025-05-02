@@ -209,6 +209,11 @@ inline void ModelSEIRMixing<TSeq>::update_infected()
             Model<TSeq>::get_param("Contact rate") /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
+
+        // Possibly correcting for a small number of agents
+        if (adjusted_contact_rate[i] > 1.0)
+            adjusted_contact_rate[i] = 1.0;
+
     }
 
     return;

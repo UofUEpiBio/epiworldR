@@ -50,16 +50,25 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_set(
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline ToolToAgentFun<TSeq> distribute_tool_randomly(
     epiworld_double prevalence,
-    bool as_proportion = true
+    bool as_proportion = true,
+    std::vector< size_t > agents_ids = {}
 ) {
 
-    return [prevalence, as_proportion](
+    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(agents_ids);
+
+    return [prevalence,as_proportion,agents_ids_ptr](
         Tool<TSeq> & tool, Model<TSeq> * model
         ) -> void {
 
+            // Figuring out how what agents are available
+            bool use_set = agents_ids_ptr->size() > 0;
+
             // Picking how many
             int n_to_distribute;
-            int n = model->size();
+            int n = use_set ? 
+                static_cast<int>(agents_ids_ptr->size()) :
+                static_cast<int>(model->size());
+                
             if (as_proportion)
             {
                 n_to_distribute = static_cast<int>(std::floor(prevalence * n));

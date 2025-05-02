@@ -177,6 +177,10 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
             Model<TSeq>::get_param("Contact rate") /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
+        // Correcting for possible overflow
+        if (adjusted_contact_rate[i] > 1.0)
+            adjusted_contact_rate[i] = 1.0;
+
     }
 
 
