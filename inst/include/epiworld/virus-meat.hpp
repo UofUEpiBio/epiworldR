@@ -702,10 +702,10 @@ template<typename TSeq>
 inline void Virus<TSeq>::distribute(Model<TSeq> * model)
 {
 
-    if (dist_fun)
+    if (virus_functions->dist)
     {
 
-        dist_fun(*this, model);
+        virus_functions->dist(*this, model);
 
     }
 
@@ -714,7 +714,7 @@ inline void Virus<TSeq>::distribute(Model<TSeq> * model)
 template<typename TSeq>
 inline void Virus<TSeq>::set_distribution(VirusToAgentFun<TSeq> fun)
 {
-    dist_fun = fun;
+    virus_functions->dist = fun;
 }
 
 #endif

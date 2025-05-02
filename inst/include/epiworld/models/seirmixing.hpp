@@ -121,6 +121,22 @@ template<typename TSeq>
 inline void ModelSEIRMixing<TSeq>::update_infected()
 {
 
+    // #ifdef EPI_DEBUG
+    // printf_epiworld("Estimating the size of `infected`:");
+    // size_t total = 0u;
+
+    // // Memory used by the `infected` vector itself
+    // total += infected.capacity() * sizeof(std::vector<epiworld::Agent<TSeq> *>);
+    
+    // // Memory used by each inner vector and its elements
+    // for (const auto& group : infected) {
+    //     total += group.capacity() * sizeof(epiworld::Agent<TSeq> *);
+    // }
+    // printf_epiworld("%.2f Mb\n", 
+    //     static_cast<double>(total)/1024.0/1024.0);
+    // #endif
+
+
     auto & agents = Model<TSeq>::get_agents();
     auto & entities = Model<TSeq>::get_entities();
 
@@ -162,7 +178,6 @@ inline void ModelSEIRMixing<TSeq>::update_infected()
     for (size_t i = 0; i < entities.size(); ++i)
     {
         infected[i].clear();
-        infected[i].reserve(agents.size());
     }
     
     for (auto & a : agents)
@@ -175,6 +190,13 @@ inline void ModelSEIRMixing<TSeq>::update_infected()
         }
 
     }
+
+    // Shirnking the vectors to the actual size
+    for (size_t i = 0u; i < entities.size(); ++i)
+    {
+        infected[i].shrink_to_fit();
+    }
+    infected.shrink_to_fit();
 
     // Adjusting contact rate
     adjusted_contact_rate.clear();

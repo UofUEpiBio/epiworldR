@@ -102,7 +102,7 @@ protected:
     std::vector< Agent<TSeq> > population = {};
 
     bool using_backup = true;
-    std::vector< Agent<TSeq> > population_backup = {};
+    std::shared_ptr< std::vector< Agent<TSeq> > > population_backup = {};
 
     /**
      * @name Auxiliary variables for AgentsSample<TSeq> iterators
@@ -138,7 +138,7 @@ protected:
     std::vector< ToolPtr<TSeq> > tools = {};
 
     std::vector< Entity<TSeq> > entities = {}; 
-    std::vector< Entity<TSeq> > entities_backup = {};
+    std::shared_ptr< std::vector< Entity<TSeq> > > entities_backup = {};
 
     std::shared_ptr< std::mt19937 > engine = std::make_shared< std::mt19937 >();
     

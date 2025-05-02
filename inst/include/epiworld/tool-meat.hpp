@@ -519,10 +519,10 @@ template<typename TSeq>
 inline void Tool<TSeq>::distribute(Model<TSeq> * model)
 {
 
-    if (dist_fun)
+    if (tool_functions->dist)
     {
 
-        dist_fun(*this, model);
+        tool_functions->dist(*this, model);
 
     }
 
@@ -531,7 +531,7 @@ inline void Tool<TSeq>::distribute(Model<TSeq> * model)
 template<typename TSeq>
 inline void Tool<TSeq>::set_distribution(ToolToAgentFun<TSeq> fun)
 {
-    dist_fun = fun;
+    tool_functions->dist = fun;
 }
 
 #endif

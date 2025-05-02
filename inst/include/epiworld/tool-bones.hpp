@@ -26,6 +26,8 @@ public:
     ToolFun<TSeq> recovery_enhancer        = nullptr;
     ToolFun<TSeq> death_reduction          = nullptr;
 
+    ToolToAgentFun<TSeq> dist = nullptr;
+
     ToolFunctions() = default;
 };
 
@@ -59,8 +61,6 @@ private:
     epiworld_fast_int queue_post = Queue<TSeq>::NoOne; ///< Change of state when removed from agent.
 
     void set_agent(Agent<TSeq> * p, size_t idx);
-
-    ToolToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
     Tool(std::string name = "unknown tool");

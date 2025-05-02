@@ -20,6 +20,9 @@ public:
     VirusFun<TSeq>        probability_of_death     = nullptr;
     VirusFun<TSeq>        incubation               = nullptr;
 
+    // Information about how distribution works
+    VirusToAgentFun<TSeq> dist = nullptr;
+
     VirusFunctions() = default;
 
 };
@@ -56,9 +59,6 @@ private:
     epiworld_fast_int queue_init    = Queue<TSeq>::Everyone; ///< Change of state when added to agent.
     epiworld_fast_int queue_post    = -Queue<TSeq>::Everyone; ///< Change of state when removed from agent.
     epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
-
-    // Information about how distribution works
-    VirusToAgentFun<TSeq> dist_fun = nullptr;
 
 public:
     std::shared_ptr< VirusFunctions<TSeq> > virus_functions = 
