@@ -525,16 +525,20 @@ set_distribution_tool <- function(tool, distfun) {
 #' @param prevalence Numeric scalar. Prevalence of the tool.
 #' @return
 #' - The `distribute_tool_randomly` function returns a distribution function of
-#' class `epiworld_tool_distfun`.
+#' class `epiworld_tool_distfun`. When `agents_ids` is not empty,
+#' it will distribute the tool randomly within that set. Otherwise it uses
+#' all the agents in the model.
 distribute_tool_randomly <- function(
     prevalence,
-    as_proportion
+    as_proportion,
+    agents_ids = integer(0)
     ) {
 
   structure(
     distribute_tool_randomly_cpp(
       as.double(prevalence),
-      as.logical(as_proportion)
+      as.logical(as_proportion),
+      as.integer(agents_ids)
     ),
     class = "epiworld_tool_distfun"
   )
