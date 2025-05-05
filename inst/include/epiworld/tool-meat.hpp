@@ -81,8 +81,32 @@ inline ToolFun<TSeq> tool_fun_logit(
 }
 
 template<typename TSeq>
+inline Tool<TSeq>::Tool()
+{
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
+    set_name("Tool");
+}
+
+template<typename TSeq>
 inline Tool<TSeq>::Tool(std::string name)
 {
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
     set_name(name);
 }
 
@@ -93,18 +117,22 @@ inline Tool<TSeq>::Tool(
     bool as_proportion
     )
 {
+
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
     set_name(name);
 
     set_distribution(
         distribute_tool_randomly<TSeq>(prevalence, as_proportion)
     );
 }
-
-// template<typename TSeq>
-// inline Tool<TSeq>::Tool(TSeq d, std::string name) {
-//     sequence = std::make_shared<TSeq>(d);
-//     tool_name = std::make_shared<std::string>(name);
-// }
 
 template<typename TSeq>
 inline void Tool<TSeq>::set_sequence(TSeq d) {
@@ -116,8 +144,13 @@ inline void Tool<TSeq>::set_sequence(std::shared_ptr<TSeq> d) {
     sequence = d;
 }
 
+template<>
+inline void Tool<int>::set_sequence(int d) {
+    sequence = d;
+}
+
 template<typename TSeq>
-inline std::shared_ptr<TSeq> Tool<TSeq>::get_sequence() {
+inline EPI_TYPENAME_TRAITS(TSeq, int) Tool<TSeq>::get_sequence() {
     return sequence;
 }
 
@@ -342,17 +375,13 @@ inline void Tool<TSeq>::set_death_reduction(
 template<typename TSeq>
 inline void Tool<TSeq>::set_name(std::string name)
 {
-    if (name != "")
-        tool_name = std::make_shared<std::string>(name);
+    tool_name = name;
 }
 
 template<typename TSeq>
 inline std::string Tool<TSeq>::get_name() const {
 
-    if (tool_name)
-        return *tool_name;
-
-    return "unknown tool";
+    return tool_name;
 
 }
 
@@ -479,8 +508,17 @@ inline bool Tool<std::vector<int>>::operator==(
 template<typename TSeq>
 inline bool Tool<TSeq>::operator==(const Tool<TSeq> & other) const
 {
-    if (*sequence != *other.sequence)
-        return false;
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        if (sequence != other.sequence)
+            return false;
+    }
+    else
+    {
+        if (*sequence != *other.sequence)
+            return false;
+    }
+
 
     if (tool_name != other.tool_name)
         return false;
@@ -506,7 +544,7 @@ template<typename TSeq>
 inline void Tool<TSeq>::print() const
 {
 
-    printf_epiworld("Tool       : %s\n", tool_name->c_str());
+    printf_epiworld("Tool       : %s\n", tool_name.c_str());
     printf_epiworld("Id         : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
     printf_epiworld("state_init : %i\n", static_cast<int>(state_init));
     printf_epiworld("state_post : %i\n", static_cast<int>(state_post));

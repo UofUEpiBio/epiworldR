@@ -1,6 +1,12 @@
 #ifndef EPIWORLD_MODELS_SIRMIXING_HPP
 #define EPIWORLD_MODELS_SIRMIXING_HPP
 
+#define GET_MODEL(model, output) \
+    auto * output = dynamic_cast< ModelSIRMixing<TSeq> * >( (model) ); \
+    /*Using the [[assume(...)]] to avoid the compiler warning \
+    if the standard is C++23 or later */ \
+    [[assume((output) != nullptr)]]
+
 /**
  * @file seirentitiesconnected.hpp
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model with mixing
@@ -312,9 +318,8 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
             // Downcasting to retrieve the sampler attached to the
             // class
-            ModelSIRMixing<TSeq> * m_down =
-                dynamic_cast<ModelSIRMixing<TSeq> *>(m);
-
+            GET_MODEL(m, m_down);
+            
             size_t ndraws = m_down->sample_agents(p, m_down->sampled_agents);
 
             if (ndraws == 0u)
@@ -427,8 +432,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
     {
 
-        ModelSIRMixing<TSeq> * m_down =
-            dynamic_cast<ModelSIRMixing<TSeq> *>(m);
+        GET_MODEL(m, m_down);
 
         m_down->update_infected_list();
 
@@ -507,4 +511,5 @@ inline ModelSIRMixing<TSeq> & ModelSIRMixing<TSeq>::initial_states(
 
 }
 
+#undef GET_MODEL
 #endif

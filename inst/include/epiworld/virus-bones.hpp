@@ -48,8 +48,10 @@ private:
     
     Agent<TSeq> * agent = nullptr;
 
-    std::shared_ptr<TSeq> baseline_sequence = nullptr;
-    std::shared_ptr<std::string> virus_name = nullptr;
+    EPI_TYPENAME_TRAITS(TSeq, int) baseline_sequence = 
+        EPI_TYPENAME_TRAITS(TSeq, int)(); 
+
+    std::string virus_name = "unknown virus";
     int date = -99;
     int id   = -99;    
     epiworld_fast_int state_init    = -99; ///< Change of state when added to agent.
@@ -60,9 +62,12 @@ private:
     epiworld_fast_int queue_post    = -Queue<TSeq>::Everyone; ///< Change of state when removed from agent.
     epiworld_fast_int queue_removed = -99; ///< Change of state when agent is removed
 
-public:
     std::shared_ptr< VirusFunctions<TSeq> > virus_functions = 
-    std::make_shared< VirusFunctions<TSeq> >();
+        std::make_shared< VirusFunctions<TSeq> >();
+        
+public:
+
+    Virus();
 
     Virus(std::string name = "unknown virus");
 
@@ -75,7 +80,7 @@ public:
     void mutate(Model<TSeq> * model);
     void set_mutation(MutFun<TSeq> fun);
     
-    std::shared_ptr<TSeq> get_sequence();
+    EPI_TYPENAME_TRAITS(TSeq, int) get_sequence();
     void set_sequence(TSeq sequence);
     
     Agent<TSeq> * get_agent();

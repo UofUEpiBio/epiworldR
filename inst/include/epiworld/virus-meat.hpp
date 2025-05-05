@@ -80,9 +80,34 @@ inline VirusFun<TSeq> virus_fun_logit(
 }
 
 template<typename TSeq>
+inline Virus<TSeq>::Virus()
+{
+
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        baseline_sequence = -1;
+    }
+    else
+    {
+        baseline_sequence = nullptr;
+    }
+
+}
+
+template<typename TSeq>
 inline Virus<TSeq>::Virus(
     std::string name
     ) {
+
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        baseline_sequence = -1;
+    }
+    else
+    {
+        baseline_sequence = nullptr;
+    }
+    
     set_name(name);
 }
 
@@ -92,6 +117,16 @@ inline Virus<TSeq>::Virus(
     epiworld_double prevalence,
     bool prevalence_as_proportion
     ) {
+
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        baseline_sequence = -1;
+    }
+    else
+    {
+        baseline_sequence = nullptr;
+    }
+
     set_name(name);
     set_distribution(
         distribute_virus_randomly<TSeq>(
@@ -122,7 +157,7 @@ inline void Virus<TSeq>::set_mutation(
 }
 
 template<typename TSeq>
-inline std::shared_ptr<TSeq> Virus<TSeq>::get_sequence()
+inline EPI_TYPENAME_TRAITS(TSeq, int) Virus<TSeq>::get_sequence()
 {
 
     return baseline_sequence;
@@ -137,6 +172,16 @@ inline void Virus<TSeq>::set_sequence(TSeq sequence)
     return;
 
 }
+
+template<>
+inline void Virus<int>::set_sequence(int sequence)
+{
+
+    baseline_sequence = sequence;
+    return;
+
+}
+
 
 template<typename TSeq>
 inline Agent<TSeq> * Virus<TSeq>::get_agent()
@@ -411,7 +456,7 @@ inline void Virus<TSeq>::set_post_immunity(
 
     // To make sure that we keep registering the virus
     ToolPtr<TSeq> __no_reinfect = std::make_shared<Tool<TSeq>>(
-        "Immunity (" + *virus_name + ")"
+        "Immunity (" + virus_name + ")"
     );
 
     __no_reinfect->set_susceptibility_reduction(prob);
@@ -462,7 +507,7 @@ inline void Virus<TSeq>::set_post_immunity(
 
     // To make sure that we keep registering the virus
     ToolPtr<TSeq> __no_reinfect = std::make_shared<Tool<TSeq>>(
-        "Immunity (" + *virus_name + ")"
+        "Immunity (" + virus_name + ")"
     );
 
     __no_reinfect->set_susceptibility_reduction(prob);
@@ -492,10 +537,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_name(std::string name)
 {
 
-    if (name == "")
-        virus_name = nullptr;
-    else
-        virus_name = std::make_shared<std::string>(name);
+    virus_name = name;
 
 }
 
@@ -503,10 +545,7 @@ template<typename TSeq>
 inline std::string Virus<TSeq>::get_name() const
 {
 
-    if (virus_name)
-        return *virus_name;
-    
-    return "unknown virus";
+    return virus_name;
 
 }
 
@@ -580,7 +619,6 @@ inline bool Virus<std::vector<int>>::operator==(
     ) const
 {
     
-
     EPI_DEBUG_FAIL_AT_TRUE(
         baseline_sequence->size() != other.baseline_sequence->size(),
         "Virus:: baseline_sequence don't match"
@@ -639,10 +677,20 @@ template<typename TSeq>
 inline bool Virus<TSeq>::operator==(const Virus<TSeq> & other) const
 {
     
-    EPI_DEBUG_FAIL_AT_TRUE(
-        *baseline_sequence != *other.baseline_sequence,
-        "Virus:: baseline_sequence don't match"
-    )
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        EPI_DEBUG_FAIL_AT_TRUE(
+            baseline_sequence != other.baseline_sequence,
+            "Virus:: baseline_sequence don't match"
+        )
+    }
+    else
+    {
+        EPI_DEBUG_FAIL_AT_TRUE(
+            baseline_sequence != other.baseline_sequence,
+            "Virus:: baseline_sequence don't match"
+        )
+    }
 
     EPI_DEBUG_FAIL_AT_TRUE(
         virus_name != other.virus_name,
@@ -687,7 +735,7 @@ template<typename TSeq>
 inline void Virus<TSeq>::print() const
 {
 
-    printf_epiworld("Virus         : %s\n", virus_name->c_str());
+    printf_epiworld("Virus         : %s\n", virus_name.c_str());
     printf_epiworld("Id            : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
     printf_epiworld("state_init    : %i\n", static_cast<int>(state_init));
     printf_epiworld("state_post    : %i\n", static_cast<int>(state_post));

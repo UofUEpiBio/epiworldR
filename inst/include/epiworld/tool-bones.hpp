@@ -49,8 +49,11 @@ private:
 
     int date = -99;
     int id   = -99;
-    std::shared_ptr<std::string> tool_name     = nullptr;
-    std::shared_ptr<TSeq> sequence             = nullptr;
+    std::string tool_name;
+    
+    EPI_TYPENAME_TRAITS(TSeq, int) sequence = 
+        EPI_TYPENAME_TRAITS(TSeq, int)(); ///< Sequence of the tool
+
     std::shared_ptr<ToolFunctions<TSeq>> tool_functions = 
         std::make_shared< ToolFunctions<TSeq> >();
 
@@ -63,6 +66,7 @@ private:
     void set_agent(Agent<TSeq> * p, size_t idx);
 
 public:
+    Tool();
     Tool(std::string name = "unknown tool");
     Tool(
         std::string name,
@@ -72,7 +76,7 @@ public:
 
     void set_sequence(TSeq d);
     void set_sequence(std::shared_ptr<TSeq> d);
-    std::shared_ptr<TSeq> get_sequence();
+    EPI_TYPENAME_TRAITS(TSeq, int) get_sequence();
 
     /**
      * @name Get and set the tool functions

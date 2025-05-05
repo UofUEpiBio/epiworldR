@@ -15,6 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include <type_traits>
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
