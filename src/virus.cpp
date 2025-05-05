@@ -300,7 +300,7 @@ SEXP distribute_virus_randomly_cpp(
   external_pointer<VirusToAgentFun<>> distfun(
     new VirusToAgentFun<>(
       distribute_virus_randomly(
-        prevalence, as_proportion
+        prevalence, as_proportion, ids
       )
     )
   );
