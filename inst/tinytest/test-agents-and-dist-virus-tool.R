@@ -79,7 +79,7 @@ expect_stdout(print(get_agents(abm)), "more agents ...")
 # - Most of the time two susceptible.
 set_distribution_tool(
   get_tool(abm, 0),
-  distfun = distribute_tool_randomly(1L, FALSE)
+  distfun = distribute_tool_randomly(2L, FALSE)
 )
 
 set_distribution_virus(
@@ -141,7 +141,7 @@ measles_vaccine <- tool(
 
 set_distribution_tool(
   tool = measles_vaccine,
-  distfun = distribute_tool_randomly(1.0, TRUE)
+  distfun = distribute_tool_randomly(2L, TRUE)
 )
 
 add_tool(abm, measles_vaccine)
@@ -191,7 +191,7 @@ expect_equal(
 )
 
 ###############################################################################
-# Third case: Only agents 24 and 36 are vaccinated:
+# Third case: Only agents 25 and 36 are vaccinated:
 
 set_distribution_tool(
   get_tool(abm, 0),
@@ -219,7 +219,7 @@ expect_stdout(print(get_agents(abm)), "more agents ...")
 # - Most of the time two susceptible.
 set_distribution_tool(
   get_tool(abm, 0),
-  distfun = distribute_tool_randomly(1L, FALSE)
+  distfun = distribute_tool_randomly(2L, FALSE)
 )
 
 set_distribution_virus(
