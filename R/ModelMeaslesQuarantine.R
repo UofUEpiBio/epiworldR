@@ -19,10 +19,10 @@
 #' @param hospitalization_rate Probability of hospitalization.
 #' @param hospitalization_period Average number of days in hospital.
 #' @param prop_vaccinated Proportion of the population vaccinated.
-#' @param quarantine_period Total duration of quarantine.
+#' @param quarantine_period Number of days an agent is in quarantine.
 #' @param quarantine_willingness Probability of accepting quarantine (
 #' see details).
-#' @param isolation_period Total duration of isolation.
+#' @param isolation_period Number of days an agent is in isolation.
 #' @details
 #' This model can be described as a SEIHR model with isolation and quarantine.
 #' The infectious state is divided into prodromal and rash phases. Furthermore,
