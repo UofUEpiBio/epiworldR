@@ -178,6 +178,11 @@ run.epiworld_model <- function(model, ndays, seed = NULL) {
 #' @export
 print.epiworld_model <- function(x, ...) {
   print_cpp(x, lite = TRUE)
+
+  if (length(attr(x, "saver"))) {
+    cat("(the model has a saver attached. You can use `run_multiple_get_results`)\n")
+  }
+
   invisible(x)
 }
 

@@ -345,10 +345,10 @@ make_saver <- function(
 print.epiworld_saver <- function(x, ...) {
 
   cat("A saver for -run_multiple-\n")
-  cat("Saves the following:", paste(x$what, sep = ", "), "\n")
-  cat("To file            :", ifelse(x$file_output, "yes", "no"), "\n")
-  if (x$file_output)
-    cat("Saver pattern      :", x$fn)
+  cat("Saves the following :", paste(x$what, sep = ", "), "\n")
+  cat("To file             :", ifelse(x$file_output, "yes", "no"), "\n")
+  cat("Saver folder        :", dirname(x$fn), "\n")
+  cat("Saver id            :", x$id, "\n")
 
   invisible(x)
 
