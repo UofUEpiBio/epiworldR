@@ -97,6 +97,6 @@ ans <- run_multiple_get_results(abm, nthreads = 2)$total_hist |>
   data.table::as.data.table()
 
 ans <- ans[date == 50 & state == "Susceptible"]
-ans[, all(counts %in% c(1, 2, 199))]
+expect_true(ans[, all(counts %in% c(1, 2, 199))])
 
 
