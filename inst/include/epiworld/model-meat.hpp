@@ -1913,7 +1913,7 @@ inline void Model<TSeq>::reset() {
         for (size_t i = 0; i < population.size(); ++i)
         {
 
-            if (population[i] != (*population_backup)[i])
+            if (population[i] != (population_backup)[i])
                 throw std::logic_error("Model::reset population doesn't match.");
 
         }
@@ -1941,7 +1941,7 @@ inline void Model<TSeq>::reset() {
         for (size_t i = 0; i < entities.size(); ++i)
         {
 
-            if (entities[i] != (*entities_backup)[i])
+            if (entities[i] != (entities_backup)[i])
                 throw std::logic_error("Model::reset entities don't match.");
 
         }
