@@ -42,6 +42,13 @@ expect_silent(rm_tool(sir_0, 1))
 expect_silent(rm_tool(sir_0, 0))
 expect_error(rm_tool(sir_0, 0), "only 0 tools")
 
+# Check distributing tool to invalid agent IDs
+expect_error(distribute_tool_randomly(
+  prevalence = 2L,
+  as_proportion = FALSE,
+  agents_ids = c(-1, -2, -33)
+), "ID must be a positive integer")
+
 # Check initialization with missing prevalence parameter (deprecated) ----------
 expect_warning(tool_1 <- tool(
   name = "Vaccine",
