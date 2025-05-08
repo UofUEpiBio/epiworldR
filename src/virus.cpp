@@ -284,13 +284,23 @@ SEXP set_distribution_virus_cpp(SEXP virus, SEXP dist) {
 [[cpp11::register]]
 SEXP distribute_virus_randomly_cpp(
   double prevalence,
-  bool as_proportion
+  bool as_proportion,
+  integers agents_ids
 ) {
+
+  // Converting integers to std::vector<size_t>
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
 
   external_pointer<VirusToAgentFun<>> distfun(
     new VirusToAgentFun<>(
       distribute_virus_randomly(
-        prevalence, as_proportion
+        prevalence, as_proportion, ids
       )
     )
   );

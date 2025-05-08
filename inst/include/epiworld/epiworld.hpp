@@ -15,6 +15,7 @@
 #include <sstream>
 #include <iomanip>
 #include <set>
+#include <type_traits>
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
@@ -86,9 +87,6 @@ namespace epiworld {
     #include "agent-meat.hpp"
 
     #include "agentssample-bones.hpp"
-
-    #include "groupsampler-bones.hpp"
-    #include "groupsampler-meat.hpp"
 
     #include "models/models.hpp"
 

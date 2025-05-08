@@ -18,6 +18,12 @@ private:
 public:
 
     /**
+     * @brief Vector of days spent in latent and infectious states
+     * A row-major matrix
+     */
+    std::vector< epiworld_double > days_latent_and_infectious;
+
+    /**
      * @name Construct a new ModelSURV object
      * 
      * The ModelSURV class simulates a survaillence model where agents can be
@@ -94,7 +100,21 @@ public:
     );
     ///@}
 
+    void reset();
+
 };
+
+template<typename TSeq>
+inline void ModelSURV<TSeq>::reset()
+{
+    epiworld::Model<TSeq>::reset();
+
+    days_latent_and_infectious.clear();
+    days_latent_and_infectious.resize(
+        2u * epiworld::Model<TSeq>::size(),
+        -1.0
+    );
+}
 
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
@@ -158,6 +178,9 @@ inline ModelSURV<TSeq>::ModelSURV(
     [](epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m) -> void
     {
 
+        // Dynamically getting the ModelSURV
+        ModelSURV<TSeq> * model_surv = dynamic_cast<ModelSURV<TSeq> *>(m);
+
         epiworld::VirusPtr<TSeq> & v = p->get_virus(); 
         epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
         
@@ -165,22 +188,26 @@ inline ModelSURV<TSeq>::ModelSURV(
         epiworld_fast_uint state = p->get_state();
 
         // Figuring out latent period
-        if (v->get_data().size() == 0u)
+        auto & dat = model_surv->days_latent_and_infectious;
+        if (dat[p->get_id()] < 0)
         {
-            epiworld_double latent_days = m->rgamma(m->par("Latent period"), 1.0);
-            v->get_data().push_back(latent_days);
-
-            v->get_data().push_back(
-                m->rgamma(m->par("Infect period"), 1.0) + latent_days
+            epiworld_double latent_days = m->rgamma(
+                m->par("Latent period"), 1.0
             );
+
+            dat[p->get_id() * 2u] = latent_days;
+
+            dat[p->get_id() * 2u + 1u] = 
+                m->rgamma(m->par("Infect period"), 1.0) +
+                latent_days;
         }
         
         // If still latent, nothing happens
-        if (days_since_exposed <= v->get_data()[0u])
+        if (days_since_exposed <= dat[p->get_id() * 2u])
             return;
 
         // If past days infected + latent, then bye.
-        if (days_since_exposed >= v->get_data()[1u])
+        if (days_since_exposed >= dat[p->get_id() * 2u + 1u])
         {
             p->rm_virus(m);
             return;
@@ -211,7 +238,7 @@ inline ModelSURV<TSeq>::ModelSURV(
 
     };
 
-    std::vector< epiworld_fast_uint > exposed_state = {
+    std::vector< unsigned int > exposed_state = {
         SYMPTOMATIC,
         SYMPTOMATIC_ISOLATED,
         ASYMPTOMATIC,

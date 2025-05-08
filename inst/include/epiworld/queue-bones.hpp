@@ -55,7 +55,7 @@ inline void Queue<TSeq>::operator+=(Agent<TSeq> * p)
     if (++active[p->id] == 1)
         n_in_queue++;
 
-    for (auto n : p->neighbors)
+    for (auto n : (*p->neighbors))
     {
 
         if (++active[n] == 1)
@@ -72,7 +72,7 @@ inline void Queue<TSeq>::operator-=(Agent<TSeq> * p)
     if (--active[p->id] == 0)
         n_in_queue--;
 
-    for (auto n : p->neighbors)
+    for (auto n : (*p->neighbors))
     {
         if (--active[n] == 0)
             n_in_queue--;

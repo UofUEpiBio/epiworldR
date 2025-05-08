@@ -3,7 +3,8 @@
 
 #define GET_MODEL(name, m) \
     ModelMeaslesQuarantine<TSeq> * name = \
-        dynamic_cast<ModelMeaslesQuarantine<TSeq> *>(m);
+        dynamic_cast<ModelMeaslesQuarantine<TSeq> *>(m); \
+    [[assume(name != nullptr)]]
 
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \

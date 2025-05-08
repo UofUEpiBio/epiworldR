@@ -576,8 +576,8 @@ set_distribution_tool_cpp <- function(tool, distfun) {
   .Call(`_epiworldR_set_distribution_tool_cpp`, tool, distfun)
 }
 
-distribute_tool_randomly_cpp <- function(prevalence, as_proportion) {
-  .Call(`_epiworldR_distribute_tool_randomly_cpp`, prevalence, as_proportion)
+distribute_tool_randomly_cpp <- function(prevalence, as_proportion, agents_ids) {
+  .Call(`_epiworldR_distribute_tool_randomly_cpp`, prevalence, as_proportion, agents_ids)
 }
 
 distribute_tool_to_set_cpp <- function(agents_ids) {
@@ -668,8 +668,8 @@ set_distribution_virus_cpp <- function(virus, dist) {
   .Call(`_epiworldR_set_distribution_virus_cpp`, virus, dist)
 }
 
-distribute_virus_randomly_cpp <- function(prevalence, as_proportion) {
-  .Call(`_epiworldR_distribute_virus_randomly_cpp`, prevalence, as_proportion)
+distribute_virus_randomly_cpp <- function(prevalence, as_proportion, agents_ids) {
+  .Call(`_epiworldR_distribute_virus_randomly_cpp`, prevalence, as_proportion, agents_ids)
 }
 
 distribute_virus_to_set_cpp <- function(agents_ids) {

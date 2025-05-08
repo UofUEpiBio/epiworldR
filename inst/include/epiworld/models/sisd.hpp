@@ -10,7 +10,7 @@
  * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
  * @param inital_death epiworld_double Initial death_rate of the immune system
  */
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSISD : public epiworld::Model<TSeq>
 {
 

@@ -23,6 +23,7 @@
 \alias{set_incubation_fun}
 \alias{set_distribution_virus}
 \alias{distribute_virus_randomly}
+\alias{distribute_virus_to_set}
 \alias{distribute_virus_set}
 \title{Virus design}
 \usage{
@@ -75,7 +76,9 @@ set_incubation_fun(virus, model, vfun)
 
 set_distribution_virus(virus, distfun)
 
-distribute_virus_randomly(prevalence, as_proportion)
+distribute_virus_randomly(prevalence, as_proportion, agents_ids = integer(0))
+
+distribute_virus_to_set(agents_ids)
 
 distribute_virus_set(agents_ids)
 }
@@ -177,7 +180,9 @@ assigns an incubation period to the specified virus of class \link{epiworld_viru
 
 \itemize{
 \item The \code{distribute_virus_randomly} function returns a function that can be
-used to distribute the virus in the model.
+used to distribute the virus in the model. When \code{agents_ids} is not empty,
+it will distribute the virus randomly within that set. Otherwise it uses
+all the agents in the model.
 }
 }
 \description{

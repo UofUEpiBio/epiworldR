@@ -145,9 +145,11 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_set(
     std::vector< size_t > & idx
     ) {
 
-    return [idx](Entity<TSeq> & e, Model<TSeq> * m) -> void {
+    auto idx_shared = std::make_shared< std::vector< size_t > >(idx);
 
-        for (const auto & i: idx)
+    return [idx_shared](Entity<TSeq> & e, Model<TSeq> * m) -> void {
+
+        for (const auto & i: *idx_shared)
         {
             e.add_agent(&m->get_agent(i), m);
         }

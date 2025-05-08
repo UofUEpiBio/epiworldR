@@ -14,7 +14,7 @@ abm <- ModelMeaslesQuarantine(
 # Changing the distribution of the virus
 set_distribution_virus(
   get_virus(abm, 0),
-  distfun = distribute_virus_set(10L)
+  distfun = distribute_virus_to_set(10L)
 )
 
 run(abm, 100, 200)
@@ -84,7 +84,7 @@ set_distribution_tool(
 
 set_distribution_virus(
   get_virus(abm, 0),
-  distfun = distribute_virus_set(2L)
+  distfun = distribute_virus_to_set(2L)
 )
 
 run_multiple(
@@ -154,7 +154,7 @@ abm |>
 # Changing the distribution of the virus
 set_distribution_virus(
   get_virus(abm, 0),
-  distfun = distribute_virus_set(10L)
+  distfun = distribute_virus_to_set(10L)
 )
 
 run(abm, 100, 200)
@@ -224,7 +224,7 @@ set_distribution_tool(
 
 set_distribution_virus(
   get_virus(abm, 0),
-  distfun = distribute_virus_set(2L)
+  distfun = distribute_virus_to_set(2L)
 )
 
 run_multiple(
