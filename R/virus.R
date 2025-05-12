@@ -541,16 +541,20 @@ set_distribution_virus <- function(virus, distfun) {
 #' proportion of the total number of agents in the model.
 #' @return
 #' - The `distribute_virus_randomly` function returns a function that can be
-#' used to distribute the virus in the model.
+#' used to distribute the virus in the model. When `agents_ids` is not empty,
+#' it will distribute the virus randomly within that set. Otherwise it uses
+#' all the agents in the model.
 distribute_virus_randomly <- function(
     prevalence,
-    as_proportion
+    as_proportion,
+    agents_ids = integer(0)
     ) {
 
   structure(
     distribute_virus_randomly_cpp(
       as.double(prevalence),
-      as.logical(as_proportion)
+      as.logical(as_proportion),
+      as.integer(agents_ids)
     ),
     class = "epiworld_virus_distfun"
   )
@@ -561,11 +565,19 @@ distribute_virus_randomly <- function(
 #' @rdname virus
 #' @param agents_ids Integer vector. Indices of the agents that will receive the
 #' virus.
-distribute_virus_set <- function(agents_ids) {
+distribute_virus_to_set <- function(agents_ids) {
 
   structure(
     distribute_virus_to_set_cpp(as.vector(agents_ids)),
     class = "epiworld_virus_distfun"
   )
+
+}
+
+#' @export
+#' @rdname virus
+distribute_virus_set <- function(agents_ids) {
+
+  .Deprecated("distribute_virus_to_set")
 
 }

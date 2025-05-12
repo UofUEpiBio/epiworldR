@@ -8,9 +8,13 @@
 
 * The mixing models were using the wrong sampling scheme for the contact event between agents. The new implementation allows using the regular basic reproductive number calculation for its calibration.
 
+* The functions `distribute_(virus|tool)_to_set` now have an additional argument that allows restricting the set of agents.
+
 ## Other Changes
 
 * Added more tests to the `ModelMeaslesQuarantine` model, as well as to the `set_distribution*`, `distribute_*`, and `get_agents_states` functions.
+
+* A large overhaul memory management was performed (C++ side), decreasing the memory footprint by one order of magnitude in some cases.
 
 
 # epiworldR 0.8.1.0

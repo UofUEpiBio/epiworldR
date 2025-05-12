@@ -299,14 +299,24 @@ SEXP set_distribution_tool_cpp(
 [[cpp11::register]]
 SEXP distribute_tool_randomly_cpp(
   double prevalence,
-  bool as_proportion
+  bool as_proportion,
+  integers agents_ids
 ) {
+
+  std::vector<size_t> ids;
+  for (auto & id : as_cpp<std::vector<int>>(agents_ids))
+  {
+    if (id < 0)
+      stop("Agent's ID must be a positive integer.");
+    ids.push_back(static_cast<size_t>(id));
+  }
 
   external_pointer<ToolToAgentFun<>> res(
       new ToolToAgentFun<>(
           distribute_tool_randomly(
             prevalence,
-            as_proportion
+            as_proportion,
+            ids
           )
       )
   );

@@ -74,7 +74,7 @@ set_death_reduction_fun(tool, model, tfun)
 
 set_distribution_tool(tool, distfun)
 
-distribute_tool_randomly(prevalence, as_proportion)
+distribute_tool_randomly(prevalence, as_proportion, agents_ids = integer(0))
 
 distribute_tool_to_set(agents_ids)
 }
@@ -167,7 +167,9 @@ to the specified tool of class \link{epiworld_tool}.
 
 \itemize{
 \item The \code{distribute_tool_randomly} function returns a distribution function of
-class \code{epiworld_tool_distfun}.
+class \code{epiworld_tool_distfun}. When \code{agents_ids} is not empty,
+it will distribute the tool randomly within that set. Otherwise it uses
+all the agents in the model.
 }
 
 \itemize{

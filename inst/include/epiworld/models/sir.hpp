@@ -10,7 +10,7 @@
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
  * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
  */
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIR : public epiworld::Model<TSeq>
 {
 public:

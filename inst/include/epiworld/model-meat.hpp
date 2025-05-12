@@ -353,6 +353,7 @@ inline epiworld_double death_reduction_mixer_default(
 template<typename TSeq>
 inline Model<TSeq> * Model<TSeq>::clone_ptr()
 {
+    // Everything is copied
     Model<TSeq> * ptr = new Model<TSeq>(*dynamic_cast<const Model<TSeq>*>(this));
 
     #ifdef EPI_DEBUG
@@ -398,18 +399,13 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     queue(model.queue),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size()),
-    array_int_tmp(model.array_int_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size())
 {
 
 
     // Removing old neighbors
     for (auto & p : population)
         p.model = this;
-
-    if (population_backup.size() != 0u)
-        for (auto & p : population_backup)
-            p.model = this;
 
     // Pointing to the right place. This needs
     // to be done afterwards since the state zero is set as a function
@@ -468,8 +464,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size()),
-    array_int_tmp(model.array_int_tmp.size())
+    array_virus_tmp(model.array_virus_tmp.size())
 {
 
     db.model = this;
@@ -490,10 +485,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     for (auto & p : population)
         p.model = this;
-
-    if (population_backup.size() != 0)
-        for (auto & p : population_backup)
-            p.model = this;
 
     db = m.db;
     db.model = this;
@@ -541,13 +532,8 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     if (use_queuing)
         queue.model = this;
 
-    array_double_tmp.resize(std::max(
-        size(),
-        static_cast<size_t>(1024 * 1024)
-    ));
-
+    array_double_tmp.resize(static_cast<size_t>(1024u), 0.0);
     array_virus_tmp.resize(1024u);
-    array_int_tmp.resize(1024u * 1024);
 
     return *this;
 
@@ -807,29 +793,12 @@ inline void Model<TSeq>::set_backup()
 {
 
     if (population_backup.size() == 0u)
-        population_backup = population;
+        population_backup = std::vector< Agent<TSeq> >(population);
 
     if (entities_backup.size() == 0u)
-        entities_backup = entities;
+        entities_backup = std::vector< Entity<TSeq> >(entities);
 
 }
-
-// template<typename TSeq>
-// inline void Model<TSeq>::restore_backup()
-// {
-
-//     // Restoring the data
-//     population = *population_backup;
-//     entities   = *entities_backup;
-
-//     // And correcting the pointer
-//     for (auto & p : population)
-//         p.model = this;
-
-//     for (auto & e : entities)
-//         e.model = this;
-
-// }
 
 template<typename TSeq>
 inline std::shared_ptr< std::mt19937 > & Model<TSeq>::get_rand_endgine()
@@ -1355,12 +1324,11 @@ inline Model<TSeq> & Model<TSeq>::run(
 
     array_double_tmp.resize(std::max(
         size(),
-        static_cast<size_t>(1024 * 1024)
+        static_cast<size_t>(1024)
     ));
 
 
     array_virus_tmp.resize(1024);
-    array_int_tmp.resize(1024 * 1024);
 
     // Checking whether the proposed state in/out/removed
     // are valid
@@ -1487,10 +1455,26 @@ inline void Model<TSeq>::run_multiple(
 
     omp_set_num_threads(nthreads);
 
+    // Not more than the number of experiments
+    nthreads =
+        static_cast<size_t>(nthreads) > nexperiments ? nexperiments : nthreads;
+
     // Generating copies of the model
-    std::vector< Model<TSeq> * > these;
-    for (size_t i = 0; i < static_cast<size_t>(std::max(nthreads - 1, 0)); ++i)
-        these.push_back(clone_ptr());
+    std::vector< Model<TSeq> * > these(
+        std::max(nthreads - 1, 0)
+    );
+
+    #pragma omp parallel for shared(these, nthreads)
+    for (size_t i = 0u; i < static_cast<size_t>(nthreads); ++i)
+    {
+
+        if (i == 0)
+            continue;
+
+        these[i - 1] = clone_ptr();
+
+    }
+        
 
     // Figuring out how many replicates
     std::vector< size_t > nreplicates(nthreads, 0);
@@ -1544,7 +1528,7 @@ inline void Model<TSeq>::run_multiple(
         }
     }
     #endif
-
+    
     #pragma omp parallel shared(these, nreplicates, nreplicates_csum, seeds_n) \
         firstprivate(nexperiments, nthreads, fun, reset, verbose, pb_multiple, ndays) \
         default(shared)
@@ -1558,6 +1542,9 @@ inline void Model<TSeq>::run_multiple(
             if (iam == 0)
             {
 
+                // Checking if the user interrupted the simulation
+                EPI_CHECK_USER_INTERRUPT(n);
+
                 // Initializing the seed
                 run(ndays, seeds_n[sim_id]);
 
@@ -1566,7 +1553,7 @@ inline void Model<TSeq>::run_multiple(
 
                 // Only the first one prints
                 if (verbose)
-                    pb_multiple.next();
+                    pb_multiple.next();                
 
             } else {
 
@@ -1578,6 +1565,8 @@ inline void Model<TSeq>::run_multiple(
 
             }
 
+            
+
         }
         
     }
@@ -1585,8 +1574,11 @@ inline void Model<TSeq>::run_multiple(
     // Adjusting the number of replicates
     n_replicates += (nexperiments - nreplicates[0u]);
 
-    for (auto & ptr : these)
-        delete ptr;
+    #pragma omp parallel for shared(these)
+    for (int i = 1; i < nthreads; ++i)
+    {
+        delete these[i - 1];
+    }
 
     #else
     // if (reset)
@@ -1611,6 +1603,9 @@ inline void Model<TSeq>::run_multiple(
 
     for (size_t n = 0u; n < nexperiments; ++n)
     {
+
+        // Checking if the user interrupted the simulation
+        EPI_CHECK_USER_INTERRUPT(n);
 
         run(ndays, seeds_n[n]);
 
@@ -1661,15 +1656,13 @@ inline void Model<TSeq>::update_state() {
     
 }
 
-
-
 template<typename TSeq>
 inline void Model<TSeq>::mutate_virus() {
 
     // Checking if any virus has mutation
     size_t nmutates = 0u;
     for (const auto & v: viruses)
-        if (v->mutation_fun)
+        if (v->virus_functions->mutation)
             nmutates++;
 
     if (nmutates == 0u)
@@ -1824,7 +1817,11 @@ inline void Model<TSeq>::write_edgelist(
 
         for (const auto & p : wseq)
         {
-            for (auto & n : p->neighbors)
+
+            if (p->neighbors == nullptr)
+                continue;
+
+            for (auto & n : *p->neighbors)
                 efile << p->id << " " << n << "\n";
         }
 
@@ -1832,7 +1829,11 @@ inline void Model<TSeq>::write_edgelist(
 
         for (const auto & p : wseq)
         {
-            for (auto & n : p->neighbors)
+
+            if (p->neighbors == nullptr)
+                continue;
+
+            for (auto & n : *p->neighbors)
                 if (static_cast<int>(p->id) <= static_cast<int>(n))
                     efile << p->id << " " << n << "\n";
         }
@@ -1857,7 +1858,10 @@ std::vector< int > & target
 
         for (const auto & p : wseq)
         {
-            for (auto & n : p->neighbors)
+            if (p->neighbors == nullptr)
+                continue;
+
+            for (auto & n : *p->neighbors)
             {
                 source.push_back(static_cast<int>(p->id));
                 target.push_back(static_cast<int>(n));
@@ -1868,7 +1872,11 @@ std::vector< int > & target
 
         for (const auto & p : wseq)
         {
-            for (auto & n : p->neighbors) {
+
+            if (p->neighbors == nullptr)
+                continue;
+
+            for (auto & n : *p->neighbors) {
                 if (static_cast<int>(p->id) <= static_cast<int>(n)) {
                     source.push_back(static_cast<int>(p->id));
                     target.push_back(static_cast<int>(n));
@@ -1893,15 +1901,19 @@ inline void Model<TSeq>::reset() {
     // Restablishing people
     pb = Progress(ndays, 80);
 
-    if (population_backup.size() != 0u)
+    if (population_backup.size())
     {
         population = population_backup;
+    
+        // Ensuring the population is poiting to the model
+        for (auto & p : population)
+            p.model = this;
 
         #ifdef EPI_DEBUG
         for (size_t i = 0; i < population.size(); ++i)
         {
 
-            if (population[i] != population_backup[i])
+            if (population[i] != (population_backup)[i])
                 throw std::logic_error("Model::reset population doesn't match.");
 
         }
@@ -1921,7 +1933,7 @@ inline void Model<TSeq>::reset() {
     }
     #endif
         
-    if (entities_backup.size() != 0)
+    if (entities_backup.size())
     {
         entities = entities_backup;
 
@@ -1929,7 +1941,7 @@ inline void Model<TSeq>::reset() {
         for (size_t i = 0; i < entities.size(); ++i)
         {
 
-            if (entities[i] != entities_backup[i])
+            if (entities[i] != (entities_backup)[i])
                 throw std::logic_error("Model::reset entities don't match.");
 
         }

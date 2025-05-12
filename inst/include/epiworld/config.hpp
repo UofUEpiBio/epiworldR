@@ -5,6 +5,13 @@
     #define printf_epiworld fflush(stdout);printf
 #endif
 
+// In case the user has a way to stop the program
+// This is called during `run_multiple()` and it is
+// passed the simulation number.
+#ifndef EPI_CHECK_USER_INTERRUPT
+    #define EPI_CHECK_USER_INTERRUPT(a)
+#endif
+
 #ifndef EPIWORLD_MAXNEIGHBORS
     #define EPIWORLD_MAXNEIGHBORS 1048576
 #endif
@@ -21,7 +28,7 @@
 #endif
 
 #ifndef epiworld_fast_int
-    #define epiworld_fast_int long long int
+    #define epiworld_fast_int int
 #endif
 
 #ifndef epiworld_fast_uint

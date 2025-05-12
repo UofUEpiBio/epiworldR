@@ -4,7 +4,7 @@
 /**
  * @brief Template for a Susceptible-Infected-Removed-Deceased (SIRD) model
  */
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRD : public epiworld::Model<TSeq>
 {
 public:

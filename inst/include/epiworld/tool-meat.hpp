@@ -81,8 +81,32 @@ inline ToolFun<TSeq> tool_fun_logit(
 }
 
 template<typename TSeq>
+inline Tool<TSeq>::Tool()
+{
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
+    set_name("Tool");
+}
+
+template<typename TSeq>
 inline Tool<TSeq>::Tool(std::string name)
 {
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
     set_name(name);
 }
 
@@ -93,18 +117,22 @@ inline Tool<TSeq>::Tool(
     bool as_proportion
     )
 {
+
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        sequence = -1;
+    }
+    else
+    {
+        sequence = nullptr;
+    }
+
     set_name(name);
 
     set_distribution(
         distribute_tool_randomly<TSeq>(prevalence, as_proportion)
     );
 }
-
-// template<typename TSeq>
-// inline Tool<TSeq>::Tool(TSeq d, std::string name) {
-//     sequence = std::make_shared<TSeq>(d);
-//     tool_name = std::make_shared<std::string>(name);
-// }
 
 template<typename TSeq>
 inline void Tool<TSeq>::set_sequence(TSeq d) {
@@ -116,8 +144,13 @@ inline void Tool<TSeq>::set_sequence(std::shared_ptr<TSeq> d) {
     sequence = d;
 }
 
+template<>
+inline void Tool<int>::set_sequence(int d) {
+    sequence = d;
+}
+
 template<typename TSeq>
-inline std::shared_ptr<TSeq> Tool<TSeq>::get_sequence() {
+inline EPI_TYPENAME_TRAITS(TSeq, int) Tool<TSeq>::get_sequence() {
     return sequence;
 }
 
@@ -128,8 +161,10 @@ inline epiworld_double Tool<TSeq>::get_susceptibility_reduction(
 )
 {
 
-    if (susceptibility_reduction_fun)
-        return susceptibility_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->susceptibility_reduction)
+        return tool_functions->susceptibility_reduction(
+            *this, this->agent, v, model
+        );
 
     return DEFAULT_TOOL_CONTAGION_REDUCTION;
 
@@ -142,8 +177,10 @@ inline epiworld_double Tool<TSeq>::get_transmission_reduction(
 )
 {
 
-    if (transmission_reduction_fun)
-        return transmission_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->transmission_reduction)
+        return tool_functions->transmission_reduction(
+            *this, this->agent, v, model
+        );
 
     return DEFAULT_TOOL_TRANSMISSION_REDUCTION;
 
@@ -156,8 +193,8 @@ inline epiworld_double Tool<TSeq>::get_recovery_enhancer(
 )
 {
 
-    if (recovery_enhancer_fun)
-        return recovery_enhancer_fun(*this, this->agent, v, model);
+    if (tool_functions->recovery_enhancer)
+        return tool_functions->recovery_enhancer(*this, this->agent, v, model);
 
     return DEFAULT_TOOL_RECOVERY_ENHANCER;
 
@@ -170,8 +207,8 @@ inline epiworld_double Tool<TSeq>::get_death_reduction(
 )
 {
 
-    if (death_reduction_fun)
-        return death_reduction_fun(*this, this->agent, v, model);
+    if (tool_functions->death_reduction)
+        return tool_functions->death_reduction(*this, this->agent, v, model);
 
     return DEFAULT_TOOL_DEATH_REDUCTION;
 
@@ -182,7 +219,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    susceptibility_reduction_fun = fun;
+    tool_functions->susceptibility_reduction = fun;
 }
 
 template<typename TSeq>
@@ -190,7 +227,7 @@ inline void Tool<TSeq>::set_transmission_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    transmission_reduction_fun = fun;
+    tool_functions->transmission_reduction = fun;
 }
 
 template<typename TSeq>
@@ -198,7 +235,7 @@ inline void Tool<TSeq>::set_recovery_enhancer_fun(
     ToolFun<TSeq> fun
 )
 {
-    recovery_enhancer_fun = fun;
+    tool_functions->recovery_enhancer = fun;
 }
 
 template<typename TSeq>
@@ -206,7 +243,7 @@ inline void Tool<TSeq>::set_death_reduction_fun(
     ToolFun<TSeq> fun
 )
 {
-    death_reduction_fun = fun;
+    tool_functions->death_reduction = fun;
 }
 
 template<typename TSeq>
@@ -219,7 +256,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    susceptibility_reduction_fun = tmpfun;
+    tool_functions->susceptibility_reduction = tmpfun;
 
 }
 
@@ -234,7 +271,7 @@ inline void Tool<TSeq>::set_transmission_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    transmission_reduction_fun = tmpfun;
+    tool_functions->transmission_reduction = tmpfun;
 
 }
 
@@ -249,7 +286,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(epiworld_double * prob)
             return *prob;
         };
 
-    recovery_enhancer_fun = tmpfun;
+    tool_functions->recovery_enhancer = tmpfun;
 
 }
 
@@ -264,7 +301,7 @@ inline void Tool<TSeq>::set_death_reduction(epiworld_double * prob)
             return *prob;
         };
 
-    death_reduction_fun = tmpfun;
+    tool_functions->death_reduction = tmpfun;
 
 }
 
@@ -283,7 +320,7 @@ inline void Tool<TSeq>::set_susceptibility_reduction(
             return prob;
         };
 
-    susceptibility_reduction_fun = tmpfun;
+    tool_functions->susceptibility_reduction = tmpfun;
 
 }
 
@@ -299,7 +336,7 @@ inline void Tool<TSeq>::set_transmission_reduction(
             return prob;
         };
 
-    transmission_reduction_fun = tmpfun;
+    tool_functions->transmission_reduction = tmpfun;
 
 }
 
@@ -315,7 +352,7 @@ inline void Tool<TSeq>::set_recovery_enhancer(
             return prob;
         };
 
-    recovery_enhancer_fun = tmpfun;
+    tool_functions->recovery_enhancer = tmpfun;
 
 }
 
@@ -331,24 +368,20 @@ inline void Tool<TSeq>::set_death_reduction(
             return prob;
         };
 
-    death_reduction_fun = tmpfun;
+    tool_functions->death_reduction = tmpfun;
 
 }
 
 template<typename TSeq>
 inline void Tool<TSeq>::set_name(std::string name)
 {
-    if (name != "")
-        tool_name = std::make_shared<std::string>(name);
+    tool_name = name;
 }
 
 template<typename TSeq>
 inline std::string Tool<TSeq>::get_name() const {
 
-    if (tool_name)
-        return *tool_name;
-
-    return "unknown tool";
+    return tool_name;
 
 }
 
@@ -475,8 +508,17 @@ inline bool Tool<std::vector<int>>::operator==(
 template<typename TSeq>
 inline bool Tool<TSeq>::operator==(const Tool<TSeq> & other) const
 {
-    if (*sequence != *other.sequence)
-        return false;
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        if (sequence != other.sequence)
+            return false;
+    }
+    else
+    {
+        if (*sequence != *other.sequence)
+            return false;
+    }
+
 
     if (tool_name != other.tool_name)
         return false;
@@ -502,7 +544,7 @@ template<typename TSeq>
 inline void Tool<TSeq>::print() const
 {
 
-    printf_epiworld("Tool       : %s\n", tool_name->c_str());
+    printf_epiworld("Tool       : %s\n", tool_name.c_str());
     printf_epiworld("Id         : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
     printf_epiworld("state_init : %i\n", static_cast<int>(state_init));
     printf_epiworld("state_post : %i\n", static_cast<int>(state_post));
@@ -515,10 +557,10 @@ template<typename TSeq>
 inline void Tool<TSeq>::distribute(Model<TSeq> * model)
 {
 
-    if (dist_fun)
+    if (tool_functions->dist)
     {
 
-        dist_fun(*this, model);
+        tool_functions->dist(*this, model);
 
     }
 
@@ -527,7 +569,7 @@ inline void Tool<TSeq>::distribute(Model<TSeq> * model)
 template<typename TSeq>
 inline void Tool<TSeq>::set_distribution(ToolToAgentFun<TSeq> fun)
 {
-    dist_fun = fun;
+    tool_functions->dist = fun;
 }
 
 #endif

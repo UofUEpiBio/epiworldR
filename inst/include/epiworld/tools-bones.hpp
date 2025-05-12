@@ -20,7 +20,7 @@ class Tools {
     friend class Agent<TSeq>;
 private:
     std::vector< ToolPtr<TSeq> > * dat;
-    const epiworld_fast_uint * n_tools;
+    const unsigned int * n_tools;
 
 public:
 

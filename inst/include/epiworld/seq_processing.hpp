@@ -42,7 +42,7 @@ inline std::vector<int> default_seq_hasher<bool>(const bool & x) {
  * @param seq 
  * @return std::string 
  */
-template<typename TSeq = int>
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline std::string default_seq_writer(const TSeq & seq);
 
 template<>

@@ -1,8 +1,6 @@
 #ifndef EPIWORLD_MACROS_HPP
 #define EPIWORLD_MACROS_HPP
 
-
-
 /**
  * @brief Helper macro to define a new tool
  * 
@@ -107,5 +105,16 @@
 #define EPI_NEW_ENTITYTOAGENTFUN_LAMBDA(funname,tseq) \
     epiworld::EntityToAgentFun<tseq> funname = \
     [](epiworld::Entity<tseq> & e, epiworld::Model<tseq> * m) -> void
+
+// Use this to make it more efficient for storage if the type is small
+// and the pointer is not needed
+#define EPI_TYPENAME_TRAITS(tseq, bound) typename std::conditional< \
+    sizeof( tseq ) <= sizeof( bound ), \
+    tseq, \
+    std::shared_ptr< tseq > \
+    >::type
+
+#define EPI_IF_TSEQ_LESS_EQ_INT(tseq) \
+    if constexpr (sizeof( tseq ) <= sizeof( int ))
 
 #endif

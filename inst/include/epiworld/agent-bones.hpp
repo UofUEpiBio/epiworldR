@@ -83,16 +83,16 @@ private:
     
     Model<TSeq> * model;
 
-    std::vector< size_t > neighbors;
-    std::vector< size_t > neighbors_locations;
+    std::vector< size_t > * neighbors = nullptr;
+    std::vector< size_t > * neighbors_locations = nullptr;
     size_t n_neighbors = 0u;
 
     std::vector< size_t > entities;
     std::vector< size_t > entities_locations;
     size_t n_entities = 0u;
 
-    epiworld_fast_uint state = 0u;
-    epiworld_fast_uint state_prev = 0u; ///< For accounting, if need to undo a change.
+    unsigned int state = 0u;
+    unsigned int state_prev = 0u; ///< For accounting, if need to undo a change.
     
     int state_last_changed = -1; ///< Last time the agent was updated.
     int id = -1;
@@ -100,13 +100,7 @@ private:
     VirusPtr<TSeq> virus = nullptr;
 
     std::vector< ToolPtr<TSeq> > tools;
-    epiworld_fast_uint n_tools = 0u;
-
-    std::vector< Agent<TSeq> * > sampled_agents = {};
-    size_t sampled_agents_n      = 0u;
-    std::vector< size_t > sampled_agents_left = {};
-    size_t sampled_agents_left_n = 0u;
-    int date_last_build_sample   = -99;
+    unsigned int n_tools = 0u;
 
 public:
 
@@ -114,6 +108,7 @@ public:
     Agent(Agent<TSeq> && p);
     Agent(const Agent<TSeq> & p);
     Agent<TSeq> & operator=(const Agent<TSeq> & other_agent);
+    ~Agent();
 
     /**
      * @name Add/Remove Virus/Tool
@@ -254,7 +249,7 @@ public:
         epiworld_fast_int queue = 0
         );
 
-    const epiworld_fast_uint & get_state() const;
+    const unsigned int & get_state() const;
 
     void reset();
 
