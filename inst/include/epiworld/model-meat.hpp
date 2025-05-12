@@ -795,7 +795,7 @@ inline void Model<TSeq>::set_backup()
     if (population_backup.size() == 0u)
         population_backup = std::vector< Agent<TSeq> >(population);
 
-    if (!entities_backup.size() == 0u)
+    if (entities_backup.size() == 0u)
         entities_backup = std::vector< Entity<TSeq> >(entities);
 
 }
