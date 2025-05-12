@@ -103,7 +103,7 @@ distancing.</p>
 <span></span>
 <span><span class="fu">set_distribution_tool</span><span class="op">(</span><span class="va">tool</span>, <span class="va">distfun</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">distribute_tool_randomly</span><span class="op">(</span><span class="va">prevalence</span>, <span class="va">as_proportion</span><span class="op">)</span></span>
+<span><span class="fu">distribute_tool_randomly</span><span class="op">(</span><span class="va">prevalence</span>, <span class="va">as_proportion</span>, agents_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">distribute_tool_to_set</span><span class="op">(</span><span class="va">agents_ids</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -219,7 +219,9 @@ to the specified tool of class epiworld_tool.</p></li>
 </ul><ul><li><p>The <code>set_death_reduction</code> function assigns a probability decrease
 to the specified tool of class epiworld_tool.</p></li>
 </ul><ul><li><p>The <code>distribute_tool_randomly</code> function returns a distribution function of
-class <code>epiworld_tool_distfun</code>.</p></li>
+class <code>epiworld_tool_distfun</code>. When <code>agents_ids</code> is not empty,
+it will distribute the tool randomly within that set. Otherwise it uses
+all the agents in the model.</p></li>
 </ul><ul><li><p>The <code>distribute_tool_to_set</code> function returns a distribution function of
 class <code>epiworld_tool_distfun</code>.</p></li>
 </ul></div>

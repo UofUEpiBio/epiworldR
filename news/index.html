@@ -48,10 +48,12 @@
 <ul><li><p>In the <code>ModelMeaslesQuarantine</code> model, isolated individuals now have a different parameter for the number of days in isolation. Previously, the same parameter was used for both isolated and quarantined individuals. The new parameter is <code>isolation_period</code>.</p></li>
 <li><p>The <code>ModelMeaslesQuarantine</code> model changed a couple of parameter names to improve consistency. We also improved the documentation of the model.</p></li>
 <li><p>The mixing models were using the wrong sampling scheme for the contact event between agents. The new implementation allows using the regular basic reproductive number calculation for its calibration.</p></li>
+<li><p>The functions <code>distribute_(virus|tool)_to_set</code> now have an additional argument that allows restricting the set of agents.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="other-changes-0-8-2-0">Other Changes<a class="anchor" aria-label="anchor" href="#other-changes-0-8-2-0"></a></h3>
-<ul><li>Added more tests to the <code>ModelMeaslesQuarantine</code> model, as well as to the <code>set_distribution*</code>, <code>distribute_*</code>, and <code>get_agents_states</code> functions.</li>
+<ul><li><p>Added more tests to the <code>ModelMeaslesQuarantine</code> model, as well as to the <code>set_distribution*</code>, <code>distribute_*</code>, and <code>get_agents_states</code> functions.</p></li>
+<li><p>A large overhaul memory management was performed (C++ side), decreasing the memory footprint by one order of magnitude in some cases.</p></li>
 </ul></div>
 </div>
     <div class="section level2">

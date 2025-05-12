@@ -103,7 +103,9 @@ viruses.</p>
 <span></span>
 <span><span class="fu">set_distribution_virus</span><span class="op">(</span><span class="va">virus</span>, <span class="va">distfun</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">distribute_virus_randomly</span><span class="op">(</span><span class="va">prevalence</span>, <span class="va">as_proportion</span><span class="op">)</span></span>
+<span><span class="fu">distribute_virus_randomly</span><span class="op">(</span><span class="va">prevalence</span>, <span class="va">as_proportion</span>, agents_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a></span><span class="op">(</span><span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">distribute_virus_to_set</span><span class="op">(</span><span class="va">agents_ids</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">distribute_virus_set</span><span class="op">(</span><span class="va">agents_ids</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -223,7 +225,9 @@ epiworld_virus.</p></li>
 </ul><ul><li><p>The <code>set_incubation</code> function does not return a value, but instead
 assigns an incubation period to the specified virus of class epiworld_virus.</p></li>
 </ul><ul><li><p>The <code>distribute_virus_randomly</code> function returns a function that can be
-used to distribute the virus in the model.</p></li>
+used to distribute the virus in the model. When <code>agents_ids</code> is not empty,
+it will distribute the virus randomly within that set. Otherwise it uses
+all the agents in the model.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
