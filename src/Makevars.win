@@ -7,3 +7,6 @@ PKG_CXXFLAGS=$(SHLIB_OPENMP_CXXFLAGS) -I../inst/include/ \
 
 # For testing
 #PKG_CXXFLAGS=-Wall
+
+# Specifying the C++ standard
+CXX_STD = CXX23
