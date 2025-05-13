@@ -16,6 +16,7 @@
 #include <iomanip>
 #include <set>
 #include <type_traits>
+#include <cassert>
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
