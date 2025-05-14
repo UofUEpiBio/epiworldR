@@ -114,7 +114,7 @@ doubles get_transition_probability_cpp(
 ) {
 
   cpp11::external_pointer<Model<>> ptr(model);
-  return cpp11::writable::doubles(ptr->get_db().transition_probability(false));
+  return cpp11::writable::doubles(ptr->get_db().get_transition_probability(false));
 
 }
 
@@ -158,7 +158,7 @@ cpp11::data_frame get_reproductive_number_cpp(
   // Getting the right class
   cpp11::external_pointer<Model<>> ptr(model);
   std::unordered_map< std::vector< int >, int, epiworld::vecHasher<int>> rn =
-    ptr->get_db().reproductive_number();
+    ptr->get_db().get_reproductive_number();
 
 
   for (const auto & m : rn)
@@ -245,7 +245,7 @@ cpp11::data_frame get_generation_time_cpp(
   std::vector<int> date;
   std::vector<int> gentime;
 
-  ptr->get_db().generation_time(
+  ptr->get_db().get_generation_time(
     agent_id,
     virus_id,
     date,
