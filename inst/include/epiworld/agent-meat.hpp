@@ -110,8 +110,8 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
 
     if (other_agent.n_neighbors > 0u)
     {
-        neighbors = new std::vector< size_t >(other_agent.n_neighbors);
-        neighbors_locations = new std::vector< size_t >(other_agent.n_neighbors);
+        neighbors = new std::vector< size_t >(*other_agent.neighbors);
+        neighbors_locations = new std::vector< size_t >(*other_agent.neighbors_locations);
     }
     
     entities = other_agent.entities;

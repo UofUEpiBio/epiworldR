@@ -1,3 +1,9 @@
+# epiworldR 0.8.3.0 (dev)
+
+## Bug Fixes
+
+* The `run_multiple()` function was failing to correctly backup the agents' edgelist in the case of network models. This was due to a bug in the C++ library that was not correctly copying the edgelist. This has been fixed.
+
 # epiworldR 0.8.2.0
 
 ## Changes
