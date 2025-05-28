@@ -23,13 +23,24 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRMixing : public epiworld::Model<TSeq> 
 {
 private:
-    std::vector< std::vector< epiworld::Agent<TSeq> * > > infected;
+    
+    // Vector of infected agents
+    std::vector< size_t > infected;
+    size_t n_infected;
+
+    // Number of infected agents in each group
+    std::vector< size_t > n_infected_per_group;
+    
+    // Where the agents start in the `infected` vector
+    std::vector< size_t > entity_indices;
+
     void update_infected_list();
-    std::vector< epiworld::Agent<TSeq> * > sampled_agents;
+    std::vector< size_t > sampled_agents;
     size_t sample_agents(
         epiworld::Agent<TSeq> * agent,
-        std::vector< epiworld::Agent<TSeq> * > & sampled_agents
+        std::vector< size_t > & sampled_agents
         );
+
     std::vector< double > adjusted_contact_rate;
     std::vector< double > contact_matrix;
 
@@ -110,7 +121,7 @@ public:
 
     size_t get_n_infected(size_t group) const
     {
-        return infected[group].size();
+        return n_infected_per_group[group];
     }
 
     void set_contact_matrix(std::vector< double > cmat)
@@ -124,101 +135,53 @@ public:
 template<typename TSeq>
 inline void ModelSIRMixing<TSeq>::update_infected_list()
 {
-
     auto & agents = Model<TSeq>::get_agents();
-    auto & entities = Model<TSeq>::get_entities();
 
-    infected.resize(entities.size());
-    sampled_agents.resize(agents.size());
-
-    // Checking contact matrix's rows add to one
-    size_t nentities = entities.size();
-    if (this->contact_matrix.size() !=  nentities*nentities)
-        throw std::length_error(
-            std::string("The contact matrix must be a square matrix of size ") +
-            std::string("nentities x nentities. ") +
-            std::to_string(this->contact_matrix.size()) +
-            std::string(" != ") + std::to_string(nentities*nentities) +
-            std::string(".")
-            );
-
-    for (size_t i = 0u; i < entities.size(); ++i)
-    {
-        double sum = 0.0;
-        for (size_t j = 0u; j < entities.size(); ++j)
-        {
-            if (this->contact_matrix[index(i, j, nentities)] < 0.0)
-                throw std::range_error(
-                    std::string("The contact matrix must be non-negative. ") +
-                    std::to_string(this->contact_matrix[index(i, j, nentities)]) +
-                    std::string(" < 0.")
-                    );
-            sum += this->contact_matrix[index(i, j, nentities)];
-        }
-        if (sum < 0.999 || sum > 1.001)
-            throw std::range_error(
-                std::string("The contact matrix must have rows that add to one. ") +
-                std::to_string(sum) +
-                std::string(" != 1.")
-                );
-    }
-
-    for (size_t i = 0; i < entities.size(); ++i)
-    {
-        infected[i].clear();
-        infected[i].reserve(agents.size());
-    }
+    std::fill(n_infected_per_group.begin(), n_infected_per_group.end(), 0u);
+    n_infected = 0;
     
     for (auto & a : agents)
     {
-
         if (a.get_state() == ModelSIRMixing<TSeq>::INFECTED)
         {
             if (a.get_n_entities() > 0u)
-                infected[a.get_entity(0u).get_id()].push_back(&a);
+            {
+                const auto & entity = a.get_entity(0u);
+                infected[
+                    // Position of the group in the `infected` vector
+                    entity_indices[entity.get_id()] +
+                    // Position of the agent in the group
+                    n_infected_per_group[entity.get_id()]++
+                ] = a.get_id();
+
+                // Incrementing the overall counter
+                n_infected++;
+            }
         }
-
     }
-
-    // Adjusting contact rate
-    adjusted_contact_rate.clear();
-    adjusted_contact_rate.resize(infected.size(), 0.0);
-
-    for (size_t i = 0u; i < infected.size(); ++i)
-    {
-                
-        adjusted_contact_rate[i] = 
-            Model<TSeq>::get_param("Contact rate") /
-                static_cast< epiworld_double > (this->get_entity(i).size());
-
-        // Correcting for possible overflow
-        if (adjusted_contact_rate[i] > 1.0)
-            adjusted_contact_rate[i] = 1.0;
-
-    }
-
 
     return;
-
 }
 
 template<typename TSeq>
 inline size_t ModelSIRMixing<TSeq>::sample_agents(
     epiworld::Agent<TSeq> * agent,
-    std::vector< epiworld::Agent<TSeq> * > & sampled_agents
+    std::vector< size_t > & sampled_agents
     )
 {
 
     size_t agent_group_id = agent->get_entity(0u).get_id();
-    size_t ngroups = infected.size();
+    size_t ngroups = this->entities.size();
 
     int samp_id = 0;
-    for (size_t g = 0; g < infected.size(); ++g)
+    for (size_t g = 0; g < ngroups; ++g)
     {
+
+        size_t group_size = n_infected_per_group[g];
 
         // How many from this entity?
         int nsamples = epiworld::Model<TSeq>::rbinom(
-            infected[g].size(),
+            group_size,
             adjusted_contact_rate[g] * contact_matrix[
                 index(agent_group_id, g, ngroups)
             ]
@@ -232,19 +195,30 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
         {
 
             // Randomly selecting an agent
-            int which = epiworld::Model<TSeq>::runif() * infected[g].size();
+            int which = epiworld::Model<TSeq>::runif() * group_size;
 
             // Correcting overflow error
-            if (which >= static_cast<int>(infected[g].size()))
-                which = static_cast<int>(infected[g].size()) - 1;
+            if (which >= static_cast<int>(group_size))
+                which = static_cast<int>(group_size) - 1;
 
-            auto & a = infected[g][which];
+            #ifdef EPI_DEBUG
+            auto & a = this->population.at(infected.at(entity_indices[g] + which));
+            #else
+            auto & a = this->get_agent(infected[entity_indices[g] + which]);
+            #endif
+
+            #ifdef EPI_DEBUG
+            if (a.get_state() != ModelSIRMixing<TSeq>::INFECTED)
+                throw std::logic_error(
+                    "The agent is not infected, but it should be."
+                );
+            #endif
 
             // Can't sample itself
-            if (a->get_id() == agent->get_id())
+            if (a.get_id() == agent->get_id())
                 continue;
 
-            sampled_agents[samp_id++] = a;
+            sampled_agents[samp_id++] = a.get_id();
             
         }
 
@@ -270,11 +244,80 @@ template<typename TSeq>
 inline void ModelSIRMixing<TSeq>::reset()
 {
 
-    Model<TSeq>::reset();
+    Model<TSeq>::reset();   
+
+    // Checking contact matrix's rows add to one
+    size_t nentities = this->entities.size();
+    if (this->contact_matrix.size() !=  nentities*nentities)
+        throw std::length_error(
+            std::string("The contact matrix must be a square matrix of size ") +
+            std::string("nentities x nentities. ") +
+            std::to_string(this->contact_matrix.size()) +
+            std::string(" != ") + std::to_string(nentities*nentities) +
+            std::string(".")
+            );
+
+    for (size_t i = 0u; i < this->entities.size(); ++i)
+    {
+        double sum = 0.0;
+        for (size_t j = 0u; j < this->entities.size(); ++j)
+        {
+            if (this->contact_matrix[index(i, j, nentities)] < 0.0)
+                throw std::range_error(
+                    std::string("The contact matrix must be non-negative. ") +
+                    std::to_string(this->contact_matrix[index(i, j, nentities)]) +
+                    std::string(" < 0.")
+                    );
+            sum += this->contact_matrix[index(i, j, nentities)];
+        }
+        if (sum < 0.999 || sum > 1.001)
+            throw std::range_error(
+                std::string("The contact matrix must have rows that add to one. ") +
+                std::to_string(sum) +
+                std::string(" != 1.")
+                );
+    }
+
+    // Do it the first time only
+    sampled_agents.resize(Model<TSeq>::size());
+
+    // We only do it once
+    n_infected_per_group.resize(this->entities.size(), 0u);
+    std::fill(n_infected_per_group.begin(), n_infected_per_group.end(), 0u);
+
+    // We are assuming one agent per entity
+    infected.resize(Model<TSeq>::size());
+    std::fill(infected.begin(), infected.end(), 0u);
+
+    // This will say when do the groups start in the `infected` vector
+    entity_indices.resize(this->entities.size(), 0u);
+    std::fill(entity_indices.begin(), entity_indices.end(), 0u);
+    for (size_t i = 1u; i < this->entities.size(); ++i)
+    {
+        entity_indices[i] +=
+            this->entities[i - 1].size() +
+            entity_indices[i - 1]
+            ;
+    }
+    
+    // Adjusting contact rate
+    adjusted_contact_rate.clear();
+    adjusted_contact_rate.resize(this->entities.size(), 0.0);
+
+    for (size_t i = 0u; i < this->entities.size(); ++i)
+    {
+        adjusted_contact_rate[i] = 
+            Model<TSeq>::get_param("Contact rate") /
+                static_cast< epiworld_double > (this->get_entity(i).size());
+
+        // Possibly correcting for a small number of agents
+        if (adjusted_contact_rate[i] > 1.0)
+            adjusted_contact_rate[i] = 1.0;
+    }
+
     this->update_infected_list();
 
     return;
-
 }
 
 template<typename TSeq>
@@ -339,9 +382,9 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
             for (size_t n = 0u; n < ndraws; ++n)
             {
 
-                auto & neighbor = m_down->sampled_agents[n];
+                auto & neighbor = m->get_agent(m_down->sampled_agents[n]);
 
-                auto & v = neighbor->get_virus();
+                auto & v = neighbor.get_virus();
 
                 #ifdef EPI_DEBUG
                 if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
@@ -352,7 +395,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                 m->array_double_tmp[nviruses_tmp] =
                     (1.0 - p->get_susceptibility_reduction(v, m)) * 
                     v->get_prob_infecting(m) * 
-                    (1.0 - neighbor->get_transmission_reduction(v, m)) 
+                    (1.0 - neighbor.get_transmission_reduction(v, m)) 
                     ; 
             
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);

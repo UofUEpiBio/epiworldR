@@ -1,6 +1,21 @@
 #ifndef EPIWORLD_MODEL_MEAT_HPP
 #define EPIWORLD_MODEL_MEAT_HPP
 
+#include <vector>
+#include <functional>
+#include <memory>
+#include <random>
+#include <string>
+#include <map>
+#include <unordered_map>
+#include "config.hpp"
+#include "userdata-bones.hpp"
+#include "adjlist-bones.hpp"
+#include "model-bones.hpp"
+#include "entities-bones.hpp"
+#include "virus-bones.hpp"
+#include "agent-bones.hpp"
+
 /**
  * @brief Function factory for saving model runs
  * 
@@ -213,36 +228,47 @@ inline void Model<TSeq>::events_run()
 
         #ifdef EPI_DEBUG
         if (a.new_state >= static_cast<epiworld_fast_int>(nstates))
+        {
             throw std::range_error(
                 "The proposed state " + std::to_string(a.new_state) + " is out of range. " +
                 "The model currently has " + std::to_string(nstates - 1) + " states.");
 
-        if (a.new_state < 0)
+        }
+        else if ((a.new_state != -99) && (a.new_state < 0))
+        {
             throw std::range_error(
                 "The proposed state " + std::to_string(a.new_state) + " is out of range. " +
                 "The state cannot be negative.");
+        }
         #endif
 
         // Undoing the change in the transition matrix
-        if ((p->state_last_changed == today()) && (static_cast<int>(p->state) != a.new_state))
+        if (
+            (a.new_state != -99) &&
+            (p->state_last_changed == today()) &&
+            (static_cast<int>(p->state) != a.new_state)
+        )
         {
             // Undoing state change in the transition matrix
             // The previous state is already recorded
             db.update_state(p->state_prev, p->state, true);
 
-        } else 
+        } else if (p->state_last_changed != today()) 
             p->state_prev = p->state; // Recording the previous state
 
         // Applying function after the fact. This way, if there were
         // updates, they can be recorded properly, before losing the information
-        p->state = a.new_state;
         if (a.call)
         {
             a.call(a, this);
         }
 
+        if (a.new_state != -99)
+            p->state = a.new_state;
+
         // Registering that the last change was today
         p->state_last_changed = today();
+        
 
         #ifdef EPI_DEBUG
         if (static_cast<int>(p->state) >= static_cast<int>(nstates))
@@ -252,7 +278,7 @@ inline void Model<TSeq>::events_run()
         #endif
 
         // Updating queue
-        if (use_queuing)
+        if (use_queuing && a.queue != -99)
         {
 
             if (a.queue == Queue<TSeq>::Everyone)
@@ -1290,6 +1316,34 @@ inline int Model<TSeq>::today() const {
 template<typename TSeq>
 inline void Model<TSeq>::next() {
 
+    #ifdef EPI_DEBUG
+    // Checking all the agents have proper states
+    for (auto & p : population)
+    {
+        if ((p.state >= nstates) || (p.state < 0))
+        {
+            throw std::range_error(
+                "The agent " + std::to_string(p.id) +
+                " has state " + std::to_string(p.state) +
+                " which is above the maximum state of " +
+                std::to_string(nstates - 1) + "."
+            );
+        }
+
+        if ((p.state_prev >= nstates) || (p.state_prev < 0))
+        {
+            throw std::range_error(
+                "The agent " + std::to_string(p.id) +
+                " has previous state " + std::to_string(p.state_prev) +
+                " which is above the maximum state of " +
+                std::to_string(nstates - 1) + "."
+            );
+        }
+        
+    }
+
+    #endif
+
     db.record();
     ++this->current_date;
     
@@ -1719,6 +1773,11 @@ template<typename TSeq>
 inline epiworld_fast_uint Model<TSeq>::get_n_replicates() const
 {
     return n_replicates;
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_n_entities() const {
+    return entities.size();
 }
 
 template<typename TSeq>
