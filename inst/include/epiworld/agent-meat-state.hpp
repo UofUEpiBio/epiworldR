@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_PERSON_MEAT_STATE_HPP
 #define EPIWORLD_PERSON_MEAT_STATE_HPP
 
+#include "config.hpp"
+
 // template<typename TSeq>
 // class Model;
 
@@ -78,6 +80,6 @@ inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
 
     return ;
 
-}
+};
 
 #endif

@@ -117,4 +117,10 @@
 #define EPI_IF_TSEQ_LESS_EQ_INT(tseq) \
     if constexpr (sizeof( tseq ) <= sizeof( int ))
 
+#define EPI_CHECK_COALESCE(proposed_, virus_tool_, alt_) \
+    if (static_cast<int>(proposed_) == -99) {\
+        if (static_cast<int>(virus_tool_) == -99) \
+            (proposed_) = (alt_);\
+        else (proposed_) = (virus_tool_);}
+
 #endif
