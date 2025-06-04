@@ -242,7 +242,7 @@ inline void ModelMeaslesQuarantine<TSeq>::quarantine_agents() {
 
     }
 
-    // Clearing the list of ids
+    // Setting the quarantine process off
     this->system_quarantine_triggered = false;
 
     return;
@@ -453,7 +453,7 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     GET_MODEL(m, model);
     
     #ifdef EPI_DEBUG
-    if (model->day_flagged.size() <= p->get_id())
+    if (static_cast<int>(model->day_flagged.size()) <= p->get_id())
         throw std::logic_error(
             "The agent is not in the list of quarantined or isolated agents: " +
             std::to_string(p->get_id()) +
@@ -487,7 +487,7 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     // Recovers
     if (which == 2)
     {
-        p->rm_agent_by_virus(
+        p->rm_virus(
             m,
             detected ?
                 ModelMeaslesQuarantine::ISOLATED_RECOVERED:
@@ -508,7 +508,8 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     else if (which != 0)
     {
         throw std::logic_error("The roulette returned an unexpected value.");
-    } else if ((which == 0u) && detected)
+    }
+    else if ((which == 0u) && detected)
     {
         // If the agent is not hospitalized, then it is moved to
         // isolation.
@@ -542,13 +543,13 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     {
         if (unisolate)
         {
-            p->rm_agent_by_virus(
+            p->rm_virus(
                 m,
                 ModelMeaslesQuarantine::RECOVERED
             );
         }
         else
-            p->rm_agent_by_virus(
+            p->rm_virus(
                 m, ModelMeaslesQuarantine::ISOLATED_RECOVERED
             );
     }
@@ -556,7 +557,13 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     // If hospitalized, then the agent is removed from the system
     else if (which == 1u)
     {
-        p->change_state(m, ModelMeaslesQuarantine::HOSPITALIZED);
+        p->change_state(
+            m,
+            // HOSPITALIZED 
+            unisolate ?
+                ModelMeaslesQuarantine::HOSPITALIZED :
+                ModelMeaslesQuarantine::DETECTED_HOSPITALIZED
+            );
     }
     // If neither hospitalized nor recovered, then the agent is
     // still under isolation, unless the quarantine period is over.
@@ -676,7 +683,7 @@ LOCAL_UPDATE_FUN(m_update_hospitalized) {
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_agent_by_virus(m, ModelMeaslesQuarantine::RECOVERED);
+        p->rm_virus(m, ModelMeaslesQuarantine::RECOVERED);
 
     return;
 
