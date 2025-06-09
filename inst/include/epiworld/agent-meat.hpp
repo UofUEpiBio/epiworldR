@@ -60,7 +60,9 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     n_neighbors(p.n_neighbors),
     entities(p.entities),
     entities_locations(p.entities_locations),
-    n_entities(p.n_entities)
+    n_entities(p.n_entities),
+    neighbors(nullptr),
+    neighbors_locations(nullptr)
 {
 
     if (n_neighbors > 0u)
@@ -113,6 +115,11 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     {
         neighbors = new std::vector< size_t >(*other_agent.neighbors);
         neighbors_locations = new std::vector< size_t >(*other_agent.neighbors_locations);
+    }
+    else 
+    {
+        neighbors = nullptr;
+        neighbors_locations = nullptr;
     }
     
     entities = other_agent.entities;
