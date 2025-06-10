@@ -1,4 +1,4 @@
-# epiworldR 0.8.3.0 (dev)
+# epiworldR 0.8.3.0
 
 ## Improvements
 

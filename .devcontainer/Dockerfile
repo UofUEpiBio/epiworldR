@@ -6,7 +6,7 @@ FROM rocker/tidyverse:4.4.0
 
 # Adding R packages
 RUN install2.r cpp11 roxygen2 tinytest data.table netplot \
-  devtools decor
+  devtools decor DiagrammeR
 
 RUN install2.r languageserver httpgd
 

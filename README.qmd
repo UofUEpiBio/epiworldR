@@ -115,10 +115,10 @@ model_seirconn <- ModelSEIRCONN(
   recovery_rate       = 1 / 7
 ) |> add_virus(
   virus(
-    name = "COVID-19",
+    name = "COVID-19 (delta)",
     prevalence = 0.01,
     as_proportion = TRUE,
-    prob_infecting = 0.01,
+    prob_infecting = 0.2,
     recovery_rate = 0.6,
     prob_death = 0.5,
     incubation = 7

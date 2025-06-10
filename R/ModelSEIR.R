@@ -43,6 +43,10 @@ ModelSEIR <- function(
     incubation_days,
     recovery_rate
     ) {
+
+
+  citer_cite_call()
+
   # Check input parameters
   stopifnot_string(name)
   stopifnot_double(prevalence)
