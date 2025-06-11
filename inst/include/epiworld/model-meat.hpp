@@ -2065,6 +2065,12 @@ Model<TSeq>::get_states() const
 }
 
 template<typename TSeq>
+inline size_t Model<TSeq>::get_n_states() const
+{
+    return nstates;
+}
+
+template<typename TSeq>
 inline const std::vector< UpdateFun<TSeq> > &
 Model<TSeq>::get_state_fun() const
 {
@@ -2641,6 +2647,7 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
 
 template<typename TSeq>
 inline void Model<TSeq>::draw(
+    DiagramType diagram_type,
     const std::string & fn_output,
     bool self
 ) {
@@ -2648,8 +2655,9 @@ inline void Model<TSeq>::draw(
     ModelDiagram diagram;
 
     diagram.draw_from_data(
+        diagram_type,
         this->get_states(),
-        this->get_db().transition_probability(false),
+        this->get_db().get_transition_probability(false),
         fn_output,
         self
     );

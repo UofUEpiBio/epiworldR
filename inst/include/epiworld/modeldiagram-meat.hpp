@@ -10,7 +10,7 @@ inline void ModelDiagram::read_transitions(
 
     if (!file.is_open())
         throw std::runtime_error(
-            "Could not open the file '" + 
+            "Could not open the file '" +
             fn_transition + "' for reading."
         );
 
@@ -117,7 +117,7 @@ inline void ModelDiagram::transition_probability(
     }
 
     return;
-    
+
 
 }
 
@@ -133,10 +133,8 @@ inline void ModelDiagram::clear()
 inline void ModelDiagram::draw_mermaid(
     std::string fn_output,
     bool self
-)
-{
-
-    // Getting a sorting vector of indices from the states
+) {
+     // Getting a sorting vector of indices from the states
     // string vector
     std::vector< size_t > idx(states.size());
     std::iota(idx.begin(), idx.end(), 0u);
@@ -172,8 +170,8 @@ inline void ModelDiagram::draw_mermaid(
 
             if (tprob[idx[i] + idx[j] * n_states] > 0.0)
             {
-                graph += "\t" + states_ids[i] + " -->|" + 
-                    std::to_string(tprob[idx[i] + idx[j] * n_states]) + 
+                graph += "\t" + states_ids[i] + " -->|" +
+                    std::to_string(tprob[idx[i] + idx[j] * n_states]) +
                     "| " + states_ids[j] + "\n";
             }
         }
@@ -186,22 +184,104 @@ inline void ModelDiagram::draw_mermaid(
         if (!file.is_open())
             throw std::runtime_error(
                 "Could not open the file " +
-                fn_output + 
+                fn_output +
                 " for writing."
             );
 
         file << graph;
         file.close();
-        
+
     } else {
         printf_epiworld("%s\n", graph.c_str());
     }
 
     return;
+}
 
+inline void ModelDiagram::draw_dot(std::string fn_output, bool self) {
+    std::vector<size_t> idx(states.size());
+    std::iota(idx.begin(), idx.end(), 0u);
+
+    std::sort(
+        idx.begin(),
+        idx.end(),
+        [&states = this->states](size_t i, size_t j) {
+            return states[i] < states[j];
+        }
+    );
+
+    std::vector<std::string> states_ids;
+    for (size_t i = 0u; i < states.size(); ++i)
+        states_ids.push_back("s" + std::to_string(i));
+
+    std::string graph = "digraph G {\n\trankdir=LR;\n";
+
+    // Declaring the states
+    for (size_t i = 0u; i < states.size(); ++i)
+    {
+        graph += "\t" + states_ids[i] + " [label=\"" + states[idx[i]] + "\"];\n";
+    }
+
+    // Adding the transitions
+    size_t n_states = states.size();
+    for (size_t i = 0u; i < states.size(); ++i)
+    {
+        for (size_t j = 0u; j < states.size(); ++j)
+        {
+            if (!self && i == j)
+                continue;
+
+            if (tprob[idx[i] + idx[j] * n_states] > 0.0)
+            {
+                graph += "\t" + states_ids[i] + " -> " + states_ids[j] +
+                         " [label=\"" +
+                         std::to_string(tprob[idx[i] + idx[j] * n_states]) +
+                         "\"];\n";
+            }
+        }
+    }
+
+    graph += "}\n";
+
+    if (fn_output != "")
+    {
+        std::ofstream file(fn_output);
+
+        if (!file.is_open())
+            throw std::runtime_error(
+                "Could not open the file " +
+                fn_output +
+                " for writing."
+            );
+
+        file << graph;
+        file.close();
+
+    } else {
+        printf_epiworld("%s\n", graph.c_str());
+    }
+
+    return;
+}
+
+inline void ModelDiagram::draw(
+    DiagramType diagram_type,
+    std::string fn_output,
+    bool self
+)
+{
+    switch (diagram_type) {
+    case DiagramType::Mermaid:
+        return draw_mermaid(fn_output, self);
+    case DiagramType::DOT:
+        return draw_dot(fn_output, self);
+    default:
+  		throw std::logic_error("Unknown how to dispatch DiagramType.");
+    }
 }
 
 inline void ModelDiagram::draw_from_file(
+    DiagramType diagram_type,
     const std::string & fn_transition,
     const std::string & fn_output,
     bool self
@@ -216,13 +296,14 @@ inline void ModelDiagram::draw_from_file(
     this->transition_probability();
 
     // Actually drawing the diagram
-    this->draw_mermaid(fn_output, self);
+    this->draw(diagram_type, fn_output, self);
 
     return;
-  
+
 }
 
 inline void ModelDiagram::draw_from_files(
+    DiagramType diagram_type,
     const std::vector< std::string > & fns_transition,
     const std::string & fn_output,
     bool self
@@ -237,12 +318,13 @@ inline void ModelDiagram::draw_from_files(
     this->transition_probability();
 
     // Actually drawing the diagram
-    this->draw_mermaid(fn_output, self);
+    this->draw(diagram_type, fn_output, self);
 
     return;
 }
 
 inline void ModelDiagram::draw_from_data(
+    DiagramType diagram_type,
     const std::vector< std::string > & states,
     const std::vector< epiworld_double > & tprob,
     const std::string & fn_output,
@@ -254,7 +336,7 @@ inline void ModelDiagram::draw_from_data(
     this->states = states;
     this->tprob = tprob;
 
-    this->draw_mermaid(fn_output, self);
+    this->draw(diagram_type, fn_output, self);
 
     return;
 

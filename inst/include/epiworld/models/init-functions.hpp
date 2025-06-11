@@ -1,8 +1,6 @@
 #ifndef EPIWORLD_MODELS_INIT_FUNCTIONS_HPP
 #define EPIWORLD_MODELS_INIT_FUNCTIONS_HPP
 
-#include "../epiworld.hpp"
-
 /**
  * @brief Creates an initial function for the SIR-like models
  * The function is used for the initial states of the model.

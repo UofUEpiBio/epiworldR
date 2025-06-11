@@ -1,15 +1,22 @@
 #ifndef EPIWORLD_MODELDIAGRAM_HPP
 #define EPIWORLD_MODELDIAGRAM_HPP
 
+enum class DiagramType {
+    Mermaid, DOT
+};
+
 class ModelDiagram {
 private:
 
     std::map< std::pair< std::string, std::string >, int > data;
-
     std::vector< std::string > states;
     std::vector< epiworld_double > tprob;
 
-    void draw_mermaid(
+    void draw_mermaid(std::string fn_output, bool self);
+    void draw_dot(std::string fn_output, bool self);
+
+    void draw(
+        DiagramType diagram_type,
         std::string fn_output = "",
         bool self = false
     );
@@ -66,6 +73,7 @@ public:
     ModelDiagram() {};
 
     void draw_from_data(
+        DiagramType diagram_type,
         const std::vector< std::string > & states,
         const std::vector< epiworld_double > & tprob,
         const std::string & fn_output = "",
@@ -73,12 +81,14 @@ public:
     );
 
     void draw_from_file(
+        DiagramType diagram_type,
         const std::string & fn_transition,
         const std::string & fn_output = "",
         bool self = false
     );
 
     void draw_from_files(
+        DiagramType diagram_type,
         const std::vector< std::string > & fns_transition,
         const std::string & fn_output = "",
         bool self = false

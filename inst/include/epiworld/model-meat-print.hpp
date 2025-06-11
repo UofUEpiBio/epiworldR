@@ -297,7 +297,7 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     }
 
     if (today() != 0)
-        (void) db.transition_probability(true);
+        (void) db.get_transition_probability(true);
 
     return *this;
 

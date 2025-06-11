@@ -442,7 +442,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected_list = [](
+    epiworld::UpdateFun<TSeq> update_exposed_and_infected = [](
         epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
         ) -> void {
 
@@ -517,8 +517,8 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     
     // state
     model.add_state("Susceptible", update_susceptible);
-    model.add_state("Exposed", update_infected_list);
-    model.add_state("Infected", update_infected_list);
+    model.add_state("Exposed", update_exposed_and_infected);
+    model.add_state("Infected", update_exposed_and_infected);
     model.add_state("Recovered");
 
     // Global function

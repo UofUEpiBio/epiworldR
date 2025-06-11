@@ -1,14 +1,9 @@
 #ifndef EPIWORLD_PERSON_MEAT_STATE_HPP
 #define EPIWORLD_PERSON_MEAT_STATE_HPP
 
+#include "model-bones.hpp"
+#include "agent-meat-virus-sampling.hpp"
 #include "config.hpp"
-
-// template<typename TSeq>
-// class Model;
-
-// template<typename TSeq>
-// class Agent;
-
 
 /**
  * @file agent-meat-state.hpp
@@ -20,8 +15,6 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#include "agent-meat-virus-sampling.hpp"
-
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 inline void default_update_susceptible(

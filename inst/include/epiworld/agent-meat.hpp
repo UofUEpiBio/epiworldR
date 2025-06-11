@@ -57,12 +57,12 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
 template<typename TSeq>
 inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     model(p.model),
+    neighbors(nullptr),
+    neighbors_locations(nullptr),
     n_neighbors(p.n_neighbors),
     entities(p.entities),
     entities_locations(p.entities_locations),
-    n_entities(p.n_entities),
-    neighbors(nullptr),
-    neighbors_locations(nullptr)
+    n_entities(p.n_entities)
 {
 
     if (n_neighbors > 0u)

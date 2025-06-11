@@ -17,6 +17,7 @@ void draw_from_data_cpp(
 ) {
     epiworld::ModelDiagram diagram;
     diagram.draw_from_data(
+        DiagramType::Mermaid,
         states,
         tprob,
         fn_output,
@@ -32,6 +33,7 @@ void draw_from_file_cpp(
 ) {
     epiworld::ModelDiagram diagram;
     diagram.draw_from_file(
+        DiagramType::Mermaid,
         fn_transition,
         fn_output,
         self
@@ -46,6 +48,7 @@ void draw_from_files_cpp(
 ) {
     epiworld::ModelDiagram diagram;
     diagram.draw_from_files(
+        DiagramType::Mermaid,
         fns_transition,
         fn_output,
         self
