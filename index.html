@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,6 +115,9 @@
 <p>This Susceptible-Infected-Recovered model features a population of 100,000 agents simulated in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 70% chance of transmission. Infected individuals recover at a 0.3 rate:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link">epiworldR</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Thank you for using epiworldR! Please consider citing it in your work.</span></span>
+<span><span class="co">#&gt; You can find the citation information by running</span></span>
+<span><span class="co">#&gt;   citation("epiworldR")</span></span>
 <span></span>
 <span><span class="co"># Creating a SIR model</span></span>
 <span><span class="va">sir</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ModelSIR.html">ModelSIR</a></span><span class="op">(</span></span>
@@ -150,8 +153,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 1.00s</span></span>
-<span><span class="co">#&gt; Last run speed      : 4.12 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 132.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 37.85 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -197,10 +200,10 @@
 <span>  recovery_rate       <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">7</span></span>
 <span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/virus.html">add_virus</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/virus.html">virus</a></span><span class="op">(</span></span>
-<span>    name <span class="op">=</span> <span class="st">"COVID-19"</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"COVID-19 (delta)"</span>,</span>
 <span>    prevalence <span class="op">=</span> <span class="fl">0.01</span>,</span>
 <span>    as_proportion <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>    prob_infecting <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>    prob_infecting <span class="op">=</span> <span class="fl">0.2</span>,</span>
 <span>    recovery_rate <span class="op">=</span> <span class="fl">0.6</span>,</span>
 <span>    prob_death <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>    incubation <span class="op">=</span> <span class="fl">7</span></span>
@@ -222,8 +225,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 360.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 2.77 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 143.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 6.98 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -231,7 +234,7 @@
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Virus(es):</span></span>
 <span><span class="co">#&gt;  - COVID-19</span></span>
-<span><span class="co">#&gt;  - COVID-19</span></span>
+<span><span class="co">#&gt;  - COVID-19 (delta)</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Tool(s):</span></span>
 <span><span class="co">#&gt;  (none)</span></span>
@@ -243,15 +246,15 @@
 <span><span class="co">#&gt;  - Prob. Transmission   : 0.1000</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Distribution of the population at time 100:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible :  9800 -&gt; 13</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible :  9800 -&gt; 59</span></span>
 <span><span class="co">#&gt;   - (1) Exposed     :   200 -&gt; 0</span></span>
-<span><span class="co">#&gt;   - (2) Infected    :     0 -&gt; 1</span></span>
-<span><span class="co">#&gt;   - (3) Recovered   :     0 -&gt; 9986</span></span>
+<span><span class="co">#&gt;   - (2) Infected    :     0 -&gt; 0</span></span>
+<span><span class="co">#&gt;   - (3) Recovered   :     0 -&gt; 9941</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
-<span><span class="co">#&gt;  - Susceptible  0.96  0.04     -     -</span></span>
+<span><span class="co">#&gt;  - Susceptible  0.95  0.05     -     -</span></span>
 <span><span class="co">#&gt;  - Exposed         -  0.86  0.14     -</span></span>
-<span><span class="co">#&gt;  - Infected        -     -  0.86  0.14</span></span>
+<span><span class="co">#&gt;  - Infected        -     -  0.79  0.21</span></span>
 <span><span class="co">#&gt;  - Recovered       -     -     -  1.00</span></span></code></pre></div>
 <p>Computing some key statistics</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -263,23 +266,23 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">repnum</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-seir-conn-figures-2.png" style="width:100.0%"></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg   n       sd  lb   ub</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 5.110000 100 4.882240 0.0 17.0</span></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 5.000000   9 3.605551 0.2 10.4</span></span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 6.000000  13 5.049752 0.0 13.0</span></span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 4.592593  27 3.885469 0.0 12.7</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 4.846154  26 4.920913 0.0 14.5</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 4.236842  38 3.241906 0.0 12.0</span></span>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co">#&gt;   virus_id    virus date      avg   n       sd lb    ub</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; 1        0 COVID-19    0 4.880000 100 4.159157  0 14.05</span></span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co">#&gt; 2        0 COVID-19    2 5.333333   9 4.415880  1 12.60</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a><span class="co">#&gt; 3        0 COVID-19    3 5.416667  12 3.369875  1 10.45</span></span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; 4        0 COVID-19    4 3.480000  25 2.740438  0  9.80</span></span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt; 5        0 COVID-19    5 2.580645  31 2.790152  0  9.00</span></span>
+<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt; 6        0 COVID-19    6 3.339623  53 3.031523  0 10.40</span></span>
 <span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a></span>
 <span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">plot_generation_time</span>(model_seirconn))</span></code></pre></div>
 <p><img src="reference/figures/README-seir-conn-figures-3.png" style="width:100.0%"></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="co">#&gt;   date      avg  n       sd ci_lower ci_upper    virus virus_id</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; 1    0 9.637363 91 6.507289      2.0   26.000 COVID-19        0</span></span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 2    2 7.125000  8 2.474874      2.7    9.825 COVID-19        0</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 3    3 8.090909 11 7.203534      2.0   23.750 COVID-19        0</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 4    4 6.708333 24 4.338695      2.0   16.425 COVID-19        0</span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 5    5 7.428571 21 4.738897      2.0   15.500 COVID-19        0</span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 6    6 7.628571 35 4.173345      2.0   15.300 COVID-19        0</span></span></code></pre></div>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a><span class="co">#&gt; 1    0 8.318681 91 5.599363     2.00   20.500 COVID-19        0</span></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; 2    2 6.888889  9 4.648775     2.20   14.000 COVID-19        0</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt; 3    3 5.083333 12 2.503028     3.00    9.725 COVID-19        0</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt; 4    4 6.095238 21 3.096849     2.00   12.500 COVID-19        0</span></span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 5    5 8.173913 23 6.846712     2.55   24.000 COVID-19        0</span></span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 6    6 7.272727 44 5.332496     2.00   19.000 COVID-19        0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="sir-logit">SIR Logit<a class="anchor" aria-label="anchor" href="#sir-logit"></a>
@@ -455,7 +458,7 @@
 <span><span class="co">#&gt; And the actual R package:</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt;   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based</span></span>
-<span><span class="co">#&gt;   Epi Models_. R package version 0.8.1.2,</span></span>
+<span><span class="co">#&gt;   Epi Models_. R package version 0.8.3.0,</span></span>
 <span><span class="co">#&gt;   &lt;https://github.com/UofUEpiBio/epiworldR&gt;.</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; To see these entries in BibTeX format, use 'print(&lt;citation&gt;,</span></span>
@@ -612,9 +615,9 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://www.r-pkg.org/badges/version/epiworldR" alt="CRAN status"></a></li>
+<li><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://www.r-pkg.org/badges/version/epiworldR.png" alt="CRAN status"></a></li>
 <li><a href="https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml" class="external-link"><img src="https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://cran.r-project.org/package=epiworldR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/epiworldR" alt="CRANlogs downloads"></a></li>
+<li><a href="https://cran.r-project.org/package=epiworldR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/epiworldR.png" alt="CRANlogs downloads"></a></li>
 <li><a href="https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
 <li><a href="https://app.codecov.io/gh/UofUEpiBio/epiworldR" class="external-link"><img src="https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN" alt="codecov"></a></li>
 <li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
@@ -630,7 +633,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>
