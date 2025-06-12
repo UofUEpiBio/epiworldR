@@ -17,6 +17,7 @@
         auto * output = dynamic_cast< ModelSEIRMixing<TSeq> * >( (model) ); \
         assert((output) != nullptr); // Use assert for runtime checks
 #endif
+
 /**
  * @file seirentitiesconnected.hpp
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model with mixing
@@ -28,7 +29,6 @@ private:
     
     // Vector of vectors of infected agents     
     std::vector< size_t > infected;
-    size_t n_infected;
 
     // Number of infected agents in each group
     std::vector< size_t > n_infected_per_group;
@@ -36,7 +36,7 @@ private:
     // Where the agents start in the `infected` vector
     std::vector< size_t > entity_indices;
 
-    void update_infected();
+    void update_infected_list();
     std::vector< size_t > sampled_agents;
     size_t sample_agents(
         epiworld::Agent<TSeq> * agent,
@@ -135,7 +135,7 @@ public:
 };
 
 template<typename TSeq>
-inline void ModelSEIRMixing<TSeq>::update_infected()
+inline void ModelSEIRMixing<TSeq>::update_infected_list()
 {
 
     auto & agents = Model<TSeq>::get_agents();
@@ -156,9 +156,6 @@ inline void ModelSEIRMixing<TSeq>::update_infected()
                     // Position of the agent in the group
                     n_infected_per_group[entity.get_id()]++
                 ] = a.get_id();
-
-                // Incrementing the overall counter
-                n_infected++;
 
             }
         }
@@ -327,7 +324,7 @@ inline void ModelSEIRMixing<TSeq>::reset()
 
     }
 
-    this->update_infected();
+    this->update_infected_list();
 
     return;
 
@@ -445,7 +442,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
+    epiworld::UpdateFun<TSeq> update_exposed_and_infected = [](
         epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
         ) -> void {
 
@@ -520,8 +517,8 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     
     // state
     model.add_state("Susceptible", update_susceptible);
-    model.add_state("Exposed", update_infected);
-    model.add_state("Infected", update_infected);
+    model.add_state("Exposed", update_exposed_and_infected);
+    model.add_state("Infected", update_exposed_and_infected);
     model.add_state("Recovered");
 
     // Global function
@@ -530,7 +527,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
         GET_MODEL(m, m_down);
         
-        m_down->update_infected();
+        m_down->update_infected_list();
 
         return;
 

@@ -6,7 +6,7 @@
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
-inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
+inline std::function<void(Model<TSeq>*)> create_init_function_sir(
     std::vector< double > proportions_
 ) {
 
@@ -24,8 +24,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
 
     double prop = proportions_[0u];
 
-    std::function<void(epiworld::Model<TSeq>*)> fun =
-    [prop] (epiworld::Model<TSeq> * model) -> void {
+    std::function<void(Model<TSeq>*)> fun =
+    [prop] (Model<TSeq> * model) -> void {
 
         // Figuring out information about the viruses
         double tot = 0.0;
@@ -44,7 +44,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
         // we only need to change recovered
         size_t nrecovered = prop * tot_left * n;
         
-        epiworld::AgentsSample<TSeq> sample(
+        AgentsSample<TSeq> sample(
             *model,
             nrecovered,
             {0u},
@@ -71,7 +71,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sir(
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
-inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
+inline std::function<void(Model<TSeq>*)> create_init_function_sird(
     std::vector< double > prop
 ) {
 
@@ -97,8 +97,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
             "The proportions must sum up to 1."
             );
 
-    std::function<void(epiworld::Model<TSeq>*)> fun =
-    [prop] (epiworld::Model<TSeq> * model) -> void {
+    std::function<void(Model<TSeq>*)> fun =
+    [prop] (Model<TSeq> * model) -> void {
 
         // Figuring out information about the viruses
         double tot = 0.0;
@@ -118,7 +118,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
         size_t nrecovered = prop[0u] * tot_left * n;
         size_t ndeceased  = prop[01] * tot_left * n;
         
-        epiworld::AgentsSample<TSeq> sample_recover(
+        AgentsSample<TSeq> sample_recover(
             *model,
             nrecovered,
             {0u},
@@ -129,7 +129,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
         for (auto & agent : sample_recover)
             agent->change_state(model, 2, Queue<TSeq>::NoOne);
 
-        epiworld::AgentsSample<TSeq> sample_deceased(
+        AgentsSample<TSeq> sample_deceased(
             *model,
             ndeceased,
             {0u},
@@ -157,7 +157,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_sird(
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
-inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
+inline std::function<void(Model<TSeq>*)> create_init_function_seir(
     std::vector< double > proportions_
 ) {
 
@@ -174,8 +174,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
                 );
 
 
-    std::function<void(epiworld::Model<TSeq>*)> fun = 
-        [proportions_] (epiworld::Model<TSeq> * model) -> void {
+    std::function<void(Model<TSeq>*)> fun = 
+        [proportions_] (Model<TSeq> * model) -> void {
 
         // Figuring out information about the viruses
         double tot = 0.0;
@@ -195,7 +195,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
         size_t nexposed   = proportions_[0u] * tot * n;
         size_t nrecovered = proportions_[1u] * tot_left * n;
         
-        epiworld::AgentsSample<TSeq> sample_suscept(
+        AgentsSample<TSeq> sample_suscept(
             *model,
             nrecovered,
             {0u},
@@ -206,7 +206,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
         for (auto & agent : sample_suscept)
             agent->change_state(model, 3, Queue<TSeq>::NoOne);
 
-        epiworld::AgentsSample<TSeq> sample_exposed(
+        AgentsSample<TSeq> sample_exposed(
             *model,
             nexposed,
             {1u},
@@ -233,7 +233,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seir(
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
-inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
+inline std::function<void(Model<TSeq>*)> create_init_function_seird(
     std::vector< double > proportions_
 ) {
 
@@ -255,8 +255,8 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
             "The last two terms of -proportions_- must add up to less than 1."
             );
 
-    std::function<void(epiworld::Model<TSeq>*)> fun = 
-        [proportions_] (epiworld::Model<TSeq> * model) -> void {
+    std::function<void(Model<TSeq>*)> fun = 
+        [proportions_] (Model<TSeq> * model) -> void {
 
         // Figuring out information about the viruses
         double tot = 0.0;
@@ -278,7 +278,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
         size_t nrecovered = proportions_[1u] * tot_left * n;
         size_t ndeceased  = proportions_[2u] * tot_left * n;
         
-        epiworld::AgentsSample<TSeq> sample_suscept(
+        AgentsSample<TSeq> sample_suscept(
             *model,
             nrecovered,
             {0u},
@@ -289,7 +289,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
         for (auto & agent : sample_suscept)
             agent->change_state(model, 3, Queue<TSeq>::NoOne);
 
-        epiworld::AgentsSample<TSeq> sample_exposed(
+        AgentsSample<TSeq> sample_exposed(
             *model,
             nexposed,
             {1u},
@@ -304,7 +304,7 @@ inline std::function<void(epiworld::Model<TSeq>*)> create_init_function_seird(
         model->events_run();
 
         // Setting the initial states for the deceased
-        epiworld::AgentsSample<TSeq> sample_deceased(
+        AgentsSample<TSeq> sample_deceased(
             *model,
             ndeceased,
             {0u},

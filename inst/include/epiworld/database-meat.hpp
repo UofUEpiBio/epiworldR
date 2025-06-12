@@ -1,6 +1,13 @@
 #ifndef EPIWORLD_DATABASE_MEAT_HPP
 #define EPIWORLD_DATABASE_MEAT_HPP
 
+#include <vector>
+#include <string>
+#include "config.hpp"
+#include "epiworld-macros.hpp"
+#include "misc.hpp"
+#include "database-bones.hpp"
+
 template<typename TSeq>
 inline void DataBase<TSeq>::reset()
 {
@@ -517,6 +524,25 @@ inline void DataBase<TSeq>::update_state(
         epiworld_fast_uint new_state,
         bool undo
 ) {
+
+    if (prev_state == new_state)
+        return; // No need to update if the state is the same
+
+    #ifdef EPI_DEBUG
+    // Checking ranges (should be within expected)
+    if ((prev_state >= model->nstates))
+        throw std::out_of_range(
+            "prev_state is out of range in DataBase::update_state"
+        );
+    if ((new_state >= model->nstates))
+        throw std::out_of_range(
+            "new_state is out of range in DataBase::update_state"
+        );
+    if (prev_state == new_state)
+        throw std::logic_error(
+            "prev_state and new_state are the same in DataBase::update_state"
+        );
+    #endif
 
     if (undo)
     {
@@ -1080,12 +1106,18 @@ inline void DataBase<TSeq>::write_data(
         for (int i = 0; i <= model->today(); ++i)
         {
 
-            // Skipping the zeros
-            if (hist_transition_matrix[i * (ns * ns)] == 0)
-                continue;
-
             for (int from = 0u; from < ns; ++from)
+            {
                 for (int to = 0u; to < ns; ++to)
+                {
+                    // Skipping the zeros
+                    auto counts = hist_transition_matrix[
+                        i * (ns * ns) + to * ns + from
+                    ];
+
+                    if (counts == 0)
+                        continue;
+
                     file_transition <<
                         #ifdef EPI_DEBUG
                         EPI_GET_THREAD_ID() << " " <<
@@ -1093,17 +1125,19 @@ inline void DataBase<TSeq>::write_data(
                         i << " \"" <<
                         model->states_labels[from] << "\" \"" <<
                         model->states_labels[to] << "\" " <<
-                        hist_transition_matrix[i * (ns * ns) + to * ns + from] << "\n";
+                        counts << "\n";
+                }
+            }
                 
         }
                 
     }
 
     if (fn_reproductive_number != "")
-        reproductive_number(fn_reproductive_number);
+        get_reproductive_number(fn_reproductive_number);
 
     if (fn_generation_time != "")
-        generation_time(fn_generation_time);
+        get_generation_time(fn_generation_time);
 
 }
 
@@ -1173,7 +1207,7 @@ inline UserData<TSeq> & DataBase<TSeq>::get_user_data()
 }
 
 template<typename TSeq>
-inline MapVec_type<int,int> DataBase<TSeq>::reproductive_number()
+inline MapVec_type<int,int> DataBase<TSeq>::get_reproductive_number()
 const {
 
     // Checking size
@@ -1211,12 +1245,12 @@ const {
 }
 
 template<typename TSeq>
-inline void DataBase<TSeq>::reproductive_number(
+inline void DataBase<TSeq>::get_reproductive_number(
     std::string fn
 ) const {
 
 
-    auto map = reproductive_number();
+    auto map = get_reproductive_number();
 
     std::ofstream fn_file(fn, std::ios_base::out);
 
@@ -1252,7 +1286,7 @@ inline void DataBase<TSeq>::reproductive_number(
 }
 
 template<typename TSeq>
-inline std::vector< epiworld_double > DataBase<TSeq>::transition_probability(
+inline std::vector< epiworld_double > DataBase<TSeq>::get_transition_probability(
     bool print,
     bool normalize
 ) const {
@@ -1797,7 +1831,7 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
 }
 
 template<typename TSeq>
-inline void DataBase<TSeq>::generation_time(
+inline void DataBase<TSeq>::get_generation_time(
     std::vector< int > & agent_id,
     std::vector< int > & virus_id,
     std::vector< int > & time,
@@ -1849,7 +1883,7 @@ inline void DataBase<TSeq>::generation_time(
 }
 
 template<typename TSeq>
-inline void DataBase<TSeq>::generation_time(
+inline void DataBase<TSeq>::get_generation_time(
     std::string fn
 ) const
 {
@@ -1859,7 +1893,7 @@ inline void DataBase<TSeq>::generation_time(
     std::vector< int > time;
     std::vector< int > gentime;
 
-    generation_time(agent_id, virus_id, time, gentime);
+    get_generation_time(agent_id, virus_id, time, gentime);
 
     std::ofstream fn_file(fn, std::ios_base::out);
 
@@ -1867,7 +1901,7 @@ inline void DataBase<TSeq>::generation_time(
     if (!fn_file)
     {
         throw std::runtime_error(
-            "DataBase::generation_time: "
+            "DataBase::get_generation_time: "
             "Cannot open file " + fn + "."
         );
     }

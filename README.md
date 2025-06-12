@@ -7,10 +7,10 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
+status](https://www.r-pkg.org/badges/version/epiworldR.png)](https://CRAN.R-project.org/package=epiworldR)
 [![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 [![CRANlogs
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR.png)](https://cran.r-project.org/package=epiworldR)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
@@ -103,6 +103,9 @@ at a 0.3 rate:
 
 ``` r
 library(epiworldR)
+#> Thank you for using epiworldR! Please consider citing it in your work.
+#> You can find the citation information by running
+#>   citation("epiworldR")
 
 # Creating a SIR model
 sir <- ModelSIR(
@@ -141,8 +144,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 1.00s
-#> Last run speed      : 4.12 million agents x day / second
+#> Last run elapsed t  : 132.00ms
+#> Last run speed      : 37.85 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -197,10 +200,10 @@ model_seirconn <- ModelSEIRCONN(
   recovery_rate       = 1 / 7
 ) |> add_virus(
   virus(
-    name = "COVID-19",
+    name = "COVID-19 (delta)",
     prevalence = 0.01,
     as_proportion = TRUE,
-    prob_infecting = 0.01,
+    prob_infecting = 0.2,
     recovery_rate = 0.6,
     prob_death = 0.5,
     incubation = 7
@@ -222,8 +225,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 360.00ms
-#> Last run speed      : 2.77 million agents x day / second
+#> Last run elapsed t  : 143.00ms
+#> Last run speed      : 6.98 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -231,7 +234,7 @@ summary(model_seirconn)
 #>
 #> Virus(es):
 #>  - COVID-19
-#>  - COVID-19
+#>  - COVID-19 (delta)
 #>
 #> Tool(s):
 #>  (none)
@@ -243,15 +246,15 @@ summary(model_seirconn)
 #>  - Prob. Transmission   : 0.1000
 #>
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  9800 -> 13
+#>   - (0) Susceptible :  9800 -> 59
 #>   - (1) Exposed     :   200 -> 0
-#>   - (2) Infected    :     0 -> 1
-#>   - (3) Recovered   :     0 -> 9986
+#>   - (2) Infected    :     0 -> 0
+#>   - (3) Recovered   :     0 -> 9941
 #>
 #> Transition Probabilities:
-#>  - Susceptible  0.96  0.04     -     -
+#>  - Susceptible  0.95  0.05     -     -
 #>  - Exposed         -  0.86  0.14     -
-#>  - Infected        -     -  0.86  0.14
+#>  - Infected        -     -  0.79  0.21
 #>  - Recovered       -     -     -  1.00
 ```
 
@@ -274,13 +277,13 @@ head(plot(repnum))
 <img src="man/figures/README-seir-conn-figures-2.png"
 style="width:100.0%" />
 
-    #>   virus_id    virus date      avg   n       sd  lb   ub
-    #> 1        0 COVID-19    0 5.110000 100 4.882240 0.0 17.0
-    #> 2        0 COVID-19    2 5.000000   9 3.605551 0.2 10.4
-    #> 3        0 COVID-19    3 6.000000  13 5.049752 0.0 13.0
-    #> 4        0 COVID-19    4 4.592593  27 3.885469 0.0 12.7
-    #> 5        0 COVID-19    5 4.846154  26 4.920913 0.0 14.5
-    #> 6        0 COVID-19    6 4.236842  38 3.241906 0.0 12.0
+    #>   virus_id    virus date      avg   n       sd lb    ub
+    #> 1        0 COVID-19    0 4.880000 100 4.159157  0 14.05
+    #> 2        0 COVID-19    2 5.333333   9 4.415880  1 12.60
+    #> 3        0 COVID-19    3 5.416667  12 3.369875  1 10.45
+    #> 4        0 COVID-19    4 3.480000  25 2.740438  0  9.80
+    #> 5        0 COVID-19    5 2.580645  31 2.790152  0  9.00
+    #> 6        0 COVID-19    6 3.339623  53 3.031523  0 10.40
 
     head(plot_generation_time(model_seirconn))
 
@@ -288,12 +291,12 @@ style="width:100.0%" />
 style="width:100.0%" />
 
     #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    0 9.637363 91 6.507289      2.0   26.000 COVID-19        0
-    #> 2    2 7.125000  8 2.474874      2.7    9.825 COVID-19        0
-    #> 3    3 8.090909 11 7.203534      2.0   23.750 COVID-19        0
-    #> 4    4 6.708333 24 4.338695      2.0   16.425 COVID-19        0
-    #> 5    5 7.428571 21 4.738897      2.0   15.500 COVID-19        0
-    #> 6    6 7.628571 35 4.173345      2.0   15.300 COVID-19        0
+    #> 1    0 8.318681 91 5.599363     2.00   20.500 COVID-19        0
+    #> 2    2 6.888889  9 4.648775     2.20   14.000 COVID-19        0
+    #> 3    3 5.083333 12 2.503028     3.00    9.725 COVID-19        0
+    #> 4    4 6.095238 21 3.096849     2.00   12.500 COVID-19        0
+    #> 5    5 8.173913 23 6.846712     2.55   24.000 COVID-19        0
+    #> 6    6 7.272727 44 5.332496     2.00   19.000 COVID-19        0
 
 ## SIR Logit
 
@@ -496,7 +499,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.8.1.2,
+#>   Epi Models_. R package version 0.8.3.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,

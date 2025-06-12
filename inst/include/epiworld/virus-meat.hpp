@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_VIRUS_MEAT_HPP
 #define EPIWORLD_VIRUS_MEAT_HPP
 
+#include "config.hpp"
+
 /**
  * @brief Factory function of VirusFun base on logit
  * 
@@ -427,7 +429,7 @@ inline void Virus<TSeq>::post_recovery(
 {
 
     if (virus_functions->post_recovery)
-    virus_functions->post_recovery(agent, *this, model);    
+        virus_functions->post_recovery(agent, *this, model);    
 
     return;
         

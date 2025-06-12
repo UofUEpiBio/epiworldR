@@ -353,6 +353,10 @@ void draw_mermaid_cpp(
 ) {
 
   external_pointer<Model<>> modelptr(model);
-  modelptr->draw(fn_output, self);
+  modelptr->draw(
+    DiagramType::Mermaid,
+    fn_output,
+    self
+  );
 
 }

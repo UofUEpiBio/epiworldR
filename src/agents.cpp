@@ -50,10 +50,7 @@ SEXP print_agent_cpp(
 ) {
 
   cpp11::external_pointer<Agent<>> ptr(agent);
-  cpp11::external_pointer<Model<>> ptr_model(model);
-
-  ptr->print(&(*ptr_model), compressed);
-
+  ptr->print(compressed);
   return agent;
 
 }

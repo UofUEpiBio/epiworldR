@@ -1,3 +1,16 @@
+# epiworldR 0.8.3.0
+
+## Improvements
+
+* epiworld was storing empty entries in the transition matrix. This was making reading the saved data significantly slower.
+
+## Bug Fixes
+
+* The `run_multiple()` function was failing to correctly backup the agents' edgelist in the case of network models. This was due to a bug in the C++ library that was not correctly copying the edgelist. This has been fixed.
+
+* When multiple transitions happened in a single step, e.g., I->E->S, the model was only recording E->S, but not I->S (which is the correct).
+
+
 # epiworldR 0.8.2.0
 
 ## Changes
