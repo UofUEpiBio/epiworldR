@@ -1,4 +1,11 @@
-# epiworldR 0.8.3.0
+# epiworldR 0.8.4.0 (dev)
+
+## Improvements
+
+* The C++ library has been updated to version 0.8.4, which includes several speed improvements. Some preliminary tests show x6 speedups.
+
+
+# epiworldR 0.8.3.0 (CRAN)
 
 ## Improvements
 
