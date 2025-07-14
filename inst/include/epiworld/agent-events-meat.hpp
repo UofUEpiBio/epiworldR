@@ -7,7 +7,7 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 {
 
     Agent<TSeq> *  p = a.agent;
-    VirusPtr<TSeq> v = a.virus;
+    VirusPtr<TSeq> & v = a.virus;
     
     m->get_db().record_transmission(
         v->get_agent() ? v->get_agent()->get_id() : -1,
@@ -16,7 +16,7 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
         v->get_date() 
     );
     
-    p->virus = std::make_shared< Virus<TSeq> >(*v);
+    p->virus = std::move(v);
     p->virus->set_date(m->today());
     p->virus->set_agent(p);
 
@@ -37,11 +37,11 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 
     // Lastly, we increase the daily count of the virus
     #ifdef EPI_DEBUG
-    m->get_db().today_virus.at(v->get_id()).at(
+    m->get_db().today_virus.at(p->virus->get_id()).at(
         a.new_state != -99 ? a.new_state : p->state
     )++;
     #else
-    m->get_db().today_virus[v->get_id()][
+    m->get_db().today_virus[p->virus->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
     #endif
@@ -53,16 +53,16 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
 {
 
     Agent<TSeq> * p = a.agent;
-    ToolPtr<TSeq> t = a.tool;
+    ToolPtr<TSeq> & t = a.tool;
     
     // Update tool accounting
     p->n_tools++;
     size_t n_tools = p->n_tools;
 
     if (n_tools <= p->tools.size())
-        p->tools[n_tools - 1] = std::make_shared< Tool<TSeq> >(*t);
+        p->tools[n_tools - 1] = std::move(t);
     else
-        p->tools.push_back(std::make_shared< Tool<TSeq> >(*t));
+        p->tools.emplace_back(std::move(t));
 
     n_tools--;
 
@@ -84,7 +84,7 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
             );
     }
 
-    m->get_db().today_tool[t->get_id()][
+    m->get_db().today_tool[p->tools.back()->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
 

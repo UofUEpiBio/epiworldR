@@ -85,6 +85,10 @@ template<typename TSeq>
 inline Virus<TSeq>::Virus()
 {
 
+    #ifdef EPI_DEBUG_VIRUS
+    counter_construct++;
+    #endif
+
     EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
     {
         baseline_sequence = -1;
@@ -100,6 +104,10 @@ template<typename TSeq>
 inline Virus<TSeq>::Virus(
     std::string name
     ) {
+
+    #ifdef EPI_DEBUG_VIRUS
+    counter_construct++;
+    #endif
 
     EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
     {
@@ -120,6 +128,10 @@ inline Virus<TSeq>::Virus(
     bool prevalence_as_proportion
     ) {
 
+    #ifdef EPI_DEBUG_VIRUS
+    counter_construct++;
+    #endif
+
     EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
     {
         baseline_sequence = -1;
@@ -137,6 +149,116 @@ inline Virus<TSeq>::Virus(
         )
     );
 }
+
+#ifdef EPI_DEBUG_VIRUS
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_construct = 0;
+
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_copy_construct = 0;
+
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_move_construct = 0;
+
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_copy_assign = 0;
+
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_move_assign = 0;
+
+template<typename TSeq>
+std::atomic<int> Virus<TSeq>::counter_destruct = 0;
+
+template<typename TSeq>
+inline Virus<TSeq>::~Virus()
+{
+    counter_destruct++;
+}
+
+// Copy constructor
+template<typename TSeq>
+inline Virus<TSeq>::Virus(const Virus<TSeq>& other)
+    : agent(other.agent),
+      baseline_sequence(other.baseline_sequence),
+      virus_name(other.virus_name),
+      date(other.date),
+      id(other.id),
+      state_init(other.state_init),
+      state_post(other.state_post),
+      state_removed(other.state_removed),
+      queue_init(other.queue_init),
+      queue_post(other.queue_post),
+      queue_removed(other.queue_removed),
+      virus_functions(other.virus_functions)
+{
+    counter_copy_construct++;
+}
+
+// Move constructor
+template<typename TSeq>
+inline Virus<TSeq>::Virus(Virus<TSeq>&& other) noexcept
+    : agent(other.agent),
+      baseline_sequence(std::move(other.baseline_sequence)),
+      virus_name(std::move(other.virus_name)),
+      date(other.date),
+      id(other.id),
+      state_init(other.state_init),
+      state_post(other.state_post),
+      state_removed(other.state_removed),
+      queue_init(other.queue_init),
+      queue_post(other.queue_post),
+      queue_removed(other.queue_removed),
+      virus_functions(std::move(other.virus_functions))
+{
+    counter_move_construct++;
+    // other.agent = nullptr;
+}
+
+// Copy assignment
+template<typename TSeq>
+inline Virus<TSeq>& Virus<TSeq>::operator=(const Virus<TSeq>& other)
+{
+    if (this != &other) {
+        agent = other.agent;
+        baseline_sequence = other.baseline_sequence;
+        virus_name = other.virus_name;
+        date = other.date;
+        id = other.id;
+        state_init = other.state_init;
+        state_post = other.state_post;
+        state_removed = other.state_removed;
+        queue_init = other.queue_init;
+        queue_post = other.queue_post;
+        queue_removed = other.queue_removed;
+        virus_functions = other.virus_functions;
+        counter_copy_assign++;
+    }
+    return *this;
+}
+
+// Move assignment
+template<typename TSeq>
+inline Virus<TSeq>& Virus<TSeq>::operator=(Virus<TSeq>&& other) noexcept
+{
+    if (this != &other) {
+        agent = other.agent;
+        baseline_sequence = std::move(other.baseline_sequence);
+        virus_name = std::move(other.virus_name);
+        date = other.date;
+        id = other.id;
+        state_init = other.state_init;
+        state_post = other.state_post;
+        state_removed = other.state_removed;
+        queue_init = other.queue_init;
+        queue_post = other.queue_post;
+        queue_removed = other.queue_removed;
+        virus_functions = std::move(other.virus_functions);
+        other.agent = nullptr;
+        counter_move_assign++;
+    }
+    return *this;
+}
+#endif
 
 template<typename TSeq>
 inline void Virus<TSeq>::mutate(
@@ -476,7 +598,7 @@ inline void Virus<TSeq>::set_post_immunity(
             if (__no_reinfect->get_id() == -99)
                 m->get_db().record_tool(*__no_reinfect);
 
-            p->add_tool(__no_reinfect, m);
+            p->add_tool(*__no_reinfect, m);
 
             return;
 
@@ -525,7 +647,7 @@ inline void Virus<TSeq>::set_post_immunity(
             if (__no_reinfect->get_id() == -99)
                 m->get_db().record_tool(*__no_reinfect);
 
-            p->add_tool(__no_reinfect, m);
+            p->add_tool(*__no_reinfect, m);
 
             return;
 

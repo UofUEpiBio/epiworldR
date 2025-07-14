@@ -17,6 +17,9 @@
 #include <set>
 #include <type_traits>
 #include <cassert>
+#ifdef EPI_DEBUG_VIRUS
+#include <atomic>
+#endif
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
@@ -24,7 +27,7 @@
 /* Versioning */
 #define EPIWORLD_VERSION_MAJOR 0
 #define EPIWORLD_VERSION_MINOR 8
-#define EPIWORLD_VERSION_PATCH 3
+#define EPIWORLD_VERSION_PATCH 4
 
 static const int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
 static const int epiworld_version_minor = EPIWORLD_VERSION_MINOR;

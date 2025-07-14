@@ -153,12 +153,12 @@ public:
      */
     Event(
         Agent<TSeq> * agent_,
-        VirusPtr<TSeq> virus_,
-        ToolPtr<TSeq> tool_,
+        VirusPtr<TSeq> & virus_,
+        ToolPtr<TSeq> & tool_,
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        EventFun<TSeq> call_,
+        EventFun<TSeq> & call_,
         int idx_agent_,
         int idx_object_
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
