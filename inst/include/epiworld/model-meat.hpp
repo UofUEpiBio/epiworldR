@@ -1538,25 +1538,23 @@ inline void Model<TSeq>::run_multiple(
     }
         
 
-    // Figuring out how many replicates
+    // Figuring out how many replicates - distribute remainder evenly
     std::vector< size_t > nreplicates(nthreads, 0);
     std::vector< size_t > nreplicates_csum(nthreads, 0);
+    
+    size_t base_replicates = nexperiments / nthreads;
+    size_t remainder = nexperiments % nthreads;
+    
     size_t sums = 0u;
     for (int i = 0; i < nthreads; ++i)
     {
-        nreplicates[i] = static_cast<epiworld_fast_uint>(
-            std::floor(nexperiments/nthreads)
-            );
+        // Distribute remainder to first 'remainder' threads
+        nreplicates[i] = base_replicates + (static_cast<size_t>(i) < remainder ? 1 : 0);
         
         // This takes the cumsum
         nreplicates_csum[i] = sums;
-
         sums += nreplicates[i];
-
     }
-
-    if (sums < nexperiments)
-        nreplicates[nthreads - 1] += (nexperiments - sums);
 
     Progress pb_multiple(
         nreplicates[0u],
