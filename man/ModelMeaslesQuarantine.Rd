@@ -53,12 +53,12 @@ are moved to isolation and trigger the quarantine process.}
 
 \item{prop_vaccinated}{Proportion of the population vaccinated.}
 
-\item{quarantine_period}{Total duration of quarantine.}
+\item{quarantine_period}{Number of days an agent is in quarantine.}
 
 \item{quarantine_willingness}{Probability of accepting quarantine (
 see details).}
 
-\item{isolation_period}{Total duration of isolation.}
+\item{isolation_period}{Number of days an agent is in isolation.}
 }
 \value{
 \itemize{
@@ -135,6 +135,7 @@ Other Models:
 \code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSEIRMixing}()},
+\code{\link{ModelSEIRMixingQuarantine}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRD}()},

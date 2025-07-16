@@ -537,3 +537,53 @@ SEXP ModelMeaslesQuarantine_cpp(
   return ptr;
 
 }
+
+[[cpp11::register]]
+SEXP ModelSEIRMixingQuarantine_cpp(
+    std::string name,
+    unsigned int n,
+    double prevalence,
+    double contact_rate,
+    double transmission_rate,
+    double incubation_days,
+    double recovery_rate,
+    std::vector< double > contact_matrix,
+    logicals entity_can_quarantine,
+    double hospitalization_rate,
+    double hospitalization_period,
+    double days_undetected,
+    int quarantine_period,
+    double quarantine_willingness,
+    int isolation_period
+) {
+
+  // Wrapping the logicals to a vector of bools
+  std::vector<bool> entity_can_quarantine_vec;
+  for (size_t i = 0; i < entity_can_quarantine.size(); ++i) {
+    entity_can_quarantine_vec.push_back(entity_can_quarantine[i]);
+  }
+
+  // Creating a pointer to a ModelSEIRMixingQuarantine model
+  cpp11::external_pointer<epiworld::epimodels::ModelSEIRMixingQuarantine<>> ptr(
+      new epiworld::epimodels::ModelSEIRMixingQuarantine<>(
+          name,
+          n,
+          prevalence,
+          contact_rate,
+          transmission_rate,
+          incubation_days,
+          recovery_rate,
+          contact_matrix,
+          entity_can_quarantine_vec,
+          hospitalization_rate,
+          hospitalization_period,
+          days_undetected,
+          quarantine_period,
+          quarantine_willingness,
+          isolation_period
+      )
+  );
+
+  return ptr;
+
+}

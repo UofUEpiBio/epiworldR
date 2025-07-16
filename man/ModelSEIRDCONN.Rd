@@ -94,6 +94,7 @@ Other Models:
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIRMixing}()},
+\code{\link{ModelSEIRMixingQuarantine}()},
 \code{\link{ModelSIR}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRD}()},
