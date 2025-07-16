@@ -61,6 +61,7 @@ Other Models:
 \code{\link{ModelSEIRD}()},
 \code{\link{ModelSEIRDCONN}()},
 \code{\link{ModelSEIRMixing}()},
+\code{\link{ModelSEIRMixingQuarantine}()},
 \code{\link{ModelSIRCONN}()},
 \code{\link{ModelSIRD}()},
 \code{\link{ModelSIRDCONN}()},

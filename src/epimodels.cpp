@@ -548,7 +548,7 @@ SEXP ModelSEIRMixingQuarantine_cpp(
     double incubation_days,
     double recovery_rate,
     std::vector< double > contact_matrix,
-    std::vector< bool > entity_can_quarantine,
+    logicals entity_can_quarantine,
     double hospitalization_rate,
     double hospitalization_period,
     double days_undetected,
@@ -556,6 +556,12 @@ SEXP ModelSEIRMixingQuarantine_cpp(
     double quarantine_willingness,
     int isolation_period
 ) {
+
+  // Wrapping the logicals to a vector of bools
+  std::vector<bool> entity_can_quarantine_vec;
+  for (size_t i = 0; i < entity_can_quarantine.size(); ++i) {
+    entity_can_quarantine_vec.push_back(entity_can_quarantine[i]);
+  }
 
   // Creating a pointer to a ModelSEIRMixingQuarantine model
   cpp11::external_pointer<epiworld::epimodels::ModelSEIRMixingQuarantine<>> ptr(
@@ -568,7 +574,7 @@ SEXP ModelSEIRMixingQuarantine_cpp(
           incubation_days,
           recovery_rate,
           contact_matrix,
-          entity_can_quarantine,
+          entity_can_quarantine_vec,
           hospitalization_rate,
           hospitalization_period,
           days_undetected,
