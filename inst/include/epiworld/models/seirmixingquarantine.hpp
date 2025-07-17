@@ -74,14 +74,19 @@ private:
     // Data about the quarantine process
     std::vector< bool > quarantine_willingness; ///< Indicator
     std::vector< bool > isolation_willingness; ///< Indicator for isolation willingness
-    std::vector< bool > entity_quarantine_triggered; ///< Whether the quarantine process has started
-    std::vector< bool > entity_can_quarantine; ///< Whether the entity can quarantine
+    std::vector< size_t > agent_quarantine_triggered; ///< Whether the quarantine process has started
     std::vector< int > day_flagged; ///< Either detected or started quarantine
     std::vector< int > day_onset; ///< Day of onset of the disease
     std::vector< int > day_exposed; ///< Day of exposure
 
     void m_quarantine_process();
     static void m_update_model(Model<TSeq> * m);
+
+    // We will limit tracking to up to EPI_MAX_TRACKING
+    std::vector< size_t > tracking_matrix; ///< Tracking matrix for agent interactions
+    std::vector< size_t > tracking_matrix_size; ///< Number of current interactions for each agent
+
+    void m_add_tracking(size_t infected_id, size_t agent_id);
 
 public:
 
@@ -122,7 +127,6 @@ public:
         epiworld_double avg_incubation_days,
         epiworld_double recovery_rate,
         std::vector< double > contact_matrix,
-        std::vector< bool > entity_can_quarantine,
         epiworld_double hospitalization_rate,
         epiworld_double hospitalization_period,
         // Policy parameters
@@ -130,7 +134,8 @@ public:
         epiworld_fast_int quarantine_period,
         epiworld_double quarantine_willingness,
         epiworld_double isolation_willingness,
-        epiworld_fast_int isolation_period
+        epiworld_fast_int isolation_period,
+        epiworld_double contact_tracing_success_rate = 1.0
     );
     
     /**
@@ -154,7 +159,6 @@ public:
         epiworld_double avg_incubation_days,
         epiworld_double recovery_rate,
         std::vector< double > contact_matrix,
-        std::vector< bool > entity_can_quarantine,
         epiworld_double hospitalization_rate,
         epiworld_double hospitalization_period,
         // Policy parameters
@@ -162,7 +166,8 @@ public:
         epiworld_fast_int quarantine_period,
         epiworld_double quarantine_willingness,
         epiworld_double isolation_willingness,
-        epiworld_fast_int isolation_period
+        epiworld_fast_int isolation_period,
+        epiworld_double contact_tracing_success_rate = 1.0
     );
 
     ModelSEIRMixingQuarantine<TSeq> & run(
@@ -190,25 +195,14 @@ public:
         return;
     };
 
-    void set_entity_can_quarantine(std::vector< bool > can_quarantine)
-    {
-        entity_can_quarantine = can_quarantine;
-        return;
-    };
-
     std::vector< double > get_contact_matrix() const
     {
         return contact_matrix;
     };
 
-    std::vector< bool > get_entity_can_quarantine() const
+    std::vector< size_t > get_agent_quarantine_triggered() const
     {
-        return entity_can_quarantine;
-    };
-
-    std::vector< bool > get_entity_quarantine_triggered() const
-    {
-        return entity_quarantine_triggered;
+        return agent_quarantine_triggered;
     };
 
     std::vector< bool > get_quarantine_willingness() const
@@ -230,6 +224,27 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_model(Model<TSeq> * m)
     model->m_quarantine_process();
     model->events_run();
     model->m_update_infected_list();
+    return;
+}
+
+template<typename TSeq>
+inline void ModelSEIRMixingQuarantine<TSeq>::m_add_tracking(
+    size_t infected_id,
+    size_t agent_id
+)
+{
+
+    // We avoid the math if there's no point in tracking anymore
+    if (agent_quarantine_triggered[infected_id] >= 2u)
+        return;
+
+    // If we are overflow, we start from the beginning
+    size_t loc = tracking_matrix_size[infected_id] % EPI_MAX_TRACKING;
+    tracking_matrix[MM(infected_id, loc, Model<TSeq>::size())] = agent_id;
+
+    // We increase the size of the tracking matrix
+    tracking_matrix_size[infected_id]++;
+
     return;
 }
 
@@ -364,16 +379,6 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
             std::string(".")
             );
 
-    
-    // Checking the quarantine variable
-    if (entity_can_quarantine.size() != this->entities.size())
-        throw std::length_error(
-            std::string("The entity_can_quarantine vector must have the same size as the number of entities. ") +
-            std::to_string(entity_can_quarantine.size()) +
-            std::string(" != ") + std::to_string(this->entities.size()) +
-            std::string(".")
-        );
-
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
         double sum = 0.0;
@@ -450,11 +455,11 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
             Model<TSeq>::runif() < this->par("Isolation willingness");
     }
 
-    entity_quarantine_triggered.resize(this->size(), false);
+    agent_quarantine_triggered.resize(this->size(), 0u);
     std::fill(
-        entity_quarantine_triggered.begin(),
-        entity_quarantine_triggered.end(),
-        false
+        agent_quarantine_triggered.begin(),
+        agent_quarantine_triggered.end(),
+        0u
     );
 
     day_flagged.resize(this->size(), 0);
@@ -477,7 +482,14 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
         day_exposed.end(),
         0
     );
-    
+
+    // Tracking matrix
+    tracking_matrix.resize(EPI_MAX_TRACKING * Model<TSeq>::size(), 0u);
+    std::fill(tracking_matrix.begin(), tracking_matrix.end(), 0u);
+
+    tracking_matrix_size.resize(Model<TSeq>::size(), 0u);
+    std::fill(tracking_matrix_size.begin(), tracking_matrix_size.end(), 0u);
+
     return;
 
 }
@@ -538,6 +550,9 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_susceptible(
                 "Trying to add an extra element to a temporal array outside of the range."
             );
         #endif
+
+        // Adding the current agent to the tracked interactions
+        m_down->m_add_tracking(neighbor.get_id(), p->get_id());
             
         /* And it is a function of susceptibility_reduction as well */ 
         m->array_double_tmp[nviruses_tmp] =
@@ -603,13 +618,13 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
 
     // If detected and the entity can quarantine, we start
     // the quarantine process
-    if (detected && model->entity_can_quarantine[p->get_id()])
+    if (detected)
     {
-        model->entity_quarantine_triggered[p->get_id()] = true;
+        model->agent_quarantine_triggered[p->get_id()] = 1u;
     }
 
     // Checking if the agent is willing to isolate individually
-    // This is separate from quarantine and can happen even if entity cannot quarantine
+    // This is separate from quarantine and can happen even if agent cannot quarantine
     bool isolation_detected = (m->par("Isolation period") >= 0) &&
         detected &&
         (model->isolation_willingness[p->get_id()])
@@ -848,22 +863,36 @@ template<typename TSeq>
 inline void ModelSEIRMixingQuarantine<TSeq>::m_quarantine_process() {
 
     // Process entity-level quarantine
-    int entity_num = -1;
-    for (auto & entity: Model<TSeq>::get_entities())
+    for (size_t agent_i = 0u; agent_i < Model<TSeq>::size(); ++agent_i)
     {
 
-        // Checking if the quarantine in the entity was triggered
+        // Checking if the quarantine in the agent was triggered
         // or not
-        if (!entity_quarantine_triggered[++entity_num])
+        if (agent_quarantine_triggered[agent_i] != 1u)
             continue;
 
         if (this->par("Quarantine period") < 0)
             continue;
 
-        for (auto i: entity.get_agents())
+        // Getting the number of contacts, if it is greater
+        // than the maximum, it means that we overflowed, so 
+        // we will only quarantine the first EPI_MAX_TRACKING
+        size_t n_contacts = this->tracking_matrix_size[agent_i];
+        if (n_contacts >= EPI_MAX_TRACKING)
+            n_contacts = EPI_MAX_TRACKING;
+
+        for (size_t contact_i = 0u; contact_i < n_contacts; ++contact_i)
         {
 
-            auto & agent = Model<TSeq>::get_agent(i);
+            // Checking if we will detect the contact
+            if (Model<TSeq>::runif() > Model<TSeq>::par("Contact tracing success rate"))
+                continue;
+
+            size_t contact_id = this->tracking_matrix[
+                MM(agent_i, contact_i, Model<TSeq>::size())
+            ];
+
+            auto & agent = Model<TSeq>::get_agent(contact_id);
 
             if (agent.get_state() > INFECTED)
                 continue;
@@ -873,7 +902,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_quarantine_process() {
                 continue;
 
             if (
-                quarantine_willingness[i] &&
+                quarantine_willingness[contact_id] &&
                 (Model<TSeq>::par("Quarantine period") >= 0))
             {
 
@@ -881,17 +910,17 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_quarantine_process() {
                 {
                     case SUSCEPTIBLE:
                         agent.change_state(this, QUARANTINED_SUSCEPTIBLE);
-                        day_flagged[i] = Model<TSeq>::today();
+                        day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case EXPOSED:
                         agent.change_state(this, QUARANTINED_EXPOSED);
-                        day_flagged[i] = Model<TSeq>::today();
+                        day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case INFECTED:
-                        if (isolation_willingness[i])
+                        if (isolation_willingness[contact_id])
                         {
                             agent.change_state(this, ISOLATED);
-                            day_flagged[i] = Model<TSeq>::today();
+                            day_flagged[contact_id] = Model<TSeq>::today();
                         }
                         break;
                     default:
@@ -904,7 +933,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_quarantine_process() {
         }
 
         // Setting the quarantine process off
-        entity_quarantine_triggered[entity_num] = false;
+        agent_quarantine_triggered[agent_i] = 2u;
     }
 
     return;
@@ -931,7 +960,6 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     epiworld_double avg_incubation_days,
     epiworld_double recovery_rate,
     std::vector< double > contact_matrix,
-    std::vector< bool > entity_can_quarantine,
     epiworld_double hospitalization_rate,
     epiworld_double hospitalization_period,
     // Policy parameters
@@ -939,13 +967,13 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     epiworld_fast_int quarantine_period,
     epiworld_double quarantine_willingness,
     epiworld_double isolation_willingness,
-    epiworld_fast_int isolation_period
+    epiworld_fast_int isolation_period,
+    epiworld_double contact_tracing_success_rate
     )
 {
 
     // Setting up the contact matrix
     this->contact_matrix = contact_matrix;
-    this->entity_can_quarantine = entity_can_quarantine;
 
     // Setting up parameters
     model.add_param(contact_rate, "Contact rate");
@@ -963,6 +991,9 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
         isolation_willingness, "Isolation willingness"
     );
     model.add_param(isolation_period, "Isolation period");
+    model.add_param(
+        contact_tracing_success_rate, "Contact tracing success rate"
+    );
     
     // state
     model.add_state("Susceptible", m_update_susceptible);
@@ -1015,7 +1046,6 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     epiworld_double avg_incubation_days,
     epiworld_double recovery_rate,
     std::vector< double > contact_matrix,
-    std::vector< bool > entity_can_quarantine,
     epiworld_double hospitalization_rate,
     epiworld_double hospitalization_period,
     // Policy parameters
@@ -1023,12 +1053,12 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     epiworld_fast_int quarantine_period,
     epiworld_double quarantine_willingness,
     epiworld_double isolation_willingness,
-    epiworld_fast_int isolation_period
+    epiworld_fast_int isolation_period,
+    epiworld_double contact_tracing_success_rate
     )
 {   
 
     this->contact_matrix = contact_matrix;
-    this->entity_can_quarantine = entity_can_quarantine;
 
     ModelSEIRMixingQuarantine(
         *this,
@@ -1040,7 +1070,6 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
         avg_incubation_days,
         recovery_rate,
         contact_matrix,
-        entity_can_quarantine,
         hospitalization_rate,
         hospitalization_period,
         // Policy parameters
@@ -1048,7 +1077,8 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
         quarantine_period,
         quarantine_willingness,
         isolation_willingness,
-        isolation_period
+        isolation_period,
+        contact_tracing_success_rate
     );
 
     return;

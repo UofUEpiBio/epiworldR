@@ -9,8 +9,6 @@
 #' @param recovery_rate Numeric scalar between 0 and 1. Probability of recovery.
 #' @param n Number of individuals in the population.
 #' @param contact_matrix Matrix of contact rates between individuals.
-#' @param entity_can_quarantine Logical vector indicating which entities can
-#' quarantine.
 #' @param hospitalization_rate Double. Rate of hospitalization.
 #' @param hospitalization_period Double. Period of hospitalization.
 #' @param days_undetected Double. Number of days an infection goes undetected.
@@ -18,15 +16,13 @@
 #' @param quarantine_willingness Double. Proportion of agents willing to quarantine.
 #' @param isolation_willingness Double. Proportion of agents willing to isolate.
 #' @param isolation_period Integer. Number of days for isolation.
+#' @param contact_tracing_success_rate Double. Probability of successful contact tracing.
 #' @export
 #' @family Models
 #' @details
 #' The `contact_matrix` is a matrix of contact rates between entities. The
 #' matrix should be of size `n x n`, where `n` is the number of entities.
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
-#'
-#' The `entity_can_quarantine` vector indicates which entities can quarantine.
-#' It should have the same length as the number of entities.
 #'
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
@@ -50,9 +46,6 @@
 #'   c(0.1, 0.2, 0.7)
 #' ) |> matrix(byrow = TRUE, nrow = 3)
 #'
-#' # Which entities can quarantine
-#' entity_can_quar <- c(TRUE, TRUE, FALSE)
-#'
 #' N <- 9e3
 #'
 #' flu_model <- ModelSEIRMixingQuarantine(
@@ -64,14 +57,14 @@
 #'   recovery_rate         = 1 / 7,
 #'   incubation_days       = 7,
 #'   contact_matrix        = cmatrix,
-#'   entity_can_quarantine = entity_can_quar,
 #'   hospitalization_rate  = 0.05,
 #'   hospitalization_period = 7,
 #'   days_undetected       = 3,
 #'   quarantine_period     = 14,
 #'   quarantine_willingness = 0.8,
 #'   isolation_period      = 7,
-#'   isolation_willingness = 0.5
+#'   isolation_willingness = 0.5,
+#'   contact_tracing_success_rate = 0.7
 #' )
 #'
 #' # Adding the entities to the model
@@ -94,14 +87,14 @@ ModelSEIRMixingQuarantine <- function(
     incubation_days,
     recovery_rate,
     contact_matrix,
-    entity_can_quarantine,
     hospitalization_rate,
     hospitalization_period,
     days_undetected,
     quarantine_period,
     quarantine_willingness,
     isolation_willingness,
-    isolation_period
+    isolation_period,
+    contact_tracing_success_rate
     ) {
   # Check input parameters
   stopifnot_string(name)
@@ -120,18 +113,19 @@ ModelSEIRMixingQuarantine <- function(
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
   stopifnot_double(isolation_willingness, lb = 0, ub = 1)
   stopifnot_int(isolation_period)
+  stopifnot_double(contact_tracing_success_rate, lb = 0, ub = 1)
 
   structure(
     ModelSEIRMixingQuarantine_cpp(
       name, n, prevalence, contact_rate,
       transmission_rate, incubation_days,
       recovery_rate, as.vector(contact_matrix),
-      as.logical(entity_can_quarantine),
       hospitalization_rate, hospitalization_period,
       days_undetected, quarantine_period,
       quarantine_willingness,
       isolation_willingness,
-      isolation_period
+      isolation_period,
+      contact_tracing_success_rate
     ),
     class = c("epiworld_seirmixingquarantine", "epiworld_model")
   )

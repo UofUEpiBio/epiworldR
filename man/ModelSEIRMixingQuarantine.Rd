@@ -14,14 +14,14 @@ ModelSEIRMixingQuarantine(
   incubation_days,
   recovery_rate,
   contact_matrix,
-  entity_can_quarantine,
   hospitalization_rate,
   hospitalization_period,
   days_undetected,
   quarantine_period,
   quarantine_willingness,
   isolation_willingness,
-  isolation_period
+  isolation_period,
+  contact_tracing_success_rate
 )
 }
 \arguments{
@@ -43,9 +43,6 @@ incubation period.}
 
 \item{contact_matrix}{Matrix of contact rates between individuals.}
 
-\item{entity_can_quarantine}{Logical vector indicating which entities can
-quarantine.}
-
 \item{hospitalization_rate}{Double. Rate of hospitalization.}
 
 \item{hospitalization_period}{Double. Period of hospitalization.}
@@ -59,6 +56,8 @@ quarantine.}
 \item{isolation_willingness}{Double. Proportion of agents willing to isolate.}
 
 \item{isolation_period}{Integer. Number of days for isolation.}
+
+\item{contact_tracing_success_rate}{Double. Probability of successful contact tracing.}
 }
 \value{
 \itemize{
@@ -72,9 +71,6 @@ Susceptible Exposed Infected Removed model (SEIR) with mixing and quarantine
 The \code{contact_matrix} is a matrix of contact rates between entities. The
 matrix should be of size \verb{n x n}, where \code{n} is the number of entities.
 This is a row-stochastic matrix, i.e., the sum of each row should be 1.
-
-The \code{entity_can_quarantine} vector indicates which entities can quarantine.
-It should have the same length as the number of entities.
 
 The \link{initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
@@ -95,9 +91,6 @@ cmatrix <- c(
   c(0.1, 0.2, 0.7)
 ) |> matrix(byrow = TRUE, nrow = 3)
 
-# Which entities can quarantine
-entity_can_quar <- c(TRUE, TRUE, FALSE)
-
 N <- 9e3
 
 flu_model <- ModelSEIRMixingQuarantine(
@@ -109,14 +102,14 @@ flu_model <- ModelSEIRMixingQuarantine(
   recovery_rate         = 1 / 7,
   incubation_days       = 7,
   contact_matrix        = cmatrix,
-  entity_can_quarantine = entity_can_quar,
   hospitalization_rate  = 0.05,
   hospitalization_period = 7,
   days_undetected       = 3,
   quarantine_period     = 14,
   quarantine_willingness = 0.8,
   isolation_period      = 7,
-  isolation_willingness = 0.5
+  isolation_willingness = 0.5,
+  contact_tracing_success_rate = 0.7
 )
 
 # Adding the entities to the model

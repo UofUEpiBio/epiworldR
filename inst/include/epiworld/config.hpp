@@ -37,6 +37,10 @@
 
 #define EPI_DEFAULT_TSEQ int
 
+#ifndef EPI_MAX_TRACKING
+    #define EPI_MAX_TRACKING 100
+#endif
+
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Model;
 
