@@ -20,6 +20,7 @@ ModelSEIRMixingQuarantine(
   days_undetected,
   quarantine_period,
   quarantine_willingness,
+  isolation_willingness,
   isolation_period
 )
 }
@@ -54,6 +55,8 @@ quarantine.}
 \item{quarantine_period}{Integer. Number of days for quarantine.}
 
 \item{quarantine_willingness}{Double. Proportion of agents willing to quarantine.}
+
+\item{isolation_willingness}{Double. Proportion of agents willing to isolate.}
 
 \item{isolation_period}{Integer. Number of days for isolation.}
 }

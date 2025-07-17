@@ -554,6 +554,7 @@ SEXP ModelSEIRMixingQuarantine_cpp(
     double days_undetected,
     int quarantine_period,
     double quarantine_willingness,
+    double isolation_willingness,
     int isolation_period
 ) {
 
@@ -580,6 +581,7 @@ SEXP ModelSEIRMixingQuarantine_cpp(
           days_undetected,
           quarantine_period,
           quarantine_willingness,
+          isolation_willingness,
           isolation_period
       )
   );

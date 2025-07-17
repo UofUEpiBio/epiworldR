@@ -16,6 +16,7 @@
 #' @param days_undetected Double. Number of days an infection goes undetected.
 #' @param quarantine_period Integer. Number of days for quarantine.
 #' @param quarantine_willingness Double. Proportion of agents willing to quarantine.
+#' @param isolation_willingness Double. Proportion of agents willing to isolate.
 #' @param isolation_period Integer. Number of days for isolation.
 #' @export
 #' @family Models
@@ -98,6 +99,7 @@ ModelSEIRMixingQuarantine <- function(
     days_undetected,
     quarantine_period,
     quarantine_willingness,
+    isolation_willingness,
     isolation_period
     ) {
   # Check input parameters
@@ -114,7 +116,8 @@ ModelSEIRMixingQuarantine <- function(
   stopifnot_double(hospitalization_period)
   stopifnot_double(days_undetected)
   stopifnot_int(quarantine_period)
-  stopifnot_double(quarantine_willingness)
+  stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
+  stopifnot_double(isolation_willingness, lb = 0, ub = 1)
   stopifnot_int(isolation_period)
 
   structure(
@@ -125,7 +128,9 @@ ModelSEIRMixingQuarantine <- function(
       as.logical(entity_can_quarantine),
       hospitalization_rate, hospitalization_period,
       days_undetected, quarantine_period,
-      quarantine_willingness, isolation_period
+      quarantine_willingness,
+      isolation_willingness,
+      isolation_period
     ),
     class = c("epiworld_seirmixingquarantine", "epiworld_model")
   )
