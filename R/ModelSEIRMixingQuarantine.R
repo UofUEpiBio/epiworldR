@@ -70,7 +70,8 @@
 #'   days_undetected       = 3,
 #'   quarantine_period     = 14,
 #'   quarantine_willingness = 0.8,
-#'   isolation_period      = 7
+#'   isolation_period      = 7,
+#'   isolation_willingness = 0.5
 #' )
 #'
 #' # Adding the entities to the model
