@@ -21,7 +21,8 @@ ModelSEIRMixingQuarantine(
   quarantine_willingness,
   isolation_willingness,
   isolation_period,
-  contact_tracing_success_rate
+  contact_tracing_success_rate,
+  contact_tracing_days_prior
 )
 }
 \arguments{

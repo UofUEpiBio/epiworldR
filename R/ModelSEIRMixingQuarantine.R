@@ -94,7 +94,8 @@ ModelSEIRMixingQuarantine <- function(
     quarantine_willingness,
     isolation_willingness,
     isolation_period,
-    contact_tracing_success_rate
+    contact_tracing_success_rate,
+    contact_tracing_days_prior
     ) {
   # Check input parameters
   stopifnot_string(name)
@@ -114,6 +115,7 @@ ModelSEIRMixingQuarantine <- function(
   stopifnot_double(isolation_willingness, lb = 0, ub = 1)
   stopifnot_int(isolation_period)
   stopifnot_double(contact_tracing_success_rate, lb = 0, ub = 1)
+  stopifnot_int(contact_tracing_days_prior, lb = 0)
 
   structure(
     ModelSEIRMixingQuarantine_cpp(
@@ -125,7 +127,8 @@ ModelSEIRMixingQuarantine <- function(
       quarantine_willingness,
       isolation_willingness,
       isolation_period,
-      contact_tracing_success_rate
+      contact_tracing_success_rate,
+      contact_tracing_days_prior
     ),
     class = c("epiworld_seirmixingquarantine", "epiworld_model")
   )

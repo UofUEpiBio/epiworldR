@@ -555,7 +555,8 @@ SEXP ModelSEIRMixingQuarantine_cpp(
     double quarantine_willingness,
     double isolation_willingness,
     int isolation_period,
-    double contact_tracing_success_rate
+    double contact_tracing_success_rate,
+    unsigned int contact_tracing_days_prior
 ) {
 
 
@@ -577,7 +578,8 @@ SEXP ModelSEIRMixingQuarantine_cpp(
           quarantine_willingness,
           isolation_willingness,
           isolation_period,
-          contact_tracing_success_rate
+          contact_tracing_success_rate,
+          contact_tracing_days_prior
       )
   );
 
