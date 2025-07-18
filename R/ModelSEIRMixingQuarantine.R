@@ -106,7 +106,6 @@ ModelSEIRMixingQuarantine <- function(
   stopifnot_double(incubation_days)
   stopifnot_double(recovery_rate)
   stopifany_na(contact_matrix)
-  stopifany_na(entity_can_quarantine)
   stopifnot_double(hospitalization_rate)
   stopifnot_double(hospitalization_period)
   stopifnot_double(days_undetected)
