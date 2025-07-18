@@ -93,6 +93,7 @@ epiworld-methods
 
 Other Models: 
 \code{\link{ModelDiffNet}()},
+\code{\link{ModelMeaslesMixing}()},
 \code{\link{ModelMeaslesQuarantine}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSEIRCONN}()},

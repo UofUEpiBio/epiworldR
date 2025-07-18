@@ -6,6 +6,8 @@
 
 * New model `ModelSEIRMixingQuarantine` that implements a SEIR model with quarantine and mixing has been added.
 
+* New model `ModelMeaslessQuarantine` that implements a measles based on the `ModelSEIRMixingQuarantine` model has been added.
+
 
 # epiworldR 0.8.3.0 (CRAN)
 
