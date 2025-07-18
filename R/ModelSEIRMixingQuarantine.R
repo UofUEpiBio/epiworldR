@@ -1,4 +1,11 @@
 #' Susceptible Exposed Infected Removed model (SEIR) with mixing and quarantine
+#'
+#' `ModelSEIRMixingQuarantine` creates a model of the SEIR type with mixing and
+#' a quarantine mechanism. Agents who are infected can be quarantined or
+#' isolated. Isolation happens after the agent has been detected as infected,
+#' and agents who have been in contact with the detected person will me moved
+#' to quarantined status.
+#'
 #' @param name String. Name of the virus
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param contact_rate Numeric scalar. Average number of contacts per step.
@@ -17,12 +24,15 @@
 #' @param isolation_willingness Double. Proportion of agents willing to isolate.
 #' @param isolation_period Integer. Number of days for isolation.
 #' @param contact_tracing_success_rate Double. Probability of successful contact tracing.
+#' @param contact_tracing_days_prior Integer. Number of days prior to the onset
+#' of the infection for which contact tracing is effective.
 #' @export
 #' @family Models
 #' @details
 #' The `contact_matrix` is a matrix of contact rates between entities. The
 #' matrix should be of size `n x n`, where `n` is the number of entities.
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
+#'
 #'
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected

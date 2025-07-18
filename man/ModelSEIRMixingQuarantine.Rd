@@ -59,6 +59,9 @@ incubation period.}
 \item{isolation_period}{Integer. Number of days for isolation.}
 
 \item{contact_tracing_success_rate}{Double. Probability of successful contact tracing.}
+
+\item{contact_tracing_days_prior}{Integer. Number of days prior to the onset
+of the infection for which contact tracing is effective.}
 }
 \value{
 \itemize{
@@ -66,7 +69,11 @@ incubation period.}
 }
 }
 \description{
-Susceptible Exposed Infected Removed model (SEIR) with mixing and quarantine
+\code{ModelSEIRMixingQuarantine} creates a model of the SEIR type with mixing and
+a quarantine mechanism. Agents who are infected can be quarantined or
+isolated. Isolation happens after the agent has been detected as infected,
+and agents who have been in contact with the detected person will me moved
+to quarantined status.
 }
 \details{
 The \code{contact_matrix} is a matrix of contact rates between entities. The
