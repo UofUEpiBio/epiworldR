@@ -7,26 +7,33 @@
 #' @param vname String. Name of the virus
 #' @param n Number of individuals in the population.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param contact_rate Numeric scalar. Average number of contacts per step.
+#' @param contact_matrix A row-stochastic matrix of mixing proportions between
+#' population groups.
+#' @param vax_reduction_recovery_rate Double. Vaccine reduction in recovery 
+#' rate (default: 0.5).
 #' @param transmission_rate Numeric scalar between 0 and 1. Probability of
-#' transmission.
-#' @param vax_efficacy Double. Vaccine efficacy rate.
-#' @param vax_reduction_recovery_rate Double. Vaccine reduction in recovery rate.
-#' @param incubation_period Double. Duration of incubation period.
-#' @param prodromal_period Double. Duration of prodromal period.
-#' @param rash_period Double. Duration of rash period.
-#' @param contact_matrix Matrix of contact rates between individuals.
-#' @param hospitalization_rate Double. Rate of hospitalization.
-#' @param hospitalization_period Double. Period of hospitalization.
-#' @param days_undetected Double. Number of days an infection goes undetected.
-#' @param quarantine_period Integer. Number of days for quarantine.
-#' @param quarantine_willingness Double. Proportion of agents willing to quarantine.
-#' @param isolation_willingness Double. Proportion of agents willing to isolate.
-#' @param isolation_period Integer. Number of days for isolation.
+#' transmission (default: 0.9).
+#' @param contact_rate Numeric scalar. Average number of contacts per step.
 #' @param prop_vaccinated Double. Proportion of population that is vaccinated.
-#' @param contact_tracing_success_rate Double. Probability of successful contact tracing.
+#' @param vax_efficacy Double. Vaccine efficacy rate (default: 0.99).
+#' @param quarantine_period Integer. Number of days for quarantine
+#' (default: 21).
+#' @param quarantine_willingness Double. Proportion of agents willing to
+#' quarantine (default: 1).
+#' @param isolation_willingness Double. Proportion of agents willing to isolate
+#' (default: 1).
+#' @param isolation_period Integer. Number of days for isolation (default: 4).
+#' @param incubation_period Double. Duration of incubation period (default: 12).
+#' @param prodromal_period Double. Duration of prodromal period (default: 4).
+#' @param rash_period Double. Duration of rash period (default: 3).
+#' @param hospitalization_rate Double. Rate of hospitalization (default: 0.2).
+#' @param hospitalization_period Double. Period of hospitalization (default: 7).
+#' @param days_undetected Double. Number of days an infection goes undetected
+#' (default: 2).
+#' @param contact_tracing_success_rate Double. Probability of successful
+#' contact tracing (default: 1.0).
 #' @param contact_tracing_days_prior Integer. Number of days prior to the onset
-#' of the infection for which contact tracing is effective.
+#' of the infection for which contact tracing is effective (default: 4).
 #' @export
 #' @family Models
 #' @details
@@ -35,14 +42,20 @@
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 #'
 #' The model includes three distinct phases of measles infection: incubation,
-#' prodromal, and rash periods. Vaccination provides protection against infection
-#' and may reduce recovery time.
+#' prodromal, and rash periods. Vaccination provides protection against
+#' infection and may reduce recovery time.
 #'
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
+#' 
+#' The default value for the contact rate is an approximation to the disease's 
+#' basic reproduction number (R0), but it is not 100% accurate. A more accurate
+#' way to se the contact rate is available, and will be distributed in the
+#' future.
 #' @returns
-#' - The `ModelMeaslesMixing` function returns a model of class [epiworld_model].
+#' - The `ModelMeaslesMixing` function returns a model of classes 
+#' [epiworld_model] and [epiworld_measlesmixing].
 #' @aliases epiworld_measlesmixing
 #'
 #' @examples
@@ -101,22 +114,22 @@ ModelMeaslesMixing <- function(
     vname,
     n,
     prevalence,
-    contact_rate,
-    transmission_rate,
-    vax_efficacy,
-    vax_reduction_recovery_rate,
-    incubation_period,
-    prodromal_period,
-    rash_period,
     contact_matrix,
-    hospitalization_rate,
-    hospitalization_period,
-    days_undetected,
-    quarantine_period,
-    quarantine_willingness,
-    isolation_willingness,
-    isolation_period,
+    vax_reduction_recovery_rate = .5,
+    transmission_rate = .9,
+    contact_rate = 15 / transmission_rate / prodromal_period,
     prop_vaccinated,
+    vax_efficacy = .99,
+    quarantine_period = 21,
+    quarantine_willingness = 1,
+    isolation_willingness = 1,
+    isolation_period = 4,
+    incubation_period = 12,
+    prodromal_period = 4,
+    rash_period = 3,
+    hospitalization_rate = 0.2,
+    hospitalization_period = 7,
+    days_undetected = 2,
     contact_tracing_success_rate = 1.0,
     contact_tracing_days_prior = 4
     ) {

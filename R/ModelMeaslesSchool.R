@@ -86,7 +86,7 @@
 #' This model was built as a response to the US Measles outbreak in 2025.
 #' This is a collaboration between the University of Utah (ForeSITE center
 #' grant) and the Utah Department of Health and Human Services.
-ModelMeaslesQuarantine <- function(
+ModelMeaslesSchool <- function(
     n,
     prevalence = 1,
     contact_rate = 15 / transmission_rate / prodromal_period,
@@ -123,7 +123,7 @@ ModelMeaslesQuarantine <- function(
   stopifnot_int(isolation_period, lb = -1)
 
   structure(
-    ModelMeaslesQuarantine_cpp(
+    ModelMeaslesSchool_cpp(
       n,
       prevalence,
       contact_rate,
@@ -144,4 +144,15 @@ ModelMeaslesQuarantine <- function(
     class = c("epiworld_measlesquarantine", "epiworld_model")
   )
 
+}
+
+#' @export
+#' @rdname epiworldR-deprecated
+ModelMeaslesQuarantine <- function(...) {
+  .Deprecated(
+    "ModelMeaslesSchool",
+    package = "epiworldR",
+    msg =
+      "ModelMeaslesQuarantine is deprecated. Use ModelMeaslesSchool instead."
+  )
 }

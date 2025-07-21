@@ -150,7 +150,6 @@ public:
      * @brief Constructs a ModelMeaslesMixing object.
      *
      * @param model A reference to an existing ModelMeaslesMixing object.
-     * @param vname The name of the virus for the ModelMeaslesMixing object.
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
      * @param contact_rate The contact rate between entities in the model.
@@ -175,7 +174,6 @@ public:
      */
     ModelMeaslesMixing(
         ModelMeaslesMixing<TSeq> & model,
-        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -202,7 +200,6 @@ public:
     /**
      * @brief Constructs a ModelMeaslesMixing object.
      *
-     * @param vname The name of the virus for the ModelMeaslesMixing object.
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
      * @param contact_rate The contact rate between entities in the model.
@@ -225,7 +222,6 @@ public:
      * @param contact_tracing_days_prior The number of days prior to detection for which contacts are traced (default: 4).
      */
     ModelMeaslesMixing(
-        const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
@@ -1107,7 +1103,6 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
  * @brief Template for a Measles model with population mixing, quarantine, and contact tracing
  * 
  * @param model A ModelMeaslesMixing<TSeq> object where to set up the model.
- * @param vname Name of the virus
  * @param n Number of agents in the population
  * @param prevalence Initial prevalence (proportion of infected individuals)
  * @param contact_rate Average number of contacts (interactions) per step
@@ -1132,7 +1127,6 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
 template<typename TSeq>
 inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     ModelMeaslesMixing<TSeq> & model,
-    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -1207,7 +1201,7 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     model.queuing_off();
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    epiworld::Virus<TSeq> virus("Measles", prevalence, true);
     virus.set_state(
         ModelMeaslesMixing<TSeq>::EXPOSED,
         ModelMeaslesMixing<TSeq>::RECOVERED,
@@ -1243,7 +1237,6 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
 
 template<typename TSeq>
 inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
-    const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -1272,7 +1265,6 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
 
     ModelMeaslesMixing(
         *this,
-        vname,
         n,
         prevalence,
         contact_rate,
