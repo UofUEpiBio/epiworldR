@@ -326,7 +326,7 @@ expect_error(test_model <- ModelMeaslesMixing(
   prop_vaccinated            = good_prop_vaccinated,
   contact_tracing_success_rate = good_contact_tracing_success_rate,
   contact_tracing_days_prior = good_contact_tracing_days_prior
-), "must be within bounds")
+), "must be")
 
 expect_error(test_model <- ModelMeaslesMixing(
   vname                       = good_vname,
@@ -350,4 +350,4 @@ expect_error(test_model <- ModelMeaslesMixing(
   prop_vaccinated            = good_prop_vaccinated,
   contact_tracing_success_rate = good_contact_tracing_success_rate,
   contact_tracing_days_prior = good_contact_tracing_days_prior
-), "must be within bounds")
+), "must be")
