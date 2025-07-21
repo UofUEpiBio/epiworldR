@@ -121,6 +121,7 @@ private:
     // We will limit tracking to up to EPI_MAX_TRACKING
     std::vector< size_t > tracking_matrix; ///< Tracking matrix for agent interactions
     std::vector< size_t > tracking_matrix_size; ///< Number of current interactions for each agent
+    std::vector< size_t > tracking_matrix_date; ///< Date of each interaction
 
     void m_add_tracking(size_t infectious_id, size_t agent_id);
 
@@ -349,20 +350,13 @@ inline void ModelMeaslesMixing<TSeq>::m_add_tracking(
         agent_quarantine_triggered[infectious_id] >= 
         ModelMeaslesMixing<TSeq>::QUARANTINE_PROCESS_DONE
     )
-        return;
-
-    // We avoid the math if the contact happened before
-    // the lower bound of the contact tracing
-    size_t days_since_rash = Model<TSeq>::today() - day_rash_onset[infectious_id];
-    if (days_since_rash > 
-        Model<TSeq>::par("Contact tracing days prior")
-    )
-        return;
-    
+        return;    
 
     // If we are overflow, we start from the beginning
     size_t loc = tracking_matrix_size[infectious_id] % EPI_MAX_TRACKING;
-    tracking_matrix[MM(infectious_id, loc, Model<TSeq>::size())] = agent_id;
+    loc = MM(infectious_id, loc, Model<TSeq>::size());
+    tracking_matrix[loc] = agent_id;
+    tracking_matrix_date[loc] = Model<TSeq>::today();
 
     // We increase the size of the tracking matrix
     tracking_matrix_size[infectious_id]++;
@@ -611,6 +605,9 @@ inline void ModelMeaslesMixing<TSeq>::reset()
 
     tracking_matrix_size.resize(Model<TSeq>::size(), 0u);
     std::fill(tracking_matrix_size.begin(), tracking_matrix_size.end(), 0u);
+
+    tracking_matrix_date.resize(EPI_MAX_TRACKING * Model<TSeq>::size(), 0u);
+    std::fill(tracking_matrix_date.begin(), tracking_matrix_date.end(), 0u);
 
     return;
 
@@ -1036,16 +1033,25 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
         if (n_contacts >= EPI_MAX_TRACKING)
             n_contacts = EPI_MAX_TRACKING;
 
+        // When the rash onset started (this is for contact tracing)
+        size_t day_rash_onset_agent_i = this->day_rash_onset[agent_i];
+
         for (size_t contact_i = 0u; contact_i < n_contacts; ++contact_i)
         {
+
+            // Checking if the contact is within the contact tracing days prior
+            size_t loc = MM(agent_i, contact_i, Model<TSeq>::size());
+            bool within_days_prior =
+                (day_rash_onset_agent_i - tracking_matrix_date[loc]) <=
+                Model<TSeq>::par("Contact tracing days prior");
+            if (!within_days_prior)
+                continue;
 
             // Checking if we will detect the contact
             if (Model<TSeq>::runif() > Model<TSeq>::par("Contact tracing success rate"))
                 continue;
 
-            size_t contact_id = this->tracking_matrix[
-                MM(agent_i, contact_i, Model<TSeq>::size())
-            ];
+            size_t contact_id = this->tracking_matrix[loc];
 
             auto & agent = Model<TSeq>::get_agent(contact_id);
 

@@ -95,6 +95,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          apt-get update && apt-get install curl -y --no-install-recommends
           install2.r -n 2 shinyjs shinydashboard DT shinycssloaders plotly
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
 
