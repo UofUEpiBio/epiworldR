@@ -4,7 +4,6 @@
 #' between different population groups. The model includes vaccination,
 #' quarantine, isolation, and contact tracing mechanisms.
 #'
-#' @param vname String. Name of the virus
 #' @param n Number of individuals in the population.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param contact_matrix A row-stochastic matrix of mixing proportions between
@@ -76,7 +75,6 @@
 #' N <- 9e3
 #'
 #' measles_model <- ModelMeaslesMixing(
-#'   vname                    = "Measles",
 #'   n                        = N,
 #'   prevalence               = 1 / N,
 #'   contact_rate             = 15,
@@ -111,7 +109,6 @@
 #'
 #' @seealso epiworld-methods
 ModelMeaslesMixing <- function(
-    vname,
     n,
     prevalence,
     contact_matrix,
@@ -134,7 +131,6 @@ ModelMeaslesMixing <- function(
     contact_tracing_days_prior = 4
     ) {
   # Check input parameters
-  stopifnot_string(vname)
   stopifnot_int(n)
   stopifnot_double(prevalence)
   stopifnot_double(contact_rate)
@@ -158,19 +154,26 @@ ModelMeaslesMixing <- function(
 
   structure(
     ModelMeaslesMixing_cpp(
-      vname, n, prevalence, contact_rate,
-      transmission_rate, vax_efficacy,
-      vax_reduction_recovery_rate, incubation_period,
-      prodromal_period, rash_period,
-      as.vector(contact_matrix),
-      hospitalization_rate, hospitalization_period,
-      days_undetected, quarantine_period,
-      quarantine_willingness,
-      isolation_willingness,
-      isolation_period,
-      prop_vaccinated,
-      contact_tracing_success_rate,
-      contact_tracing_days_prior
+      n = n,
+      prevalence = prevalence,
+      contact_rate = contact_rate,
+      transmission_rate = transmission_rate,
+      vax_efficacy = vax_efficacy,
+      vax_reduction_recovery_rate = vax_reduction_recovery_rate,
+      incubation_period = incubation_period,
+      prodromal_period = prodromal_period,
+      rash_period = rash_period,
+      contact_matrix = as.vector(contact_matrix),
+      hospitalization_rate = hospitalization_rate,
+      hospitalization_period = hospitalization_period,
+      days_undetected = days_undetected,
+      quarantine_period = quarantine_period,
+      quarantine_willingness = quarantine_willingness,
+      isolation_willingness = isolation_willingness,
+      isolation_period = isolation_period,
+      prop_vaccinated = prop_vaccinated,
+      contact_tracing_success_rate = contact_tracing_success_rate,
+      contact_tracing_days_prior = contact_tracing_days_prior
     ),
     class = c("epiworld_measlesmixing", "epiworld_model")
   )

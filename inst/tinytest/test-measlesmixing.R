@@ -16,7 +16,6 @@ cmatrix <- c(
 N <- 9e3
 
 measles_model <- ModelMeaslesMixing(
-  vname                       = "Measles",
   n                          = N,
   prevalence                 = 1 / N,
   contact_rate               = 15,
@@ -78,7 +77,6 @@ transmissions[, sum(N), by = .(entity)]
 transmissions[, table(entity)]
 
 # Check functions fail with invalid inputs -------------------------------------
-good_vname <- "Measles"
 good_n <- 9e3
 good_prevalence <- 1 / good_n
 good_contact_rate <- 15
@@ -100,7 +98,6 @@ good_prop_vaccinated <- 0.95
 good_contact_tracing_success_rate <- 0.8
 good_contact_tracing_days_prior <- 4L
 
-bad_vname <- 10
 bad_numeric_input <- "not a number"
 bad_int_input <- "not an integer"
 
@@ -111,31 +108,6 @@ expected_error_msg_double <- "must be a double"
 expected_error_msg_any_na <- "must not contain NA values"
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = bad_vname,
-  n                          = good_n,
-  prevalence                 = good_prevalence,
-  contact_rate               = good_contact_rate,
-  transmission_rate          = good_transmission_rate,
-  vax_efficacy               = good_vax_efficacy,
-  vax_reduction_recovery_rate = good_vax_reduction_recovery_rate,
-  incubation_period          = good_incubation_period,
-  prodromal_period           = good_prodromal_period,
-  rash_period                = good_rash_period,
-  contact_matrix             = good_contact_matrix,
-  hospitalization_rate       = good_hospitalization_rate,
-  hospitalization_period     = good_hospitalization_period,
-  days_undetected            = good_days_undetected,
-  quarantine_period          = good_quarantine_period,
-  quarantine_willingness     = good_quarantine_willingness,
-  isolation_willingness      = good_isolation_willingness,
-  isolation_period           = good_isolation_period,
-  prop_vaccinated            = good_prop_vaccinated,
-  contact_tracing_success_rate = good_contact_tracing_success_rate,
-  contact_tracing_days_prior = good_contact_tracing_days_prior
-), expected_error_msg_str)
-
-expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = bad_numeric_input,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -159,7 +131,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 ), expected_error_msg_int)
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = bad_numeric_input,
   contact_rate               = good_contact_rate,
@@ -183,7 +154,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 ), expected_error_msg_double)
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -207,7 +177,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 ), expected_error_msg_any_na)
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -231,7 +200,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 ), expected_error_msg_double)
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -254,33 +222,7 @@ expect_error(test_model <- ModelMeaslesMixing(
   contact_tracing_days_prior = good_contact_tracing_days_prior
 ), expected_error_msg_int)
 
-# Check NA values
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = NA,
-  n                          = good_n,
-  prevalence                 = good_prevalence,
-  contact_rate               = good_contact_rate,
-  transmission_rate          = good_transmission_rate,
-  vax_efficacy               = good_vax_efficacy,
-  vax_reduction_recovery_rate = good_vax_reduction_recovery_rate,
-  incubation_period          = good_incubation_period,
-  prodromal_period           = good_prodromal_period,
-  rash_period                = good_rash_period,
-  contact_matrix             = good_contact_matrix,
-  hospitalization_rate       = good_hospitalization_rate,
-  hospitalization_period     = good_hospitalization_period,
-  days_undetected            = good_days_undetected,
-  quarantine_period          = good_quarantine_period,
-  quarantine_willingness     = good_quarantine_willingness,
-  isolation_willingness      = good_isolation_willingness,
-  isolation_period           = good_isolation_period,
-  prop_vaccinated            = good_prop_vaccinated,
-  contact_tracing_success_rate = good_contact_tracing_success_rate,
-  contact_tracing_days_prior = good_contact_tracing_days_prior
-), expected_error_msg_str)
-
-expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -305,7 +247,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 
 # Test bound checks for probability parameters
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,
@@ -329,7 +270,6 @@ expect_error(test_model <- ModelMeaslesMixing(
 ), "must be")
 
 expect_error(test_model <- ModelMeaslesMixing(
-  vname                       = good_vname,
   n                          = good_n,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,

@@ -6,7 +6,6 @@
 \title{Measles model with mixing}
 \usage{
 ModelMeaslesMixing(
-  vname,
   n,
   prevalence,
   contact_matrix,
@@ -30,8 +29,6 @@ ModelMeaslesMixing(
 )
 }
 \arguments{
-\item{vname}{String. Name of the virus}
-
 \item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
@@ -128,7 +125,6 @@ cmatrix <- c(
 N <- 9e3
 
 measles_model <- ModelMeaslesMixing(
-  vname                    = "Measles",
   n                        = N,
   prevalence               = 1 / N,
   contact_rate             = 15,
