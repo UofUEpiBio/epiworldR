@@ -11,7 +11,7 @@ the process."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ the process."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Run multiple simulations at once</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/v0.8.3.0/R/make_saver.R" class="external-link"><code>R/make_saver.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/R/make_saver.R" class="external-link"><code>R/make_saver.R</code></a></small>
       <div class="d-none name"><code>run_multiple.Rd</code></div>
     </div>
 
@@ -156,17 +156,17 @@ data specified by <code>make_saver</code>.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       1    0        1 Susceptible    990</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       1    0        1    Infected     10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3       1    0        1   Recovered      0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1        1 Susceptible    981</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1        1    Infected     18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1        1   Recovered      1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1    1        1 Susceptible    970</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1    1        1    Infected     28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1    1        1   Recovered      2</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ans</span><span class="op">$</span><span class="va">reproductive</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   sim_num virus_id    virus source source_exposure_date rt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1        0 COVID-19    519                   10  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1        0 COVID-19    152                    9  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1        0 COVID-19    949                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1        0 COVID-19    921                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1        0 COVID-19    855                    8  0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    816                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       1        0 COVID-19    415                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       1        0 COVID-19    132                   10  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       1        0 COVID-19    953                    9  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       1        0 COVID-19    313                    9  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       1        0 COVID-19    920                    8  0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       1        0 COVID-19    694                    8  0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting</span></span></span>
 <span class="r-in"><span><span class="va">multi_sir</span> <span class="op">&lt;-</span> <span class="va">ans</span><span class="op">$</span><span class="va">total_hist</span></span></span>

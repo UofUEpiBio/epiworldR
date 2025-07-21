@@ -11,7 +11,7 @@ detected cases and optional quarantine of unvaccinated individuals."></head><bod
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ detected cases and optional quarantine of unvaccinated individuals."></head><bod
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Measles model with quarantine</h1>
-      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/v0.8.3.0/R/ModelMeaslesQuarantine.R" class="external-link"><code>R/ModelMeaslesQuarantine.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/R/ModelMeaslesQuarantine.R" class="external-link"><code>R/ModelMeaslesQuarantine.R</code></a></small>
       <div class="d-none name"><code>ModelMeaslesQuarantine.Rd</code></div>
     </div>
 
@@ -133,7 +133,7 @@ are moved to isolation and trigger the quarantine process.</p></dd>
 
 
 <dt id="arg-quarantine-period">quarantine_period<a class="anchor" aria-label="anchor" href="#arg-quarantine-period"></a></dt>
-<dd><p>Total duration of quarantine.</p></dd>
+<dd><p>Number of days an agent is in quarantine.</p></dd>
 
 
 <dt id="arg-quarantine-willingness">quarantine_willingness<a class="anchor" aria-label="anchor" href="#arg-quarantine-willingness"></a></dt>
@@ -142,7 +142,7 @@ see details).</p></dd>
 
 
 <dt id="arg-isolation-period">isolation_period<a class="anchor" aria-label="anchor" href="#arg-isolation-period"></a></dt>
-<dd><p>Total duration of isolation.</p></dd>
+<dd><p>Number of days an agent is in isolation.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -192,11 +192,13 @@ Services. <a href="https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.
     <div class="dont-index"><p>epiworld-methods</p>
 <p>Other Models:
 <code><a href="ModelDiffNet.html">ModelDiffNet</a>()</code>,
+<code><a href="ModelMeaslesMixing.html">ModelMeaslesMixing</a>()</code>,
 <code><a href="ModelSEIR.html">ModelSEIR</a>()</code>,
 <code><a href="ModelSEIRCONN.html">ModelSEIRCONN</a>()</code>,
 <code><a href="ModelSEIRD.html">ModelSEIRD</a>()</code>,
 <code><a href="ModelSEIRDCONN.html">ModelSEIRDCONN</a>()</code>,
 <code><a href="ModelSEIRMixing.html">ModelSEIRMixing</a>()</code>,
+<code><a href="ModelSEIRMixingQuarantine.html">ModelSEIRMixingQuarantine</a>()</code>,
 <code><a href="ModelSIR.html">ModelSIR</a>()</code>,
 <code><a href="ModelSIRCONN.html">ModelSIRCONN</a>()</code>,
 <code><a href="ModelSIRD.html">ModelSIRD</a>()</code>,

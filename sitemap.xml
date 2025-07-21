@@ -17,12 +17,14 @@
 <url><loc>/paper.html</loc></url>
 <url><loc>/reference/LFMCMC.html</loc></url>
 <url><loc>/reference/ModelDiffNet.html</loc></url>
+<url><loc>/reference/ModelMeaslesMixing.html</loc></url>
 <url><loc>/reference/ModelMeaslesQuarantine.html</loc></url>
 <url><loc>/reference/ModelSEIR.html</loc></url>
 <url><loc>/reference/ModelSEIRCONN.html</loc></url>
 <url><loc>/reference/ModelSEIRD.html</loc></url>
 <url><loc>/reference/ModelSEIRDCONN.html</loc></url>
 <url><loc>/reference/ModelSEIRMixing.html</loc></url>
+<url><loc>/reference/ModelSEIRMixingQuarantine.html</loc></url>
 <url><loc>/reference/ModelSIR.html</loc></url>
 <url><loc>/reference/ModelSIRCONN.html</loc></url>
 <url><loc>/reference/ModelSIRD.html</loc></url>
