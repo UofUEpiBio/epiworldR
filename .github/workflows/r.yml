@@ -110,8 +110,10 @@ jobs:
     steps:
       - name: Get epiworldRShiny
         run: |
+          # Get the latest version from CRAN
+          LATEST_VERSION=$(curl -s https://crandb.r-pkg.org/epiworldRShiny | grep -o '"Version":"[^"]*"' | cut -d'"' -f4)
           wget \
-            https://cran.r-project.org/src/contrib/epiworldRShiny_0.1-0.tar.gz
+            https://cran.r-project.org/src/contrib/epiworldRShiny_${LATEST_VERSION}.tar.gz
 
       - name: Install dependencies
         run: |
