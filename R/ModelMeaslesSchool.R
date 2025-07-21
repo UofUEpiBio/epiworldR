@@ -157,5 +157,5 @@ ModelMeaslesQuarantine <- function(...) {
   )
 
   ModelMeaslesSchool(...)
-  
+
 }
