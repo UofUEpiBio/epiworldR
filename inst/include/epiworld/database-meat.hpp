@@ -48,10 +48,12 @@ inline void DataBase<TSeq>::reset()
     hist_tool_counts.clear();    
 
     today_virus.resize(get_n_viruses());
-    std::fill(today_virus.begin(), today_virus.begin(), std::vector<int>(model->nstates, 0));
+    for (auto& virus_states : today_virus)
+        virus_states.assign(model->nstates, 0);
 
     today_tool.resize(get_n_tools());
-    std::fill(today_tool.begin(), today_tool.begin(), std::vector<int>(model->nstates, 0));
+    for (auto& tool_states : today_tool)
+        tool_states.assign(model->nstates, 0);
 
     hist_total_date.clear();
     hist_total_state.clear();
@@ -228,7 +230,7 @@ inline void DataBase<TSeq>::record()
             hist_total_counts.push_back(today_total[s]);
         }
 
-        for (auto cell : transition_matrix)
+        for (const auto& cell : transition_matrix)
             hist_transition_matrix.push_back(cell);
 
         // Now the diagonal must reflect the state
@@ -620,7 +622,7 @@ inline void DataBase<TSeq>::record_transition(
 
 template<typename TSeq>
 inline int DataBase<TSeq>::get_today_total(
-    std::string what
+    const std::string & what
 ) const
 {
 
@@ -706,8 +708,7 @@ inline void DataBase<TSeq>::get_hist_virus(
 ) const {
 
     date = hist_virus_date;
-    std::vector< std::string > labels;
-    labels = model->states_labels;
+    const auto& labels = model->states_labels;
     
     id = hist_virus_id;
     state.resize(hist_virus_state.size(), "");
@@ -730,8 +731,7 @@ inline void DataBase<TSeq>::get_hist_tool(
 ) const {
 
     date = hist_tool_date;
-    std::vector< std::string > labels;
-    labels = model->states_labels;
+    const auto& labels = model->states_labels;
     
     id = hist_tool_id;
     state.resize(hist_tool_state.size(), "");
@@ -1291,7 +1291,7 @@ inline std::vector< epiworld_double > DataBase<TSeq>::get_transition_probability
     bool normalize
 ) const {
 
-    auto states_labels = model->get_states();
+    const auto& states_labels = model->get_states();
     size_t n_state = states_labels.size();
     size_t n_days   = model->get_ndays();
     std::vector< epiworld_double > res(n_state * n_state, 0.0);

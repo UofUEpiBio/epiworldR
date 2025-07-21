@@ -163,7 +163,7 @@ inline Agent<TSeq>::~Agent()
 
 template<typename TSeq>
 inline void Agent<TSeq>::add_tool(
-    ToolPtr<TSeq> tool,
+    ToolPtr<TSeq> & tool,
     Model<TSeq> * model,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
@@ -183,7 +183,7 @@ inline void Agent<TSeq>::add_tool(
 
 template<typename TSeq>
 inline void Agent<TSeq>::add_tool(
-    Tool<TSeq> tool,
+    const Tool<TSeq> & tool,
     Model<TSeq> * model,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
@@ -195,7 +195,7 @@ inline void Agent<TSeq>::add_tool(
 
 template<typename TSeq>
 inline void Agent<TSeq>::set_virus(
-    VirusPtr<TSeq> virus,
+    VirusPtr<TSeq> & virus,
     Model<TSeq> * model,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
@@ -222,7 +222,7 @@ inline void Agent<TSeq>::set_virus(
 
 template<typename TSeq>
 inline void Agent<TSeq>::set_virus(
-    Virus<TSeq> virus,
+    const Virus<TSeq> & virus,
     Model<TSeq> * model,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
@@ -253,8 +253,16 @@ inline void Agent<TSeq>::add_entity(
          // model entity
     {
 
+        auto nullvirus = VirusPtr<TSeq>(nullptr);
+        auto nulltool = ToolPtr<TSeq>(nullptr);
+        auto call = EventFun<TSeq>(default_add_entity<TSeq>);
+
         Event<TSeq> a(
-                this, nullptr, nullptr, &entity, state_new, queue, default_add_entity<TSeq>,
+                this,
+                nullvirus,
+                nulltool,
+                &entity, state_new, queue,
+                call,
                 -1, -1
             );
 

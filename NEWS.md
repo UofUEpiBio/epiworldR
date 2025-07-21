@@ -1,4 +1,15 @@
-# epiworldR 0.8.3.0
+# epiworldR 0.9.0.0 (dev)
+
+## Improvements
+
+* The C++ library has been updated to version 0.9.0, which includes several speed improvements. Some preliminary tests show x10 speedups.
+
+* New model `ModelSEIRMixingQuarantine` that implements a SEIR model with quarantine and mixing has been added.
+
+* New model `ModelMeaslessQuarantine` that implements a measles based on the `ModelSEIRMixingQuarantine` model has been added.
+
+
+# epiworldR 0.8.3.0 (CRAN)
 
 ## Improvements
 

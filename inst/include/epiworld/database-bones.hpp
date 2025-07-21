@@ -165,8 +165,8 @@ public:
      * corresponding date
      */
     ///@{
-    int get_today_total(std::string what) const;
-    int get_today_total(epiworld_fast_uint what) const;
+    int get_today_total(const std::string & what) const;
+    int get_today_total(const epiworld_fast_uint & what) const;
     void get_today_total(
         std::vector< std::string > * state = nullptr,
         std::vector< int > * counts = nullptr

@@ -199,15 +199,15 @@ inline void Model<TSeq>::events_add(
 
         Event<TSeq> & A = events.at(nactions - 1u);
 
-        A.agent      = agent_;
-        A.virus      = virus_;
-        A.tool       = tool_;
-        A.entity     = entity_;
-        A.new_state  = new_state_;
-        A.queue      = queue_;
-        A.call       = call_;
-        A.idx_agent  = idx_agent_;
-        A.idx_object = idx_object_;
+        A.agent      = std::move(agent_);
+        A.virus      = std::move(virus_);
+        A.tool       = std::move(tool_);
+        A.entity     = std::move(entity_);
+        A.new_state  = std::move(new_state_);
+        A.queue      = std::move(queue_);
+        A.call       = std::move(call_);
+        A.idx_agent  = std::move(idx_agent_);
+        A.idx_object = std::move(idx_object_);
 
     }
 
@@ -863,11 +863,12 @@ inline epiworld_double Model<TSeq>::rgamma() {
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_double beta) {
-    auto old_param = rgammad.param();
-    rgammad.param(std::gamma_distribution<>::param_type(alpha, beta));
-    epiworld_double ans = rgammad(*engine);
-    rgammad.param(old_param);
-    return ans;
+
+    return rgammad(
+        *engine,
+        std::gamma_distribution<>::param_type(alpha, beta)
+    );
+    
 }
 
 template<typename TSeq>
@@ -877,11 +878,12 @@ inline epiworld_double Model<TSeq>::rexp() {
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rexp(epiworld_double lambda) {
-    auto old_param = rexpd.param();
-    rexpd.param(std::exponential_distribution<>::param_type(lambda));
-    epiworld_double ans = rexpd(*engine);
-    rexpd.param(old_param);
-    return ans;
+
+    return rexpd(
+        *engine,
+        std::exponential_distribution<>::param_type(lambda)
+    );
+
 }
 
 template<typename TSeq>
@@ -891,11 +893,11 @@ inline epiworld_double Model<TSeq>::rlognormal() {
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_double shape) {
-    auto old_param = rlognormald.param();
-    rlognormald.param(std::lognormal_distribution<>::param_type(mean, shape));
-    epiworld_double ans = rlognormald(*engine);
-    rlognormald.param(old_param);
-    return ans;
+    
+    return rlognormald(
+        *engine,
+        std::lognormal_distribution<>::param_type(mean, shape)
+    );
 }
 
 template<typename TSeq>
@@ -905,11 +907,15 @@ inline int Model<TSeq>::rbinom() {
 
 template<typename TSeq>
 inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
-    auto old_param = rbinomd.param();
-    rbinomd.param(std::binomial_distribution<>::param_type(n, p));
-    epiworld_double ans = rbinomd(*engine);
-    rbinomd.param(old_param);
-    return ans;
+
+    if (n == 0 || p == 0.0)
+        return 0;
+
+    return rbinomd(
+        *engine,
+        std::binomial_distribution<>::param_type(n, p)
+    );
+
 }
 
 template<typename TSeq>
@@ -919,11 +925,11 @@ inline int Model<TSeq>::rnbinom() {
 
 template<typename TSeq>
 inline int Model<TSeq>::rnbinom(int n, epiworld_double p) {
-    auto old_param = rnbinomd.param();
-    rnbinomd.param(std::negative_binomial_distribution<>::param_type(n, p));
-    int ans = rnbinomd(*engine);
-    rnbinomd.param(old_param);
-    return ans;
+
+    return rnbinomd(
+        *engine,
+        std::negative_binomial_distribution<>::param_type(n, p)
+    );
 }
 
 template<typename TSeq>
@@ -933,11 +939,12 @@ inline int Model<TSeq>::rgeom() {
 
 template<typename TSeq>
 inline int Model<TSeq>::rgeom(epiworld_double p) {
-    auto old_param = rgeomd.param();
-    rgeomd.param(std::geometric_distribution<>::param_type(p));
-    int ans = rgeomd(*engine);
-    rgeomd.param(old_param);
-    return ans;
+
+    return rgeomd(
+        *engine,
+        std::geometric_distribution<>::param_type(p)
+    );
+
 }
 
 template<typename TSeq>
@@ -947,11 +954,12 @@ inline int Model<TSeq>::rpoiss() {
 
 template<typename TSeq>
 inline int Model<TSeq>::rpoiss(epiworld_double lambda) {
-    auto old_param = rpoissd.param();
-    rpoissd.param(std::poisson_distribution<>::param_type(lambda));
-    int ans = rpoissd(*engine);
-    rpoissd.param(old_param);
-    return ans;
+    
+    return rpoissd(
+        *engine,
+        std::poisson_distribution<>::param_type(lambda)
+    );
+
 }
 
 template<typename TSeq>
@@ -1530,25 +1538,23 @@ inline void Model<TSeq>::run_multiple(
     }
         
 
-    // Figuring out how many replicates
+    // Figuring out how many replicates - distribute remainder evenly
     std::vector< size_t > nreplicates(nthreads, 0);
     std::vector< size_t > nreplicates_csum(nthreads, 0);
+    
+    size_t base_replicates = nexperiments / nthreads;
+    size_t remainder = nexperiments % nthreads;
+    
     size_t sums = 0u;
     for (int i = 0; i < nthreads; ++i)
     {
-        nreplicates[i] = static_cast<epiworld_fast_uint>(
-            std::floor(nexperiments/nthreads)
-            );
+        // Distribute remainder to first 'remainder' threads
+        nreplicates[i] = base_replicates + (static_cast<size_t>(i) < remainder ? 1 : 0);
         
         // This takes the cumsum
         nreplicates_csum[i] = sums;
-
         sums += nreplicates[i];
-
     }
-
-    if (sums < nexperiments)
-        nreplicates[nthreads - 1] += (nexperiments - sums);
 
     Progress pb_multiple(
         nreplicates[0u],

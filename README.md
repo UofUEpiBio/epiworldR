@@ -7,10 +7,10 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/epiworldR.png)](https://CRAN.R-project.org/package=epiworldR)
+status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
 [![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 [![CRANlogs
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR.png)](https://cran.r-project.org/package=epiworldR)
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
@@ -56,15 +56,16 @@ Current available models:
 6.  `ModelSEIRD`
 7.  `ModelSEIRDCONN`
 8.  `ModelSEIRMixing`
-9.  `ModelSIR`
-10. `ModelSIRCONN`
-11. `ModelSIRD`
-12. `ModelSIRDCONN`
-13. `ModelSIRLogit`
-14. `ModelSIRMixing`
-15. `ModelSIS`
-16. `ModelSISD`
-17. `ModelSURV`
+9.  `ModelSEIRMixingQuarantine`
+10. `ModelSIR`
+11. `ModelSIRCONN`
+12. `ModelSIRD`
+13. `ModelSIRDCONN`
+14. `ModelSIRLogit`
+15. `ModelSIRMixing`
+16. `ModelSIS`
+17. `ModelSISD`
+18. `ModelSURV`
 
 ## Installation
 
@@ -144,8 +145,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 132.00ms
-#> Last run speed      : 37.85 million agents x day / second
+#> Last run elapsed t  : 122.00ms
+#> Last run speed      : 40.88 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -225,8 +226,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 143.00ms
-#> Last run speed      : 6.98 million agents x day / second
+#> Last run elapsed t  : 64.00ms
+#> Last run speed      : 15.41 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -499,7 +500,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.8.3.0,
+#>   Epi Models_. R package version 0.9.0.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,
