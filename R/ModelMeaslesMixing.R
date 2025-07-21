@@ -8,7 +8,7 @@
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param contact_matrix A row-stochastic matrix of mixing proportions between
 #' population groups.
-#' @param vax_reduction_recovery_rate Double. Vaccine reduction in recovery 
+#' @param vax_reduction_recovery_rate Double. Vaccine reduction in recovery
 #' rate (default: 0.5).
 #' @param transmission_rate Numeric scalar between 0 and 1. Probability of
 #' transmission (default: 0.9).
@@ -47,13 +47,13 @@
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
-#' 
-#' The default value for the contact rate is an approximation to the disease's 
+#'
+#' The default value for the contact rate is an approximation to the disease's
 #' basic reproduction number (R0), but it is not 100% accurate. A more accurate
 #' way to se the contact rate is available, and will be distributed in the
 #' future.
 #' @returns
-#' - The `ModelMeaslesMixing` function returns a model of classes 
+#' - The `ModelMeaslesMixing` function returns a model of classes
 #' [epiworld_model] and [epiworld_measlesmixing].
 #' @aliases epiworld_measlesmixing
 #'
