@@ -155,4 +155,7 @@ ModelMeaslesQuarantine <- function(...) {
     msg =
       "ModelMeaslesQuarantine is deprecated. Use ModelMeaslesSchool instead."
   )
+
+  ModelMeaslesSchool(...)
+  
 }
