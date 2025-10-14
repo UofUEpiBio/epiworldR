@@ -14,6 +14,6 @@ RUN install2.r --error languageserver && \
 RUN apt-get update && apt-get install --no-install-recommends -y valgrind gdb \
   libglpk-dev
 
-RUN apt-get update && apt-get install --no-install-recommends -y pre-commit
+RUN apt-get update && apt-get install --no-install-recommends -y pre-commit nano
 
 CMD ["bash"]
