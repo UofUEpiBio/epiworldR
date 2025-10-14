@@ -18,7 +18,7 @@ good_quarantine_period <- 15
 good_quarantine_willingness <- 1
 good_isolation_period <- 3
 
-expect_silent(measles_model <- ModelMeaslesQuarantine(
+expect_silent(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prevalence = good_prevalence,
     contact_rate = good_contact_rate,
@@ -70,175 +70,175 @@ expected_error_msg_na <- "must not be NA"
 expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = bad_input
 ), expected_error_msg_int)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prevalence = bad_input
 ), expected_error_msg_int)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     contact_rate = bad_input
 ), expected_error_msg_double)
 
 # Special test for transmission_rate because used in calculation of default contact_rate
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     transmission_rate = bad_input
 ), "non-numeric argument to binary operator")
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     contact_rate = good_contact_rate,
     transmission_rate = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     vax_efficacy = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     vax_improved_recovery = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     incubation_period = bad_input
 ), expected_error_msg_double)
 
 # Special test for prodromal_period because used in calculation of default contact_rate
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prodromal_period = bad_input
 ), "non-numeric argument to binary operator")
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     contact_rate = good_contact_rate,
     prodromal_period = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     rash_period = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     days_undetected = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     hospitalization_rate = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     hospitalization_period = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prop_vaccinated = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     quarantine_period = bad_input
 ), expected_error_msg_int)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     quarantine_willingness = bad_input
 ), expected_error_msg_double)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     isolation_period = bad_input
 ), expected_error_msg_int)
 
 # Check handling NA
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prevalence = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     contact_rate = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     transmission_rate = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     vax_efficacy = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     vax_improved_recovery = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     incubation_period = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prodromal_period = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     rash_period = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     days_undetected = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     hospitalization_rate = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     hospitalization_period = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     prop_vaccinated = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     quarantine_period = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     quarantine_willingness = NA
 ), expected_error_msg_na)
 
-expect_error(measles_model <- ModelMeaslesQuarantine(
+expect_error(measles_model <- ModelMeaslesSchool(
     n = good_n,
     isolation_period = NA
 ), expected_error_msg_na)

@@ -1,4 +1,11 @@
-# epiworldR 0.9.1.0 (dev)
+# epiworldR 0.9.4.0
+
+## Bug Fixes
+
+* The rewiring algorithm was not changing the edges, but only the weights of the edges. This has been fixed in epiworld 0.9.4.
+
+
+# epiworldR 0.9.1.0
 
 ## Improvements
 
