@@ -1,1 +1,1 @@
-- This repository hosts an R package that uses cpp11. Most the work lies on porting C++ code from the epiworld library and expose it 
+- This repository hosts an R package that uses cpp11. Most the work lies on porting C++ code from the epiworld library and expose it
