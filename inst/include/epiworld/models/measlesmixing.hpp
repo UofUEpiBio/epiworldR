@@ -12,7 +12,7 @@ using namespace epiworld;
         auto * output = dynamic_cast< ModelMeaslesMixing<TSeq> * >( (model) ); \
         /*Using the [[assume(...)]] to avoid the compiler warning \
         if the standard is C++23 or later */ \
-        [[assume((output) != nullptr)]]
+        [[assume((output) != nullptr)]];
 #else
     // C++17 or C++20
     #define GET_MODEL(model, output) \
@@ -37,7 +37,7 @@ using namespace epiworld;
 
 /**
  * @brief Measles model with population mixing, quarantine, and contact tracing
- * 
+ *
  * This class implements a Measles epidemiological model based on the SEIR framework
  * with additional features including:
  * - Population mixing based on contact matrices
@@ -49,10 +49,10 @@ using namespace epiworld;
  * - Contact tracing with configurable success rates
  * - Hospitalization of severe cases
  * - Individual willingness to comply with public health measures
- * 
+ *
  * The model supports 13 distinct states:
  * - Susceptible: Individuals who can become infected
- * - Exposed: Infected but not yet infectious (incubation period)  
+ * - Exposed: Infected but not yet infectious (incubation period)
  * - Prodromal: Infectious individuals in the community (replaces "Infected" in SEIR)
  * - Rash: Non-infectious individuals with visible symptoms (detection occurs here)
  * - Isolated: Detected individuals in self-isolation
@@ -64,20 +64,20 @@ using namespace epiworld;
  * - Quarantined Recovered: Recovered individuals in quarantine due to contact tracing
  * - Hospitalized: Individuals requiring hospital care
  * - Recovered: Individuals who have recovered and gained immunity
- * 
+ *
  * @tparam TSeq Type for genetic sequences (default: EPI_DEFAULT_TSEQ)
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesMixing : public Model<TSeq> 
+class ModelMeaslesMixing : public Model<TSeq>
 {
 private:
-    
-    // Vector of vectors of infected agents (prodromal agents are infectious)     
+
+    // Vector of vectors of infected agents (prodromal agents are infectious)
     std::vector< size_t > infectious;
 
     // Number of infectious agents in each group
     std::vector< size_t > n_infectious_per_group;
-    
+
     // Where the agents start in the `infectious` vector
     std::vector< size_t > entity_indices;
 
@@ -146,7 +146,7 @@ public:
     static const size_t QUARANTINE_PROCESS_DONE     = 2u;
 
     ModelMeaslesMixing() {};
-    
+
     /**
      * @brief Constructs a ModelMeaslesMixing object.
      *
@@ -197,7 +197,7 @@ public:
         epiworld_double contact_tracing_success_rate = 1.0,
         epiworld_fast_uint contact_tracing_days_prior = 4u
     );
-    
+
     /**
      * @brief Constructs a ModelMeaslesMixing object.
      *
@@ -347,10 +347,10 @@ inline void ModelMeaslesMixing<TSeq>::m_add_tracking(
 
     // We avoid the math if there's no point in tracking anymore
     if (
-        agent_quarantine_triggered[infectious_id] >= 
+        agent_quarantine_triggered[infectious_id] >=
         ModelMeaslesMixing<TSeq>::QUARANTINE_PROCESS_DONE
     )
-        return;    
+        return;
 
     // If we are overflow, we start from the beginning
     size_t loc = tracking_matrix_size[infectious_id] % EPI_MAX_TRACKING;
@@ -372,7 +372,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
     auto & agents = Model<TSeq>::get_agents();
 
     std::fill(n_infectious_per_group.begin(), n_infectious_per_group.end(), 0u);
-    
+
     for (const auto & a : agents)
     {
 
@@ -456,11 +456,11 @@ inline size_t ModelMeaslesMixing<TSeq>::sample_agents(
                 continue;
 
             sampled_agents[samp_id++] = a.get_id();
-            
+
         }
 
     }
-    
+
     return samp_id;
 
 }
@@ -482,7 +482,7 @@ template<typename TSeq>
 inline void ModelMeaslesMixing<TSeq>::reset()
 {
 
-    Model<TSeq>::reset();   
+    Model<TSeq>::reset();
 
     // Checking contact matrix's rows add to one
     size_t nentities = this->entities.size();
@@ -539,15 +539,15 @@ inline void ModelMeaslesMixing<TSeq>::reset()
             ;
 
     }
-    
+
     // Adjusting contact rate
     adjusted_contact_rate.clear();
     adjusted_contact_rate.resize(this->entities.size(), 0.0);
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-                
-        adjusted_contact_rate[i] = 
+
+        adjusted_contact_rate[i] =
             Model<TSeq>::get_param("Contact rate") /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
@@ -616,14 +616,14 @@ inline void ModelMeaslesMixing<TSeq>::reset()
 template<typename TSeq>
 inline Model<TSeq> * ModelMeaslesMixing<TSeq>::clone_ptr()
 {
-    
+
     ModelMeaslesMixing<TSeq> * ptr = new ModelMeaslesMixing<TSeq>(
         *dynamic_cast<const ModelMeaslesMixing<TSeq>*>(this)
         );
 
     #if __cplusplus >= 202302L
         // C++23 or later
-        [[assume(ptr != nullptr)]]
+        [[assume(ptr != nullptr)]];
     #else
         // C++17 or C++20
         assert(ptr != nullptr); // Use assert for runtime checks
@@ -644,7 +644,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
     // Downcasting to retrieve the sampler attached to the
     // class
     GET_MODEL(m, m_down);
-    
+
     size_t ndraws = m_down->sample_agents(p, m_down->sampled_agents);
 
     #ifdef EPI_DEBUG
@@ -653,7 +653,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
 
     if (ndraws == 0u)
         return;
-    
+
     // Drawing from the set
     int nviruses_tmp = 0;
     for (size_t n = 0u; n < ndraws; ++n)
@@ -672,14 +672,14 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
 
         // Adding the current agent to the tracked interactions
         m_down->m_add_tracking(neighbor.get_id(), p->get_id());
-            
-        /* And it is a function of susceptibility_reduction as well */ 
+
+        /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-            v->get_prob_infecting(m) * 
-            (1.0 - neighbor.get_transmission_reduction(v, m)) 
-            ; 
-    
+            (1.0 - p->get_susceptibility_reduction(v, m)) *
+            v->get_prob_infecting(m) *
+            (1.0 - neighbor.get_transmission_reduction(v, m))
+            ;
+
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
 
     }
@@ -696,7 +696,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
         ModelMeaslesMixing<TSeq>::EXPOSED
         );
 
-    return; 
+    return;
 
 };
 
@@ -735,7 +735,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_prodromal(
         model->day_rash_onset[p->get_id()] = m->today();
         p->change_state(m, ModelMeaslesMixing<TSeq>::RASH);
     }
-    
+
     return ;
 
 };
@@ -754,7 +754,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
         (m->runif() < 1.0/m->par("Days undetected"))
     )
     {
-        model->agent_quarantine_triggered[p->get_id()] = 
+        model->agent_quarantine_triggered[p->get_id()] =
             ModelMeaslesMixing<TSeq>::QUARANTINE_PROCESS_ACTIVE;
         detected = true;
     }
@@ -762,9 +762,9 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
     // Computing probabilities for state change
     m->array_double_tmp[0] = 1.0/m->par("Rash period"); // Recovery
     m->array_double_tmp[1] = m->par("Hospitalization rate"); // Hospitalization
-        
+
     SAMPLE_FROM_PROBS(2, which);
-    
+
     if (which == 2) // Recovers
     {
         p->rm_virus(
@@ -794,7 +794,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
         p->change_state(m, ModelMeaslesMixing<TSeq>::ISOLATED);
         model->day_flagged[p->get_id()] = m->today();
     }
-    
+
     return ;
 
 };
@@ -814,7 +814,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_isolated(
         (m->par("Isolation period") <= days_since) ?
         true: false;
 
-    // Sampling from the probabilities of recovery   
+    // Sampling from the probabilities of recovery
     m->array_double_tmp[0] = 1.0/m->par("Rash period");
 
     // And hospitalization
@@ -943,7 +943,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_prodromal(
     bool unquarantine =
         (m->par("Quarantine period") <= days_since) ?
         true: false;
-    
+
     // Develops rash?
     if (m->runif() < (1.0/m->par("Prodromal period")))
     {
@@ -952,7 +952,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_prodromal(
     }
     else
     {
-        
+
         if (unquarantine)
             p->change_state(m, ModelMeaslesMixing<TSeq>::PRODROMAL);
 
@@ -967,7 +967,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_recovered(
 
     GET_MODEL(m, model);
     int days_since = m->today() - model->day_flagged[p->get_id()];
-    
+
     if (days_since >= m->par("Quarantine period"))
         p->change_state(m, ModelMeaslesMixing<TSeq>::RECOVERED);
 
@@ -1018,7 +1018,7 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
         // Checking if the quarantine in the agent was triggered
         // or not
         if (
-            agent_quarantine_triggered[agent_i] != 
+            agent_quarantine_triggered[agent_i] !=
             ModelMeaslesMixing<TSeq>::QUARANTINE_PROCESS_ACTIVE
         )
             continue;
@@ -1027,7 +1027,7 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
             continue;
 
         // Getting the number of contacts, if it is greater
-        // than the maximum, it means that we overflowed, so 
+        // than the maximum, it means that we overflowed, so
         // we will only quarantine the first EPI_MAX_TRACKING
         size_t n_contacts = this->tracking_matrix_size[agent_i];
         if (n_contacts >= EPI_MAX_TRACKING)
@@ -1098,7 +1098,7 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
         }
 
         // Setting the quarantine process off
-        agent_quarantine_triggered[agent_i] = 
+        agent_quarantine_triggered[agent_i] =
             ModelMeaslesMixing<TSeq>::QUARANTINE_PROCESS_DONE;
     }
 
@@ -1107,7 +1107,7 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
 
 /**
  * @brief Template for a Measles model with population mixing, quarantine, and contact tracing
- * 
+ *
  * @param model A ModelMeaslesMixing<TSeq> object where to set up the model.
  * @param n Number of agents in the population
  * @param prevalence Initial prevalence (proportion of infected individuals)
@@ -1186,7 +1186,7 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     model.add_param(prop_vaccinated, "Vaccination rate");
     model.add_param(vax_efficacy, "Vax efficacy");
     model.add_param(vax_reduction_recovery_rate, "Vax improved recovery");
-    
+
     // state
     model.add_state("Susceptible", m_update_susceptible);
     model.add_state("Exposed", m_update_exposed);
@@ -1265,7 +1265,7 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     epiworld_double contact_tracing_success_rate,
     epiworld_fast_uint contact_tracing_days_prior
     )
-{   
+{
 
     this->contact_matrix = contact_matrix;
 
@@ -1314,4 +1314,5 @@ inline ModelMeaslesMixing<TSeq> & ModelMeaslesMixing<TSeq>::initial_states(
 }
 #undef MM
 #undef GET_MODEL
+#undef SAMPLE_FROM_PROBS
 #endif

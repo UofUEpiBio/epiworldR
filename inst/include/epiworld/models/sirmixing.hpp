@@ -7,7 +7,7 @@
         auto * output = dynamic_cast< ModelSIRMixing<TSeq> * >( (model) ); \
         /*Using the [[assume(...)]] to avoid the compiler warning \
         if the standard is C++23 or later */ \
-        [[assume((output) != nullptr)]]
+        [[assume((output) != nullptr)]];
 #else
     // C++17 or C++20
     #define GET_MODEL(model, output) \
@@ -20,17 +20,17 @@
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model with mixing
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRMixing : public epiworld::Model<TSeq> 
+class ModelSIRMixing : public epiworld::Model<TSeq>
 {
 private:
-    
+
     // Vector of infected agents
     std::vector< size_t > infected;
     size_t n_infected;
 
     // Number of infected agents in each group
     std::vector< size_t > n_infected_per_group;
-    
+
     // Where the agents start in the `infected` vector
     std::vector< size_t > entity_indices;
 
@@ -55,7 +55,7 @@ public:
     static const int RECOVERED   = 2;
 
     ModelSIRMixing() {};
-    
+
     /**
      * @brief Constructs a ModelSIRMixing object.
      *
@@ -78,7 +78,7 @@ public:
         epiworld_double recovery_rate,
         std::vector< double > contact_matrix
     );
-    
+
     /**
      * @brief Constructs a ModelSIRMixing object.
      *
@@ -139,7 +139,7 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
 
     std::fill(n_infected_per_group.begin(), n_infected_per_group.end(), 0u);
     n_infected = 0;
-    
+
     for (auto & a : agents)
     {
         if (a.get_state() == ModelSIRMixing<TSeq>::INFECTED)
@@ -219,11 +219,11 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
                 continue;
 
             sampled_agents[samp_id++] = a.get_id();
-            
+
         }
 
     }
-    
+
     return samp_id;
 
 }
@@ -234,7 +234,7 @@ inline ModelSIRMixing<TSeq> & ModelSIRMixing<TSeq>::run(
     int seed
 )
 {
-    
+
     Model<TSeq>::run(ndays, seed);
     return *this;
 
@@ -244,7 +244,7 @@ template<typename TSeq>
 inline void ModelSIRMixing<TSeq>::reset()
 {
 
-    Model<TSeq>::reset();   
+    Model<TSeq>::reset();
 
     // Checking contact matrix's rows add to one
     size_t nentities = this->entities.size();
@@ -299,14 +299,14 @@ inline void ModelSIRMixing<TSeq>::reset()
             entity_indices[i - 1]
             ;
     }
-    
+
     // Adjusting contact rate
     adjusted_contact_rate.clear();
     adjusted_contact_rate.resize(this->entities.size(), 0.0);
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-        adjusted_contact_rate[i] = 
+        adjusted_contact_rate[i] =
             Model<TSeq>::get_param("Contact rate") /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
@@ -323,7 +323,7 @@ inline void ModelSIRMixing<TSeq>::reset()
 template<typename TSeq>
 inline Model<TSeq> * ModelSIRMixing<TSeq>::clone_ptr()
 {
-    
+
     ModelSIRMixing<TSeq> * ptr = new ModelSIRMixing<TSeq>(
         *dynamic_cast<const ModelSIRMixing<TSeq>*>(this)
         );
@@ -335,7 +335,7 @@ inline Model<TSeq> * ModelSIRMixing<TSeq>::clone_ptr()
 
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
- * 
+ *
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
@@ -370,13 +370,13 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
             // Downcasting to retrieve the sampler attached to the
             // class
             GET_MODEL(m, m_down);
-            
+
             size_t ndraws = m_down->sample_agents(p, m_down->sampled_agents);
 
             if (ndraws == 0u)
                 return;
 
-            
+
             // Drawing from the set
             int nviruses_tmp = 0;
             for (size_t n = 0u; n < ndraws; ++n)
@@ -390,14 +390,14 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                 if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
                     throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
                 #endif
-                    
-                /* And it is a function of susceptibility_reduction as well */ 
+
+                /* And it is a function of susceptibility_reduction as well */
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor.get_transmission_reduction(v, m)) 
-                    ; 
-            
+                    (1.0 - p->get_susceptibility_reduction(v, m)) *
+                    v->get_prob_infecting(m) *
+                    (1.0 - neighbor.get_transmission_reduction(v, m))
+                    ;
+
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
 
             }
@@ -414,7 +414,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                 ModelSIRMixing<TSeq>::INFECTED
                 );
 
-            return; 
+            return;
 
         };
 
@@ -433,8 +433,8 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                 const auto & v = p->get_virus();
 
                 // Recover
-                m->array_double_tmp[n_events++] = 
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+                m->array_double_tmp[n_events++] =
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m));
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -449,7 +449,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                 if (n_events == 0u)
                     return;
                 #endif
-                
+
 
                 // Running the roulette
                 int which = roulette(n_events, m);
@@ -473,7 +473,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     model.add_param(contact_rate, "Contact rate");
     model.add_param(transmission_rate, "Prob. Transmission");
     model.add_param(recovery_rate, "Prob. Recovery");
-    
+
     // state
     model.add_state("Susceptible", update_susceptible);
     model.add_state("Infected", update_infected);
@@ -528,7 +528,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     epiworld_double recovery_rate,
     std::vector< double > contact_matrix
     )
-{   
+{
 
     this->contact_matrix = contact_matrix;
 
