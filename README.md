@@ -7,10 +7,10 @@
 <!-- badges: start -->
 
 [![CRAN
-status](https://www.r-pkg.org/badges/version/epiworldR.png)](https://CRAN.R-project.org/package=epiworldR)
+status](https://www.r-pkg.org/badges/version/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
 [![R-CMD-check](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg)](https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml)
 [![CRANlogs
-downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR.png)](https://cran.r-project.org/package=epiworldR)
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
