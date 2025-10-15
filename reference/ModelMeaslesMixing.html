@@ -11,7 +11,7 @@ quarantine, isolation, and contact tracing mechanisms."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,25 +55,24 @@ quarantine, isolation, and contact tracing mechanisms.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ModelMeaslesMixing</span><span class="op">(</span></span>
-<span>  <span class="va">vname</span>,</span>
 <span>  <span class="va">n</span>,</span>
 <span>  <span class="va">prevalence</span>,</span>
-<span>  <span class="va">contact_rate</span>,</span>
-<span>  <span class="va">transmission_rate</span>,</span>
-<span>  <span class="va">vax_efficacy</span>,</span>
-<span>  <span class="va">vax_reduction_recovery_rate</span>,</span>
-<span>  <span class="va">incubation_period</span>,</span>
-<span>  <span class="va">prodromal_period</span>,</span>
-<span>  <span class="va">rash_period</span>,</span>
 <span>  <span class="va">contact_matrix</span>,</span>
-<span>  <span class="va">hospitalization_rate</span>,</span>
-<span>  <span class="va">hospitalization_period</span>,</span>
-<span>  <span class="va">days_undetected</span>,</span>
-<span>  <span class="va">quarantine_period</span>,</span>
-<span>  <span class="va">quarantine_willingness</span>,</span>
-<span>  <span class="va">isolation_willingness</span>,</span>
-<span>  <span class="va">isolation_period</span>,</span>
+<span>  vax_reduction_recovery_rate <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  contact_rate <span class="op">=</span> <span class="fl">15</span><span class="op">/</span><span class="va">transmission_rate</span><span class="op">/</span><span class="va">prodromal_period</span>,</span>
 <span>  <span class="va">prop_vaccinated</span>,</span>
+<span>  vax_efficacy <span class="op">=</span> <span class="fl">0.99</span>,</span>
+<span>  quarantine_period <span class="op">=</span> <span class="fl">21</span>,</span>
+<span>  quarantine_willingness <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  isolation_willingness <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  isolation_period <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  incubation_period <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  prodromal_period <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  rash_period <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  hospitalization_rate <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  hospitalization_period <span class="op">=</span> <span class="fl">7</span>,</span>
+<span>  days_undetected <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  contact_tracing_success_rate <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  contact_tracing_days_prior <span class="op">=</span> <span class="fl">4</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -83,11 +82,7 @@ quarantine, isolation, and contact tracing mechanisms.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-vname">vname<a class="anchor" aria-label="anchor" href="#arg-vname"></a></dt>
-<dd><p>String. Name of the virus</p></dd>
-
-
-<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
+<dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>Number of individuals in the population.</p></dd>
 
 
@@ -95,84 +90,92 @@ quarantine, isolation, and contact tracing mechanisms.</p>
 <dd><p>Double. Initial proportion of individuals with the virus.</p></dd>
 
 
-<dt id="arg-contact-rate">contact_rate<a class="anchor" aria-label="anchor" href="#arg-contact-rate"></a></dt>
-<dd><p>Numeric scalar. Average number of contacts per step.</p></dd>
+<dt id="arg-contact-matrix">contact_matrix<a class="anchor" aria-label="anchor" href="#arg-contact-matrix"></a></dt>
+<dd><p>A row-stochastic matrix of mixing proportions between
+population groups.</p></dd>
+
+
+<dt id="arg-vax-reduction-recovery-rate">vax_reduction_recovery_rate<a class="anchor" aria-label="anchor" href="#arg-vax-reduction-recovery-rate"></a></dt>
+<dd><p>Double. Vaccine reduction in recovery
+rate (default: 0.5).</p></dd>
 
 
 <dt id="arg-transmission-rate">transmission_rate<a class="anchor" aria-label="anchor" href="#arg-transmission-rate"></a></dt>
 <dd><p>Numeric scalar between 0 and 1. Probability of
-transmission.</p></dd>
+transmission (default: 0.9).</p></dd>
 
 
-<dt id="arg-vax-efficacy">vax_efficacy<a class="anchor" aria-label="anchor" href="#arg-vax-efficacy"></a></dt>
-<dd><p>Double. Vaccine efficacy rate.</p></dd>
-
-
-<dt id="arg-vax-reduction-recovery-rate">vax_reduction_recovery_rate<a class="anchor" aria-label="anchor" href="#arg-vax-reduction-recovery-rate"></a></dt>
-<dd><p>Double. Vaccine reduction in recovery rate.</p></dd>
-
-
-<dt id="arg-incubation-period">incubation_period<a class="anchor" aria-label="anchor" href="#arg-incubation-period"></a></dt>
-<dd><p>Double. Duration of incubation period.</p></dd>
-
-
-<dt id="arg-prodromal-period">prodromal_period<a class="anchor" aria-label="anchor" href="#arg-prodromal-period"></a></dt>
-<dd><p>Double. Duration of prodromal period.</p></dd>
-
-
-<dt id="arg-rash-period">rash_period<a class="anchor" aria-label="anchor" href="#arg-rash-period"></a></dt>
-<dd><p>Double. Duration of rash period.</p></dd>
-
-
-<dt id="arg-contact-matrix">contact_matrix<a class="anchor" aria-label="anchor" href="#arg-contact-matrix"></a></dt>
-<dd><p>Matrix of contact rates between individuals.</p></dd>
-
-
-<dt id="arg-hospitalization-rate">hospitalization_rate<a class="anchor" aria-label="anchor" href="#arg-hospitalization-rate"></a></dt>
-<dd><p>Double. Rate of hospitalization.</p></dd>
-
-
-<dt id="arg-hospitalization-period">hospitalization_period<a class="anchor" aria-label="anchor" href="#arg-hospitalization-period"></a></dt>
-<dd><p>Double. Period of hospitalization.</p></dd>
-
-
-<dt id="arg-days-undetected">days_undetected<a class="anchor" aria-label="anchor" href="#arg-days-undetected"></a></dt>
-<dd><p>Double. Number of days an infection goes undetected.</p></dd>
-
-
-<dt id="arg-quarantine-period">quarantine_period<a class="anchor" aria-label="anchor" href="#arg-quarantine-period"></a></dt>
-<dd><p>Integer. Number of days for quarantine.</p></dd>
-
-
-<dt id="arg-quarantine-willingness">quarantine_willingness<a class="anchor" aria-label="anchor" href="#arg-quarantine-willingness"></a></dt>
-<dd><p>Double. Proportion of agents willing to quarantine.</p></dd>
-
-
-<dt id="arg-isolation-willingness">isolation_willingness<a class="anchor" aria-label="anchor" href="#arg-isolation-willingness"></a></dt>
-<dd><p>Double. Proportion of agents willing to isolate.</p></dd>
-
-
-<dt id="arg-isolation-period">isolation_period<a class="anchor" aria-label="anchor" href="#arg-isolation-period"></a></dt>
-<dd><p>Integer. Number of days for isolation.</p></dd>
+<dt id="arg-contact-rate">contact_rate<a class="anchor" aria-label="anchor" href="#arg-contact-rate"></a></dt>
+<dd><p>Numeric scalar. Average number of contacts per step.</p></dd>
 
 
 <dt id="arg-prop-vaccinated">prop_vaccinated<a class="anchor" aria-label="anchor" href="#arg-prop-vaccinated"></a></dt>
 <dd><p>Double. Proportion of population that is vaccinated.</p></dd>
 
 
+<dt id="arg-vax-efficacy">vax_efficacy<a class="anchor" aria-label="anchor" href="#arg-vax-efficacy"></a></dt>
+<dd><p>Double. Vaccine efficacy rate (default: 0.99).</p></dd>
+
+
+<dt id="arg-quarantine-period">quarantine_period<a class="anchor" aria-label="anchor" href="#arg-quarantine-period"></a></dt>
+<dd><p>Integer. Number of days for quarantine
+(default: 21).</p></dd>
+
+
+<dt id="arg-quarantine-willingness">quarantine_willingness<a class="anchor" aria-label="anchor" href="#arg-quarantine-willingness"></a></dt>
+<dd><p>Double. Proportion of agents willing to
+quarantine (default: 1).</p></dd>
+
+
+<dt id="arg-isolation-willingness">isolation_willingness<a class="anchor" aria-label="anchor" href="#arg-isolation-willingness"></a></dt>
+<dd><p>Double. Proportion of agents willing to isolate
+(default: 1).</p></dd>
+
+
+<dt id="arg-isolation-period">isolation_period<a class="anchor" aria-label="anchor" href="#arg-isolation-period"></a></dt>
+<dd><p>Integer. Number of days for isolation (default: 4).</p></dd>
+
+
+<dt id="arg-incubation-period">incubation_period<a class="anchor" aria-label="anchor" href="#arg-incubation-period"></a></dt>
+<dd><p>Double. Duration of incubation period (default: 12).</p></dd>
+
+
+<dt id="arg-prodromal-period">prodromal_period<a class="anchor" aria-label="anchor" href="#arg-prodromal-period"></a></dt>
+<dd><p>Double. Duration of prodromal period (default: 4).</p></dd>
+
+
+<dt id="arg-rash-period">rash_period<a class="anchor" aria-label="anchor" href="#arg-rash-period"></a></dt>
+<dd><p>Double. Duration of rash period (default: 3).</p></dd>
+
+
+<dt id="arg-hospitalization-rate">hospitalization_rate<a class="anchor" aria-label="anchor" href="#arg-hospitalization-rate"></a></dt>
+<dd><p>Double. Rate of hospitalization (default: 0.2).</p></dd>
+
+
+<dt id="arg-hospitalization-period">hospitalization_period<a class="anchor" aria-label="anchor" href="#arg-hospitalization-period"></a></dt>
+<dd><p>Double. Period of hospitalization (default: 7).</p></dd>
+
+
+<dt id="arg-days-undetected">days_undetected<a class="anchor" aria-label="anchor" href="#arg-days-undetected"></a></dt>
+<dd><p>Double. Number of days an infection goes undetected
+(default: 2).</p></dd>
+
+
 <dt id="arg-contact-tracing-success-rate">contact_tracing_success_rate<a class="anchor" aria-label="anchor" href="#arg-contact-tracing-success-rate"></a></dt>
-<dd><p>Double. Probability of successful contact tracing.</p></dd>
+<dd><p>Double. Probability of successful
+contact tracing (default: 1.0).</p></dd>
 
 
 <dt id="arg-contact-tracing-days-prior">contact_tracing_days_prior<a class="anchor" aria-label="anchor" href="#arg-contact-tracing-days-prior"></a></dt>
 <dd><p>Integer. Number of days prior to the onset
-of the infection for which contact tracing is effective.</p></dd>
+of the infection for which contact tracing is effective (default: 4).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
 
-<ul><li><p>The <code>ModelMeaslesMixing</code> function returns a model of class <a href="epiworld-methods.html">epiworld_model</a>.</p></li>
+<ul><li><p>The <code>ModelMeaslesMixing</code> function returns a model of classes
+<a href="epiworld-methods.html">epiworld_model</a> and epiworld_measlesmixing.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -180,18 +183,22 @@ of the infection for which contact tracing is effective.</p></dd>
 matrix should be of size <code>n x n</code>, where <code>n</code> is the number of entities.
 This is a row-stochastic matrix, i.e., the sum of each row should be 1.</p>
 <p>The model includes three distinct phases of measles infection: incubation,
-prodromal, and rash periods. Vaccination provides protection against infection
-and may reduce recovery time.</p>
+prodromal, and rash periods. Vaccination provides protection against
+infection and may reduce recovery time.</p>
 <p>The <a href="epiworld-methods.html">initial_states</a> function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.</p>
+<p>The default value for the contact rate is an approximation to the disease's
+basic reproduction number (R0), but it is not 100% accurate. A more accurate
+way to se the contact rate is available, and will be distributed in the
+future.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>epiworld-methods</p>
 <p>Other Models:
 <code><a href="ModelDiffNet.html">ModelDiffNet</a>()</code>,
-<code><a href="ModelMeaslesQuarantine.html">ModelMeaslesQuarantine</a>()</code>,
+<code><a href="ModelMeaslesSchool.html">ModelMeaslesSchool</a>()</code>,
 <code><a href="ModelSEIR.html">ModelSEIR</a>()</code>,
 <code><a href="ModelSEIRCONN.html">ModelSEIRCONN</a>()</code>,
 <code><a href="ModelSEIRD.html">ModelSEIRD</a>()</code>,
@@ -229,7 +236,6 @@ agents have been removed at the beginning of the simulation.</p>
 <span class="r-in"><span><span class="va">N</span> <span class="op">&lt;-</span> <span class="fl">9e3</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">measles_model</span> <span class="op">&lt;-</span> <span class="fu">ModelMeaslesMixing</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  vname                    <span class="op">=</span> <span class="st">"Measles"</span>,</span></span>
 <span class="r-in"><span>  n                        <span class="op">=</span> <span class="va">N</span>,</span></span>
 <span class="r-in"><span>  prevalence               <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="va">N</span>,</span></span>
 <span class="r-in"><span>  contact_rate             <span class="op">=</span> <span class="fl">15</span>,</span></span>
@@ -274,8 +280,8 @@ agents have been removed at the beginning of the simulation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of entities  : 3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Days (duration)     : 100 (of 100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Number of viruses   : 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 120.00ms</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 7.45 million agents x day / second</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run elapsed t  : 127.00ms</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Last run speed      : 7.06 million agents x day / second</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Rewiring            : off</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Global events:</span>
@@ -307,33 +313,33 @@ agents have been removed at the beginning of the simulation.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Vax improved recovery        : 0.8000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Distribution of the population at time 100:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 0) Susceptible             : 8999 -&gt; 7172</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 1) Exposed                 :    1 -&gt; 405</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 2) Prodromal               :    0 -&gt; 130</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 3) Rash                    :    0 -&gt; 45</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 4) Isolated                :    0 -&gt; 5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 5) Isolated Recovered      :    0 -&gt; 159</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 6) Detected Hospitalized   :    0 -&gt; 15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 7) Quarantined Exposed     :    0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 8) Quarantined Susceptible :    0 -&gt; 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 0) Susceptible             : 8999 -&gt; 6919</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 1) Exposed                 :    1 -&gt; 299</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 2) Prodromal               :    0 -&gt; 83</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 3) Rash                    :    0 -&gt; 35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 4) Isolated                :    0 -&gt; 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 5) Isolated Recovered      :    0 -&gt; 131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 6) Detected Hospitalized   :    0 -&gt; 25</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 7) Quarantined Exposed     :    0 -&gt; 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 8) Quarantined Susceptible :    0 -&gt; 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - ( 9) Quarantined Prodromal   :    0 -&gt; 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   - (10) Quarantined Recovered   :    0 -&gt; 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (11) Hospitalized            :    0 -&gt; 17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   - (12) Recovered               :    0 -&gt; 1051</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (11) Hospitalized            :    0 -&gt; 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   - (12) Recovered               :    0 -&gt; 1493</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Transition Probabilities:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Susceptible              1.00  0.00     -     -     -     -     -     -  0.00     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed                     -  0.90  0.10     -     -     -     -  0.00     -  0.00     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prodromal                   -     -  0.68  0.32     -     -     -     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Rash                        -     -     -  0.06  0.08  0.37  0.06     -     -     -     -  0.06  0.38</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Isolated                    -     -     -     -  0.15  0.76  0.09     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Isolated Recovered          -     -     -     -     -  0.90     -     -     -     -     -     -  0.10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Detected Hospitalized       -     -     -     -     -     -  0.89     -     -     -     -     -  0.11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Exposed         -  0.02  0.01     -     -     -     -  0.85     -  0.12     -     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Exposed                     -  0.89  0.10     -     -     -     -  0.01     -  0.00     -     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Prodromal                   -     -  0.66  0.33  0.00     -     -     -     -  0.00     -     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Rash                        -     -     -  0.07  0.08  0.39  0.06     -     -     -     -  0.05  0.36</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Isolated                    -     -     -     -  0.16  0.75  0.09     -     -     -     -     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Isolated Recovered          -     -     -     -     -  0.89     -     -     -     -     -     -  0.11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Detected Hospitalized       -     -     -     -     -     -  0.91     -     -     -     -     -  0.09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Exposed         -  0.03  0.00     -     -     -     -  0.87     -  0.09     -     -     -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Susceptible  0.07     -     -     -     -     -     -     -  0.93     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Prodromal       -     -  0.04     -  0.46     -     -     -     -  0.50     -     -     -</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Prodromal       -     -  0.01     -  0.38     -     -     -     -  0.61     -     -     -</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Quarantined Recovered       -     -     -     -     -     -     -     -     -     -     -     -     -</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  - Hospitalized                -     -     -     -     -     -     -     -     -     -     -  0.91  0.09</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - Hospitalized                -     -     -     -     -     -     -     -     -     -     -  0.89  0.11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  - Recovered                   -     -     -     -     -     -     -     -     -     -     -     -  1.00</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Andrew
 Pulsipher</h4>
             
-            <h4 data-toc-skip class="date">2025-07-21</h4>
+            <h4 data-toc-skip class="date">2025-10-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UofUEpiBio/epiworldR/blob/main/vignettes/likelihood-free-mcmc.Rmd" class="external-link"><code>vignettes/likelihood-free-mcmc.Rmd</code></a></small>
       <div class="d-none name"><code>likelihood-free-mcmc.Rmd</code></div>
@@ -146,8 +146,8 @@ functions to construct the model in epiworldR.</p>
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 271.00µs</span></span>
-<span><span class="co">#&gt; Last run speed      : 369.00 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 326.00µs</span></span>
+<span><span class="co">#&gt; Last run speed      : 306.75 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -164,13 +164,13 @@ functions to construct the model in epiworldR.</p>
 <span><span class="co">#&gt;  - Transmission rate : 0.1000</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Distribution of the population at time 50:</span></span>
-<span><span class="co">#&gt;   - (0) Susceptible : 1980 -&gt; 1865</span></span>
-<span><span class="co">#&gt;   - (1) Infected    :   20 -&gt; 0</span></span>
-<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 135</span></span>
+<span><span class="co">#&gt;   - (0) Susceptible : 1980 -&gt; 1824</span></span>
+<span><span class="co">#&gt;   - (1) Infected    :   20 -&gt; 18</span></span>
+<span><span class="co">#&gt;   - (2) Recovered   :    0 -&gt; 158</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Transition Probabilities:</span></span>
 <span><span class="co">#&gt;  - Susceptible  1.00  0.00     -</span></span>
-<span><span class="co">#&gt;  - Infected        -  0.85  0.15</span></span>
+<span><span class="co">#&gt;  - Infected        -  0.87  0.13</span></span>
 <span><span class="co">#&gt;  - Recovered       -     -  1.00</span></span></code></pre></div>
 <p>Note the “Model parameters” and the “Distribution of the population
 at time 50” from the above output. Our goal is to recover the model
@@ -302,16 +302,16 @@ samples.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; N Samples (total) : 2000</span></span>
 <span><span class="co">#&gt; N Samples (after burn-in period) : 500</span></span>
-<span><span class="co">#&gt; Elapsed t : 1.00s</span></span>
+<span><span class="co">#&gt; Elapsed t : 656.00ms</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Parameters:</span></span>
-<span><span class="co">#&gt;   -Recovery rate     :  0.14 [ 0.13,  0.15] (initial :  0.30)</span></span>
-<span><span class="co">#&gt;   -Transmission rate :  0.09 [ 0.09,  0.10] (initial :  0.30)</span></span>
+<span><span class="co">#&gt;   -Recovery rate     :  0.49 [ 0.46,  0.55] (initial :  0.30)</span></span>
+<span><span class="co">#&gt;   -Transmission rate :  0.27 [ 0.25,  0.29] (initial :  0.30)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Statistics:</span></span>
-<span><span class="co">#&gt;   -Susceptible :  1865.49 [ 1864.00,  1866.00] (Observed:  1865.00)</span></span>
-<span><span class="co">#&gt;   -Infected    :     0.00 [    0.00,     0.00] (Observed:     0.00)</span></span>
-<span><span class="co">#&gt;   -Recovered   :   134.51 [  134.00,   136.00] (Observed:   135.00)</span></span>
+<span><span class="co">#&gt;   -Susceptible :  1833.42 [ 1831.00,  1835.00] (Observed:  1824.00)</span></span>
+<span><span class="co">#&gt;   -Infected    :     0.00 [    0.00,     0.00] (Observed:    18.00)</span></span>
+<span><span class="co">#&gt;   -Recovered   :   166.58 [  165.00,   169.00] (Observed:   158.00)</span></span>
 <span><span class="co">#&gt; ___________________________________________</span></span></code></pre></div>
 <p>We can also look at the trace of the parameters:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">

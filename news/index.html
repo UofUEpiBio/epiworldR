@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">epiworldR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,12 +42,23 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.9.0.0" id="epiworldr-0900-dev">epiworldR 0.9.0.0 (dev)<a class="anchor" aria-label="anchor" href="#epiworldr-0900-dev"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.9.4.0" id="epiworldr-0940">epiworldR 0.9.4.0<a class="anchor" aria-label="anchor" href="#epiworldr-0940"></a></h2>
 <div class="section level3">
-<h3 id="improvements-0-9-0-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-9-0-0"></a></h3>
-<ul><li><p>The C++ library has been updated to version 0.9.0, which includes several speed improvements. Some preliminary tests show x10 speedups.</p></li>
+<h3 id="bug-fixes-0-9-4-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-9-4-0"></a></h3>
+<ul><li>The rewiring algorithm was not changing the edges, but only the weights of the edges. This has been fixed in epiworld 0.9.4.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.1.0" id="epiworldr-0910">epiworldR 0.9.1.0<a class="anchor" aria-label="anchor" href="#epiworldr-0910"></a></h2>
+<div class="section level3">
+<h3 id="improvements-0-9-1-0">Improvements<a class="anchor" aria-label="anchor" href="#improvements-0-9-1-0"></a></h3>
+<ul><li><p>The C++ library has been updated to version 0.9.1, which includes several speed improvements. Some preliminary tests show x10 speedups.</p></li>
 <li><p>New model <code>ModelSEIRMixingQuarantine</code> that implements a SEIR model with quarantine and mixing has been added.</p></li>
-<li><p>New model <code>ModelMeaslessQuarantine</code> that implements a measles based on the <code>ModelSEIRMixingQuarantine</code> model has been added.</p></li>
+<li><p>New model <code>ModelMeasles</code> that implements a measles based on the <code>ModelSEIRMixingQuarantine</code> model has been added.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-changes-0-9-1-0">Other changes<a class="anchor" aria-label="anchor" href="#other-changes-0-9-1-0"></a></h3>
+<ul><li>The Model <code>ModelMeaslesQuarantine</code> has been deprecated in favor of <code>ModelMeaslesSchool</code> (change of name).</li>
 </ul></div>
 </div>
     <div class="section level2">
