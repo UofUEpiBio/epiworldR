@@ -49,7 +49,7 @@ run_multiple(
   )
 
 res1 <- run_multiple_get_results(
-  model_seircon, nthreads = 1L #, freader = data.table::fread
+  model_seircon, nthreads = 1L, freader = data.table::fread
   )
 
 
