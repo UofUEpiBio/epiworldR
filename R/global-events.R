@@ -8,8 +8,24 @@
 #' @export
 #' @param prob Numeric scalar. A probability between 0 and 1.
 #' @param tool An object of class [tool].
+#' @param day Integer. The day (step) at which the event is executed (see details).
+#' When negative (default -99), the event is executed at each time step.
+#' When positive, the event is executed only at the specified day.
+#' @param name Character scalar. The name of the event.
 #' @name global-events
 #' @aliases global-actions
+#' @details 
+#' Global events can be created using:
+#' - `globalevent_tool()`: Distribute a tool to agents with a given probability
+#' - `globalevent_tool_logit()`: Distribute a tool using a logistic regression model
+#' - `globalevent_set_params()`: Change a model parameter at a specific time
+#' - `globalevent_fun()`: Execute a custom R function at each time step or specific day
+#' 
+#' Once created, events are added to a model with `add_globalevent()` and can be 
+#' removed by name with `rm_globalevent()`.
+#' 
+#' **Note:** The `globalaction_*` family of functions are deprecated. Use the 
+#' `globalevent_*` functions instead.
 #' @examples
 #' # Simple model
 #' model_sirconn <- ModelSIRCONN(
@@ -265,25 +281,22 @@ print.epiworld_globalevent <- function(x, ...) {
 
 }
 
+#' Add Global Event to Model
+#'
 #' @export
-#' @param action (Deprecated) use `event` instead.
-#' @param event The event to be added or removed. If it is to add, then
-#' it should be an object of class `epiworld_globalevent`. If it is to remove,
-#' it should be an integer with the position of the event in the model
-#' (starting from zero).
-#' @param day Integer. The day (step) at which the action is executed (see details).
 #' @param model An object of class [epiworld_model].
-#' @param name Character scalar. The name of the action.
-#' @rdname global-events
+#' @param event An object of class `epiworld_globalevent` to be added to the model.
+#' @param action (Deprecated) use `event` instead.
+#' @rdname add_globalevent
 #' @seealso epiworld-model
-#' @details The function `add_globalevent` adds a global action to a model.
-#' The model checks for actions to be executed at each time step. If the added
-#' action matches the current time step, the action is executed. When `day` is
-#' negative, the action is executed at each time step. When `day` is positive,
-#' the action is executed at the specified time step.
-#' @returns
-#' - The function `add_globalevent` returns the model with the added
-#' event
+#' @details The function `add_globalevent` adds a global event to a model.
+#' The model checks for events to be executed at each time step. If the added
+#' event matches the current time step, the event is executed. When `day` is
+#' negative (the default), the event is executed at each time step. When `day` 
+#' is positive, the event is executed at the specified time step.
+#' @returns The model with the added event (invisibly).
+#' @examples
+#' # See examples in ?global-events
 add_globalevent <- function(model, event, action = NULL) {
 
   if (missing(event) && !missing(action)) {
@@ -300,14 +313,48 @@ add_globalevent <- function(model, event, action = NULL) {
 
 }
 
+#' Remove Global Event from Model
+#'
 #' @export
-#' @rdname global-events
-#' @returns
-#' - The function `rm_globalevent` returns the model with the removed
-#' event.
-rm_globalevent <- function(model, event) {
+#' @param model An object of class [epiworld_model].
+#' @param name Character scalar. The name of the global event to remove.
+#' @rdname rm_globalevent
+#' @seealso epiworld-model
+#' @details The function `rm_globalevent` removes a global event from a model
+#' by its name. The name should match the name assigned when the event was 
+#' created (e.g., through `globalevent_tool()`, `globalevent_fun()`, etc.).
+#' @returns The model with the event removed (invisibly).
+#' @examples
+#' \dontrun{
+#' # Create a model
+#' model_sirconn <- ModelSIRCONN(
+#'   name = "COVID-19",
+#'   n = 10000,
+#'   prevalence = 0.01,
+#'   contact_rate = 5,
+#'   transmission_rate = 0.4,
+#'   recovery_rate = 0.95
+#' )
+#'
+#' # Add a global event
+#' epitool <- tool(
+#'   name = "Vaccine",
+#'   prevalence = 0,
+#'   as_proportion = FALSE,
+#'   susceptibility_reduction = .9,
+#'   transmission_reduction = .5,
+#'   recovery_enhancer = .5,
+#'   death_reduction = .9
+#' )
+#' vaccine_event <- globalevent_tool(epitool, .2, name = "Vaccination", day = 20)
+#' add_globalevent(model_sirconn, vaccine_event)
+#'
+#' # Remove the global event by name
+#' rm_globalevent(model_sirconn, "Vaccination")
+#' }
+rm_globalevent <- function(model, name) {
 
   stopifnot_model(model)
-  invisible(rm_globalevent_cpp(model, event))
+  invisible(rm_globalevent_cpp(model, name))
 
 }
