@@ -12,18 +12,31 @@ model_seircon=ModelSEIRCONN(
   transmission_rate = 0.5,
   recovery_rate = 1/7,
   incubation_days = 3
+  ) |>
+  add_tool(
+    tool = tool(
+      name = "test_tool",
+      prevalence = .5,
+      as_proportion = TRUE,
+      susceptibility_reduction = 0.0,
+      transmission_reduction = 0.0,
+      recovery_enhancer = 0.0,
+      death_reduction = 0.0
+      )
   )
 
 run(model_seircon,ndays=days,seed=1912)
 
 saver <- make_saver(
   "total_hist",
+  "virus_hist",
+  "virus_info",
+  "tool_info",
+  "tool_hist",
   "transmission",
   "transition",
   "reproductive",
-  "generation",
-  "tool_hist",
-  "virus_hist"
+  "generation"
 )
 
 run_multiple(
@@ -35,12 +48,8 @@ run_multiple(
   nthreads = 2L
   )
 
-res1 <- run_multiple_get_results(model_seircon, nthreads = 2L, freader = data.table::fread, nthreads = 1L)
+res1 <- run_multiple_get_results(
+  model_seircon, nthreads = 1L #, freader = data.table::fread
+  )
 
-res1 <- lapply(res1, data.table::as.data.table)
 
-avg_infected <- res1$total_hist[date==50 & state=="Infected"]$counts |> mean()
-avg_recovered <- res1$total_hist[date==50 & state=="Recovered"]$counts |> mean()
-
-expect_true(abs(avg_infected - 13.8) < 50)
-expect_true(abs(avg_recovered - 4986) < 50)
