@@ -1,28 +1,5 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-sirconn.R")
 
-# Function to test transition probability matrix ------------------------
-test_tmat <- function(tmat) {
-  tmat_expected <- structure(
-    c(
-      0.823433858323328, 0, 0, 
-      0.176566141676672, 0.856971222609989, 0, 
-      0, 0.143028777390011, 1
-    ),
-    dim = c(3L, 3L),
-    dimnames = list(
-      c("Susceptible", "Infected", "Recovered"),
-      c("Susceptible", "Infected", "Recovered")
-    )
-  )
-  
-  # Check matches expected output
-  expect_equal(tmat, tmat_expected, tolerance = 0.1)
-  
-  # Check for out of bounds values
-  expect_false(any(tmat < 0))
-  expect_false(any(tmat > 1))
-}
-
 # Create SIR CONN Model --------------------------------------------------------
 expect_silent(sirconn_0 <- ModelSIRCONN(
   name = "A Virus",
@@ -48,7 +25,7 @@ expect_silent(plot(sirconn_0)) # Plot succeeds after model is run
 hist_queuing <- get_hist_total(sirconn_0)
 tmat_queuing <- get_transition_probability(sirconn_0)
 
-test_tmat(tmat_queuing)
+test_tmat_matches_expected(tmat_queuing)
 
 # Check model run without queuing ----------------------------------------------
 expect_warning(queuing_off(sirconn_0), "SIR Connected models do not have queue.")

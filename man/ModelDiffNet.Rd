@@ -82,7 +82,7 @@ plot(adopt_chatgpt)
 \seealso{
 Other Models: 
 \code{\link{ModelMeaslesMixing}()},
-\code{\link{ModelMeaslesQuarantine}()},
+\code{\link{ModelMeaslesSchool}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},

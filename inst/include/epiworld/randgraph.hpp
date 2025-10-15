@@ -101,12 +101,53 @@ inline void rewire_degseq(
         int id01 = std::floor(p0.get_n_neighbors() * model->runif());
         int id11 = std::floor(p1.get_n_neighbors() * model->runif());
 
+        // Get the actual neighbor IDs that will be swapped
+        auto neighbors_p0 = p0.get_neighbors();
+        auto neighbors_p1 = p1.get_neighbors();
+        size_t neighbor_id_01 = neighbors_p0[id01]->get_id();
+        size_t neighbor_id_11 = neighbors_p1[id11]->get_id();
+
+        // Check if the swap would create self-loops or invalid configurations
+        // After swap: p0 will be connected to neighbor_id_11, p1 to neighbor_id_01
+        // Skip if:
+        // 1. neighbor_id_01 == neighbor_id_11 (swapping the same neighbor)
+        // 2. neighbor_id_01 == non_isolates[id1] (p1's new neighbor would be p1 itself)
+        // 3. neighbor_id_11 == non_isolates[id0] (p0's new neighbor would be p0 itself)
+        if (neighbor_id_01 == neighbor_id_11 ||
+            neighbor_id_01 == non_isolates[id1] ||
+            neighbor_id_11 == non_isolates[id0]) {
+            continue;
+        }
+
+        // Check if the swap would create duplicate edges
+        // After swap: p0 will be connected to neighbor_id_11, p1 to neighbor_id_01
+        bool would_create_duplicate = false;
+        for (auto* n : neighbors_p0) {
+            if (n->get_id() == neighbor_id_11 && n != neighbors_p0[id01]) {
+                would_create_duplicate = true;
+                break;
+            }
+        }
+        if (!would_create_duplicate) {
+            for (auto* n : neighbors_p1) {
+                if (n->get_id() == neighbor_id_01 && n != neighbors_p1[id11]) {
+                    would_create_duplicate = true;
+                    break;
+                }
+            }
+        }
+
+        if (would_create_duplicate) {
+            continue; // Skip this rewire attempt
+        }
+
         // When rewiring, we need to flip the individuals from the other
         // end as well, since we are dealing withi an undirected graph
         
-        // Finding what neighbour is id0
-        model->get_agents()[id0].swap_neighbors(
-            model->get_agents()[id1],
+        // Swap neighbors between the two agents
+        // Note: id0 and id1 are indices in non_isolates, not agent IDs
+        model->get_agents()[non_isolates[id0]].swap_neighbors(
+            model->get_agents()[non_isolates[id1]],
             id01,
             id11
             );
@@ -143,7 +184,7 @@ inline void rewire_degseq(
         _degree0[i] = agents->get_dat()[i].size();
     #endif
     
-    std::vector< epiworld_fast_uint > non_isolates;
+    std::vector< int > non_isolates;
     non_isolates.reserve(nties.size());
 
     std::vector< epiworld_double > weights;
@@ -244,22 +285,56 @@ inline void rewire_degseq(
             if (count++ == id11)
                 id11 = n.first;
 
-        // When rewiring, we need to flip the individuals from the other
-        // end as well, since we are dealing withi an undirected graph
+        // When rewiring, we need to actually swap the edges, not just the weights
+        // We'll swap edges: (id0, id01) <-> (id1, id11)
+        // After swap: (id0, id11) and (id1, id01)
+        // But first, check if the swap would create duplicate or self-loop edges
         
-        // Finding what neighbour is id0
+        // Check for self-loops (new edge would connect node to itself)
+        if (id01 == non_isolates[id1] || id11 == non_isolates[id0]) {
+            continue;
+        }
+        
+        // Check for duplicate edges (new edge already exists)
+        if (p0.find(id11) != p0.end() || p1.find(id01) != p1.end()) {
+            continue; // Skip this rewire attempt to avoid duplicate edges
+        }
+        
+        // Check if we're trying to swap the same neighbor
+        if (id01 == id11) {
+            continue;
+        }
+        
+        // Save the weights before removing edges
+        int weight_0_01 = p0[id01];
+        int weight_1_11 = p1[id11];
+        
+        // Remove old edges from ego perspectives
+        p0.erase(id01);
+        p1.erase(id11);
+        
+        // Add new edges from ego perspectives with swapped alters
+        p0[id11] = weight_0_01;
+        p1[id01] = weight_1_11;
+        
+        // For undirected graphs, also update from alter perspectives
         if (!agents->is_directed())
         {
-
             std::map<int,int> & p01 = agents->get_dat()[id01];
             std::map<int,int> & p11 = agents->get_dat()[id11];
-
-            std::swap(p01[id0], p11[id1]);
             
+            // Save weights from alter perspectives
+            int weight_01_0 = p01[non_isolates[id0]];
+            int weight_11_1 = p11[non_isolates[id1]];
+            
+            // Remove old edges from alter perspectives
+            p01.erase(non_isolates[id0]);
+            p11.erase(non_isolates[id1]);
+            
+            // Add new edges from alter perspectives
+            p01[non_isolates[id1]] = weight_11_1;
+            p11[non_isolates[id0]] = weight_01_0;
         }
-
-        // Moving alter first
-        std::swap(p0[id01], p1[id11]);
 
     }
 

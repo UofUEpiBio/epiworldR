@@ -493,7 +493,7 @@ SEXP ModelSEIRMixing_cpp(
 }
 
 [[cpp11::register]]
-SEXP ModelMeaslesQuarantine_cpp(
+SEXP ModelMeaslesSchool_cpp(
   unsigned int n,
   unsigned int prevalence,
   double contact_rate,
@@ -512,9 +512,9 @@ SEXP ModelMeaslesQuarantine_cpp(
   int isolation_period
 ) {
 
-  // Creating a pointer to a ModelMeaslesQuarantine model
-  cpp11::external_pointer<epiworld::epimodels::ModelMeaslesQuarantine<>> ptr(
-      new epiworld::epimodels::ModelMeaslesQuarantine<>(
+  // Creating a pointer to a ModelMeaslesSchool model
+  cpp11::external_pointer<epiworld::epimodels::ModelMeaslesSchool<>> ptr(
+      new epiworld::epimodels::ModelMeaslesSchool<>(
           n,
           prevalence,
           contact_rate,
@@ -589,7 +589,6 @@ SEXP ModelSEIRMixingQuarantine_cpp(
 
 [[cpp11::register]]
 SEXP ModelMeaslesMixing_cpp(
-    const std::string & vname,
     unsigned int n,
     double prevalence,
     double contact_rate,
@@ -616,7 +615,6 @@ SEXP ModelMeaslesMixing_cpp(
   // Creating a pointer to a ModelMeaslesMixing model
   cpp11::external_pointer<epiworld::epimodels::ModelMeaslesMixing<>> ptr(
       new epiworld::epimodels::ModelMeaslesMixing<>(
-          vname,
           n,
           prevalence,
           contact_rate,

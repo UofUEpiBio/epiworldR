@@ -6,77 +6,82 @@
 \title{Measles model with mixing}
 \usage{
 ModelMeaslesMixing(
-  vname,
   n,
   prevalence,
-  contact_rate,
-  transmission_rate,
-  vax_efficacy,
-  vax_reduction_recovery_rate,
-  incubation_period,
-  prodromal_period,
-  rash_period,
   contact_matrix,
-  hospitalization_rate,
-  hospitalization_period,
-  days_undetected,
-  quarantine_period,
-  quarantine_willingness,
-  isolation_willingness,
-  isolation_period,
+  vax_reduction_recovery_rate = 0.5,
+  transmission_rate = 0.9,
+  contact_rate = 15/transmission_rate/prodromal_period,
   prop_vaccinated,
+  vax_efficacy = 0.99,
+  quarantine_period = 21,
+  quarantine_willingness = 1,
+  isolation_willingness = 1,
+  isolation_period = 4,
+  incubation_period = 12,
+  prodromal_period = 4,
+  rash_period = 3,
+  hospitalization_rate = 0.2,
+  hospitalization_period = 7,
+  days_undetected = 2,
   contact_tracing_success_rate = 1,
   contact_tracing_days_prior = 4
 )
 }
 \arguments{
-\item{vname}{String. Name of the virus}
-
 \item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{contact_rate}{Numeric scalar. Average number of contacts per step.}
+\item{contact_matrix}{A row-stochastic matrix of mixing proportions between
+population groups.}
+
+\item{vax_reduction_recovery_rate}{Double. Vaccine reduction in recovery
+rate (default: 0.5).}
 
 \item{transmission_rate}{Numeric scalar between 0 and 1. Probability of
-transmission.}
+transmission (default: 0.9).}
 
-\item{vax_efficacy}{Double. Vaccine efficacy rate.}
-
-\item{vax_reduction_recovery_rate}{Double. Vaccine reduction in recovery rate.}
-
-\item{incubation_period}{Double. Duration of incubation period.}
-
-\item{prodromal_period}{Double. Duration of prodromal period.}
-
-\item{rash_period}{Double. Duration of rash period.}
-
-\item{contact_matrix}{Matrix of contact rates between individuals.}
-
-\item{hospitalization_rate}{Double. Rate of hospitalization.}
-
-\item{hospitalization_period}{Double. Period of hospitalization.}
-
-\item{days_undetected}{Double. Number of days an infection goes undetected.}
-
-\item{quarantine_period}{Integer. Number of days for quarantine.}
-
-\item{quarantine_willingness}{Double. Proportion of agents willing to quarantine.}
-
-\item{isolation_willingness}{Double. Proportion of agents willing to isolate.}
-
-\item{isolation_period}{Integer. Number of days for isolation.}
+\item{contact_rate}{Numeric scalar. Average number of contacts per step.}
 
 \item{prop_vaccinated}{Double. Proportion of population that is vaccinated.}
 
-\item{contact_tracing_success_rate}{Double. Probability of successful contact tracing.}
+\item{vax_efficacy}{Double. Vaccine efficacy rate (default: 0.99).}
+
+\item{quarantine_period}{Integer. Number of days for quarantine
+(default: 21).}
+
+\item{quarantine_willingness}{Double. Proportion of agents willing to
+quarantine (default: 1).}
+
+\item{isolation_willingness}{Double. Proportion of agents willing to isolate
+(default: 1).}
+
+\item{isolation_period}{Integer. Number of days for isolation (default: 4).}
+
+\item{incubation_period}{Double. Duration of incubation period (default: 12).}
+
+\item{prodromal_period}{Double. Duration of prodromal period (default: 4).}
+
+\item{rash_period}{Double. Duration of rash period (default: 3).}
+
+\item{hospitalization_rate}{Double. Rate of hospitalization (default: 0.2).}
+
+\item{hospitalization_period}{Double. Period of hospitalization (default: 7).}
+
+\item{days_undetected}{Double. Number of days an infection goes undetected
+(default: 2).}
+
+\item{contact_tracing_success_rate}{Double. Probability of successful
+contact tracing (default: 1.0).}
 
 \item{contact_tracing_days_prior}{Integer. Number of days prior to the onset
-of the infection for which contact tracing is effective.}
+of the infection for which contact tracing is effective (default: 4).}
 }
 \value{
 \itemize{
-\item The \code{ModelMeaslesMixing} function returns a model of class \link{epiworld_model}.
+\item The \code{ModelMeaslesMixing} function returns a model of classes
+\link{epiworld_model} and \link{epiworld_measlesmixing}.
 }
 }
 \description{
@@ -90,12 +95,17 @@ matrix should be of size \verb{n x n}, where \code{n} is the number of entities.
 This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 
 The model includes three distinct phases of measles infection: incubation,
-prodromal, and rash periods. Vaccination provides protection against infection
-and may reduce recovery time.
+prodromal, and rash periods. Vaccination provides protection against
+infection and may reduce recovery time.
 
 The \link{initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
+
+The default value for the contact rate is an approximation to the disease's
+basic reproduction number (R0), but it is not 100\% accurate. A more accurate
+way to se the contact rate is available, and will be distributed in the
+future.
 }
 \examples{
 
@@ -115,7 +125,6 @@ cmatrix <- c(
 N <- 9e3
 
 measles_model <- ModelMeaslesMixing(
-  vname                    = "Measles",
   n                        = N,
   prevalence               = 1 / N,
   contact_rate             = 15,
@@ -154,7 +163,7 @@ epiworld-methods
 
 Other Models: 
 \code{\link{ModelDiffNet}()},
-\code{\link{ModelMeaslesQuarantine}()},
+\code{\link{ModelMeaslesSchool}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},

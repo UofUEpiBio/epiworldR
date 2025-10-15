@@ -57,6 +57,18 @@ You can install the development version of epiworldR from [GitHub](https://githu
 devtools::install_github("UofUEpiBio/epiworldR")
 ```
 
+Or from [R-universe](https://uofuepibio.r-universe.dev/){target="_blank"} (recommended for the latest development version):
+
+```r
+install.packages(
+  'epiworldR',
+  repos = c(
+    'https://uofuepibio.r-universe.dev',
+    'https://cloud.r-project.org'
+  )
+)
+```
+
 Or from CRAN
 
 ```r

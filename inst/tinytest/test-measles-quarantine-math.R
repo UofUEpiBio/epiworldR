@@ -7,7 +7,7 @@ for (R0 in R0s) {
 
   crate <- R0 / p_t * p_r
 
-  model_measles <- ModelMeaslesQuarantine(
+  model_measles <- ModelMeaslesSchool(
     n = 1000,
     prevalence = 1,
     contact_rate = crate,

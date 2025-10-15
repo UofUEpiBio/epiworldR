@@ -1,23 +1,5 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-sir.R")
 
-# Function to test transition probability matrix ------------------------
-test_tmat_matches_expected <- function(tmat) {
-  tmat_expected <- structure(
-    c(
-      0.963299980893923, 0, 0,
-      0.0367000191060766, 0.700012995826896, 0, 
-      0, 0.299987004173104, 1
-    ),
-    dim = c(3L, 3L),
-    dimnames = list(
-      c("Susceptible", "Infected", "Recovered"),
-      c("Susceptible", "Infected", "Recovered")
-    )
-  )
-  
-  expect_equal(tmat, tmat_expected, tolerance = 0.0000001)
-}
-
 # Create small world population SIR Model --------------------------------------
 expect_silent(sir_0 <- ModelSIR(
   name = "COVID-19",

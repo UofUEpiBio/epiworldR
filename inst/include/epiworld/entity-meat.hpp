@@ -55,36 +55,42 @@ inline std::vector< epiworld_double > & Entity<TSeq>::get_location()
 }
 
 template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::iterator Entity<TSeq>::begin()
+inline typename std::vector< size_t >::iterator Entity<TSeq>::begin()
 {
 
     if (n_agents == 0)
-        return agents.end();
+        return typename std::vector< size_t >::iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::iterator Entity<TSeq>::end()
+inline typename std::vector< size_t >::iterator Entity<TSeq>::end()
 {
+    if (n_agents == 0)
+        return typename std::vector< size_t >::iterator{};
+
     return agents.begin() + n_agents;
 }
 
 template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::const_iterator Entity<TSeq>::begin() const
+inline typename std::vector< size_t >::const_iterator Entity<TSeq>::begin() const
 {
 
     if (n_agents == 0)
-        return agents.end();
+        return typename std::vector< size_t >::const_iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::const_iterator Entity<TSeq>::end() const
+inline typename std::vector< size_t >::const_iterator Entity<TSeq>::end() const
 {
+    if (n_agents == 0)
+        return typename std::vector< size_t >::const_iterator{};
+
     return agents.begin() + n_agents;
 }
 

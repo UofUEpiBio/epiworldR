@@ -1,12 +1,23 @@
-# epiworldR 0.9.0.0 (dev)
+# epiworldR 0.9.4.0
+
+## Bug Fixes
+
+* The rewiring algorithm was not changing the edges, but only the weights of the edges. This has been fixed in epiworld 0.9.4.
+
+
+# epiworldR 0.9.1.0
 
 ## Improvements
 
-* The C++ library has been updated to version 0.9.0, which includes several speed improvements. Some preliminary tests show x10 speedups.
+* The C++ library has been updated to version 0.9.1, which includes several speed improvements. Some preliminary tests show x10 speedups.
 
 * New model `ModelSEIRMixingQuarantine` that implements a SEIR model with quarantine and mixing has been added.
 
-* New model `ModelMeaslessQuarantine` that implements a measles based on the `ModelSEIRMixingQuarantine` model has been added.
+* New model `ModelMeasles` that implements a measles based on the `ModelSEIRMixingQuarantine` model has been added.
+
+## Other changes
+
+* The Model `ModelMeaslesQuarantine` has been deprecated in favor of `ModelMeaslesSchool` (change of name).
 
 
 # epiworldR 0.8.3.0 (CRAN)
