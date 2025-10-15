@@ -21,7 +21,9 @@ saver <- make_saver(
   "transmission",
   "transition",
   "reproductive",
-  "generation"
+  "generation",
+  "tool_hist",
+  "virus_hist"
 )
 
 run_multiple(
@@ -33,7 +35,7 @@ run_multiple(
   nthreads = 2L
   )
 
-res1 <- run_multiple_get_results(model_seircon, nthreads = 2L)
+res1 <- run_multiple_get_results(model_seircon, nthreads = 2L, freader = data.table::fread, nthreads = 1L)
 
 res1 <- lapply(res1, data.table::as.data.table)
 
