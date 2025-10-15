@@ -1015,7 +1015,7 @@ inline void DataBase<TSeq>::write_data(
                 #endif
                 hist_tool_date[i] << " " <<
                 hist_tool_id[i] << " \"" <<
-                model->states_labels[hist_tool_state[i]] << " \"" <<
+                model->states_labels[hist_tool_state[i]] << "\" " <<
                 hist_tool_counts[i] << "\n";
     }
 
