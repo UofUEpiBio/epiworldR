@@ -8,7 +8,7 @@
 
 * The rewiring algorithm was not changing the edges, but only the weights of the edges. This has been fixed in epiworld 0.9.4.
 
-* The saver associated with `tools_hist` had a bug that caused it to not save the history of tools correctly. This has been fixed in the epiworld 0.10.0.
+* The saver associated with `tools_hist` had a bug that caused it to not save the history of tools correctly. This has been fixed in epiworld 0.10.0.
 
 
 # epiworldR 0.9.1.0
