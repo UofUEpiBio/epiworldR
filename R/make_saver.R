@@ -173,8 +173,21 @@ run_multiple_get_results <- function(
     output[[i]] <- lapply(seq_along(fnames), \(j) {
       # It doesn't matter if the file is empty
       # but we can't cbind if it is empty
-      if (nrow(output[[i]][[j]]) == 0)
-        return(output[[i]][[j]])
+      if (nrow(output[[i]][[j]]) == 0) {
+        cnames <- c("sim_num", colnames(output[[i]][[j]]))
+
+        return(
+          data.frame(
+            matrix(
+              NA,
+              nrow = 0,
+              ncol = length(cnames),
+              dimnames = list(NULL, cnames)
+            )
+          )
+        )
+
+      }
 
       cbind(sim_num = j, output[[i]][[j]])
 
