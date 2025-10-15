@@ -148,8 +148,12 @@ run_multiple_get_results <- function(
   output <- vector("list", length(saver$what))
   names(output) <- saver$what
 
-  cl <- parallel::makeCluster(nthreads)
-  on.exit(parallel::stopCluster(cl))
+  cl <- if (nthreads > 1L)
+    parallel::makeCluster(nthreads)
+  else NULL
+
+  on.exit(if (length(cl)) parallel::stopCluster(cl))
+
   for (i in saver$what) {
     # Listing the files
     fnames <- list.files(
@@ -167,7 +171,10 @@ run_multiple_get_results <- function(
       )
 
     # Reading the files
-    output[[i]] <- parallel::parLapply(cl, fnames, reader_fun, ...)
+    output[[i]] <- if (length(cl))
+      parallel::parLapply(cl, fnames, reader_fun, ...)
+    else
+      lapply(fnames, reader_fun, ...)
 
     # Getting number of simulation
     output[[i]] <- lapply(seq_along(fnames), \(j) {

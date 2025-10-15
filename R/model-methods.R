@@ -172,6 +172,10 @@ run <- function(model, ndays, seed = NULL) UseMethod("run")
 run.epiworld_model <- function(model, ndays, seed = NULL) {
   if (length(seed)) set.seed(seed)
   run_cpp(model, ndays, sample.int(1e4, 1))
+
+  # For now, just adding a new line (which is currently skipped
+  # in C++)
+  cat("\n")
   invisible(model)
 }
 

@@ -52,4 +52,12 @@ res1 <- run_multiple_get_results(
   model_seircon, nthreads = 1L, freader = data.table::fread
   )
 
+res2 <- run_multiple_get_results(
+  model_seircon, nthreads = 2L, freader = NULL
+  )
+
+res2 <- lapply(res2, as.data.frame)
+
+expect_equivalent(res1, res2)
+
 
