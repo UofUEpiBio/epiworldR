@@ -5,7 +5,7 @@
 ###############################################################################
 # First case: Everyone is vaccinated, so only the 
 # index case is infected
-abm <- ModelMeaslesQuarantine(
+abm <- ModelMeaslesSchool(
   n = 200,
   prop_vaccinated = 1.0,
   vax_efficacy = 1.0
