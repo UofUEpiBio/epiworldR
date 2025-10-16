@@ -1,8 +1,8 @@
 #' Measles model with mixing and risk-based quarantine
 #'
 #' `ModelMeaslesMixingRiskQuarantine` creates a measles epidemiological model with mixing
-#' between different population groups and risk-based quarantine strategies. The model 
-#' includes vaccination, quarantine with three risk levels (high, medium, low), isolation, 
+#' between different population groups and risk-based quarantine strategies. The model
+#' includes vaccination, quarantine with three risk levels (high, medium, low), isolation,
 #' and contact tracing mechanisms.
 #'
 #' @param n Number of individuals in the population.
@@ -52,7 +52,7 @@
 #' Risk-based quarantine strategies assign different quarantine durations based on
 #' exposure risk:
 #' - **High Risk**: Unvaccinated agents who share entity membership with the case
-#' - **Medium Risk**: Unvaccinated agents who contacted an infected individual but 
+#' - **Medium Risk**: Unvaccinated agents who contacted an infected individual but
 #'   don't share entity membership
 #' - **Low Risk**: Other unvaccinated agents
 #'
