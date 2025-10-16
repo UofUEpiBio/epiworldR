@@ -87,7 +87,7 @@ specifying \code{freader = data.table::fread} and passing additional arguments
 (e.g., \code{nThread = 2L}) via \code{...}. This can significantly speed up the
 reading process, especially for large datasets.
 
-If the model does not, for example, tools, then the corresponding data frame
+If the model does not have, for example, tools, then the corresponding data frame
 will be empty (0 rows). A warning will be issued in this case when trying
 to retrieve or plot the results.
 }

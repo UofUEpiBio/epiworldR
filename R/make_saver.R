@@ -121,7 +121,7 @@ run_multiple.epiworld_model <- function(
 #' (e.g., `nThread = 2L`) via `...`. This can significantly speed up the
 #' reading process, especially for large datasets.
 #'
-#' If the model does not, for example, tools, then the corresponding data frame
+#' If the model does not have, for example, tools, then the corresponding data frame
 #' will be empty (0 rows). A warning will be issued in this case when trying
 #' to retrieve or plot the results.
 #' @returns
