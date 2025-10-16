@@ -31,7 +31,7 @@ Our SIR model will have the following characteristics:
 * **Virus Name:** COVID-19
 * **Initial Virus Prevalence:** 0.01
 * **Recovery Rate:** 1/7 (0.14)
-* **Transmission Rate:** 0.1
+* **Transmission Rate:** 0.02
 * **Number of Agents:** 2,000
 
 We use the `ModelSIR` and `agents_smallworld` functions to construct the model in epiworldR.
@@ -44,14 +44,14 @@ model_seed <- 122
 model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
-  transmission_rate = .1,
+  transmission_rate = .02,
   recovery_rate = 1 / 7
 )
 
 agents_smallworld(
   model_sir,
   n = 2000,
-  k = 5,
+  k = 10,
   d = FALSE,
   p = 0.01
 )

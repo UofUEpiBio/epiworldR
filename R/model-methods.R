@@ -175,7 +175,6 @@ run.epiworld_model <- function(model, ndays, seed = NULL) {
 
   # For now, just adding a new line (which is currently skipped
   # in C++)
-  cat("\n")
   invisible(model)
 }
 

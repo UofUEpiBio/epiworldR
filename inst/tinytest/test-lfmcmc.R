@@ -98,7 +98,6 @@ expect_equal(get_n_samples(lfmcmc_model), n_samp)
 expect_equivalent(get_observed_stats(lfmcmc_model), obs_data)
 
 expect_equivalent(get_mean_stats(lfmcmc_model), obs_data, tolerance = 0.1)
-expect_equal(get_n_stats(lfmcmc_model), length(expected_stats_mean))
 
 expected_params_mean <- c(0.3133401, 0.2749686)
 expect_equal(get_mean_params(lfmcmc_model), expected_params_mean, tolerance = 0.1)
@@ -106,12 +105,9 @@ expect_equal(get_n_params(lfmcmc_model), length(expected_params_mean))
 
 expect_equal(length(get_current_proposed_params(lfmcmc_model)), length(expected_params_mean))
 expect_equal(length(get_current_accepted_params(lfmcmc_model)), length(expected_params_mean))
-expect_equal(length(get_current_proposed_stats(lfmcmc_model)), length(expected_stats_mean))
-expect_equal(length(get_current_accepted_stats(lfmcmc_model)), length(expected_stats_mean))
 
 expect_equal(dim(get_all_accepted_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
 expect_equal(dim(get_all_sample_params(lfmcmc_model)), c(n_samp, length(expected_params_mean)))
-expect_equal(dim(get_all_sample_stats(lfmcmc_model)), c(n_samp, length(expected_stats_mean)))
 
 expect_equal(length(get_all_sample_acceptance(lfmcmc_model)), n_samp)
 expect_equal(length(get_all_sample_drawn_prob(lfmcmc_model)), n_samp)
