@@ -1504,7 +1504,10 @@ inline void Model<TSeq>::run_multiple(
     }
     // #endif
 
-    EPI_DEBUG_NOTIFY_ACTIVE()
+    if (verbose)
+    {
+        EPI_DEBUG_NOTIFY_ACTIVE()
+    }
 
     bool old_verb = this->verbose;
     verbose_off();
