@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
     -   id: trailing-whitespace
         exclude: ^(inst/|man/|src/cpp11.cpp|playgroud/|R/cpp11.R)
@@ -16,7 +16,7 @@ repos:
 -   repo: https://github.com/lorenzwalthert/precommit
     # This version of precommit uses R 4.4.1 (renv.lock)
     # See the pre-commit.yaml workflow file for more details.
-    rev: v0.4.3.9009
+    rev: v0.4.3.9015
     hooks:
       - id: style-files
         args:
