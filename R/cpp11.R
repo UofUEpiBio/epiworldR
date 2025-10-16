@@ -232,6 +232,10 @@ ModelMeaslesMixing_cpp <- function(n, prevalence, contact_rate, transmission_rat
   .Call(`_epiworldR_ModelMeaslesMixing_cpp`, n, prevalence, contact_rate, transmission_rate, vax_efficacy, vax_reduction_recovery_rate, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, contact_tracing_success_rate, contact_tracing_days_prior)
 }
 
+ModelMeaslesMixingRiskQuarantine_cpp <- function(n, prevalence, contact_rate, transmission_rate, vax_efficacy, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period_high, quarantine_period_medium, quarantine_period_low, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, detection_rate_quarantine, contact_tracing_success_rate, contact_tracing_days_prior) {
+  .Call(`_epiworldR_ModelMeaslesMixingRiskQuarantine_cpp`, n, prevalence, contact_rate, transmission_rate, vax_efficacy, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period_high, quarantine_period_medium, quarantine_period_low, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, detection_rate_quarantine, contact_tracing_success_rate, contact_tracing_days_prior)
+}
+
 LFMCMC_cpp <- function(model) {
   .Call(`_epiworldR_LFMCMC_cpp`, model)
 }

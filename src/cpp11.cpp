@@ -1218,8 +1218,8 @@ extern "C" {
 static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_LFMCMC_cpp",                           (DL_FUNC) &_epiworldR_LFMCMC_cpp,                            1},
     {"_epiworldR_ModelDiffNet_cpp",                     (DL_FUNC) &_epiworldR_ModelDiffNet_cpp,                      8},
-    {"_epiworldR_ModelMeaslesMixing_cpp",               (DL_FUNC) &_epiworldR_ModelMeaslesMixing_cpp,               20},
     {"_epiworldR_ModelMeaslesMixingRiskQuarantine_cpp", (DL_FUNC) &_epiworldR_ModelMeaslesMixingRiskQuarantine_cpp, 22},
+    {"_epiworldR_ModelMeaslesMixing_cpp",               (DL_FUNC) &_epiworldR_ModelMeaslesMixing_cpp,               20},
     {"_epiworldR_ModelMeaslesSchool_cpp",               (DL_FUNC) &_epiworldR_ModelMeaslesSchool_cpp,               16},
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},
