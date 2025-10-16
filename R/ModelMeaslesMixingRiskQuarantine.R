@@ -30,9 +30,9 @@
 #' @param rash_period Double. Duration of rash period (default: 3).
 #' @param hospitalization_rate Double. Rate of hospitalization (default: 0.2).
 #' @param hospitalization_period Double. Period of hospitalization (default: 7).
-#' @param days_undetected Double. Number of days an infection goes undetected
+#' @param days_undetected Double. Number of days rash goes undetected
 #' (default: 2).
-#' @param detection_rate_quarantine Double. Detection rate during active quarantine periods
+#' @param detection_rate_quarantine Double. Detection rate of prodromal agents during active quarantine periods
 #' (default: 0.5).
 #' @param contact_tracing_success_rate Double. Probability of successful
 #' contact tracing (default: 1.0).
@@ -45,9 +45,9 @@
 #' matrix should be of size `n x n`, where `n` is the number of entities.
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 #'
-#' The model includes three distinct phases of measles infection: incubation,
+#' The model includes three distinct phases of measles infection: incubation (exposed),
 #' prodromal, and rash periods. Vaccination provides protection against
-#' infection.
+#' transmission.
 #'
 #' Risk-based quarantine strategies assign different quarantine durations based on
 #' exposure risk:
@@ -147,10 +147,10 @@ ModelMeaslesMixingRiskQuarantine <- function(
     contact_tracing_days_prior = 4
     ) {
   # Check input parameters
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(contact_rate)
-  stopifnot_double(transmission_rate)
+  stopifnot_int(n, lb = 0)
+  stopifnot_double(prevalence, lb = 0.0, ub = 1.0)
+  stopifnot_double(contact_rate, lb = 0.0)
+  stopifnot_double(transmission_rate, lb = 0.0, ub = 1.0)
   stopifnot_double(vax_efficacy, lb = 0, ub = 1)
   stopifnot_double(incubation_period)
   stopifnot_double(prodromal_period)
@@ -159,12 +159,12 @@ ModelMeaslesMixingRiskQuarantine <- function(
   stopifnot_double(hospitalization_rate)
   stopifnot_double(hospitalization_period)
   stopifnot_double(days_undetected)
-  stopifnot_int(quarantine_period_high)
-  stopifnot_int(quarantine_period_medium)
-  stopifnot_int(quarantine_period_low)
+  stopifnot_int(quarantine_period_high, lb = 0L)
+  stopifnot_int(quarantine_period_medium, lb = 0L)
+  stopifnot_int(quarantine_period_low, lb = 0L)
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
   stopifnot_double(isolation_willingness, lb = 0, ub = 1)
-  stopifnot_int(isolation_period)
+  stopifnot_int(isolation_period, lb = 0L)
   stopifnot_double(prop_vaccinated, lb = 0, ub = 1)
   stopifnot_double(detection_rate_quarantine, lb = 0, ub = 1)
   stopifnot_double(contact_tracing_success_rate, lb = 0, ub = 1)
