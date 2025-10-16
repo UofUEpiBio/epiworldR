@@ -26,8 +26,8 @@
 
 /* Versioning */
 #define EPIWORLD_VERSION_MAJOR 0
-#define EPIWORLD_VERSION_MINOR 9
-#define EPIWORLD_VERSION_PATCH 1
+#define EPIWORLD_VERSION_MINOR 10
+#define EPIWORLD_VERSION_PATCH 0
 
 static const int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
 static const int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
@@ -93,6 +93,7 @@ namespace epiworld {
 
     #include "agentssample-bones.hpp"
 
+    #include "contacttracing-bones.hpp"
     #include "models/models.hpp"
 
 }

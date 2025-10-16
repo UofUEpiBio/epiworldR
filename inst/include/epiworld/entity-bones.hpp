@@ -69,11 +69,11 @@ public:
     void set_location(std::vector< epiworld_double > loc);
     std::vector< epiworld_double > & get_location();
 
-    typename std::vector< Agent<TSeq> * >::iterator begin();
-    typename std::vector< Agent<TSeq> * >::iterator end();
+    typename std::vector< size_t >::iterator begin();
+    typename std::vector< size_t >::iterator end();
 
-    typename std::vector< Agent<TSeq> * >::const_iterator begin() const;
-    typename std::vector< Agent<TSeq> * >::const_iterator end() const;
+    typename std::vector< size_t >::const_iterator begin() const;
+    typename std::vector< size_t >::const_iterator end() const;
 
     size_t operator[](size_t i);
 

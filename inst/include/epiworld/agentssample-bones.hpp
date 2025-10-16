@@ -302,20 +302,23 @@ inline Agent<TSeq> * AgentsSample<TSeq>::operator()(size_t i)
 template<typename TSeq>
 inline typename std::vector< Agent<TSeq> * >::iterator AgentsSample<TSeq>::begin()
 {
-
-    if (sample_size > 0u)
-        return agents->begin();
-    else
-        return agents->end();
-
+    // Check for null pointer
+    if (agents == nullptr)
+        return typename std::vector< Agent<TSeq> * >::iterator{};
+    
+    return agents->begin();
 }
 
 template<typename TSeq>
 inline typename std::vector< Agent<TSeq> * >::iterator AgentsSample<TSeq>::end()
 {
-
-    return agents->begin() + sample_size;
-
+    // Check for null pointer
+    if (agents == nullptr)
+        return typename std::vector< Agent<TSeq> * >::iterator{};
+    
+    // Ensure we don't go beyond the actual vector size
+    size_t actual_end = std::min(sample_size, agents->size());
+    return agents->begin() + actual_end;
 }
 
 template<typename TSeq>

@@ -18,7 +18,12 @@ run_multiple(
   nthreads = 1L
 )
 
-run_multiple_get_results(m, nthreads = parallel::detectCores() - 1L)
+run_multiple_get_results(
+  m,
+  nthreads = min(2L, parallel::detectCores()),
+  freader = NULL,
+  ...
+)
 
 make_saver(..., fn = "")
 }
@@ -35,7 +40,10 @@ make_saver(..., fn = "")
 
 \item{nthreads}{Integer. Number of threads (passed to \code{\link[parallel:makeCluster]{parallel::makeCluster()}}).}
 
-\item{...}{List of strings (characters) specifying what to save (see details).}
+\item{freader}{A function to read the files. If \code{NULL} (default,) uses
+\code{utils::read.table}.}
+
+\item{...}{Additional arguments passed to \code{freader}.}
 
 \item{fn}{A file name pattern.}
 }
@@ -72,6 +80,16 @@ Currently, the following elements can be saved:
 \item \code{reproductive} Reproductive number.
 \item \code{generation} Estimation of generation time.
 }
+
+An alternative to using the default \code{utils::read.table} function is to use
+\code{data.table::fread} from the \code{data.table} package. This can be done by
+specifying \code{freader = data.table::fread} and passing additional arguments
+(e.g., \code{nThread = 2L}) via \code{...}. This can significantly speed up the
+reading process, especially for large datasets.
+
+If the model does not have, for example, tools, then the corresponding data frame
+will be empty (0 rows). A warning will be issued in this case when trying
+to retrieve or plot the results.
 }
 \examples{
 model_sir <- ModelSIRCONN(

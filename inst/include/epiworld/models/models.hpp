@@ -24,6 +24,7 @@ namespace epimodels {
     #include "measlesquarantine.hpp"
     #include "seirmixingquarantine.hpp"
     #include "measlesmixing.hpp"
+    #include "measlesmixingriskquarantine.hpp"
 
 
 }

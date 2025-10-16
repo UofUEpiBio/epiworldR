@@ -111,6 +111,19 @@ run_multiple.epiworld_model <- function(
 #' @export
 #' @rdname run_multiple
 #' @param nthreads Integer. Number of threads (passed to [parallel::makeCluster()]).
+#' @param freader A function to read the files. If `NULL` (default,) uses
+#' `utils::read.table`.
+#' @param ... Additional arguments passed to `freader`.
+#' @details
+#' An alternative to using the default `utils::read.table` function is to use
+#' `data.table::fread` from the `data.table` package. This can be done by
+#' specifying `freader = data.table::fread` and passing additional arguments
+#' (e.g., `nThread = 2L`) via `...`. This can significantly speed up the
+#' reading process, especially for large datasets.
+#'
+#' If the model does not have, for example, tools, then the corresponding data frame
+#' will be empty (0 rows). A warning will be issued in this case when trying
+#' to retrieve or plot the results.
 #' @returns
 #' - The `run_multiple_get_results` function returns a named list with the
 #' data specified by `make_saver`.
@@ -118,7 +131,9 @@ run_multiple.epiworld_model <- function(
 #' @importFrom parallel parLapply makeCluster stopCluster detectCores
 run_multiple_get_results <- function(
     m,
-    nthreads = parallel::detectCores() - 1L
+    nthreads = min(2L, parallel::detectCores()),
+    freader = NULL,
+    ...
     ) {
 
   if (!inherits(m, "epiworld_model"))
@@ -133,8 +148,12 @@ run_multiple_get_results <- function(
   output <- vector("list", length(saver$what))
   names(output) <- saver$what
 
-  cl <- parallel::makeCluster(nthreads)
-  on.exit(parallel::stopCluster(cl))
+  cl <- if (nthreads > 1L)
+    parallel::makeCluster(nthreads)
+  else NULL
+
+  on.exit(if (length(cl)) parallel::stopCluster(cl))
+
   for (i in saver$what) {
     # Listing the files
     fnames <- list.files(
@@ -143,18 +162,42 @@ run_multiple_get_results <- function(
       full.names = TRUE
     )
 
+    reader_fun <- if (length(freader))
+      function(x, ...) freader(x, ...)
+    else
+      function(x, ...) utils::read.table(
+        x,
+        sep = " ", header = TRUE, comment.char = ""
+      )
+
     # Reading the files
-    output[[i]] <- parallel::parLapply(
-      cl, fnames, utils::read.table, sep = " ", header = TRUE,
-      comment.char = ""
-    )
+    output[[i]] <- if (length(cl))
+      parallel::parLapply(cl, fnames, reader_fun, ...)
+    else
+      lapply(fnames, reader_fun, ...)
 
     # Getting number of simulation
     output[[i]] <- lapply(seq_along(fnames), \(j) {
-      if (nrow(output[[i]][[j]]) > 0)
-        cbind(sim_num = j, output[[i]][[j]])
-      else
-        NULL
+      # It doesn't matter if the file is empty
+      # but we can't cbind if it is empty
+      if (nrow(output[[i]][[j]]) == 0) {
+        cnames <- c("sim_num", colnames(output[[i]][[j]]))
+
+        return(
+          data.frame(
+            matrix(
+              NA,
+              nrow = 0,
+              ncol = length(cnames),
+              dimnames = list(NULL, cnames)
+            )
+          )
+        )
+
+      }
+
+      cbind(sim_num = j, output[[i]][[j]])
+
     })
 
     # Putting all together

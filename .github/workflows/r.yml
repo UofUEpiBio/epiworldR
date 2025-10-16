@@ -51,7 +51,9 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages:
+            any::rcmdcheck
+            any::tinytest
           needs: check
 
       - uses: r-lib/actions/check-r-package@v2
@@ -111,6 +113,7 @@ jobs:
       - name: Get epiworldRShiny
         run: |
           # Get the latest version from CRAN
+          apt-get update && apt-get install curl -y --no-install-recommends
           LATEST_VERSION=$(curl -s https://crandb.r-pkg.org/epiworldRShiny | grep -o '"Version":"[^"]*"' | cut -d'"' -f4)
           wget \
             https://cran.r-project.org/src/contrib/epiworldRShiny_${LATEST_VERSION}.tar.gz

@@ -3,7 +3,7 @@
 {
 	"name": "epiworldR",
 	"build": {
-		"dockerfile": "Dockerfile"
+		"dockerfile": "Containerfile"
 	},
 	"customizations": {
 		"vscode": {
