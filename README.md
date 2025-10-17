@@ -51,22 +51,23 @@ Current available models:
 1.  `ModelDiagram`
 2.  `ModelDiffNet`
 3.  `ModelMeaslesMixing`
-4.  `ModelMeaslesSchool`
-5.  `ModelSEIR`
-6.  `ModelSEIRCONN`
-7.  `ModelSEIRD`
-8.  `ModelSEIRDCONN`
-9.  `ModelSEIRMixing`
-10. `ModelSEIRMixingQuarantine`
-11. `ModelSIR`
-12. `ModelSIRCONN`
-13. `ModelSIRD`
-14. `ModelSIRDCONN`
-15. `ModelSIRLogit`
-16. `ModelSIRMixing`
-17. `ModelSIS`
-18. `ModelSISD`
-19. `ModelSURV`
+4.  `ModelMeaslesMixingRiskQuarantine`
+5.  `ModelMeaslesSchool`
+6.  `ModelSEIR`
+7.  `ModelSEIRCONN`
+8.  `ModelSEIRD`
+9.  `ModelSEIRDCONN`
+10. `ModelSEIRMixing`
+11. `ModelSEIRMixingQuarantine`
+12. `ModelSIR`
+13. `ModelSIRCONN`
+14. `ModelSIRD`
+15. `ModelSIRDCONN`
+16. `ModelSIRLogit`
+17. `ModelSIRMixing`
+18. `ModelSIS`
+19. `ModelSISD`
+20. `ModelSURV`
 
 ## Installation
 
@@ -160,8 +161,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 60.00ms
-#> Last run speed      : 82.23 million agents x day / second
+#> Last run elapsed t  : 59.00ms
+#> Last run speed      : 84.55 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -241,8 +242,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 16.00ms
-#> Last run speed      : 61.56 million agents x day / second
+#> Last run elapsed t  : 17.00ms
+#> Last run speed      : 56.11 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -515,7 +516,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.9.4.0,
+#>   Epi Models_. R package version 0.10.0.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,

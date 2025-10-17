@@ -1,5 +1,9 @@
 # epiworldR 0.10.0.0
 
+## New Features
+
+* New model `ModelMeaslesMixingRiskQuarantine` that implements a measles model with mixing, risk-based contacts, and quarantine has been added. This is part of a joint effort with our partners at the Utah Department of Health and Human Services (DHHS).
+
 ## Improvements
 
 * The function `run_multiple_get_results()` has two new arguments: `freader` and `...`, which allows the user to specify a custom function to read the results of each simulation (e.g., `data.table::fread`).
