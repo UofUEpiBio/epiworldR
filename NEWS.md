@@ -12,7 +12,7 @@
 
 * The rewiring algorithm was not changing the edges, but only the weights of the edges. This has been fixed in epiworld 0.9.4.
 
-* The saver associated with `tools_hist` had a bug that caused it to not save the history of tools correctly. This has been fixed in epiworld 0.10.0.
+* The saver associated with `tools_hist` had a bug that caused it to not save the history of tools correctly. This has been fixed in epiworld 0.10.0. This was detected during work with @margowheatley and @AliseMendoza.
 
 
 # epiworldR 0.9.1.0
@@ -22,8 +22,6 @@
 * The C++ library has been updated to version 0.9.1, which includes several speed improvements. Some preliminary tests show x10 speedups.
 
 * New model `ModelSEIRMixingQuarantine` that implements a SEIR model with quarantine and mixing has been added.
-
-* New model `ModelMeasles` that implements a measles based on the `ModelSEIRMixingQuarantine` model has been added.
 
 ## Other changes
 

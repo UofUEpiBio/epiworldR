@@ -10,7 +10,6 @@
 #' match the basic reproductive number (R0) of 15 (see details).
 #' @param transmission_rate Probability of transmission.
 #' @param vax_efficacy Probability of vaccine efficacy.
-#' @param vax_improved_recovery Increase in recovery rate due to vaccination.
 #' @param incubation_period Average number of incubation days.
 #' @param prodromal_period Average number of prodromal days.
 #' @param rash_period Average number of rash days.
@@ -23,6 +22,7 @@
 #' @param quarantine_willingness Probability of accepting quarantine (
 #' see details).
 #' @param isolation_period Number of days an agent is in isolation.
+#' @param ... Further arguments (not used).
 #' @details
 #' This model can be described as a SEIHR model with isolation and quarantine.
 #' The infectious state is divided into prodromal and rash phases. Furthermore,
@@ -49,6 +49,11 @@
 #' Since the quarantine process is triggered by an isolation, then
 #' `isolation_period = -1` automatically sets `quarantine_period = -1`.
 #'
+#' @note
+#' As of version 0.10.0, the parameter `vax_improved_recovery` has been removed
+#' and is no longer used (it never had a side effect). Future versions may not
+#' accept it.
+#'
 #' @references
 #' Jones, Trahern W, and Katherine Baranowski. 2019. "Measles and Mumps: Old
 #' Diseases, New Outbreaks."
@@ -64,6 +69,7 @@
 #' Services. <https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf>.
 #' @export
 #' @family Models
+#' @family measles models
 #' @aliases epiworld_measlesquarantine
 #' @returns
 #' - The `ModelMeaslesQuarantine` function returns a model of classes [epiworld_model] and `epiworld_measlesquarantine`.
@@ -92,7 +98,6 @@ ModelMeaslesSchool <- function(
     contact_rate = 15 / transmission_rate / prodromal_period,
     transmission_rate = .9,
     vax_efficacy = .99,
-    vax_improved_recovery = .5,
     incubation_period = 12,
     prodromal_period = 4,
     rash_period = 3,
@@ -102,7 +107,8 @@ ModelMeaslesSchool <- function(
     prop_vaccinated = 1 - 1 / 15,
     quarantine_period = 21,
     quarantine_willingness = 1,
-    isolation_period = 4
+    isolation_period = 4,
+    ...
     ) {
   # Check input parameters
   stopifnot_int(n, lb = 1)
@@ -110,7 +116,7 @@ ModelMeaslesSchool <- function(
   stopifnot_double(contact_rate, lb = 1e-10, ub = n)
   stopifnot_double(transmission_rate, lb = 0, ub = 1)
   stopifnot_double(vax_efficacy, lb = 0, ub = 1)
-  stopifnot_double(vax_improved_recovery, lb = 0, ub = 1)
+  # stopifnot_double(vax_improved_recovery, lb = 0, ub = 1)
   stopifnot_double(incubation_period, lb = 0)
   stopifnot_double(prodromal_period, lb = 0)
   stopifnot_double(rash_period, lb = 0)
@@ -122,6 +128,14 @@ ModelMeaslesSchool <- function(
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
   stopifnot_int(isolation_period, lb = -1)
 
+  if ("vax_improved_recovery" %in% names(list(...)))
+    warning(
+      "The argument 'vax_improved_recovery' is no longer used and has been ",
+      "removed. Future versions may not accept it.",
+      call. = FALSE,
+      immediate. = TRUE
+    )
+
   structure(
     ModelMeaslesSchool_cpp(
       n,
@@ -129,7 +143,7 @@ ModelMeaslesSchool <- function(
       contact_rate,
       transmission_rate,
       vax_efficacy,
-      vax_improved_recovery,
+      0.0, # vax_improved_recovery,
       incubation_period,
       prodromal_period,
       rash_period,

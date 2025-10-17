@@ -181,5 +181,10 @@ Other Models:
 \code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
+
+Other measles models: 
+\code{\link{ModelMeaslesMixingRiskQuarantine}()},
+\code{\link{ModelMeaslesSchool}()}
 }
 \concept{Models}
+\concept{measles models}

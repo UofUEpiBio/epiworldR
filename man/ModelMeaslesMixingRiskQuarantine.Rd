@@ -74,10 +74,10 @@ quarantine (default: 1).}
 
 \item{hospitalization_period}{Double. Period of hospitalization (default: 7).}
 
-\item{days_undetected}{Double. Number of days an infection goes undetected
+\item{days_undetected}{Double. Number of days rash goes undetected
 (default: 2).}
 
-\item{detection_rate_quarantine}{Double. Detection rate during active quarantine periods
+\item{detection_rate_quarantine}{Double. Detection rate of prodromal agents during active quarantine periods
 (default: 0.5).}
 
 \item{contact_tracing_success_rate}{Double. Probability of successful
@@ -103,9 +103,9 @@ The \code{contact_matrix} is a matrix of contact rates between entities. The
 matrix should be of size \verb{n x n}, where \code{n} is the number of entities.
 This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 
-The model includes three distinct phases of measles infection: incubation,
+The model includes three distinct phases of measles infection: incubation (exposed),
 prodromal, and rash periods. Vaccination provides protection against
-infection.
+transmission.
 
 Risk-based quarantine strategies assign different quarantine durations based on
 exposure risk:
@@ -201,5 +201,10 @@ Other Models:
 \code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
+
+Other measles models: 
+\code{\link{ModelMeaslesMixing}()},
+\code{\link{ModelMeaslesSchool}()}
 }
 \concept{Models}
+\concept{measles models}
