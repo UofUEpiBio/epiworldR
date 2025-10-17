@@ -16,7 +16,7 @@ private:
     int last_loc;     ///< Last location of the bar
     int cur_loc;      ///< Last location of the bar
     int i;            ///< Current iteration step
-    
+
 public:
     Progress() {};
     Progress(int n_, int width_);
@@ -24,7 +24,7 @@ public:
 
     void start();
     void next();
-    void end();
+    
 
 };
 
@@ -70,17 +70,14 @@ inline void Progress::next() {
     { 
         printf_epiworld("|");
     }
+
+    if (i == n)
+    {
+        printf_epiworld(" done.\n");
+    }
     #endif
 
     last_loc = cur_loc;
-
-}
-
-inline void Progress::end() {
-
-    #ifndef EPI_DEBUG
-    printf_epiworld(" done.\n");
-    #endif
 
 }
 

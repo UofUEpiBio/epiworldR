@@ -32,7 +32,7 @@ README.md: README.Rmd
 # 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
 # 		mv epiworld.hpp inst/include/epiworld.hpp
 local-update:
-	rsync -avz ../epiworld/include/epiworld inst/include/.
+	rsync -avz --delete ../epiworld/include/epiworld inst/include/.
 
 check: build
 	cd .. && R CMD check epiworldR_*.tar.gz
