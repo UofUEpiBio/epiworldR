@@ -1,4 +1,0 @@
-#' @EPIWORLD_NAME@
-#' @useDynLib @EPIWORLD_NAME@, .registration = TRUE
-#' @importFrom graphics boxplot plot
-"_PACKAGE"

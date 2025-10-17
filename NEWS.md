@@ -14,6 +14,12 @@
 
 * The saver associated with `tools_hist` had a bug that caused it to not save the history of tools correctly. This has been fixed in epiworld 0.10.0. This was detected during work with @margowheatley and @AliseMendoza.
 
+## Misc
+
+* The `ModelMeaslesQuarantine` model has been updated to warn the user if the deprecated parameter `vax_improved_recovery` is used. This parameter is no longer used and has been removed.
+
+* Various legacy C++ files have been removed from the `inst/include/epiworld` folder.
+
 
 # epiworldR 0.9.1.0
 
