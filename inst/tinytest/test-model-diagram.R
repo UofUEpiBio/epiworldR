@@ -36,7 +36,7 @@ expect_message(md_with_output_file <- draw_mermaid_from_data(
 
 expect_false(identical(md_basic, md_self_transitions))
 
-if (!grepl("windows", osVersion))
+if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
@@ -58,7 +58,7 @@ expect_message(md_with_output_file <- draw_mermaid_from_matrix(
 
 expect_false(identical(md_basic, md_self_transitions))
 
-if (!grepl("windows", osVersion))
+if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
@@ -82,7 +82,7 @@ expect_message(md_with_output_file <- draw_mermaid_from_file(
 
 expect_false(identical(md_basic, md_self_transitions))
 
-if (!grepl("windows", osVersion))
+if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
@@ -106,7 +106,7 @@ expect_message(md_with_output_file <- draw_mermaid_from_files(
 
 expect_false(identical(md_basic, md_self_transitions))
 
-if (!grepl("windows", osVersion))
+if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
