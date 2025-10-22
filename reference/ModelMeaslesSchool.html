@@ -60,7 +60,6 @@ detected cases and optional quarantine of unvaccinated individuals.</p>
 <span>  contact_rate <span class="op">=</span> <span class="fl">15</span><span class="op">/</span><span class="va">transmission_rate</span><span class="op">/</span><span class="va">prodromal_period</span>,</span>
 <span>  transmission_rate <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  vax_efficacy <span class="op">=</span> <span class="fl">0.99</span>,</span>
-<span>  vax_improved_recovery <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  incubation_period <span class="op">=</span> <span class="fl">12</span>,</span>
 <span>  prodromal_period <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>  rash_period <span class="op">=</span> <span class="fl">3</span>,</span>
@@ -70,7 +69,8 @@ detected cases and optional quarantine of unvaccinated individuals.</p>
 <span>  prop_vaccinated <span class="op">=</span> <span class="fl">1</span> <span class="op">-</span> <span class="fl">1</span><span class="op">/</span><span class="fl">15</span>,</span>
 <span>  quarantine_period <span class="op">=</span> <span class="fl">21</span>,</span>
 <span>  quarantine_willingness <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  isolation_period <span class="op">=</span> <span class="fl">4</span></span>
+<span>  isolation_period <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -97,10 +97,6 @@ match the basic reproductive number (R0) of 15 (see details).</p></dd>
 
 <dt id="arg-vax-efficacy">vax_efficacy<a class="anchor" aria-label="anchor" href="#arg-vax-efficacy"></a></dt>
 <dd><p>Probability of vaccine efficacy.</p></dd>
-
-
-<dt id="arg-vax-improved-recovery">vax_improved_recovery<a class="anchor" aria-label="anchor" href="#arg-vax-improved-recovery"></a></dt>
-<dd><p>Increase in recovery rate due to vaccination.</p></dd>
 
 
 <dt id="arg-incubation-period">incubation_period<a class="anchor" aria-label="anchor" href="#arg-incubation-period"></a></dt>
@@ -144,6 +140,10 @@ see details).</p></dd>
 <dt id="arg-isolation-period">isolation_period<a class="anchor" aria-label="anchor" href="#arg-isolation-period"></a></dt>
 <dd><p>Number of days an agent is in isolation.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Further arguments (not used).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -174,6 +174,12 @@ Since the quarantine process is triggered by an isolation, then
 <code>isolation_period = -1</code> automatically sets <code>quarantine_period = -1</code>.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>As of version 0.10.0, the parameter <code>vax_improved_recovery</code> has been removed
+and is no longer used (it never had a side effect). Future versions may not
+accept it.</p>
+    </div>
+    <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Jones, Trahern W, and Katherine Baranowski. 2019. "Measles and Mumps: Old
 Diseases, New Outbreaks."</p>
@@ -193,6 +199,7 @@ Services. <a href="https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.
 <p>Other Models:
 <code><a href="ModelDiffNet.html">ModelDiffNet</a>()</code>,
 <code><a href="ModelMeaslesMixing.html">ModelMeaslesMixing</a>()</code>,
+<code><a href="ModelMeaslesMixingRiskQuarantine.html">ModelMeaslesMixingRiskQuarantine</a>()</code>,
 <code><a href="ModelSEIR.html">ModelSEIR</a>()</code>,
 <code><a href="ModelSEIRCONN.html">ModelSEIRCONN</a>()</code>,
 <code><a href="ModelSEIRD.html">ModelSEIRD</a>()</code>,
@@ -208,7 +215,10 @@ Services. <a href="https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.
 <code><a href="ModelSIS.html">ModelSIS</a>()</code>,
 <code><a href="ModelSISD.html">ModelSISD</a>()</code>,
 <code><a href="ModelSURV.html">ModelSURV</a>()</code>,
-<code><a href="epiworld-data.html">epiworld-data</a></code></p></div>
+<code><a href="epiworld-data.html">epiworld-data</a></code></p>
+<p>Other measles models:
+<code><a href="ModelMeaslesMixing.html">ModelMeaslesMixing</a>()</code>,
+<code><a href="ModelMeaslesMixingRiskQuarantine.html">ModelMeaslesMixingRiskQuarantine</a>()</code></p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -231,7 +241,7 @@ grant) and the Utah Department of Health and Human Services.</p>
 <span class="r-in"><span><span class="fu"><a href="epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_measles</span>, ndays <span class="op">=</span> <span class="fl">100</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> _________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Running the model...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span>
 <span class="r-in"><span><span class="va">model_measles</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ________________________________________________________________________________</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
