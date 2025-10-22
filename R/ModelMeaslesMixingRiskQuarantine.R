@@ -1,22 +1,25 @@
-#' Measles model with mixing
+#' Measles model with mixing and risk-based quarantine
 #'
-#' `ModelMeaslesMixing` creates a measles epidemiological model with mixing
-#' between different population groups. The model includes vaccination,
-#' quarantine, isolation, and contact tracing mechanisms.
+#' `ModelMeaslesMixingRiskQuarantine` creates a measles epidemiological model with mixing
+#' between different population groups and risk-based quarantine strategies. The model
+#' includes vaccination, quarantine with three risk levels (high, medium, low), isolation,
+#' and contact tracing mechanisms.
 #'
 #' @param n Number of individuals in the population.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
 #' @param contact_matrix A row-stochastic matrix of mixing proportions between
 #' population groups.
-#' @param vax_reduction_recovery_rate Double. Vaccine reduction in recovery
-#' rate (default: 0.5).
 #' @param transmission_rate Numeric scalar between 0 and 1. Probability of
 #' transmission (default: 0.9).
 #' @param contact_rate Numeric scalar. Average number of contacts per step.
 #' @param prop_vaccinated Double. Proportion of population that is vaccinated.
 #' @param vax_efficacy Double. Vaccine efficacy rate (default: 0.99).
-#' @param quarantine_period Integer. Number of days for quarantine
+#' @param quarantine_period_high Integer. Number of days for quarantine for high-risk contacts
 #' (default: 21).
+#' @param quarantine_period_medium Integer. Number of days for quarantine for medium-risk contacts
+#' (default: 14).
+#' @param quarantine_period_low Integer. Number of days for quarantine for low-risk contacts
+#' (default: 7).
 #' @param quarantine_willingness Double. Proportion of agents willing to
 #' quarantine (default: 1).
 #' @param isolation_willingness Double. Proportion of agents willing to isolate
@@ -27,8 +30,10 @@
 #' @param rash_period Double. Duration of rash period (default: 3).
 #' @param hospitalization_rate Double. Rate of hospitalization (default: 0.2).
 #' @param hospitalization_period Double. Period of hospitalization (default: 7).
-#' @param days_undetected Double. Number of days an infection goes undetected
+#' @param days_undetected Double. Number of days rash goes undetected
 #' (default: 2).
+#' @param detection_rate_quarantine Double. Detection rate of prodromal agents during active quarantine periods
+#' (default: 0.5).
 #' @param contact_tracing_success_rate Double. Probability of successful
 #' contact tracing (default: 1.0).
 #' @param contact_tracing_days_prior Integer. Number of days prior to the onset
@@ -41,9 +46,16 @@
 #' matrix should be of size `n x n`, where `n` is the number of entities.
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 #'
-#' The model includes three distinct phases of measles infection: incubation,
+#' The model includes three distinct phases of measles infection: incubation (exposed),
 #' prodromal, and rash periods. Vaccination provides protection against
-#' infection and may reduce recovery time.
+#' transmission.
+#'
+#' Risk-based quarantine strategies assign different quarantine durations based on
+#' exposure risk:
+#' - **High Risk**: Unvaccinated agents who share entity membership with the case
+#' - **Medium Risk**: Unvaccinated agents who contacted an infected individual but
+#'   don't share entity membership
+#' - **Low Risk**: Other unvaccinated agents
 #'
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
@@ -51,12 +63,12 @@
 #'
 #' The default value for the contact rate is an approximation to the disease's
 #' basic reproduction number (R0), but it is not 100% accurate. A more accurate
-#' way to se the contact rate is available, and will be distributed in the
+#' way to set the contact rate is available, and will be distributed in the
 #' future.
 #' @returns
-#' - The `ModelMeaslesMixing` function returns a model of classes
-#' [epiworld_model] and [epiworld_measlesmixing].
-#' @aliases epiworld_measlesmixing
+#' - The `ModelMeaslesMixingRiskQuarantine` function returns a model of classes
+#' [epiworld_model] and [epiworld_measlesmixingriskquarantine].
+#' @aliases epiworld_measlesmixingriskquarantine
 #'
 #' @examples
 #'
@@ -75,13 +87,12 @@
 #'
 #' N <- 9e3
 #'
-#' measles_model <- ModelMeaslesMixing(
+#' measles_model <- ModelMeaslesMixingRiskQuarantine(
 #'   n                        = N,
 #'   prevalence               = 1 / N,
 #'   contact_rate             = 15,
 #'   transmission_rate        = 0.9,
 #'   vax_efficacy             = 0.97,
-#'   vax_reduction_recovery_rate = 0.8,
 #'   incubation_period        = 10,
 #'   prodromal_period         = 3,
 #'   rash_period              = 7,
@@ -89,11 +100,14 @@
 #'   hospitalization_rate     = 0.1,
 #'   hospitalization_period   = 10,
 #'   days_undetected          = 2,
-#'   quarantine_period        = 14,
+#'   quarantine_period_high   = 21,
+#'   quarantine_period_medium = 14,
+#'   quarantine_period_low    = 7,
 #'   quarantine_willingness   = 0.9,
 #'   isolation_willingness    = 0.8,
 #'   isolation_period         = 10,
 #'   prop_vaccinated          = 0.95,
+#'   detection_rate_quarantine = 0.5,
 #'   contact_tracing_success_rate = 0.8,
 #'   contact_tracing_days_prior = 4
 #' )
@@ -109,16 +123,17 @@
 #' summary(measles_model)
 #'
 #' @seealso epiworld-methods
-ModelMeaslesMixing <- function(
+ModelMeaslesMixingRiskQuarantine <- function(
     n,
     prevalence,
     contact_matrix,
-    vax_reduction_recovery_rate = .5,
     transmission_rate = .9,
     contact_rate = 15 / transmission_rate / prodromal_period,
     prop_vaccinated,
     vax_efficacy = .99,
-    quarantine_period = 21,
+    quarantine_period_high = 21,
+    quarantine_period_medium = 14,
+    quarantine_period_low = 7,
     quarantine_willingness = 1,
     isolation_willingness = 1,
     isolation_period = 4,
@@ -128,16 +143,16 @@ ModelMeaslesMixing <- function(
     hospitalization_rate = 0.2,
     hospitalization_period = 7,
     days_undetected = 2,
+    detection_rate_quarantine = 0.5,
     contact_tracing_success_rate = 1.0,
     contact_tracing_days_prior = 4
     ) {
   # Check input parameters
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(contact_rate)
-  stopifnot_double(transmission_rate)
+  stopifnot_int(n, lb = 0)
+  stopifnot_double(prevalence, lb = 0.0, ub = 1.0)
+  stopifnot_double(contact_rate, lb = 0.0)
+  stopifnot_double(transmission_rate, lb = 0.0, ub = 1.0)
   stopifnot_double(vax_efficacy, lb = 0, ub = 1)
-  stopifnot_double(vax_reduction_recovery_rate)
   stopifnot_double(incubation_period)
   stopifnot_double(prodromal_period)
   stopifnot_double(rash_period)
@@ -145,22 +160,24 @@ ModelMeaslesMixing <- function(
   stopifnot_double(hospitalization_rate)
   stopifnot_double(hospitalization_period)
   stopifnot_double(days_undetected)
-  stopifnot_int(quarantine_period)
+  stopifnot_int(quarantine_period_high, lb = 0L)
+  stopifnot_int(quarantine_period_medium, lb = 0L)
+  stopifnot_int(quarantine_period_low, lb = 0L)
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
   stopifnot_double(isolation_willingness, lb = 0, ub = 1)
-  stopifnot_int(isolation_period)
+  stopifnot_int(isolation_period, lb = 0L)
   stopifnot_double(prop_vaccinated, lb = 0, ub = 1)
+  stopifnot_double(detection_rate_quarantine, lb = 0, ub = 1)
   stopifnot_double(contact_tracing_success_rate, lb = 0, ub = 1)
   stopifnot_int(contact_tracing_days_prior, lb = 0)
 
   structure(
-    ModelMeaslesMixing_cpp(
+    ModelMeaslesMixingRiskQuarantine_cpp(
       n = n,
       prevalence = prevalence,
       contact_rate = contact_rate,
       transmission_rate = transmission_rate,
       vax_efficacy = vax_efficacy,
-      vax_reduction_recovery_rate = vax_reduction_recovery_rate,
       incubation_period = incubation_period,
       prodromal_period = prodromal_period,
       rash_period = rash_period,
@@ -168,15 +185,18 @@ ModelMeaslesMixing <- function(
       hospitalization_rate = hospitalization_rate,
       hospitalization_period = hospitalization_period,
       days_undetected = days_undetected,
-      quarantine_period = quarantine_period,
+      quarantine_period_high = quarantine_period_high,
+      quarantine_period_medium = quarantine_period_medium,
+      quarantine_period_low = quarantine_period_low,
       quarantine_willingness = quarantine_willingness,
       isolation_willingness = isolation_willingness,
       isolation_period = isolation_period,
       prop_vaccinated = prop_vaccinated,
+      detection_rate_quarantine = detection_rate_quarantine,
       contact_tracing_success_rate = contact_tracing_success_rate,
       contact_tracing_days_prior = contact_tracing_days_prior
     ),
-    class = c("epiworld_measlesmixing", "epiworld_model")
+    class = c("epiworld_measlesmixingriskquarantine", "epiworld_model")
   )
 
 }

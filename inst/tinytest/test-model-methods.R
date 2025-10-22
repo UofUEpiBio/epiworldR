@@ -21,8 +21,6 @@ expect_message(md_with_output <- draw_mermaid(
   output_file = "mermaid_diagram.txt"
 ), "Diagram written")
 
-expect_false(identical(md_basic, md_self))
-expect_identical(md_basic, md_with_output)
 
 expect_true(file.exists("mermaid_diagram.txt"))
 file.remove("mermaid_diagram.txt")

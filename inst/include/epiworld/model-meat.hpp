@@ -1616,7 +1616,7 @@ inline void Model<TSeq>::run_multiple(
 
                 // Only the first one prints
                 if (verbose)
-                    pb_multiple.next();                
+                    pb_multiple.next();
 
             } else {
 
@@ -1627,8 +1627,6 @@ inline void Model<TSeq>::run_multiple(
                     fun(sim_id, these[iam - 1]);
 
             }
-
-            
 
         }
         
@@ -1680,9 +1678,6 @@ inline void Model<TSeq>::run_multiple(
     
     }
     #endif
-
-    if (verbose)
-        pb_multiple.end();
 
     if (old_verb)
         verbose_on();

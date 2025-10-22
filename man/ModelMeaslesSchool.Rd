@@ -11,7 +11,6 @@ ModelMeaslesSchool(
   contact_rate = 15/transmission_rate/prodromal_period,
   transmission_rate = 0.9,
   vax_efficacy = 0.99,
-  vax_improved_recovery = 0.5,
   incubation_period = 12,
   prodromal_period = 4,
   rash_period = 3,
@@ -21,7 +20,8 @@ ModelMeaslesSchool(
   prop_vaccinated = 1 - 1/15,
   quarantine_period = 21,
   quarantine_willingness = 1,
-  isolation_period = 4
+  isolation_period = 4,
+  ...
 )
 }
 \arguments{
@@ -35,8 +35,6 @@ match the basic reproductive number (R0) of 15 (see details).}
 \item{transmission_rate}{Probability of transmission.}
 
 \item{vax_efficacy}{Probability of vaccine efficacy.}
-
-\item{vax_improved_recovery}{Increase in recovery rate due to vaccination.}
 
 \item{incubation_period}{Average number of incubation days.}
 
@@ -59,6 +57,8 @@ are moved to isolation and trigger the quarantine process.}
 see details).}
 
 \item{isolation_period}{Number of days an agent is in isolation.}
+
+\item{...}{Further arguments (not used).}
 }
 \value{
 \itemize{
@@ -96,6 +96,11 @@ there is no quarantine process. The same happens with \code{isolation_period}.
 Since the quarantine process is triggered by an isolation, then
 \code{isolation_period = -1} automatically sets \code{quarantine_period = -1}.
 }
+\note{
+As of version 0.10.0, the parameter \code{vax_improved_recovery} has been removed
+and is no longer used (it never had a side effect). Future versions may not
+accept it.
+}
 \examples{
 # An in a school with low vaccination
 model_measles <- ModelMeaslesQuarantine(
@@ -131,6 +136,7 @@ epiworld-methods
 Other Models: 
 \code{\link{ModelDiffNet}()},
 \code{\link{ModelMeaslesMixing}()},
+\code{\link{ModelMeaslesMixingRiskQuarantine}()},
 \code{\link{ModelSEIR}()},
 \code{\link{ModelSEIRCONN}()},
 \code{\link{ModelSEIRD}()},
@@ -147,6 +153,10 @@ Other Models:
 \code{\link{ModelSISD}()},
 \code{\link{ModelSURV}()},
 \code{\link{epiworld-data}}
+
+Other measles models: 
+\code{\link{ModelMeaslesMixing}()},
+\code{\link{ModelMeaslesMixingRiskQuarantine}()}
 }
 \author{
 This model was built as a response to the US Measles outbreak in 2025.
@@ -154,3 +164,4 @@ This is a collaboration between the University of Utah (ForeSITE center
 grant) and the Utah Department of Health and Human Services.
 }
 \concept{Models}
+\concept{measles models}

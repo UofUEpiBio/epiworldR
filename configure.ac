@@ -179,7 +179,7 @@ fi
 ## now use all these
 AC_SUBST([OPENMP_FLAG], ["${openmp_flag}"])
 AC_SUBST([EPIWORLD_NAME], ["${epiworldname}"])
-AC_CONFIG_FILES([src/Makevars R/epiworldR-package.R])
+AC_CONFIG_FILES([src/Makevars])
 
 # Use sed to replace the line useDynLib\([a-zA-Z]+ in the NAMESPACE
 # file with useDynLib(${epiworldname}

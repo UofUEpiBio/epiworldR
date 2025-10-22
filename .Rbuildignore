@@ -15,7 +15,6 @@ images
 test_files
 test\.html
 test\.pdf
-^tests
 .*\.DS_Store
 world-epi
 playground/

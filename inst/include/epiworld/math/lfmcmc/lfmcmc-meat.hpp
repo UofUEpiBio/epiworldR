@@ -272,9 +272,6 @@ inline void LFMCMC<TData>::run(
    
     // Init progress bar
     progress_bar = Progress(m_n_samples, 80);
-    if (verbose) { 
-        progress_bar.next(); 
-    }
 
     // Run LFMCMC
     for (size_t i = 1u; i < m_n_samples; ++i)
@@ -336,9 +333,9 @@ inline void LFMCMC<TData>::run(
         for (size_t k = 0u; k < m_n_params; ++k)
             m_all_accepted_params[i * m_n_params + k] = m_current_accepted_params[k];
 
-        if (verbose) { 
-            progress_bar.next(); 
-        }
+        if (verbose)
+           progress_bar.next();
+
     }
 
     // End timing
