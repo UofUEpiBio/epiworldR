@@ -430,10 +430,10 @@ clone_model <- function(model) {
 #' - The `draw_mermaid` returns the mermaid diagram as a string.
 #' @importFrom utils capture.output
 draw_mermaid <- function(
-    model,
-    output_file = "",
-    allow_self_transitions = FALSE
-    ) {
+  model,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
   stopifnot_model(model)
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)

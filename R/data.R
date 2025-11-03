@@ -179,14 +179,14 @@ get_reproductive_number.epiworld_model <- function(x) {
 #' @export
 #' @importFrom stats sd quantile aggregate
 plot.epiworld_repnum <- function(
-    x,
-    y = NULL,
-    ylab = "Average Rep. Number",
-    xlab = "Day (step)",
-    main = "Reproductive Number",
-    type = "b",
-    plot = TRUE,
-    ...) {
+  x,
+  y = NULL,
+  ylab = "Average Rep. Number",
+  xlab = "Day (step)",
+  main = "Reproductive Number",
+  type = "b",
+  plot = TRUE,
+  ...) {
 
 
   if (nrow(x) == 0) {
@@ -397,14 +397,14 @@ plot_incidence <- function(x, ...) {
 #' daily incidence of each state. The function returns the data frame used for
 #' plotting.
 plot.epiworld_hist_transition <- function(
-    x,
-    type = "b",
-    xlab = "Day (step)",
-    ylab = "Counts",
-    main = "Daily incidence",
-    plot = TRUE,
-    ...
-    ) {
+  x,
+  type = "b",
+  xlab = "Day (step)",
+  ylab = "Counts",
+  main = "Daily incidence",
+  plot = TRUE,
+  ...
+) {
 
   if (!inherits(x, "epiworld_hist_transition")) {
     stop("The object must be of class 'epiworld_hist_transition'")
@@ -538,14 +538,14 @@ get_generation_time <- function(x) {
 #' @export
 #' @rdname epiworld-data
 plot.epiworld_generation_time <- function(
-    x,
-    type = "b",
-    xlab = "Day (step)",
-    ylab = "Avg. Generation Time",
-    main = "Generation Time",
-    plot = TRUE,
-    ...
-    ) {
+  x,
+  type = "b",
+  xlab = "Day (step)",
+  ylab = "Avg. Generation Time",
+  main = "Generation Time",
+  plot = TRUE,
+  ...
+) {
 
   if (!inherits(x, "epiworld_generation_time")) {
     stop("The object must be of class 'epiworld_generation_time'")

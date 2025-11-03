@@ -47,14 +47,14 @@
 #' plot(model_seirconn)
 #' @seealso epiworld-methods
 ModelSEIRCONN <- function(
-    name,
-    n,
-    prevalence,
-    contact_rate,
-    transmission_rate,
-    incubation_days,
-    recovery_rate
-    ) {
+  name,
+  n,
+  prevalence,
+  contact_rate,
+  transmission_rate,
+  incubation_days,
+  recovery_rate
+) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_int(n)

@@ -62,16 +62,16 @@
 
 #' @family Models
 ModelSIRLogit <- function(
-    vname,
-    data,
-    coefs_infect,
-    coefs_recover,
-    coef_infect_cols,
-    coef_recover_cols,
-    prob_infection,
-    recovery_rate,
-    prevalence
-    ) {
+  vname,
+  data,
+  coefs_infect,
+  coefs_recover,
+  coef_infect_cols,
+  coef_recover_cols,
+  prob_infection,
+  recovery_rate,
+  prevalence
+) {
   # Check input parameters
   stopifnot_string(vname)
   stopifany_na(data)

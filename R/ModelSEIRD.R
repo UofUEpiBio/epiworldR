@@ -40,13 +40,13 @@
 #' plot(model_seird, main = "SEIRD Model")
 #' @seealso epiworld-methods
 ModelSEIRD <- function(
-    name,
-    prevalence,
-    transmission_rate,
-    incubation_days,
-    recovery_rate,
-    death_rate
-    ) {
+  name,
+  prevalence,
+  transmission_rate,
+  incubation_days,
+  recovery_rate,
+  death_rate
+) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_double(prevalence)

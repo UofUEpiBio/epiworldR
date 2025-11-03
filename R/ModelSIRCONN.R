@@ -33,8 +33,8 @@
 #' plot(model_sirconn,  main = "SIRCONN Model")
 #' @seealso epiworld-methods
 ModelSIRCONN <- function(
-    name, n, prevalence, contact_rate, transmission_rate, recovery_rate
-    ) {
+  name, n, prevalence, contact_rate, transmission_rate, recovery_rate
+) {
   # Check inputs
   stopifnot_string(name)
   stopifnot_int(n)

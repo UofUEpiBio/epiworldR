@@ -35,11 +35,11 @@
 #' @export
 #' @importFrom utils capture.output
 draw_mermaid_from_data <- function(
-    states,
-    transition_probs,
-    output_file = "",
-    allow_self_transitions = FALSE
-    ) {
+  states,
+  transition_probs,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
   stopifnot_stringvector(states)
   stopifnot_numvector(transition_probs)
   stopifnot_string(output_file)
@@ -76,10 +76,10 @@ draw_mermaid_from_data <- function(
 #' mermaid diagram as a string.
 #' @export
 draw_mermaid_from_matrix <- function(
-    transition_matrix,
-    output_file = "",
-    allow_self_transitions = FALSE
-    ) {
+  transition_matrix,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
 
   stopifany_na(transition_matrix)
 
@@ -118,10 +118,10 @@ draw_mermaid_from_matrix <- function(
 #' @export
 #' @importFrom utils capture.output
 draw_mermaid_from_file <- function(
-    transitions_file,
-    output_file = "",
-    allow_self_transitions = FALSE
-    ) {
+  transitions_file,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
   stopifnot_string(transitions_file)
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)
@@ -156,10 +156,10 @@ draw_mermaid_from_file <- function(
 #' @export
 #' @importFrom utils capture.output
 draw_mermaid_from_files <- function(
-    transitions_files,
-    output_file = "",
-    allow_self_transitions = FALSE
-    ) {
+  transitions_files,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
   stopifnot_stringvector(transitions_files)
   stopifnot_string(output_file)
   stopifnot_bool(allow_self_transitions)

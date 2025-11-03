@@ -93,23 +93,23 @@
 #' This is a collaboration between the University of Utah (ForeSITE center
 #' grant) and the Utah Department of Health and Human Services.
 ModelMeaslesSchool <- function(
-    n,
-    prevalence = 1,
-    contact_rate = 15 / transmission_rate / prodromal_period,
-    transmission_rate = .9,
-    vax_efficacy = .99,
-    incubation_period = 12,
-    prodromal_period = 4,
-    rash_period = 3,
-    days_undetected = 2,
-    hospitalization_rate = .2,
-    hospitalization_period = 7,
-    prop_vaccinated = 1 - 1 / 15,
-    quarantine_period = 21,
-    quarantine_willingness = 1,
-    isolation_period = 4,
-    ...
-    ) {
+  n,
+  prevalence = 1,
+  contact_rate = 15 / transmission_rate / prodromal_period,
+  transmission_rate = .9,
+  vax_efficacy = .99,
+  incubation_period = 12,
+  prodromal_period = 4,
+  rash_period = 3,
+  days_undetected = 2,
+  hospitalization_rate = .2,
+  hospitalization_period = 7,
+  prop_vaccinated = 1 - 1 / 15,
+  quarantine_period = 21,
+  quarantine_willingness = 1,
+  isolation_period = 4,
+  ...
+) {
   # Check input parameters
   stopifnot_int(n, lb = 1)
   stopifnot_int(prevalence, lb = 0, ub = n)

@@ -59,23 +59,23 @@
 #' - The `run_multiple` function runs a specified number of simulations and
 #' returns a model object of class [epiworld_model].
 run_multiple <- function(
-    m, ndays, nsims,
-    seed = sample.int(1e4, 1),
-    saver = make_saver(),
-    reset = TRUE,
-    verbose = TRUE,
-    nthreads = 1L
-    ) UseMethod("run_multiple")
+  m, ndays, nsims,
+  seed = sample.int(1e4, 1),
+  saver = make_saver(),
+  reset = TRUE,
+  verbose = TRUE,
+  nthreads = 1L
+) UseMethod("run_multiple")
 
 #' @export
 run_multiple.epiworld_model <- function(
-    m, ndays, nsims,
-    seed     = sample.int(1e4, 1),
-    saver    = make_saver(),
-    reset    = TRUE,
-    verbose  = TRUE,
-    nthreads = 1L
-    ) {
+  m, ndays, nsims,
+  seed     = sample.int(1e4, 1),
+  saver    = make_saver(),
+  reset    = TRUE,
+  verbose  = TRUE,
+  nthreads = 1L
+) {
 
   if (!inherits(saver, "epiworld_saver"))
     stop("-saver- should be of class \"epiworld_saver\"")
@@ -130,11 +130,11 @@ run_multiple.epiworld_model <- function(
 #' @importFrom utils read.table
 #' @importFrom parallel parLapply makeCluster stopCluster detectCores
 run_multiple_get_results <- function(
-    m,
-    nthreads = min(2L, parallel::detectCores()),
-    freader = NULL,
-    ...
-    ) {
+  m,
+  nthreads = min(2L, parallel::detectCores()),
+  freader = NULL,
+  ...
+) {
 
   if (!inherits(m, "epiworld_model"))
     stop("-m- must be of class `epiworld_model`.")
@@ -320,9 +320,9 @@ plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
 #' @rdname run_multiple
 #' @aliases epiworld_saver
 make_saver <- function(
-    ...,
-    fn = ""
-    ) {
+  ...,
+  fn = ""
+) {
 
   what <- list(...)
 

@@ -123,10 +123,10 @@ get_entity_name <- function(entity) {
 #' @return
 #' - The function `entity_add_agent` adds an agent to the entity.
 entity_add_agent <- function(
-    entity,
-    agent,
-    model = attr(entity, "model")
-    ) {
+  entity,
+  agent,
+  model = attr(entity, "model")
+) {
 
   stopifnot_entity(entity)
   stopifnot_agent(agent)
@@ -152,9 +152,9 @@ rm_entity <- function(model, id) {
 #' @export
 #' @rdname entities
 add_entity <- function(
-    model,
-    entity
-    ) {
+  model,
+  entity
+) {
 
   stopifnot_model(model)
   stopifnot_entity(entity)
@@ -174,10 +174,10 @@ add_entity <- function(
 #' @return
 #' - The function `load_agents_entities_ties` loads agents into entities.
 load_agents_entities_ties <- function(
-    model,
-    agents_id,
-    entities_id
-    ) {
+  model,
+  agents_id,
+  entities_id
+) {
 
   stopifnot_model(model)
   if (!inherits(agents_id, "integer")) {
@@ -218,10 +218,10 @@ print.epiworld_entity <- function(x, ...) {
 #' as a proportion.
 #' @rdname entities
 distribute_entity_randomly <- function(
-    prevalence,
-    as_proportion,
-    to_unassigned = TRUE
-    ) {
+  prevalence,
+  as_proportion,
+  to_unassigned = TRUE
+) {
 
   structure(
     distribute_entity_randomly_cpp(
@@ -238,8 +238,8 @@ distribute_entity_randomly <- function(
 #' @param agents_ids Integer vector. Ids of the agents to distribute.
 #' @rdname entities
 distribute_entity_to_set <- function(
-    agents_ids
-    ) {
+  agents_ids
+) {
 
   structure(
     distribute_entity_to_set_cpp(
@@ -254,9 +254,9 @@ distribute_entity_to_set <- function(
 #' @rdname entities
 #' @param distfun Distribution function object of class `epiworld_distribution_entity`.
 set_distribution_entity <- function(
-    entity,
-    distfun
-    ) {
+  entity,
+  distfun
+) {
 
   stopifnot_entity(entity)
   stopifnot_entity_distfun(distfun)

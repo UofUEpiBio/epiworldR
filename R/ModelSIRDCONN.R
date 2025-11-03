@@ -36,14 +36,14 @@
 #' plot(model_sirdconn,  main = "SIRDCONN Model")
 #' @seealso epiworld-methods
 ModelSIRDCONN <- function(
-    name,
-    n,
-    prevalence,
-    contact_rate,
-    transmission_rate,
-    recovery_rate,
-    death_rate
-    ) {
+  name,
+  n,
+  prevalence,
+  contact_rate,
+  transmission_rate,
+  recovery_rate,
+  death_rate
+) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_int(n)

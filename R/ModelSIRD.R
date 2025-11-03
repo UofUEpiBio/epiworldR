@@ -46,8 +46,8 @@
 #' plot(model_sird)
 #' @seealso epiworld-methods
 ModelSIRD <- function(
-    name, prevalence, transmission_rate, recovery_rate, death_rate
-    ) {
+  name, prevalence, transmission_rate, recovery_rate, death_rate
+) {
   # Check inputs
   stopifnot_string(name)
   stopifnot_double(prevalence)
