@@ -13,6 +13,7 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Fast Agent-Based Epi Models">
 <meta name="description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents features, providing great complexity for the model dynamics. Furthermore, epiworldR' is ideal for simulation studies featuring large populations.">
 <meta property="og:description" content="A flexible framework for Agent-Based Models (ABM), the epiworldR package provides methods for prototyping disease outbreaks and transmission models using a C++ backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents features, providing great complexity for the model dynamics. Furthermore, epiworldR' is ideal for simulation studies featuring large populations.">
+<meta property="og:image" content="/logo.png">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -58,10 +59,13 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header"><h1 id="epiworldr">epiworldR<a class="anchor" aria-label="anchor" href="#epiworldr"></a>
-</h1></div>
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="epiworldr-">epiworldR <a class="anchor" aria-label="anchor" href="#epiworldr-"></a>
+</h1>
+</div>
 <!-- badges: start -->
 
+<!-- badges: end -->
 <p>This R package is a wrapper of the C++ library <a href="https://github.com/UofUEpiBio/epiworld" target="_blank" class="external-link">epiworld</a>. It provides a general framework for modeling disease transmission using <a href="https://en.wikipedia.org/w/index.php?title=Agent-based_model&amp;oldid=1153634802" target="_blank" class="external-link">agent-based models</a>. Some of the main features include:</p>
 <ul>
 <li>Fast simulation with an average of 30 million agents/day per second.</li>
@@ -144,7 +148,8 @@
 <span>  <span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span>ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
-<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span></span>
+<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
+<span><span class="co">#&gt; |</span></span>
 <span></span>
 <span><span class="va">sir</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
@@ -165,8 +170,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 50 (of 50)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 1</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 59.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 84.55 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 71.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 69.45 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -225,7 +230,7 @@
 <span><span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_seirconn</span>, ndays <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; Running the model...</span></span>
-<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span></span>
+<span><span class="co">#&gt; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model_seirconn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
 <span><span class="co">#&gt; ________________________________________________________________________________</span></span>
@@ -237,8 +242,8 @@
 <span><span class="co">#&gt; Number of entities  : 0</span></span>
 <span><span class="co">#&gt; Days (duration)     : 100 (of 100)</span></span>
 <span><span class="co">#&gt; Number of viruses   : 2</span></span>
-<span><span class="co">#&gt; Last run elapsed t  : 17.00ms</span></span>
-<span><span class="co">#&gt; Last run speed      : 56.11 million agents x day / second</span></span>
+<span><span class="co">#&gt; Last run elapsed t  : 16.00ms</span></span>
+<span><span class="co">#&gt; Last run speed      : 59.03 million agents x day / second</span></span>
 <span><span class="co">#&gt; Rewiring            : off</span></span>
 <span><span class="co">#&gt;</span></span>
 <span><span class="co">#&gt; Global events:</span></span>
@@ -334,7 +339,8 @@
 <span><span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span><span class="va">model_logit</span>, <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
-<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span></span>
+<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
+<span><span class="co">#&gt; |</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">model_logit</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-logit-model-1.png" style="width:100.0%"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
@@ -382,7 +388,8 @@
 <span>  <span class="fu"><a href="reference/epiworld-methods.html">run</a></span><span class="op">(</span>ndays <span class="op">=</span> <span class="fl">50</span>, seed <span class="op">=</span> <span class="fl">1912</span><span class="op">)</span></span>
 <span><span class="co">#&gt; _________________________________________________________________________</span></span>
 <span><span class="co">#&gt; |Running the model...</span></span>
-<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||</span></span>
+<span><span class="co">#&gt; |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</span></span>
+<span><span class="co">#&gt; |</span></span>
 <span></span>
 <span><span class="co"># Transmission network</span></span>
 <span><span class="va">net</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/epiworld-data.html">get_transmissions</a></span><span class="op">(</span><span class="va">sir</span><span class="op">)</span></span>
@@ -510,8 +517,8 @@
 <td align="left">yes</td>
 <td align="left">yes</td>
 <td>yes</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://tinyverse.netlify.com/badge/epiworldR.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link"><img src="https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://tinyverse.netlify.app/badge//epiworldR" alt="status"></a></td>
+<td align="left"><a href="https://github.com/UofUEpiBio/epiworldR" class="external-link"><img src="https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR" alt="Activity"></a></td>
 </tr>
 <tr class="even">
 <td align="left"><a href="https://cran.r-project.org/package=ABM" class="external-link"><strong>ABM</strong></a></td>
@@ -520,8 +527,8 @@
 <td align="left">-</td>
 <td align="left">yes</td>
 <td>yes</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=ABM" class="external-link"><img src="https://tinyverse.netlify.com/badge/ABM.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/junlingm/ABM" class="external-link"><img src="https://img.shields.io/github/last-commit/junlingm/ABM.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=ABM" class="external-link"><img src="https://tinyverse.netlify.app/badge//ABM" alt="status"></a></td>
+<td align="left"><a href="https://github.com/junlingm/ABM" class="external-link"><img src="https://img.shields.io/github/last-commit/junlingm/ABM" alt="Activity"></a></td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="https://cran.r-project.org/package=abmR" class="external-link"><strong>abmR</strong></a></td>
@@ -530,8 +537,8 @@
 <td align="left">yes</td>
 <td align="left">-</td>
 <td>-</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=abmR" class="external-link"><img src="https://tinyverse.netlify.com/badge/abmR.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/bgoch5/abmR" class="external-link"><img src="https://img.shields.io/github/last-commit/bgoch5/abmR.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=abmR" class="external-link"><img src="https://tinyverse.netlify.app/badge//abmR" alt="status"></a></td>
+<td align="left"><a href="https://github.com/bgoch5/abmR" class="external-link"><img src="https://img.shields.io/github/last-commit/bgoch5/abmR" alt="Activity"></a></td>
 </tr>
 <tr class="even">
 <td align="left"><a href="https://cran.r-project.org/package=cystiSim" class="external-link"><strong>cystiSim</strong></a></td>
@@ -540,8 +547,8 @@
 <td align="left">yes</td>
 <td align="left">-</td>
 <td>-</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=cystiSim" class="external-link"><img src="https://tinyverse.netlify.com/badge/cystiSim.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/brechtdv/cystiSim" class="external-link"><img src="https://img.shields.io/github/last-commit/brechtdv/cystiSim.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=cystiSim" class="external-link"><img src="https://tinyverse.netlify.app/badge//cystiSim" alt="status"></a></td>
+<td align="left"><a href="https://github.com/brechtdv/cystiSim" class="external-link"><img src="https://img.shields.io/github/last-commit/brechtdv/cystiSim" alt="Activity"></a></td>
 </tr>
 <tr class="odd">
 <td align="left"><a href="https://cran.r-project.org/package=villager" class="external-link"><strong>villager</strong></a></td>
@@ -550,8 +557,8 @@
 <td align="left">-</td>
 <td align="left">yes</td>
 <td>-</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=villager" class="external-link"><img src="https://tinyverse.netlify.com/badge/villager.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/zizroc/villager" class="external-link"><img src="https://img.shields.io/github/last-commit/zizroc/villager.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=villager" class="external-link"><img src="https://tinyverse.netlify.app/badge//villager" alt="status"></a></td>
+<td align="left"><a href="https://github.com/zizroc/villager" class="external-link"><img src="https://img.shields.io/github/last-commit/zizroc/villager" alt="Activity"></a></td>
 </tr>
 <tr class="even">
 <td align="left"><a href="https://cran.r-project.org/package=RNetLogo" class="external-link"><strong>RNetLogo</strong></a></td>
@@ -560,8 +567,8 @@
 <td align="left">yes</td>
 <td align="left">yes</td>
 <td>-</td>
-<td align="left"><a href="https://CRAN.R-project.org/package=RNetLogo" class="external-link"><img src="https://tinyverse.netlify.com/badge/RNetLogo.png" alt="status"></a></td>
-<td align="left"><a href="https://github.com/cran/RNetLogo" class="external-link"><img src="https://img.shields.io/github/last-commit/cran/RNetLogo.png" alt="Activity"></a></td>
+<td align="left"><a href="https://CRAN.R-project.org/package=RNetLogo" class="external-link"><img src="https://tinyverse.netlify.app/badge//RNetLogo" alt="status"></a></td>
+<td align="left"><a href="https://github.com/cran/RNetLogo" class="external-link"><img src="https://img.shields.io/github/last-commit/cran/RNetLogo" alt="Activity"></a></td>
 </tr>
 </tbody>
 </table>
@@ -627,12 +634,13 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
 <li><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://www.r-pkg.org/badges/version/epiworldR" alt="CRAN status"></a></li>
 <li><a href="https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml" class="external-link"><img src="https://github.com/UofUEpiBio/epiworldR/actions/workflows/r.yml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://cran.r-project.org/package=epiworldR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/epiworldR" alt="CRANlogs downloads"></a></li>
 <li><a href="https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a></li>
 <li><a href="https://app.codecov.io/gh/UofUEpiBio/epiworldR" class="external-link"><img src="https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN" alt="codecov"></a></li>
-<li><a href="https://github.com/EpiForeSITE" class="external-link"><img src="https://github.com/EpiForeSITE/software/raw/e82ed88f75e0fe5c0a1a3b38c2b94509f122019c/docs/assets/foresite-software-badge.svg" alt="ForeSITE Group"></a></li>
+<li><a href="https://CRAN.R-project.org/package=epiworldR" class="external-link"><img src="https://tinyverse.netlify.app/badge//epiworldR" alt="status"></a></li>
 </ul>
 </div>
 
