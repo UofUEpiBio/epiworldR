@@ -21,13 +21,13 @@
 #' values: (1) Proportion of exposed agents who are infected, (2)
 #' proportion of non-infected agents already removed, and (3) proportion of
 #' non-ifected agents already deceased.
+#' @section Model diagram:
+#'
+#' ![](diagrams/seirdconn.png "SEIRD Connected Diagram")
 #' @family Models
 #' @aliases epiworld_seirdconn
 #' @returns
 #' - The `ModelSEIRDCONN`function returns a model of class [epiworld_model].
-#' @section Model diagram:
-#'
-#' ![](diagrams/seirdconn.png "SEIRD Connected Diagram")
 #' @examples
 #' # An example with COVID-19
 #' model_seirdconn <- ModelSEIRDCONN(

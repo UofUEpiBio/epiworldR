@@ -41,6 +41,11 @@ incubation days.}
 The SEIR connected model implements a model where all agents are connected.
 This is equivalent to a compartmental model (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SEIR_model}{wiki}).
 }
+\section{Model diagram}{
+
+\figure{diagrams/seirconn.png}{SEIR Connected Diagram}
+}
+
 \examples{
 # An example with COVID-19
 model_seirconn <- ModelSEIRCONN(

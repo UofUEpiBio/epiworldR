@@ -41,6 +41,11 @@ The \link{initial_states} function allows the user to set the initial state of t
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
 }
+\section{Model diagram}{
+
+\figure{diagrams/sirconn.png}{SIR Connected Diagram}
+}
+
 \examples{
 model_sirconn <- ModelSIRCONN(
   name                = "COVID-19",

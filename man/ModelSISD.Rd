@@ -27,6 +27,11 @@ infection.}
 \description{
 Susceptible-Infected-Susceptible-Deceased model (SISD) (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model}{wiki})
 }
+\section{Model diagram}{
+
+\figure{diagrams/sisd.png}{SISD Diagram}
+}
+
 \examples{
 model_sisd <- ModelSISD(
   name = "COVID-19",

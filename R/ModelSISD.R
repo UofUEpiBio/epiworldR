@@ -12,6 +12,8 @@
 #' @family Models
 #' @returns
 #' - The `ModelSISD` function returns a model of class [epiworld_model].
+#' @section Model diagram:
+#' ![](diagrams/sisd.png "SISD Diagram")
 #' @aliases epiworld_sisd
 #' @examples
 #' model_sisd <- ModelSISD(

@@ -101,6 +101,11 @@ As of version 0.10.0, the parameter \code{vax_improved_recovery} has been remove
 and is no longer used (it never had a side effect). Future versions may not
 accept it.
 }
+\section{Model diagram}{
+
+\figure{diagrams/measlesschool.png}{Measles School Diagram}
+}
+
 \examples{
 # An in a school with low vaccination
 model_measles <- ModelMeaslesQuarantine(

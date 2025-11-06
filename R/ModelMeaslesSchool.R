@@ -48,6 +48,8 @@
 #' there is no quarantine process. The same happens with `isolation_period`.
 #' Since the quarantine process is triggered by an isolation, then
 #' `isolation_period = -1` automatically sets `quarantine_period = -1`.
+#' @section Model diagram:
+#' ![](diagrams/measlesschool.png "Measles School Diagram")
 #'
 #' @note
 #' As of version 0.10.0, the parameter `vax_improved_recovery` has been removed
