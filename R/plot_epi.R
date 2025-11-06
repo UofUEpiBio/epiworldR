@@ -41,10 +41,10 @@ plot_epi <- function(x, main = "", counts_scale, ...) UseMethod("plot_epi")
 
 #' @export
 plot_epi.epiworld_model <- function(
-    x, main = "",
-    counts_scale,
-    ...
-    ) {
+  x, main = "",
+  counts_scale,
+  ...
+) {
   # Check if model has been run
   if (length(get_hist_total(x)$counts) <= 0)
     stop("The model must be run before it can be plotted.")
@@ -60,10 +60,10 @@ plot_epi.epiworld_model <- function(
 
 #' @export
 plot_epi.epiworld_hist_virus <- function(
-    x, main = "",
-    counts_scale,
-    ...
-    ) {
+  x, main = "",
+  counts_scale,
+  ...
+) {
 
   res <- lapply(sort(unique(x$id)), function(i) x[x$id == i, ])
 
@@ -76,10 +76,10 @@ plot_epi.epiworld_hist_virus <- function(
 
 #' @export
 plot_epi.epiworld_hist <- function(
-    x, main = "",
-    counts_scale,
-    ...
-    ) {
+  x, main = "",
+  counts_scale,
+  ...
+) {
 
   curves      <- x
   state_names <- attr(curves, "states")

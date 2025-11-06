@@ -76,9 +76,9 @@
 #' actions
 #'
 globalevent_tool <- function(
-    tool, prob,
-    name = get_name_tool(tool), day = -99
-    ) {
+  tool, prob,
+  name = get_name_tool(tool), day = -99
+) {
 
   structure(
     globalevent_tool_cpp(tool, prob, name, day),
@@ -108,9 +108,9 @@ globalaction_tool <- function(...) {
 #' `vars` is an integer vector indicating the position of the variables in the
 #' model.
 globalevent_tool_logit <- function(
-    tool, vars, coefs,
-    name = get_name_tool(tool), day = -99
-    ) {
+  tool, vars, coefs,
+  name = get_name_tool(tool), day = -99
+) {
 
   stopifnot_tool(tool)
 
@@ -149,9 +149,9 @@ globalaction_tool_logit <- function(...) {
 #' the model. The parameter is specified by its name `param` and the value by
 #' `value`.
 globalevent_set_params <- function(
-    param, value,
-    name = paste0("Set ", param, " to ", value), day = -99
-    ) {
+  param, value,
+  name = paste0("Set ", param, " to ", value), day = -99
+) {
 
   structure(
     globalevent_set_param_cpp(
@@ -225,8 +225,8 @@ globalaction_set_params <- function(...) {
 #' # We add the global event to the model
 #' model <- add_globalevent(model, hist_saver_event)
 globalevent_fun <- function(
-    fun, name = deparse(substitute(fun)), day = -99
-    ) {
+  fun, name = deparse(substitute(fun)), day = -99
+) {
 
   structure(
     globalevent_fun_cpp(fun, name, as.integer(day)),

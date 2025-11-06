@@ -123,8 +123,8 @@ The **kernel function** effectively scores the results of the latest simulation 
 
 ```{r kernfun}
 kernel_fun <- function(
-    simulated_stats, observed_stats, epsilon, lfmcmc_obj
-    ) {
+  simulated_stats, observed_stats, epsilon, lfmcmc_obj
+) {
 
   diff <- ((simulated_stats - observed_stats)^2)^epsilon
   dnorm(sqrt(sum(diff)))

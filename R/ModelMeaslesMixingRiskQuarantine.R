@@ -124,29 +124,29 @@
 #'
 #' @seealso epiworld-methods
 ModelMeaslesMixingRiskQuarantine <- function(
-    n,
-    prevalence,
-    contact_matrix,
-    transmission_rate = .9,
-    contact_rate = 15 / transmission_rate / prodromal_period,
-    prop_vaccinated,
-    vax_efficacy = .99,
-    quarantine_period_high = 21,
-    quarantine_period_medium = 14,
-    quarantine_period_low = 7,
-    quarantine_willingness = 1,
-    isolation_willingness = 1,
-    isolation_period = 4,
-    incubation_period = 12,
-    prodromal_period = 4,
-    rash_period = 3,
-    hospitalization_rate = 0.2,
-    hospitalization_period = 7,
-    days_undetected = 2,
-    detection_rate_quarantine = 0.5,
-    contact_tracing_success_rate = 1.0,
-    contact_tracing_days_prior = 4
-    ) {
+  n,
+  prevalence,
+  contact_matrix,
+  transmission_rate = .9,
+  contact_rate = 15 / transmission_rate / prodromal_period,
+  prop_vaccinated,
+  vax_efficacy = .99,
+  quarantine_period_high = 21,
+  quarantine_period_medium = 14,
+  quarantine_period_low = 7,
+  quarantine_willingness = 1,
+  isolation_willingness = 1,
+  isolation_period = 4,
+  incubation_period = 12,
+  prodromal_period = 4,
+  rash_period = 3,
+  hospitalization_rate = 0.2,
+  hospitalization_period = 7,
+  days_undetected = 2,
+  detection_rate_quarantine = 0.5,
+  contact_tracing_success_rate = 1.0,
+  contact_tracing_days_prior = 4
+) {
   # Check input parameters
   stopifnot_int(n, lb = 0)
   stopifnot_double(prevalence, lb = 0.0, ub = 1.0)

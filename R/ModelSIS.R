@@ -34,10 +34,10 @@
 #'
 #' @seealso epiworld-methods
 ModelSIS <- function(
-    name,
-    prevalence,
-    transmission_rate,
-    recovery_rate) {
+  name,
+  prevalence,
+  transmission_rate,
+  recovery_rate) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_double(prevalence)

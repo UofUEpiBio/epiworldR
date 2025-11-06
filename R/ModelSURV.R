@@ -61,20 +61,20 @@
 #'
 #' @seealso epiworld-methods
 ModelSURV <- function(
-    name,
-    prevalence,
-    efficacy_vax,
-    latent_period,
-    infect_period,
-    prob_symptoms,
-    prop_vaccinated,
-    prop_vax_redux_transm,
-    prop_vax_redux_infect,
-    surveillance_prob,
-    transmission_rate,
-    prob_death,
-    prob_noreinfect
-    ) {
+  name,
+  prevalence,
+  efficacy_vax,
+  latent_period,
+  infect_period,
+  prob_symptoms,
+  prop_vaccinated,
+  prop_vax_redux_transm,
+  prop_vax_redux_infect,
+  surveillance_prob,
+  transmission_rate,
+  prob_death,
+  prob_noreinfect
+) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_double(prevalence)

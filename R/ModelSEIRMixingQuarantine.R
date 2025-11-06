@@ -90,24 +90,24 @@
 #'
 #' @seealso epiworld-methods
 ModelSEIRMixingQuarantine <- function(
-    name,
-    n,
-    prevalence,
-    contact_rate,
-    transmission_rate,
-    incubation_days,
-    recovery_rate,
-    contact_matrix,
-    hospitalization_rate,
-    hospitalization_period,
-    days_undetected,
-    quarantine_period,
-    quarantine_willingness,
-    isolation_willingness,
-    isolation_period,
-    contact_tracing_success_rate,
-    contact_tracing_days_prior
-    ) {
+  name,
+  n,
+  prevalence,
+  contact_rate,
+  transmission_rate,
+  incubation_days,
+  recovery_rate,
+  contact_matrix,
+  hospitalization_rate,
+  hospitalization_period,
+  days_undetected,
+  quarantine_period,
+  quarantine_willingness,
+  isolation_willingness,
+  isolation_period,
+  contact_tracing_success_rate,
+  contact_tracing_days_prior
+) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_int(n)

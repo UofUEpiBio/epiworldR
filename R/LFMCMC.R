@@ -110,9 +110,9 @@ LFMCMC <- function(model = NULL) {
 #' @returns The simulated model of class [epiworld_lfmcmc].
 #' @export
 run_lfmcmc <- function(
-    lfmcmc, params_init, n_samples, epsilon,
-    seed = NULL
-    ) {
+  lfmcmc, params_init, n_samples, epsilon,
+  seed = NULL
+) {
 
   stopifnot_lfmcmc(lfmcmc)
 
