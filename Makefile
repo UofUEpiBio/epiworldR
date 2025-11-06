@@ -25,8 +25,8 @@ install:
 		R CMD INSTALL epiworldR_$(VERSION).tar.gz
 
 
-README.md: README.Rmd
-	Rscript --vanilla -e 'rmarkdown::render("README.Rmd")'
+README.md: README.qmd
+	quarto render README.qmd
 
 # update:
 # 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
