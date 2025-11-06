@@ -1,6 +1,19 @@
 # Capture the current value of the version of the package in DESCRIPTION
 VERSION := $(shell grep Version DESCRIPTION | sed -e 's/Version: //')
 
+help:
+	@echo "Makefile commands:"
+	@echo "  build               Build the package tarball"
+	@echo "  check               Check the built package"
+	@echo "  checkv              Check the built package with valgrind"
+	@echo "  install             Install the built package"
+	@echo "  install-dev         Install the development version of the package"
+	@echo "  debug               Build and run a debug Docker container"
+	@echo "  docs                Generate documentation with roxygen2"
+	@echo "  local-update        Update epiworld.hpp from local epiworld include folder"
+	@echo "  local-update-diagrams  Update diagrams from local epiworld docs_src folder"
+	@echo "  website             Build the pkgdown website"
+	@echo "  clean               Clean compiled files and reset DESCRIPTION and NAMESPACE"
 
 build:
 	cd .. && R CMD build epiworldR
@@ -34,6 +47,9 @@ README.md: README.Rmd
 local-update:
 	rsync -avz --delete ../epiworld/include/epiworld inst/include/.
 
+local-update-diagrams:
+	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/diagrams
+
 check: build
 	cd .. && R CMD check epiworldR_*.tar.gz
 
@@ -56,4 +72,7 @@ dev: clean
 	R CMD build --no-build-vignettes .
 	R CMD INSTALL epiworldR_$(VERSION).tar.gz
 
-.PHONY: build update check clean docs docker-debug dev
+website:
+	Rscript -e 'pkgdown::build_site()'
+
+.PHONY: build update check clean docs docker-debug dev website

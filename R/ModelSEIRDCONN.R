@@ -25,6 +25,9 @@
 #' @aliases epiworld_seirdconn
 #' @returns
 #' - The `ModelSEIRDCONN`function returns a model of class [epiworld_model].
+#' @section Model diagram:
+#'
+#' ![](diagrams/seirdconn.png "SEIRD Connected Diagram")
 #' @examples
 #' # An example with COVID-19
 #' model_seirdconn <- ModelSEIRDCONN(
