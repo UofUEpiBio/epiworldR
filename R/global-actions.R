@@ -6,6 +6,7 @@
 #' vaccination, isolation, and social distancing by means of tools.
 #'
 #' @export
+#' @concept global-events
 #' @param prob Numeric scalar. A probability between 0 and 1.
 #' @param tool An object of class [tool].
 #' @name global-events

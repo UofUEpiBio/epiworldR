@@ -10,6 +10,7 @@
 #' @param prevalence Numeric scalar. Prevalence (initial state) in proportion.
 #'
 #' @export
+#' @concept general-models
 #' @returns
 #' - The `ModelSIRLogit` function returns a model of class [epiworld_model].
 #' @examples

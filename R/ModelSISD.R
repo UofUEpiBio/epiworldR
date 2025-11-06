@@ -10,6 +10,7 @@
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @returns
 #' - The `ModelSISD` function returns a model of class [epiworld_model].
 #' @aliases epiworld_sisd

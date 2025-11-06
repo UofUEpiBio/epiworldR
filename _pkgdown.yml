@@ -1,3 +1,52 @@
 url: ~
 template:
   bootstrap: 5
+
+reference:
+  - title: "General Models"
+    desc: >
+      Standard epidemiological models including SIR, SEIR, SIS, and their variants.
+    contents:
+      - has_concept("general-models")
+  
+  - title: "Measles Models"
+    desc: >
+      Specialized measles models with mixing, quarantine, and vaccination features.
+    contents:
+      - has_concept("measles-models")
+  
+  - title: "Likelihood-Free MCMC"
+    desc: >
+      Functions for performing Likelihood-Free Markov Chain Monte Carlo simulations.
+    contents:
+      - has_concept("fmcmc")
+  
+  - title: "Model Utility Functions"
+    desc: >
+      Functions for manipulating models, running simulations, and extracting results.
+    contents:
+      - has_concept("model-utility-functions")
+  
+  - title: "Virus Functions"
+    desc: >
+      Functions for creating and manipulating virus objects in models.
+    contents:
+      - has_concept("virus-functions")
+  
+  - title: "Tool Functions"
+    desc: >
+      Functions for creating and managing tools (e.g., vaccines, interventions).
+    contents:
+      - has_concept("tool-functions")
+  
+  - title: "Entity Functions"
+    desc: >
+      Functions for working with entities in mixing models.
+    contents:
+      - has_concept("entity-functions")
+  
+  - title: "Global Events"
+    desc: >
+      Functions for defining and managing global events in simulations.
+    contents:
+      - has_concept("global-events")

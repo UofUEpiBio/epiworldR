@@ -15,6 +15,7 @@
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @aliases epiworld_seirconn
 #' @returns
 #' - The `ModelSEIRCONN`function returns a model of class [epiworld_model].
