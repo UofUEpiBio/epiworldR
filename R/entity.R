@@ -8,6 +8,7 @@
 #' [ModelSIRMixing] and [ModelSEIRMixing].
 #'
 #' @name entities
+#' @concept entity-functions
 #' @export
 #' @examples
 #' # Creating a mixing model

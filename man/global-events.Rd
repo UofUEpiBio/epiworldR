@@ -203,3 +203,4 @@ model <- add_globalevent(model, hist_saver_event)
 \seealso{
 epiworld-model
 }
+\concept{global-events}

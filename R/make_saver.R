@@ -85,6 +85,7 @@
 #' plot(multi_sir)
 #'
 #' @export
+#' @concept model-utility-functions
 #' @returns
 #' - The `run_multiple` function runs a specified number of simulations and
 #' returns a model object of class [epiworld_model].

@@ -9,6 +9,7 @@
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery from virus.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @returns
 #' - The `ModelSIS` function returns a model of class [epiworld_model].
 #' @aliases epiworld_sis

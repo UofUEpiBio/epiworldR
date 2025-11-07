@@ -5,6 +5,7 @@
 #' number of adopters in the network.
 #'
 #' @export
+#' @concept general-models
 #' @param name Name of the model.
 #' @param prevalence Prevalence of the disease.
 #' @param prob_adopt Probability of adoption.

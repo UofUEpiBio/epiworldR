@@ -61,6 +61,7 @@
 #' )
 #' virus_set_state(delta2, 1, 2, 3)
 #' @export
+#' @concept virus-functions
 #' @aliases epiworld_virus
 virus <- function(
     name,

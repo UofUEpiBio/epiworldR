@@ -314,3 +314,4 @@ get_tool(model_sirconn, 0) # Returns information about the first tool in the
 # Draw a mermaid diagram of the transitions
 draw_mermaid(model_sirconn)
 }
+\concept{model-utility-functions}

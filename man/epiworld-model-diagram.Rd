@@ -95,3 +95,4 @@ draw_mermaid_from_data(
   transition_probs = c(get_transition_probability(model))
 )
 }
+\concept{model-utility-functions}

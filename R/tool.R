@@ -63,6 +63,7 @@
 #' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #'
 #' @export
+#' @concept tool-functions
 #' @returns
 #' - The `tool` function creates a tool of class [epiworld_tool].
 #' @aliases epiworld_tool

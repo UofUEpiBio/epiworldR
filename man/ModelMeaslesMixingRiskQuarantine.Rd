@@ -213,3 +213,4 @@ Other measles models:
 }
 \concept{Models}
 \concept{measles models}
+\concept{measles-models}

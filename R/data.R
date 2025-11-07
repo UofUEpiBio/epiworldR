@@ -13,6 +13,7 @@
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
 #' @name epiworld-data
+#' @concept model-utility-functions
 #' @family Models
 #' @examples
 #' # SEIR Connected

@@ -15,6 +15,7 @@
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @aliases epiworld_seirconn
 #' @section Model diagram:
 #' ![](diagrams/seirconn.png "SEIR Connected Diagram")

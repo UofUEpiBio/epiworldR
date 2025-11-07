@@ -11,6 +11,7 @@
 #' @section Model diagram:
 #' ![](diagrams/sirlogit.png "SIR Logit Diagram")
 #' @export
+#' @concept general-models
 #' @returns
 #' - The `ModelSIRLogit` function returns a model of class [epiworld_model].
 #' @examples
