@@ -300,3 +300,4 @@ run(sir, ndays = 50, seed = 11)
 plot(sir)
 
 }
+\concept{virus-functions}

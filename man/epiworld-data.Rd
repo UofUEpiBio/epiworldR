@@ -259,3 +259,4 @@ Other Models:
 \code{\link{ModelSURV}()}
 }
 \concept{Models}
+\concept{model-utility-functions}

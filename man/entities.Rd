@@ -134,3 +134,4 @@ run(mymodel, ndays = 100, seed = 1912)
 
 summary(mymodel)
 }
+\concept{entity-functions}

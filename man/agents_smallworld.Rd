@@ -152,3 +152,4 @@ run(sir, 50)
 
 plot(sir)
 }
+\concept{model-utility-functions}

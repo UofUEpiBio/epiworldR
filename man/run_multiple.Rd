@@ -152,3 +152,4 @@ multi_sir <- multi_sir[multi_sir$date <= 20, ]
 plot(multi_sir)
 
 }
+\concept{model-utility-functions}
