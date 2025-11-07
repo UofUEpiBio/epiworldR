@@ -15,7 +15,7 @@
 #' values: (1) proportion of non-infected agents already removed, and (2) proportion of
 #' non-ifected agents already deceased.
 #' @section Model diagram:
-#' ![](diagrams/sirdconn.png "SIRD Connected Diagram")
+#' ![](diagrams/sirdconnected.png "SIRD Connected Diagram")
 #' @family Models
 #' @returns
 #' - The `ModelSIRDCONN`function returns a model of class [epiworld_model].

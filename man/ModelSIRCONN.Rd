@@ -43,7 +43,7 @@ agents have been removed at the beginning of the simulation.
 }
 \section{Model diagram}{
 
-\figure{diagrams/sirconn.png}{SIR Connected Diagram}
+\figure{diagrams/sirconnected.png}{SIR Connected Diagram}
 }
 
 \examples{
