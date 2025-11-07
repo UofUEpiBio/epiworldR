@@ -72,6 +72,7 @@
 #' @export
 #' @family Models
 #' @family measles models
+#' @concept measles-models
 #' @aliases epiworld_measlesquarantine
 #' @returns
 #' - The `ModelMeaslesQuarantine` function returns a model of classes [epiworld_model] and `epiworld_measlesquarantine`.
@@ -164,6 +165,7 @@ ModelMeaslesSchool <- function(
 
 #' @export
 #' @rdname epiworldR-deprecated
+#' @keywords internal
 ModelMeaslesQuarantine <- function(...) {
   .Deprecated(
     "ModelMeaslesSchool",

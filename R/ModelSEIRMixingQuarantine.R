@@ -28,6 +28,7 @@
 #' of the infection for which contact tracing is effective.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @details
 #' The `contact_matrix` is a matrix of contact rates between entities. The
 #' matrix should be of size `n x n`, where `n` is the number of entities.

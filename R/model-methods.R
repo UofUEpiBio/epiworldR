@@ -10,6 +10,7 @@
 #' @param seed Seed to set for initializing random number generator (passed to [set.seed()]).
 #' @param model Model object.
 #' @export
+#' @concept model-utility-functions
 #' @name epiworld-methods
 #' @aliases epiworld_model
 #' @examples

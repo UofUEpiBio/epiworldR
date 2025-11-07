@@ -23,6 +23,7 @@
 #' @param prob_noreinfect Double. Probability of no re-infection.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @aliases epiworld_surv
 #' @returns
 #' - The `ModelSURV`function returns a model of class [epiworld_model].

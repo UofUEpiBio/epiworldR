@@ -91,3 +91,4 @@ x[0] # Print information about the first agent. Substitute the agent of
 \seealso{
 agents
 }
+\concept{model-utility-functions}
