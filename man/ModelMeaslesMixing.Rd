@@ -107,6 +107,11 @@ basic reproduction number (R0), but it is not 100\% accurate. A more accurate
 way to se the contact rate is available, and will be distributed in the
 future.
 }
+\section{Model diagram}{
+
+\figure{diagrams/measlesmixing.png}{Measles Mixing Diagram}
+}
+
 \examples{
 
 # Start off creating three entities.
@@ -188,3 +193,4 @@ Other measles models:
 }
 \concept{Models}
 \concept{measles models}
+\concept{measles-models}

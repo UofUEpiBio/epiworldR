@@ -48,6 +48,8 @@
 #' there is no quarantine process. The same happens with `isolation_period`.
 #' Since the quarantine process is triggered by an isolation, then
 #' `isolation_period = -1` automatically sets `quarantine_period = -1`.
+#' @section Model diagram:
+#' ![](diagrams/measlesschool.png "Measles School Diagram")
 #'
 #' @note
 #' As of version 0.10.0, the parameter `vax_improved_recovery` has been removed
@@ -70,6 +72,7 @@
 #' @export
 #' @family Models
 #' @family measles models
+#' @concept measles-models
 #' @aliases epiworld_measlesquarantine
 #' @returns
 #' - The `ModelMeaslesQuarantine` function returns a model of classes [epiworld_model] and `epiworld_measlesquarantine`.
@@ -162,6 +165,7 @@ ModelMeaslesSchool <- function(
 
 #' @export
 #' @rdname epiworldR-deprecated
+#' @keywords internal
 ModelMeaslesQuarantine <- function(...) {
   .Deprecated(
     "ModelMeaslesSchool",

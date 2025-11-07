@@ -11,10 +11,13 @@
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @details
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
+#' @section Model diagram:
+#' ![](diagrams/sir.png "SIR Diagram")
 #' @aliases epiworld_sir
 #' @returns
 #' - The `ModelSIR` function returns a model of class [epiworld_model].

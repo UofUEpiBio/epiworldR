@@ -9,12 +9,15 @@
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
 #' @export
+#' @concept general-models
 #' @details
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. The user must provide a vector of proportions indicating the following
 #' values: (1) Proportion of exposed agents who are infected, (2)
 #' proportion of non-infected agents already removed, and (3) proportion of
 #' non-ifected agents already deceased.
+#' @section Model diagram:
+#' ![](diagrams/seird.png "SEIRD Diagram")
 #' @family Models
 #' @aliases epiworld_seird
 #' @returns

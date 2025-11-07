@@ -36,6 +36,7 @@
 #' @export
 #' @family Models
 #' @family measles models
+#' @concept measles-models
 #' @details
 #' The `contact_matrix` is a matrix of contact rates between entities. The
 #' matrix should be of size `n x n`, where `n` is the number of entities.
@@ -53,6 +54,8 @@
 #' basic reproduction number (R0), but it is not 100% accurate. A more accurate
 #' way to se the contact rate is available, and will be distributed in the
 #' future.
+#' @section Model diagram:
+#' ![](diagrams/measlesmixing.png "Measles Mixing Diagram")
 #' @returns
 #' - The `ModelMeaslesMixing` function returns a model of classes
 #' [epiworld_model] and [epiworld_measlesmixing].

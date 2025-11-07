@@ -86,6 +86,7 @@
 #' get_mean_params(lfmcmc_model)
 #'
 #' @export
+#' @concept fmcmc
 LFMCMC <- function(model = NULL) {
 
   if ((length(model) > 0) && !inherits(model, "epiworld_model"))

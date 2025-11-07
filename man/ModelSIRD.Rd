@@ -33,6 +33,11 @@ model. The user must provide a vector of proportions indicating the following
 values: (1) proportion of non-infected agents already removed, and (2) proportion of
 non-ifected agents already deceased.
 }
+\section{Model diagram}{
+
+\figure{diagrams/sird.png}{SIRD Diagram}
+}
+
 \examples{
 model_sird <- ModelSIRD(
   name              = "COVID-19",
@@ -83,3 +88,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}

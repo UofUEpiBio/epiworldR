@@ -44,6 +44,11 @@ values: (1) Proportion of exposed agents who are infected, (2)
 proportion of non-infected agents already removed, and (3) proportion of
 non-ifected agents already deceased.
 }
+\section{Model diagram}{
+
+\figure{diagrams/seird.png}{SEIRD Diagram}
+}
+
 \examples{
 model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4,
@@ -89,3 +94,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}

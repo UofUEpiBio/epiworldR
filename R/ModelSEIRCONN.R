@@ -15,7 +15,10 @@
 #' @param n Number of individuals in the population.
 #' @export
 #' @family Models
+#' @concept general-models
 #' @aliases epiworld_seirconn
+#' @section Model diagram:
+#' ![](diagrams/seirconn.png "SEIR Connected Diagram")
 #' @returns
 #' - The `ModelSEIRCONN`function returns a model of class [epiworld_model].
 #' @examples

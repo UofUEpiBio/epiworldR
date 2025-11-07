@@ -25,6 +25,11 @@ infection.}
 \description{
 Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/index.php?title=Compartmental_models_in_epidemiology&oldid=1155757336#The_SIS_model}{wiki})
 }
+\section{Model diagram}{
+
+\figure{diagrams/sis.png}{SIS Diagram}
+}
+
 \examples{
 model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1)
@@ -71,3 +76,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}

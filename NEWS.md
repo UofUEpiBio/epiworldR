@@ -20,6 +20,10 @@
 
 * Various legacy C++ files have been removed from the `inst/include/epiworld` folder.
 
+* We now include model diagrams in the documentation of each model (new feature of `epiworld` 0.10.0).
+
+* Various improvements to the documentation of the package and models.
+
 
 # epiworldR 0.9.1.0
 

@@ -43,6 +43,11 @@ ModelSIRLogit(
 \description{
 SIR Logistic model
 }
+\section{Model diagram}{
+
+\figure{diagrams/sirlogit.png}{SIR Logit Diagram}
+}
+
 \examples{
 set.seed(2223)
 n <- 100000
@@ -114,3 +119,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}

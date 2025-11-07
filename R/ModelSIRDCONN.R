@@ -8,11 +8,14 @@
 #' @param death_rate Numeric scalar between 0 and 1. Probability of death.
 #' @param n Number of individuals in the population.
 #' @export
+#' @concept general-models
 #' @details
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. The user must provide a vector of proportions indicating the following
 #' values: (1) proportion of non-infected agents already removed, and (2) proportion of
 #' non-ifected agents already deceased.
+#' @section Model diagram:
+#' ![](diagrams/sirdconnected.png "SIRD Connected Diagram")
 #' @family Models
 #' @returns
 #' - The `ModelSIRDCONN`function returns a model of class [epiworld_model].

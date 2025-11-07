@@ -10,6 +10,7 @@
 #' @param x An object of class [epiworld_agents].
 #' @seealso agents
 #' @export
+#' @concept model-utility-functions
 #' @aliases epiworld_agents
 #' @return
 #' - The `get_agents` function returns an object of class [epiworld_agents].

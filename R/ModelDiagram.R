@@ -6,6 +6,7 @@
 #' using other packages.
 #'
 #' @name epiworld-model-diagram
+#' @concept model-utility-functions
 #' @examples
 #' # Create and run a model
 #' model <- ModelSIRCONN(

@@ -51,6 +51,12 @@ values: (1) Proportion of exposed agents who are infected, (2)
 proportion of non-infected agents already removed, and (3) proportion of
 non-ifected agents already deceased.
 }
+\section{Model diagram}{
+
+
+\figure{diagrams/seirdconn.png}{SEIRD Connected Diagram}
+}
+
 \examples{
 # An example with COVID-19
 model_seirdconn <- ModelSEIRDCONN(
@@ -109,3 +115,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}

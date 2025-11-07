@@ -48,6 +48,11 @@ The \link{initial_states} function allows the user to set the initial state of t
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
 }
+\section{Model diagram}{
+
+\figure{diagrams/sirmixing.png}{SIR Mixing Diagram}
+}
+
 \examples{
 # From the vignette
 
@@ -113,3 +118,4 @@ Other Models:
 \code{\link{epiworld-data}}
 }
 \concept{Models}
+\concept{general-models}
