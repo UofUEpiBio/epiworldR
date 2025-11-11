@@ -40,3 +40,4 @@ docker
 # Temporary build artifacts
 ^Rplots\.pdf$
 ^.*-conftest\.gcno$
+^_codeql_detected_source_root$

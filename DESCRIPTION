@@ -19,28 +19,23 @@ Authors@R: c(
   ))
 Description: A flexible framework for Agent-Based Models (ABM), the 'epiworldR' package provides methods for prototyping disease outbreaks and transmission models using a 'C++' backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents' features, providing great complexity for the model dynamics. Furthermore, 'epiworldR' is ideal for simulation studies featuring large populations.
 URL: https://github.com/UofUEpiBio/epiworldR,
-        https://uofuepibio.github.io/epiworldR/,
-        https://uofuepibio.github.io/epiworldR-workshop/
+    https://uofuepibio.github.io/epiworldR/,
+    https://uofuepibio.github.io/epiworldR-workshop/
 BugReports: https://github.com/UofUEpiBio/epiworldR/issues
 License: MIT + file LICENSE
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
-Suggests: knitr, rmarkdown, tinytest, netplot, igraph, data.table,
-        DiagrammeR
-Imports: utils, parallel
+Suggests:
+    knitr,
+    rmarkdown,
+    tinytest,
+    netplot,
+    igraph,
+    data.table,
+    DiagrammeR
+Imports:
+    utils,
+    parallel
 VignetteBuilder: knitr
-NeedsCompilation: yes
-Packaged: 2025-11-11 17:35:00 UTC; runner
-Author: George Vega Yon [aut] (<https://orcid.org/0000-0002-3171-0844>),
-  Derek Meyer [aut] (<https://orcid.org/0009-0005-1350-6988>),
-  Andrew Pulsipher [aut, cre] (<https://orcid.org/0000-0002-0773-3210>),
-  Susan Holmes [rev] (JOSS reviewer,
-    <https://orcid.org/0000-0002-2208-8168>),
-  Abinash Satapathy [rev] (JOSS reviewer,
-    <https://orcid.org/0000-0002-2955-2744>),
-  Carinogurjao [rev],
-  Centers for Disease Control and Prevention [fnd] (Award number
-    1U01CK000585; 75D30121F00003)
-Maintainer: Andrew Pulsipher <pulsipher.a@gmail.com>
