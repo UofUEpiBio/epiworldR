@@ -24,7 +24,7 @@
 #' non-ifected agents already deceased.
 #' @section Model diagram:
 #'
-#' ![](diagrams/seirdconn.png "SEIRD Connected Diagram")
+#' ![](diagrams/seirdconnected.png "SEIRD Connected Diagram")
 #' @family Models
 #' @aliases epiworld_seirdconn
 #' @returns

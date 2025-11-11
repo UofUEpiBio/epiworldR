@@ -36,3 +36,7 @@ README\.html
 paper\..+
 docker
 \.devcontainer
+
+# Temporary build artifacts
+^Rplots\.pdf$
+^.*-conftest\.gcno$

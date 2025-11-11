@@ -54,7 +54,7 @@ non-ifected agents already deceased.
 \section{Model diagram}{
 
 
-\figure{diagrams/seirdconn.png}{SEIRD Connected Diagram}
+\figure{diagrams/seirdconnected.png}{SEIRD Connected Diagram}
 }
 
 \examples{
