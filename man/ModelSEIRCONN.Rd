@@ -43,7 +43,7 @@ This is equivalent to a compartmental model (\href{https://en.wikipedia.org/w/in
 }
 \section{Model diagram}{
 
-\figure{diagrams/seirconnected.png}{SEIR Connected Diagram}
+\figure{seirconnected.png}{SEIR Connected Diagram}
 }
 
 \examples{

@@ -29,7 +29,7 @@ Susceptible-Infected-Susceptible-Deceased model (SISD) (\href{https://en.wikiped
 }
 \section{Model diagram}{
 
-\figure{diagrams/sisd.png}{SISD Diagram}
+\figure{sisd.png}{SISD Diagram}
 }
 
 \examples{

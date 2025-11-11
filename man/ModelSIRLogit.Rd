@@ -45,7 +45,7 @@ SIR Logistic model
 }
 \section{Model diagram}{
 
-\figure{diagrams/sirlogit.png}{SIR Logit Diagram}
+\figure{sirlogit.png}{SIR Logit Diagram}
 }
 
 \examples{

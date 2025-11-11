@@ -17,7 +17,7 @@
 #' values: (1) Proportion of non-infected agents who are removed, and (2)
 #' Proportion of exposed agents to be set as infected.
 #' @section Model diagram:
-#' ![](diagrams/seir.png "SEIR Diagram")
+#' ![](seir.png "SEIR Diagram")
 #' @returns
 #' - The `ModelSEIR`function returns a model of class [epiworld_model].
 #' @examples

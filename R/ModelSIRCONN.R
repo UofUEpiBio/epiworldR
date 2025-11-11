@@ -14,7 +14,7 @@
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
 #' @section Model diagram:
-#' ![](diagrams/sirconnected.png "SIR Connected Diagram")
+#' ![](sirconnected.png "SIR Connected Diagram")
 #' @returns
 #' - The `ModelSIRCONN`function returns a model of class [epiworld_model].
 #' @aliases epiworld_sirconn

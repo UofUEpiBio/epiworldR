@@ -103,7 +103,7 @@ accept it.
 }
 \section{Model diagram}{
 
-\figure{diagrams/measlesschool.png}{Measles School Diagram}
+\figure{measlesschool.png}{Measles School Diagram}
 }
 
 \examples{

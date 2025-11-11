@@ -86,7 +86,7 @@ agents have been removed at the beginning of the simulation.
 }
 \section{Model diagram}{
 
-\figure{diagrams/seirmixingquarantine.png}{SEIR Mixing Quarantine Diagram}
+\figure{seirmixingquarantine.png}{SEIR Mixing Quarantine Diagram}
 }
 
 \examples{

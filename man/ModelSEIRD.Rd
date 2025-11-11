@@ -46,7 +46,7 @@ non-ifected agents already deceased.
 }
 \section{Model diagram}{
 
-\figure{diagrams/seird.png}{SEIRD Diagram}
+\figure{seird.png}{SEIRD Diagram}
 }
 
 \examples{

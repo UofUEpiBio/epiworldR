@@ -67,7 +67,7 @@
 #' way to set the contact rate is available, and will be distributed in the
 #' future.
 #' @section Model diagram:
-#' ![](diagrams/measlesmixingriskquarantine.png "Measles Mixing Risk Quarantine Diagram")
+#' ![](measlesmixingriskquarantine.png "Measles Mixing Risk Quarantine Diagram")
 #' @returns
 #' - The `ModelMeaslesMixingRiskQuarantine` function returns a model of classes
 #' [epiworld_model] and [epiworld_measlesmixingriskquarantine].

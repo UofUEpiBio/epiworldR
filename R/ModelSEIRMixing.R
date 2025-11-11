@@ -23,7 +23,7 @@
 #'
 #' @section Model diagram:
 #'
-#' ![](diagrams/seirmixing.png "SEIR Mixing Diagram")
+#' ![](seirmixing.png "SEIR Mixing Diagram")
 #'
 #' @returns
 #' - The `ModelSEIRMixing`function returns a model of class [epiworld_model].
