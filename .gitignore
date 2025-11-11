@@ -25,3 +25,4 @@ config.log
 config.status
 
 .vscode
+build/
