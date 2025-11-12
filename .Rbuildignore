@@ -41,3 +41,6 @@ docker
 ^Rplots\.pdf$
 ^.*-conftest\.gcno$
 ^_codeql_detected_source_root$
+
+# Ignore revdev folder
+revdev/
