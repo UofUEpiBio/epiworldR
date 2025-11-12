@@ -6,7 +6,9 @@ FROM rocker/tidyverse:4.5.1
 
 # Installing pdflatex via tinytex
 RUN Rscript --vanilla -e "install.packages('tinytex'); tinytex::install_tinytex()" && \
-  cat "export PATH=/root/bin:$PATH" >> /root/.bashrc
+  cat "export PATH=/root/bin:$PATH" >> /root/.bashrc && \
+  apt-get update && apt-get install --no-install-recommends -y tidy
+
 
 # Adding R packages
 RUN install2.r --error cpp11 roxygen2 tinytest data.table netplot \

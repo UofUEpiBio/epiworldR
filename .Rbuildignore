@@ -43,4 +43,4 @@ docker
 ^_codeql_detected_source_root$
 
 # Ignore revdev folder
-revdev/
+revdep/
