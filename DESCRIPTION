@@ -4,16 +4,14 @@ Title: Measles Epidemiological Models
 Version: 0.1.0.0
 Depends: 
     R (>= 4.1.0),
-    epiworldR (>= 0.10.0)
+    epiworldR (>= 0.10.0.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
   email="g.vegayon@gmail.com", comment = c(ORCID = "0000-0002-3171-0844")),
-  person(given="Derek", family="Meyer", role=c("aut"),
-  email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),
-  person(given="Andrew", family="Pulsipher", role=c("aut"),
-  email="pulsipher.a@gmail.com", comment = c(ORCID = "0000-0002-0773-3210")),
   person("Centers for Disease Control and Prevention", role="fnd", comment = "Award number 1U01CK000585; 75D30121F00003"
   ))
+Remotes: 
+    UofUEpiBio/epiworldR@main
 Description: A specialized collection of measles epidemiological models built on the 'epiworldR' framework. This package is a spinoff from 'epiworldR' focusing specifically on measles transmission dynamics. It includes models for school settings with quarantine and isolation policies, mixing models with population groups, and risk-based quarantine strategies. The models use Agent-Based Models (ABM) with a fast 'C++' backend from the 'epiworld' library. Ideal for studying measles outbreaks, vaccination strategies, and intervention policies.
 URL: https://github.com/UofUEpiBio/measles
 BugReports: https://github.com/UofUEpiBio/measles/issues
