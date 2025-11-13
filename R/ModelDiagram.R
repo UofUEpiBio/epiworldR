@@ -56,10 +56,15 @@ plot.epiworld_diagram <- function(x, ...) {
 #' run(model, ndays = 50, seed = 1912)
 #'
 #' # Draw mermaid diagrams from model data
-#' draw_mermaid_from_data(
+#' diagram <- draw_mermaid_from_data(
 #'   states = get_states(model),
 #'   transition_probs = c(get_transition_probability(model))
 #' )
+#'
+#' \dontrun{
+#' # If DiagrammeR is installed, we can plot the diagram
+#' plot(diagram)
+#' }
 #' @param states String vector. List of model states.
 #' @param transition_probs Numeric vector. Transition probability matrix
 #' @param output_file String. Optional path to a file. If provided, the diagram will be written to the file.

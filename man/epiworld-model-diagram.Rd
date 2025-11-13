@@ -100,9 +100,14 @@ verbose_off(model)
 run(model, ndays = 50, seed = 1912)
 
 # Draw mermaid diagrams from model data
-draw_mermaid_from_data(
+diagram <- draw_mermaid_from_data(
   states = get_states(model),
   transition_probs = c(get_transition_probability(model))
 )
+
+\dontrun{
+  # If DiagrammeR is installed, we can plot the diagram
+  plot(diagram)
+}
 }
 \concept{model-utility-functions}
