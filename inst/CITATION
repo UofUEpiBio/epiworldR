@@ -1,8 +1,25 @@
 year <- 2025
 note <- sprintf("R package version %s", meta$Version)
 
+bibentry(bibtype = "Manual",
+         title = "{{measles: Measles Epidemiological Models}}",
+         author = c(
+          person("George", "Vega Yon", comment = c(ORCID = "0000-0002-3171-0844")),
+          person("Derek", "Meyer", comment = c(ORCID = "0009-0005-1350-6988")),
+          person(given="Andrew", family="Pulsipher", comment = c(ORCID = "0000-0002-0773-3210"))
+          ),
+         year = year,
+         note = note,
+         url = "https://github.com/UofUEpiBio/measles", 
+         header = "To cite the measles package in publications use:",
+         textVersion = paste(
+           "Vega Yon, George, Meyer, Derek, and Pulsipher, Andrew (2025).",
+           "measles: Measles Epidemiological Models. R package.",
+           "https://github.com/UofUEpiBio/measles"
+         ))
+
 bibentry(
-  header = "To cite epiworldR in publications use:",
+  header = "Please also cite the underlying epiworldR framework:",
   bibtype = "Article",
   entry  = "Article",
   title = "epiworldR: Fast Agent-Based Epi Models",
@@ -23,15 +40,3 @@ bibentry(
     "https://doi.org/10.21105/joss.05781"
   )
 )
-
-bibentry(bibtype = "Manual",
-         title = "{{epiworldR: Fast Agent-Based Epi Models}}",
-         author = c(
-          person("Derek", "Meyer", comment = c(ORCID = "0009-0005-1350-6988")),
-          person(given="Andrew", family="Pulsipher", comment = c(ORCID = "0000-0002-0773-3210")),
-          person("George", "Vega Yon", comment = c(ORCID = "0000-0002-3171-0844"))
-          ),
-         year = year,
-         note = note,
-         url = "https://github.com/UofUEpiBio/epiworldR", 
-         header = "And the actual R package:")
