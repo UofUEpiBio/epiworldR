@@ -426,7 +426,7 @@ clone_model <- function(model) {
 #' @inheritParams epiworld-model-diagram
 #' @details `draw_mermaid` generates a mermaid diagram of the model. The
 #' diagram is saved in the specified output file (or printed to the standard
-#' output if the filename is empty).
+#' output if the filename is empty). See [draw_mermaid_from_data()].
 #' @return
 #' - The `draw_mermaid` returns the mermaid diagram as a string.
 #' @importFrom utils capture.output
@@ -457,6 +457,10 @@ draw_mermaid <- function(
       allow_self_transitions
     ))
 
-    return(paste(diagram, collapse = "\n"))
+    return(
+      as_epiworld_diagram(
+        paste(diagram, collapse = "\n")
+      )
+    )
   }
 }
