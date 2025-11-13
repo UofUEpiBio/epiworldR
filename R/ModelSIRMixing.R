@@ -19,7 +19,7 @@
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
 #' @section Model diagram:
-#' ![](diagrams/sirmixing.png "SIR Mixing Diagram")
+#' ![](sirmixing.png "SIR Mixing Diagram")
 #' @returns
 #' - The `ModelSIRMixing`function returns a model of class [epiworld_model].
 #' @aliases epiworld_sirmixing

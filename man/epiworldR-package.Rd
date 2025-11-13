@@ -6,6 +6,8 @@
 \alias{epiworldR-package}
 \title{epiworldR}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A flexible framework for Agent-Based Models (ABM), the 'epiworldR' package provides methods for prototyping disease outbreaks and transmission models using a 'C++' backend, making it very fast. It supports multiple epidemiological models, including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility rates as a function of agents' features, providing great complexity for the model dynamics. Furthermore, 'epiworldR' is ideal for simulation studies featuring large populations.
 }
 \seealso{
@@ -19,12 +21,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
+\strong{Maintainer}: George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
 
 Authors:
 \itemize{
-  \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
   \item Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
+  \item Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
 }
 
 Other contributors:

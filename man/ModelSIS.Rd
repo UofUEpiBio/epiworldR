@@ -27,7 +27,7 @@ Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/i
 }
 \section{Model diagram}{
 
-\figure{diagrams/sis.png}{SIS Diagram}
+\figure{sis.png}{SIS Diagram}
 }
 
 \examples{

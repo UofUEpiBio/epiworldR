@@ -55,7 +55,7 @@ agents have been removed at the beginning of the simulation.
 \section{Model diagram}{
 
 
-\figure{diagrams/seirmixing.png}{SEIR Mixing Diagram}
+\figure{seirmixing.png}{SEIR Mixing Diagram}
 }
 
 \examples{

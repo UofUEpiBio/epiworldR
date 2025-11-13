@@ -50,7 +50,7 @@ agents have been removed at the beginning of the simulation.
 }
 \section{Model diagram}{
 
-\figure{diagrams/sirmixing.png}{SIR Mixing Diagram}
+\figure{sirmixing.png}{SIR Mixing Diagram}
 }
 
 \examples{

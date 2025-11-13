@@ -36,3 +36,11 @@ README\.html
 paper\..+
 docker
 \.devcontainer
+
+# Temporary build artifacts
+^Rplots\.pdf$
+^.*-conftest\.gcno$
+^_codeql_detected_source_root$
+
+# Ignore revdev folder
+revdep/

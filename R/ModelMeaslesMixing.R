@@ -55,7 +55,7 @@
 #' way to se the contact rate is available, and will be distributed in the
 #' future.
 #' @section Model diagram:
-#' ![](diagrams/measlesmixing.png "Measles Mixing Diagram")
+#' ![](measlesmixing.png "Measles Mixing Diagram")
 #' @returns
 #' - The `ModelMeaslesMixing` function returns a model of classes
 #' [epiworld_model] and [epiworld_measlesmixing].

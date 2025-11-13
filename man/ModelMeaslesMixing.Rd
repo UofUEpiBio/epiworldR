@@ -109,7 +109,7 @@ future.
 }
 \section{Model diagram}{
 
-\figure{diagrams/measlesmixing.png}{Measles Mixing Diagram}
+\figure{measlesmixing.png}{Measles Mixing Diagram}
 }
 
 \examples{

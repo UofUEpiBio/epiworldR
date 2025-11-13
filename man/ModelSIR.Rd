@@ -32,7 +32,7 @@ agents have been removed at the beginning of the simulation.
 }
 \section{Model diagram}{
 
-\figure{diagrams/sir.png}{SIR Diagram}
+\figure{sir.png}{SIR Diagram}
 }
 
 \examples{

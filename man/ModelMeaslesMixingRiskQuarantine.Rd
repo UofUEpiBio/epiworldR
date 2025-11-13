@@ -127,7 +127,7 @@ future.
 }
 \section{Model diagram}{
 
-\figure{diagrams/measlesmixingriskquarantine.png}{Measles Mixing Risk Quarantine Diagram}
+\figure{measlesmixingriskquarantine.png}{Measles Mixing Risk Quarantine Diagram}
 }
 
 \examples{

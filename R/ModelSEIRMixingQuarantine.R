@@ -39,7 +39,7 @@
 #' model. In particular, the user can specify how many of the non-infected
 #' agents have been removed at the beginning of the simulation.
 #' @section Model diagram:
-#' ![](diagrams/seirmixingquarantine.png "SEIR Mixing Quarantine Diagram")
+#' ![](seirmixingquarantine.png "SEIR Mixing Quarantine Diagram")
 #' @returns
 #' - The `ModelSEIRMixingQuarantine` function returns a model of class [epiworld_model].
 #' @aliases epiworld_seirmixingquarantine

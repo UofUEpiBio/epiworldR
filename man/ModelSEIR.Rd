@@ -36,7 +36,7 @@ Proportion of exposed agents to be set as infected.
 }
 \section{Model diagram}{
 
-\figure{diagrams/seir.png}{SEIR Diagram}
+\figure{seir.png}{SEIR Diagram}
 }
 
 \examples{

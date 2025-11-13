@@ -17,7 +17,7 @@
 #' proportion of non-infected agents already removed, and (3) proportion of
 #' non-ifected agents already deceased.
 #' @section Model diagram:
-#' ![](diagrams/seird.png "SEIRD Diagram")
+#' ![](seird.png "SEIRD Diagram")
 #' @family Models
 #' @aliases epiworld_seird
 #' @returns

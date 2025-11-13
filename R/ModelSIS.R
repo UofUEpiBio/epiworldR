@@ -14,7 +14,7 @@
 #' - The `ModelSIS` function returns a model of class [epiworld_model].
 #' @aliases epiworld_sis
 #' @section Model diagram:
-#' ![](diagrams/sis.png "SIS Diagram")
+#' ![](sis.png "SIS Diagram")
 #' @examples
 #' model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01,
 #'   transmission_rate = 0.9, recovery_rate = 0.1)

@@ -48,7 +48,7 @@ local-update:
 	rsync -avz --delete ../epiworld/include/epiworld inst/include/.
 
 local-update-diagrams:
-	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/diagrams
+	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/
 
 check: build
 	cd .. && R CMD check epiworldR_*.tar.gz

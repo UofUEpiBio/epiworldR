@@ -16,7 +16,7 @@ run(model, ndays = 50, seed = 1912)
 
 # Check draw functions succeed with valid inputs -------------------------------
 
-test_output_file <- "mermaid_diagram.txt"
+test_output_file <- tempfile("mermaid_diagram", fileext = ".txt")
 
 # Check draw_mermaid_from_data
 expect_silent(md_basic <- draw_mermaid_from_data(
@@ -40,8 +40,6 @@ if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
-file.remove(test_output_file)
-expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_matrix
 expect_silent(md_basic <- draw_mermaid_from_matrix(
@@ -62,11 +60,12 @@ if (!grepl("windows", .Platform$OS.type))
   expect_identical(md_basic, md_with_output_file)
 
 expect_true(file.exists(test_output_file))
-file.remove(test_output_file)
-expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_file
-test_file <- "test-model-diagram-files/single-file-transitions.txt"
+test_file <- file.path(
+  "test-model-diagram-files",
+  "single-file-transitions.txt"
+  )
 
 expect_silent(md_basic <- draw_mermaid_from_file(
     transitions_file = test_file
@@ -90,7 +89,10 @@ file.remove(test_output_file)
 expect_false(file.exists(test_output_file))
 
 # Check draw_mermaid_from_files
-test_files <- paste0("test-model-diagram-files/multiple-files/", list.files("test-model-diagram-files/multiple-files/"))
+test_files <- paste0(
+  "test-model-diagram-files/multiple-files/",
+  list.files("test-model-diagram-files/multiple-files/")
+  )
 
 expect_silent(md_basic <- draw_mermaid_from_files(
     transitions_files = test_files
