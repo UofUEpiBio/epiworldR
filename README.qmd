@@ -102,7 +102,7 @@ contact_matrix <- matrix(c(
 # Create the model
 measles_model <- ModelMeaslesMixing(
   n = 9000,
-  prevalence = 1/9000,
+  prevalence = 1 / 9000,
   contact_rate = 15,
   transmission_rate = 0.9,
   vax_efficacy = 0.97,
