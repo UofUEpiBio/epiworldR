@@ -164,8 +164,7 @@ ModelMeaslesSchool <- function(
 }
 
 #' @export
-#' @rdname epiworldR-deprecated
-#' @keywords internal
+#' @rdname ModelMeaslesSchool
 ModelMeaslesQuarantine <- function(...) {
   .Deprecated(
     "ModelMeaslesSchool",
