@@ -3,6 +3,7 @@
 \name{ModelMeaslesSchool}
 \alias{ModelMeaslesSchool}
 \alias{epiworld_measlesquarantine}
+\alias{ModelMeaslesQuarantine}
 \title{Measles model with quarantine}
 \usage{
 ModelMeaslesSchool(
@@ -23,6 +24,8 @@ ModelMeaslesSchool(
   isolation_period = 4,
   ...
 )
+
+ModelMeaslesQuarantine(...)
 }
 \arguments{
 \item{n}{Number of agents in the model.}
@@ -62,7 +65,7 @@ see details).}
 }
 \value{
 \itemize{
-\item The \code{ModelMeaslesQuarantine} function returns a model of classes \link{epiworld_model} and \code{epiworld_measlesquarantine}.
+\item The \code{ModelMeaslesQuarantine} function returns a model of classes \link[epiworldR:epiworld-methods]{epiworldR::epiworld_model} and \code{epiworld_measlesquarantine}.
 }
 }
 \description{
@@ -139,25 +142,8 @@ Services. \url{https://epi.utah.gov/wp-content/uploads/Measles-disease-plan.pdf}
 epiworld-methods
 
 Other Models: 
-\code{\link{ModelDiffNet}()},
 \code{\link{ModelMeaslesMixing}()},
-\code{\link{ModelMeaslesMixingRiskQuarantine}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRCONN}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRDCONN}()},
-\code{\link{ModelSEIRMixing}()},
-\code{\link{ModelSEIRMixingQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRCONN}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRDCONN}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIRMixing}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()},
-\code{\link{epiworld-data}}
+\code{\link{ModelMeaslesMixingRiskQuarantine}()}
 
 Other measles models: 
 \code{\link{ModelMeaslesMixing}()},

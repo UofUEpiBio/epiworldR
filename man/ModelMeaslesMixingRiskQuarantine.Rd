@@ -89,7 +89,7 @@ of the infection for which contact tracing is effective (default: 4).}
 \value{
 \itemize{
 \item The \code{ModelMeaslesMixingRiskQuarantine} function returns a model of classes
-\link{epiworld_model} and \link{epiworld_measlesmixingriskquarantine}.
+\link[epiworldR:epiworld-methods]{epiworldR::epiworld_model} and \link{epiworld_measlesmixingriskquarantine}.
 }
 }
 \description{
@@ -116,7 +116,7 @@ don't share entity membership
 \item \strong{Low Risk}: Other unvaccinated agents
 }
 
-The \link{initial_states} function allows the user to set the initial state of the
+The \link[epiworldR:epiworld-methods]{epiworldR::initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
 
@@ -187,25 +187,8 @@ summary(measles_model)
 epiworld-methods
 
 Other Models: 
-\code{\link{ModelDiffNet}()},
 \code{\link{ModelMeaslesMixing}()},
-\code{\link{ModelMeaslesSchool}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRCONN}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRDCONN}()},
-\code{\link{ModelSEIRMixing}()},
-\code{\link{ModelSEIRMixingQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRCONN}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRDCONN}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIRMixing}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()},
-\code{\link{epiworld-data}}
+\code{\link{ModelMeaslesSchool}()}
 
 Other measles models: 
 \code{\link{ModelMeaslesMixing}()},

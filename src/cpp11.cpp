@@ -29,9 +29,9 @@ extern "C" SEXP _measles_ModelMeaslesMixingRiskQuarantine_cpp(SEXP n, SEXP preva
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_measles_ModelMeaslesSchool_cpp",               (DL_FUNC) &_measles_ModelMeaslesSchool_cpp,               16},
-    {"_measles_ModelMeaslesMixing_cpp",               (DL_FUNC) &_measles_ModelMeaslesMixing_cpp,               20},
     {"_measles_ModelMeaslesMixingRiskQuarantine_cpp", (DL_FUNC) &_measles_ModelMeaslesMixingRiskQuarantine_cpp, 22},
+    {"_measles_ModelMeaslesMixing_cpp",               (DL_FUNC) &_measles_ModelMeaslesMixing_cpp,               20},
+    {"_measles_ModelMeaslesSchool_cpp",               (DL_FUNC) &_measles_ModelMeaslesSchool_cpp,               16},
     {NULL, NULL, 0}
 };
 }
