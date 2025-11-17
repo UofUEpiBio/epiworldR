@@ -2,7 +2,7 @@
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "cpp11/matrix.hpp"
-#include "epiworld-common.h"
+#include "epiworld/epiworld.hpp"
 
 using namespace cpp11;
 

@@ -1,7 +1,4 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-measlesmixingriskquarantine.R")
-
-library(epiworldR)
-
 e1 <- entity("Population 1", 3e3, FALSE)
 e2 <- entity("Population 2", 3e3, FALSE)
 e3 <- entity("Population 3", 3e3, FALSE)

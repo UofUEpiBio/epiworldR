@@ -1,7 +1,4 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-measlesmixingriskquarantine.R")
-
-library(epiworldR)
-
 # Row-stochastic matrix (rowsums 1)
 self <- .83
 others <- (1 - self) / 2
