@@ -106,8 +106,8 @@ diagram <- draw_mermaid_from_data(
 )
 
 \dontrun{
-  # If DiagrammeR is installed, we can plot the diagram
-  plot(diagram)
+# If DiagrammeR is installed, we can plot the diagram
+plot(diagram)
 }
 }
 \concept{model-utility-functions}
