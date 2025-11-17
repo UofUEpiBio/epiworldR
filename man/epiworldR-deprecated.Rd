@@ -37,3 +37,4 @@ globalaction_fun(...)
 Starting version 0.0-4, epiworld changed how it refered to "actions."
 Following more traditional ABMs, actions are now called "events."
 }
+\keyword{internal}
