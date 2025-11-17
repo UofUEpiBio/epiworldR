@@ -16,15 +16,15 @@ run(model, ndays = 50, seed = 1912)
 # Check draw_mermaid succeeds with valid inputs --------------------------------
 expect_silent(md_basic <- draw_mermaid(model))
 expect_silent(md_self <- draw_mermaid(model, allow_self_transitions = TRUE))
+
+mermaid_tmp <- tempfile(fileext = ".txt")
 expect_message(md_with_output <- draw_mermaid(
   model,
-  output_file = "mermaid_diagram.txt"
+  output_file = mermaid_tmp
 ), "Diagram written")
 
 
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
+expect_true(file.exists(mermaid_tmp))
 
 # Check functions fail with invalid inputs -------------------------------------
 
