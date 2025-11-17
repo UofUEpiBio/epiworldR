@@ -12,7 +12,7 @@ cmatrix <- c(
 
 N <- 9e3
 
-measles_model <- ModelMeaslesMixing(
+measles_model <- measles::ModelMeaslesMixing(
   n                          = N,
   prevalence                 = 1 / N,
   contact_rate               = 15,
@@ -104,7 +104,7 @@ expected_error_msg_int <- "must be an integer"
 expected_error_msg_double <- "must be a double"
 expected_error_msg_any_na <- "must not contain NA values"
 
-expect_error(test_model <- ModelMeaslesMixing(
+expect_error(test_model <- measles::ModelMeaslesMixing(
   n                          = bad_numeric_input,
   prevalence                 = good_prevalence,
   contact_rate               = good_contact_rate,

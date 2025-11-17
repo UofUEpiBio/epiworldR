@@ -44,3 +44,7 @@ docker
 
 # Ignore revdev folder
 revdep/
+
+# R packages
+.*\.tar\.gz$
+.*\.Rcheck/$

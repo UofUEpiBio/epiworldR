@@ -21,14 +21,5 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11, epiworldR
 Suggests:
-    knitr,
-    rmarkdown,
     tinytest,
-    netplot,
-    igraph,
-    data.table,
-    DiagrammeR
-Imports:
-    utils,
-    parallel
-VignetteBuilder: knitr
+    data.table

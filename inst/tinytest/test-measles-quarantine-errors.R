@@ -19,7 +19,7 @@ model_factory <- function(
   isolation_period = 3L,
   ...
 ) {
-  ModelMeaslesSchool(
+  measles::ModelMeaslesSchool(
     n = n,
     prevalence = prevalence,
     contact_rate = contact_rate,

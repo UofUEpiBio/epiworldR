@@ -12,7 +12,7 @@ cmatrix <- c(
 
 N <- 9e3
 
-measles_model <- ModelMeaslesMixingRiskQuarantine(
+measles_model <- measles::ModelMeaslesMixingRiskQuarantine(
   n                          = N,
   prevalence                 = 1 / N,
   contact_rate               = 15,

@@ -20,7 +20,7 @@ model_factory <- function(durations, nsims = 100) {
   e2 <- entity("Population 2", 200, FALSE)
   e3 <- entity("Population 3", 200, FALSE)
 
-  measles_model <- ModelMeaslesMixingRiskQuarantine(
+  measles_model <- measles::ModelMeaslesMixingRiskQuarantine(
     n                          = N,
     prevalence                 = 1 / N,
     contact_rate               = c_rate,
