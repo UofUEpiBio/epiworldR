@@ -1,3 +1,9 @@
+# epiworldR 0.10.0.1
+
+## Breaking Changes
+
+* **Measles models have been removed from epiworldR**. The measles-specific models (`ModelMeaslesSchool`, `ModelMeaslesMixing`, `ModelMeaslesMixingRiskQuarantine`, and the deprecated `ModelMeaslesQuarantine`) have been moved to a separate package. Users who need measles models should install the [`measles`](https://github.com/UofUEpiBio/measles) package.
+
 # epiworldR 0.10.0.0
 
 ## New Features

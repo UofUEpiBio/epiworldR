@@ -44,6 +44,10 @@ From the package's description:
 
 Current available models:
 
+**Note:** Measles-specific models have been moved to the separate [`measles`](https://github.com/UofUEpiBio/measles) R package.
+
+**Note:** Measles-specific models have been moved to the separate [`measles`](https://github.com/UofUEpiBio/measles) R package.
+
 ```{r print-models, echo=FALSE, results='asis'}
 models <- list.files(path = "R/", pattern = "Model.*.R", full.names = FALSE) |>
   gsub(pattern = "(Model.*)\\.R", replacement = "\\1")
