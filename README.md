@@ -46,26 +46,26 @@ From the package’s description:
 
 Current available models:
 
+**Note:** Measles-specific models have been moved to the separate
+[`measles`](https://github.com/UofUEpiBio/measles) R package.
+
 1.  `ModelDiagram`
 2.  `ModelDiffNet`
-3.  `ModelMeaslesMixing`
-4.  `ModelMeaslesMixingRiskQuarantine`
-5.  `ModelMeaslesSchool`
-6.  `ModelSEIR`
-7.  `ModelSEIRCONN`
-8.  `ModelSEIRD`
-9.  `ModelSEIRDCONN`
-10. `ModelSEIRMixing`
-11. `ModelSEIRMixingQuarantine`
-12. `ModelSIR`
-13. `ModelSIRCONN`
-14. `ModelSIRD`
-15. `ModelSIRDCONN`
-16. `ModelSIRLogit`
-17. `ModelSIRMixing`
-18. `ModelSIS`
-19. `ModelSISD`
-20. `ModelSURV`
+3.  `ModelSEIR`
+4.  `ModelSEIRCONN`
+5.  `ModelSEIRD`
+6.  `ModelSEIRDCONN`
+7.   `ModelSEIRMixing`
+8.   `ModelSEIRMixingQuarantine`
+9.   `ModelSIR`
+10. `ModelSIRCONN`
+11. `ModelSIRD`
+12. `ModelSIRDCONN`
+13. `ModelSIRLogit`
+14. `ModelSIRMixing`
+15. `ModelSIS`
+16. `ModelSISD`
+17. `ModelSURV`
 
 ## Installation
 
