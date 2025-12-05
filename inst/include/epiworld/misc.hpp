@@ -1,4 +1,4 @@
-#ifndef EPIWORLD_MISC_HPP 
+#ifndef EPIWORLD_MISC_HPP
 #define EPIWORLD_MISC_HPP
 
 template<typename TSeq>
@@ -10,40 +10,40 @@ class Agent;
 // Relevant for anything using vecHasher function ------------------------------
 /**
  * @brief Vector hasher
- * @tparam T 
+ * @tparam T
  */
 template <typename T>
 struct vecHasher {
     std::size_t operator()(std::vector< T > const&  dat) const noexcept {
-        
+
         std::hash< T > hasher;
         std::size_t hash = hasher(dat[0u]);
-        
+
         // ^ makes bitwise XOR
         // 0x9e3779b9 is a 32 bit constant (comes from the golden ratio)
         // << is a shift operator, something like lhs * 2^(rhs)
         if (dat.size() > 1u)
             for (epiworld_fast_uint i = 1u; i < dat.size(); ++i)
                 hash ^= hasher(dat[i]) + 0x9e3779b9 + (hash<<6) + (hash>>2);
-        
+
         return hash;
-        
+
     }
 };
 
-template<typename Ta = epiworld_double, typename Tb = epiworld_fast_uint> 
+template<typename Ta = epiworld_double, typename Tb = epiworld_fast_uint>
 using MapVec_type = std::unordered_map< std::vector< Ta >, Tb, vecHasher<Ta>>;
 
 /**
  * @name Default sequence initializers
- * 
- * @details 
+ *
+ * @details
  * If the user does not provide a default sequence, this function is used when
  * a sequence needs to be initialized. Some examples: `Agent`, `Virus`, and
  * `Tool` need a default sequence.
- * 
- * @tparam TSeq 
- * @return TSeq 
+ *
+ * @tparam TSeq
+ * @return TSeq
  */
 ///@{
 template<typename TSeq = EPI_DEFAULT_TSEQ>
@@ -95,7 +95,7 @@ inline std::vector<epiworld_double> default_sequence(int seq_count) {
 
 /**
  * @brief Check whether `a` is included in `b`
- * 
+ *
  * @tparam Ta Type of `a`. Could be int, epiworld_double, etc.
  * @param a Scalar of class `Ta`.
  * @param b Vector `std::vector` of class `Ta`.
@@ -113,12 +113,12 @@ inline bool IN(const Ta & a, const std::vector< Ta > & b) noexcept
 
 /**
  * @brief Conditional Weighted Sampling
- * 
- * @details 
+ *
+ * @details
  * The sampling function will draw one of `{-1, 0,...,probs.size() - 1}` in a
  * weighted fashion. The probabilities are drawn given that either one or none
  * of the cases is drawn; in the latter returns -1.
- * 
+ *
  * @param probs Vector of probabilities.
  * @param m A `Model`. This is used to draw random uniform numbers.
  * @return int If -1 then it means that none got sampled, otherwise the index
@@ -131,7 +131,7 @@ inline int roulette(
     )
 {
 
-    // Step 1: Computing the prob on none 
+    // Step 1: Computing the prob on none
     TDbl p_none = 1.0;
     std::vector< int > certain_infection;
     certain_infection.reserve(probs.size());
@@ -142,7 +142,7 @@ inline int roulette(
 
         if (probs[p] > (1 - 1e-100))
             certain_infection.push_back(p);
-        
+
     }
 
     TDbl r = static_cast<TDbl>(m->runif());
@@ -173,7 +173,7 @@ inline int roulette(
         cumsum += probs_only_p[p]/(p_none_or_single);
         if (r < cumsum)
             return static_cast<int>(p);
-        
+
     }
 
 
@@ -209,12 +209,12 @@ inline int roulette(
     {
         throw std::logic_error(
             "Trying to sample from more data than there is in roulette!" +
-            std::to_string(nelements) + " vs " + 
+            std::to_string(nelements) + " vs " +
             std::to_string(m->array_double_tmp.size())
             );
     }
 
-    // Step 1: Computing the prob on none 
+    // Step 1: Computing the prob on none
     epiworld_double p_none = 1.0;
     epiworld_fast_uint ncertain = 0u;
     // std::vector< int > certain_infection;
@@ -225,7 +225,7 @@ inline int roulette(
         if (m->array_double_tmp[p] > (1 - 1e-100))
             m->array_double_tmp[nelements + ncertain++] = p;
             // certain_infection.push_back(p);
-        
+
     }
 
     epiworld_double r = m->runif();
@@ -239,7 +239,7 @@ inline int roulette(
     epiworld_double p_none_or_single = p_none;
     for (epiworld_fast_uint p = 0u; p < nelements; ++p)
     {
-        m->array_double_tmp[nelements + p] = 
+        m->array_double_tmp[nelements + p] =
             m->array_double_tmp[p] * (p_none / (1.0 - m->array_double_tmp[p]));
         p_none_or_single += m->array_double_tmp[nelements + p];
     }
@@ -255,7 +255,7 @@ inline int roulette(
         cumsum += m->array_double_tmp[nelements + p]/(p_none_or_single);
         if (r < cumsum)
             return static_cast<int>(p);
-        
+
     }
 
     return static_cast<int>(nelements - 1u);
@@ -264,7 +264,7 @@ inline int roulette(
 
 /**
  * @brief Read parameters from a yaml file
- * 
+ *
  * @details
  * The file should have the following structure:
  * ```yaml
@@ -273,10 +273,10 @@ inline int roulette(
  * [name of parameter 2]: [value in T]
  * ...
  * ```
- * 
+ *
  * @tparam T Type of the parameter
  * @param fn Path to the file containing the parameters
- * @return std::map<std::string, T> 
+ * @return std::map<std::string, T>
  */
 template <typename T>
 inline std::map< std::string, T > read_yaml(std::string fn)

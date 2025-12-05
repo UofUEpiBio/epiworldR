@@ -4,6 +4,10 @@
 /**
  * @brief Template for a Susceptible-Infected-Susceptible-Deceased (SISD) model
  * 
+ * ![Model Diagram](../assets/img/sisd.png)
+ * 
+ * @ingroup death_compartmental
+ * 
  * @param vname std::string Name of the virus
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system

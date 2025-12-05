@@ -1,6 +1,13 @@
 #ifndef EPIWORLD_MODELS_SIRDCONNECTED_HPP 
 #define EPIWORLD_MODELS_SIRDCONNECTED_HPP
 
+/**
+ * @brief Template for a Susceptible-Infected-Removed-Deceased (SIRD) model with connected population
+ * 
+ * ![Model Diagram](../assets/img/sirdconnected.png)
+ * 
+ * @ingroup connected_models
+ */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRDCONN : public epiworld::Model<TSeq>
 {

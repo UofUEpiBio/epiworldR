@@ -3,6 +3,8 @@
 
 /**
  * @brief Creates an initial function for the SIR-like models
+ * @ingroup model_utilities
+ * 
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
@@ -68,6 +70,8 @@ inline std::function<void(Model<TSeq>*)> create_init_function_sir(
 
 /**
  * @brief Creates an initial function for the SIR-like models
+ * @ingroup model_utilities
+ * 
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
@@ -154,6 +158,8 @@ inline std::function<void(Model<TSeq>*)> create_init_function_sird(
 
 /**
  * @brief Creates an initial function for the SEIR-like models
+ * @ingroup model_utilities
+ * 
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>
@@ -230,6 +236,8 @@ inline std::function<void(Model<TSeq>*)> create_init_function_seir(
 
 /**
  * @brief Creates an initial function for the SEIR-like models
+ * @ingroup model_utilities
+ * 
  * The function is used for the initial states of the model.
 */
 template<typename TSeq>

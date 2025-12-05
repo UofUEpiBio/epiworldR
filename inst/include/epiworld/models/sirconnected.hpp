@@ -1,6 +1,13 @@
 #ifndef EPIWORLD_MODELS_SIRCONNECTED_HPP 
 #define EPIWORLD_MODELS_SIRCONNECTED_HPP
 
+/**
+ * @brief Template for a Susceptible-Infected-Removed (SIR) model with connected population
+ * 
+ * ![Model Diagram](../assets/img/sirconnected.png)
+ * 
+ * @ingroup connected_models
+ */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRCONN : public epiworld::Model<TSeq>
 {

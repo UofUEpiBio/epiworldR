@@ -7,6 +7,10 @@
 /**
  * @brief Template for a Susceptible-Infected-Removed (SIR) model
  * 
+ * ![Model Diagram](../assets/img/sirlogit.png)
+ * 
+ * @ingroup special_models
+ * 
  * @details
  * In this model, infection and recoveru probabilities are computed
  * using a logit model. Particularly, the probability of infection

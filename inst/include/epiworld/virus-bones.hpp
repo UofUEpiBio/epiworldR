@@ -10,6 +10,14 @@ class Virus;
 template<typename TSeq>
 class Model;
 
+/**
+ * @brief Class containing virus functions
+ * @details
+ * Provides a way to share virus-related functions across multiple Virus instances.
+ * This is particularly useful when viruses are cloned or copied, ensuring that
+ * they all reference the same set of functions without duplicating them.
+ * @tparam TSeq Type for genetic sequences
+ */
 template<typename TSeq>
 class VirusFunctions {
 public:

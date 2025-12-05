@@ -9,8 +9,8 @@ class DataBase;
 
 /**
  * @brief Personalized data by the user
- * 
- * @tparam TSeq 
+ *
+ * @tparam TSeq
  */
 template<typename TSeq>
 class UserData
@@ -38,15 +38,15 @@ public:
 
     /**
      * @brief Construct a new User Data object
-     * 
+     *
      * @param names A vector of names. The length of the vector sets
      * the number of columns to record.
      */
     UserData(std::vector< std::string > names);
 
     /**
-     * @name Append data 
-     * 
+     * @name Append data
+     *
      * @param x A vector of length `ncol()` (if vector), otherwise a `epiworld_double`.
      * @param j Index of the data point, from 0 to `ncol() - 1`.
      */
@@ -59,11 +59,11 @@ public:
     ///@}
 
     /**
-     * @name Access data 
-     * 
+     * @name Access data
+     *
      * @param i Row (0 through ndays - 1.)
      * @param j Column (0 through `ncols()`).
-     * @return epiworld_double& 
+     * @return epiworld_double&
      */
     ///@{
     epiworld_double & operator()(

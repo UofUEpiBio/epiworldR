@@ -124,8 +124,8 @@ using EntityToAgentFun = std::function<void(Entity<TSeq>&,Model<TSeq>*)>;
 
 /**
  * @brief Event data for update an agent
- * 
- * @tparam TSeq 
+ *
+ * @tparam TSeq
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 struct Event {
@@ -141,9 +141,9 @@ struct Event {
 public:
 /**
      * @brief Construct a new Event object
-     * 
+     *
      * All the parameters are rather optional.
-     * 
+     *
      * @param agent_ Agent over who the action will happen
      * @param virus_ Virus to add
      * @param tool_ Tool to add
@@ -173,8 +173,8 @@ public:
 };
 
 /**
- * @name Constants in epiworld 
- * 
+ * @name Constants in epiworld
+ *
  * @details The following are the default values some probabilities and
  * rates take when no value has been specified in the model.
  */

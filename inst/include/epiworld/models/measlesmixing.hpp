@@ -65,10 +65,13 @@ using namespace epiworld;
  * - Hospitalized: Individuals requiring hospital care
  * - Recovered: Individuals who have recovered and gained immunity
  *
+ * ![Model Diagram](../assets/img/measlesmixing.png)
+ *
  * @tparam TSeq Type for genetic sequences (default: EPI_DEFAULT_TSEQ)
+ * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesMixing : public Model<TSeq>
+class ModelMeaslesMixing : public epiworld::Model<TSeq>
 {
 private:
 

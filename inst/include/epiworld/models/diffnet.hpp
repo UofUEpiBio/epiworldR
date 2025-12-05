@@ -3,12 +3,14 @@
 
 /**
  * @brief Template for a Network Diffusion Model
+ * @ingroup special_models
  * 
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
  * @param initial_recovery epiworld_double Initial recovery rate of the immune system
+ * 
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelDiffNet : public epiworld::Model<TSeq>
