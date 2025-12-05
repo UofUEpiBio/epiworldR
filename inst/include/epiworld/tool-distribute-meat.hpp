@@ -96,7 +96,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
                     floor(model->runif() * n--)
                     );
 
-                if (loc >= n)
+                if ((n > 0) && (loc >= n))
                     loc = n - 1;
                 
                 population[idx[loc]].add_tool(
@@ -187,7 +187,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
                     floor(model->runif() * n--)
                     );
 
-                if (loc >= n)
+                if ((n > 0) && (loc >= n))
                     loc = n - 1;
                 
                 population[idx[loc]].add_tool(

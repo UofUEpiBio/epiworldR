@@ -24,6 +24,7 @@
 \alias{set_distribution_tool}
 \alias{distribute_tool_randomly}
 \alias{distribute_tool_to_set}
+\alias{distribute_tool_to_entities}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -77,11 +78,15 @@ set_distribution_tool(tool, distfun)
 distribute_tool_randomly(prevalence, as_proportion, agents_ids = integer(0))
 
 distribute_tool_to_set(agents_ids)
+
+distribute_tool_to_entities(prevalence, as_proportion)
 }
 \arguments{
 \item{name}{Name of the tool}
 
-\item{prevalence}{Numeric scalar. Prevalence of the tool.}
+\item{prevalence}{Numeric scalar. Prevalence of the tool. In the case of
+\code{distribute_tool_to_entities}, it is a vector of prevalences, one per
+entity.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
 as a proportion of the total number of agents in the model.}
@@ -205,6 +210,10 @@ randomly assigns the tool to a proportion of the population.
 
 The \code{distribute_tool_to_set} function creates a distribution function that
 assigns the tool to a set of agents.
+
+The \code{distribute_tool_to_entities} function creates a distribution function
+that assigns the tool to a number of agents based on prevalence at the
+entity level. This is only useful for the mixing models.
 }
 \examples{
 # Simple model

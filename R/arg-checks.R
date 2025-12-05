@@ -226,3 +226,26 @@ stopifnot_virus_distfun <- function(virus_distfun) {
     )
   }
 }
+
+stopifnot_dataframe <- function(df) {
+  if (!inherits(df, "data.frame"))
+    stop(
+      "The argument must be a data.frame. It is of class: ",
+      paste(class(df), collapse = ", ")
+    )
+  invisible(TRUE)
+}
+
+stopifnot_columns <- function(df, expected_cols) {
+  stopifnot_dataframe(df)
+
+  missing_cols <- setdiff(expected_cols, colnames(df))
+
+  if (length(missing_cols) > 0L)
+    stop(
+      "The data.frame is missing the following columns: ",
+      paste(missing_cols, collapse = ", ")
+    )
+
+  invisible(TRUE)
+}

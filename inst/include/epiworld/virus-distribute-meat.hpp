@@ -114,7 +114,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
                 );
 
             // Correcting for possible overflow
-            if (loc >= n_available)
+            if ((n_available > 0) && (loc >= n_available))
                 loc = n_available - 1;
 
             Agent<TSeq> & agent = population[idx[loc]];
@@ -209,7 +209,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
                     floor(model->runif() * n--)
                     );
 
-                if (loc >= n)
+                if ((n > 0) && (loc >= n))
                     loc = n - 1;
                 
                 population[idx[loc]].set_virus(

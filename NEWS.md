@@ -1,4 +1,10 @@
-# epiworldR 0.10.0.1
+# epiworldR 0.11.0.0
+
+## New Features
+
+* New distribution functions `distribute_virus_to_entities()` and `distribute_tool_to_entities()` that allow distributing viruses and tools to agents based on their entity membership (new in epiworld 0.11.0).
+
+* New function `add_entities_from_dataframe()` that allows adding multiple entities to a model based on a data.frame (wrapper around `add_entity()`).
 
 ## Breaking Changes
 

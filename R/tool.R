@@ -523,7 +523,9 @@ set_distribution_tool <- function(tool, distfun) {
 #' randomly assigns the tool to a proportion of the population.
 #' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
 #' as a proportion of the total number of agents in the model.
-#' @param prevalence Numeric scalar. Prevalence of the tool.
+#' @param prevalence Numeric scalar. Prevalence of the tool. In the case of
+#' `distribute_tool_to_entities`, it is a vector of prevalences, one per
+#' entity.
 #' @return
 #' - The `distribute_tool_randomly` function returns a distribution function of
 #' class `epiworld_tool_distfun`. When `agents_ids` is not empty,
@@ -563,6 +565,27 @@ distribute_tool_to_set <- function(
   structure(
     distribute_tool_to_set_cpp(
       agents_ids
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}
+
+#' @export
+#' @rdname tool
+#' @details
+#' The `distribute_tool_to_entities` function creates a distribution function
+#' that assigns the tool to a number of agents based on prevalence at the
+#' entity level. This is only useful for the mixing models.
+distribute_tool_to_entities <- function(
+  prevalence,
+  as_proportion
+) {
+
+  structure(
+    distribute_tool_to_entities_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
     ),
     class = "epiworld_tool_distfun"
   )

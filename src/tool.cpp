@@ -350,6 +350,24 @@ SEXP distribute_tool_to_set_cpp(
 
 }
 
+[[cpp11::register]]
+SEXP distribute_tool_to_entities_cpp(
+  doubles prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<ToolToAgentFun<>> distfun(
+    new ToolToAgentFun<>(
+      distribute_tool_to_entities(
+        as_cpp<std::vector<double>>(prevalence),
+        as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
 
 
 #undef WrapTool
