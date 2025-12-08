@@ -6,9 +6,14 @@
 
 * New function `add_entities_from_dataframe()` that allows adding multiple entities to a model based on a data.frame (wrapper around `add_entity()`).
 
+## Bug Fixes
+
+* The saver was not correctly saving the history of tools when using `tools_hist`. This has been fixed (new in epiworld 0.11.0).
+
 ## Breaking Changes
 
 * **Measles models have been removed from epiworldR**. The measles-specific models (`ModelMeaslesSchool`, `ModelMeaslesMixing`, `ModelMeaslesMixingRiskQuarantine`, and the deprecated `ModelMeaslesQuarantine`) have been moved to a separate package. Users who need measles models should install the [`measles`](https://github.com/UofUEpiBio/measles) package.
+
 
 # epiworldR 0.10.0.0
 
