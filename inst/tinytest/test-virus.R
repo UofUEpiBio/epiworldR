@@ -95,8 +95,10 @@ expect_silent(model_ptr <- ModelSIRCONN(
   recovery_rate = 0.3
 ))
 
-# Add a custom parameter to the model
+# Add custom parameters to the model
 expect_silent(add_param(model_ptr, "custom_trans", 0.9))
+expect_silent(add_param(model_ptr, "custom_death", 0.05))
+expect_silent(add_param(model_ptr, "custom_incubation", 3.0))
 
 virus_ptr <- virus(
   name = "Pointer Virus",
@@ -109,6 +111,14 @@ virus_ptr <- virus(
 # Test pointer-based probability setting
 expect_silent(set_prob_infecting_ptr(virus_ptr, model_ptr, "custom_trans"))
 expect_silent(set_prob_recovery_ptr(virus_ptr, model_ptr, "Recovery rate"))
+expect_silent(set_prob_death_ptr(virus_ptr, model_ptr, "custom_death"))
+expect_silent(set_incubation_ptr(virus_ptr, model_ptr, "custom_incubation"))
+
+# Verify parameters can be retrieved
+expect_equal(get_param(model_ptr, "custom_trans"), 0.9)
+expect_equal(get_param(model_ptr, "custom_death"), 0.05)
+expect_equal(get_param(model_ptr, "custom_incubation"), 3.0)
+
 expect_silent(add_virus(model_ptr, virus_ptr))
 expect_silent(verbose_off(model_ptr))
 expect_silent(run(model_ptr, ndays = 5, seed = 789))

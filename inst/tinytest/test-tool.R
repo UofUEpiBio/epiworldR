@@ -126,8 +126,10 @@ expect_silent(model_ptr <- ModelSIRCONN(
   recovery_rate = 0.2
 ))
 
-# Add a custom parameter to the model
+# Add custom parameters to the model
 expect_silent(add_param(model_ptr, "tool_efficacy", 0.85))
+expect_silent(add_param(model_ptr, "recovery_boost", 0.4))
+expect_silent(add_param(model_ptr, "death_protection", 0.7))
 
 tool_ptr <- tool(
   name = "Pointer Tool",
@@ -142,6 +144,14 @@ tool_ptr <- tool(
 # Test pointer-based tool parameter setting
 expect_silent(set_susceptibility_reduction_ptr(tool_ptr, model_ptr, "tool_efficacy"))
 expect_silent(set_transmission_reduction_ptr(tool_ptr, model_ptr, "Transmission rate"))
+expect_silent(set_recovery_enhancer_ptr(tool_ptr, model_ptr, "recovery_boost"))
+expect_silent(set_death_reduction_ptr(tool_ptr, model_ptr, "death_protection"))
+
+# Verify parameters can be retrieved
+expect_equal(get_param(model_ptr, "tool_efficacy"), 0.85)
+expect_equal(get_param(model_ptr, "recovery_boost"), 0.4)
+expect_equal(get_param(model_ptr, "death_protection"), 0.7)
+
 expect_silent(add_tool(model_ptr, tool_ptr))
 expect_silent(verbose_off(model_ptr))
 expect_silent(run(model_ptr, ndays = 5, seed = 890))
