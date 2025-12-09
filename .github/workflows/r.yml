@@ -126,3 +126,23 @@ jobs:
       - name: Check the package
         run: |
           R CMD check --no-manual epiworldRShiny_*tar.gz
+
+  measles:
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse:4.4.0
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: 'UofUEpiBio/measles'
+          ref: 'main'
+          fetch-depth: 1
+
+      - name: Install epiworldR from this branch
+        run: |
+          installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
+
+      - name: Check the package
+        run: |
+          R CMD build .
+          R CMD check --no-manual measles_*tar.gz
