@@ -3,11 +3,20 @@
 #' Starting version 0.0-4, epiworld changed how it refered to "actions."
 #' Following more traditional ABMs, actions are now called "events."
 #'
+#' Starting version 0.11.0.0, the measles models have been removed from
+#' `epiworldR` and now are part of the `measles` R package:
+#' <https://github.com/UofUEpiBio/measles>. The models previously available
+#' in `epiworldR` were: `ModelMeaslesSchool` and `ModelMeaslesMixing`.
+#'
 #' @param ... Arguments to be passed to the new function.
 #' @param model Model object of class `epiworld_model`.
 #' @param tool Tool object of class `epiworld_tool`.
 #' @param virus Virus object of class `epiworld_virus`.
 #' @name epiworldR-deprecated
+#' @aliases ModelMeaslesSchool
+#' @aliases ModelMeaslesMixing
+#' @aliases ModelMeaslesMixingRiskQuarantine
+#' @aliases ModelMeaslesQuarantine
 NULL
 
 #' @param n Deprecated.

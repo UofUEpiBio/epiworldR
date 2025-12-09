@@ -2,6 +2,10 @@
 % Please edit documentation in R/functions-renamed.R, R/global-actions.R
 \name{epiworldR-deprecated}
 \alias{epiworldR-deprecated}
+\alias{ModelMeaslesSchool}
+\alias{ModelMeaslesMixing}
+\alias{ModelMeaslesMixingRiskQuarantine}
+\alias{ModelMeaslesQuarantine}
 \alias{add_tool_n}
 \alias{add_virus_n}
 \alias{globalaction_tool}
@@ -36,4 +40,9 @@ globalaction_fun(...)
 \description{
 Starting version 0.0-4, epiworld changed how it refered to "actions."
 Following more traditional ABMs, actions are now called "events."
+
+Starting version 0.11.0.0, the measles models have been removed from
+\code{epiworldR} and now are part of the \code{measles} R package:
+\url{https://github.com/UofUEpiBio/measles}. The models previously available
+in \code{epiworldR} were: \code{ModelMeaslesSchool} and \code{ModelMeaslesMixing}.
 }
