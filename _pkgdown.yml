@@ -44,3 +44,9 @@ reference:
       Functions for defining and managing global events in simulations.
     contents:
       - has_concept("global-events")
+
+  - title: "Deprecated Functions"
+    desc: >
+      Functions that have been renamed or deprecated in recent versions.
+    contents:
+      - has_concept("deprecated-functions")

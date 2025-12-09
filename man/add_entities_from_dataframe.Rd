@@ -59,3 +59,4 @@ flu_model <- ModelSIRMixing(
     as_proportion = FALSE
   )
 }
+\concept{entity-functions}

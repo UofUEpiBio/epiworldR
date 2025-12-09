@@ -46,3 +46,4 @@ Starting version 0.11.0.0, the measles models have been removed from
 \url{https://github.com/UofUEpiBio/measles}. The models previously available
 in \code{epiworldR} were: \code{ModelMeaslesSchool} and \code{ModelMeaslesMixing}.
 }
+\concept{deprecated-functions}

@@ -17,6 +17,7 @@
 #' @aliases ModelMeaslesMixing
 #' @aliases ModelMeaslesMixingRiskQuarantine
 #' @aliases ModelMeaslesQuarantine
+#' @concept deprecated-functions
 NULL
 
 #' @param n Deprecated.

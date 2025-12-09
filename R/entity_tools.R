@@ -45,6 +45,7 @@
 #'     as_proportion = FALSE
 #'   )
 #' @export
+#' @concept entity-functions
 add_entities_from_dataframe <- function(
   model,
   entities,
