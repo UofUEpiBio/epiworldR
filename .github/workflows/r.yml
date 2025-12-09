@@ -138,9 +138,17 @@ jobs:
           ref: 'main'
           fetch-depth: 1
 
-      - name: Install epiworldR from this branch
+      - uses: quarto-dev/quarto-actions/setup@v2.2.0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tinytex: true
+
+      - name: Install epiworldR from this branch and other dependencies
         run: |
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
+          installGithub.r EpiForeSITE/multigroup-vaccine
+          install2.r --error quarto tinytest data.table
 
       - name: Check the package
         run: |
