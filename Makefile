@@ -51,8 +51,8 @@ local-update:
 local-update-diagrams:
 	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/
 
-check: build
-	cd .. && R CMD check epiworldR_*.tar.gz
+check:
+	Rscript --vanilla -e 'devtools::check()'
 
 clean:
 	rm -f src/*.dll src/*.so src/*.o
