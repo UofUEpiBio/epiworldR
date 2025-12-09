@@ -138,6 +138,10 @@ jobs:
           ref: 'main'
           fetch-depth: 1
 
+      - name: Setup js
+        run: |
+          apt-get update && apt-get install curl jq -y --no-install-recommends
+
       - uses: quarto-dev/quarto-actions/setup@v2.2.0
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
