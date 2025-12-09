@@ -76,4 +76,8 @@ dev: clean
 website:
 	Rscript -e 'pkgdown::build_site()'
 
-.PHONY: build update check clean docs docker-debug dev website
+
+test:
+	Rscript --vanilla -e 'devtools::load_all(); tinytest::test_all()'
+
+.PHONY: build update check clean docs docker-debug dev website test

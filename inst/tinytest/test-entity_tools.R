@@ -18,7 +18,31 @@ measles_model <- ModelSIRMixing(
   transmission_rate = 0.1,
   recovery_rate     = 1 / 7,
   contact_matrix    = cmatrix
-) |>
+)
+
+# Should be a data.frame
+expect_error({
+  measles_model |>
+    add_entities_from_dataframe(
+      entities = character(),
+      col_name = "name",
+      col_number = "size",
+      as_proportion = TRUE
+    )
+}, "data.frame")
+
+# Failed columns
+expect_error({
+  measles_model |>
+    add_entities_from_dataframe(
+      entities = cbind(entities, txt = "text"),
+      col_name = "name",
+      col_number = "txt",
+      as_proportion = TRUE
+    )
+}, "integer")
+
+measles_model |>
   add_entities_from_dataframe(
     entities = entities,
     col_name = "name",
