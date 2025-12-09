@@ -151,7 +151,6 @@ jobs:
       - name: Install epiworldR from this branch and other dependencies
         run: |
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
-          installGithub.r EpiForeSITE/multigroup-vaccine
           install2.r --error quarto tinytest data.table
 
       - name: Check the package
