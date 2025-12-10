@@ -200,7 +200,7 @@ expect_silent(run(model3, ndays = 40, seed = 1912))
 # Check that tools were distributed (via hist tool data)
 tool_hist <- get_hist_tool(model3)
 expect_true(
-  nrow(tool_hist) > 0,
+  nrow(tool_hist[tool_hist$date >= 20, ]) > 0,
   info = "Tool should have been distributed by the global event"
 )
 
