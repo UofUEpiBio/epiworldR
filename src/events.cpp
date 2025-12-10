@@ -19,14 +19,14 @@ SEXP globalevent_tool_logit_cpp(
 
     std::vector< size_t > vars_size_t(vars.begin(), vars.end());
 
-    GlobalFun<int> action(epimodels::globalevent_tool_logit<int>(
+    GlobalFun<int> event(epimodels::globalevent_tool_logit<int>(
         *cpp11::external_pointer<Tool<int>>(tool),
         vars_size_t,
         coefs
     ));
 
     cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(action, name, day)
+        new GlobalEvent<int>(event, name, day)
     );
 
     return ptr;
@@ -41,13 +41,13 @@ SEXP globalevent_tool_cpp(
     int day
 ) {
 
-    GlobalFun<int> action(epimodels::globalevent_tool<int>(
+    GlobalFun<int> event(epimodels::globalevent_tool<int>(
         *cpp11::external_pointer<Tool<int>>(tool),
         prob
     ));
 
     cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(action, name, day)
+        new GlobalEvent<int>(event, name, day)
     );
 
     return ptr;
@@ -62,13 +62,13 @@ SEXP globalevent_set_param_cpp(
     int day
 ) {
 
-    GlobalFun<int> action(epimodels::globalevent_set_param<int>(
+    GlobalFun<int> event(epimodels::globalevent_set_param<int>(
         param,
         value
     ));
 
     cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(action, name, day)
+        new GlobalEvent<int>(event, name, day)
     );
 
     return ptr;
@@ -76,15 +76,15 @@ SEXP globalevent_set_param_cpp(
 }
 
 [[cpp11::register]]
-SEXP print_global_action_cpp(
-    SEXP action
+SEXP print_globalevent_cpp(
+    SEXP event
 ) {
 
-  external_pointer<GlobalEvent<int>> actionptr(action);
+  external_pointer<GlobalEvent<int>> eventptr(event);
 
-  actionptr->print();
+  eventptr->print();
 
-  return action;
+  return event;
 
 }
 
@@ -92,13 +92,13 @@ SEXP print_global_action_cpp(
 [[cpp11::register]]
 SEXP add_globalevent_cpp(
     SEXP model,
-    SEXP action
+    SEXP event
 ) {
 
   external_pointer<Model<int>> modelptr(model);
-  external_pointer<GlobalEvent<int>> actionptr(action);
+  external_pointer<GlobalEvent<int>> eventptr(event);
 
-  modelptr->add_globalevent(*actionptr);
+  modelptr->add_globalevent(*eventptr);
 
   return model;
 
