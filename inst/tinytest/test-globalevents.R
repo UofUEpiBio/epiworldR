@@ -34,10 +34,12 @@ daily_event <- globalevent_fun(daily_event_fun, "Daily event", day = -99)
 expect_silent(add_globalevent(model, daily_event))
 
 # Add global events that run on specific days (10, 20, 30)
+# Note: the function is defined inside the loop because each event needs
+# its own closure, but the behavior is identical
+specific_event_fun <- function(m) {
+  specific_event_days <<- c(specific_event_days, today(m))
+}
 for (day in c(10, 20, 30)) {
-  specific_event_fun <- function(m) {
-    specific_event_days <<- c(specific_event_days, today(m))
-  }
   specific_event <- globalevent_fun(
     specific_event_fun,
     paste0("Specific day event ", day),
@@ -90,13 +92,10 @@ expect_equal(
 # 2. After the intervention, transmission should stop completely
 # =============================================================================
 
-# Reset for new test
+# Test parameters
 ndays <- 40
 intervention_day <- 20
 nexperiments <- 10
-
-total_transmissions_before <- 0
-total_transmissions_after <- 0
 
 # Create a single SIR model
 model2 <- ModelSIRCONN(
@@ -140,6 +139,9 @@ trans_data <- results$transmission
 # Count transmissions before and after intervention
 # Transmissions on the intervention day are excluded since the global event
 # runs after update_state() on that day
+# Reset counts to 0 first to ensure we don't use stale values
+total_transmissions_before <- 0
+total_transmissions_after <- 0
 if (nrow(trans_data) > 0) {
   total_transmissions_before <- sum(trans_data$date < intervention_day)
   total_transmissions_after <- sum(trans_data$date > intervention_day)
