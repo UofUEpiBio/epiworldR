@@ -253,7 +253,7 @@ globalaction_fun <- function(...) {
 #' @export
 print.epiworld_globalevent <- function(x, ...) {
 
-  print_global_action_cpp(x)
+  print_globalevent_cpp(x)
   cat("Call: ", deparse(attr(x, "call")), "\n")
   if (length(attr(x, "tool"))) {
     cat("Tool: ", get_name_tool(attr(x, "tool")), "\n")
@@ -270,8 +270,7 @@ print.epiworld_globalevent <- function(x, ...) {
 #' @param action (Deprecated) use `event` instead.
 #' @param event The event to be added or removed. If it is to add, then
 #' it should be an object of class `epiworld_globalevent`. If it is to remove,
-#' it should be an integer with the position of the event in the model
-#' (starting from zero).
+#' it should be the name of the event (character).
 #' @param day Integer. The day (step) at which the action is executed (see details).
 #' @param model An object of class [epiworld_model].
 #' @param name Character scalar. The name of the action.
