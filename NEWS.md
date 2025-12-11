@@ -6,6 +6,8 @@
 
 * New function `add_entities_from_dataframe()` that allows adding multiple entities to a model based on a data.frame (wrapper around `add_entity()`).
 
+* New functions `get_outbreak_size()` and `get_active_cases()` allow extracting timeseries of the outbreak size and number of active cases (individuals with a virus) (new in epiworld 0.11.0).
+
 ## Bug Fixes
 
 * The saver was not correctly saving the history of tools when using `tools_hist`. This has been fixed (new in epiworld 0.11.0).

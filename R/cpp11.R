@@ -76,6 +76,14 @@ get_today_total_cpp <- function(model) {
   .Call(`_epiworldR_get_today_total_cpp`, model)
 }
 
+get_active_cases_cpp <- function(model) {
+  .Call(`_epiworldR_get_active_cases_cpp`, model)
+}
+
+get_outbreak_size_cpp <- function(model) {
+  .Call(`_epiworldR_get_outbreak_size_cpp`, model)
+}
+
 get_entities_cpp <- function(model) {
   .Call(`_epiworldR_get_entities_cpp`, model)
 }

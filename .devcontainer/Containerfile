@@ -1,14 +1,14 @@
-FROM rocker/tidyverse:4.5.1
+FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
 
 # RUN \
 #   echo 'options(repos=c(CRAN="https://packagemanager.posit.co/cran/__linux__/bookworm/latest"))' >> ~/.Rprofile && \
 #   Rscript --vanilla -e 'getOption("repos")'
 
 # Installing pdflatex via tinytex
-RUN Rscript --vanilla -e "install.packages('tinytex'); tinytex::install_tinytex()" && \
-  cat "export PATH=/root/bin:$PATH" >> /root/.bashrc && \
+RUN install2.r --error tinytex && \
+  Rscript --vanilla -e "tinytex::install_tinytex()" && \
+  # cat "export PATH=/root/bin:$PATH" >> /root/.bashrc && \
   apt-get update && apt-get install --no-install-recommends -y tidy
-
 
 # Adding R packages
 RUN install2.r --error cpp11 roxygen2 tinytest data.table netplot \

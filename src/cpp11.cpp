@@ -138,6 +138,20 @@ extern "C" SEXP _epiworldR_get_today_total_cpp(SEXP model) {
     return cpp11::as_sexp(get_today_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
+// db.cpp
+cpp11::writable::data_frame get_active_cases_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_active_cases_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_active_cases_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// db.cpp
+cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_outbreak_size_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_outbreak_size_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
 // entities.cpp
 SEXP get_entities_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_entities_cpp(SEXP model) {
@@ -1252,6 +1266,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
     {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},
     {"_epiworldR_entity_get_agents_cpp",                (DL_FUNC) &_epiworldR_entity_get_agents_cpp,                 1},
+    {"_epiworldR_get_active_cases_cpp",                 (DL_FUNC) &_epiworldR_get_active_cases_cpp,                  1},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
@@ -1293,6 +1308,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_ndays_cpp",                        (DL_FUNC) &_epiworldR_get_ndays_cpp,                         1},
     {"_epiworldR_get_network_cpp",                      (DL_FUNC) &_epiworldR_get_network_cpp,                       1},
     {"_epiworldR_get_observed_stats_cpp",               (DL_FUNC) &_epiworldR_get_observed_stats_cpp,                1},
+    {"_epiworldR_get_outbreak_size_cpp",                (DL_FUNC) &_epiworldR_get_outbreak_size_cpp,                 1},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
     {"_epiworldR_get_state_agent_cpp",                  (DL_FUNC) &_epiworldR_get_state_agent_cpp,                   1},

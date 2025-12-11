@@ -51,6 +51,14 @@ local-update:
 local-update-diagrams:
 	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/
 
+update:
+	git clone --depth=1 https://github.com/UofUEpiBio/epiworld tmp_epiworld && \
+	rsync -avz --delete tmp_epiworld/include/epiworld inst/include/. && \
+	rm inst/include/epiworld/models/*.mmd && \
+	rsync -avz --delete tmp_epiworld/docs_src/assets/img/* man/figures && \
+	rm -rf tmp_epiworld
+
+
 check:
 	Rscript --vanilla -e 'devtools::check()'
 
