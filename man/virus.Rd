@@ -25,6 +25,7 @@
 \alias{distribute_virus_randomly}
 \alias{distribute_virus_to_set}
 \alias{distribute_virus_set}
+\alias{distribute_virus_to_entities}
 \title{Virus design}
 \usage{
 virus(
@@ -81,11 +82,15 @@ distribute_virus_randomly(prevalence, as_proportion, agents_ids = integer(0))
 distribute_virus_to_set(agents_ids)
 
 distribute_virus_set(agents_ids)
+
+distribute_virus_to_entities(prevalence, as_proportion)
 }
 \arguments{
 \item{name}{of the virus}
 
-\item{prevalence}{Numeric scalar. Prevalence of the virus.}
+\item{prevalence}{Numeric scalar. Prevalence of the virus. In the case of
+\code{distribute_virus_to_entities}, it is a vector of prevalences, one per
+entity.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, the prevalence is set as a
 proportion of the total number of agents in the model.}
@@ -210,6 +215,10 @@ The \code{distribute_virus_randomly} function is a factory function
 used to randomly distribute the virus in the model. The prevalence can be set
 as a proportion or as a number of agents. The resulting function can then be
 passed to \code{set_distribution_virus}.
+
+The \code{distribute_virus_to_entities} function is a factory function
+used to distribute the virus to a number of agents based on a prevalence
+at the entity level.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(

@@ -45,13 +45,14 @@ README.md: README.qmd
 # 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
 # 		mv epiworld.hpp inst/include/epiworld.hpp
 local-update:
-	rsync -avz --delete ../epiworld/include/epiworld inst/include/.
+	rsync -avz --delete ../epiworld/include/epiworld inst/include/. && \
+	rm inst/include/epiworld/models/*.mmd
 
 local-update-diagrams:
 	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/
 
-check: build
-	cd .. && R CMD check epiworldR_*.tar.gz
+check:
+	Rscript --vanilla -e 'devtools::check()'
 
 clean:
 	rm -f src/*.dll src/*.so src/*.o
@@ -75,4 +76,8 @@ dev: clean
 website:
 	Rscript -e 'pkgdown::build_site()'
 
-.PHONY: build update check clean docs docker-debug dev website
+
+test:
+	Rscript --vanilla -e 'devtools::load_all(); tinytest::test_all()'
+
+.PHONY: build update check clean docs docker-debug dev website test

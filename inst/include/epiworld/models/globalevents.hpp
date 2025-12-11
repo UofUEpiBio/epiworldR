@@ -5,6 +5,7 @@
 // to agents with probability p.
 /**
  * @brief Global event that distributes a tool to agents with probability p.
+ * @ingroup model_utilities
  * 
  * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param p Probability of distributing the tool.
@@ -53,6 +54,7 @@ inline std::function<void(Model<TSeq>*)> globalevent_tool(
 /**
  * @brief Global event that distributes a tool to agents with probability
  * p = 1 / (1 + exp(-\sum_i coef_i * agent(vars_i))).
+ * @ingroup model_utilities
  * 
  * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param coefs Vector of coefficients.
@@ -112,6 +114,7 @@ inline std::function<void(Model<TSeq>*)> globalevent_tool_logit(
 // A global action that updates a parameter in the model.
 /**
  * @brief Global event that updates a parameter in the model.
+ * @ingroup model_utilities
  * 
  * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param param Parameter to update.

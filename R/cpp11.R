@@ -192,20 +192,8 @@ ModelSEIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_
   .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix)
 }
 
-ModelMeaslesSchool_cpp <- function(n, prevalence, contact_rate, transmission_rate, vax_efficacy, vax_reduction_recovery_rate, incubation_period, prodromal_period, rash_period, days_undetected, hospitalization_rate, hospitalization_period, prop_vaccinated, quarantine_period, quarantine_willingness, isolation_period) {
-  .Call(`_epiworldR_ModelMeaslesSchool_cpp`, n, prevalence, contact_rate, transmission_rate, vax_efficacy, vax_reduction_recovery_rate, incubation_period, prodromal_period, rash_period, days_undetected, hospitalization_rate, hospitalization_period, prop_vaccinated, quarantine_period, quarantine_willingness, isolation_period)
-}
-
 ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
   .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
-}
-
-ModelMeaslesMixing_cpp <- function(n, prevalence, contact_rate, transmission_rate, vax_efficacy, vax_reduction_recovery_rate, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, contact_tracing_success_rate, contact_tracing_days_prior) {
-  .Call(`_epiworldR_ModelMeaslesMixing_cpp`, n, prevalence, contact_rate, transmission_rate, vax_efficacy, vax_reduction_recovery_rate, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, contact_tracing_success_rate, contact_tracing_days_prior)
-}
-
-ModelMeaslesMixingRiskQuarantine_cpp <- function(n, prevalence, contact_rate, transmission_rate, vax_efficacy, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period_high, quarantine_period_medium, quarantine_period_low, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, detection_rate_quarantine, contact_tracing_success_rate, contact_tracing_days_prior) {
-  .Call(`_epiworldR_ModelMeaslesMixingRiskQuarantine_cpp`, n, prevalence, contact_rate, transmission_rate, vax_efficacy, incubation_period, prodromal_period, rash_period, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period_high, quarantine_period_medium, quarantine_period_low, quarantine_willingness, isolation_willingness, isolation_period, prop_vaccinated, detection_rate_quarantine, contact_tracing_success_rate, contact_tracing_days_prior)
 }
 
 globalevent_tool_logit_cpp <- function(tool, vars, coefs, name, day) {
@@ -596,6 +584,10 @@ distribute_tool_to_set_cpp <- function(agents_ids) {
   .Call(`_epiworldR_distribute_tool_to_set_cpp`, agents_ids)
 }
 
+distribute_tool_to_entities_cpp <- function(prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_tool_to_entities_cpp`, prevalence, as_proportion)
+}
+
 virus_cpp <- function(name, prevalence, as_proportion, prob_infecting, prob_recovery, prob_death, post_immunity, incubation) {
   .Call(`_epiworldR_virus_cpp`, name, prevalence, as_proportion, prob_infecting, prob_recovery, prob_death, post_immunity, incubation)
 }
@@ -686,4 +678,8 @@ distribute_virus_randomly_cpp <- function(prevalence, as_proportion, agents_ids)
 
 distribute_virus_to_set_cpp <- function(agents_ids) {
   .Call(`_epiworldR_distribute_virus_to_set_cpp`, agents_ids)
+}
+
+distribute_virus_to_entities_cpp <- function(prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_virus_to_entities_cpp`, prevalence, as_proportion)
 }

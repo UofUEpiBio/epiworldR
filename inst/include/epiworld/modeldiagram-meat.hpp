@@ -151,7 +151,7 @@ inline void ModelDiagram::draw_mermaid(
     for (size_t i = 0u; i < states.size(); ++i)
         states_ids.push_back("s" + std::to_string(i));
 
-    std::string graph = "flowchart LR\n";
+    std::string graph = "flowchart TB\n";
 
     // Declaring the states
     for (size_t i = 0u; i < states.size(); ++i)

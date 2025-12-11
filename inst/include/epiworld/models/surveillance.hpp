@@ -1,6 +1,10 @@
 #ifndef EPIWORLD_MODELS_SURVEILLANCE_HPP
 #define EPIWORLD_MODELS_SURVEILLANCE_HPP
 
+/**
+ * @brief Template for a Surveillance model
+ * @ingroup special_models
+ */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSURV : public epiworld::Model<TSeq> {
 

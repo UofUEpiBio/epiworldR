@@ -5,6 +5,15 @@ enum class DiagramType {
     Mermaid, DOT
 };
 
+/**
+ * @brief Class to create model diagrams from transition data
+ * 
+ * This class reads transition data from epidemiological model simulations
+ * and generates visual diagrams representing the state transitions.
+ * It supports multiple diagram formats, including Mermaid and DOT.
+ * 
+ * @ingroup model_utilities
+ */
 class ModelDiagram {
 private:
 

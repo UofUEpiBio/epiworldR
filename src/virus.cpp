@@ -333,5 +333,24 @@ SEXP distribute_virus_to_set_cpp(
 
 }
 
+[[cpp11::register]]
+SEXP distribute_virus_to_entities_cpp(
+  doubles prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_to_entities(
+        as_cpp<std::vector<double>>(prevalence),
+        as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
+
 
 #undef WrapVirus

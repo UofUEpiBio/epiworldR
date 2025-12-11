@@ -548,12 +548,13 @@ public:
      *
      * @param lab `std::string` Name of the state.
      *
-     * @return `add_state*` returns nothing.
+     * @return `add_state*` returns the ID (index) of the registered state.
      * @return `get_state_*` returns a vector of pairs with the
      * states and their labels.
      */
     ///@{
-    void add_state(std::string lab, UpdateFun<TSeq> fun = nullptr);
+    epiworld_fast_int state_of(std::string_view name);
+    epiworld_fast_int add_state(std::string lab, UpdateFun<TSeq> fun = nullptr);
     const std::vector< std::string > & get_states() const;
     size_t get_n_states() const;
     const std::vector< UpdateFun<TSeq> > & get_state_fun() const;

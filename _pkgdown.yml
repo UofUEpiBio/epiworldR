@@ -9,12 +9,6 @@ reference:
     contents:
       - has_concept("general-models")
 
-  - title: "Measles Models"
-    desc: >
-      Specialized measles models with mixing, quarantine, and vaccination features.
-    contents:
-      - has_concept("measles-models")
-
   - title: "Likelihood-Free MCMC"
     desc: >
       Functions for performing Likelihood-Free Markov Chain Monte Carlo simulations.
@@ -50,3 +44,9 @@ reference:
       Functions for defining and managing global events in simulations.
     contents:
       - has_concept("global-events")
+
+  - title: "Deprecated Functions"
+    desc: >
+      Functions that have been renamed or deprecated in recent versions.
+    contents:
+      - has_concept("deprecated-functions")

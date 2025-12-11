@@ -1,15 +1,32 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-agents-and-dist-virus-tool.R")
 
 ###############################################################################
-# Test Group 1: ModelMeaslesQuarantine
+# Test Group 1: ModelSEIRCONN
 ###############################################################################
 # First case: Everyone is vaccinated, so only the 
 # index case is infected
-abm <- ModelMeaslesSchool(
+abm <- ModelSEIRCONN(
+  name = "COVID-19",
   n = 200,
-  prop_vaccinated = 1.0,
-  vax_efficacy = 1.0
+  prevalence = 0,
+  contact_rate = 2,
+  transmission_rate = 0.9,
+  incubation_days = 7,
+  recovery_rate = 0.3
 )
+
+# Add a vaccine tool that provides 100% protection
+vaccine <- tool(
+  name = "Vaccine",
+  susceptibility_reduction = 1.0,
+  transmission_reduction = 1.0,
+  recovery_enhancer = 1.0,
+  death_reduction = 1.0,
+  prevalence = 1.0,
+  as_proportion = TRUE
+)
+
+add_tool(abm, vaccine)
 
 # Changing the distribution of the virus
 set_distribution_virus(
@@ -43,6 +60,7 @@ run_multiple(
 ans <- run_multiple_get_results(abm, nthreads = 2)
 ans <- data.table::as.data.table(ans$total_hist)[date == 0]
 ans <- ans[, .(n = sum(counts)), by = .(sim_num, state)][n > 0]
+# All simulations should have 5 exposed and 195 susceptible at start
 expect_equal(
   ans[, table(n, state)],
   structure(c(100L, 0L, 0L, 100L), dim = c(2L, 2L), dimnames = list(
@@ -51,7 +69,7 @@ expect_equal(
 
 
 ###############################################################################
-# Third case: Only agents 24 and 36 are vaccinated:
+# Third case: Only agents 25 and 36 are vaccinated:
 
 set_distribution_tool(
   get_tool(abm, 0),
@@ -59,12 +77,14 @@ set_distribution_tool(
 )
 
 # Making sure that the agents become infected
-set_param(abm, "Transmission rate", 1.0)
+set_param(abm, "Prob. Transmission", 1.0)
 set_param(abm, "Contact rate", 100)
 
 run(abm, 100, 200)
 states <- get_agents_states(abm)
 
+# Agents 26 and 37 (indices 25 and 36) should stay susceptible (vaccinated)
+# All others should be recovered
 expect_true(
   all(states[c(26, 37)] == "Susceptible") &&
   all(states[-c(26, 37)] == "Recovered")
@@ -119,7 +139,7 @@ contact_matrix <- c(
 ) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
 
 abm <- ModelSEIRMixing(
-  name = "Measles",
+  name = "COVID-19",
   n = 900,
   prevalence = 1 / 900,
   contact_rate = 15 / 0.9 / 4,
@@ -129,8 +149,8 @@ abm <- ModelSEIRMixing(
   contact_matrix = contact_matrix
 )
 
-measles_vaccine <- tool(
-  name = "Measles Vaccine",
+vaccine <- tool(
+  name = "Vaccine",
   susceptibility_reduction = 1.0,
   transmission_reduction = 1.0,
   recovery_enhancer = 1.0,
@@ -140,11 +160,11 @@ measles_vaccine <- tool(
 )
 
 set_distribution_tool(
-  tool = measles_vaccine,
+  tool = vaccine,
   distfun = distribute_tool_randomly(2L, TRUE)
 )
 
-add_tool(abm, measles_vaccine)
+add_tool(abm, vaccine)
 
 abm |>
   add_entity(e1) |>

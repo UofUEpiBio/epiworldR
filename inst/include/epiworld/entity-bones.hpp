@@ -16,6 +16,9 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> * m);
 template<typename TSeq>
 inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m);
 
+/**
+ * @brief Groups of agents within a model.
+ */
 template<typename TSeq>
 class Entity {
     friend class Agent<TSeq>;

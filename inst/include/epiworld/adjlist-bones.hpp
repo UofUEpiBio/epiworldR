@@ -1,6 +1,10 @@
 #ifndef EPIWORLD_ADJLIST_BONES_HPP
 #define EPIWORLD_ADJLIST_BONES_HPP
 
+
+/**
+ * @brief Adjacency list representation of a network
+ */
 class AdjList {
 private:
 
