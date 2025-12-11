@@ -25,36 +25,26 @@ hist_total <- get_hist_total(model)
 active_cases <- get_active_cases(model)
 outbreak_size <- get_outbreak_size(model)
 
-# Test 1: get_active_cases() should match number of infected -------------------
-# For each day, active cases should equal the infected count from history
+# Checking active cases
+hist_total_infected <- aggregate(
+  counts ~ date,
+  data = hist_total[hist_total$state == "Infected", ],
+  sum
+)
 
-for (day in unique(active_cases$date)) {
-  # Get infected count from history
-  infected_count <- hist_total[hist_total$date == day & hist_total$state == "Infected", "counts"]
-  
-  # Get active cases for this day (should be only one row per day)
-  active_count <- active_cases[active_cases$date == day, "active_cases"]
-  
-  # They should be equal
-  expect_equal(active_count, infected_count,
-    info = paste("Active cases should equal infected count on day", day))
-}
+expect_equal(
+  hist_total_infected$counts,
+  active_cases$active_cases
+)
 
-# Test 2: get_outbreak_size() should match infected + recovered ---------------
-# For each day in outbreak_size, outbreak size should equal infected + recovered 
-# from history. Note: we deduplicate by taking the first occurrence of each date.
+# Checking outbreak size
+hist_total_outbreak_size <- aggregate(
+  counts ~ date,
+  data = hist_total[hist_total$state %in% c("Infected", "Recovered"), ],
+  sum
+)
 
-outbreak_size_unique <- outbreak_size[!duplicated(outbreak_size$date), ]
-
-for (i in seq_len(nrow(outbreak_size_unique))) {
-  day <- outbreak_size_unique$date[i]
-  outbreak_count <- outbreak_size_unique$outbreak_size[i]
-  
-  # Get infected and recovered counts from history
-  infected_count <- hist_total[hist_total$date == day & hist_total$state == "Infected", "counts"]
-  recovered_count <- hist_total[hist_total$date == day & hist_total$state == "Recovered", "counts"]
-  
-  # Outbreak size should equal infected + recovered
-  expect_equal(outbreak_count, infected_count + recovered_count,
-    info = paste("Outbreak size should equal infected + recovered on day", day))
-}
+expect_equal(
+  hist_total_outbreak_size$counts,
+  outbreak_size$outbreak_size
+)
