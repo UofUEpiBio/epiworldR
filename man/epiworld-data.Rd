@@ -84,9 +84,9 @@ get_generation_time(x)
 
 plot_generation_time(x, ...)
 
-get_active_cases(model)
+get_active_cases(x)
 
-get_outbreak_size(model)
+get_outbreak_size(x)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
