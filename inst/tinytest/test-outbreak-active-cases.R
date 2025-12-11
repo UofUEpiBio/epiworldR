@@ -56,13 +56,11 @@ expect_true(all(outbreak_data$virus_id >= 0))
 # Check that virus name matches the model
 expect_equal(unique(outbreak_data$virus), "test virus")
 
-# Outbreak size tracking across time
-# Note: The function may return duplicate dates or non-sequential dates
-# We just verify that data is being recorded and structure is correct
+# Verify data is recorded for each virus
 for (vid in unique(outbreak_data$virus_id)) {
   virus_data <- outbreak_data[outbreak_data$virus_id == vid, ]
   
-  # Check that we have some data points
+  # Check that we have data points for this virus
   expect_true(nrow(virus_data) > 0,
     info = "Should have outbreak size data for each virus")
 }
@@ -98,8 +96,7 @@ expect_equal(unique(active_cases_data$virus), "test virus")
 merged_data <- merge(
   outbreak_data,
   active_cases_data,
-  by = c("date", "virus_id", "virus"),
-  suffixes = c("_outbreak", "_active")
+  by = c("date", "virus_id", "virus")
 )
 
 expect_true(all(merged_data$active_cases <= merged_data$outbreak_size),
