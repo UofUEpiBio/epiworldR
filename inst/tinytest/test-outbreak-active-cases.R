@@ -1,10 +1,5 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-outbreak-active-cases.R")
 
-# Load the package (needed for manual test runs)
-if (require("epiworldR", quietly = TRUE)) {
-  library(epiworldR)
-}
-
 # Test get_outbreak_size and get_active_cases functions across multiple days
 # This test validates that virus history is correctly recorded for all days
 # of a simulation, not just day 0. Ported from epiworld C++ test:
@@ -36,8 +31,6 @@ expect_silent(run(model, ndays = ndays, seed = 123))
 
 # Test get_outbreak_size function ---------------------------------------------
 outbreak_data <- get_outbreak_size(model)
-
-# Check that outbreak_data is a data frame
 expect_inherits(outbreak_data, "data.frame")
 
 # Check that it has the expected columns
@@ -76,8 +69,6 @@ for (vid in unique(outbreak_data$virus_id)) {
 
 # Test get_active_cases function ----------------------------------------------
 active_cases_data <- get_active_cases(model)
-
-# Check that active_cases_data is a data frame
 expect_inherits(active_cases_data, "data.frame")
 
 # Check that it has the expected columns
