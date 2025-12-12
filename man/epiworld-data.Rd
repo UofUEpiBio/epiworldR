@@ -23,6 +23,8 @@
 \alias{get_generation_time}
 \alias{plot.epiworld_generation_time}
 \alias{plot_generation_time}
+\alias{get_active_cases}
+\alias{get_outbreak_size}
 \title{Accessing the database of epiworld}
 \usage{
 get_hist_total(x)
@@ -81,6 +83,10 @@ get_generation_time(x)
 )
 
 plot_generation_time(x, ...)
+
+get_active_cases(x)
+
+get_outbreak_size(x)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
@@ -168,6 +174,18 @@ the following columns: "agent", "virus_id", "virus", "date", and "gentime".
 \itemize{
 \item The function \code{plot_generation_time} is a wrapper for \link{plot} and
 \link{get_generation_time}.
+}
+
+\itemize{
+\item The function \code{get_active_cases} returns a data.frame with four columns:
+date, virus_id, virus, and active_cases indicating the number of active
+cases (individuals with a virus) at each point in time.
+}
+
+\itemize{
+\item The function \code{get_outbreak_size} returns a data.frame with four columns:
+date, virus_id, virus, and outbreak_size indicating the outbreak size per
+virus at each point in time.
 }
 }
 \description{

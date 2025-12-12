@@ -674,3 +674,25 @@ plot.epiworld_generation_time <- function(
 plot_generation_time <- function(x, ...) {
   plot(get_generation_time(x), ...)
 }
+
+#' @export
+#' @rdname epiworld-data
+#' @return
+#' - The function `get_active_cases` returns a data.frame with four columns:
+#' date, virus_id, virus, and active_cases indicating the number of active
+#' cases (individuals with a virus) at each point in time.
+get_active_cases <- function(x) {
+  stopifnot_model(x)
+  return(get_active_cases_cpp(x))
+}
+
+#' @export
+#' @rdname epiworld-data
+#' @return
+#' - The function `get_outbreak_size` returns a data.frame with four columns:
+#' date, virus_id, virus, and outbreak_size indicating the outbreak size per
+#' virus at each point in time.
+get_outbreak_size <- function(x) {
+  stopifnot_model(x)
+  return(get_outbreak_size_cpp(x))
+}

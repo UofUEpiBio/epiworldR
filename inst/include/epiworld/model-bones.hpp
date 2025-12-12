@@ -69,7 +69,9 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     bool transmission = false,
     bool transition = false,
     bool reproductive = false,
-    bool generation = false
+    bool generation = false,
+    bool active_cases = false,
+    bool outbreak_size = false
     );
 
 // template<typename TSeq>
@@ -488,6 +490,9 @@ public:
      * @param fn_transmission Filename. Transmission history.
      * @param fn_transition   Filename. Markov transition history.
      * @param fn_reproductive_number Filename. Case by case reproductive number
+     * @param fn_generation_time Filename. Generation time data.
+     * @param fn_active_cases Filename. Active cases data.
+     * @param fn_outbreak_size Filename. Outbreak size data.
      */
     void write_data(
         std::string fn_virus_info,
@@ -498,7 +503,9 @@ public:
         std::string fn_transmission,
         std::string fn_transition,
         std::string fn_reproductive_number,
-        std::string fn_generation_time
+        std::string fn_generation_time,
+        std::string fn_active_cases,
+        std::string fn_outbreak_size
         ) const;
 
     /**

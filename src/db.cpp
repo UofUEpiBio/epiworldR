@@ -292,3 +292,67 @@ cpp11::writable::doubles get_today_total_cpp(SEXP model) {
   return totals_r;
 
 }
+
+[[cpp11::register]]
+cpp11::writable::data_frame get_active_cases_cpp(SEXP model) {
+
+  std::vector< int > date;
+  std::vector< int > virus;
+  std::vector< int > counts;
+
+  cpp11::external_pointer<Model<>> ptr(model);
+
+  ptr->get_db().
+    get_active_cases(date, virus, counts);
+
+  // Same idea with the names
+  std::vector< std::string > viruses;
+  for (const auto & i : ptr->get_viruses())
+    viruses.push_back(i->get_name());
+
+  std::vector< std::string > vnames(virus.size());
+  std::transform(
+    virus.begin(), virus.end(), vnames.begin(),
+    [&viruses](int i) { return viruses[i]; }
+  );
+
+  return cpp11::writable::data_frame({
+    "date"_nm      = date,
+    "virus_id"_nm  = virus,
+    "virus"_nm     = vnames,
+    "active_cases"_nm    = counts,
+  });
+
+}
+
+[[cpp11::register]]
+cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model) {
+
+  std::vector< int > date;
+  std::vector< int > virus;
+  std::vector< int > counts;
+
+  cpp11::external_pointer<Model<>> ptr(model);
+
+  ptr->get_db().
+    get_outbreak_size(date, virus, counts);
+
+  // Same idea with the names
+  std::vector< std::string > viruses;
+  for (const auto & i : ptr->get_viruses())
+    viruses.push_back(i->get_name());
+
+  std::vector< std::string > vnames(virus.size());
+  std::transform(
+    virus.begin(), virus.end(), vnames.begin(),
+    [&viruses](int i) { return viruses[i]; }
+  );
+
+  return cpp11::writable::data_frame({
+    "date"_nm      = date,
+    "virus_id"_nm  = virus,
+    "virus"_nm     = vnames,
+    "outbreak_size"_nm    = counts,
+  });
+
+}

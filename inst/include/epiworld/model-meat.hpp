@@ -45,7 +45,9 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     bool transmission,
     bool transition,
     bool reproductive,
-    bool generation
+    bool generation,
+    bool active_cases,
+    bool outbreak_size
     )
 {
 
@@ -68,7 +70,9 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         transmission,
         transition,
         reproductive,
-        generation
+        generation,
+        active_cases,
+        outbreak_size
     };
 
     std::function<void(size_t,Model<TSeq>*)> saver = [fmt,what_to_save](
@@ -84,6 +88,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         std::string transition = "";
         std::string reproductive = "";
         std::string generation = "";
+        std::string active_cases = "";
+        std::string outbreak_size = "";
 
         char buff[1024u];
         if (what_to_save[0u])
@@ -144,7 +150,22 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             generation = buff;
 
         }
+        if (what_to_save[9u])
+        {
 
+            active_cases = fmt + std::string("_active_cases.csv");
+            snprintf(buff, sizeof(buff), active_cases.c_str(), niter);
+            active_cases = buff;
+
+        }
+        if (what_to_save[10u])
+        {
+
+            outbreak_size = fmt + std::string("_outbreak_size.csv");
+            snprintf(buff, sizeof(buff), outbreak_size.c_str(), niter);
+            outbreak_size = buff;
+
+        }
 
         m->write_data(
             virus_info,
@@ -155,7 +176,9 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             transmission,
             transition,
             reproductive,
-            generation
+            generation,
+            active_cases,
+            outbreak_size
         );
 
     };
@@ -1849,7 +1872,9 @@ inline void Model<TSeq>::write_data(
     std::string fn_transmission,
     std::string fn_transition,
     std::string fn_reproductive_number,
-    std::string fn_generation_time
+    std::string fn_generation_time,
+    std::string fn_active_cases,
+    std::string fn_outbreak_size
     ) const
 {
 
@@ -1857,7 +1882,8 @@ inline void Model<TSeq>::write_data(
         fn_virus_info, fn_virus_hist,
         fn_tool_info, fn_tool_hist,
         fn_total_hist, fn_transmission, fn_transition,
-        fn_reproductive_number, fn_generation_time
+        fn_reproductive_number, fn_generation_time,
+        fn_active_cases, fn_outbreak_size
         );
 
 }
