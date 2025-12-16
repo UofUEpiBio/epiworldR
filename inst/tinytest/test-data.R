@@ -180,11 +180,3 @@ expect_true(is.matrix(trans_prob_unrun))
 
 # Test plot.epiworld_hist (generic plot for hist objects) ----------------------
 expect_silent(plot(hist_total, plot = TRUE))
-
-# Clean up ---------------------------------------------------------------------
-rm(model, model_unrun, hist_total, today_total, hist_virus, hist_tool, 
-   trans_prob, repnum, repnum_plot, trans_matrix, trans_matrix_skip, 
-   trans_array, incidence_plot, trans_plot, transmissions, gentime, 
-   gentime_plot, active_cases, outbreak_size, hist_total_unrun, 
-   hist_virus_unrun, hist_tool_unrun, repnum_unrun, trans_matrix_unrun, 
-   trans_prob_unrun)
