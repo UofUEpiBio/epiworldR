@@ -373,6 +373,10 @@ make_saver <- function(
     stop(
       "The following elements in -what- are not supported: \"",
       paste(what[not_in_available], collapse = "\" , \""),
+      "\"\n",
+      # Listing available
+      "Available elements are:\n - \"",
+      paste(available, collapse = "\"\n - \""),
       "\""
     )
   }
