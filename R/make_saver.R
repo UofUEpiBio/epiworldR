@@ -25,6 +25,8 @@
 #' - `transition` Transition matrices.
 #' - `reproductive` Reproductive number.
 #' - `generation` Estimation of generation time.
+#' - `active_cases` Number of active cases per virus.
+#' - `outbreak_size` Size of outbreaks per virus.
 #'
 #' @section Data structures:
 #'
@@ -50,6 +52,10 @@
 #' (integer), `source_exposure_date` (integer), `rt` (integer).
 #' - `generation`: `virus` (integer), `source` (integer), `source_exposure_date`
 #' (integer), `generation_time` (integer).
+#' - `active_cases`: `date` (integer), `virus_id` (integer), `virus`
+#' (character), `active_cases` (integer).
+#' - `outbreak_size`: `date` (integer), `virus_id` (integer), `virus`
+#' (character), `outbreak_size` (integer).
 #'
 #' An **important difference** from the function [get_reproductive_number()] is
 #' that the returned reproductive number here includes a `-1` in the column
@@ -359,17 +365,7 @@ make_saver <- function(
   what <- list(...)
 
   # Any missmatch?
-  available <- c(
-    "total_hist",
-    "virus_info",
-    "virus_hist",
-    "tool_info",
-    "tool_hist",
-    "transmission",
-    "transition",
-    "reproductive",
-    "generation"
-  )
+  available <- args(make_saver_cpp)[-1]
 
   not_in_available <- which(!(what %in% available))
   if (length(not_in_available)) {
