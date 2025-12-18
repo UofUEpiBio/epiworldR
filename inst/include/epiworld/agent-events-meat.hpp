@@ -27,10 +27,12 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
         auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
+        // For tool counts, use current state (p->state) not state_prev
+        // because state_prev may be stale if multiple changes occurred today
         for (size_t i = 0u; i < p->n_tools; ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
-                p->state_prev,
+                p->state,
                 a.new_state
             );
     }
@@ -76,10 +78,12 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
         auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
+        // For virus counts, use current state (p->state) not state_prev
+        // because state_prev may be stale if multiple changes occurred today
         if (p->virus)
             db.update_virus(
                 p->virus->get_id(),
-                p->state_prev,
+                p->state,
                 a.new_state
             );
     }
@@ -110,10 +114,12 @@ inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
         auto & db = model->get_db();
         db.update_state(p->state_prev, a.new_state);
 
+        // For tool counts, use current state (p->state) not state_prev
+        // because state_prev may be stale if multiple changes occurred today
         for (size_t i = 0u; i < p->n_tools; ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
-                p->state_prev,
+                p->state,
                 a.new_state
             );
     }
@@ -155,10 +161,12 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
         auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
+        // For virus counts, use current state (p->state) not state_prev
+        // because state_prev may be stale if multiple changes occurred today
         if (p->virus)
             db.update_virus(
                 p->virus->get_id(),
-                p->state_prev,
+                p->state,
                 a.new_state
             );
     }
@@ -187,15 +195,17 @@ inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m)
         auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
+        // For virus and tool counts, use current state (p->state) not state_prev
+        // because state_prev may be stale if multiple changes occurred today
         if (p->virus)
             db.update_virus(
-                p->virus->get_id(), p->state_prev, a.new_state
+                p->virus->get_id(), p->state, a.new_state
             );
 
         for (size_t i = 0u; i < p->n_tools; ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
-                p->state_prev,
+                p->state,
                 a.new_state
             );
 
