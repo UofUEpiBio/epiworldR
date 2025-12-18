@@ -109,13 +109,15 @@ private:
     void update_virus(
         epiworld_fast_uint virus_id,
         epiworld_fast_uint prev_state,
-        epiworld_fast_uint new_state
+        epiworld_fast_uint new_state,
+        bool undo = false
     );
 
     void update_tool(
         epiworld_fast_uint tool_id,
         epiworld_fast_uint prev_state,
-        epiworld_fast_uint new_state
+        epiworld_fast_uint new_state,
+        bool undo = false
     );
 
     void record_transition(epiworld_fast_uint from, epiworld_fast_uint to, bool undo);
