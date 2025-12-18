@@ -80,6 +80,8 @@ Currently, the following elements can be saved:
 \item \code{transition} Transition matrices.
 \item \code{reproductive} Reproductive number.
 \item \code{generation} Estimation of generation time.
+\item \code{active_cases} Number of active cases per virus.
+\item \code{outbreak_size} Size of outbreaks per virus.
 }
 
 An alternative to using the default \code{utils::read.table} function is to use
@@ -117,6 +119,10 @@ columns:
 (integer), \code{source_exposure_date} (integer), \code{rt} (integer).
 \item \code{generation}: \code{virus} (integer), \code{source} (integer), \code{source_exposure_date}
 (integer), \code{generation_time} (integer).
+\item \code{active_cases}: \code{date} (integer), \code{virus_id} (integer), \code{virus}
+(character), \code{active_cases} (integer).
+\item \code{outbreak_size}: \code{date} (integer), \code{virus_id} (integer), \code{virus}
+(character), \code{outbreak_size} (integer).
 }
 
 An \strong{important difference} from the function \code{\link[=get_reproductive_number]{get_reproductive_number()}} is

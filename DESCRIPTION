@@ -37,5 +37,6 @@ Suggests:
     DiagrammeR
 Imports:
     utils,
-    parallel
+    parallel,
+    methods
 VignetteBuilder: knitr

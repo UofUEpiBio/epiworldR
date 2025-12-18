@@ -34,8 +34,7 @@ install-dev: clean
 	EPI_DEV=yes R CMD INSTALL .& $(MAKE) clean
 
 install:
-	cd .. && \
-		R CMD INSTALL epiworldR_$(VERSION).tar.gz
+	Rscript --vanilla -e 'devtools::install()'
 
 
 README.md: README.qmd

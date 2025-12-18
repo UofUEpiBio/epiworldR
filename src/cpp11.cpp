@@ -695,10 +695,10 @@ extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   END_CPP11
 }
 // model.cpp
-SEXP make_saver_cpp(std::string fn, bool total_hist, bool virus_info, bool virus_hist, bool tool_info, bool tool_hist, bool transmission, bool transition, bool reproductive, bool generation);
-extern "C" SEXP _epiworldR_make_saver_cpp(SEXP fn, SEXP total_hist, SEXP virus_info, SEXP virus_hist, SEXP tool_info, SEXP tool_hist, SEXP transmission, SEXP transition, SEXP reproductive, SEXP generation) {
+SEXP make_saver_cpp(std::string fn, bool total_hist, bool virus_info, bool virus_hist, bool tool_info, bool tool_hist, bool transmission, bool transition, bool reproductive, bool generation, bool active_cases, bool outbreak_size);
+extern "C" SEXP _epiworldR_make_saver_cpp(SEXP fn, SEXP total_hist, SEXP virus_info, SEXP virus_hist, SEXP tool_info, SEXP tool_hist, SEXP transmission, SEXP transition, SEXP reproductive, SEXP generation, SEXP active_cases, SEXP outbreak_size) {
   BEGIN_CPP11
-    return cpp11::as_sexp(make_saver_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(fn), cpp11::as_cpp<cpp11::decay_t<bool>>(total_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_info), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_info), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(transmission), cpp11::as_cpp<cpp11::decay_t<bool>>(transition), cpp11::as_cpp<cpp11::decay_t<bool>>(reproductive), cpp11::as_cpp<cpp11::decay_t<bool>>(generation)));
+    return cpp11::as_sexp(make_saver_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(fn), cpp11::as_cpp<cpp11::decay_t<bool>>(total_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_info), cpp11::as_cpp<cpp11::decay_t<bool>>(virus_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_info), cpp11::as_cpp<cpp11::decay_t<bool>>(tool_hist), cpp11::as_cpp<cpp11::decay_t<bool>>(transmission), cpp11::as_cpp<cpp11::decay_t<bool>>(transition), cpp11::as_cpp<cpp11::decay_t<bool>>(reproductive), cpp11::as_cpp<cpp11::decay_t<bool>>(generation), cpp11::as_cpp<cpp11::decay_t<bool>>(active_cases), cpp11::as_cpp<cpp11::decay_t<bool>>(outbreak_size)));
   END_CPP11
 }
 // model.cpp
@@ -1326,7 +1326,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
     {"_epiworldR_load_agents_entities_ties_cpp",        (DL_FUNC) &_epiworldR_load_agents_entities_ties_cpp,         3},
-    {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       10},
+    {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       12},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             2},
