@@ -909,18 +909,21 @@ inline void DataBase<TSeq>::get_outbreak_size(
     
     // Making room
     date.assign(n_days * n_viruses, 0);
+    std::iota(date.begin(), date.end(), 0);
+
     virus_id.assign(n_days * n_viruses, 0);
+    for (size_t v = 0u; v < n_viruses; ++v)
+        for (size_t d = 0u; d < n_days; ++d)
+            virus_id[d + v * n_days] = static_cast<int>(v);
+
     outbreak_size.assign(n_days * n_viruses, 0);
 
+    // With more viruses, there are more days;
     for (size_t i = 0u; i < transmission_date.size(); ++i)
     {
-
-        // With more viruses, there are more days
-        auto location = transmission_date[i] + transmission_virus[i] * n_days;
-
-        date[location] = transmission_date[i];
-        virus_id[location] = transmission_virus[i];
-        outbreak_size[location] += 1;
+        outbreak_size[
+            transmission_date[i] + transmission_virus[i] * n_days
+        ] += 1;
     }
 
     // Now, we generate the cumulative sum

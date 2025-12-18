@@ -10,7 +10,7 @@
 
 ## Bug Fixes
 
-* The saver was not correctly saving the history of tools when using `tools_hist`. This has been fixed (new in epiworld 0.11.0).
+* The saver was not correctly saving the history of tools and viruses when using `virus_hist` and `tools_hist`, respectively. This has been fixed (new in epiworld 0.11.0).
 
 ## Breaking Changes
 
