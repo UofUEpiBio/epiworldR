@@ -357,6 +357,7 @@ plot.epiworld_multiple_save_reproductive_number <- function(x, y = NULL, ...) {
 #' @export
 #' @rdname run_multiple
 #' @aliases epiworld_saver
+#' @importFrom methods formalArgs
 make_saver <- function(
   ...,
   fn = ""
@@ -365,7 +366,7 @@ make_saver <- function(
   what <- list(...)
 
   # Any missmatch?
-  available <- args(make_saver_cpp)[-1]
+  available <- methods::formalArgs(make_saver_cpp)[-1]
 
   not_in_available <- which(!(what %in% available))
   if (length(not_in_available)) {
