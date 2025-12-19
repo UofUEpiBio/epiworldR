@@ -356,3 +356,28 @@ cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model) {
   });
 
 }
+
+
+[[cpp11::register]]
+cpp11::writable::data_frame get_hospitalizations_cpp(SEXP model) {
+
+  std::vector< int > date;
+  std::vector< int > virus_id;
+  std::vector< int > tool_id;
+  std::vector< int > count;
+  std::vector< double > weight;
+
+  cpp11::external_pointer<Model<>> ptr(model);
+
+  ptr->get_db().
+    get_hospitalizations(date, virus_id, tool_id, count, weight);
+
+  return cpp11::writable::data_frame({
+    "date"_nm     = date,
+    "virus_id"_nm = virus_id,
+    "tool_id"_nm  = tool_id,
+    "count"_nm    = count,
+    "weight"_nm   = weight
+  });
+
+}

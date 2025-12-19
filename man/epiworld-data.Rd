@@ -25,6 +25,7 @@
 \alias{plot_generation_time}
 \alias{get_active_cases}
 \alias{get_outbreak_size}
+\alias{get_hospitalizations}
 \title{Accessing the database of epiworld}
 \usage{
 get_hist_total(x)
@@ -87,6 +88,8 @@ plot_generation_time(x, ...)
 get_active_cases(x)
 
 get_outbreak_size(x)
+
+get_hospitalizations(x)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
@@ -184,8 +187,18 @@ cases (individuals with a virus) at each point in time.
 
 \itemize{
 \item The function \code{get_outbreak_size} returns a data.frame with four columns:
-date, virus_id, virus, and outbreak_size indicating the outbreak size per
-virus at each point in time.
+\code{date}, \code{virus_id}, \code{virus}, and \code{outbreak_size} indicating the outbreak
+size per virus at each point in time.
+}
+
+\itemize{
+\item The function \code{get_hospitalizations} returns a data.frame with five columns:
+\code{date}, \code{virus_id}, \code{tool_id}, \code{hospitalizations}, and \code{weight}. The \code{weight}
+column is used to keep track of individuals having multiple tools. For
+example, if an agent has two tools (vaccination and mask-wearing), then it
+will show up twice under count, but with weights 0.5 for each count. Models
+with no hospitalization tracking will return the same data.frame with no
+rows.
 }
 }
 \description{

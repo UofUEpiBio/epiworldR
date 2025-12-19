@@ -67,12 +67,15 @@ inline void DataBase<TSeq>::reset()
     transmission_target.clear();
     transmission_source_exposure_date.clear();
 
+    m_hospitalizations.reset();
+
     return;
 
 }
 
 template<typename TSeq>
 inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
+    m_hospitalizations(db.m_hospitalizations),
     virus_id(db.virus_id),
     virus_name(db.virus_name),
     virus_sequence(db.virus_sequence),
@@ -1005,7 +1008,8 @@ inline void DataBase<TSeq>::write_data(
     std::string fn_reproductive_number,
     std::string fn_generation_time,
     std::string fn_active_cases,
-    std::string fn_outbreak_size
+    std::string fn_outbreak_size,
+    std::string fn_hospitalizations
 ) const
 {
 
@@ -1334,6 +1338,48 @@ inline void DataBase<TSeq>::write_data(
                     virus_id[i] << " \"" <<
                     virus_name[virus_id[i]] << "\" " <<
                     outbreak_size[i] << "\n";
+        }
+
+    }
+
+    if (fn_hospitalizations != "")
+    {
+        std::vector< int > date;
+        std::vector< int > virus_id;
+        std::vector< int > tool_id;
+        std::vector< int > count;
+        std::vector< double > weight;
+        get_hospitalizations(date, virus_id, tool_id, count, weight);
+
+        std::ofstream file_hospitalizations(fn_hospitalizations, std::ios_base::out);
+        // Repeat the same error if the file doesn't exists
+        if (!file_hospitalizations)
+        {
+            throw std::runtime_error(
+                "Could not open file \"" + fn_hospitalizations +
+                "\" for writing.")
+                ;
+        }
+
+        file_hospitalizations <<
+            #ifdef EPI_DEBUG
+            "thread " << 
+            #endif
+            "date " << "virus_id " << "tool_id " << "count " << "weight\n";
+
+        for (size_t i = 0u; i < date.size(); ++i)
+        {
+            // Only write non-zero counts or weights
+            if (count[i] > 0 || weight[i] > 0.0)
+                file_hospitalizations <<
+                    #ifdef EPI_DEBUG
+                    EPI_GET_THREAD_ID() << " " <<
+                    #endif
+                    date[i] << " " <<
+                    virus_id[i] << " " <<
+                    tool_id[i] << " " <<
+                    count[i] << " " <<
+                    weight[i] << "\n";
         }
 
     }
@@ -2126,6 +2172,27 @@ inline void DataBase<TSeq>::get_generation_time(
 
     return;
 
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::record_hospitalization(Agent<TSeq> & agent)
+{
+    m_hospitalizations.record(agent, *model);
+}
+
+template<typename TSeq>
+inline void DataBase<TSeq>::get_hospitalizations(
+    std::vector<int> & date,
+    std::vector<int> & virus_id,
+    std::vector<int> & tool_id,
+    std::vector<int> & count,
+    std::vector<double> & weight
+) const
+{
+    // Get the number of days from the model and add 1 since days are 0-indexed
+    // today() returns the last day, so we need today() + 1 for the full count
+    int ndays = model->today() + 1;
+    m_hospitalizations.get(ndays, date, virus_id, tool_id, count, weight);
 }
 
 #undef VECT_MATCH

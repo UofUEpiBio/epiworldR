@@ -71,7 +71,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     bool reproductive = false,
     bool generation = false,
     bool active_cases = false,
-    bool outbreak_size = false
+    bool outbreak_size = false,
+    bool hospitalizations = false
     );
 
 // template<typename TSeq>
@@ -493,6 +494,7 @@ public:
      * @param fn_generation_time Filename. Generation time data.
      * @param fn_active_cases Filename. Active cases data.
      * @param fn_outbreak_size Filename. Outbreak size data.
+     * @param fn_hospitalizations Filename. Hospitalization data.
      */
     void write_data(
         std::string fn_virus_info,
@@ -505,7 +507,8 @@ public:
         std::string fn_reproductive_number,
         std::string fn_generation_time,
         std::string fn_active_cases,
-        std::string fn_outbreak_size
+        std::string fn_outbreak_size,
+        std::string fn_hospitalizations
         ) const;
 
     /**
@@ -756,6 +759,56 @@ public:
         const std::string & fn_output = "",
         bool self = false
     );
+
+    /**
+     * @brief Record a hospitalization event for an agent.
+     * 
+     * @param agent Reference to the agent being hospitalized.
+     * 
+     * @details
+     * This is a wrapper for `DataBase::record_hospitalization()`.
+     * For each hospitalization, the method records:
+     * - The current date from the model
+     * - The virus ID from the agent's virus
+     * - For each tool the agent has, a separate record with weight = 1/N
+     *   where N is the number of tools
+     * - If the agent has no tools, a single record with tool_id = -1 and
+     *   weight = 1.0
+     */
+    void record_hospitalization(Agent<TSeq> & agent);
+
+    /**
+     * @brief Get the full time series of hospitalization data.
+     * 
+     * @param date Output vector for dates.
+     * @param virus_id Output vector for virus IDs.
+     * @param tool_id Output vector for tool IDs.
+     * @param count Output vector for counts (number of hospitalized individuals).
+     * @param weight Output vector for summed weights (fractional contribution
+     *   based on tool distribution).
+     * 
+     * @details
+     * This is a wrapper for `DataBase::get_hospitalizations()`.
+     * Returns the full time series of hospitalization data. For each unique 
+     * (virus_id, tool_id) combination observed, returns an entry for every 
+     * day from 0 to ndays-1.
+     * 
+     * The `count` vector contains the actual number of individuals hospitalized 
+     * for that (date, virus_id, tool_id) combination. This is useful for 
+     * answering questions like "how many total people were hospitalized?" 
+     * regardless of their tools.
+     * 
+     * The `weight` vector contains fractional contributions: if an agent has N 
+     * tools, each tool gets weight = 1/N. Summing weights across all tool_ids 
+     * for a given date and virus_id gives the total number of hospitalizations.
+     */
+    void get_hospitalizations(
+        std::vector<int> & date,
+        std::vector<int> & virus_id,
+        std::vector<int> & tool_id,
+        std::vector<int> & count,
+        std::vector<double> & weight
+    ) const;
 
 
 };

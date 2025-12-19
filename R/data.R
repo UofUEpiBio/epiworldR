@@ -690,9 +690,27 @@ get_active_cases <- function(x) {
 #' @rdname epiworld-data
 #' @return
 #' - The function `get_outbreak_size` returns a data.frame with four columns:
-#' date, virus_id, virus, and outbreak_size indicating the outbreak size per
-#' virus at each point in time.
+#' `date`, `virus_id`, `virus`, and `outbreak_size` indicating the outbreak
+#' size per virus at each point in time.
 get_outbreak_size <- function(x) {
   stopifnot_model(x)
   return(get_outbreak_size_cpp(x))
+}
+
+
+#' @export
+#' @rdname epiworld-data
+#' @return
+#' - The function `get_hospitalizations` returns a data.frame with five columns:
+#' `date`, `virus_id`, `tool_id`, `hospitalizations`, and `weight`. The `weight`
+#' column is used to keep track of individuals having multiple tools. For
+#' example, if an agent has two tools (vaccination and mask-wearing), then it
+#' will show up twice under count, but with weights 0.5 for each count. Models
+#' with no hospitalization tracking will return the same data.frame with no
+#' rows.
+get_hospitalizations <- function(x) {
+
+  stopifnot_model(x)
+  return(get_hospitalizations_cpp(x))
+
 }

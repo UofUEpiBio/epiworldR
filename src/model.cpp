@@ -73,7 +73,8 @@ SEXP make_saver_cpp(
   bool reproductive,
   bool generation,
   bool active_cases,
-  bool outbreak_size
+  bool outbreak_size,
+  bool hospitalizations
 ) {
 
   funptr* saver = new funptr(make_save_run<int>(
@@ -88,7 +89,8 @@ SEXP make_saver_cpp(
     reproductive,
     generation,
     active_cases,
-    outbreak_size
+    outbreak_size,
+    hospitalizations
   ));
 
   external_pointer<funptr> sav_ptr(saver);
