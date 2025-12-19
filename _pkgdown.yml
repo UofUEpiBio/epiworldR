@@ -15,11 +15,62 @@ reference:
     contents:
       - has_concept("fmcmc")
 
-  - title: "Model Utility Functions"
+  - title: "Model History"
     desc: >
-      Functions for manipulating models, running simulations, and extracting results.
+      Functions to extract simulation history at total, variant, and tool levels.
     contents:
-      - has_concept("model-utility-functions")
+      - epiworld-history
+      - get_hist_total
+      - get_hist_virus
+      - get_hist_tool
+      - get_today_total
+
+  - title: "Transition Dynamics & Incidence"
+    desc: >
+      Transition counts by day, incidence plots, and array conversion.
+    contents:
+      - epiworld-transition
+      - get_hist_transition_matrix
+      - plot_incidence
+
+  - title: "Reproductive Number (Rt)"
+    desc: >
+      Extraction and plotting of Rt by virus over time.
+    contents:
+      - epiworld-repnum
+      - get_reproductive_number
+      - plot_reproductive_number
+
+  - title: "Generation Time"
+    desc: >
+      Extraction and plotting of generation time by virus over time.
+    contents:
+      - epiworld-gentime
+      - get_generation_time
+      - plot_generation_time
+
+  - title: "Transmission Network"
+    desc: >
+      Transmission edges, including seeded infections.
+    contents:
+      - epiworld-transmissions
+      - get_transmissions
+
+  - title: "Summaries"
+    desc: >
+      Active cases, outbreak size, and transition probability snapshots.
+    contents:
+      - epiworld-summaries
+      - get_active_cases
+      - get_outbreak_size
+      - get_transition_probability
+
+  - title: "Hospitalizations"
+    desc: >
+      Weighted hospitalization tracking when agents have multiple tools.
+    contents:
+      - epiworld-hospitalizations
+      - get_hospitalizations
 
   - title: "Virus Functions"
     desc: >

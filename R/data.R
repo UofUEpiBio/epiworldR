@@ -1,22 +1,22 @@
-#' Accessing the database of epiworld
+# ============================================================================
+# TOPIC: epiworld-history
+# Model history and totals
+# ============================================================================
+
+#' Model history and totals
 #'
-#' Models in `epiworld` are stored in a database. This database can be accessed
-#' using the functions described in this manual page. Some elements of the
-#' database are: the transition matrix, the incidence matrix, the reproductive
-#' number, the generation time, and daily incidence at the virus and tool level.
-#'
+#' Functions to extract simulation history at total, variant, and tool levels,
+#' plus snapshot totals and a common plot method for history objects.
 #'
 #' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
-#' any model.
-#' @param skip_zeros Logical scalar. When `FALSE` it will return all the
-#' entries in the transition matrix.
+#' (any model).
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
-#' @name epiworld-data
+#' @name epiworld-history
 #' @concept model-utility-functions
-#' @family Models
+#' @family History
 #' @examples
-#' # SEIR Connected
+#' # SEIR Connected model
 #' seirconn <- ModelSEIRCONN(
 #'   name              = "Disease",
 #'   n                 = 10000,
@@ -31,9 +31,6 @@
 #' set.seed(937)
 #' run(seirconn, 50)
 #'
-#' # Retrieving the transition probability
-#' get_transition_probability(seirconn)
-#'
 #' # Retrieving date, state, and counts dataframe including any added tools
 #' get_hist_tool(seirconn)
 #'
@@ -43,22 +40,8 @@
 #' # Retrieving date, state, and counts dataframe by variant
 #' head(get_hist_virus(seirconn))
 #'
-#' # Retrieving (and plotting) the reproductive number
-#' rp <- get_reproductive_number(seirconn)
-#' plot(rp) # Also equivalent to plot_reproductive_number(seirconn)
-#'
-#' # We can go further and get all the history
-#' t_hist <- get_hist_transition_matrix(seirconn)
-#'
-#' head(t_hist)
-#'
-#' # And turn it into an array
-#' as.array(t_hist)[, , 1:3]
-#'
-#' # We cam also get (and plot) the incidence, as well as
-#' # the generation time
-#' inci <- plot_incidence(seirconn)
-#' gent <- plot_generation_time(seirconn)
+#' # Snapshot of totals at end of simulation
+#' get_today_total(seirconn)
 #'
 NULL
 
@@ -66,7 +49,7 @@ NULL
 #' @returns
 #' - The `get_hist_total` function returns an object of class
 #' [epiworld_hist_total].
-#' @rdname epiworld-data
+#' @rdname epiworld-history
 #' @aliases epiworld_hist_total
 get_hist_total <- function(x) UseMethod("get_hist_total")
 
@@ -83,7 +66,7 @@ get_hist_total.epiworld_model <- function(x) {
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-history
 #' @returns
 #' - The `get_today_total` function returns a named vector with the
 #' total number of individuals in each state at the end of the simulation.
@@ -103,7 +86,7 @@ plot.epiworld_hist <- function(x, y, ...) {
 #' @returns
 #' - The `get_hist_virus` function returns an object of class
 #' [epiworld_hist_virus].
-#' @rdname epiworld-data
+#' @rdname epiworld-history
 #' @aliases epiworld_hist_variant epiworld_hist_virus
 get_hist_virus <- function(x) UseMethod("get_hist_virus")
 
@@ -120,8 +103,8 @@ get_hist_virus.epiworld_model <- function(x) {
 
 #' @export
 #' @returns
-#' - The `get_hist_tool` function returns an object of [epiworld_hist_virus].
-#' @rdname epiworld-data
+#' - The `get_hist_tool` function returns an object of [epiworld_hist_tool].
+#' @rdname epiworld-history
 #' @aliases epiworld_hist_tool
 get_hist_tool <- function(x) UseMethod("get_hist_tool")
 
@@ -135,11 +118,52 @@ get_hist_tool.epiworld_model <- function(x) {
   )
 }
 
+# ============================================================================
+# TOPIC: epiworld-summaries
+# Summary counts and probabilities
+# ============================================================================
+
+#' Summary counts and probabilities
+#'
+#' Functions to extract summary statistics from models, including transition
+#' probabilities, active cases, and outbreak sizes.
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model).
+#' @name epiworld-summaries
+#' @concept model-utility-functions
+#' @family Summaries
+#' @examples
+#' # SEIR Connected model
+#' seirconn <- ModelSEIRCONN(
+#'   name              = "Disease",
+#'   n                 = 10000,
+#'   prevalence        = 0.1,
+#'   contact_rate      = 2.0,
+#'   transmission_rate = 0.8,
+#'   incubation_days   = 7.0,
+#'   recovery_rate     = 0.3
+#' )
+#'
+#' set.seed(937)
+#' run(seirconn, 50)
+#'
+#' # Retrieving the transition probability
+#' get_transition_probability(seirconn)
+#'
+#' # Get active cases
+#' head(get_active_cases(seirconn))
+#'
+#' # Get outbreak size
+#' head(get_outbreak_size(seirconn))
+#'
+NULL
+
 #' @export
 #' @returns
 #' - The `get_transition_probability` function returns an object of class
 #' `matrix`.
-#' @rdname epiworld-data
+#' @rdname epiworld-summaries
 get_transition_probability <- function(x) {
   UseMethod("get_transition_probability")
 }
@@ -154,11 +178,48 @@ get_transition_probability.epiworld_model <- function(x) {
   matrix(res, nrow = ns, ncol = ns, dimnames = list(s, s))
 }
 
+# ============================================================================
+# TOPIC: epiworld-repnum
+# Reproductive number (Rt)
+# ============================================================================
+
+#' Reproductive number (Rt)
+#'
+#' Extraction and plotting of the reproductive number (Rt) by virus over time.
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model), or an object of class [epiworld_repnum].
+#' @param ... In the case of plot methods, further arguments passed to
+#' [graphics::plot].
+#' @name epiworld-repnum
+#' @concept model-utility-functions
+#' @family Epidemiological metrics
+#' @examples
+#' # SEIR Connected model
+#' seirconn <- ModelSEIRCONN(
+#'   name              = "Disease",
+#'   n                 = 10000,
+#'   prevalence        = 0.1,
+#'   contact_rate      = 2.0,
+#'   transmission_rate = 0.8,
+#'   incubation_days   = 7.0,
+#'   recovery_rate     = 0.3
+#' )
+#'
+#' set.seed(937)
+#' run(seirconn, 50)
+#'
+#' # Retrieving (and plotting) the reproductive number
+#' rp <- get_reproductive_number(seirconn)
+#' plot(rp) # Also equivalent to plot_reproductive_number(seirconn)
+#'
+NULL
+
 #' @export
 #' @returns
 #' - The `get_reproductive_number` function returns an object of class
 #' [epiworld_repnum].
-#' @rdname epiworld-data
+#' @rdname epiworld-repnum
 #' @aliases epiworld_repnum
 get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
 
@@ -170,13 +231,14 @@ get_reproductive_number.epiworld_model <- function(x) {
   res
 }
 
-#' @rdname epiworld-data
+#' @rdname epiworld-repnum
 #' @param y Ignored.
-#' @param plot Logical scalar. If `TRUE` (default), the function will the
+#' @param plot Logical scalar. If `TRUE` (default), the function will plot the
 #' desired statistic.
 #' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
 #' @returns
-#' - The `plot` function returns a plot of the reproductive number over time.
+#' - The `plot` method for `epiworld_repnum` returns a plot of the reproductive
+#' number over time.
 #' @export
 #' @importFrom stats sd quantile aggregate
 plot.epiworld_repnum <- function(
@@ -322,7 +384,7 @@ plot.epiworld_repnum <- function(
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-repnum
 #' @details The `plot_reproductive_number` function is a wrapper around
 #' [get_reproductive_number] that plots the result.
 plot_reproductive_number <- function(x, ...) {
@@ -330,9 +392,55 @@ plot_reproductive_number <- function(x, ...) {
 }
 
 
+# ============================================================================
+# TOPIC: epiworld-transition
+# Transition dynamics and incidence
+# ============================================================================
+
+#' Transition dynamics and incidence
+#'
+#' Functions to extract and visualize state transition counts, daily incidence,
+#' and conversion to array format.
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model), or an object of class [epiworld_hist_transition].
+#' @param skip_zeros Logical scalar. When `FALSE` it will return all the
+#' entries in the transition matrix.
+#' @param ... In the case of plot methods, further arguments passed to
+#' [graphics::plot].
+#' @name epiworld-transition
+#' @aliases epiworld_hist_transition
+#' @concept model-utility-functions
+#' @family Transition dynamics
+#' @examples
+#' # SEIR Connected model
+#' seirconn <- ModelSEIRCONN(
+#'   name              = "Disease",
+#'   n                 = 10000,
+#'   prevalence        = 0.1,
+#'   contact_rate      = 2.0,
+#'   transmission_rate = 0.8,
+#'   incubation_days   = 7.0,
+#'   recovery_rate     = 0.3
+#' )
+#'
+#' set.seed(937)
+#' run(seirconn, 50)
+#'
+#' # Get the transition history
+#' t_hist <- get_hist_transition_matrix(seirconn)
+#' head(t_hist)
+#'
+#' # Convert to array
+#' as.array(t_hist)[, , 1:3]
+#'
+#' # Plot incidence
+#' inci <- plot_incidence(seirconn)
+#'
+NULL
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-transition
 #' @returns
 #' - `get_hist_transition_matrix` returns a [data.frame] with four columns:
 #' "state_from", "state_to", "date", and "counts."
@@ -359,7 +467,7 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
 #' `data.frame` returned by `get_hist_transition_matrix` into an array of
 #' `nstates x nstates x (ndays + 1)`
 #' entries, where the first entry is the initial state.
-#' @rdname epiworld-data
+#' @rdname epiworld-transition
 as.array.epiworld_hist_transition <- function(x, ...) {
 
   states <- attr(x, "states")
@@ -379,21 +487,24 @@ as.array.epiworld_hist_transition <- function(x, ...) {
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-transition
 #' @returns
 #' - The `plot_incidence` function returns a plot originating from the object
 #' `get_hist_transition_matrix`.
 #' @details The `plot_incidence` function is a wrapper between
-#' [get_hist_transition_matrix] and it's plot method.
+#' [get_hist_transition_matrix] and its plot method.
 plot_incidence <- function(x, ...) {
   plot(get_hist_transition_matrix(x), ...)
 }
 
 #' @export
 #' @returns
-#' - The `plot` function returns a plot which originates from the
-#' `epiworld_hist_transition` object.
-#' @rdname epiworld-data
+#' - The `plot` method for `epiworld_hist_transition` returns a plot of the
+#' daily incidence.
+#' @rdname epiworld-transition
+#' @param plot Logical scalar. If `TRUE` (default), the function will plot the
+#' desired statistic.
+#' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
 #' @details The plot method for the `epiworld_hist_transition` class plots the
 #' daily incidence of each state. The function returns the data frame used for
 #' plotting.
@@ -488,8 +599,42 @@ plot.epiworld_hist_transition <- function(
 
 }
 
+# ============================================================================
+# TOPIC: epiworld-transmissions
+# Transmission network
+# ============================================================================
+
+#' Transmission network
+#'
+#' Transmission edges, including seeded infections (`source = -1`).
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model).
+#' @name epiworld-transmissions
+#' @concept model-utility-functions
+#' @family Network outputs
+#' @examples
+#' # SEIR Connected model
+#' seirconn <- ModelSEIRCONN(
+#'   name              = "Disease",
+#'   n                 = 10000,
+#'   prevalence        = 0.1,
+#'   contact_rate      = 2.0,
+#'   transmission_rate = 0.8,
+#'   incubation_days   = 7.0,
+#'   recovery_rate     = 0.3
+#' )
+#'
+#' set.seed(937)
+#' run(seirconn, 50)
+#'
+#' # Get transmission data
+#' head(get_transmissions(seirconn))
+#'
+NULL
+
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-transmissions
 #' @details
 #' The function `get_transmissions` includes the seeded infections, with the
 #' `source` column coded as `-1`.
@@ -515,8 +660,45 @@ get_transmissions.epiworld_model <- function(x) {
 
 }
 
+# ============================================================================
+# TOPIC: epiworld-gentime
+# Generation time
+# ============================================================================
+
+#' Generation time
+#'
+#' Extraction and plotting of generation time by virus over time.
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model), or an object of class [epiworld_generation_time].
+#' @param ... In the case of plot methods, further arguments passed to
+#' [graphics::plot].
+#' @name epiworld-gentime
+#' @aliases epiworld_generation_time
+#' @concept model-utility-functions
+#' @family Epidemiological metrics
+#' @examples
+#' # SEIR Connected model
+#' seirconn <- ModelSEIRCONN(
+#'   name              = "Disease",
+#'   n                 = 10000,
+#'   prevalence        = 0.1,
+#'   contact_rate      = 2.0,
+#'   transmission_rate = 0.8,
+#'   incubation_days   = 7.0,
+#'   recovery_rate     = 0.3
+#' )
+#'
+#' set.seed(937)
+#' run(seirconn, 50)
+#'
+#' # Get and plot generation time
+#' gent <- plot_generation_time(seirconn)
+#'
+NULL
+
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-gentime
 #' @return
 #' - The function `get_generation_time` returns a `data.frame` with
 #' the following columns: "agent", "virus_id", "virus", "date", and "gentime".
@@ -537,7 +719,10 @@ get_generation_time <- function(x) {
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-gentime
+#' @param plot Logical scalar. If `TRUE` (default), the function will plot the
+#' desired statistic.
+#' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
 plot.epiworld_generation_time <- function(
   x,
   type = "b",
@@ -667,7 +852,7 @@ plot.epiworld_generation_time <- function(
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-gentime
 #' @return
 #' - The function `plot_generation_time` is a wrapper for [plot] and
 #' [get_generation_time].
@@ -676,7 +861,7 @@ plot_generation_time <- function(x, ...) {
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-summaries
 #' @return
 #' - The function `get_active_cases` returns a data.frame with four columns:
 #' date, virus_id, virus, and active_cases indicating the number of active
@@ -687,7 +872,7 @@ get_active_cases <- function(x) {
 }
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-summaries
 #' @return
 #' - The function `get_outbreak_size` returns a data.frame with four columns:
 #' `date`, `virus_id`, `virus`, and `outbreak_size` indicating the outbreak
@@ -697,9 +882,26 @@ get_outbreak_size <- function(x) {
   return(get_outbreak_size_cpp(x))
 }
 
+# ============================================================================
+# TOPIC: epiworld-hospitalizations
+# Hospitalizations by tool
+# ============================================================================
+
+#' Hospitalizations by tool
+#'
+#' Weighted hospitalization tracking when agents have multiple tools.
+#'
+#' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
+#' (any model).
+#' @name epiworld-hospitalizations
+#' @concept model-utility-functions
+#' @family Summaries
+#' @examples
+#' # See model documentation for examples with hospitalization tracking
+NULL
 
 #' @export
-#' @rdname epiworld-data
+#' @rdname epiworld-hospitalizations
 #' @return
 #' - The function `get_hospitalizations` returns a data.frame with five columns:
 #' `date`, `virus_id`, `tool_id`, `hospitalizations`, and `weight`. The `weight`

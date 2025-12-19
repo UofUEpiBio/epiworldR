@@ -69,8 +69,7 @@ Other Models:
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIRMixing}()},
 \code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()},
-\code{\link{epiworld-data}}
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}
