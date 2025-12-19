@@ -69,19 +69,20 @@ When available, users can take advantage of parallel computing to speed up
 the process.
 }
 \details{
-Currently, the following elements can be saved:
-\itemize{
-\item \code{total_hist} History of the model (total numbers per time).
-\item \code{virus_info} Information about \code{viruses}.
-\item \code{virus_hist} Changes in \code{viruses}.
-\item \code{tool_info} Information about \code{tools}.
-\item \code{tool_hist} Changes in \code{tools}.
-\item \code{transmission} Transmission events.
-\item \code{transition} Transition matrices.
-\item \code{reproductive} Reproductive number.
-\item \code{generation} Estimation of generation time.
-\item \code{active_cases} Number of active cases per virus.
-\item \code{outbreak_size} Size of outbreaks per virus.
+Currently, the following elements can be saved:\tabular{lll}{
+   Keyword \tab Description \tab Function \cr
+   \code{total_hist} \tab History of the model (total numbers per time). \tab \code{\link[=get_hist_total]{get_hist_total()}} \cr
+   \code{virus_info} \tab Information about \code{viruses}. \tab  \cr
+   \code{virus_hist} \tab Changes in \code{viruses}. \tab \code{\link[=get_hist_virus]{get_hist_virus()}} \cr
+   \code{tool_info} \tab Information about \code{tools}. \tab  \cr
+   \code{tool_hist} \tab Changes in \code{tools}. \tab \code{\link[=get_hist_tool]{get_hist_tool()}} \cr
+   \code{transmission} \tab Transmission events. \tab \code{\link[=get_transmissions]{get_transmissions()}} \cr
+   \code{transition} \tab Transition matrices. \tab \code{\link[=get_hist_transition_matrix]{get_hist_transition_matrix()}} \cr
+   \code{reproductive} \tab Reproductive number. \tab \code{\link[=get_reproductive_number]{get_reproductive_number()}} \cr
+   \code{generation} \tab Estimation of generation time. \tab \code{\link[=get_generation_time]{get_generation_time()}} \cr
+   \code{active_cases} \tab Number of active cases per virus. \tab \code{\link[=get_active_cases]{get_active_cases()}} \cr
+   \code{outbreak_size} \tab Size of outbreaks per virus. \tab \code{\link[=get_outbreak_size]{get_outbreak_size()}} \cr
+   \code{hospitalizations} \tab Number of hospitalizations per virus/tool. \tab \code{\link[=get_hospitalizations]{get_hospitalizations()}} \cr
 }
 
 An alternative to using the default \code{utils::read.table} function is to use
@@ -123,6 +124,8 @@ columns:
 (character), \code{active_cases} (integer).
 \item \code{outbreak_size}: \code{date} (integer), \code{virus_id} (integer), \code{virus}
 (character), \code{outbreak_size} (integer).
+\item \code{hospitalizations}: \code{date} (integer), \code{virus_id} (integer), \code{tool_id}
+(integer), \code{counts} (integer), and \code{weight} (numeric).
 }
 
 An \strong{important difference} from the function \code{\link[=get_reproductive_number]{get_reproductive_number()}} is

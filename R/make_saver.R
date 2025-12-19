@@ -15,18 +15,20 @@
 #'
 #' @details
 #' Currently, the following elements can be saved:
-#'
-#' - `total_hist` History of the model (total numbers per time).
-#' - `virus_info` Information about `viruses`.
-#' - `virus_hist` Changes in `viruses`.
-#' - `tool_info` Information about `tools`.
-#' - `tool_hist` Changes in `tools`.
-#' - `transmission` Transmission events.
-#' - `transition` Transition matrices.
-#' - `reproductive` Reproductive number.
-#' - `generation` Estimation of generation time.
-#' - `active_cases` Number of active cases per virus.
-#' - `outbreak_size` Size of outbreaks per virus.
+#' | Keyword | Description | Function |
+#' |:--|:---|:---|
+#' | `total_hist` | History of the model (total numbers per time). | [get_hist_total()] |
+#' | `virus_info` | Information about `viruses`. | |
+#' | `virus_hist` | Changes in `viruses`. | [get_hist_virus()]|
+#' | `tool_info` | Information about `tools`. | |
+#' | `tool_hist` | Changes in `tools`. | [get_hist_tool()]|
+#' | `transmission` | Transmission events. | [get_transmissions()]|
+#' | `transition` | Transition matrices. | [get_hist_transition_matrix()] |
+#' | `reproductive` | Reproductive number. | [get_reproductive_number()]|
+#' | `generation` | Estimation of generation time. | [get_generation_time()] |
+#' | `active_cases` | Number of active cases per virus. | [get_active_cases()] |
+#' | `outbreak_size` | Size of outbreaks per virus. | [get_outbreak_size()] |
+#' | `hospitalizations` | Number of hospitalizations per virus/tool. | [get_hospitalizations()]|
 #'
 #' @section Data structures:
 #'
@@ -56,6 +58,8 @@
 #' (character), `active_cases` (integer).
 #' - `outbreak_size`: `date` (integer), `virus_id` (integer), `virus`
 #' (character), `outbreak_size` (integer).
+#' - `hospitalizations`: `date` (integer), `virus_id` (integer), `tool_id`
+#' (integer), `counts` (integer), and `weight` (numeric).
 #'
 #' An **important difference** from the function [get_reproductive_number()] is
 #' that the returned reproductive number here includes a `-1` in the column

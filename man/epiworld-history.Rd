@@ -7,7 +7,6 @@
 \alias{get_today_total}
 \alias{plot.epiworld_hist}
 \alias{get_hist_virus}
-\alias{epiworld_hist_variant}
 \alias{epiworld_hist_virus}
 \alias{get_hist_tool}
 \alias{epiworld_hist_tool}
