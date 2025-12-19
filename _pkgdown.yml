@@ -9,6 +9,26 @@ reference:
     contents:
       - has_concept("general-models")
 
+  - title: "Model Methods"
+    desc: >
+      Core functions for manipulating models, running simulations, and extracting results.
+    contents:
+      - epiworld-methods
+      - run_multiple
+
+  - title: "Model Diagrams"
+    desc: >
+      Functions for creating and visualizing model state transition diagrams.
+    contents:
+      - epiworld-model-diagram
+
+  - title: "Agents"
+    desc: >
+      Functions for creating, inspecting, and manipulating agents in models.
+    contents:
+      - agents
+      - agents_smallworld
+
   - title: "Likelihood-Free MCMC"
     desc: >
       Functions for performing Likelihood-Free Markov Chain Monte Carlo simulations.

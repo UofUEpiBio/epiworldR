@@ -5,6 +5,7 @@
 \alias{get_hist_total}
 \alias{epiworld_hist_total}
 \alias{get_today_total}
+\alias{plot.epiworld_hist}
 \alias{get_hist_virus}
 \alias{epiworld_hist_variant}
 \alias{epiworld_hist_virus}
@@ -16,6 +17,8 @@ get_hist_total(x)
 
 get_today_total(x)
 
+\method{plot}{epiworld_hist}(x, y, ...)
+
 get_hist_virus(x)
 
 get_hist_tool(x)
@@ -23,6 +26,8 @@ get_hist_tool(x)
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model).}
+
+\item{y}{Ignored.}
 
 \item{...}{In the case of plot methods, further arguments passed to
 \link[graphics:plot.default]{graphics::plot}.}

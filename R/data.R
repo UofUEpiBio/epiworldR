@@ -78,6 +78,8 @@ get_today_total.epiworld_model <- function(x) {
 }
 
 #' @export
+#' @rdname epiworld-history
+#' @param y Ignored.
 plot.epiworld_hist <- function(x, y, ...) {
   plot_epi(x, ...)
 }
