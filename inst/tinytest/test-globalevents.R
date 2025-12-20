@@ -135,10 +135,10 @@ expect_silent(
 )
 
 # Retrieve results
+library(data.table)
 results <- run_multiple_get_results(model2, nthreads = 1L)
 trans_data <- as.data.table(results$transmission)
 
-library(data.table)
 outbreak_data <- as.data.table(results$outbreak_size)
 active_cases <- as.data.table(results$active_cases)
 hospitalizations <- as.data.table(results$hospitalizations)
