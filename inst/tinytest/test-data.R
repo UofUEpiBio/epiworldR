@@ -148,7 +148,7 @@ expect_true(all(c("date", "virus_id", "virus", "outbreak_size") %in% names(outbr
 
 # Test get_hospitalizations ----------------------------------------------------
 expect_silent(hospitalizations <- get_hospitalizations(model))
-expect_true(nrow(hospitalizations) == 0) # No hospitalizations in this model
+expect_true(sum(hospitalizations$count) == 0) # No hospitalizations in this model
 
 # Test with unrun model (should return empty results) --------------------------
 model_unrun <- ModelSIRCONN(

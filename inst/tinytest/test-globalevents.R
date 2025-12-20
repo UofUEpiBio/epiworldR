@@ -143,7 +143,7 @@ outbreak_data <- as.data.table(results$outbreak_size)
 active_cases <- as.data.table(results$active_cases)
 hospitalizations <- as.data.table(results$hospitalizations)
 
-expect_true(nrow(hospitalizations) == 0)
+expect_true(sum(hospitalizations$count) == 0)
 
 sizes0 <- outbreak_data[date == max(date), .(sim_num, size = outbreak_size)]
 sizes1 <- trans_data[, .(size = .N), by = "sim_num"]
