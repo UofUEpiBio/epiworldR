@@ -47,7 +47,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     bool reproductive,
     bool generation,
     bool active_cases,
-    bool outbreak_size
+    bool outbreak_size,
+    bool hospitalizations
     )
 {
 
@@ -72,7 +73,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         reproductive,
         generation,
         active_cases,
-        outbreak_size
+        outbreak_size,
+        hospitalizations
     };
 
     std::function<void(size_t,Model<TSeq>*)> saver = [fmt,what_to_save](
@@ -90,6 +92,7 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         std::string generation = "";
         std::string active_cases = "";
         std::string outbreak_size = "";
+        std::string hospitalizations = "";
 
         char buff[1024u];
         if (what_to_save[0u])
@@ -166,6 +169,14 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             outbreak_size = buff;
 
         }
+        if (what_to_save[11u])
+        {
+
+            hospitalizations = fmt + std::string("_hospitalizations.csv");
+            snprintf(buff, sizeof(buff), hospitalizations.c_str(), niter);
+            hospitalizations = buff;
+
+        }
 
         m->write_data(
             virus_info,
@@ -178,7 +189,8 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
             reproductive,
             generation,
             active_cases,
-            outbreak_size
+            outbreak_size,
+            hospitalizations
         );
 
     };
@@ -1874,7 +1886,8 @@ inline void Model<TSeq>::write_data(
     std::string fn_reproductive_number,
     std::string fn_generation_time,
     std::string fn_active_cases,
-    std::string fn_outbreak_size
+    std::string fn_outbreak_size,
+    std::string fn_hospitalizations
     ) const
 {
 
@@ -1883,7 +1896,8 @@ inline void Model<TSeq>::write_data(
         fn_tool_info, fn_tool_hist,
         fn_total_hist, fn_transmission, fn_transition,
         fn_reproductive_number, fn_generation_time,
-        fn_active_cases, fn_outbreak_size
+        fn_active_cases, fn_outbreak_size,
+        fn_hospitalizations
         );
 
 }
@@ -2704,6 +2718,24 @@ inline void Model<TSeq>::draw(
 
     return;
 
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::record_hospitalization(Agent<TSeq> & agent)
+{
+    db.record_hospitalization(agent);
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::get_hospitalizations(
+    std::vector<int> & date,
+    std::vector<int> & virus_id,
+    std::vector<int> & tool_id,
+    std::vector<int> & count,
+    std::vector<double> & weight
+) const
+{
+    db.get_hospitalizations(date, virus_id, tool_id, count, weight);
 }
 
 #undef VECT_MATCH

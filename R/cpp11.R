@@ -84,6 +84,10 @@ get_outbreak_size_cpp <- function(model) {
   .Call(`_epiworldR_get_outbreak_size_cpp`, model)
 }
 
+get_hospitalizations_cpp <- function(model) {
+  .Call(`_epiworldR_get_hospitalizations_cpp`, model)
+}
+
 get_entities_cpp <- function(model) {
   .Call(`_epiworldR_get_entities_cpp`, model)
 }
@@ -392,8 +396,8 @@ run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
 
-make_saver_cpp <- function(fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation, active_cases, outbreak_size) {
-  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation, active_cases, outbreak_size)
+make_saver_cpp <- function(fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation, active_cases, outbreak_size, hospitalizations) {
+  .Call(`_epiworldR_make_saver_cpp`, fn, total_hist, virus_info, virus_hist, tool_info, tool_hist, transmission, transition, reproductive, generation, active_cases, outbreak_size, hospitalizations)
 }
 
 run_multiple_cpp <- function(m, ndays, nsims, seed, saver, reset, verbose, nthreads) {

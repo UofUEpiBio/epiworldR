@@ -508,6 +508,7 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     {
         // If hospitalized, then the agent is removed from the system
         // effectively
+        model->record_hospitalization(*p);
         p->change_state(
             m,
             detected ?
@@ -567,6 +568,7 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     // If hospitalized, then the agent is removed from the system
     else if (which == 1u)
     {
+        model->record_hospitalization(*p);
         p->change_state(
             m,
             // HOSPITALIZED

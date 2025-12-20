@@ -92,8 +92,7 @@ Other Models:
 \code{\link{ModelSIRMixing}()},
 \code{\link{ModelSIS}()},
 \code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()},
-\code{\link{epiworld-data}}
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}

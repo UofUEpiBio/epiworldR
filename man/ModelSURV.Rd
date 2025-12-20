@@ -115,8 +115,7 @@ Other Models:
 \code{\link{ModelSIRLogit}()},
 \code{\link{ModelSIRMixing}()},
 \code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()},
-\code{\link{epiworld-data}}
+\code{\link{ModelSISD}()}
 }
 \concept{Models}
 \concept{general-models}

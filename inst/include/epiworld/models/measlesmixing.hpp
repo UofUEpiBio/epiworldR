@@ -779,6 +779,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
     }
     else if (which == 1) // Hospitalized
     {
+        m->record_hospitalization(*p);
         p->change_state(
             m,
             detected ?
@@ -843,6 +844,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_isolated(
     else if (which == 1)
     {
 
+        m->record_hospitalization(*p);
         if (unisolate)
         {
             p->change_state(
