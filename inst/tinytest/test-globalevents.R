@@ -118,7 +118,9 @@ stop_transmission <- globalevent_set_params(
 expect_silent(add_globalevent(model2, stop_transmission))
 
 # Run multiple experiments
-saver <- make_saver("transmission")
+saver <- make_saver(
+  "transmission", "outbreak_size", "active_cases", "hospitalizations"
+  )
 expect_silent(
   run_multiple(
     model2,
@@ -134,7 +136,23 @@ expect_silent(
 
 # Retrieve results
 results <- run_multiple_get_results(model2, nthreads = 1L)
-trans_data <- results$transmission
+trans_data <- as.data.table(results$transmission)
+
+library(data.table)
+outbreak_data <- as.data.table(results$outbreak_size)
+active_cases <- as.data.table(results$active_cases)
+hospitalizations <- as.data.table(results$hospitalizations)
+
+expect_true(nrow(hospitalizations) == 0)
+
+sizes0 <- outbreak_data[date == max(date), .(sim_num, size = outbreak_size)]
+sizes1 <- trans_data[, .(size = .N), by = "sim_num"]
+
+setorder(sizes0, sim_num)
+setorder(sizes1, sim_num)
+
+expect_equal(sizes0, sizes1)
+
 
 # Count transmissions before and after intervention
 # Transmissions on the intervention day are excluded since the global event
