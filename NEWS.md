@@ -8,6 +8,8 @@
 
 * New functions `get_outbreak_size()` and `get_active_cases()` allow extracting timeseries of the outbreak size and number of active cases (individuals with a virus) (new in epiworld 0.11.0).
 
+* New function `get_hospitalizations()` that allows extracting timeseries of hospitalizations from the model results (new in epiworld 0.11.0).
+
 ## Bug Fixes
 
 * The saver was not correctly saving the history of tools and viruses when using `virus_hist` and `tools_hist`, respectively. This has been fixed (new in epiworld 0.11.0).
