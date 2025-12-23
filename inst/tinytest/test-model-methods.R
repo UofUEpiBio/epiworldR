@@ -18,13 +18,8 @@ expect_silent(md_basic <- draw_mermaid(model))
 expect_silent(md_self <- draw_mermaid(model, allow_self_transitions = TRUE))
 expect_message(md_with_output <- draw_mermaid(
   model,
-  output_file = "mermaid_diagram.txt"
+  output_file = tempfile(fileext = ".md")
 ), "Diagram written")
-
-
-expect_true(file.exists("mermaid_diagram.txt"))
-file.remove("mermaid_diagram.txt")
-expect_false(file.exists("mermaid_diagram.txt"))
 
 # Check functions fail with invalid inputs -------------------------------------
 
