@@ -12,7 +12,7 @@
 [![CRANlogs downloads](https://cranlogs.r-pkg.org/badges/grand-total/epiworldR)](https://cran.r-project.org/package=epiworldR)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
-[![status](https://tinyverse.netlify.app/badge//epiworldR)](https://CRAN.R-project.org/package=epiworldR)
+[![status](https://tinyverse.netlify.app/badge/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
 
 <!-- badges: end -->
 
@@ -49,15 +49,18 @@ Current available models:
 **Note:** Measles-specific models have been moved to the separate
 [`measles`](https://github.com/UofUEpiBio/measles) R package.
 
+**Note:** Measles-specific models have been moved to the separate
+[`measles`](https://github.com/UofUEpiBio/measles) R package.
+
 1.  `ModelDiagram`
 2.  `ModelDiffNet`
 3.  `ModelSEIR`
 4.  `ModelSEIRCONN`
 5.  `ModelSEIRD`
 6.  `ModelSEIRDCONN`
-7.   `ModelSEIRMixing`
-8.   `ModelSEIRMixingQuarantine`
-9.   `ModelSIR`
+7.  `ModelSEIRMixing`
+8.  `ModelSEIRMixingQuarantine`
+9.  `ModelSIR`
 10. `ModelSIRCONN`
 11. `ModelSIRD`
 12. `ModelSIRDCONN`
@@ -160,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 71.00ms
-#> Last run speed      : 69.45 million agents x day / second
+#> Last run elapsed t  : 124.00ms
+#> Last run speed      : 40.28 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -241,8 +244,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 16.00ms
-#> Last run speed      : 59.03 million agents x day / second
+#> Last run elapsed t  : 63.00ms
+#> Last run speed      : 15.86 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -517,7 +520,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.10.0.0,
+#>   Epi Models_. R package version 0.11.0.1,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,
@@ -538,10 +541,10 @@ existing alternatives, including ABM \[@ABM\], abmR \[@abmR\], cystiSim
 |:--------|:--------|:--------|:--------|:--------|---------|:--------|:--------|
 | [**epiworldR**](https://cran.r-project.org/package=epiworldR)               | yes              | yes            | yes           | yes            | yes                 | [![status](https://tinyverse.netlify.app/badge//epiworldR)](https://CRAN.R-project.org/package=epiworldR) | [![Activity](https://img.shields.io/github/last-commit/UofUEpiBio/epiworldR)](https://github.com/UofUEpiBio/epiworldR) |
 | [**ABM**](https://cran.r-project.org/package=ABM)                           | \-               | \-             | \-            | yes            | yes                 | [![status](https://tinyverse.netlify.app/badge//ABM)](https://CRAN.R-project.org/package=ABM)             | [![Activity](https://img.shields.io/github/last-commit/junlingm/ABM)](https://github.com/junlingm/ABM)                 |
-| [**abmR**](https://cran.r-project.org/package=abmR)                         | \-               | \-             | yes           | \-             | \-                  | [![status](https://tinyverse.netlify.app/badge//abmR)](https://CRAN.R-project.org/package=abmR)           | [![Activity](https://img.shields.io/github/last-commit/bgoch5/abmR)](https://github.com/bgoch5/abmR)                   |
-| [**cystiSim**](https://cran.r-project.org/package=cystiSim)                 | \-               | yes            | yes           | \-             | \-                  | [![status](https://tinyverse.netlify.app/badge//cystiSim)](https://CRAN.R-project.org/package=cystiSim)   | [![Activity](https://img.shields.io/github/last-commit/brechtdv/cystiSim)](https://github.com/brechtdv/cystiSim)       |
-| [**villager**](https://cran.r-project.org/package=villager)                 | \-               | \-             | \-            | yes            | \-                  | [![status](https://tinyverse.netlify.app/badge//villager)](https://CRAN.R-project.org/package=villager)   | [![Activity](https://img.shields.io/github/last-commit/zizroc/villager)](https://github.com/zizroc/villager)           |
-| [**RNetLogo**](https://cran.r-project.org/package=RNetLogo) | \-               | yes            | yes           | yes            | \-                  | [![status](https://tinyverse.netlify.app/badge//RNetLogo)](https://CRAN.R-project.org/package=RNetLogo)   | [![Activity](https://img.shields.io/github/last-commit/cran/RNetLogo)](https://github.com/cran/RNetLogo)               |
+| [**abmR**](https://cran.r-project.org/package=abmR)                         | \-               | \-             | yes           | \-             | \-                  | [![status](https://tinyverse.netlify.app/badge/abmR)](https://CRAN.R-project.org/package=abmR)           | [![Activity](https://img.shields.io/github/last-commit/bgoch5/abmR)](https://github.com/bgoch5/abmR)                   |
+| [**cystiSim**](https://cran.r-project.org/package=cystiSim)                 | \-               | yes            | yes           | \-             | \-                  | [![status](https://tinyverse.netlify.app/badge/cystiSim)](https://CRAN.R-project.org/package=cystiSim)   | [![Activity](https://img.shields.io/github/last-commit/brechtdv/cystiSim)](https://github.com/brechtdv/cystiSim)       |
+| [**villager**](https://cran.r-project.org/package=villager)                 | \-               | \-             | \-            | yes            | \-                  | [![status](https://tinyverse.netlify.app/badge/villager)](https://CRAN.R-project.org/package=villager)   | [![Activity](https://img.shields.io/github/last-commit/zizroc/villager)](https://github.com/zizroc/villager)           |
+| [**RNetLogo**](https://cran.r-project.org/package=RNetLogo) | \-               | yes            | yes           | yes            | \-                  | [![status](https://tinyverse.netlify.app/badge/RNetLogo)](https://CRAN.R-project.org/package=RNetLogo)   | [![Activity](https://img.shields.io/github/last-commit/cran/RNetLogo)](https://github.com/cran/RNetLogo)               |
 
 # Other ABM R packages
 
