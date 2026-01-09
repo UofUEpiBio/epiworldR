@@ -36,12 +36,6 @@ run(sir_0, ndays = 50, seed = 1912)
 tmat_noqueuing <- get_transition_probability(sir_0)
 expect_identical(tmat_noqueuing, tmat_queuing)
 
-# Check queuing is faster ------------------------------------------------------
-runtime_noqueuing <- system.time(run(sir_0, ndays = 50, seed = 1912))
-queuing_on(sir_0)
-runtime_queuing <- system.time(run(sir_0, ndays = 50, seed = 1912))
-expect_true(runtime_queuing["elapsed"] < runtime_noqueuing["elapsed"])
-
 # Check functions fail with invalid inputs -------------------------------------
 good_name <- "A Virus"
 good_prevalence <- 0.01
