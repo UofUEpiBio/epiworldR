@@ -1,0 +1,11 @@
+FROM cran/debian:latest
+
+RUN \
+  echo 'options(repos=c(CRAN="https://packagemanager.posit.co/cran/__linux__/bookworm/latest"))' >> ~/.Rprofile && \
+  Rscript --vanilla -e 'getOption("repos")'
+
+# Adding R packages
+RUN Rscript -e "install.packages(c('cpp11', 'tinytest', 'data.table', 'netplot', \
+  'devtools', 'decor', 'DiagrammeR'))"
+
+CMD ["bash"]
