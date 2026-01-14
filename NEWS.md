@@ -1,3 +1,8 @@
+# epiworldR 0.11.0.1
+
+* Minor release fixing errors in tests in some OSs (reported by CRAN).
+
+
 # epiworldR 0.11.0.0
 
 ## New Features
