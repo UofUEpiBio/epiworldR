@@ -374,7 +374,11 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
 
     auto & agents = Model<TSeq>::get_agents();
 
+    // Resetting infectious list
     std::fill(n_infectious_per_group.begin(), n_infectious_per_group.end(), 0u);
+
+    // Resetting the number of available contacts
+    adjusted_contact_rate.assign(this->entities.size(), 0.0);
 
     for (const auto & a : agents)
     {
@@ -394,6 +398,29 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
             }
         }
 
+        // Setting how many agents are available for contact
+        if (
+            ((a.get_state() < RASH) || (a.get_state() == RECOVERED)) &&
+            (a.get_n_entities() > 0u)
+        )
+        {
+            adjusted_contact_rate[
+                a.get_entity(0u).get_id()
+            ] += 1.0;
+        }
+
+    }
+
+    // This simplifies calculations later
+    for (auto & rate: adjusted_contact_rate)
+    {
+        if (rate > 0.0)
+            rate = Model<TSeq>::get_param("Contact rate") / rate;
+        else
+            rate = 0.0;  // No available contacts in this group
+
+        if (rate > 1.0)
+            rate = 1.0;
     }
 
     return;
@@ -540,24 +567,6 @@ inline void ModelMeaslesMixing<TSeq>::reset()
             this->entities[i - 1].size() +
             entity_indices[i - 1]
             ;
-
-    }
-
-    // Adjusting contact rate
-    adjusted_contact_rate.clear();
-    adjusted_contact_rate.resize(this->entities.size(), 0.0);
-
-    for (size_t i = 0u; i < this->entities.size(); ++i)
-    {
-
-        adjusted_contact_rate[i] =
-            Model<TSeq>::get_param("Contact rate") /
-                static_cast< epiworld_double > (this->get_entity(i).size());
-
-
-        // Possibly correcting for a small number of agents
-        if (adjusted_contact_rate[i] > 1.0)
-            adjusted_contact_rate[i] = 1.0;
 
     }
 

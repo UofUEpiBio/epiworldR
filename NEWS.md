@@ -1,3 +1,14 @@
+# epiworldR 0.11.1.1
+
+## Bug Fixes
+
+These changes will be reflected in the `measles` R package:
+
+* The measles school model was not including the number of recovered agents in the population that it could sample from, which resulted in a minor over estimation of the outbreak size (about 5 to 10 percent).
+
+* The measles mixing models were assuming the number of available agents did not change when sampling contacts. This has been corrected. Outbreak sizes are now expected to be larger on average.
+
+
 # epiworldR 0.11.0.1
 
 * Minor release fixing errors in tests in some OSs (reported by CRAN).

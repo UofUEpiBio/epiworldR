@@ -47,6 +47,7 @@
  * 
  * ![Model Diagram](../assets/img/measlesschool.png)
  * 
+ * 
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
@@ -319,15 +320,21 @@ inline void ModelMeaslesSchool<TSeq>::update_infectious() {
         if (s == PRODROMAL)
             this->infectious.push_back(&agent);
 
-        if (s < RASH)
+        if ((s < RASH) || (s == RECOVERED))
             ++n_available;
 
     }
 
     // Assumes fixed contact rate throughout the simulation
+    // but corrects for the number of available agents.
     double p_contact = this->par("Contact rate")/
         static_cast< epiworld_double >(n_available);
 
+    // Notice this is for sampling with replacement
+    // from the list of infected individuals.
+    // This is a partial drawing which, complemented with
+    // drawing from the non-infected individuals, yields
+    // a Binomial(n, contact_rate/n) number of contacts.
     this->set_rand_binom(
         static_cast<int>(this->infectious.size()),
         p_contact > 1.0 ? 1.0 : p_contact
