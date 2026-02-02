@@ -57,10 +57,10 @@ inline ToolFun<TSeq> tool_fun_logit(
         coefs_f.push_back(static_cast<epiworld_double>(c));
 
     ToolFun<TSeq> fun_ = [coefs_f,vars](
-        Tool<TSeq>& tool,
+        Tool<TSeq>&,
         Agent<TSeq> * agent,
-        VirusPtr<TSeq> virus,
-        Model<TSeq> * model
+        VirusPtr<TSeq>,
+        Model<TSeq> *
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();

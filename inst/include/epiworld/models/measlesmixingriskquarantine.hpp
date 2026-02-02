@@ -4,15 +4,17 @@
 #define COL_MAJOR_POS(i, j, n) \
     (j * n + i)
 
-#if __cplusplus >= 202302L
-    // C++23 or later
+#if defined(__clang__)
+    // Clang
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
-        /*Using the [[assume(...)]] to avoid the compiler warning \
-        if the standard is C++23 or later */ \
+        __builtin_assume((output) != nullptr);
+#elif defined(__GNUC__) && __GNUC__ >= 13
+    // GCC 13 or later
+    #define GET_MODEL(model, output) \
+        auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
         [[assume((output) != nullptr)]];
 #else
-    // C++17 or C++20
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
         assert((output) != nullptr); // Use assert for runtime checks
