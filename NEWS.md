@@ -1,8 +1,10 @@
 # epiworldR 0.11.2.0
 
+* Updates to `epiworld` version 0.11.2 including minor patches to avoid warnings and notes from clang.
+
 ## Bug Fixes
 
-These changes will be reflected in the `measles` R package:
+These changes will be reflected in the `measles` R package (so no changes for the `epiworldR` package):
 
 * The measles school model was not including the number of recovered agents in the population that it could sample from, which resulted in a minor overestimation of the outbreak size (about 5 to 10 percent).
 
