@@ -80,6 +80,11 @@ The \code{contact_matrix} is a matrix of contact rates between entities. The
 matrix should be of size \verb{n x n}, where \code{n} is the number of entities.
 This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 
+The quarantine and isolation processes can be turned off by specifying
+\code{quarantine_period < 0} and \code{isolation_period < 0} respectively. In other
+words, any negative value for these parameters will suppress the
+corresponding process.
+
 The \link{initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected
 agents have been removed at the beginning of the simulation.
