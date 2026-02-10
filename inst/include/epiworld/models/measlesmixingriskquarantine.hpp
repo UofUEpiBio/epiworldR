@@ -4,15 +4,17 @@
 #define COL_MAJOR_POS(i, j, n) \
     (j * n + i)
 
-#if __cplusplus >= 202302L
-    // C++23 or later
+#if defined(__clang__)
+    // Clang
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
-        /*Using the [[assume(...)]] to avoid the compiler warning \
-        if the standard is C++23 or later */ \
+        __builtin_assume((output) != nullptr);
+#elif defined(__GNUC__) && __GNUC__ >= 13
+    // GCC 13 or later
+    #define GET_MODEL(model, output) \
+        auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
         [[assume((output) != nullptr)]];
 #else
-    // C++17 or C++20
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
         assert((output) != nullptr); // Use assert for runtime checks
@@ -412,6 +414,9 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_infectious_list()
 
     // Resetting the infectious list (no infected agents)
     std::fill(n_infectious_per_group.begin(), n_infectious_per_group.end(), 0u);
+
+    // Resetting the number of available contacts
+    adjusted_contact_rate.assign(this->entities.size(), 0.0);
     
     // Looping over agents to find the infectious ones
     for (const auto & a : agents)
@@ -432,6 +437,29 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_infectious_list()
             }
         }
 
+        // Setting how many agents are available for contact
+        if (
+            ((a.get_state() < RASH) || (a.get_state() == RECOVERED)) &&
+            (a.get_n_entities() > 0u)
+        )
+        {
+            adjusted_contact_rate[
+                a.get_entity(0u).get_id()
+            ] += 1.0;
+        }
+
+    }
+
+    // This simplifies calculations later
+    for (auto & rate: adjusted_contact_rate)
+    {
+        if (rate > 0.0)
+            rate = Model<TSeq>::get_param("Contact rate") / rate;
+        else
+            rate = 0.0;  // No available contacts in this group
+
+        if (rate > 1.0)
+            rate = 1.0;
     }
 
     return;
@@ -1364,23 +1392,6 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::reset()
             this->entities[i - 1].size() +
             infectious_entity_indices[i - 1]
             ;
-
-    }
-    
-    // Adjusting contact rate
-    adjusted_contact_rate.assign(this->entities.size(), 0.0);
-
-    for (size_t i = 0u; i < this->entities.size(); ++i)
-    {
-                
-        adjusted_contact_rate[i] = 
-            Model<TSeq>::get_param("Contact rate") /
-                static_cast< epiworld_double > (this->get_entity(i).size());
-
-
-        // Possibly correcting for a small number of agents
-        if (adjusted_contact_rate[i] > 1.0)
-            adjusted_contact_rate[i] = 1.0;
 
     }
 

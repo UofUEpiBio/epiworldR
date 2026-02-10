@@ -6,18 +6,18 @@ using namespace epiworld;
 #define MM(i, j, n) \
     j * n + i
 
-#if __cplusplus >= 202302L
-    // C++23 or later
+#if defined(__clang__)
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelSEIRMixingQuarantine<TSeq> * >( (model) ); \
-        /*Using the [[assume(...)]] to avoid the compiler warning \
-        if the standard is C++23 or later */ \
+        __builtin_assume((output) != nullptr);
+#elif defined(__GNUC__) && __GNUC__ >= 13
+    #define GET_MODEL(model, output) \
+        auto * output = dynamic_cast< ModelSEIRMixingQuarantine<TSeq> * >( (model) ); \
         [[assume((output) != nullptr)]];
 #else
-    // C++17 or C++20
     #define GET_MODEL(model, output) \
         auto * output = dynamic_cast< ModelSEIRMixingQuarantine<TSeq> * >( (model) ); \
-        assert((output) != nullptr); // Use assert for runtime checks
+        assert((output) != nullptr);
 #endif
 
 #define SAMPLE_FROM_PROBS(n, ans) \
@@ -600,8 +600,11 @@ inline Model<TSeq> * ModelSEIRMixingQuarantine<TSeq>::clone_ptr()
         *dynamic_cast<const ModelSEIRMixingQuarantine<TSeq>*>(this)
         );
 
-    #if __cplusplus >= 202302L
-        // C++23 or later
+    #if defined(__clang__)
+        // Clang
+        __builtin_assume(ptr != nullptr);
+    #elif defined(__GNUC__) && __GNUC__ >= 13
+        // GCC 13 or later
         [[assume(ptr != nullptr)]];
     #else
         // C++17 or C++20

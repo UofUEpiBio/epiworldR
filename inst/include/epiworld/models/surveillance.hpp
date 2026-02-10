@@ -131,7 +131,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     epiworld_double prob_symptoms,
     epiworld_double prop_vaccinated,
     epiworld_double prop_vax_redux_transm,
-    epiworld_double prop_vax_redux_infect,
+    epiworld_double,
     epiworld_double surveillance_prob,
     epiworld_double prob_transmission,
     epiworld_double prob_death,
@@ -335,7 +335,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_param(prob_noreinfect, "Prob. no reinfect");
 
     // Virus ------------------------------------------------------------------
-    epiworld::Virus<TSeq> covid("Covid19", prevalence, false);
+    epiworld::Virus<TSeq> covid(vname, prevalence, false);
     covid.set_state(LATENT, RECOVERED, REMOVED);
     covid.set_post_immunity(&model("Prob. no reinfect"));
     covid.set_prob_death(&model("Prob. death"));

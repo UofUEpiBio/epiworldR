@@ -15,8 +15,7 @@ template<typename TSeq>
 inline VirusFun<TSeq> virus_fun_logit(
     std::vector< int > vars,
     std::vector< double > coefs,
-    Model<TSeq> * model,
-    bool logit = true
+    Model<TSeq> * model
 ) {
 
     // Checking that there are features

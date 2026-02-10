@@ -1,8 +1,14 @@
 #ifndef MEASLESQUARANTINE_HPP
 #define MEASLESQUARANTINE_HPP
 
-#if __cplusplus >= 202302L
-    // C++23 or later
+#if defined(__clang__)
+    // Clang
+    #define GET_MODEL(model, output) \
+        ModelMeaslesSchool<TSeq> * output = \
+            dynamic_cast<ModelMeaslesSchool<TSeq> *>(model); \
+        __builtin_assume(output != nullptr);
+#elif defined(__GNUC__) && __GNUC__ >= 13
+    // GCC 13 or later
     #define GET_MODEL(model, output) \
         ModelMeaslesSchool<TSeq> * output = \
             dynamic_cast<ModelMeaslesSchool<TSeq> *>(model); \
@@ -46,6 +52,7 @@
  * isolation_period days.
  * 
  * ![Model Diagram](../assets/img/measlesschool.png)
+ * 
  * 
  * @ingroup disease_specific
  */
@@ -319,15 +326,25 @@ inline void ModelMeaslesSchool<TSeq>::update_infectious() {
         if (s == PRODROMAL)
             this->infectious.push_back(&agent);
 
-        if (s < RASH)
+        if ((s < RASH) || (s == RECOVERED))
             ++n_available;
 
     }
 
     // Assumes fixed contact rate throughout the simulation
-    double p_contact = this->par("Contact rate")/
-        static_cast< epiworld_double >(n_available);
+    // but corrects for the number of available agents.
+    double p_contact = 0.0;
+    if (n_available > 0)
+    {
+        p_contact = this->par("Contact rate")/
+            static_cast< epiworld_double >(n_available);
+    }
 
+    // Notice this is for sampling with replacement
+    // from the list of infected individuals.
+    // This is a partial drawing which, complemented with
+    // drawing from the non-infected individuals, yields
+    // a Binomial(n, contact_rate/n) number of contacts.
     this->set_rand_binom(
         static_cast<int>(this->infectious.size()),
         p_contact > 1.0 ? 1.0 : p_contact
