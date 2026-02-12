@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.11.2.0
+Version: 0.11.3.0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
