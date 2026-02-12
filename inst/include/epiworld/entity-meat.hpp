@@ -179,6 +179,32 @@ inline void Entity<TSeq>::reset()
 }
 
 template<typename TSeq>
+inline void Entity<TSeq>::reset(const Entity<TSeq> & backup)
+{
+
+    // Clear agent vectors preserving capacity — agents will be
+    // re-distributed after reset, so we avoid replacing the
+    // vectors (which would trigger heap allocations)
+    this->agents.clear();
+    this->n_agents = 0u;
+    this->agents_location.clear();
+
+    // Restore non-agent fields from backup
+    this->id             = backup.id;
+    this->max_capacity   = backup.max_capacity;
+    this->entity_name    = backup.entity_name;
+    this->location       = backup.location;
+    this->state_init     = backup.state_init;
+    this->state_post     = backup.state_post;
+    this->queue_init     = backup.queue_init;
+    this->queue_post     = backup.queue_post;
+    this->dist_fun       = backup.dist_fun;
+
+    return;
+
+}
+
+template<typename TSeq>
 inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
 {
 

@@ -688,6 +688,51 @@ inline void Agent<TSeq>::reset()
 }
 
 template<typename TSeq>
+inline void Agent<TSeq>::reset(const Agent<TSeq> & backup)
+{
+
+    // Clear virus — will be re-distributed after model reset
+    virus = nullptr;
+
+    // Restore neighbors from backup (graph structure persists
+    // across simulation replicates)
+    if (neighbors != nullptr)
+    {
+        delete neighbors;
+        delete neighbors_locations;
+        neighbors = nullptr;
+        neighbors_locations = nullptr;
+    }
+
+    n_neighbors = backup.n_neighbors;
+    if (backup.n_neighbors > 0u)
+    {
+        neighbors = new std::vector< size_t >(*backup.neighbors);
+        neighbors_locations = new std::vector< size_t >(*backup.neighbors_locations);
+    }
+
+    // Clear tools preserving capacity — will be re-distributed
+    // after model reset
+    tools.clear();
+    n_tools = 0u;
+
+    // Clear entities preserving capacity — will be
+    // re-distributed after model reset. By clearing instead
+    // of replacing the vectors, we avoid unnecessary heap
+    // allocations across simulation replicates.
+    this->entities.clear();
+    this->entities_locations.clear();
+    this->n_entities = 0u;
+
+    // Reset state to defaults
+    this->id                 = backup.id;
+    this->state              = 0u;
+    this->state_prev         = 0u;
+    this->state_last_changed = -1;
+
+}
+
+template<typename TSeq>
 inline bool Agent<TSeq>::has_tool(epiworld_fast_uint t) const
 {
 

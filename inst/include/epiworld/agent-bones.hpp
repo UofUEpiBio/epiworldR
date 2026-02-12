@@ -249,6 +249,18 @@ public:
 
     void reset();
 
+    /**
+     * @brief Reset the agent from a backup, preserving vector capacities.
+     * 
+     * Restores agent state from a backup agent without replacing entity
+     * and tool vectors, which avoids unnecessary heap allocations. The
+     * entity/tool vectors are cleared (preserving their capacity) instead
+     * of being replaced with empty backup vectors.
+     * 
+     * @param backup The backup agent to restore state from.
+     */
+    void reset(const Agent<TSeq> & backup);
+
     bool has_tool(epiworld_fast_uint t) const;
     bool has_tool(std::string name) const;
     bool has_tool(const Tool<TSeq> & t) const;

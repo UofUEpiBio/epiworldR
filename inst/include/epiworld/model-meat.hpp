@@ -2006,11 +2006,15 @@ inline void Model<TSeq>::reset() {
 
     if (population_backup.size())
     {
-        population = population_backup;
 
-        // Ensuring the population is poiting to the model
-        for (auto & p : population)
-            p.model = this;
+        // Reset each agent from backup, preserving entity/tool
+        // vector capacities to avoid repeated heap allocations
+        // across simulation replicates
+        for (size_t i = 0u; i < population.size(); ++i)
+        {
+            population[i].reset(population_backup[i]);
+            population[i].model = this;
+        }
 
         #ifdef EPI_DEBUG
         for (size_t i = 0; i < population.size(); ++i)
@@ -2023,9 +2027,11 @@ inline void Model<TSeq>::reset() {
         #endif
 
     }
-
-    for (auto & p : population)
-        p.reset();
+    else
+    {
+        for (auto & p : population)
+            p.reset();
+    }
 
     #ifdef EPI_DEBUG
     for (auto & a: population)
@@ -2038,7 +2044,12 @@ inline void Model<TSeq>::reset() {
 
     if (entities_backup.size())
     {
-        entities = entities_backup;
+
+        // Reset each entity from backup, preserving agent
+        // vector capacities to avoid repeated heap allocations
+        // across simulation replicates
+        for (size_t i = 0u; i < entities.size(); ++i)
+            entities[i].reset(entities_backup[i]);
 
         #ifdef EPI_DEBUG
         for (size_t i = 0; i < entities.size(); ++i)
@@ -2051,9 +2062,11 @@ inline void Model<TSeq>::reset() {
         #endif
 
     }
-
-    for (auto & e: entities)
-        e.reset();
+    else
+    {
+        for (auto & e: entities)
+            e.reset();
+    }
 
     current_date = 0;
 

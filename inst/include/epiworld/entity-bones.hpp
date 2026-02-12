@@ -90,6 +90,18 @@ public:
 
     void reset();
 
+    /**
+     * @brief Reset the entity from a backup, preserving vector capacities.
+     * 
+     * Restores entity state from a backup entity without replacing agent
+     * vectors, which avoids unnecessary heap allocations. The agent vectors
+     * are cleared (preserving their capacity) instead of being replaced
+     * with empty backup vectors.
+     * 
+     * @param backup The backup entity to restore state from.
+     */
+    void reset(const Entity<TSeq> & backup);
+
     bool operator==(const Entity<TSeq> & other) const;
     bool operator!=(const Entity<TSeq> & other) const {return !operator==(other);};
 
