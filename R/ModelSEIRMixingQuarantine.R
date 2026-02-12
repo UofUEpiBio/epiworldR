@@ -34,6 +34,10 @@
 #' matrix should be of size `n x n`, where `n` is the number of entities.
 #' This is a row-stochastic matrix, i.e., the sum of each row should be 1.
 #'
+#' The quarantine and isolation processes can be turned off by specifying
+#' `quarantine_period < 0` and `isolation_period < 0` respectively. In other
+#' words, any negative value for these parameters will suppress the
+#' corresponding process.
 #'
 #' The [initial_states] function allows the user to set the initial state of the
 #' model. In particular, the user can specify how many of the non-infected
@@ -113,15 +117,15 @@ ModelSEIRMixingQuarantine <- function(
 ) {
   # Check input parameters
   stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(contact_rate)
-  stopifnot_double(transmission_rate)
-  stopifnot_double(incubation_days)
-  stopifnot_double(recovery_rate)
+  stopifnot_int(n, lb = 1L)
+  stopifnot_double(prevalence, lb = 0, ub = 1)
+  stopifnot_double(contact_rate, lb = 0)
+  stopifnot_double(transmission_rate, lb = 0, ub = 1)
+  stopifnot_double(incubation_days, lb = 0)
+  stopifnot_double(recovery_rate, lb = 0, ub = 1)
   stopifany_na(contact_matrix)
-  stopifnot_double(hospitalization_rate)
-  stopifnot_double(hospitalization_period)
+  stopifnot_double(hospitalization_rate, lb = 0, ub = 1)
+  stopifnot_double(hospitalization_period, lb = 0)
   stopifnot_double(days_undetected)
   stopifnot_int(quarantine_period)
   stopifnot_double(quarantine_willingness, lb = 0, ub = 1)

@@ -1,3 +1,10 @@
+# epiworldR 0.11.3.0
+
+* Updates to `epiworld` version 0.11.3, including a patch to the `ModelSEIRMixingQuarantine` model. It was underestimating the outbreak size. This is a similar issue detected in the collection of the measles models.
+
+* The `ModelSEIRMixingQuarantine` gained a couple of extra checks for validating the inputs.
+
+
 # epiworldR 0.11.2.0
 
 * Updates to `epiworld` version 0.11.2 including minor patches to avoid warnings and notes from clang.
