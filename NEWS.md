@@ -2,6 +2,11 @@
 
 * Updates to `epiworld` version 0.11.2 including minor patches to avoid warnings and notes from clang.
 
+* Simplified build configuration to comply with CRAN policies: removed custom
+  `configure` script, using R's built-in OpenMP settings
+  (`$(SHLIB_OPENMP_CXXFLAGS)`) and specifying C++17 via `CXX_STD` in Makevars
+  and `SystemRequirements` in DESCRIPTION.
+
 ## Bug Fixes
 
 These changes will be reflected in the `measles` R package (so no changes for the `epiworldR` package):

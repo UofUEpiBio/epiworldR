@@ -39,4 +39,5 @@ Imports:
     utils,
     parallel,
     methods
+SystemRequirements: C++17
 VignetteBuilder: knitr

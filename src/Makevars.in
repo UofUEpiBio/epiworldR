@@ -1,4 +1,0 @@
-PKG_LIBS = @OPENMP_FLAG@
-PKG_CXXFLAGS=@OPENMP_FLAG@ -I../inst/include/ $(EPI_CONFIG) \
-    -Dprintf_epiworld=Rprintf -Depiworld_double=double \
-    '-DEPI_CHECK_USER_INTERRUPT(a)=cpp11::check_user_interrupt()'
