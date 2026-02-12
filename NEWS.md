@@ -4,6 +4,11 @@
 
 * The `ModelSEIRMixingQuarantine` gained a couple of extra checks for validating the inputs.
 
+* Simplified build configuration to comply with CRAN policies: removed custom
+  `configure` script, using R's built-in OpenMP settings
+  (`$(SHLIB_OPENMP_CXXFLAGS)`) and specifying C++17 via `CXX_STD` in Makevars
+  and `SystemRequirements` in DESCRIPTION.
+
 
 # epiworldR 0.11.2.0
 
