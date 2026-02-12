@@ -61,10 +61,7 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
     p->n_tools++;
     size_t n_tools = p->n_tools;
 
-    if (n_tools <= p->tools.size())
-        p->tools[n_tools - 1] = std::move(t);
-    else
-        p->tools.emplace_back(std::move(t));
+    p->tools.emplace_back(std::move(t));
 
     n_tools--;
 
@@ -145,6 +142,9 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
     Agent<TSeq> * p   = a.agent;    
     ToolPtr<TSeq> & t = a.agent->tools[a.tool->pos_in_agent];
 
+    // Capture the tool ID before any swaps or removals
+    int removed_tool_id = t->get_id();
+
     if (--p->n_tools > 0)
     {
         p->tools[p->n_tools]->pos_in_agent = t->pos_in_agent;
@@ -153,6 +153,10 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
             p->tools[p->n_tools]
             );
     }
+
+    // Keep vector size in sync with n_tools to avoid
+    // container-overflow ASAN errors
+    p->tools.pop_back();
 
     // Change of state needs to be recorded and updated on the
     // tools.
@@ -175,9 +179,9 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
     // Like rm_virus, we use the previous state of the agent
     // as that was the state when the tool was added.
     #ifdef EPI_DEBUG
-    m->get_db().today_tool.at(t->get_id()).at(p->state_prev)--;
+    m->get_db().today_tool.at(removed_tool_id).at(p->state_prev)--;
     #else
-    m->get_db().today_tool[t->get_id()][p->state_prev]--;
+    m->get_db().today_tool[removed_tool_id][p->state_prev]--;
     #endif
 
     return;
@@ -241,32 +245,14 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
     }
 
     // Adding the entity to the agent
-    if (++p->n_entities <= p->entities.size())
-    {
-
-        p->entities[p->n_entities - 1]           = e->get_id();
-        p->entities_locations[p->n_entities - 1] = e->n_agents;
-
-    } else
-    {
-        p->entities.push_back(e->get_id());
-        p->entities_locations.push_back(e->n_agents);
-    }
+    p->n_entities++;
+    p->entities.push_back(e->get_id());
+    p->entities_locations.push_back(e->n_agents);
 
     // Adding the agent to the entity
-    // Adding the entity to the agent
-    if (++e->n_agents <= e->agents.size())
-    {
-
-        e->agents[e->n_agents - 1]          = p->get_id();
-        // Adjusted by '-1' since the list of entities in the agent just grew.
-        e->agents_location[e->n_agents - 1] = p->n_entities - 1;
-
-    } else
-    {
-        e->agents.push_back(p->get_id());
-        e->agents_location.push_back(p->n_entities - 1);
-    }
+    e->n_agents++;
+    e->agents.push_back(p->get_id());
+    e->agents_location.push_back(p->n_entities - 1);
 
     // Today was the last modification
     // e->date_last_add_or_remove = m->today();
@@ -304,7 +290,17 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
             p->entities[idx_entity_in_agent]
         );
 
+        std::swap(
+            p->entities_locations[p->n_entities],
+            p->entities_locations[idx_entity_in_agent]
+        );
+
     }
+
+    // Keep vector sizes in sync with n_entities to avoid
+    // container-overflow ASAN errors
+    p->entities.pop_back();
+    p->entities_locations.pop_back();
 
     if (--e->n_agents > 0)
     {
@@ -327,7 +323,17 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
             e->agents[idx_agent_in_entity]
         );
 
+        std::swap(
+            e->agents_location[e->n_agents],
+            e->agents_location[idx_agent_in_entity]
+        );
+
     }
+
+    // Keep vector sizes in sync with n_agents to avoid
+    // container-overflow ASAN errors
+    e->agents.pop_back();
+    e->agents_location.pop_back();
 
     // Setting the date of the last removal
     // e->date_last_add_or_remove = m->today();
