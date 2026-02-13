@@ -60,10 +60,10 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
     // Update tool accounting
     p->tools.emplace_back(std::move(t));
 
-    size_t n_tools_idx = p->tools.size() - 1u;
+    size_t last_tool_idx = p->tools.size() - 1u;
 
-    p->tools[n_tools_idx]->set_date(m->today());
-    p->tools[n_tools_idx]->set_agent(p, n_tools_idx);
+    p->tools[last_tool_idx]->set_date(m->today());
+    p->tools[last_tool_idx]->set_agent(p, last_tool_idx);
 
     // Change of state needs to be recorded and updated on the
     // tools.

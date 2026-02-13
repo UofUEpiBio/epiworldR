@@ -52,7 +52,7 @@ template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::iterator Tools<TSeq>::end()
 {
      
-    return dat->begin() + dat->size();
+    return dat->end();
 }
 
 template<typename TSeq>
@@ -148,7 +148,7 @@ inline typename std::vector< ToolPtr<TSeq> >::const_iterator Tools_const<TSeq>::
 template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::const_iterator Tools_const<TSeq>::end() const {
      
-    return dat->begin() + dat->size();
+    return dat->end();
 }
 
 template<typename TSeq>
