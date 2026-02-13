@@ -22,13 +22,11 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     n_neighbors(p.n_neighbors),
     entities(std::move(p.entities)),
     entities_locations(std::move(p.entities_locations)),
-    n_entities(p.n_entities),
     state(p.state),
     state_prev(p.state_prev), 
     state_last_changed(p.state_last_changed),
     id(p.id),
-    tools(std::move(p.tools)), /// Needs to be adjusted
-    n_tools(p.n_tools)
+    tools(std::move(p.tools)) /// Needs to be adjusted
 {
 
     state = p.state;
@@ -61,8 +59,7 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     neighbors_locations(nullptr),
     n_neighbors(p.n_neighbors),
     entities(p.entities),
-    entities_locations(p.entities_locations),
-    n_entities(p.n_entities)
+    entities_locations(p.entities_locations)
 {
 
     if (n_neighbors > 0u)
@@ -82,9 +79,8 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     }
     
 
-    tools.reserve(p.get_n_tools());
-    n_tools = tools.size();
-    for (size_t i = 0u; i < n_tools; ++i)
+    tools.reserve(p.tools.size());
+    for (size_t i = 0u; i < p.tools.size(); ++i)
     {
         
         // Will create a copy of the virus, with the exeption of
@@ -124,7 +120,6 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     
     entities = other_agent.entities;
     entities_locations = other_agent.entities_locations;
-    n_entities = other_agent.n_entities;
 
     state              = other_agent.state;
     state_prev         = other_agent.state_prev;
@@ -138,11 +133,12 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     } else
         virus = nullptr;
     
-    n_tools             = other_agent.n_tools;
-    for (size_t i = 0u; i < n_tools; ++i)
+    tools.clear();
+    tools.reserve(other_agent.tools.size());
+    for (size_t i = 0u; i < other_agent.tools.size(); ++i)
     {
-        tools[i] = std::make_shared<Tool<TSeq>>(*other_agent.tools[i]);
-        tools[i]->set_agent(this, i);
+        tools.emplace_back(std::make_shared<Tool<TSeq>>(*other_agent.tools[i]));
+        tools.back()->set_agent(this, i);
     }
     
     return *this;
@@ -281,10 +277,10 @@ inline void Agent<TSeq>::rm_tool(
 )
 {
 
-    if (tool_idx >= n_tools)
+    if (tool_idx >= tools.size())
         throw std::range_error(
             "The Tool you want to remove is out of range. This Agent only has " +
-            std::to_string(n_tools) + " tools."
+            std::to_string(tools.size()) + " tools."
         );
 
     model->events_add(
@@ -348,12 +344,12 @@ inline void Agent<TSeq>::rm_entity(
 )
 {
 
-    if (entity_idx >= n_entities)
+    if (entity_idx >= entities.size())
         throw std::range_error(
             "The Entity you want to remove is out of range. This Agent only has " +
-            std::to_string(n_entities) + " entitites."
+            std::to_string(entities.size()) + " entitites."
         );
-    else if (n_entities == 0u)
+    else if (entities.empty())
         throw std::logic_error(
             "There is entity to remove here!"
         );
@@ -382,7 +378,7 @@ inline void Agent<TSeq>::rm_entity(
 
     // Looking for entity location in the agent
     int entity_idx = -1;
-    for (size_t i = 0u; i < n_entities; ++i)
+    for (size_t i = 0u; i < entities.size(); ++i)
     {
         if (static_cast<int>(entities[i]) == entity.get_id())
         {
@@ -497,7 +493,7 @@ inline ToolPtr<TSeq> & Agent<TSeq>::get_tool(int i)
 template<typename TSeq>
 inline size_t Agent<TSeq>::get_n_tools() const noexcept
 {
-    return n_tools;
+    return tools.size();
 }
 
 template<typename TSeq>
@@ -674,11 +670,9 @@ inline void Agent<TSeq>::reset()
     this->virus = nullptr;
 
     this->tools.clear();
-    n_tools = 0u;
 
     this->entities.clear();
     this->entities_locations.clear();
-    this->n_entities = 0u;
 
     this->state = 0u;
     this->state_prev = 0u;
@@ -714,7 +708,6 @@ inline void Agent<TSeq>::reset(const Agent<TSeq> & backup)
     // Clear tools preserving capacity — will be re-distributed
     // after model reset
     tools.clear();
-    n_tools = 0u;
 
     // Clear entities preserving capacity — will be
     // re-distributed after model reset. By clearing instead
@@ -722,7 +715,6 @@ inline void Agent<TSeq>::reset(const Agent<TSeq> & backup)
     // allocations across simulation replicates.
     this->entities.clear();
     this->entities_locations.clear();
-    this->n_entities = 0u;
 
     // Reset state to defaults
     this->id                 = backup.id;
@@ -830,7 +822,7 @@ inline void Agent<TSeq>::print(
             model->states_labels[state].c_str(),
             static_cast<int>(state),
             virus == nullptr ? std::string("no").c_str() : std::string("yes").c_str(),
-            static_cast<int>(n_tools),
+            static_cast<int>(tools.size()),
             static_cast<int>(n_neighbors)
         );
     }
@@ -842,7 +834,7 @@ inline void Agent<TSeq>::print(
             model->states_labels[state].c_str(), static_cast<int>(state));
         printf_epiworld("  Has virus    : %s\n", virus == nullptr ?
             std::string("no").c_str() : std::string("yes").c_str());
-        printf_epiworld("  Tool count   : %i\n", static_cast<int>(n_tools));
+        printf_epiworld("  Tool count   : %i\n", static_cast<int>(tools.size()));
         printf_epiworld("  Neigh. count : %i\n", static_cast<int>(n_neighbors));
 
         size_t nfeats = model->get_agents_data_ncols();
@@ -926,10 +918,10 @@ inline const Entities_const<TSeq> Agent<TSeq>::get_entities() const
 template<typename TSeq>
 inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 {
-    if (n_entities == 0)
+    if (entities.empty())
         throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
 
-    if (i >= n_entities)
+    if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
     return model->get_entity(entities[i]);
@@ -938,10 +930,10 @@ inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 template<typename TSeq>
 inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
 {
-    if (n_entities == 0)
+    if (entities.empty())
         throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
 
-    if (i >= n_entities)
+    if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
     return model->get_entity(entities[i]);
@@ -950,7 +942,7 @@ inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
 template<typename TSeq>
 inline size_t Agent<TSeq>::get_n_entities() const
 {
-    return n_entities;
+    return entities.size();
 }
 
 template<typename TSeq>
@@ -972,12 +964,12 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
     }
     
     EPI_DEBUG_FAIL_AT_TRUE(
-        n_entities != other.n_entities,
+        entities.size() != other.entities.size(),
         "Agent:: n_entities don't match"
         )
     
     
-    for (size_t i = 0u; i < n_entities; ++i)
+    for (size_t i = 0u; i < entities.size(); ++i)
     {
         EPI_DEBUG_FAIL_AT_TRUE(
             entities[i] != other.entities[i],
@@ -1016,9 +1008,9 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
         )
     }
     
-    EPI_DEBUG_FAIL_AT_TRUE(n_tools != other.n_tools, "Agent:: n_tools don't match")
+    EPI_DEBUG_FAIL_AT_TRUE(tools.size() != other.tools.size(), "Agent:: n_tools don't match")
 
-    for (size_t i = 0u; i < n_tools; ++i)
+    for (size_t i = 0u; i < tools.size(); ++i)
     {
         
         EPI_DEBUG_FAIL_AT_TRUE(

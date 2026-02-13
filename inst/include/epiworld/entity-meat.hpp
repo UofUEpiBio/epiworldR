@@ -25,10 +25,10 @@ inline void Entity<TSeq>::add_agent(
 template<typename TSeq>
 inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 {
-    if (idx >= n_agents)
+    if (idx >= agents.size())
         throw std::out_of_range(
             "Trying to remove agent "+ std::to_string(idx) +
-            " out of " + std::to_string(n_agents)
+            " out of " + std::to_string(agents.size())
             );
 
     model->get_agents()[agents[idx]].rm_entity(*this, model);
@@ -39,7 +39,7 @@ inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 template<typename TSeq>
 inline size_t Entity<TSeq>::size() const noexcept
 {
-    return n_agents;
+    return agents.size();
 }
 
 template<typename TSeq>
@@ -58,7 +58,7 @@ template<typename TSeq>
 inline typename std::vector< size_t >::iterator Entity<TSeq>::begin()
 {
 
-    if (n_agents == 0)
+    if (agents.empty())
         return typename std::vector< size_t >::iterator{};
 
     return agents.begin();
@@ -68,17 +68,17 @@ inline typename std::vector< size_t >::iterator Entity<TSeq>::begin()
 template<typename TSeq>
 inline typename std::vector< size_t >::iterator Entity<TSeq>::end()
 {
-    if (n_agents == 0)
+    if (agents.empty())
         return typename std::vector< size_t >::iterator{};
 
-    return agents.begin() + n_agents;
+    return agents.end();
 }
 
 template<typename TSeq>
 inline typename std::vector< size_t >::const_iterator Entity<TSeq>::begin() const
 {
 
-    if (n_agents == 0)
+    if (agents.empty())
         return typename std::vector< size_t >::const_iterator{};
 
     return agents.begin();
@@ -88,19 +88,19 @@ inline typename std::vector< size_t >::const_iterator Entity<TSeq>::begin() cons
 template<typename TSeq>
 inline typename std::vector< size_t >::const_iterator Entity<TSeq>::end() const
 {
-    if (n_agents == 0)
+    if (agents.empty())
         return typename std::vector< size_t >::const_iterator{};
 
-    return agents.begin() + n_agents;
+    return agents.end();
 }
 
 template<typename TSeq>
 size_t Entity<TSeq>::operator[](size_t i)
 {
-    if (n_agents <= i)
+    if (agents.size() <= i)
         throw std::logic_error(
             "There are not that many agents in this entity. " +
-            std::to_string(n_agents) + " <= " + std::to_string(i)
+            std::to_string(agents.size()) + " <= " + std::to_string(i)
             );
 
     return i;
@@ -171,7 +171,6 @@ inline void Entity<TSeq>::reset()
 {
 
     this->agents.clear();
-    this->n_agents = 0u;
     this->agents_location.clear();
 
     return;
@@ -186,7 +185,6 @@ inline void Entity<TSeq>::reset(const Entity<TSeq> & backup)
     // re-distributed after reset, so we avoid replacing the
     // vectors (which would trigger heap allocations)
     this->agents.clear();
-    this->n_agents = 0u;
     this->agents_location.clear();
 
     // Restore non-agent fields from backup
@@ -211,10 +209,10 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
     if (id != other.id)
         return false;
 
-    if (n_agents != other.n_agents)
+    if (agents.size() != other.agents.size())
         return false;
 
-    for (size_t i = 0u; i < n_agents; ++i)
+    for (size_t i = 0u; i < agents.size(); ++i)
     {
         if (agents[i] != other.agents[i])
             return false;
@@ -281,7 +279,7 @@ inline void Entity<TSeq>::print() const
         "Entity '%s' (id %i) with %i agents.\n",
         this->entity_name.c_str(),
         static_cast<int>(id),
-        static_cast<int>(n_agents)
+        static_cast<int>(agents.size())
     );
 }
 

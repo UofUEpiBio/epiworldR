@@ -31,7 +31,6 @@ private:
     int id = -1;
     std::vector< size_t > agents;   ///< Vector of agents
     std::vector< size_t > agents_location; ///< Location where the entity is stored in the agent
-    size_t n_agents = 0u;
 
     int max_capacity = -1;
     std::string entity_name = "Unnamed entity";

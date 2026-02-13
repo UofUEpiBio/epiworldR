@@ -89,7 +89,6 @@ private:
 
     std::vector< size_t > entities;
     std::vector< size_t > entities_locations;
-    size_t n_entities = 0u;
 
     unsigned int state = 0u;
     unsigned int state_prev = 0u; ///< For accounting, if need to undo a change.
@@ -100,7 +99,6 @@ private:
     VirusPtr<TSeq> virus = nullptr;
 
     std::vector< ToolPtr<TSeq> > tools;
-    unsigned int n_tools = 0u;
 
 public:
 

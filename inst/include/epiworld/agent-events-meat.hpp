@@ -29,7 +29,7 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 
         // For tool counts, use current state (p->state) not state_prev
         // because state_prev may be stale if multiple changes occurred today
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,
@@ -58,15 +58,12 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
     ToolPtr<TSeq> & t = a.tool;
     
     // Update tool accounting
-    p->n_tools++;
-    size_t n_tools = p->n_tools;
-
     p->tools.emplace_back(std::move(t));
 
-    n_tools--;
+    size_t n_tools_idx = p->tools.size() - 1u;
 
-    p->tools[n_tools]->set_date(m->today());
-    p->tools[n_tools]->set_agent(p, n_tools);
+    p->tools[n_tools_idx]->set_date(m->today());
+    p->tools[n_tools_idx]->set_agent(p, n_tools_idx);
 
     // Change of state needs to be recorded and updated on the
     // tools.
@@ -113,7 +110,7 @@ inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
 
         // For tool counts, use current state (p->state) not state_prev
         // because state_prev may be stale if multiple changes occurred today
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,
@@ -145,17 +142,16 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
     // Capture the tool ID before any swaps or removals
     int removed_tool_id = t->get_id();
 
-    if (--p->n_tools > 0)
+    if (p->tools.size() > 1u)
     {
-        p->tools[p->n_tools]->pos_in_agent = t->pos_in_agent;
+        p->tools.back()->pos_in_agent = t->pos_in_agent;
         std::swap(
             p->tools[t->pos_in_agent],
-            p->tools[p->n_tools]
+            p->tools.back()
             );
     }
 
-    // Keep vector size in sync with n_tools to avoid
-    // container-overflow ASAN errors
+    // Remove the last element (the one we want to remove)
     p->tools.pop_back();
 
     // Change of state needs to be recorded and updated on the
@@ -206,7 +202,7 @@ inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m)
                 p->virus->get_id(), p->state, a.new_state
             );
 
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,
@@ -245,14 +241,12 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
     }
 
     // Adding the entity to the agent
-    p->n_entities++;
     p->entities.push_back(e->get_id());
-    p->entities_locations.push_back(e->n_agents);
+    p->entities_locations.push_back(e->agents.size());
 
     // Adding the agent to the entity
-    e->n_agents++;
     e->agents.push_back(p->get_id());
-    e->agents_location.push_back(p->n_entities - 1);
+    e->agents_location.push_back(p->entities.size() - 1);
 
     // Today was the last modification
     // e->date_last_add_or_remove = m->today();
@@ -268,17 +262,17 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
     size_t idx_agent_in_entity = a.idx_agent;
     size_t idx_entity_in_agent = a.idx_object;
 
-    if (--p->n_entities > 0)
+    if (p->entities.size() > 1u)
     {
 
         // When we move the end entity to the new location, the 
         // moved entity needs to reflect the change, i.e., where the
         // entity will now be located in the agent
         size_t agent_location_in_last_entity  =
-            p->entities_locations[p->n_entities];
+            p->entities_locations.back();
 
         Entity<TSeq> * last_entity =
-            &m->get_entity(p->entities[p->n_entities]); ///< Last entity of the agent
+            &m->get_entity(p->entities.back()); ///< Last entity of the agent
 
         // The end entity will be located where the removed was
         last_entity->agents_location[agent_location_in_last_entity] =
@@ -286,32 +280,31 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
 
         // We now make the swap
         std::swap(
-            p->entities[p->n_entities],
+            p->entities.back(),
             p->entities[idx_entity_in_agent]
         );
 
         std::swap(
-            p->entities_locations[p->n_entities],
+            p->entities_locations.back(),
             p->entities_locations[idx_entity_in_agent]
         );
 
     }
 
-    // Keep vector sizes in sync with n_entities to avoid
-    // container-overflow ASAN errors
+    // Remove the last element (the one we want to remove)
     p->entities.pop_back();
     p->entities_locations.pop_back();
 
-    if (--e->n_agents > 0)
+    if (e->agents.size() > 1u)
     {
 
         // When we move the end agent to the new location, the 
         // moved agent needs to reflect the change, i.e., where the
         // agent will now be located in the entity
-        size_t entity_location_in_last_agent = e->agents_location[e->n_agents];
+        size_t entity_location_in_last_agent = e->agents_location.back();
         
         Agent<TSeq> * last_agent  =
-            &m->get_agents()[e->agents[e->n_agents]]; ///< Last agent of the entity
+            &m->get_agents()[e->agents.back()]; ///< Last agent of the entity
 
         // The end entity will be located where the removed was
         last_agent->entities_locations[entity_location_in_last_agent] =
@@ -319,19 +312,18 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m)
 
         // We now make the swap
         std::swap(
-            e->agents[e->n_agents],
+            e->agents.back(),
             e->agents[idx_agent_in_entity]
         );
 
         std::swap(
-            e->agents_location[e->n_agents],
+            e->agents_location.back(),
             e->agents_location[idx_agent_in_entity]
         );
 
     }
 
-    // Keep vector sizes in sync with n_agents to avoid
-    // container-overflow ASAN errors
+    // Remove the last element (the one we want to remove)
     e->agents.pop_back();
     e->agents_location.pop_back();
 

@@ -20,12 +20,11 @@ class Tools {
     friend class Agent<TSeq>;
 private:
     std::vector< ToolPtr<TSeq> > * dat;
-    const unsigned int * n_tools;
 
 public:
 
     Tools() = delete;
-    Tools(Agent<TSeq> & p) : dat(&p.tools), n_tools(&p.n_tools) {};
+    Tools(Agent<TSeq> & p) : dat(&p.tools) {};
 
     typename std::vector< ToolPtr<TSeq> >::iterator begin();
     typename std::vector< ToolPtr<TSeq> >::iterator end();
@@ -43,7 +42,7 @@ template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::iterator Tools<TSeq>::begin()
 {
 
-    if (*n_tools == 0u)
+    if (dat->size() == 0u)
         return dat->end();
     
     return dat->begin();
@@ -53,14 +52,14 @@ template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::iterator Tools<TSeq>::end()
 {
      
-    return begin() + *n_tools;
+    return dat->begin() + dat->size();
 }
 
 template<typename TSeq>
 inline ToolPtr<TSeq> & Tools<TSeq>::operator()(size_t i)
 {
 
-    if (i >= *n_tools)
+    if (i >= dat->size())
         throw std::range_error("Tool index out of range.");
 
     return dat->operator[](i);
@@ -78,24 +77,24 @@ inline ToolPtr<TSeq> & Tools<TSeq>::operator[](size_t i)
 template<typename TSeq>
 inline size_t Tools<TSeq>::size() const noexcept 
 {
-    return *n_tools;
+    return dat->size();
 }
 
 template<typename TSeq>
 inline void Tools<TSeq>::print() const noexcept 
 {
-    if (*n_tools == 0u)
+    if (dat->size() == 0u)
     {
         printf_epiworld("List of tools (none)\n");
         return;
     }
 
-    printf_epiworld("List of tools (%i): ", static_cast<int>(*n_tools));
+    printf_epiworld("List of tools (%i): ", static_cast<int>(dat->size()));
 
     // Printing the name of each virus separated by a comma
-    for (size_t i = 0u; i < *n_tools; ++i)
+    for (size_t i = 0u; i < dat->size(); ++i)
     {
-        if (i == *n_tools - 1u)
+        if (i == dat->size() - 1u)
         {
             printf_epiworld("%s", dat->operator[](i)->get_name().c_str());
         } else
@@ -119,12 +118,11 @@ class Tools_const {
     friend class Agent<TSeq>;
 private:
     const std::vector< ToolPtr<TSeq> > * dat;
-    const epiworld_fast_uint * n_tools;
 
 public:
 
     Tools_const() = delete;
-    Tools_const(const Agent<TSeq> & p) : dat(&p.tools), n_tools(&p.n_tools) {};
+    Tools_const(const Agent<TSeq> & p) : dat(&p.tools) {};
 
     typename std::vector< ToolPtr<TSeq> >::const_iterator begin() const;
     typename std::vector< ToolPtr<TSeq> >::const_iterator end() const;
@@ -141,7 +139,7 @@ public:
 template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::const_iterator Tools_const<TSeq>::begin() const {
 
-    if (*n_tools == 0u)
+    if (dat->size() == 0u)
         return dat->end();
     
     return dat->begin();
@@ -150,14 +148,14 @@ inline typename std::vector< ToolPtr<TSeq> >::const_iterator Tools_const<TSeq>::
 template<typename TSeq>
 inline typename std::vector< ToolPtr<TSeq> >::const_iterator Tools_const<TSeq>::end() const {
      
-    return begin() + *n_tools;
+    return dat->begin() + dat->size();
 }
 
 template<typename TSeq>
 inline const ToolPtr<TSeq> & Tools_const<TSeq>::operator()(size_t i)
 {
 
-    if (i >= *n_tools)
+    if (i >= dat->size())
         throw std::range_error("Tool index out of range.");
 
     return dat->operator[](i);
@@ -175,24 +173,24 @@ inline const ToolPtr<TSeq> & Tools_const<TSeq>::operator[](size_t i)
 template<typename TSeq>
 inline size_t Tools_const<TSeq>::size() const noexcept 
 {
-    return *n_tools;
+    return dat->size();
 }
 
 template<typename TSeq>
 inline void Tools_const<TSeq>::print() const noexcept 
 {
-    if (*n_tools == 0u)
+    if (dat->size() == 0u)
     {
         printf_epiworld("List of tools (none)\n");
         return;
     }
 
-    printf_epiworld("List of tools (%i): ", *n_tools);
+    printf_epiworld("List of tools (%i): ", static_cast<int>(dat->size()));
 
     // Printing the name of each virus separated by a comma
-    for (size_t i = 0u; i < *n_tools; ++i)
+    for (size_t i = 0u; i < dat->size(); ++i)
     {
-        if (i == *n_tools - 1u)
+        if (i == dat->size() - 1u)
         {
             printf_epiworld("%s", dat->operator[](i)->get_name().c_str());
         } else
