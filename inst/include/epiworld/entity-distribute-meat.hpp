@@ -106,7 +106,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_range(
         return [from, to](Entity<TSeq> & e, Model<TSeq> * m) -> void {
 
             auto & agents = m->get_agents();
-            for (size_t i = from; i < to; ++i)
+            for (int i = from; i < to; ++i)
             {
                 if (agents[i].get_n_entities() == 0)
                     e.add_agent(&agents[i], m);
@@ -127,7 +127,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_range(
         return [from, to](Entity<TSeq> & e, Model<TSeq> * m) -> void {
 
             auto & agents = m->get_agents();
-            for (size_t i = from; i < to; ++i)
+            for (int i = from; i < to; ++i)
             {
                 e.add_agent(&agents[i], m);
             }

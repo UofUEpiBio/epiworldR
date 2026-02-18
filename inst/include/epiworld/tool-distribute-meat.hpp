@@ -168,7 +168,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
         for (size_t e = 0; e < entities.size(); ++e)
         {
             auto & entity_e = entities[e];
-            auto & agent_ids = entity_e.get_agents();
+            auto agent_ids = entity_e.get_agents_ids();
             double prevalence_e = prevalence[e];
             size_t n = agent_ids.size();
             size_t n_to_distribute;

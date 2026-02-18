@@ -12,7 +12,6 @@
 #include "userdata-bones.hpp"
 #include "adjlist-bones.hpp"
 #include "model-bones.hpp"
-#include "entities-bones.hpp"
 #include "virus-bones.hpp"
 #include "agent-bones.hpp"
 
@@ -444,7 +443,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     viruses(model.viruses),
     tools(model.tools),
     entities(model.entities),
-    entities_backup(model.entities_backup),
     rewire_fun(model.rewire_fun),
     rewire_prop(model.rewire_prop),
     parameters(model.parameters),
@@ -500,7 +498,6 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     tools(std::move(model.tools)),
     // Entities
     entities(std::move(model.entities)),
-    entities_backup(std::move(model.entities_backup)),
     // Pseudo-RNG
     engine(std::move(model.engine)),
     runifd(std::move(model.runifd)),
@@ -558,7 +555,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     tools                         = m.tools;
 
     entities        = m.entities;
-    entities_backup = m.entities_backup;
 
     rewire_fun  = m.rewire_fun;
     rewire_prop = m.rewire_prop;
@@ -855,9 +851,6 @@ inline void Model<TSeq>::set_backup()
 
     if (population_backup.size() == 0u)
         population_backup = std::vector< Agent<TSeq> >(population);
-
-    if (entities_backup.size() == 0u)
-        entities_backup = std::vector< Entity<TSeq> >(entities);
 
 }
 
@@ -2036,22 +2029,6 @@ inline void Model<TSeq>::reset() {
     }
     #endif
 
-    if (entities_backup.size())
-    {
-        entities = entities_backup;
-
-        #ifdef EPI_DEBUG
-        for (size_t i = 0; i < entities.size(); ++i)
-        {
-
-            if (entities[i] != (entities_backup)[i])
-                throw std::logic_error("Model::reset entities don't match.");
-
-        }
-        #endif
-
-    }
-
     for (auto & e: entities)
         e.reset();
 
@@ -2620,26 +2597,6 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         other.entities,
         "entities don't match"
     )
-
-    if ((entities_backup.size() != 0) & (other.entities_backup.size() != 0))
-    {
-
-        for (size_t i = 0u; i < entities_backup.size(); ++i)
-        {
-
-            EPI_DEBUG_FAIL_AT_TRUE(
-                entities_backup[i] != other.entities_backup[i],
-                "Model:: entities_backup[i] don't match"
-            )
-
-        }
-
-    } else if ((entities_backup.size() == 0) & (other.entities_backup.size() != 0)) {
-        EPI_DEBUG_FAIL_AT_TRUE(true, "entities_backup don't match")
-    } else if ((entities_backup.size() != 0) & (other.entities_backup.size() == 0))
-    {
-        EPI_DEBUG_FAIL_AT_TRUE(true, "entities_backup don't match")
-    }
 
     EPI_DEBUG_FAIL_AT_TRUE(
         rewire_prop != other.rewire_prop,
