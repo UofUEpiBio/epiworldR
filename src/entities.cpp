@@ -149,8 +149,8 @@ cpp11::data_frame entity_get_agents_cpp(SEXP entity) {
   cpp11::writable::integers entity_id;
 
   int id = static_cast<int>(ptr->get_id());
-  for (const Agent<> & agent: ptr->get_agents()) {
-    agent.push_back(static_cast<int>(agent.get_id()));
+  for (const Agent<> & agent_i: ptr->get_agents()) {
+    agent.push_back(static_cast<int>(agent_i.get_id()));
     entity_id.push_back(id);
   }
 
