@@ -344,11 +344,11 @@ inline void Agent<TSeq>::rm_entity(
     if (entity_idx >= entities.size())
         throw std::range_error(
             "The Entity you want to remove is out of range. This Agent only has " +
-            std::to_string(entities.size()) + " entitites."
+            std::to_string(entities.size()) + " entity(ies)."
         );
     else if (entities.size() == 0u)
         throw std::logic_error(
-            "There is entity to remove here!"
+            "There no is entity to removed!"
         );
 
     model->events_add(
@@ -374,17 +374,12 @@ inline void Agent<TSeq>::rm_entity(
 {
 
     // Looking for entity location in the agent
-    int entity_idx = -1;
-    for (Entity<TSeq> & a_entity: entities)
-    {
-        if (a_entity.get_id() == entity.get_id())
-        {
-            entity_idx++;
-            break;
-        }
-    }
+    // bool found = false;
+    bool found = std::find_if(entities.begin(), entities.end(), [&entity](const Entity<TSeq> & e) {
+        return e.get_id() == entity.get_id();
+    }) != entities.end();
 
-    if (entity_idx == -1)
+    if (!found)
         throw std::logic_error(
             std::string("The agent ") +
             std::to_string(id) +
