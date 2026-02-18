@@ -348,7 +348,7 @@ inline void Agent<TSeq>::rm_entity(
         );
     else if (entities.size() == 0u)
         throw std::logic_error(
-            "There no is entity to removed!"
+            "There is no entity to remove here!"
         );
 
     model->events_add(
