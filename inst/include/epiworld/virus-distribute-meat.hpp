@@ -190,9 +190,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
         for (size_t e = 0; e < entities.size(); ++e)
         {
             auto & entity_e = entities[e];
-            auto & agent_ids = entity_e.get_agents();
+            auto agents_ids = entity_e.get_agents_ids();
             double prevalence_e = prevalence[e];
-            size_t n = agent_ids.size();
+            size_t n = agents_ids.size();
             size_t n_to_distribute;
             if (as_proportion)
                 n_to_distribute = static_cast<size_t>(std::floor(prevalence_e * n));
@@ -202,7 +202,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
             if (n_to_distribute > n)
                 n_to_distribute = n;
 
-            std::vector< size_t > idx = agent_ids;
+            std::vector< size_t > idx = agents_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
                 size_t loc = static_cast<epiworld_fast_uint>(

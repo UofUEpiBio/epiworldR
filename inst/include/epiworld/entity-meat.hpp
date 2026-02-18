@@ -25,13 +25,13 @@ inline void Entity<TSeq>::add_agent(
 template<typename TSeq>
 inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 {
-    if (idx >= n_agents)
+    if (idx >= size())
         throw std::out_of_range(
             "Trying to remove agent "+ std::to_string(idx) +
-            " out of " + std::to_string(n_agents)
+            " out of " + std::to_string(size())
             );
 
-    model->get_agents()[agents[idx]].rm_entity(*this, model);
+    agents[idx].rm_entity(*this, model);
 
     return;
 }
@@ -39,7 +39,7 @@ inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
 template<typename TSeq>
 inline size_t Entity<TSeq>::size() const noexcept
 {
-    return n_agents;
+    return agents.size();
 }
 
 template<typename TSeq>
@@ -55,52 +55,52 @@ inline std::vector< epiworld_double > & Entity<TSeq>::get_location()
 }
 
 template<typename TSeq>
-inline typename std::vector< size_t >::iterator Entity<TSeq>::begin()
+inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator Entity<TSeq>::begin()
 {
 
-    if (n_agents == 0)
-        return typename std::vector< size_t >::iterator{};
+    if (agents.size() == 0)
+        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< size_t >::iterator Entity<TSeq>::end()
+inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator Entity<TSeq>::end()
 {
-    if (n_agents == 0)
-        return typename std::vector< size_t >::iterator{};
+    if (agents.size() == 0)
+        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator{};
 
-    return agents.begin() + n_agents;
+    return agents.begin() + agents.size();
 }
 
 template<typename TSeq>
-inline typename std::vector< size_t >::const_iterator Entity<TSeq>::begin() const
+inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator Entity<TSeq>::begin() const
 {
 
-    if (n_agents == 0)
-        return typename std::vector< size_t >::const_iterator{};
+    if (agents.size() == 0)
+        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< size_t >::const_iterator Entity<TSeq>::end() const
+inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator Entity<TSeq>::end() const
 {
-    if (n_agents == 0)
-        return typename std::vector< size_t >::const_iterator{};
+    if (agents.size() == 0)
+        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator{};
 
-    return agents.begin() + n_agents;
+    return agents.begin() + agents.size();
 }
 
 template<typename TSeq>
 size_t Entity<TSeq>::operator[](size_t i)
 {
-    if (n_agents <= i)
+    if (agents.size() <= i)
         throw std::logic_error(
             "There are not that many agents in this entity. " +
-            std::to_string(n_agents) + " <= " + std::to_string(i)
+            std::to_string(agents.size()) + " <= " + std::to_string(i)
             );
 
     return i;
@@ -171,8 +171,6 @@ inline void Entity<TSeq>::reset()
 {
 
     this->agents.clear();
-    this->n_agents = 0u;
-    this->agents_location.clear();
 
     return;
 
@@ -185,12 +183,12 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
     if (id != other.id)
         return false;
 
-    if (n_agents != other.n_agents)
+    if (agents.size() != other.agents.size())
         return false;
 
-    for (size_t i = 0u; i < n_agents; ++i)
+    for (size_t i = 0u; i < agents.size(); ++i)
     {
-        if (agents[i] != other.agents[i])
+        if (agents[i].get() != other.agents[i].get())
             return false;
     }
 
@@ -242,9 +240,19 @@ inline void Entity<TSeq>::distribute(Model<TSeq> * model)
 }
 
 template<typename TSeq>
-inline std::vector< size_t > & Entity<TSeq>::get_agents()
+inline std::vector< std::reference_wrapper<Agent<TSeq>> > & Entity<TSeq>::get_agents()
 {
     return agents;
+}
+
+template<typename TSeq>
+inline std::vector< size_t > Entity<TSeq>::get_agents_ids() const
+{
+    std::vector< size_t > res;
+    for (const Agent<TSeq> & agent: agents)
+        res.push_back(agent.get_id());
+
+    return res;
 }
 
 template<typename TSeq>
@@ -255,7 +263,7 @@ inline void Entity<TSeq>::print() const
         "Entity '%s' (id %i) with %i agents.\n",
         this->entity_name.c_str(),
         static_cast<int>(id),
-        static_cast<int>(n_agents)
+        static_cast<int>(agents.size())
     );
 }
 

@@ -11,6 +11,7 @@ help:
 	@echo "  debug               Build and run a debug Docker container"
 	@echo "  docs                Generate documentation with roxygen2"
 	@echo "  local-update        Update epiworld.hpp from local epiworld include folder"
+	@echo "  update              Update epiworld.hpp from the latest version on GitHub"
 	@echo "  local-update-diagrams  Update diagrams from local epiworld docs_src folder"
 	@echo "  website             Build the pkgdown website"
 	@echo "  clean               Clean compiled files and reset DESCRIPTION and NAMESPACE"

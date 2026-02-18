@@ -29,9 +29,7 @@ class Entity {
 private:
     
     int id = -1;
-    std::vector< size_t > agents;   ///< Vector of agents
-    std::vector< size_t > agents_location; ///< Location where the entity is stored in the agent
-    size_t n_agents = 0u;
+    std::vector< std::reference_wrapper<Agent<TSeq>> > agents;   ///< Vector of agents
 
     int max_capacity = -1;
     std::string entity_name = "Unnamed entity";
@@ -45,6 +43,8 @@ private:
     epiworld_fast_int queue_post = 0; ///< Change of state when removed from agent.
 
     EntityToAgentFun<TSeq> dist_fun = nullptr;
+
+    void reset();
 
 public:
 
@@ -72,11 +72,11 @@ public:
     void set_location(std::vector< epiworld_double > loc);
     std::vector< epiworld_double > & get_location();
 
-    typename std::vector< size_t >::iterator begin();
-    typename std::vector< size_t >::iterator end();
+    typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator begin();
+    typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator end();
 
-    typename std::vector< size_t >::const_iterator begin() const;
-    typename std::vector< size_t >::const_iterator end() const;
+    typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator begin() const;
+    typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator end() const;
 
     size_t operator[](size_t i);
 
@@ -87,8 +87,6 @@ public:
     void set_queue(epiworld_fast_int init, epiworld_fast_int post);
     void get_state(epiworld_fast_int * init, epiworld_fast_int * post);
     void get_queue(epiworld_fast_int * init, epiworld_fast_int * post);
-
-    void reset();
 
     bool operator==(const Entity<TSeq> & other) const;
     bool operator!=(const Entity<TSeq> & other) const {return !operator==(other);};
@@ -102,7 +100,8 @@ public:
      */
     void distribute(Model<TSeq> * model);
 
-    std::vector< size_t > & get_agents();
+    std::vector< std::reference_wrapper<Agent<TSeq>> > & get_agents();
+    std::vector< size_t > get_agents_ids() const;
 
     void print() const;
     void set_distribution(EntityToAgentFun<TSeq> fun);

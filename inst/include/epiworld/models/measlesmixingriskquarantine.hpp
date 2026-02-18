@@ -940,11 +940,10 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         // check that later
         if (agent_i.get_n_entities() != 0u)
         {
-            for (auto & agent_j_idx: agent_i.get_entity(0))
+            for (const Agent<TSeq> & agent_j: agent_i.get_entity(0))
             {
 
                 #ifdef EPI_DEBUG
-                auto & agent_j = Model<TSeq>::get_agent(agent_j_idx);
                 if (
                     agent_j.get_entity(0u).get_id() !=
                     agent_i.get_entity(0u).get_id()
@@ -956,6 +955,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
 
 
                 // Only if not already checked we set to high risk
+                size_t agent_j_idx = agent_j.get_id();
                 if (can_quarantine[agent_j_idx])
                     quarantine_risk_level[agent_j_idx] = RISK_HIGH;
                 

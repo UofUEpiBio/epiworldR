@@ -1,13 +1,19 @@
-# epiworldR 0.11.3.0
+# epiworldR 0.12.0.0
 
-* Updates to `epiworld` version 0.11.3, including a patch to the `ModelSEIRMixingQuarantine` model. It was underestimating the outbreak size. This is a similar issue detected in the collection of the measles models.
+## Bug fixes
+
+* Updates to `epiworld` version 0.12.0, including a patch to the `ModelSEIRMixingQuarantine` model. It was underestimating the outbreak size. This is a similar issue detected in the collection of the measles models.
 
 * The `ModelSEIRMixingQuarantine` gained a couple of extra checks for validating the inputs.
+
+## Internal changes
 
 * Simplified build configuration to comply with CRAN policies: removed custom
   `configure` script, using R's built-in OpenMP settings
   (`$(SHLIB_OPENMP_CXXFLAGS)`) and specifying C++17 via `CXX_STD` in Makevars
   and `SystemRequirements` in DESCRIPTION.
+
+* Changing how `Entities` are managed in the system, moved away from using pointers and instead use `reference_wrapper`.
 
 
 # epiworldR 0.11.2.0

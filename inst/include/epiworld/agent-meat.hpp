@@ -5,7 +5,6 @@
 #include <string>
 #include "config.hpp"
 #include "epiworld-macros.hpp"
-#include "entities-bones.hpp"
 #include "agent-bones.hpp"
 #include "agent-events-meat.hpp"
 
@@ -21,8 +20,6 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     neighbors_locations(std::move(p.neighbors_locations)),
     n_neighbors(p.n_neighbors),
     entities(std::move(p.entities)),
-    entities_locations(std::move(p.entities_locations)),
-    n_entities(p.n_entities),
     state(p.state),
     state_prev(p.state_prev), 
     state_last_changed(p.state_last_changed),
@@ -60,9 +57,7 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     neighbors(nullptr),
     neighbors_locations(nullptr),
     n_neighbors(p.n_neighbors),
-    entities(p.entities),
-    entities_locations(p.entities_locations),
-    n_entities(p.n_entities)
+    entities(p.entities)
 {
 
     if (n_neighbors > 0u)
@@ -123,8 +118,6 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     }
     
     entities = other_agent.entities;
-    entities_locations = other_agent.entities_locations;
-    n_entities = other_agent.n_entities;
 
     state              = other_agent.state;
     state_prev         = other_agent.state_prev;
@@ -348,14 +341,14 @@ inline void Agent<TSeq>::rm_entity(
 )
 {
 
-    if (entity_idx >= n_entities)
+    if (entity_idx >= entities.size())
         throw std::range_error(
             "The Entity you want to remove is out of range. This Agent only has " +
-            std::to_string(n_entities) + " entitites."
+            std::to_string(entities.size()) + " entity(ies)."
         );
-    else if (n_entities == 0u)
+    else if (entities.size() == 0u)
         throw std::logic_error(
-            "There is entity to remove here!"
+            "There is no entity to remove here!"
         );
 
     model->events_add(
@@ -366,8 +359,8 @@ inline void Agent<TSeq>::rm_entity(
         state_new,
         queue, 
         default_rm_entity<TSeq>,
-        entities_locations[entity_idx],
-        entity_idx
+        -1,
+        -1
     );
 }
 
@@ -381,17 +374,12 @@ inline void Agent<TSeq>::rm_entity(
 {
 
     // Looking for entity location in the agent
-    int entity_idx = -1;
-    for (size_t i = 0u; i < n_entities; ++i)
-    {
-        if (static_cast<int>(entities[i]) == entity.get_id())
-        {
-            entity_idx = i;
-            break;
-        }
-    }
+    // bool found = false;
+    bool found = std::find_if(entities.begin(), entities.end(), [&entity](const Entity<TSeq> & e) {
+        return e.get_id() == entity.get_id();
+    }) != entities.end();
 
-    if (entity_idx == -1)
+    if (!found)
         throw std::logic_error(
             std::string("The agent ") +
             std::to_string(id) +
@@ -408,8 +396,8 @@ inline void Agent<TSeq>::rm_entity(
         state_new,
         queue, 
         default_rm_entity<TSeq>,
-        entities_locations[entity_idx],
-        entity_idx
+        -1,
+        -1
     );
 }
 
@@ -677,8 +665,6 @@ inline void Agent<TSeq>::reset()
     n_tools = 0u;
 
     this->entities.clear();
-    this->entities_locations.clear();
-    this->n_entities = 0u;
 
     this->state = 0u;
     this->state_prev = 0u;
@@ -752,7 +738,7 @@ inline bool Agent<TSeq>::has_entity(epiworld_fast_uint t) const
 {
 
     for (auto & entity : entities)
-        if (entity == t)
+        if (entity.get_id() == t)
             return true;
 
     return false;
@@ -764,7 +750,7 @@ inline bool Agent<TSeq>::has_entity(std::string name) const
 {
 
     for (auto & entity : entities)
-        if (model->get_entity(entity).get_name() == name)
+        if (entity.get_name() == name)
             return true;
 
     return false;
@@ -867,45 +853,45 @@ inline double Agent<TSeq>::operator[](size_t j) const
 }
 
 template<typename TSeq>
-inline Entities<TSeq> Agent<TSeq>::get_entities()
+inline std::vector< std::reference_wrapper<Entity<TSeq>> > Agent<TSeq>::get_entities()
 {
-    return Entities<TSeq>(*this);
+    return entities;
 }
 
 template<typename TSeq>
-inline const Entities_const<TSeq> Agent<TSeq>::get_entities() const
+inline const std::vector< std::reference_wrapper<Entity<TSeq>> > Agent<TSeq>::get_entities() const
 {
-    return Entities_const<TSeq>(*this);
+    return entities;
 }
 
 template<typename TSeq>
 inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i) const
 {
-    if (n_entities == 0)
+    if (entities.size() == 0)
         throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
 
-    if (i >= n_entities)
+    if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->get_entity(entities[i]);
+    return entities[i];
 }
 
 template<typename TSeq>
 inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i)
 {
-    if (n_entities == 0)
+    if (entities.size() == 0)
         throw std::range_error("Agent id " + std::to_string(id) + " has no entities.");
 
-    if (i >= n_entities)
+    if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model->get_entity(entities[i]);
+    return entities[i];
 }
 
 template<typename TSeq>
 inline size_t Agent<TSeq>::get_n_entities() const
 {
-    return n_entities;
+    return entities.size();
 }
 
 template<typename TSeq>
@@ -927,15 +913,15 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
     }
     
     EPI_DEBUG_FAIL_AT_TRUE(
-        n_entities != other.n_entities,
+        entities.size() != other.entities.size(),
         "Agent:: n_entities don't match"
         )
     
     
-    for (size_t i = 0u; i < n_entities; ++i)
+    for (size_t i = 0u; i < entities.size(); ++i)
     {
         EPI_DEBUG_FAIL_AT_TRUE(
-            entities[i] != other.entities[i],
+            entities[i].get() != other.entities[i].get(),
             "Agent:: entities[i] don't match"
         )
     }
