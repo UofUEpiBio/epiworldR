@@ -226,14 +226,14 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
 
         if (p->get_n_entities() > e->size()) // Slower search through the agent
         {
-            for (const Agent<TSeq> & agent: e->get_agents())
-                if(agent.get_id() == p->get_id())
+            for (size_t agent_id : e->get_agents())
+                if(static_cast<int>(agent_id) == p->get_id())
                     throw std::logic_error("An entity cannot be reassigned to an agent.");
         }
         else                                 // Slower search through the entity
         {
-            for (const Entity<TSeq> & entity: p->get_entities())
-                if(entity.get_id() == e->get_id())
+            for (size_t entity_id : p->get_entities())
+                if(static_cast<int>(entity_id) == e->get_id())
                     throw std::logic_error("An entity cannot be reassigned to an agent.");
         }
 
@@ -241,38 +241,34 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
     }
 
     // Adding the to agent and the entity
-    p->entities.push_back(std::ref(*e));
-    e->agents.push_back(std::ref(*p));
-    
+    p->entities.push_back(static_cast<size_t>(e->get_id()));
+    e->agents.push_back(static_cast<size_t>(p->get_id()));
+
 }
 
 template<typename TSeq>
 inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> *)
 {
-    
-    Agent<TSeq> &  p = *a.agent;    
+
+    Agent<TSeq> &  p = *a.agent;
     Entity<TSeq> & e = *a.entity;
-    
+
     // Remove entity from agent's entity list
     p.entities.erase(
-        std::remove_if(
+        std::remove(
             p.entities.begin(),
             p.entities.end(),
-            [&e](const std::reference_wrapper<Entity<TSeq>> & entity_ref) {
-                return entity_ref.get().get_id() == e.get_id();
-            }
+            static_cast<size_t>(e.get_id())
         ),
         p.entities.end()
     );
 
     // Remove agent from entity's agent list
     e.agents.erase(
-        std::remove_if(
+        std::remove(
             e.agents.begin(),
             e.agents.end(),
-            [&p](const std::reference_wrapper<Agent<TSeq>> & agent_ref) {
-                return agent_ref.get().get_id() == p.get_id();
-            }
+            static_cast<size_t>(p.get_id())
         ),
         e.agents.end()
     );

@@ -118,7 +118,7 @@ public:
 
     void reset();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -335,25 +335,10 @@ inline void ModelSEIRMixing<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSEIRMixing<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSEIRMixing<TSeq>::clone_ptr()
 {
 
-    ModelSEIRMixing<TSeq> * ptr = new ModelSEIRMixing<TSeq>(
-        *dynamic_cast<const ModelSEIRMixing<TSeq>*>(this)
-        );
-
-    #if defined(__clang__)
-        // Clang
-        __builtin_assume(ptr != nullptr);
-    #elif defined(__GNUC__) && __GNUC__ >= 13
-        // GCC 13 or later
-        [[assume(ptr != nullptr)]];
-    #else
-        // C++17 or C++20
-        assert(ptr != nullptr); // Use assert for runtime checks
-    #endif
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSEIRMixing<TSeq>>(*this);
 
 }
 
@@ -424,9 +409,9 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
                 /* And it is a function of susceptibility_reduction as well */
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) *
+                    (1.0 - p->get_susceptibility_reduction(v)) *
                     v->get_prob_infecting(m) *
-                    (1.0 - neighbor.get_transmission_reduction(v, m))
+                    (1.0 - neighbor.get_transmission_reduction(v))
                     ;
 
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -441,7 +426,6 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
             p->set_virus(
                 *m->array_virus_tmp[which],
-                m,
                 ModelSEIRMixing<TSeq>::EXPOSED
                 );
 
@@ -465,7 +449,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
                 if (m->runif() < 1.0/(v->get_incubation(m)))
                 {
 
-                    p->change_state(m, ModelSEIRMixing<TSeq>::INFECTED);
+                    p->change_state(ModelSEIRMixing<TSeq>::INFECTED);
                     return;
 
                 }
@@ -481,7 +465,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
                 // Recover
                 m->array_double_tmp[n_events++] =
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m));
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v));
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -505,7 +489,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
                     return;
 
                 // Which roulette happen?
-                p->rm_virus(m);
+                p->rm_virus();
 
                 return ;
 

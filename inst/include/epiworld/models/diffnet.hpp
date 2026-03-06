@@ -100,8 +100,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     
                 /* And it is a function of susceptibility_reduction as well */ 
                 double p_i =
-                    (1.0 - agent.get_susceptibility_reduction(v, m)) * 
-                    (1.0 - agent.get_transmission_reduction(v, m)) 
+                    (1.0 - agent.get_susceptibility_reduction(v)) *
+                    (1.0 - agent.get_transmission_reduction(v)) 
                     ; 
             
                 size_t vid = v->get_id();
@@ -146,7 +146,6 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         // Otherwise, it is adopted from any of the neighbors
         agent.set_virus(
             *innovations.at(which),
-            m,
             ModelDiffNet::ADOPTER
         );
 

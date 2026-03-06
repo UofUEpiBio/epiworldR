@@ -347,7 +347,7 @@ inline void LFMCMC<TData>::run(
 template<typename TData>
 inline epiworld_double LFMCMC<TData>::runif()
 {
-    return runifd->operator()(*m_engine);
+    return runif_epi(*m_engine);
 }
 
 template<typename TData>
@@ -356,7 +356,7 @@ inline epiworld_double LFMCMC<TData>::runif(
     epiworld_double ub
 )
 {
-    return runifd->operator()(*m_engine) * (ub - lb) + lb;
+    return runif_epi(*m_engine) * (ub - lb) + lb;
 }
 
 template<typename TData>
@@ -407,7 +407,7 @@ inline void LFMCMC<TData>::seed(epiworld_fast_uint s) {
 }
 
 template<typename TData>
-inline void LFMCMC<TData>::set_rand_engine(std::shared_ptr< std::mt19937 > & eng)
+inline void LFMCMC<TData>::set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng)
 {
     m_engine = eng;
 }
@@ -419,7 +419,7 @@ inline void LFMCMC<TData>::set_rand_gamma(epiworld_double alpha, epiworld_double
 }
 
 template<typename TData>
-inline std::shared_ptr< std::mt19937 > & LFMCMC<TData>::get_rand_endgine()
+inline std::shared_ptr< epi_xoshiro256ss > & LFMCMC<TData>::get_rand_endgine()
 {
     return m_engine;
 }

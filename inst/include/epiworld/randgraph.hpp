@@ -193,6 +193,9 @@ inline void rewire_degseq(
     epiworld_double nedges = 0.0;
     auto & dat = agents->get_dat();
 
+    if (dat.size() > nties.size())
+        throw std::logic_error("Inconsistent adjacency list data.");
+
     for (size_t i = 0u; i < dat.size(); ++i)
         nties[i] += dat[i].size();
 

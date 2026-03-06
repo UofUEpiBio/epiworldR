@@ -53,7 +53,7 @@ public:
 
     void reset();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -129,14 +129,10 @@ inline void ModelSEIRCONN<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSEIRCONN<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSEIRCONN<TSeq>::clone_ptr()
 {
     
-    ModelSEIRCONN<TSeq> * ptr = new ModelSEIRCONN<TSeq>(
-        *dynamic_cast<const ModelSEIRCONN<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSEIRCONN<TSeq>>(*this);
 
 }
 
@@ -213,10 +209,10 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor.get_transmission_reduction(v, m)) 
-                    ; 
+                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    v->get_prob_infecting(m) *
+                    (1.0 - neighbor.get_transmission_reduction(v))
+                    ;
             
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
 
@@ -234,7 +230,6 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
             p->set_virus(
                 *m->array_virus_tmp[which],
-                m,
                 ModelSEIRCONN<TSeq>::EXPOSED
                 );
 
@@ -258,7 +253,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                 if (m->runif() < 1.0/(v->get_incubation(m)))
                 {
 
-                    p->change_state(m, ModelSEIRCONN<TSeq>::INFECTED);
+                    p->change_state(ModelSEIRCONN<TSeq>::INFECTED);
                     return;
 
                 }
@@ -274,7 +269,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
                 // Recover
                 m->array_double_tmp[n_events++] = 
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v));
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -298,7 +293,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                     return;
 
                 // Which roulette happen?
-                p->rm_virus(m);
+                p->rm_virus();
 
                 return ;
 

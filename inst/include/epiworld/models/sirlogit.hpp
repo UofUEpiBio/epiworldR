@@ -88,7 +88,7 @@ public:
         int seed = -1
     );
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     void reset();
     
@@ -114,14 +114,10 @@ inline ModelSIRLogit<TSeq> & ModelSIRLogit<TSeq>::run(
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSIRLogit<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSIRLogit<TSeq>::clone_ptr()
 {
     
-    ModelSIRLogit<TSeq> * ptr = new ModelSIRLogit<TSeq>(
-        *dynamic_cast<const ModelSIRLogit<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSIRLogit<TSeq>>(*this);
 
 }
 
@@ -235,9 +231,9 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
                     baseline +
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor->get_transmission_reduction(v, m))  *
+                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    v->get_prob_infecting(m) *
+                    (1.0 - neighbor->get_transmission_reduction(v))  *
                     coef_exposure
                     ; 
 
@@ -259,7 +255,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             if (which < 0)
                 return;
 
-            p->set_virus(*m->array_virus_tmp[which], m);
+            p->set_virus(*m->array_virus_tmp[which]);
 
             return;
 
@@ -285,7 +281,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             prob = 1.0/(1.0 + std::exp(-prob));
 
             if (prob > m->runif())
-                p->rm_virus(m);
+                p->rm_virus();
             
             return;
 

@@ -294,7 +294,7 @@ public:
      * @brief Create a clone of this model
      * @return Pointer to a new model instance with the same configuration
      */
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -589,9 +589,9 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
             
         /* And it is a function of susceptibility_reduction as well */ 
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m)) * 
-            v->get_prob_infecting(m) * 
-            (1.0 - neighbor.get_transmission_reduction(v, m)) 
+            (1.0 - p->get_susceptibility_reduction(v)) *
+            v->get_prob_infecting(m) *
+            (1.0 - neighbor.get_transmission_reduction(v)) 
             ; 
     
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -604,7 +604,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
     if (which < 0)
         return;
 
-    p->set_virus(*m->array_virus_tmp[which], m, EXPOSED);
+    p->set_virus(*m->array_virus_tmp[which], EXPOSED);
 
     return;
 
@@ -621,7 +621,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_exposed(
     // Does the agent become prodromal (infectious)?
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
-        p->change_state(m, PRODROMAL);
+        p->change_state(PRODROMAL);
     }
 
 }
@@ -641,7 +641,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_prodromal(
             (m->runif() < m->par("Detection rate quarantine"));
 
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, detect_it ? ISOLATED : RASH);
+        p->change_state(detect_it ? ISOLATED : RASH);
 
         if (detect_it)
             model->m_add_contact_tracing(p->get_id());
@@ -677,22 +677,22 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_rash(
         
     SAMPLE_FROM_PROBS(2, which);
     
-    if (which == 2) // Recovers
+    if (which == 0) // Recovers (probability 1/rash_period)
     {
-        p->rm_virus(m, detected ? ISOLATED_RECOVERED: RECOVERED);
+        p->rm_virus(detected ? ISOLATED_RECOVERED: RECOVERED);
     }
     else if (which == 1) // Hospitalized
     {
         m->record_hospitalization(*p);
-        p->change_state(m, detected ? DETECTED_HOSPITALIZED : HOSPITALIZED);
+        p->change_state(detected ? DETECTED_HOSPITALIZED : HOSPITALIZED);
     }
-    else if ((which == 0) && detected)
-    {
-        p->change_state(m, ISOLATED);
-    }
-    else if (which != 0)
+    else if (which > 2)
     {
         throw std::logic_error("The roulette returned an unexpected value.");
+    }
+    else if (detected)
+    {
+        p->change_state(ISOLATED);
     }
     
     return ;
@@ -722,21 +722,21 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated(
     // Sampling from the probabilities
     SAMPLE_FROM_PROBS(2, which);
 
-    // Recovers
-    if (which == 2u)
+    // Recovers (which == 0 fires with probability 1/rash_period)
+    if (which == 0u)
     {
-        p->rm_virus(m, unisolate ? RECOVERED : ISOLATED_RECOVERED);
+        p->rm_virus(unisolate ? RECOVERED : ISOLATED_RECOVERED);
     }
     // Moves to hospitalized
     else if (which == 1u)
     {
         m->record_hospitalization(*p);
-        p->change_state(m, DETECTED_HOSPITALIZED);
+        p->change_state(DETECTED_HOSPITALIZED);
     }
     // Stays in rash, may or may not be released from isolation
-    else if ((which == 0u) && unisolate)
+    else if (unisolate)
     {
-        p->change_state(m, RASH);
+        p->change_state(RASH);
     }
 
 
@@ -755,7 +755,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated_recovered(
     int days_since = m->today() - model->day_rash_onset[p->get_id()];
 
     if (m->par("Isolation period") <= days_since)
-        p->change_state(m, RECOVERED);
+        p->change_state(RECOVERED);
 
 }
 
@@ -774,7 +774,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_suscep(
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (quarantine_period <= days_since)
-        p->change_state(m, SUSCEPTIBLE);
+        p->change_state(SUSCEPTIBLE);
 
 }
 
@@ -798,7 +798,6 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_exposed(
 
         // If the agent is unquarantined, it becomes prodromal
         p->change_state(
-            m,
             (quarantine_period <= days_since) ?
             PRODROMAL : QUARANTINED_PRODROMAL
         );
@@ -807,7 +806,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_exposed(
     }
     else if (quarantine_period <= days_since)
     {
-        p->change_state(m, EXPOSED);
+        p->change_state(EXPOSED);
     }
 
 }
@@ -834,12 +833,12 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_prodroma
         model->m_add_contact_tracing(p->get_id());
         
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, ISOLATED);
+        p->change_state(ISOLATED);
         
     }
     else if (quarantine_period <= days_since)
     {
-        p->change_state(m, PRODROMAL);
+        p->change_state(PRODROMAL);
 
     }
 
@@ -860,7 +859,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_recovere
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (quarantine_period <= days_since)
-        p->change_state(m, RECOVERED);
+        p->change_state(RECOVERED);
 
 }
 
@@ -872,7 +871,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_hospitalized(
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_virus(m, RECOVERED);
+        p->rm_virus(RECOVERED);
 
 };
 
@@ -940,10 +939,11 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         // check that later
         if (agent_i.get_n_entities() != 0u)
         {
-            for (const Agent<TSeq> & agent_j: agent_i.get_entity(0))
+            for (size_t agent_j_idx: agent_i.get_entity(0))
             {
 
                 #ifdef EPI_DEBUG
+                auto & agent_j = Model<TSeq>::get_agent(agent_j_idx);
                 if (
                     agent_j.get_entity(0u).get_id() !=
                     agent_i.get_entity(0u).get_id()
@@ -955,10 +955,9 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
 
 
                 // Only if not already checked we set to high risk
-                size_t agent_j_idx = agent_j.get_id();
                 if (can_quarantine[agent_j_idx])
                     quarantine_risk_level[agent_j_idx] = RISK_HIGH;
-                
+
 
             }
         }
@@ -1030,15 +1029,15 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
 
         auto state = agent.get_state();
         if (state == SUSCEPTIBLE)
-            agent.change_state(this, QUARANTINED_SUSCEPTIBLE);
+            agent.change_state(QUARANTINED_SUSCEPTIBLE);
         else if (state == EXPOSED)
-            agent.change_state(this, QUARANTINED_EXPOSED);
+            agent.change_state(QUARANTINED_EXPOSED);
         else if (state == PRODROMAL)
-            agent.change_state(this, QUARANTINED_PRODROMAL);
+            agent.change_state(QUARANTINED_PRODROMAL);
         else if (state == RASH)
         {
             if (isolation_willingness[agent.get_id()])
-                agent.change_state(this, ISOLATED);
+                agent.change_state(ISOLATED);
         }
         else
             throw std::logic_error(
@@ -1432,14 +1431,10 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelMeaslesMixingRiskQuarantine<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelMeaslesMixingRiskQuarantine<TSeq>::clone_ptr()
 {
     
-    ModelMeaslesMixingRiskQuarantine<TSeq> * ptr = new ModelMeaslesMixingRiskQuarantine<TSeq>(
-        *dynamic_cast<const ModelMeaslesMixingRiskQuarantine<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelMeaslesMixingRiskQuarantine<TSeq>>(*this);
 
 }
 

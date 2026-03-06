@@ -52,7 +52,7 @@ public:
     
     void reset();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -135,14 +135,10 @@ inline void ModelSIRCONN<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSIRCONN<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSIRCONN<TSeq>::clone_ptr()
 {
     
-    ModelSIRCONN<TSeq> * ptr = new ModelSIRCONN<TSeq>(
-        *dynamic_cast<const ModelSIRCONN<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSIRCONN<TSeq>>(*this);
 
 }
 
@@ -220,10 +216,10 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor.get_transmission_reduction(v, m)) 
-                    ; 
+                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    v->get_prob_infecting(m) *
+                    (1.0 - neighbor.get_transmission_reduction(v))
+                    ;
             
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
                  
@@ -239,7 +235,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             if (which < 0)
                 return;
 
-            p->set_virus(*m->array_virus_tmp[which], m);
+            p->set_virus(*m->array_virus_tmp[which]);
 
             return; 
 
@@ -261,7 +257,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                 // Recover
                 m->array_double_tmp[n_events++] = 
                     1.0 - (1.0 - p->get_virus()->get_prob_recovery(m)) *
-                        (1.0 - p->get_recovery_enhancer(p->get_virus(), m)); 
+                        (1.0 - p->get_recovery_enhancer(p->get_virus()));
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -285,7 +281,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                     return;
 
                 // Which roulette happen?
-                p->rm_virus(m);
+                p->rm_virus();
 
                 return ;
 

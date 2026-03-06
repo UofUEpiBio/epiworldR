@@ -1,0 +1,17 @@
+{
+	"name": "epiworldR (R-devel-san)",
+	"build": {
+		"dockerfile": "Containerfile"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"reditorsupport.r",
+				"rdebugger.r-debugger",
+				"quarto.quarto",
+				"tianyishi.rmarkdown"
+			]
+		}
+	},
+	"remoteUser": "root"
+}

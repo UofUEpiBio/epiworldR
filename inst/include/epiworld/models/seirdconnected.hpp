@@ -55,7 +55,7 @@ public:
 
     void reset();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set up the initial states of the model.
@@ -124,21 +124,17 @@ inline void ModelSEIRDCONN<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSEIRDCONN<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSEIRDCONN<TSeq>::clone_ptr()
 {
     
-    ModelSEIRDCONN<TSeq> * ptr = new ModelSEIRDCONN<TSeq>(
-        *dynamic_cast<const ModelSEIRDCONN<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSEIRDCONN<TSeq>>(*this);
 
 }
 
 /**
- * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
+ * @brief Template for a Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) model
  * 
- * @param model A Model<TSeq> object where to set up the SIR.
+ * @param model A Model<TSeq> object where to set up the SEIRD.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
  * @param contact_rate Average number of contacts (interactions) per step.
@@ -213,10 +209,10 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) * 
-                    v->get_prob_infecting(m) * 
-                    (1.0 - neighbor.get_transmission_reduction(v, m)) 
-                    ; 
+                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    v->get_prob_infecting(m) *
+                    (1.0 - neighbor.get_transmission_reduction(v))
+                    ;
             
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
             }
@@ -233,7 +229,6 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
             p->set_virus(
                 *m->array_virus_tmp[which],
-                m,
                 ModelSEIRDCONN<TSeq>::EXPOSED
                 );
 
@@ -257,7 +252,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if (m->runif() < 1.0/(v->get_incubation(m)))
                 {
 
-                    p->change_state(m, ModelSEIRDCONN<TSeq>::INFECTED);
+                    p->change_state(ModelSEIRDCONN<TSeq>::INFECTED);
                     return;
 
                 }
@@ -272,11 +267,11 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 
                 // Die
                 m->array_double_tmp[n_events++] = 
-                    v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, m)); 
+                    v->get_prob_death(m) * (1.0 - p->get_death_reduction(v));
                 
                 // Recover
                 m->array_double_tmp[n_events++] = 
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m)); 
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v));
                                 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -303,11 +298,11 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if ((which % 2) == 0) // If odd
                 {
                 
-                    p->rm_agent_by_virus(m);
+                    p->rm_agent_by_virus();
                 
                 } else {
                 
-                    p->rm_virus(m);
+                    p->rm_virus();
                 
                 }
 

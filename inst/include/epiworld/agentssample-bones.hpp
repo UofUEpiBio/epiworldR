@@ -360,7 +360,7 @@ inline void AgentsSample<TSeq>::sample_n(size_t n)
             // Iterating through the agents in the entity
             for (size_t a_i = 0u; a_i < entity->size(); ++a_i)
             {
-                size_t s = entity->agents[a_i].get().get_state();
+                size_t s = model->population[entity->agents[a_i]].get_state();
                 if (std::find(states.begin(), states.end(), s) != states.end())
                     agents_left->push_back(a_i);
 
@@ -454,7 +454,7 @@ inline void AgentsSample<TSeq>::sample_n(size_t n)
             );
 
             size_t ith  = agents_left->operator[](ith_);
-            agents->operator[](i) = &(entity->agents[ith].get());
+            agents->operator[](i) = &model->population[entity->agents[ith]];
 
             #ifdef EPI_DEBUG
             if (__sampled[ith])

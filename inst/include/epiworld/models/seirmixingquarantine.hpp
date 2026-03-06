@@ -244,7 +244,7 @@ public:
      * @brief Create a clone of this model
      * @return Pointer to a new model instance with the same configuration
      */
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -619,25 +619,10 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSEIRMixingQuarantine<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSEIRMixingQuarantine<TSeq>::clone_ptr()
 {
 
-    ModelSEIRMixingQuarantine<TSeq> * ptr = new ModelSEIRMixingQuarantine<TSeq>(
-        *dynamic_cast<const ModelSEIRMixingQuarantine<TSeq>*>(this)
-        );
-
-    #if defined(__clang__)
-        // Clang
-        __builtin_assume(ptr != nullptr);
-    #elif defined(__GNUC__) && __GNUC__ >= 13
-        // GCC 13 or later
-        [[assume(ptr != nullptr)]];
-    #else
-        // C++17 or C++20
-        assert(ptr != nullptr); // Use assert for runtime checks
-    #endif
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSEIRMixingQuarantine<TSeq>>(*this);
 
 }
 
@@ -683,9 +668,9 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_susceptible(
 
         /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m)) *
+            (1.0 - p->get_susceptibility_reduction(v)) *
             v->get_prob_infecting(m) *
-            (1.0 - neighbor.get_transmission_reduction(v, m))
+            (1.0 - neighbor.get_transmission_reduction(v))
             ;
 
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -700,7 +685,6 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_susceptible(
 
     p->set_virus(
         *m->array_virus_tmp[which],
-        m,
         ModelSEIRMixingQuarantine<TSeq>::EXPOSED
         );
 
@@ -720,12 +704,10 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_exposed(
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
 
-        p->change_state(m, ModelSEIRMixingQuarantine<TSeq>::INFECTED);
+        p->change_state(ModelSEIRMixingQuarantine<TSeq>::INFECTED);
 
         GET_MODEL(m, model);
         model->day_onset[p->get_id()] = m->today();
-
-        return;
 
     }
 
@@ -765,7 +747,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
     // Computing probabilities for state change
     const auto & v = p->get_virus();
     m->array_double_tmp[0] = 1.0 - (1.0 - v->get_prob_recovery(m)) *
-        (1.0 - p->get_recovery_enhancer(v, m));
+        (1.0 - p->get_recovery_enhancer(v));
     m->array_double_tmp[1] = m->par("Hospitalization rate");
 
     SAMPLE_FROM_PROBS(2, which);
@@ -775,13 +757,13 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
         if (isolation_detected)
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
+                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
             );
         }
         else
         {
             p->rm_virus(
-                m, ModelSEIRMixingQuarantine<TSeq>::RECOVERED
+                ModelSEIRMixingQuarantine<TSeq>::RECOVERED
             );
         }
 
@@ -793,13 +775,13 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
         if (detected)
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::DETECTED_HOSPITALIZED
+                ModelSEIRMixingQuarantine<TSeq>::DETECTED_HOSPITALIZED
             );
         }
         else
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
+                ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
             );
         }
 
@@ -808,7 +790,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
     {
         // If the agent is detected, it goes to isolation
         p->change_state(
-            m, ModelSEIRMixingQuarantine<TSeq>::ISOLATED
+            ModelSEIRMixingQuarantine<TSeq>::ISOLATED
         );
 
     }
@@ -835,7 +817,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_isolated(
     // Sampling from the probabilities of recovery
     m->array_double_tmp[0] = 1.0 -
         (1.0 - p->get_virus()->get_prob_recovery(m)) *
-        (1.0 - p->get_recovery_enhancer(p->get_virus(), m));
+        (1.0 - p->get_recovery_enhancer(p->get_virus()));
 
     // And hospitalization
     m->array_double_tmp[1] = m->par("Hospitalization rate");
@@ -848,13 +830,12 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_isolated(
         if (unisolate)
         {
             p->rm_virus(
-                m,
                 ModelSEIRMixingQuarantine<TSeq>::RECOVERED
             );
         }
         else
             p->rm_virus(
-                m, ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
+                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
             );
     }
     else if (which == 1)
@@ -863,20 +844,20 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_isolated(
         if (unisolate)
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
+                ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
             );
         }
         else
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::DETECTED_HOSPITALIZED
+                ModelSEIRMixingQuarantine<TSeq>::DETECTED_HOSPITALIZED
             );
         }
     }
     else if ((which == 2) && unisolate)
     {
         p->change_state(
-            m, ModelSEIRMixingQuarantine<TSeq>::INFECTED
+            ModelSEIRMixingQuarantine<TSeq>::INFECTED
         );
     }
 
@@ -901,7 +882,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_quarantine_suscep(
     if (unquarantine)
     {
         p->change_state(
-            m, ModelSEIRMixingQuarantine<TSeq>::SUSCEPTIBLE
+            ModelSEIRMixingQuarantine<TSeq>::SUSCEPTIBLE
         );
     }
 
@@ -932,13 +913,13 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_quarantine_exposed(
         if (unquarantine)
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::INFECTED
+                ModelSEIRMixingQuarantine<TSeq>::INFECTED
             );
         }
         else
         {
             p->change_state(
-                m, ModelSEIRMixingQuarantine<TSeq>::ISOLATED
+                ModelSEIRMixingQuarantine<TSeq>::ISOLATED
             );
         }
 
@@ -946,7 +927,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_quarantine_exposed(
     else if (unquarantine)
     {
         p->change_state(
-            m, ModelSEIRMixingQuarantine<TSeq>::EXPOSED
+            ModelSEIRMixingQuarantine<TSeq>::EXPOSED
         );
     }
 
@@ -970,7 +951,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_isolated_recovered(
     if (unisolate)
     {
         p->change_state(
-            m, ModelSEIRMixingQuarantine<TSeq>::RECOVERED
+            ModelSEIRMixingQuarantine<TSeq>::RECOVERED
         );
     }
 
@@ -983,7 +964,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_hospitalized(
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_virus(m, ModelSEIRMixingQuarantine<TSeq>::RECOVERED);
+        p->rm_virus(ModelSEIRMixingQuarantine<TSeq>::RECOVERED);
 
 };
 
@@ -1039,17 +1020,17 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_quarantine_process() {
                 switch (agent.get_state())
                 {
                     case SUSCEPTIBLE:
-                        agent.change_state(this, QUARANTINED_SUSCEPTIBLE);
+                        agent.change_state(QUARANTINED_SUSCEPTIBLE);
                         day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case EXPOSED:
-                        agent.change_state(this, QUARANTINED_EXPOSED);
+                        agent.change_state(QUARANTINED_EXPOSED);
                         day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case INFECTED:
                         if (isolation_willingness[contact_id])
                         {
-                            agent.change_state(this, ISOLATED);
+                            agent.change_state(ISOLATED);
                             day_flagged[contact_id] = Model<TSeq>::today();
                         }
                         break;

@@ -1,0 +1,29 @@
+FROM rocker/r-devel-san
+
+# Install system dependencies
+RUN apt-get update && apt-get install --no-install-recommends -y \
+  libglpk-dev \
+  libcurl4-openssl-dev \
+  libssl-dev \
+  libxml2-dev \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN install2.r --error devtools decor tinytest quarto rmarkdown
+
+# Installing quarto and rmarkdown, which are needed
+RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.8.27/quarto-1.8.27-linux-amd64.deb && \
+  dpkg -i quarto-1.8.27-linux-amd64.deb && \
+  rm quarto-1.8.27-linux-amd64.deb
+
+# Pandoc is supposed to come with quarto, but for now, I need to do this
+# manually
+RUN wget https://github.com/jgm/pandoc/releases/download/3.9/pandoc-3.9-1-amd64.deb && \
+  dpkg -i pandoc-3.9-1-amd64.deb && \
+  rm pandoc-3.9-1-amd64.deb
+
+# Install package dependencies from DESCRIPTION
+# LinkingTo: cpp11
+# Suggests: knitr, rmarkdown, tinytest, netplot, igraph, data.table, DiagrammeR
+RUN Rscript -e 'install.packages(c("cpp11", "knitr", "rmarkdown", "tinytest", "netplot", "igraph", "data.table", "DiagrammeR"), repos = "https://cloud.r-project.org")'
+
+CMD ["bash"]
