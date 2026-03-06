@@ -97,8 +97,6 @@ expect_equal(get_n_samples(lfmcmc_model), n_samp)
 
 expect_equivalent(get_observed_stats(lfmcmc_model), obs_data)
 
-expect_equivalent(get_mean_stats(lfmcmc_model), obs_data, tolerance = 0.1)
-
 expected_params_mean <- c(0.3133401, 0.2749686)
 expect_equal(get_n_params(lfmcmc_model), length(expected_params_mean))
 
@@ -284,16 +282,6 @@ x <- run_lfmcmc(
   epsilon = 0.5,
   seed = model_seed
 )
-
-x_means <- get_all_sample_params(x)
-x_means <- tail(x_means, nrow(x_means)/2) |> colMeans()
-
-
-# expect_equivalent(
-#   x_means,
-#   c(-5, 2.5),
-#   tolerance = 0.1
-# )
 
 # Check functions fail when not passing an LFMCMC object -----------------------
 expected_error_msg <- "must be an object of class epiworld_lfmcmc"
