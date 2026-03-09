@@ -18,19 +18,19 @@
 template<typename TSeq>
 inline Model<TSeq> & Model<TSeq>::the() {
 
-    if (current_instance_ == nullptr)
+    if (current_instance_() == nullptr)
         throw std::logic_error(
             "Model::the() called outside of a simulation scope. "
             "This method can only be called during Model::run() "
             "or within a ModelScope."
         );
     
-    return *current_instance_;
+    return *current_instance_();
 }
 
 template<typename TSeq>
 inline Model<TSeq> * Model<TSeq>::the_ptr() {
-    return current_instance_;
+    return current_instance_();
 }
 
 /**

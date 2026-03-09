@@ -100,7 +100,18 @@ class Model {
     template<typename T>
     friend class ModelScope;
 
-    inline static thread_local Model<TSeq> * current_instance_ = nullptr;
+    // NOTE: Intentionally a private static function rather than an
+    // `inline static thread_local` data member.  Clang has a known bug where
+    // `inline static thread_local` members of class templates produce a
+    // separate TLS variable per translation unit, causing Model::the() to
+    // return nullptr even when a ModelScope is active.  A function-local
+    // `thread_local` static is guaranteed by the C++ standard to have exactly
+    // one instance per thread regardless of how many TUs instantiate the
+    // template.
+    static Model<TSeq> *& current_instance_() {
+        thread_local Model<TSeq> * ptr = nullptr;
+        return ptr;
+    }
 
 protected:
 
@@ -846,13 +857,13 @@ template<typename TSeq>
 class ModelScope {
 public:
     explicit ModelScope(Model<TSeq> * m)
-        : prev_(Model<TSeq>::current_instance_)
+        : prev_(Model<TSeq>::current_instance_())
     {
-        Model<TSeq>::current_instance_ = m;
+        Model<TSeq>::current_instance_() = m;
     }
 
     ~ModelScope() {
-        Model<TSeq>::current_instance_ = prev_;
+        Model<TSeq>::current_instance_() = prev_;
     }
 
     ModelScope(const ModelScope &) = delete;
