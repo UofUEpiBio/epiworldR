@@ -176,6 +176,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
             // Drawing from the set
             int nviruses_tmp = 0;
+            auto & m_ref = *m;
             for (int i = 0; i < ndraw; ++i)
             {
                 // Now selecting who is transmitting the disease
@@ -209,9 +210,9 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
                     v->get_prob_infecting(m) *
-                    (1.0 - neighbor.get_transmission_reduction(v))
+                    (1.0 - neighbor.get_transmission_reduction(v, m_ref))
                     ;
             
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -227,7 +228,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
             if (which < 0)
                 return;
 
-            p->set_virus(
+            p->set_virus(*m, 
                 *m->array_virus_tmp[which],
                 ModelSEIRDCONN<TSeq>::EXPOSED
                 );
@@ -252,7 +253,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if (m->runif() < 1.0/(v->get_incubation(m)))
                 {
 
-                    p->change_state(ModelSEIRDCONN<TSeq>::INFECTED);
+                    p->change_state(*m, ModelSEIRDCONN<TSeq>::INFECTED);
                     return;
 
                 }
@@ -267,11 +268,11 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 
                 // Die
                 m->array_double_tmp[n_events++] = 
-                    v->get_prob_death(m) * (1.0 - p->get_death_reduction(v));
+                    v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, *m));
                 
                 // Recover
                 m->array_double_tmp[n_events++] = 
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v));
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, *m));
                                 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -298,11 +299,11 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if ((which % 2) == 0) // If odd
                 {
                 
-                    p->rm_agent_by_virus();
+                    p->rm_agent_by_virus(*m);
                 
                 } else {
                 
-                    p->rm_virus();
+                    p->rm_virus(*m);
                 
                 }
 

@@ -54,7 +54,7 @@ public:
 
         // Does the agent become infected?
         if (m->runif() < 1.0/(v->get_incubation(m)))
-            p->change_state(ModelSEIR<TSeq>::INFECTED);
+            p->change_state(*m, ModelSEIR<TSeq>::INFECTED);
 
         return;
     };
@@ -66,7 +66,7 @@ public:
     ) -> void {
         // Does the agent recover?
         if (m->runif() < (m->par("Recovery rate")))
-            p->rm_virus();
+            p->rm_virus(*m);
 
         return;
     };

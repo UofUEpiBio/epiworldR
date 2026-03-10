@@ -3,25 +3,27 @@
 
 template<typename TSeq>
 inline void Entity<TSeq>::add_agent(
-    Agent<TSeq> & p
+    Agent<TSeq> & p,
+    Model<TSeq> & model
     )
 {
 
     // Need to add it to the events, through the individual
-    p.add_entity(*this);
+    p.add_entity(model, *this);
 
 }
 
 template<typename TSeq>
 inline void Entity<TSeq>::add_agent(
-    Agent<TSeq> * p
+    Agent<TSeq> * p,
+    Model<TSeq> & model
     )
 {
-    p->add_entity(*this);
+    p->add_entity(model, *this);
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::rm_agent(size_t idx)
+inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> & model)
 {
     if (idx >= size())
         throw std::out_of_range(
@@ -29,7 +31,7 @@ inline void Entity<TSeq>::rm_agent(size_t idx)
             " out of " + std::to_string(size())
             );
 
-    Model<TSeq>::the().population[agents[idx]].rm_entity(*this);
+    model.population[agents[idx]].rm_entity(model, *this);
 
     return;
 }

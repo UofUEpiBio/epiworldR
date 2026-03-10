@@ -143,7 +143,8 @@ inline ModelSURV<TSeq>::ModelSURV(
 
         // This computes the prob of getting any neighbor variant
         epiworld_fast_uint nviruses_tmp = 0u;
-        for (auto & neighbor: p->get_neighbors()) 
+        auto & m_ref = *m;
+        for (auto & neighbor: p->get_neighbors(*m)) 
         {
                     
             auto & v = neighbor->get_virus();
@@ -153,9 +154,9 @@ inline ModelSURV<TSeq>::ModelSURV(
                 
             /* And it is a function of susceptibility_reduction as well */ 
             epiworld_double tmp_transmission = 
-                (1.0 - p->get_susceptibility_reduction(v)) *
+                (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
                 v->get_prob_infecting(m) *
-                (1.0 - neighbor->get_transmission_reduction(v)) 
+                (1.0 - neighbor->get_transmission_reduction(v, m_ref)) 
                 ; 
         
             m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
@@ -172,7 +173,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         if (which < 0)
             return;
 
-        p->set_virus(*m->array_virus_tmp[which]);
+        p->set_virus(*m, *m->array_virus_tmp[which]);
         return;
 
     };
@@ -186,7 +187,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         ModelSURV<TSeq> * model_surv = dynamic_cast<ModelSURV<TSeq> *>(m);
 
         epiworld::VirusPtr<TSeq> & v = p->get_virus(); 
-        epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v));
+        epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, *m));
         
         epiworld_fast_uint days_since_exposed = m->today() - v->get_date();
         epiworld_fast_uint state = p->get_state();
@@ -213,7 +214,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         // If past days infected + latent, then bye.
         if (days_since_exposed >= dat[p->get_id() * 2u + 1u])
         {
-            p->rm_virus();
+            p->rm_virus(*m);
             return;
         }
 
@@ -223,9 +224,9 @@ inline ModelSURV<TSeq>::ModelSURV(
 
             // Will be symptomatic?
             if (EPI_RUNIF() < m->par("Prob of symptoms"))
-                p->change_state(ModelSURV<TSeq>::SYMPTOMATIC);
+                p->change_state(*m, ModelSURV<TSeq>::SYMPTOMATIC);
             else
-                p->change_state(ModelSURV<TSeq>::ASYMPTOMATIC);
+                p->change_state(*m, ModelSURV<TSeq>::ASYMPTOMATIC);
             
             return;
 
@@ -234,7 +235,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         // Otherwise, it can be removed
         if (EPI_RUNIF() < p_die)
         {
-            p->change_state(ModelSURV<TSeq>::REMOVED, -1);
+            p->change_state(*m, ModelSURV<TSeq>::REMOVED, -1);
             return;
         }
         
@@ -288,11 +289,11 @@ inline ModelSURV<TSeq>::ModelSURV(
                 if (p->get_state() == ModelSURV<TSeq>::ASYMPTOMATIC)
                 {
                     ndetected_asympt += 1.0;
-                    p->change_state(ModelSURV<TSeq>::ASYMPTOMATIC_ISOLATED);
+                    p->change_state(*m, ModelSURV<TSeq>::ASYMPTOMATIC_ISOLATED);
                 }
                 else 
                 {
-                    p->change_state(ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED);
+                    p->change_state(*m, ModelSURV<TSeq>::SYMPTOMATIC_ISOLATED);
                 }
 
             }

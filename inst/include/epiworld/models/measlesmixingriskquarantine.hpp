@@ -426,7 +426,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_infectious_list()
         {
             if (a.get_n_entities() > 0u)
             {
-                const auto & entity = a.get_entity(0u);
+                const auto & entity = a.get_entity(0u, *this);
                 infectious[
                     // Position of the group in the `infectious` vector
                     infectious_entity_indices[entity.get_id()] +
@@ -444,7 +444,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_infectious_list()
         )
         {
             adjusted_contact_rate[
-                a.get_entity(0u).get_id()
+                a.get_entity(0u, *this).get_id()
             ] += 1.0;
         }
 
@@ -477,7 +477,7 @@ inline size_t ModelMeaslesMixingRiskQuarantine<TSeq>::sample_infectious_agents(
     if (agent->get_n_entities() == 0u)
         return 0u;
 
-    size_t agent_group_id = agent->get_entity(0u).get_id();
+    size_t agent_group_id = agent->get_entity(0u, *this).get_id();
     size_t ngroups = this->entities.size();
 
     int samp_id = 0;
@@ -568,6 +568,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
     
     // Drawing from the set
     int nviruses_tmp = 0;
+    auto & m_ref = *m;
     for (size_t n = 0u; n < ndraws; ++n)
     {
 
@@ -589,9 +590,9 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
             
         /* And it is a function of susceptibility_reduction as well */ 
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v)) *
+            (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
             v->get_prob_infecting(m) *
-            (1.0 - neighbor.get_transmission_reduction(v)) 
+            (1.0 - neighbor.get_transmission_reduction(v, m_ref)) 
             ; 
     
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -604,7 +605,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
     if (which < 0)
         return;
 
-    p->set_virus(*m->array_virus_tmp[which], EXPOSED);
+    p->set_virus(*m, *m->array_virus_tmp[which], EXPOSED);
 
     return;
 
@@ -621,7 +622,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_exposed(
     // Does the agent become prodromal (infectious)?
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
-        p->change_state(PRODROMAL);
+        p->change_state(*m, PRODROMAL);
     }
 
 }
@@ -641,7 +642,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_prodromal(
             (m->runif() < m->par("Detection rate quarantine"));
 
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(detect_it ? ISOLATED : RASH);
+        p->change_state(*m, detect_it ? ISOLATED : RASH);
 
         if (detect_it)
             model->m_add_contact_tracing(p->get_id());
@@ -679,12 +680,12 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_rash(
     
     if (which == 0) // Recovers (probability 1/rash_period)
     {
-        p->rm_virus(detected ? ISOLATED_RECOVERED: RECOVERED);
+        p->rm_virus(*m, detected ? ISOLATED_RECOVERED: RECOVERED);
     }
     else if (which == 1) // Hospitalized
     {
         m->record_hospitalization(*p);
-        p->change_state(detected ? DETECTED_HOSPITALIZED : HOSPITALIZED);
+        p->change_state(*m, detected ? DETECTED_HOSPITALIZED : HOSPITALIZED);
     }
     else if (which > 2)
     {
@@ -692,7 +693,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_rash(
     }
     else if (detected)
     {
-        p->change_state(ISOLATED);
+        p->change_state(*m, ISOLATED);
     }
     
     return ;
@@ -725,18 +726,18 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated(
     // Recovers (which == 0 fires with probability 1/rash_period)
     if (which == 0u)
     {
-        p->rm_virus(unisolate ? RECOVERED : ISOLATED_RECOVERED);
+        p->rm_virus(*m, unisolate ? RECOVERED : ISOLATED_RECOVERED);
     }
     // Moves to hospitalized
     else if (which == 1u)
     {
         m->record_hospitalization(*p);
-        p->change_state(DETECTED_HOSPITALIZED);
+        p->change_state(*m, DETECTED_HOSPITALIZED);
     }
     // Stays in rash, may or may not be released from isolation
     else if (unisolate)
     {
-        p->change_state(RASH);
+        p->change_state(*m, RASH);
     }
 
 
@@ -755,7 +756,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated_recovered(
     int days_since = m->today() - model->day_rash_onset[p->get_id()];
 
     if (m->par("Isolation period") <= days_since)
-        p->change_state(RECOVERED);
+        p->change_state(*m, RECOVERED);
 
 }
 
@@ -774,7 +775,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_suscep(
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (quarantine_period <= days_since)
-        p->change_state(SUSCEPTIBLE);
+        p->change_state(*m, SUSCEPTIBLE);
 
 }
 
@@ -797,7 +798,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_exposed(
     {
 
         // If the agent is unquarantined, it becomes prodromal
-        p->change_state(
+        p->change_state(*m, 
             (quarantine_period <= days_since) ?
             PRODROMAL : QUARANTINED_PRODROMAL
         );
@@ -806,7 +807,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_exposed(
     }
     else if (quarantine_period <= days_since)
     {
-        p->change_state(EXPOSED);
+        p->change_state(*m, EXPOSED);
     }
 
 }
@@ -833,12 +834,12 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_prodroma
         model->m_add_contact_tracing(p->get_id());
         
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(ISOLATED);
+        p->change_state(*m, ISOLATED);
         
     }
     else if (quarantine_period <= days_since)
     {
-        p->change_state(PRODROMAL);
+        p->change_state(*m, PRODROMAL);
 
     }
 
@@ -859,7 +860,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_recovere
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (quarantine_period <= days_since)
-        p->change_state(RECOVERED);
+        p->change_state(*m, RECOVERED);
 
 }
 
@@ -871,7 +872,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_hospitalized(
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_virus(RECOVERED);
+        p->rm_virus(*m, RECOVERED);
 
 };
 
@@ -939,14 +940,14 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         // check that later
         if (agent_i.get_n_entities() != 0u)
         {
-            for (size_t agent_j_idx: agent_i.get_entity(0))
+            for (size_t agent_j_idx: agent_i.get_entity(0, *this))
             {
 
                 #ifdef EPI_DEBUG
                 auto & agent_j = Model<TSeq>::get_agent(agent_j_idx);
                 if (
-                    agent_j.get_entity(0u).get_id() !=
-                    agent_i.get_entity(0u).get_id()
+                    agent_j.get_entity(0u, *this).get_id() !=
+                    agent_i.get_entity(0u, *this).get_id()
                 )
                     throw std::logic_error(
                         "An agent in a group has a different group id."
@@ -1029,15 +1030,15 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
 
         auto state = agent.get_state();
         if (state == SUSCEPTIBLE)
-            agent.change_state(QUARANTINED_SUSCEPTIBLE);
+            agent.change_state(*this, QUARANTINED_SUSCEPTIBLE);
         else if (state == EXPOSED)
-            agent.change_state(QUARANTINED_EXPOSED);
+            agent.change_state(*this, QUARANTINED_EXPOSED);
         else if (state == PRODROMAL)
-            agent.change_state(QUARANTINED_PRODROMAL);
+            agent.change_state(*this, QUARANTINED_PRODROMAL);
         else if (state == RASH)
         {
             if (isolation_willingness[agent.get_id()])
-                agent.change_state(ISOLATED);
+                agent.change_state(*this, ISOLATED);
         }
         else
             throw std::logic_error(
@@ -1081,7 +1082,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         if (agent_i.get_n_entities() == 0u)
             continue;
 
-        groups_ids.insert(agent_i.get_entity(0u).get_id());
+        groups_ids.insert(agent_i.get_entity(0u, *this).get_id());
         
     }
 
@@ -1133,7 +1134,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         // contact tracing
         if (agent_i.get_n_entities() != 0u)
         {
-            size_t group_id = agent_i.get_entity(0u).get_id();
+            size_t group_id = agent_i.get_entity(0u, *m).get_id();
             if (groups_ids.find(group_id) != groups_ids.end())
                 continue;
         }

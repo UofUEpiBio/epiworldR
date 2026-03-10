@@ -97,22 +97,6 @@ class Model {
     friend class DataBase<TSeq>;
     friend class Queue<TSeq>;
 
-    template<typename T>
-    friend class ModelScope;
-
-    // NOTE: Intentionally a private static function rather than an
-    // `inline static thread_local` data member.  Clang has a known bug where
-    // `inline static thread_local` members of class templates produce a
-    // separate TLS variable per translation unit, causing Model::the() to
-    // return nullptr even when a ModelScope is active.  A function-local
-    // `thread_local` static is guaranteed by the C++ standard to have exactly
-    // one instance per thread regardless of how many TUs instantiate the
-    // template.
-    static Model<TSeq> *& current_instance_() {
-        thread_local Model<TSeq> * ptr = nullptr;
-        return ptr;
-    }
-
 protected:
 
     std::string name = ""; ///< Name of the model
@@ -284,21 +268,6 @@ public:
     Model<TSeq> & operator=(const Model<TSeq> & m);
 
     virtual ~Model() {};
-
-    /**
-     * @brief Returns a reference to the Model currently in scope on this
-     * thread (set by ModelScope, typically at the start of run()).
-     *
-     * @throws std::logic_error (in EPI_DEBUG mode) if called outside of a
-     * simulation scope.
-     */
-    static Model<TSeq> & the();
-
-    /**
-     * @brief Returns a pointer to the Model currently in scope, or nullptr
-     * if no model is in scope.
-     */
-    static Model<TSeq> * the_ptr();
 
     /**
      * @name Set the backup object
@@ -843,34 +812,6 @@ public:
     ) const;
 
 
-};
-
-/**
- * @brief RAII guard that sets the thread_local Model pointer for the
- *        duration of a scope (e.g., Model::run).
- *
- * When a ModelScope is created, it saves the current thread_local model
- * pointer and replaces it with the provided model. When it is destroyed,
- * the previous pointer is restored. This supports nesting.
- */
-template<typename TSeq>
-class ModelScope {
-public:
-    explicit ModelScope(Model<TSeq> * m)
-        : prev_(Model<TSeq>::current_instance_())
-    {
-        Model<TSeq>::current_instance_() = m;
-    }
-
-    ~ModelScope() {
-        Model<TSeq>::current_instance_() = prev_;
-    }
-
-    ModelScope(const ModelScope &) = delete;
-    ModelScope & operator=(const ModelScope &) = delete;
-
-private:
-    Model<TSeq> * prev_;
 };
 
 #endif

@@ -73,7 +73,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_randomly(
             if ((loc > 0) && (loc >= n_left))
                 loc = n_left - 1;
 
-            m->get_agent(idx[loc]).add_entity(e);
+            m->get_agent(idx[loc]).add_entity(*m, e);
 
             std::swap(idx[loc], idx[n_left]);
 
@@ -151,7 +151,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_set(
 
         for (const auto & i: *idx_shared)
         {
-            e.add_agent(&m->get_agent(i));
+            e.add_agent(&m->get_agent(i), *m);
         }
 
     };

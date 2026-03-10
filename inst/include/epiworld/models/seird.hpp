@@ -72,7 +72,7 @@ public:
 
     // Does the agent become infected?
     if (m->runif() < 1.0/(v->get_incubation(m)))
-      p->change_state(ModelSEIRD<TSeq>::INFECTED);
+      p->change_state(*m, ModelSEIRD<TSeq>::INFECTED);
 
     return;
   };
@@ -89,11 +89,11 @@ public:
       
     // Die
     m->array_double_tmp[n_events++] = 
-      v->get_prob_death(m) * (1.0 - p->get_death_reduction(v));
+      v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, *m));
     
     // Recover
     m->array_double_tmp[n_events++] = 
-      1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v));
+      1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, *m));
     
     
 #ifdef EPI_DEBUG
@@ -121,11 +121,11 @@ public:
     if ((which % 2) == 0) // If odd
     {
       
-      p->rm_agent_by_virus();
+      p->rm_agent_by_virus(*m);
       
     } else {
       
-      p->rm_virus();
+      p->rm_virus(*m);
       
     }
     

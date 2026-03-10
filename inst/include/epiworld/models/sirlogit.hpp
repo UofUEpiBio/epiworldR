@@ -213,9 +213,10 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
             double baseline = 0.0;
             for (size_t k = 0u; k < _m->coef_infect_cols.size(); ++k)
-                baseline += p->operator[](k) * _m->coefs_infect[k + 1u];
+                baseline += p->operator()(k, *m) * _m->coefs_infect[k + 1u];
 
-            for (auto & neighbor: p->get_neighbors()) 
+            auto & m_ref = *m;
+            for (auto & neighbor: p->get_neighbors(*m)) 
             {
                 
                 if (neighbor->get_virus() == nullptr)
@@ -231,9 +232,9 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
                     baseline +
-                    (1.0 - p->get_susceptibility_reduction(v)) *
+                    (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
                     v->get_prob_infecting(m) *
-                    (1.0 - neighbor->get_transmission_reduction(v))  *
+                    (1.0 - neighbor->get_transmission_reduction(v, m_ref))  *
                     coef_exposure
                     ; 
 
@@ -255,7 +256,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             if (which < 0)
                 return;
 
-            p->set_virus(*m->array_virus_tmp[which]);
+            p->set_virus(*m, *m->array_virus_tmp[which]);
 
             return;
 
@@ -275,13 +276,13 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
             #pragma omp simd reduction(+:prob)
             #endif
             for (size_t i = 0u; i < _m->coefs_recover.size(); ++i)
-                prob += p->operator[](i) * _m->coefs_recover[i];
+                prob += p->operator()(i, *m) * _m->coefs_recover[i];
 
             // Computing logis
             prob = 1.0/(1.0 + std::exp(-prob));
 
             if (prob > m->runif())
-                p->rm_virus();
+                p->rm_virus(*m);
             
             return;
 

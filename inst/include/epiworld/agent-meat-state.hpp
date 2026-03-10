@@ -28,7 +28,7 @@ inline void default_update_susceptible(
     if (virus == nullptr)
         return;
 
-    p->set_virus(*virus);
+    p->set_virus(*m, *virus);
 
     return;
 
@@ -46,11 +46,11 @@ inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
     // Die
     auto & virus = p->get_virus();
     m->array_double_tmp[0u] = 
-        virus->get_prob_death(m) * (1.0 - p->get_death_reduction(virus));
+        virus->get_prob_death(m) * (1.0 - p->get_death_reduction(virus, *m));
 
     // Recover
     m->array_double_tmp[1u] =
-        1.0 - (1.0 - virus->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(virus)); 
+        1.0 - (1.0 - virus->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(virus, *m)); 
     
 
     // Running the roulette
@@ -63,11 +63,11 @@ inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
     if (which == 0u) // If odd
     {
 
-        p->rm_agent_by_virus();
+        p->rm_agent_by_virus(*m);
         
     } else {
 
-        p->rm_virus();
+        p->rm_virus(*m);
 
     }
 

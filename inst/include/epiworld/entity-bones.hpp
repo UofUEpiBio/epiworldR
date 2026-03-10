@@ -67,9 +67,9 @@ public:
 
     ~Entity() = default;
     
-    void add_agent(Agent<TSeq> & p);
-    void add_agent(Agent<TSeq> * p);
-    void rm_agent(size_t idx);
+    void add_agent(Agent<TSeq> & p, Model<TSeq> & model);
+    void add_agent(Agent<TSeq> * p, Model<TSeq> & model);
+    void rm_agent(size_t idx, Model<TSeq> & model);
     size_t size() const noexcept;
     void set_location(std::vector< epiworld_double > loc);
     std::vector< epiworld_double > & get_location();

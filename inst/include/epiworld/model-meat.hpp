@@ -15,24 +15,6 @@
 #include "virus-bones.hpp"
 #include "agent-bones.hpp"
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::the() {
-
-    if (current_instance_() == nullptr)
-        throw std::logic_error(
-            "Model::the() called outside of a simulation scope. "
-            "This method can only be called during Model::run() "
-            "or within a ModelScope."
-        );
-    
-    return *current_instance_();
-}
-
-template<typename TSeq>
-inline Model<TSeq> * Model<TSeq>::the_ptr() {
-    return current_instance_();
-}
-
 /**
  * @brief Function factory for saving model runs
  *
@@ -726,7 +708,6 @@ inline Model<TSeq> & Model<TSeq>::agents_smallworld(
     epiworld_double p
 )
 {
-    ModelScope<TSeq> scope_(this);
 
     agents_from_adjlist(
         rgraph_smallworld(n, k, p, d, *this)
@@ -741,7 +722,6 @@ inline void Model<TSeq>::agents_empty_graph(
 )
 {
 
-    ModelScope<TSeq> scope_(this);
 
     // Resizing the people
     population.clear();
@@ -1167,7 +1147,6 @@ inline void Model<TSeq>::load_agents_entities_ties(
     )
 {
 
-    ModelScope<TSeq> scope_(this);
 
     int i,j;
     std::ifstream filei(fn);
@@ -1212,7 +1191,7 @@ inline void Model<TSeq>::load_agents_entities_ties(
 
         target_[j].push_back(i);
 
-        population[i].add_entity(entities[j]);
+        population[i].add_entity(*this, entities[j]);
 
     }
 
@@ -1226,7 +1205,6 @@ inline void Model<TSeq>::load_agents_entities_ties(
     const std::vector< int > & entities_ids
 ) {
 
-    ModelScope<TSeq> scope_(this);
 
     // Checking the size
     if (agents_ids.size() != entities_ids.size())
@@ -1253,7 +1231,6 @@ inline void Model<TSeq>::load_agents_entities_ties(
     size_t n
 ) {
 
-    ModelScope<TSeq> scope_(this);
 
     auto get_agent = [agents_ids](int i) -> int {
         return *(agents_ids + i);
@@ -1309,7 +1286,10 @@ inline void Model<TSeq>::load_agents_entities_ties(
                 );
 
         // Adding the entity to the agent
-        this->population[get_agent(i)].add_entity(this->entities[get_entity(i)]);
+        this->population[get_agent(i)].add_entity(
+            *this,
+            this->entities[get_entity(i)]
+        );
 
     }
 
@@ -1326,7 +1306,6 @@ inline void Model<TSeq>::agents_from_adjlist(
     bool directed
     ) {
 
-    ModelScope<TSeq> scope_(this);
 
     AdjList al;
     al.read_edgelist(fn, size, skip, directed);
@@ -1342,7 +1321,6 @@ inline void Model<TSeq>::agents_from_edgelist(
     bool directed
 ) {
 
-    ModelScope<TSeq> scope_(this);
 
     AdjList al(source, target, size, directed);
     agents_from_adjlist(al);
@@ -1352,7 +1330,6 @@ inline void Model<TSeq>::agents_from_edgelist(
 template<typename TSeq>
 inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
 
-    ModelScope<TSeq> scope_(this);
 
     // Resizing the people
     agents_empty_graph(al.vcount());
@@ -1455,7 +1432,6 @@ inline Model<TSeq> & Model<TSeq>::run(
 
     // Set this model as the current model in scope for this thread.
     // This enables Model::the() calls from agents, entities, etc.
-    ModelScope<TSeq> scope_(this);
 
     if (size() == 0u)
         throw std::logic_error("There are no agents in this model!");
@@ -2040,7 +2016,6 @@ inline std::map<std::string,epiworld_double> & Model<TSeq>::params()
 template<typename TSeq>
 inline void Model<TSeq>::reset() {
 
-    ModelScope<TSeq> scope_(this);
 
     // Restablishing people
     pb = Progress(ndays, 80);

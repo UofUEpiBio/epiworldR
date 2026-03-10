@@ -81,9 +81,7 @@ int entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model) {
   cpp11::external_pointer<Agent<>> ptr_agent(agent);
   cpp11::external_pointer<Model<>> ptr_model(model);
 
-  ModelScope<int> scope_model(&(*ptr_model));
-
-  ptr->add_agent(&(*ptr_agent));
+  ptr->add_agent(&(*ptr_agent), *ptr_model);
 
   return 0;
 }

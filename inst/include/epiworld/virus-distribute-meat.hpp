@@ -26,7 +26,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_set(
         for (auto i: agents_ids)
         {
             model->get_agent(i).set_virus(
-                virus
+                *model, virus
                 );
         }
     };
@@ -120,7 +120,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
             
             // Adding action
             agent.set_virus(
-                virus
+                *model, virus
                 );
 
             // Adjusting sample
@@ -211,7 +211,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
                     loc = n - 1;
                 
                 population[idx[loc]].set_virus(
-                    virus
+                    *model, virus
                     );
                 
                 std::swap(idx[loc], idx[n]);
