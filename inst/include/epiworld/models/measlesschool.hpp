@@ -1,7 +1,10 @@
-#ifndef MEASLESQUARANTINE_HPP
-#define MEASLESQUARANTINE_HPP
 
-#include<memory>
+#ifndef MEASLESSCHOOL_HPP
+#define MEASLESSCHOOL_HPP
+
+#include "../tools/vaccine.hpp"
+#include "../model-bones.hpp"
+
 
 #if defined(__clang__)
     // Clang
@@ -26,7 +29,7 @@
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \
     inline void ModelMeaslesSchool<TSeq>:: name \
-    (epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m)
+    (Agent<TSeq> * p, Model<TSeq> * m)
 
 #define SAMPLE_FROM_PROBS(n, ans) \
     size_t ans; \
@@ -59,7 +62,7 @@
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesSchool: public epiworld::Model<TSeq> {
+class ModelMeaslesSchool: public Model<TSeq> {
 
 private:
 
@@ -395,7 +398,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
         if (which == static_cast<int>(n_infectious))
             --which;
 
-        epiworld::Agent<> & neighbor = *model->infectious[which];
+        Agent<> & neighbor = *model->infectious[which];
 
         // Can't sample itself
         if (neighbor.get_id() == p->get_id())
@@ -793,42 +796,14 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
 
     model.add_virus(measles);
 
-    // Preparing a vector that allows us to keep track
-    // of when this was checked
-    thread_local auto last_day_checked = std::make_shared< std::vector< int > >(
-        n, std::numeric_limits<int>::max()
-    );
-
-    thread_local auto immune = std::make_shared< std::vector< int > >(n, 0);
-
-    thread_local ToolFun<TSeq> suscept_redux =
-        [](
-            Tool<TSeq> & t, Agent<TSeq> * a, VirusPtr<TSeq> v, Model<TSeq> * m)
-            -> epiworld_double
-        {
-
-            auto & day_checked_i = (*last_day_checked)[a->get_id()];
-            auto & immune_i      = (*immune)[a->get_id()];
-            
-            // Have we checked this agent today?
-            if (m->today() < day_checked_i)
-            {
-                day_checked_i = m->today();
-
-                immune_i = (m->runif() < (*m)("Vax efficacy")) ? 
-                    1 : 0;
-
-            }
-
-            return  (immune_i == 1) ? 1.0 : 0.0;
-
-        };
-    
-
     // Designing the vaccine
-    Tool<> vaccine("Vaccine");
-    vaccine.set_susceptibility_reduction_fun(suscept_redux);
-    vaccine.set_recovery_enhancer(&model("(IGNORED) Vax improved recovery"));
+    ToolVaccine<TSeq> vaccine(
+        std::string("MMR ") +
+        std::to_string(model("Vax efficacy"))
+    );
+    
+    vaccine.set_susceptibility_reduction(model("Vax efficacy"));
+
     vaccine.set_distribution(
         distribute_tool_randomly(prop_vaccinated, true)
     );

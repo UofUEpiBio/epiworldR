@@ -1,6 +1,11 @@
 #ifndef EPIWORLD_DIFFNET_H 
 #define EPIWORLD_DIFFNET_H
 
+#include <string>
+#include <vector>
+#include "../config.hpp"
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Network Diffusion Model
  * @ingroup special_models
@@ -13,7 +18,7 @@
  * 
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelDiffNet : public epiworld::Model<TSeq>
+class ModelDiffNet : public Model<TSeq>
 {
 private:
 public:
@@ -70,8 +75,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     this->data_cols = data_cols;
     this->params = params;
 
-    epiworld::UpdateFun<TSeq> update_non_adopters = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_non_adopters = [](
+        Agent<TSeq> * p, Model<TSeq> * m
     ) -> void {
 
         // Measuring exposure
@@ -166,7 +171,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     model.add_param(prob_adopt, parname);
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> innovation(innovation_name, prevalence, true);
+    Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
     innovation.set_prob_infecting(&model(parname));

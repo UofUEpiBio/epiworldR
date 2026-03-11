@@ -1,6 +1,11 @@
 #ifndef EPIWORLD_RNG_UTILS_HPP
 #define EPIWORLD_RNG_UTILS_HPP
 
+#include <cstdint>
+#include <limits>
+#include <random>
+#include "config.hpp"
+
 /**
  * @brief Fast 64-bit PRNG based on the xoshiro256** algorithm.
  *

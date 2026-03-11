@@ -70,7 +70,7 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     // Dealing with the virus
     if (p.virus != nullptr)
     {
-        virus = std::make_shared<Virus<TSeq>>(*p.virus);
+        virus = std::shared_ptr<Virus<TSeq>>(p.virus->clone_ptr());
         virus->set_agent(this);
     }
     
@@ -122,7 +122,7 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     
     if (other_agent.virus != nullptr)
     {
-        virus = std::make_shared<Virus<TSeq>>(*other_agent.virus);
+        virus = std::shared_ptr<Virus<TSeq>>(other_agent.virus->clone_ptr());
         virus->set_agent(this);
     } else
         virus = nullptr;
@@ -130,7 +130,7 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     n_tools             = other_agent.n_tools;
     for (size_t i = 0u; i < n_tools; ++i)
     {
-        tools[i] = std::make_shared<Tool<TSeq>>(*other_agent.tools[i]);
+        tools[i] = std::shared_ptr<Tool<TSeq>>(other_agent.tools[i]->clone_ptr());
         tools[i]->set_agent(this, i);
     }
     
@@ -178,7 +178,7 @@ inline void Agent<TSeq>::add_tool(
     epiworld_fast_int queue
 )
 {
-    ToolPtr<TSeq> tool_ptr = std::make_shared< Tool<TSeq> >(tool);
+    ToolPtr<TSeq> tool_ptr = std::shared_ptr<Tool<TSeq>>(tool.clone_ptr());
     add_tool(model, tool_ptr, state_new, queue);
 }
 
@@ -217,7 +217,7 @@ inline void Agent<TSeq>::set_virus(
     epiworld_fast_int queue
 )
 {
-    VirusPtr<TSeq> virus_ptr = std::make_shared< Virus<TSeq> >(virus);
+    VirusPtr<TSeq> virus_ptr = std::shared_ptr<Virus<TSeq>>(virus.clone_ptr());
     set_virus(model, virus_ptr, state_new, queue);
 }
 

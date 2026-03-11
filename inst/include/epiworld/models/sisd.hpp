@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SISD_HPP 
 #define EPIWORLD_MODELS_SISD_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Infected-Susceptible-Deceased (SISD) model
  * 
@@ -15,7 +17,7 @@
  * @param inital_death epiworld_double Initial death_rate of the immune system
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSISD : public epiworld::Model<TSeq>
+class ModelSISD : public Model<TSeq>
 {
 
 public:
@@ -55,8 +57,8 @@ inline ModelSISD<TSeq>::ModelSISD(
     model.set_name("Susceptible-Infected-Susceptible-Deceased (SISD)");
 
     // Adding statuses
-    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Susceptible", default_update_susceptible<TSeq>);
+    model.add_state("Infected", default_update_exposed<TSeq>);
     model.add_state("Deceased");
 
     // Setting up parameters
@@ -65,7 +67,7 @@ inline ModelSISD<TSeq>::ModelSISD(
     model.add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,0,2);
     
     virus.set_prob_infecting(&model("Transmission rate"));

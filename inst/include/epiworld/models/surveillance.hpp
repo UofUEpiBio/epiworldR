@@ -1,12 +1,14 @@
 #ifndef EPIWORLD_MODELS_SURVEILLANCE_HPP
 #define EPIWORLD_MODELS_SURVEILLANCE_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Surveillance model
  * @ingroup special_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSURV : public epiworld::Model<TSeq> {
+class ModelSURV : public Model<TSeq> {
 
 private:
     // state
@@ -111,11 +113,11 @@ public:
 template<typename TSeq>
 inline void ModelSURV<TSeq>::reset()
 {
-    epiworld::Model<TSeq>::reset();
+    Model<TSeq>::reset();
 
     days_latent_and_infectious.clear();
     days_latent_and_infectious.resize(
-        2u * epiworld::Model<TSeq>::size(),
+        2u * Model<TSeq>::size(),
         -1.0
     );
 }
@@ -179,14 +181,14 @@ inline ModelSURV<TSeq>::ModelSURV(
     };
 
 
-    epiworld::UpdateFun<TSeq> surveillance_update_exposed = 
-    [](epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m) -> void
+    UpdateFun<TSeq> surveillance_update_exposed = 
+    [](Agent<TSeq> * p, Model<TSeq> * m) -> void
     {
 
         // Dynamically getting the ModelSURV
         ModelSURV<TSeq> * model_surv = dynamic_cast<ModelSURV<TSeq> *>(m);
 
-        epiworld::VirusPtr<TSeq> & v = p->get_virus(); 
+        VirusPtr<TSeq> & v = p->get_virus(); 
         epiworld_double p_die = v->get_prob_death(m) * (1.0 - p->get_death_reduction(v, *m));
         
         epiworld_fast_uint days_since_exposed = m->today() - v->get_date();
@@ -251,9 +253,9 @@ inline ModelSURV<TSeq>::ModelSURV(
         LATENT
     };
 
-    epiworld::GlobalFun<TSeq> surveillance_program = 
+    GlobalFun<TSeq> surveillance_program = 
     [exposed_state](
-        epiworld::Model<TSeq>* m
+        Model<TSeq>* m
         ) -> void
     {
 
@@ -279,10 +281,10 @@ inline ModelSURV<TSeq>::ModelSURV(
                 continue;
 
             sampled[i] = true;
-            epiworld::Agent<TSeq> * p = &pop[i];
+            Agent<TSeq> * p = &pop[i];
             
             // If still exposed for the next term
-            if (epiworld::IN(p->get_state(), exposed_state ))
+            if (IN(p->get_state(), exposed_state ))
             {
 
                 ndetected += 1.0;
@@ -336,15 +338,15 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_param(prob_noreinfect, "Prob. no reinfect");
 
     // Virus ------------------------------------------------------------------
-    epiworld::Virus<TSeq> covid(vname, prevalence, false);
+    Virus<TSeq> covid(vname, prevalence, false);
     covid.set_state(LATENT, RECOVERED, REMOVED);
     covid.set_post_immunity(&model("Prob. no reinfect"));
     covid.set_prob_death(&model("Prob. death"));
 
-    epiworld::VirusFun<TSeq> ptransmitfun = [](
-        epiworld::Agent<TSeq> * p,
-        epiworld::Virus<TSeq> &,
-        epiworld::Model<TSeq> * m
+    VirusFun<TSeq> ptransmitfun = [](
+        Agent<TSeq> * p,
+        Virus<TSeq> &,
+        Model<TSeq> * m
         ) -> epiworld_double
     {
         // No chance of infecting
@@ -368,7 +370,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     model.add_globalevent(surveillance_program, "Surveilance program", -1);
    
     // Vaccine tool -----------------------------------------------------------
-    epiworld::Tool<TSeq> vax("Vaccine", prop_vaccinated, true);
+    Tool<TSeq> vax("Vaccine", prop_vaccinated, true);
     vax.set_susceptibility_reduction(&model("Vax efficacy"));
     vax.set_transmission_reduction(&model("Vax redux transmission"));
     

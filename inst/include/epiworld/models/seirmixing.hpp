@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SEIRMIXING_HPP
 #define EPIWORLD_MODELS_SEIRMIXING_HPP
 
+#include "../model-bones.hpp"
+
 #define MM(i, j, n) \
     j * n + i
 
@@ -27,7 +29,7 @@
  * @ingroup mixing_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRMixing : public epiworld::Model<TSeq>
+class ModelSEIRMixing : public Model<TSeq>
 {
 private:
 
@@ -43,7 +45,7 @@ private:
     void update_infected_list();
     std::vector< size_t > sampled_agents;
     size_t sample_agents(
-        epiworld::Agent<TSeq> * agent,
+        Agent<TSeq> * agent,
         std::vector< size_t > & sampled_agents
         );
     std::vector< double > adjusted_contact_rate;
@@ -172,7 +174,7 @@ inline void ModelSEIRMixing<TSeq>::update_infected_list()
 
 template<typename TSeq>
 inline size_t ModelSEIRMixing<TSeq>::sample_agents(
-    epiworld::Agent<TSeq> * agent,
+    Agent<TSeq> * agent,
     std::vector< size_t > & sampled_agents
     )
 {
@@ -187,7 +189,7 @@ inline size_t ModelSEIRMixing<TSeq>::sample_agents(
         size_t group_size = n_infected_per_group[g];
 
         // How many from this entity?
-        int nsamples = epiworld::Model<TSeq>::rbinom(
+        int nsamples = Model<TSeq>::rbinom(
             group_size,
             adjusted_contact_rate[g] * contact_matrix[
                 MM(agent_group_id, g, ngroups)
@@ -202,7 +204,7 @@ inline size_t ModelSEIRMixing<TSeq>::sample_agents(
         {
 
             // Randomly selecting an agent
-            int which = epiworld::Model<TSeq>::runif() * group_size;
+            int which = Model<TSeq>::runif() * group_size;
 
             // Correcting overflow error
             if (which >= static_cast<int>(group_size))
@@ -370,8 +372,8 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     // Setting up the contact matrix
     this->contact_matrix = contact_matrix;
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -434,8 +436,8 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_exposed_and_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_exposed_and_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -515,7 +517,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     model.add_state("Recovered");
 
     // Global function
-    epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
+    GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
     {
 
         GET_MODEL(m, m_down);
@@ -530,7 +532,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRMixing<TSeq>::EXPOSED,
         ModelSEIRMixing<TSeq>::RECOVERED,

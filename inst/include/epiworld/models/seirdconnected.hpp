@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SEIRDCONNECTED_HPP
 #define EPIWORLD_MODELS_SEIRDCONNECTED_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) model with connected population
  * 
@@ -9,10 +11,10 @@
  * @ingroup connected_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRDCONN : public epiworld::Model<TSeq> 
+class ModelSEIRDCONN : public Model<TSeq> 
 {
 private:
-    std::vector< epiworld::Agent<TSeq> * > infected;
+    std::vector< Agent<TSeq> * > infected;
     void update_infected();
 
 public:
@@ -157,8 +159,8 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     )
 {
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -194,7 +196,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if (which == static_cast<int>(ninfected))
                     --which;
 
-                epiworld::Agent<TSeq> & neighbor = *model->infected[which];
+                Agent<TSeq> & neighbor = *model->infected[which];
 
                 // Can't sample itself
                 if (neighbor.get_id() == p->get_id())
@@ -237,8 +239,8 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -332,7 +334,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
 
     // Adding update function
-    epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
+    GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
     {
         ModelSEIRDCONN<TSeq> * model = dynamic_cast<ModelSEIRDCONN<TSeq> *>(m);
         
@@ -351,7 +353,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRDCONN<TSeq>::EXPOSED,
         ModelSEIRDCONN<TSeq>::REMOVED,

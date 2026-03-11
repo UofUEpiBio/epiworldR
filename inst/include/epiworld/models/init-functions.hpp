@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_INIT_FUNCTIONS_HPP
 #define EPIWORLD_MODELS_INIT_FUNCTIONS_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Creates an initial function for the SIR-like models
  * @ingroup model_utilities

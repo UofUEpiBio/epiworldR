@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SEIRCONNECTED_HPP
 #define EPIWORLD_MODELS_SEIRCONNECTED_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model with connected population
  * 
@@ -9,10 +11,10 @@
  * @ingroup connected_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRCONN : public epiworld::Model<TSeq> 
+class ModelSEIRCONN : public Model<TSeq> 
 {
 private:
-    std::vector< epiworld::Agent<TSeq> * > infected;
+    std::vector< Agent<TSeq> * > infected;
     void update_infected();
 
 public:
@@ -160,8 +162,8 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     )
 {
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -194,7 +196,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
                 if (which == static_cast<int>(ninfected))
                     --which;
 
-                epiworld::Agent<TSeq> & neighbor = *model->infected[which];
+                Agent<TSeq> & neighbor = *model->infected[which];
 
                 // Can't sample itself
                 if (neighbor.get_id() == p->get_id())
@@ -238,8 +240,8 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -319,8 +321,8 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     model.add_state("Recovered");
 
     // Adding update function
-    epiworld::GlobalFun<TSeq> update = [](
-        epiworld::Model<TSeq> * m
+    GlobalFun<TSeq> update = [](
+        Model<TSeq> * m
         ) -> void
         {
 
@@ -336,7 +338,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRCONN<TSeq>::EXPOSED,
         ModelSEIRCONN<TSeq>::RECOVERED,

@@ -35,6 +35,9 @@ template<typename TSeq>
 class Entities;
 
 template<typename TSeq>
+class AgentsSample;
+
+template<typename TSeq>
 inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>

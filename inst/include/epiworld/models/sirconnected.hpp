@@ -1,6 +1,7 @@
 #ifndef EPIWORLD_MODELS_SIRCONNECTED_HPP 
 #define EPIWORLD_MODELS_SIRCONNECTED_HPP
 
+#include "../model-bones.hpp"
 /**
  * @brief Template for a Susceptible-Infected-Removed (SIR) model with connected population
  * 
@@ -9,12 +10,12 @@
  * @ingroup connected_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRCONN : public epiworld::Model<TSeq>
+class ModelSIRCONN : public Model<TSeq>
 {
 
 private:
 
-    std::vector< epiworld::Agent<TSeq> * > infected;
+    std::vector< Agent<TSeq> * > infected;
     void update_infected();
 
 public:
@@ -66,7 +67,7 @@ public:
 
     /**
      * @brief Get the infected individuals
-     * @return std::vector< epiworld::Agent<TSeq> * > 
+     * @return std::vector< Agent<TSeq> * > 
      */
     size_t get_n_infected() const
     {
@@ -165,8 +166,8 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     )
 {
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -198,7 +199,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
                 if (which == static_cast<int>(ninfected))
                     --which;
 
-                epiworld::Agent<TSeq> & neighbor = *model->infected[which];
+                Agent<TSeq> & neighbor = *model->infected[which];
 
                 // Can't sample itself
                 if (neighbor.get_id() == p->get_id())
@@ -243,8 +244,8 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         };
 
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -307,7 +308,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     // model.add_param(prob_reinfection, "Prob. Reinfection");
 
     // Adding update function
-    epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
+    GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
     {
         ModelSIRCONN<TSeq> * model = dynamic_cast<ModelSIRCONN<TSeq> *>(m);
         model->update_infected();
@@ -318,7 +319,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     model.add_globalevent(update, "Update infected individuals");
     
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1, 2, 2);
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));

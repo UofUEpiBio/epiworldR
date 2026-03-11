@@ -1,8 +1,7 @@
-// #include "../epiworld.hpp"
-
 #ifndef EPIWORLD_MODELS_SIRLOGIT_HPP 
 #define EPIWORLD_MODELS_SIRLOGIT_HPP
 
+#include "../model-bones.hpp"
 
 /**
  * @brief Template for a Susceptible-Infected-Removed (SIR) model
@@ -36,7 +35,7 @@
  
 */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRLogit : public epiworld::Model<TSeq>
+class ModelSIRLogit : public Model<TSeq>
 {
 private:
     static const int SUSCEPTIBLE = 0;
@@ -197,8 +196,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     model.coef_infect_cols = coef_infect_cols;
     model.coef_recover_cols = coef_recover_cols;
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -262,8 +261,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -300,7 +299,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     // model.add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSIRLogit<TSeq>::INFECTED,
         ModelSIRLogit<TSeq>::RECOVERED,

@@ -1,37 +1,25 @@
 #ifndef EPIWORLD_MODEL_BONES_HPP
 #define EPIWORLD_MODEL_BONES_HPP
 
-template<typename TSeq>
-class Agent;
+#include <memory>
+#include <vector>
+#include <functional>
+#include <string>
+#include <map>
+#include "config.hpp"
+
+#include "agent-bones.hpp"
+#include "virus-bones.hpp"
+#include "viruses-bones.hpp"
+#include "tool-bones.hpp"
+#include "database-bones.hpp"
+#include "queue-bones.hpp"
+#include "globalevent-bones.hpp"
 
 template<typename TSeq>
 class AgentsSample;
 
-template<typename TSeq>
-class Virus;
-
-template<typename TSeq>
-class Viruses;
-
-template<typename TSeq>
-class Viruses_const;
-
-template<typename TSeq>
-class Tool;
-
 class AdjList;
-
-template<typename TSeq>
-class DataBase;
-
-template<typename TSeq>
-class Queue;
-
-template<typename TSeq>
-struct Event;
-
-template<typename TSeq>
-class GlobalEvent;
 
 template<typename TSeq>
 inline epiworld_double susceptibility_reduction_mixer_default(
@@ -197,10 +185,12 @@ protected:
     void chrono_start();
     void chrono_end();
 
-    std::vector<GlobalEvent<TSeq>> globalevents;
+    std::vector<GlobalEventPtr<TSeq>> globalevents;
 
     Queue<TSeq> queue;
     bool use_queuing   = true;
+    size_t sim_id = 0u;
+    void set_sim_id(size_t id);
 
     /**
      * @brief Variables used to keep track of the events
@@ -456,6 +446,7 @@ public:
     size_t get_n_tools() const; ///< Number of tools in the model
     epiworld_fast_uint get_ndays() const;
     epiworld_fast_uint get_n_replicates() const;
+    size_t get_sim_id() const;
     size_t get_n_entities() const;
     void set_ndays(epiworld_fast_uint ndays);
     bool get_verbose() const;
@@ -670,7 +661,7 @@ public:
         );
 
     void add_globalevent(
-        GlobalEvent<TSeq> action
+        GlobalEvent<TSeq> & action
     );
 
     GlobalEvent<TSeq> & get_globalevent(std::string name); ///< Retrieve a global action by name

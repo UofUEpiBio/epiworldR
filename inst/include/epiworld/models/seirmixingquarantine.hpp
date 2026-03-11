@@ -1,7 +1,7 @@
 #ifndef EPIWORLD_MODELS_SEIRMIXINGQUARANTINE_HPP
 #define EPIWORLD_MODELS_SEIRMIXINGQUARANTINE_HPP
 
-using namespace epiworld;
+#include "../model-bones.hpp"
 
 #define MM(i, j, n) \
     j * n + i
@@ -65,7 +65,7 @@ using namespace epiworld;
  * @ingroup mixing_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRMixingQuarantine : public epiworld::Model<TSeq>
+class ModelSEIRMixingQuarantine : public Model<TSeq>
 {
 private:
 
@@ -407,7 +407,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected_list()
 
 template<typename TSeq>
 inline size_t ModelSEIRMixingQuarantine<TSeq>::sample_agents(
-    epiworld::Agent<TSeq> * agent,
+    Agent<TSeq> * agent,
     std::vector< size_t > & sampled_agents
     )
 {
@@ -425,7 +425,7 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::sample_agents(
             continue;
 
         // How many from this entity?
-        int nsamples = epiworld::Model<TSeq>::rbinom(
+        int nsamples = Model<TSeq>::rbinom(
             group_size,
             adjusted_contact_rate[g] * contact_matrix[
                 MM(agent_group_id, g, ngroups)
@@ -440,7 +440,7 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::sample_agents(
         {
 
             // Randomly selecting an agent
-            int which = epiworld::Model<TSeq>::runif() * group_size;
+            int which = Model<TSeq>::runif() * group_size;
 
             // Correcting overflow error
             if (which >= static_cast<int>(group_size))
@@ -1140,7 +1140,7 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     model.queuing_off();
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSEIRMixingQuarantine<TSeq>::EXPOSED,
         ModelSEIRMixingQuarantine<TSeq>::RECOVERED,

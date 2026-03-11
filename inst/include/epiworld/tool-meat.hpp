@@ -572,4 +572,10 @@ inline void Tool<TSeq>::set_distribution(ToolToAgentFun<TSeq> fun)
     tool_functions->dist = fun;
 }
 
+template<typename TSeq>
+inline std::unique_ptr<Tool<TSeq>> Tool<TSeq>::clone_ptr() const
+{
+    return std::make_unique<Tool<TSeq>>(*this);
+}
+
 #endif

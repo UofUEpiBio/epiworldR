@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_SIRD_H 
 #define EPIWORLD_SIRD_H
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Infected-Removed-Deceased (SIRD) model
  * 
@@ -9,7 +11,7 @@
  * @ingroup death_compartmental
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRD : public epiworld::Model<TSeq>
+class ModelSIRD : public Model<TSeq>
 {
 public:
 
@@ -70,8 +72,8 @@ inline ModelSIRD<TSeq>::ModelSIRD(
 {
 
     // Adding statuses
-    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Susceptible", default_update_susceptible<TSeq>);
+    model.add_state("Infected", default_update_exposed<TSeq>);
     model.add_state("Recovered"),
     model.add_state("Deceased")
     ;
@@ -82,7 +84,7 @@ inline ModelSIRD<TSeq>::ModelSIRD(
     model.add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,3);
     virus.set_prob_recovery(&model("Recovery rate"));
     virus.set_prob_infecting(&model("Transmission rate"));

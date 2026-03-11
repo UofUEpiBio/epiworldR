@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SIS_HPP 
 #define EPIWORLD_MODELS_SIS_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Infected-Susceptible (SIS) model
  * 
@@ -14,7 +16,7 @@
  * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIS : public epiworld::Model<TSeq>
+class ModelSIS : public Model<TSeq>
 {
 
 public:
@@ -54,15 +56,15 @@ inline ModelSIS<TSeq>::ModelSIS(
     model.set_name("Susceptible-Infected-Susceptible (SIS)");
 
     // Adding statuses
-    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
-    model.add_state("Infected", epiworld::default_update_exposed<TSeq>);
+    model.add_state("Susceptible", default_update_susceptible<TSeq>);
+    model.add_state("Infected", default_update_exposed<TSeq>);
 
     // Setting up parameters
     model.add_param(transmission_rate, "Transmission rate");
     model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(ModelSIS<TSeq>::INFECTED, ModelSIS<TSeq>::SUSCEPTIBLE, ModelSIS<TSeq>::SUSCEPTIBLE);
     
     virus.set_prob_infecting(&model("Transmission rate"));

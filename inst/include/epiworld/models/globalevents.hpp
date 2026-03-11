@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_GLOBALEVENTS_HPP
 #define EPIWORLD_GLOBALEVENTS_HPP
 
+#include "../model-bones.hpp"
+
 // This function creates a global action that distributes a tool
 // to agents with probability p.
 /**

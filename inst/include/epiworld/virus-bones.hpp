@@ -210,6 +210,8 @@ public:
     void set_distribution(VirusToAgentFun<TSeq> fun);
     ///@}
 
+    virtual ~Virus() = default;
+    virtual std::unique_ptr<Virus<TSeq>> clone_ptr() const;
 
 };
 

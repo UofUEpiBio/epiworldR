@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SEIRD_HPP
 #define EPIWORLD_MODELS_SEIRD_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) model
  * 
@@ -9,7 +11,7 @@
  * @ingroup death_compartmental
 */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRD : public epiworld::Model<TSeq>
+class ModelSEIRD : public Model<TSeq>
 {
   
 public:
@@ -62,9 +64,9 @@ public:
     epiworld_double death_rate
   );
   
-  epiworld::UpdateFun<TSeq> update_exposed_seir = [](
-    epiworld::Agent<TSeq> * p,
-    epiworld::Model<TSeq> * m
+  UpdateFun<TSeq> update_exposed_seir = [](
+    Agent<TSeq> * p,
+    Model<TSeq> * m
   ) -> void {
 
     // Getting the virus
@@ -78,8 +80,8 @@ public:
   };
 
   
-  epiworld::UpdateFun<TSeq> update_infected = [](
-    epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+  UpdateFun<TSeq> update_infected = [](
+    Agent<TSeq> * p, Model<TSeq> * m
   ) -> void {
           
     // Odd: Die, Even: Recover
@@ -159,7 +161,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
 {
   
   // Adding statuses
-  model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+  model.add_state("Susceptible", default_update_susceptible<TSeq>);
   model.add_state("Exposed",  model.update_exposed_seir);
   model.add_state("Infected", model.update_infected);
   model.add_state("Removed");
@@ -172,7 +174,7 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   model.add_param(death_rate, "Death rate");
   
   // Preparing the virus -------------------------------------------
-  epiworld::Virus<TSeq> virus(vname, prevalence, true);
+  Virus<TSeq> virus(vname, prevalence, true);
   virus.set_state(ModelSEIRD<TSeq>::EXPOSED, ModelSEIRD<TSeq>::REMOVED, ModelSEIRD<TSeq>::DECEASED);
   
   virus.set_prob_infecting(&model("Transmission rate"));

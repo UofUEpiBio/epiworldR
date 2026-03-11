@@ -14,6 +14,8 @@
 #include "model-bones.hpp"
 #include "virus-bones.hpp"
 #include "agent-bones.hpp"
+#include "tool-bones.hpp"
+#include "rng-utils.hpp"
 
 /**
  * @brief Function factory for saving model runs
@@ -457,6 +459,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     globalevents(model.globalevents),
     queue(model.queue),
     use_queuing(model.use_queuing),
+    sim_id(model.sim_id),
     array_double_tmp(model.array_double_tmp.size()),
     array_virus_tmp(model.array_virus_tmp.size())
 {
@@ -521,6 +524,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     globalevents(std::move(model.globalevents)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
+    sim_id(model.sim_id),
     array_double_tmp(model.array_double_tmp.size()),
     array_virus_tmp(model.array_virus_tmp.size())
 {
@@ -586,6 +590,8 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     // Figure out the queuing
     if (use_queuing)
         queue.model = this;
+
+    sim_id = m.sim_id;
 
     array_double_tmp.resize(static_cast<size_t>(1024u), 0.0);
     array_virus_tmp.resize(1024u);
@@ -1046,7 +1052,8 @@ inline void Model<TSeq>::add_virus(
     db.record_virus(v);
 
     // Adding new virus
-    viruses.push_back(std::make_shared< Virus<TSeq> >(v));
+    auto cloned = v.clone_ptr();
+    viruses.push_back(std::shared_ptr<Virus<TSeq>>(std::move(cloned)));
 
 }
 
@@ -1058,7 +1065,8 @@ inline void Model<TSeq>::add_tool(Tool<TSeq> & t)
     db.record_tool(t);
 
     // Adding the tool to the model (and database.)
-    tools.push_back(std::make_shared< Tool<TSeq> >(t));
+    auto cloned = t.clone_ptr();
+    tools.push_back(std::shared_ptr<Tool<TSeq>>(std::move(cloned)));
 
 }
 
@@ -1533,6 +1541,8 @@ inline Model<TSeq> & Model<TSeq>::run(
 
     chrono_end();
 
+    sim_id++;
+
     return *this;
 
 }
@@ -1657,18 +1667,21 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
 
         for (size_t n = 0u; n < nreplicates[iam]; ++n)
         {
-            size_t sim_id = nreplicates_csum[iam] + n;
+            size_t run_id = nreplicates_csum[iam] + n;
             if (iam == 0)
             {
 
                 // Checking if the user interrupted the simulation
                 EPI_CHECK_USER_INTERRUPT(n);
 
+                // Setting the simulation id
+                set_sim_id(run_id);
+
                 // Initializing the seed
-                run(ndays, seeds_n[sim_id]);
+                run(ndays, seeds_n[run_id]);
 
                 if (fun)
-                    fun(n, this);
+                    fun(run_id, this);
 
                 // Only the first one prints
                 if (verbose)
@@ -1676,11 +1689,14 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
 
             } else {
 
+                // Setting the simulation id
+                these[iam - 1]->set_sim_id(run_id);
+
                 // Initializing the seed
-                these[iam - 1]->run(ndays, seeds_n[sim_id]);
+                these[iam - 1]->run(ndays, seeds_n[run_id]);
 
                 if (fun)
-                    fun(sim_id, &(*these[iam - 1]));
+                    fun(run_id, &(*these[iam - 1]));
 
             }
 
@@ -1718,6 +1734,7 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
         // Checking if the user interrupted the simulation
         EPI_CHECK_USER_INTERRUPT(n);
 
+        set_sim_id(n);
         run(ndays, seeds_n[n]);
 
         if (fun)
@@ -1827,6 +1844,18 @@ template<typename TSeq>
 inline epiworld_fast_uint Model<TSeq>::get_n_replicates() const
 {
     return n_replicates;
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_sim_id() const
+{
+    return sim_id;
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_sim_id(size_t id)
+{
+    sim_id = id;
 }
 
 template<typename TSeq>
@@ -2345,22 +2374,18 @@ inline void Model<TSeq>::add_globalevent(
 )
 {
 
-    globalevents.push_back(
-        GlobalEvent<TSeq>(
-            fun,
-            name,
-            date
-            )
-    );
+    auto event = GlobalEvent<TSeq>(fun, name, date);
+    add_globalevent(event);
 
 }
 
 template<typename TSeq>
 inline void Model<TSeq>::add_globalevent(
-    GlobalEvent<TSeq> action
+    GlobalEvent<TSeq> & action
 )
 {
-    globalevents.push_back(action);
+    auto ptr = action.clone_ptr();
+    globalevents.push_back(GlobalEventPtr<TSeq>(std::move(ptr)));
 }
 
 template<typename TSeq>
@@ -2386,7 +2411,7 @@ GlobalEvent<TSeq> & Model<TSeq>::get_globalevent(
     if (index >= globalevents.size())
         throw std::range_error("The index " + std::to_string(index) + " is out of range.");
 
-    return globalevents[index];
+    return *globalevents[index];
 
 }
 
@@ -2399,7 +2424,7 @@ inline void Model<TSeq>::rm_globalevent(
 
     for (auto it = globalevents.begin(); it != globalevents.end(); ++it)
     {
-        if (it->get_name() == name)
+        if ((*it)->get_name() == name)
         {
             globalevents.erase(it);
             return;
@@ -2430,7 +2455,7 @@ inline void Model<TSeq>::run_globalevents()
 
     for (auto & action: globalevents)
     {
-        action(this, today());
+        (*action)(this, today());
         events_run();
     }
 

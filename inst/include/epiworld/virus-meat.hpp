@@ -888,4 +888,10 @@ inline void Virus<TSeq>::set_distribution(VirusToAgentFun<TSeq> fun)
     virus_functions->dist = fun;
 }
 
+template<typename TSeq>
+inline std::unique_ptr<Virus<TSeq>> Virus<TSeq>::clone_ptr() const
+{
+    return std::make_unique<Virus<TSeq>>(*this);
+}
+
 #endif

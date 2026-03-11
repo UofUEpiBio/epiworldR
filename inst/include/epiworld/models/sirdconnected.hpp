@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SIRDCONNECTED_HPP 
 #define EPIWORLD_MODELS_SIRDCONNECTED_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Infected-Removed-Deceased (SIRD) model with connected population
  * 
@@ -9,7 +11,7 @@
  * @ingroup connected_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRDCONN : public epiworld::Model<TSeq>
+class ModelSIRDCONN : public Model<TSeq>
 {
 public:
     static const int SUSCEPTIBLE = 0;
@@ -46,8 +48,8 @@ public:
     );
 
     // Tracking who is infected and who is not
-    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected = {};
-    // std::vector< epiworld::Agent<TSeq>* > tracked_agents_infected_next = {};
+    // std::vector< Agent<TSeq>* > tracked_agents_infected = {};
+    // std::vector< Agent<TSeq>* > tracked_agents_infected_next = {};
     // std::vector< epiworld_double >        tracked_agents_weight        = {};
     // std::vector< epiworld_double >        tracked_agents_weight_next   = {};
 
@@ -132,8 +134,8 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
 
 
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -215,8 +217,8 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
         };
 
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -295,7 +297,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
     // model.add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1, 2, 3);
     virus.set_prob_infecting(&model("Transmission rate"));
     virus.set_prob_recovery(&model("Recovery rate"));
