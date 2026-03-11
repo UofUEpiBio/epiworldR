@@ -99,6 +99,7 @@ namespace epiworld {
 
     #include "contacttracing-bones.hpp"
     
+    #include "tools/vaccine.hpp"
     #include "models/models.hpp"
 
 }

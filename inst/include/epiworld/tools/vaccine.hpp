@@ -23,10 +23,9 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ToolVaccine: public Tool<TSeq> {
 private:
 
-    static thread_local std::shared_ptr<std::vector<int>> immune;
-    static thread_local std::shared_ptr<std::vector<int>> model_id;
+    int immune = -1;
+    int model_id = -1;
     epiworld_double efficacy = 0.0;
-
 
 public:
     ToolVaccine(std::string name = "Vaccine") : Tool<TSeq>(name) {};
@@ -45,37 +44,20 @@ public:
 };
 
 template<typename TSeq>
-thread_local std::shared_ptr<std::vector<int>> ToolVaccine<TSeq>::immune = nullptr;
-
-template<typename TSeq>
-thread_local std::shared_ptr<std::vector<int>> ToolVaccine<TSeq>::model_id = nullptr;
-
-template<typename TSeq>
 inline epiworld_double ToolVaccine<TSeq>::get_susceptibility_reduction(
     VirusPtr<TSeq>,
     Model<TSeq> * model
 )
 {
 
-    // Have we initialized the tool?
-    if ((model_id == nullptr) || (model_id->size() != model->size()))
-    {
-        model_id = std::make_shared<std::vector<int>>(model->size(), -99);
-        immune = std::make_shared<std::vector<int>>(model->size(), 0);
-    }
-
-    // Agent-level information
-    auto & model_id_i = (*model_id)[this->get_agent()->get_id()];
-    auto & immune_i = (*immune)[this->get_agent()->get_id()];
-
     // Updating a single agent (if needed)
-    if (model_id_i != static_cast<int>(model->get_sim_id()))
+    if (model_id != static_cast<int>(model->get_sim_id()))
     {
-        model_id_i = static_cast<int>(model->get_sim_id());
-        immune_i = (model->runif() < efficacy) ? 1 : 0;
+        model_id = static_cast<int>(model->get_sim_id());
+        immune = (model->runif() < efficacy) ? 1 : 0;
     }
 
-    return  (immune_i == 1) ? 1.0 : 0.0;
+    return  (immune == 1) ? 1.0 : 0.0;
 
 }
 

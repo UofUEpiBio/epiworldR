@@ -16,6 +16,7 @@
 #include "agent-bones.hpp"
 #include "tool-bones.hpp"
 #include "rng-utils.hpp"
+#include "modeldiagram-bones.hpp"
 
 /**
  * @brief Function factory for saving model runs
