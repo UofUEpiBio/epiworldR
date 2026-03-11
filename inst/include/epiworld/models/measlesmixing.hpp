@@ -1235,6 +1235,8 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
         distribute_tool_randomly(prop_vaccinated, true)
     );
 
+    model.add_tool(vaccine);
+
     model.queuing_off(); // No queuing need
 
     // Adding the empty population
