@@ -28,9 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install gettex (macos only)
+      # Got this from:
+      # https://github.com/dmurdoch/parseLatex/blob/ebb86bcd2c3eae4e638081380224c7b4199dcfd2/.github/workflows/R-CMD-check.yaml
+      - name: Install dependencies on MacOS
         run: |
-          brew unlink gettext && brew link gettext --force
+          sudo Rscript -e "source('https://mac.R-project.org/bin/install.R'); install.libs('gettext')"
 
       - uses: r-lib/actions/setup-pandoc@v2
 
