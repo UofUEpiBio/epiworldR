@@ -1,5 +1,10 @@
-#ifndef MEASLESQUARANTINE_HPP
-#define MEASLESQUARANTINE_HPP
+
+#ifndef MEASLESSCHOOL_HPP
+#define MEASLESSCHOOL_HPP
+
+#include "../tools/vaccine.hpp"
+#include "../model-bones.hpp"
+
 
 #if defined(__clang__)
     // Clang
@@ -24,7 +29,7 @@
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \
     inline void ModelMeaslesSchool<TSeq>:: name \
-    (epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m)
+    (Agent<TSeq> * p, Model<TSeq> * m)
 
 #define SAMPLE_FROM_PROBS(n, ans) \
     size_t ans; \
@@ -57,7 +62,7 @@
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesSchool: public epiworld::Model<TSeq> {
+class ModelMeaslesSchool: public Model<TSeq> {
 
 private:
 
@@ -203,7 +208,7 @@ public:
     void reset();
     void update_infectious();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
 };
 
@@ -246,11 +251,11 @@ inline void ModelMeaslesSchool<TSeq>::quarantine_agents() {
         {
 
             if (agent_state == SUSCEPTIBLE)
-                this->get_agent(i).change_state(this, QUARANTINED_SUSCEPTIBLE);
+                this->get_agent(i).change_state(*this, QUARANTINED_SUSCEPTIBLE);
             else if (agent_state == EXPOSED)
-                this->get_agent(i).change_state(this, QUARANTINED_EXPOSED);
+                this->get_agent(i).change_state(*this, QUARANTINED_EXPOSED);
             else if (agent_state == PRODROMAL)
-                this->get_agent(i).change_state(this, QUARANTINED_PRODROMAL);
+                this->get_agent(i).change_state(*this, QUARANTINED_PRODROMAL);
 
             // And we add the day of quarantine
             this->day_flagged[i] = this->today();
@@ -353,14 +358,10 @@ inline void ModelMeaslesSchool<TSeq>::update_infectious() {
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelMeaslesSchool<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelMeaslesSchool<TSeq>::clone_ptr()
 {
 
-    ModelMeaslesSchool<TSeq> * ptr = new ModelMeaslesSchool<TSeq>(
-        *dynamic_cast<const ModelMeaslesSchool<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelMeaslesSchool<TSeq>>(*this);
 
 }
 
@@ -381,6 +382,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
     // Drawing from the set
     int nviruses_tmp = 0;
     int i = 0;
+    auto & m_ref = *m;
     while (i < ndraw)
     {
         // Picking the actual contacts
@@ -396,7 +398,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
         if (which == static_cast<int>(n_infectious))
             --which;
 
-        epiworld::Agent<> & neighbor = *model->infectious[which];
+        Agent<> & neighbor = *model->infectious[which];
 
         // Can't sample itself
         if (neighbor.get_id() == p->get_id())
@@ -425,9 +427,9 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
 
         /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m)) *
+            (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
             v->get_prob_infecting(m) *
-            (1.0 - neighbor.get_transmission_reduction(v, m))
+            (1.0 - neighbor.get_transmission_reduction(v, m_ref))
             ;
 
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -444,7 +446,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
     if (which < 0)
         return;
 
-    p->set_virus(*m->array_virus_tmp[which], m);
+    p->set_virus(*m, *m->array_virus_tmp[which]);
 
     return;
 
@@ -453,7 +455,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
 LOCAL_UPDATE_FUN(m_update_exposed) {
 
     if (m->runif() < (1.0/p->get_virus()->get_incubation(m)))
-        p->change_state(m, ModelMeaslesSchool<TSeq>::PRODROMAL);
+        p->change_state(*m, ModelMeaslesSchool<TSeq>::PRODROMAL);
 
     return;
 
@@ -466,7 +468,7 @@ LOCAL_UPDATE_FUN(m_update_prodromal) {
 
         GET_MODEL(m, model);
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, ModelMeaslesSchool<TSeq>::RASH);
+        p->change_state(*m, ModelMeaslesSchool<TSeq>::RASH);
 
     }
 
@@ -511,11 +513,10 @@ LOCAL_UPDATE_FUN(m_update_rash) {
     // Sampling from the probabilities
     SAMPLE_FROM_PROBS(2, which);
 
-    // Recovers
-    if (which == 2)
+    // Recovers (which == 0 fires with probability 1/rash_period)
+    if (which == 0)
     {
-        p->rm_virus(
-            m,
+        p->rm_virus(*m, 
             detected ?
                 ModelMeaslesSchool::ISOLATED_RECOVERED:
                 ModelMeaslesSchool::RECOVERED
@@ -526,22 +527,21 @@ LOCAL_UPDATE_FUN(m_update_rash) {
         // If hospitalized, then the agent is removed from the system
         // effectively
         model->record_hospitalization(*p);
-        p->change_state(
-            m,
+        p->change_state(*m, 
             detected ?
                 ModelMeaslesSchool::DETECTED_HOSPITALIZED :
                 ModelMeaslesSchool::HOSPITALIZED
             );
     }
-    else if (which != 0)
+    else if (which > 2)
     {
         throw std::logic_error("The roulette returned an unexpected value.");
     }
-    else if ((which == 0u) && detected)
+    else if (detected)
     {
         // If the agent is not hospitalized, then it is moved to
         // isolation.
-        p->change_state(m, ModelMeaslesSchool::ISOLATED);
+        p->change_state(*m, ModelMeaslesSchool::ISOLATED);
     }
 
 };
@@ -566,19 +566,18 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     // Sampling from the probabilities
     SAMPLE_FROM_PROBS(2, which);
 
-    // Recovers
-    if (which == 2u)
+    // Recovers (which == 0 fires with probability 1/rash_period)
+    if (which == 0u)
     {
         if (unisolate)
         {
-            p->rm_virus(
-                m,
+            p->rm_virus(*m, 
                 ModelMeaslesSchool::RECOVERED
             );
         }
         else
-            p->rm_virus(
-                m, ModelMeaslesSchool::ISOLATED_RECOVERED
+            p->rm_virus(*m, 
+                ModelMeaslesSchool::ISOLATED_RECOVERED
             );
     }
 
@@ -586,8 +585,7 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     else if (which == 1u)
     {
         model->record_hospitalization(*p);
-        p->change_state(
-            m,
+        p->change_state(*m, 
             // HOSPITALIZED
             unisolate ?
                 ModelMeaslesSchool::HOSPITALIZED :
@@ -596,9 +594,9 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
     }
     // If neither hospitalized nor recovered, then the agent is
     // still under isolation, unless the quarantine period is over.
-    else if ((which == 0u) && unisolate)
+    else if (unisolate)
     {
-        p->change_state(m, ModelMeaslesSchool::RASH);
+        p->change_state(*m, ModelMeaslesSchool::RASH);
     }
 
 }
@@ -616,7 +614,7 @@ LOCAL_UPDATE_FUN(m_update_isolated_recovered) {
         true: false;
 
     if (unisolate)
-        p->change_state(m, ModelMeaslesSchool::RECOVERED);
+        p->change_state(*m, ModelMeaslesSchool::RECOVERED);
 
 }
 
@@ -638,21 +636,18 @@ LOCAL_UPDATE_FUN(m_update_q_exposed) {
         // the prodromal period. Otherwise, they are moved to the
         // quarantined prodromal period.
         if (unquarantine)
-            p-> change_state(
-                m,
+            p->change_state(*m, 
                 ModelMeaslesSchool::PRODROMAL
             );
         else
-            p->change_state(
-                m,
+            p->change_state(*m, 
                 ModelMeaslesSchool::QUARANTINED_PRODROMAL
             );
 
     }
     else if (unquarantine)
     {
-        p->change_state(
-            m,
+        p->change_state(*m, 
             ModelMeaslesSchool::EXPOSED
         );
     }
@@ -666,7 +661,7 @@ LOCAL_UPDATE_FUN(m_update_q_susceptible) {
         m->today() - model->day_flagged[p->get_id()];
 
     if (days_since >= m->par("Quarantine period"))
-        p->change_state(m, ModelMeaslesSchool::SUSCEPTIBLE);
+        p->change_state(*m, ModelMeaslesSchool::SUSCEPTIBLE);
 
 }
 
@@ -686,13 +681,13 @@ LOCAL_UPDATE_FUN(m_update_q_prodromal) {
     if (m->runif() < (1.0/m->par("Prodromal period")))
     {
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, ModelMeaslesSchool::ISOLATED);
+        p->change_state(*m, ModelMeaslesSchool::ISOLATED);
     }
     else
     {
 
         if (unquarantine)
-            p->change_state(m, ModelMeaslesSchool::PRODROMAL);
+            p->change_state(*m, ModelMeaslesSchool::PRODROMAL);
 
     }
 
@@ -704,7 +699,7 @@ LOCAL_UPDATE_FUN(m_update_q_recovered) {
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (days_since >= m->par("Quarantine period"))
-        p->change_state(m, ModelMeaslesSchool::RECOVERED);
+        p->change_state(*m, ModelMeaslesSchool::RECOVERED);
 
 }
 
@@ -712,7 +707,7 @@ LOCAL_UPDATE_FUN(m_update_hospitalized) {
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_virus(m, ModelMeaslesSchool::RECOVERED);
+        p->rm_virus(*m, ModelMeaslesSchool::RECOVERED);
 
     return;
 
@@ -802,9 +797,13 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     model.add_virus(measles);
 
     // Designing the vaccine
-    Tool<> vaccine("Vaccine");
-    vaccine.set_susceptibility_reduction(&model("Vax efficacy"));
-    vaccine.set_recovery_enhancer(&model("(IGNORED) Vax improved recovery"));
+    ToolVaccine<TSeq> vaccine(
+        std::string("MMR ") +
+        std::to_string(model("Vax efficacy"))
+    );
+    
+    vaccine.set_susceptibility_reduction(model("Vax efficacy"));
+
     vaccine.set_distribution(
         distribute_tool_randomly(prop_vaccinated, true)
     );

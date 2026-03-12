@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SIRMIXING_HPP
 #define EPIWORLD_MODELS_SIRMIXING_HPP
 
+#include "../model-bones.hpp"
+
 #if defined(__clang__)
     // Clang
     #define GET_MODEL(model, output) \
@@ -27,7 +29,7 @@
  * @ingroup mixing_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIRMixing : public epiworld::Model<TSeq>
+class ModelSIRMixing : public Model<TSeq>
 {
 private:
 
@@ -44,7 +46,7 @@ private:
     void update_infected_list();
     std::vector< size_t > sampled_agents;
     size_t sample_agents(
-        epiworld::Agent<TSeq> * agent,
+        Agent<TSeq> * agent,
         std::vector< size_t > & sampled_agents
         );
 
@@ -114,7 +116,7 @@ public:
 
     void reset();
 
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -153,7 +155,7 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
         {
             if (a.get_n_entities() > 0u)
             {
-                const auto & entity = a.get_entity(0u);
+                const auto & entity = a.get_entity(0u, *this);
                 infected[
                     // Position of the group in the `infected` vector
                     entity_indices[entity.get_id()] +
@@ -172,12 +174,12 @@ inline void ModelSIRMixing<TSeq>::update_infected_list()
 
 template<typename TSeq>
 inline size_t ModelSIRMixing<TSeq>::sample_agents(
-    epiworld::Agent<TSeq> * agent,
+    Agent<TSeq> * agent,
     std::vector< size_t > & sampled_agents
     )
 {
 
-    size_t agent_group_id = agent->get_entity(0u).get_id();
+    size_t agent_group_id = agent->get_entity(0u, *this).get_id();
     size_t ngroups = this->entities.size();
 
     int samp_id = 0;
@@ -187,7 +189,7 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
         size_t group_size = n_infected_per_group[g];
 
         // How many from this entity?
-        int nsamples = epiworld::Model<TSeq>::rbinom(
+        int nsamples = Model<TSeq>::rbinom(
             group_size,
             adjusted_contact_rate[g] * contact_matrix[
                 index(agent_group_id, g, ngroups)
@@ -202,7 +204,7 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
         {
 
             // Randomly selecting an agent
-            int which = epiworld::Model<TSeq>::runif() * group_size;
+            int which = Model<TSeq>::runif() * group_size;
 
             // Correcting overflow error
             if (which >= static_cast<int>(group_size))
@@ -328,14 +330,10 @@ inline void ModelSIRMixing<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelSIRMixing<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelSIRMixing<TSeq>::clone_ptr()
 {
 
-    ModelSIRMixing<TSeq> * ptr = new ModelSIRMixing<TSeq>(
-        *dynamic_cast<const ModelSIRMixing<TSeq>*>(this)
-        );
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelSIRMixing<TSeq>>(*this);
 
 }
 
@@ -366,8 +364,8 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     // Setting up the contact matrix
     this->contact_matrix = contact_matrix;
 
-    epiworld::UpdateFun<TSeq> update_susceptible = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_susceptible = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
@@ -386,6 +384,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
             // Drawing from the set
             int nviruses_tmp = 0;
+            auto & m_ref = *m;
             for (size_t n = 0u; n < ndraws; ++n)
             {
 
@@ -400,9 +399,9 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
                 /* And it is a function of susceptibility_reduction as well */
                 m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m)) *
+                    (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
                     v->get_prob_infecting(m) *
-                    (1.0 - neighbor.get_transmission_reduction(v, m))
+                    (1.0 - neighbor.get_transmission_reduction(v, m_ref))
                     ;
 
                 m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -415,9 +414,8 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
             if (which < 0)
                 return;
 
-            p->set_virus(
+            p->set_virus(*m, 
                 *m->array_virus_tmp[which],
-                m,
                 ModelSIRMixing<TSeq>::INFECTED
                 );
 
@@ -425,8 +423,8 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
         };
 
-    epiworld::UpdateFun<TSeq> update_infected = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected = [](
+        Agent<TSeq> * p, Model<TSeq> * m
         ) -> void {
 
             auto state = p->get_state();
@@ -441,7 +439,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
                 // Recover
                 m->array_double_tmp[n_events++] =
-                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, m));
+                    1.0 - (1.0 - v->get_prob_recovery(m)) * (1.0 - p->get_recovery_enhancer(v, *m));
 
                 #ifdef EPI_DEBUG
                 if (n_events == 0u)
@@ -465,7 +463,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
                     return;
 
                 // Which roulette happen?
-                p->rm_virus(m);
+                p->rm_virus(*m);
 
                 return ;
 
@@ -487,7 +485,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     model.add_state("Recovered");
 
     // Global function
-    epiworld::GlobalFun<TSeq> update = [](epiworld::Model<TSeq> * m) -> void
+    GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
     {
 
         GET_MODEL(m, m_down);
@@ -502,7 +500,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(
         ModelSIRMixing<TSeq>::INFECTED,
         ModelSIRMixing<TSeq>::RECOVERED,

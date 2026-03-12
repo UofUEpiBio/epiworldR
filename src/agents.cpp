@@ -49,8 +49,11 @@ SEXP print_agent_cpp(
     bool compressed
 ) {
 
-  cpp11::external_pointer<Agent<>> ptr(agent);
-  ptr->print(compressed);
+  cpp11::external_pointer<Agent<>>(agent)->
+    print(
+      *cpp11::external_pointer<Model<>>(model),
+      compressed
+    );
   return agent;
 
 }
@@ -85,11 +88,12 @@ std::vector<std::string> get_agents_states_cpp(SEXP model) {
 [[cpp11::register]]
 SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, int state_new, int queue) {
 
+
   cpp11::external_pointer<Agent<>> ptr_agent(agent);
   cpp11::external_pointer<Model<>> ptr_model(model);
   cpp11::external_pointer<Virus<>> ptr_virus(virus);
 
-  ptr_agent->set_virus(*ptr_virus, &(*ptr_model));
+  ptr_agent->set_virus(*ptr_model, *ptr_virus);
 
   return agent;
 
@@ -102,7 +106,7 @@ SEXP add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool, int state_new, int qu
   cpp11::external_pointer<Model<>> ptr_model(model);
   cpp11::external_pointer<Tool<>> ptr_tool(tool);
 
-  ptr_agent->add_tool(*ptr_tool, &(*ptr_model));
+  ptr_agent->add_tool(*ptr_model, *ptr_tool);
 
   return agent;
 
@@ -135,7 +139,7 @@ SEXP change_state_cpp(SEXP agent, SEXP model, int new_state, int queue) {
   cpp11::external_pointer<Agent<>> ptr_agent(agent);
   cpp11::external_pointer<Model<>> ptr_model(model);
 
-  ptr_agent->change_state(&(*ptr_model), new_state, queue);
+  ptr_agent->change_state(*ptr_model, new_state, queue);
 
   return agent;
 

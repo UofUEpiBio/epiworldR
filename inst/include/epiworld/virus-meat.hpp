@@ -60,7 +60,7 @@ inline VirusFun<TSeq> virus_fun_logit(
     VirusFun<TSeq> fun_infect = [coefs_f,vars](
         Agent<TSeq> * agent,
         Virus<TSeq> &,
-        Model<TSeq> *
+        Model<TSeq> * model
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();
@@ -70,7 +70,7 @@ inline VirusFun<TSeq> virus_fun_logit(
         #pragma omp simd reduction(+:res)
         #endif
         for (size_t i = 0u; i < K; ++i)
-            res += agent->operator[](vars.at(i)) * coefs_f.at(i);
+            res += agent->operator()(vars.at(i), *model) * coefs_f.at(i);
 
         return 1.0/(1.0 + std::exp(-res));
 
@@ -597,7 +597,7 @@ inline void Virus<TSeq>::set_post_immunity(
             if (__no_reinfect->get_id() == -99)
                 m->get_db().record_tool(*__no_reinfect);
 
-            p->add_tool(*__no_reinfect, m);
+            p->add_tool(*m, *__no_reinfect);
 
             return;
 
@@ -646,7 +646,7 @@ inline void Virus<TSeq>::set_post_immunity(
             if (__no_reinfect->get_id() == -99)
                 m->get_db().record_tool(*__no_reinfect);
 
-            p->add_tool(*__no_reinfect, m);
+            p->add_tool(*m, *__no_reinfect);
 
             return;
 
@@ -886,6 +886,12 @@ template<typename TSeq>
 inline void Virus<TSeq>::set_distribution(VirusToAgentFun<TSeq> fun)
 {
     virus_functions->dist = fun;
+}
+
+template<typename TSeq>
+inline std::unique_ptr<Virus<TSeq>> Virus<TSeq>::clone_ptr() const
+{
+    return std::make_unique<Virus<TSeq>>(*this);
 }
 
 #endif

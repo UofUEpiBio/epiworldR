@@ -29,8 +29,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_set(
         for (auto i: agents_ids)
         {
             model->get_agent(i).add_tool(
-                tool,
-                const_cast<Model<TSeq> * >(model)
+                *model, tool
                 );
         }
     };
@@ -100,8 +99,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
                     loc = n - 1;
                 
                 population[idx[loc]].add_tool(
-                    tool,
-                    const_cast< Model<TSeq> * >(model)
+                    *model, tool
                     );
                 
                 std::swap(idx[loc], idx[n]);
@@ -191,8 +189,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
                     loc = n - 1;
                 
                 population[idx[loc]].add_tool(
-                    tool,
-                    const_cast< Model<TSeq> * >(model)
+                    *model, tool
                     );
                 
                 std::swap(idx[loc], idx[n]);

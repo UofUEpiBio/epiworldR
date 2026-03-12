@@ -119,11 +119,8 @@ class LFMCMC {
 private:
 
     // Random number sampling
-    std::shared_ptr< std::mt19937 > m_engine = nullptr;
+    std::shared_ptr< epi_xoshiro256ss > m_engine = nullptr;
     
-    std::shared_ptr< std::uniform_real_distribution<> > runifd =
-        std::make_shared< std::uniform_real_distribution<> >(0.0, 1.0);
-
     std::shared_ptr< std::normal_distribution<> > rnormd =
         std::make_shared< std::normal_distribution<> >(0.0);
 
@@ -221,8 +218,8 @@ public:
      * @param eng 
      */
     ///@{
-    void set_rand_engine(std::shared_ptr< std::mt19937 > & eng);
-    std::shared_ptr< std::mt19937 > & get_rand_endgine();
+    void set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng);
+    std::shared_ptr< epi_xoshiro256ss > & get_rand_endgine();
     void seed(epiworld_fast_uint s);
     void set_rand_gamma(epiworld_double alpha, epiworld_double beta);
     epiworld_double runif();

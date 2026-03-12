@@ -75,4 +75,10 @@ inline bool GlobalEvent<TSeq>::operator!=(const GlobalEvent<TSeq> & other) const
     return !(*this == other);
 }
 
+template<typename TSeq>
+inline std::unique_ptr<GlobalEvent<TSeq>> GlobalEvent<TSeq>::clone_ptr() const
+{
+    return std::make_unique<GlobalEvent<TSeq>>(*this);
+}
+
 #endif

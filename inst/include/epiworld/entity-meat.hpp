@@ -4,26 +4,26 @@
 template<typename TSeq>
 inline void Entity<TSeq>::add_agent(
     Agent<TSeq> & p,
-    Model<TSeq> * model
+    Model<TSeq> & model
     )
 {
 
     // Need to add it to the events, through the individual
-    p.add_entity(*this, model);    
+    p.add_entity(model, *this);
 
 }
 
 template<typename TSeq>
 inline void Entity<TSeq>::add_agent(
     Agent<TSeq> * p,
-    Model<TSeq> * model
+    Model<TSeq> & model
     )
 {
-    p->add_entity(*this, model);
+    p->add_entity(model, *this);
 }
 
 template<typename TSeq>
-inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
+inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> & model)
 {
     if (idx >= size())
         throw std::out_of_range(
@@ -31,7 +31,7 @@ inline void Entity<TSeq>::rm_agent(size_t idx, Model<TSeq> * model)
             " out of " + std::to_string(size())
             );
 
-    agents[idx].rm_entity(*this, model);
+    model.population[agents[idx]].rm_entity(model, *this);
 
     return;
 }
@@ -55,43 +55,31 @@ inline std::vector< epiworld_double > & Entity<TSeq>::get_location()
 }
 
 template<typename TSeq>
-inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator Entity<TSeq>::begin()
+inline typename std::vector< size_t >::iterator Entity<TSeq>::begin()
 {
-
-    if (agents.size() == 0)
-        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator Entity<TSeq>::end()
+inline typename std::vector< size_t >::iterator Entity<TSeq>::end()
 {
-    if (agents.size() == 0)
-        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::iterator{};
-
-    return agents.begin() + agents.size();
+    return agents.end();
 }
 
 template<typename TSeq>
-inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator Entity<TSeq>::begin() const
+inline typename std::vector< size_t >::const_iterator Entity<TSeq>::begin() const
 {
-
-    if (agents.size() == 0)
-        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator{};
 
     return agents.begin();
 
 }
 
 template<typename TSeq>
-inline typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator Entity<TSeq>::end() const
+inline typename std::vector< size_t >::const_iterator Entity<TSeq>::end() const
 {
-    if (agents.size() == 0)
-        return typename std::vector< std::reference_wrapper<Agent<TSeq>> >::const_iterator{};
-
-    return agents.begin() + agents.size();
+    return agents.end();
 }
 
 template<typename TSeq>
@@ -103,7 +91,7 @@ size_t Entity<TSeq>::operator[](size_t i)
             std::to_string(agents.size()) + " <= " + std::to_string(i)
             );
 
-    return i;
+    return agents[i];
 }
 
 template<typename TSeq>
@@ -188,7 +176,7 @@ inline bool Entity<TSeq>::operator==(const Entity<TSeq> & other) const
 
     for (size_t i = 0u; i < agents.size(); ++i)
     {
-        if (agents[i].get() != other.agents[i].get())
+        if (agents[i] != other.agents[i])
             return false;
     }
 
@@ -240,19 +228,15 @@ inline void Entity<TSeq>::distribute(Model<TSeq> * model)
 }
 
 template<typename TSeq>
-inline std::vector< std::reference_wrapper<Agent<TSeq>> > & Entity<TSeq>::get_agents()
+inline const std::vector< size_t > & Entity<TSeq>::get_agents() const
 {
     return agents;
 }
 
 template<typename TSeq>
-inline std::vector< size_t > Entity<TSeq>::get_agents_ids() const
+inline const std::vector< size_t > & Entity<TSeq>::get_agents_ids() const
 {
-    std::vector< size_t > res;
-    for (const Agent<TSeq> & agent: agents)
-        res.push_back(agent.get_id());
-
-    return res;
+    return agents;
 }
 
 template<typename TSeq>

@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELS_SEIR_HPP
 #define EPIWORLD_MODELS_SEIR_HPP
 
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
  * 
@@ -16,7 +18,7 @@
  * @param recovery_rate epiworld_double Recovery rate of the virus.
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIR : public epiworld::Model<TSeq>
+class ModelSEIR : public Model<TSeq>
 {
 
 public:
@@ -44,9 +46,9 @@ public:
         epiworld_double recovery_rate
     );
 
-    epiworld::UpdateFun<TSeq> update_exposed_seir = [](
-        epiworld::Agent<TSeq> * p,
-        epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_exposed_seir = [](
+        Agent<TSeq> * p,
+        Model<TSeq> * m
     ) -> void {
 
         // Getting the virus
@@ -54,19 +56,19 @@ public:
 
         // Does the agent become infected?
         if (m->runif() < 1.0/(v->get_incubation(m)))
-            p->change_state(m, ModelSEIR<TSeq>::INFECTED);
+            p->change_state(*m, ModelSEIR<TSeq>::INFECTED);
 
         return;
     };
 
 
-    epiworld::UpdateFun<TSeq> update_infected_seir = [](
-        epiworld::Agent<TSeq> * p,
-        epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_infected_seir = [](
+        Agent<TSeq> * p,
+        Model<TSeq> * m
     ) -> void {
         // Does the agent recover?
         if (m->runif() < (m->par("Recovery rate")))
-            p->rm_virus(m);
+            p->rm_virus(*m);
 
         return;
     };
@@ -97,7 +99,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
 {
 
     // Adding statuses
-    model.add_state("Susceptible", epiworld::default_update_susceptible<TSeq>);
+    model.add_state("Susceptible", default_update_susceptible<TSeq>);
     model.add_state("Exposed", model.update_exposed_seir);
     model.add_state("Infected", model.update_infected_seir);
     model.add_state("Removed");
@@ -108,7 +110,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     model.add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus(vname, prevalence, true);
+    Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
     virus.set_prob_infecting(&model("Transmission rate"));

@@ -36,6 +36,14 @@ jobs:
           http-user-agent: release
           use-public-rspm: true
 
+      # Got this from:
+      # https://github.com/dmurdoch/parseLatex/blob/ebb86bcd2c3eae4e638081380224c7b4199dcfd2/.github/workflows/R-CMD-check.yaml
+      # and
+      # https://www.mail-archive.com/r-sig-mac@r-project.org/msg06933.html
+      - name: Install dependencies on MacOS
+        run: |
+          Rscript -e "source('https://mac.R-project.org/bin/install.R'); install.libs('gettext')"
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck

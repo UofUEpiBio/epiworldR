@@ -81,7 +81,7 @@ int entity_add_agent_cpp(SEXP entity, SEXP agent, SEXP model) {
   cpp11::external_pointer<Agent<>> ptr_agent(agent);
   cpp11::external_pointer<Model<>> ptr_model(model);
 
-  ptr->add_agent(&(*ptr_agent), &(*ptr_model));
+  ptr->add_agent(&(*ptr_agent), *ptr_model);
 
   return 0;
 }
@@ -149,8 +149,8 @@ cpp11::data_frame entity_get_agents_cpp(SEXP entity) {
   cpp11::writable::integers entity_id;
 
   int id = static_cast<int>(ptr->get_id());
-  for (const Agent<> & agent_i: ptr->get_agents()) {
-    agent.push_back(static_cast<int>(agent_i.get_id()));
+  for (const auto & agent_id: ptr->get_agents()) {
+    agent.push_back(agent_id);
     entity_id.push_back(id);
   }
 

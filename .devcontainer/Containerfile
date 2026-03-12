@@ -1,4 +1,5 @@
 FROM ghcr.io/rocker-org/devcontainer/tidyverse:4.5
+# FROM rocker/r-devel-san
 
 # RUN \
 #   echo 'options(repos=c(CRAN="https://packagemanager.posit.co/cran/__linux__/bookworm/latest"))' >> ~/.Rprofile && \

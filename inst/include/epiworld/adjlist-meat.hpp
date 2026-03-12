@@ -1,6 +1,14 @@
 #ifndef EPIWORLD_ADJLIST_MEAT_HPP
 #define EPIWORLD_ADJLIST_MEAT_HPP
 
+#include <vector>
+#include <map>
+#include <string>
+#include <stdexcept>
+#include <fstream>
+#include "config.hpp"
+#include "adjlist-bones.hpp"
+
 inline AdjList::AdjList(
     const std::vector< int > & source,
     const std::vector< int > & target,

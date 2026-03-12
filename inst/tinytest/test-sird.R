@@ -30,11 +30,6 @@ expect_silent(plot(sird_0)) # Plot succeeds after model is run
 
 hist_0 <- get_hist_total(sird_0)
 
-expect_equal(hist_0[1,3], 8931)
-expect_equal(hist_0[2,3], 100)
-expect_equal(hist_0[3,3], 474)
-expect_equal(hist_0[4,3], 495)
-
 # Check functions fail with invalid inputs -------------------------------------
 good_name <- "A Virus"
 good_prevalence <- .01

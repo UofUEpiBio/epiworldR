@@ -1,3 +1,16 @@
+# epiworldR 0.13.0.0
+
+No significant changes on the user side.
+
+## Internal changes
+
+* ([epiworld#169](https://github.com/UofUEpiBio/epiworld/pull/169)) The `Entities` system was still causing issues. The system was refactored to use indices instead without any pointers.
+
+* (same issue) The system completely avoids binding via pointers (with the exception of `DataBase`). This provides a cleaner API reducing issues related to memory/address problems. `Model::clone_ptr` now returns smart pointers instead.
+
+* ([epiworld#163](https://github.com/UofUEpiBio/epiworld/issues/163)) Changed the main engine for Pseudo Random Number Generation to xorshiro\*\* (more in this [website](https://prng.di.unimi.it/) and this [paper](https://dl.acm.org/doi/10.1145/3460772) by Blackman and Vigna). This change makes random number generation significantly faster (twice as much, compared to Mersenne Twister).
+
+
 # epiworldR 0.12.0.0
 
 ## Bug fixes

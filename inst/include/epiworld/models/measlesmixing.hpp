@@ -1,7 +1,8 @@
 #ifndef EPIWORLD_MODELS_MEASLESMIXING_HPP
 #define EPIWORLD_MODELS_MEASLESMIXING_HPP
 
-using namespace epiworld;
+#include "../tools/vaccine.hpp"
+#include "../model-bones.hpp"
 
 #define MM(i, j, n) \
     j * n + i
@@ -74,7 +75,7 @@ using namespace epiworld;
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesMixing : public epiworld::Model<TSeq>
+class ModelMeaslesMixing : public Model<TSeq>
 {
 private:
 
@@ -272,7 +273,7 @@ public:
      * @brief Create a clone of this model
      * @return Pointer to a new model instance with the same configuration
      */
-    Model<TSeq> * clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr();
 
     /**
      * @brief Set the initial states of the model
@@ -390,7 +391,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
         {
             if (a.get_n_entities() > 0u)
             {
-                const auto & entity = a.get_entity(0u);
+                const auto & entity = a.get_entity(0u, *this);
                 infectious[
                     // Position of the group in the `infectious` vector
                     entity_indices[entity.get_id()] +
@@ -408,7 +409,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
         )
         {
             adjusted_contact_rate[
-                a.get_entity(0u).get_id()
+                a.get_entity(0u, *this).get_id()
             ] += 1.0;
         }
 
@@ -432,12 +433,12 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
 
 template<typename TSeq>
 inline size_t ModelMeaslesMixing<TSeq>::sample_agents(
-    epiworld::Agent<TSeq> * agent,
+    Agent<TSeq> * agent,
     std::vector< size_t > & sampled_agents
     )
 {
 
-    size_t agent_group_id = agent->get_entity(0u).get_id();
+    size_t agent_group_id = agent->get_entity(0u, *this).get_id();
     size_t ngroups = this->entities.size();
 
     int samp_id = 0;
@@ -450,7 +451,7 @@ inline size_t ModelMeaslesMixing<TSeq>::sample_agents(
             continue;
 
         // How many from this entity?
-        int nsamples = epiworld::Model<TSeq>::rbinom(
+        int nsamples = Model<TSeq>::rbinom(
             group_size,
             adjusted_contact_rate[g] * contact_matrix[
                 MM(agent_group_id, g, ngroups)
@@ -465,7 +466,7 @@ inline size_t ModelMeaslesMixing<TSeq>::sample_agents(
         {
 
             // Randomly selecting an agent
-            int which = epiworld::Model<TSeq>::runif() * group_size;
+            int which = Model<TSeq>::runif() * group_size;
 
             // Correcting overflow error
             if (which >= static_cast<int>(group_size))
@@ -629,25 +630,10 @@ inline void ModelMeaslesMixing<TSeq>::reset()
 }
 
 template<typename TSeq>
-inline Model<TSeq> * ModelMeaslesMixing<TSeq>::clone_ptr()
+inline std::unique_ptr<Model<TSeq>> ModelMeaslesMixing<TSeq>::clone_ptr()
 {
 
-    ModelMeaslesMixing<TSeq> * ptr = new ModelMeaslesMixing<TSeq>(
-        *dynamic_cast<const ModelMeaslesMixing<TSeq>*>(this)
-        );
-
-    #if defined(__clang__)
-        // Clang
-        __builtin_assume(ptr != nullptr);
-    #elif defined(__GNUC__) && __GNUC__ >= 13
-        // GCC 13 or later
-        [[assume(ptr != nullptr)]];
-    #else
-        // C++17 or C++20
-        assert(ptr != nullptr); // Use assert for runtime checks
-    #endif
-
-    return dynamic_cast< Model<TSeq> *>(ptr);
+    return std::make_unique<ModelMeaslesMixing<TSeq>>(*this);
 
 }
 
@@ -674,6 +660,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
 
     // Drawing from the set
     int nviruses_tmp = 0;
+    auto & m_ref = *m;
     for (size_t n = 0u; n < ndraws; ++n)
     {
 
@@ -693,9 +680,9 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
 
         /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m)) *
+            (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
             v->get_prob_infecting(m) *
-            (1.0 - neighbor.get_transmission_reduction(v, m))
+            (1.0 - neighbor.get_transmission_reduction(v, m_ref))
             ;
 
         m->array_virus_tmp[nviruses_tmp++] = &(*v);
@@ -708,9 +695,8 @@ inline void ModelMeaslesMixing<TSeq>::m_update_susceptible(
     if (which < 0)
         return;
 
-    p->set_virus(
+    p->set_virus(*m, 
         *m->array_virus_tmp[which],
-        m,
         ModelMeaslesMixing<TSeq>::EXPOSED
         );
 
@@ -730,7 +716,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_exposed(
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
 
-        p->change_state(m, ModelMeaslesMixing<TSeq>::PRODROMAL);
+        p->change_state(*m, ModelMeaslesMixing<TSeq>::PRODROMAL);
 
         return;
 
@@ -751,7 +737,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_prodromal(
     if (m->runif() < 1.0/m->par("Prodromal period"))
     {
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, ModelMeaslesMixing<TSeq>::RASH);
+        p->change_state(*m, ModelMeaslesMixing<TSeq>::RASH);
     }
 
     return ;
@@ -783,10 +769,9 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
 
     SAMPLE_FROM_PROBS(2, which);
 
-    if (which == 2) // Recovers
+    if (which == 0) // Recovers (probability 1/rash_period)
     {
-        p->rm_virus(
-            m,
+        p->rm_virus(*m, 
             detected ?
                 ModelMeaslesMixing<TSeq>::ISOLATED_RECOVERED:
                 ModelMeaslesMixing<TSeq>::RECOVERED
@@ -795,22 +780,21 @@ inline void ModelMeaslesMixing<TSeq>::m_update_rash(
     else if (which == 1) // Hospitalized
     {
         m->record_hospitalization(*p);
-        p->change_state(
-            m,
+        p->change_state(*m, 
             detected ?
                 ModelMeaslesMixing<TSeq>::DETECTED_HOSPITALIZED :
                 ModelMeaslesMixing<TSeq>::HOSPITALIZED
         );
     }
-    else if (which != 0)
+    else if (which > 2)
     {
         throw std::logic_error("The roulette returned an unexpected value.");
     }
-    else if ((which == 0u) && detected)
+    else if (detected)
     {
         // If the agent is not hospitalized or recovered, then it is moved to
         // isolation.
-        p->change_state(m, ModelMeaslesMixing<TSeq>::ISOLATED);
+        p->change_state(*m, ModelMeaslesMixing<TSeq>::ISOLATED);
         model->day_flagged[p->get_id()] = m->today();
     }
 
@@ -841,19 +825,18 @@ inline void ModelMeaslesMixing<TSeq>::m_update_isolated(
 
     SAMPLE_FROM_PROBS(2, which);
 
-    // Recovers
-    if (which == 2)
+    // Recovers (which == 0 fires with probability 1/rash_period)
+    if (which == 0)
     {
         if (unisolate)
         {
-            p->rm_virus(
-                m,
+            p->rm_virus(*m, 
                 ModelMeaslesMixing<TSeq>::RECOVERED
             );
         }
         else
-            p->rm_virus(
-                m, ModelMeaslesMixing<TSeq>::ISOLATED_RECOVERED
+            p->rm_virus(*m, 
+                ModelMeaslesMixing<TSeq>::ISOLATED_RECOVERED
             );
     }
     else if (which == 1)
@@ -862,21 +845,21 @@ inline void ModelMeaslesMixing<TSeq>::m_update_isolated(
         m->record_hospitalization(*p);
         if (unisolate)
         {
-            p->change_state(
-                m, ModelMeaslesMixing<TSeq>::HOSPITALIZED
+            p->change_state(*m, 
+                ModelMeaslesMixing<TSeq>::HOSPITALIZED
             );
         }
         else
         {
-            p->change_state(
-                m, ModelMeaslesMixing<TSeq>::DETECTED_HOSPITALIZED
+            p->change_state(*m, 
+                ModelMeaslesMixing<TSeq>::DETECTED_HOSPITALIZED
             );
         }
     }
-    else if ((which == 0) && unisolate)
+    else if (unisolate)
     {
-        p->change_state(
-            m, ModelMeaslesMixing<TSeq>::RASH
+        p->change_state(*m, 
+            ModelMeaslesMixing<TSeq>::RASH
         );
     }
 
@@ -900,8 +883,8 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_suscep(
 
     if (unquarantine)
     {
-        p->change_state(
-            m, ModelMeaslesMixing<TSeq>::SUSCEPTIBLE
+        p->change_state(*m, 
+            ModelMeaslesMixing<TSeq>::SUSCEPTIBLE
         );
     }
 
@@ -928,22 +911,22 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_exposed(
         // If the agent is unquarantined, it becomes prodromal
         if (unquarantine)
         {
-            p->change_state(
-                m, ModelMeaslesMixing<TSeq>::PRODROMAL
+            p->change_state(*m, 
+                ModelMeaslesMixing<TSeq>::PRODROMAL
             );
         }
         else
         {
-            p->change_state(
-                m, ModelMeaslesMixing<TSeq>::QUARANTINED_PRODROMAL
+            p->change_state(*m, 
+                ModelMeaslesMixing<TSeq>::QUARANTINED_PRODROMAL
             );
         }
 
     }
     else if (unquarantine)
     {
-        p->change_state(
-            m, ModelMeaslesMixing<TSeq>::EXPOSED
+        p->change_state(*m, 
+            ModelMeaslesMixing<TSeq>::EXPOSED
         );
     }
 
@@ -968,13 +951,13 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_prodromal(
     if (m->runif() < (1.0/m->par("Prodromal period")))
     {
         model->day_rash_onset[p->get_id()] = m->today();
-        p->change_state(m, ModelMeaslesMixing<TSeq>::ISOLATED);
+        p->change_state(*m, ModelMeaslesMixing<TSeq>::ISOLATED);
     }
     else
     {
 
         if (unquarantine)
-            p->change_state(m, ModelMeaslesMixing<TSeq>::PRODROMAL);
+            p->change_state(*m, ModelMeaslesMixing<TSeq>::PRODROMAL);
 
     }
 
@@ -989,7 +972,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_quarantine_recovered(
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (days_since >= m->par("Quarantine period"))
-        p->change_state(m, ModelMeaslesMixing<TSeq>::RECOVERED);
+        p->change_state(*m, ModelMeaslesMixing<TSeq>::RECOVERED);
 
 };
 
@@ -1010,8 +993,8 @@ inline void ModelMeaslesMixing<TSeq>::m_update_isolated_recovered(
 
     if (unisolate)
     {
-        p->change_state(
-            m, ModelMeaslesMixing<TSeq>::RECOVERED
+        p->change_state(*m, 
+            ModelMeaslesMixing<TSeq>::RECOVERED
         );
     }
 
@@ -1024,7 +1007,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_hospitalized(
 
     // The agent is removed from the system
     if (m->runif() < 1.0/m->par("Hospitalization period"))
-        p->rm_virus(m, ModelMeaslesMixing<TSeq>::RECOVERED);
+        p->rm_virus(*m, ModelMeaslesMixing<TSeq>::RECOVERED);
 
 };
 
@@ -1090,21 +1073,21 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
                 switch (agent.get_state())
                 {
                     case SUSCEPTIBLE:
-                        agent.change_state(this, QUARANTINED_SUSCEPTIBLE);
+                        agent.change_state(*this, QUARANTINED_SUSCEPTIBLE);
                         day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case EXPOSED:
-                        agent.change_state(this, QUARANTINED_EXPOSED);
+                        agent.change_state(*this, QUARANTINED_EXPOSED);
                         day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case PRODROMAL:
-                        agent.change_state(this, QUARANTINED_PRODROMAL);
+                        agent.change_state(*this, QUARANTINED_PRODROMAL);
                         day_flagged[contact_id] = Model<TSeq>::today();
                         break;
                     case RASH:
                         if (isolation_willingness[contact_id])
                         {
-                            agent.change_state(this, ISOLATED);
+                            agent.change_state(*this, ISOLATED);
                             day_flagged[contact_id] = Model<TSeq>::today();
                         }
                         break;
@@ -1227,7 +1210,7 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     model.queuing_off();
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> virus("Measles", prevalence, true);
+    Virus<TSeq> virus("Measles", prevalence, true);
     virus.set_state(
         ModelMeaslesMixing<TSeq>::EXPOSED,
         ModelMeaslesMixing<TSeq>::RECOVERED,
@@ -1241,9 +1224,13 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     model.add_virus(virus);
 
     // Designing the vaccine
-    Tool<> vaccine("Vaccine");
-    vaccine.set_susceptibility_reduction(&model("Vax efficacy"));
-    vaccine.set_recovery_enhancer(&model("(IGNORED) Vax improved recovery"));
+    ToolVaccine<TSeq> vaccine(
+        std::string("MMR ") +
+        std::to_string(model("Vax efficacy"))
+    );
+
+    vaccine.set_susceptibility_reduction(model("Vax efficacy"));
+
     vaccine.set_distribution(
         distribute_tool_randomly(prop_vaccinated, true)
     );

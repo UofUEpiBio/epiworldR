@@ -1,37 +1,25 @@
 #ifndef EPIWORLD_MODEL_BONES_HPP
 #define EPIWORLD_MODEL_BONES_HPP
 
-template<typename TSeq>
-class Agent;
+#include <memory>
+#include <vector>
+#include <functional>
+#include <string>
+#include <map>
+#include "config.hpp"
+
+#include "agent-bones.hpp"
+#include "virus-bones.hpp"
+#include "viruses-bones.hpp"
+#include "tool-bones.hpp"
+#include "database-bones.hpp"
+#include "queue-bones.hpp"
+#include "globalevent-bones.hpp"
 
 template<typename TSeq>
 class AgentsSample;
 
-template<typename TSeq>
-class Virus;
-
-template<typename TSeq>
-class Viruses;
-
-template<typename TSeq>
-class Viruses_const;
-
-template<typename TSeq>
-class Tool;
-
 class AdjList;
-
-template<typename TSeq>
-class DataBase;
-
-template<typename TSeq>
-class Queue;
-
-template<typename TSeq>
-struct Event;
-
-template<typename TSeq>
-class GlobalEvent;
 
 template<typename TSeq>
 inline epiworld_double susceptibility_reduction_mixer_default(
@@ -96,6 +84,7 @@ class Model {
     friend class AgentsSample<TSeq>;
     friend class DataBase<TSeq>;
     friend class Queue<TSeq>;
+
 protected:
 
     std::string name = ""; ///< Name of the model
@@ -142,10 +131,10 @@ protected:
 
     std::vector< Entity<TSeq> > entities = {};
 
-    std::shared_ptr< std::mt19937 > engine = std::make_shared< std::mt19937 >();
+    std::shared_ptr< epi_xoshiro256ss > engine = std::make_shared< epi_xoshiro256ss >();
 
-    std::uniform_real_distribution<> runifd      =
-        std::uniform_real_distribution<> (0.0, 1.0);
+    epiworld_double runifd_a = 0.0;
+    epiworld_double runifd_b = 1.0;
     std::normal_distribution<>       rnormd      =
         std::normal_distribution<>(0.0);
     std::gamma_distribution<>        rgammad     =
@@ -196,10 +185,12 @@ protected:
     void chrono_start();
     void chrono_end();
 
-    std::vector<GlobalEvent<TSeq>> globalevents;
+    std::vector<GlobalEventPtr<TSeq>> globalevents;
 
     Queue<TSeq> queue;
     bool use_queuing   = true;
+    size_t sim_id = 0u;
+    void set_sim_id(size_t id);
 
     /**
      * @brief Variables used to keep track of the events
@@ -252,7 +243,7 @@ protected:
      *
      * @param copy
      */
-    virtual Model<TSeq> * clone_ptr();
+    virtual std::unique_ptr<Model<TSeq>> clone_ptr();
 
 public:
 
@@ -293,8 +284,8 @@ public:
      * @param s Seed
      */
     ///@{
-    void set_rand_engine(std::shared_ptr< std::mt19937 > & eng);
-    std::shared_ptr< std::mt19937 > & get_rand_endgine();
+    void set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng);
+    std::shared_ptr< epi_xoshiro256ss > & get_rand_endgine();
     void seed(size_t s);
     void set_rand_norm(epiworld_double mean, epiworld_double sd);
     void set_rand_unif(epiworld_double a, epiworld_double b);
@@ -412,6 +403,7 @@ public:
     std::vector< Entity<TSeq> > & get_entities();
 
     Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr);
+    const Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr) const;
 
     Model<TSeq> & agents_smallworld(
         epiworld_fast_uint n = 1000,
@@ -439,7 +431,7 @@ public:
         epiworld_fast_uint ndays,
         int seed = -1
     ); ///< Runs the simulation (after initialization)
-    void run_multiple( ///< Multiple runs of the simulation
+    Model<TSeq> & run_multiple( ///< Multiple runs of the simulation
         epiworld_fast_uint ndays,
         epiworld_fast_uint nexperiments,
         int seed_ = -1,
@@ -454,6 +446,7 @@ public:
     size_t get_n_tools() const; ///< Number of tools in the model
     epiworld_fast_uint get_ndays() const;
     epiworld_fast_uint get_n_replicates() const;
+    size_t get_sim_id() const;
     size_t get_n_entities() const;
     void set_ndays(epiworld_fast_uint ndays);
     bool get_verbose() const;
@@ -668,7 +661,7 @@ public:
         );
 
     void add_globalevent(
-        GlobalEvent<TSeq> action
+        GlobalEvent<TSeq> & action
     );
 
     GlobalEvent<TSeq> & get_globalevent(std::string name); ///< Retrieve a global action by name

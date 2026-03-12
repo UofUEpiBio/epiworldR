@@ -28,7 +28,7 @@ inline void rewire_degseq(
     #ifdef EPI_DEBUG
     std::vector< int > _degree0(agents->size(), 0);
     for (size_t i = 0u; i < _degree0.size(); ++i)
-        _degree0[i] = model->get_agents()[i].get_neighbors().size();
+        _degree0[i] = model->get_agents()[i].get_neighbors(*model).size();
     #endif
 
     // Identifying individuals with degree > 0
@@ -38,11 +38,11 @@ inline void rewire_degseq(
 
     for (epiworld_fast_uint i = 0u; i < agents->size(); ++i)
     {
-        if (agents->operator[](i).get_neighbors().size() > 0u)
+        if (agents->operator[](i).get_neighbors(*model).size() > 0u)
         {
             non_isolates.push_back(i);
             epiworld_double wtemp = static_cast<epiworld_double>(
-                agents->operator[](i).get_neighbors().size()
+                agents->operator[](i).get_neighbors(*model).size()
                 );
             weights.push_back(wtemp);
             nedges += wtemp;
@@ -102,8 +102,8 @@ inline void rewire_degseq(
         int id11 = std::floor(p1.get_n_neighbors() * model->runif());
 
         // Get the actual neighbor IDs that will be swapped
-        auto neighbors_p0 = p0.get_neighbors();
-        auto neighbors_p1 = p1.get_neighbors();
+        auto neighbors_p0 = p0.get_neighbors(*model);
+        auto neighbors_p1 = p1.get_neighbors(*model);
         size_t neighbor_id_01 = neighbors_p0[id01]->get_id();
         size_t neighbor_id_11 = neighbors_p1[id11]->get_id();
 
@@ -149,7 +149,8 @@ inline void rewire_degseq(
         model->get_agents()[non_isolates[id0]].swap_neighbors(
             model->get_agents()[non_isolates[id1]],
             id01,
-            id11
+            id11,
+            *model
             );
 
 
@@ -192,6 +193,9 @@ inline void rewire_degseq(
 
     epiworld_double nedges = 0.0;
     auto & dat = agents->get_dat();
+
+    if (dat.size() > nties.size())
+        throw std::logic_error("Inconsistent adjacency list data.");
 
     for (size_t i = 0u; i < dat.size(); ++i)
         nties[i] += dat[i].size();

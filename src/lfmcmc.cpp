@@ -40,7 +40,7 @@ SEXP LFMCMC_cpp(
         cpp11::external_pointer<Model<int>> modelptr(model);
         lfmcmc_ptr->set_rand_engine(modelptr->get_rand_endgine());
     } else {
-        auto new_ptr = std::make_shared<std::mt19937>(std::mt19937());
+        auto new_ptr = std::make_shared< epi_xoshiro256ss >(epi_xoshiro256ss());
         lfmcmc_ptr->set_rand_engine(new_ptr);
     }
 

@@ -35,6 +35,9 @@ template<typename TSeq>
 class Entities;
 
 template<typename TSeq>
+class AgentsSample;
+
+template<typename TSeq>
 inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
 
 template<typename TSeq>
@@ -79,14 +82,12 @@ class Agent {
     friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
     friend void default_change_state<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
-    
-    Model<TSeq> * model;
 
     std::vector< size_t > * neighbors = nullptr;
     std::vector< size_t > * neighbors_locations = nullptr;
     size_t n_neighbors = 0u;
 
-    std::vector< std::reference_wrapper<Entity<TSeq>> > entities;
+    std::vector< size_t > entities; ///< Entity IDs (indices into Model::entities)
 
     unsigned int state = 0u;
     unsigned int state_prev = 0u; ///< For accounting, if need to undo a change.
@@ -121,75 +122,75 @@ public:
      */
     ///@{
     void add_tool(
+        Model<TSeq> & model,
         ToolPtr<TSeq> & tool,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
 
     void add_tool(
+        Model<TSeq> & model,
         const Tool<TSeq> & tool,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
 
     void set_virus(
+        Model<TSeq> & model,
         VirusPtr<TSeq> & virus,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
 
     void set_virus(
+        Model<TSeq> & model,
         const Virus<TSeq> & virus,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
 
     void add_entity(
+        Model<TSeq> & model,
         Entity<TSeq> & entity,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
 
     void rm_tool(
+        Model<TSeq> & model,
         epiworld_fast_uint tool_idx,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
 
     void rm_tool(
+        Model<TSeq> & model,
         ToolPtr<TSeq> & tool,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
 
     void rm_virus(
-        Model<TSeq> * model,
+        Model<TSeq> & model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
 
     void rm_entity(
+        Model<TSeq> & model,
         epiworld_fast_uint entity_idx,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
 
     void rm_entity(
+        Model<TSeq> & model,
         Entity<TSeq> & entity,
-        Model<TSeq> * model,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
 
-    void rm_agent_by_virus(Model<TSeq> * model); ///< Agent removed by virus
+    void rm_agent_by_virus(Model<TSeq> & model); ///< Agent removed by virus
     ///@}
     
     /**
@@ -199,10 +200,10 @@ public:
      * @return epiworld_double 
      */
     ///@{
-    epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
-    epiworld_double get_transmission_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
-    epiworld_double get_recovery_enhancer(VirusPtr<TSeq> v, Model<TSeq> * model);
-    epiworld_double get_death_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
+    epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
+    epiworld_double get_transmission_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
+    epiworld_double get_recovery_enhancer(VirusPtr<TSeq> v, Model<TSeq> & model);
+    epiworld_double get_death_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
     ///@}
 
     int get_id() const; ///< Id of the individual
@@ -232,14 +233,15 @@ public:
     void swap_neighbors(
         Agent<TSeq> & other,
         size_t n_this,
-        size_t n_other
+        size_t n_other,
+        Model<TSeq> & model
     );
 
-    std::vector< Agent<TSeq> * > get_neighbors();
+    std::vector< Agent<TSeq> * > get_neighbors(Model<TSeq> & model);
     size_t get_n_neighbors() const;
 
     void change_state(
-        Model<TSeq> * model,
+        Model<TSeq> & model,
         epiworld_fast_uint new_state,
         epiworld_fast_int queue = 0
         );
@@ -253,9 +255,9 @@ public:
     bool has_virus(std::string name) const;
     bool has_virus(const Virus<TSeq> & v) const;
     bool has_entity(epiworld_fast_uint t) const;
-    bool has_entity(std::string name) const;
+    bool has_entity(std::string name, const Model<TSeq> & model) const;
 
-    void print(bool compressed = false) const;
+    void print(Model<TSeq> & model, bool compressed = false) const;
 
     /**
      * @brief Access the j-th column of the agent
@@ -264,25 +266,20 @@ public:
      * functions can be used to access additional agent's features 
      * not included in the model.
      * 
-     * The `operator[]` method is with no boundary check, whereas
-     * the `operator()` method checks boundaries. The former can result
-     * in a segfault.
-     * 
-     * 
      * @param j 
+     * @param model Reference to the Model
      * @return double& 
      */
     ///@{
-    double & operator()(size_t j);
-    double & operator[](size_t j);
-    double operator()(size_t j) const;
-    double operator[](size_t j) const;
+    double & operator()(size_t j, Model<TSeq> & model);
+    double operator()(size_t j, const Model<TSeq> & model) const;
     ///@}
 
-    std::vector< std::reference_wrapper<Entity<TSeq>> > get_entities();
-    const std::vector< std::reference_wrapper<Entity<TSeq>> > get_entities() const;
-    const Entity<TSeq> & get_entity(size_t i) const;
-    Entity<TSeq> & get_entity(size_t i);
+    const std::vector< size_t > & get_entities() const;
+
+    const Entity<TSeq> & get_entity(size_t i, const Model<TSeq> & model) const;
+    Entity<TSeq> & get_entity(size_t i, Model<TSeq> & model);
+
     size_t get_n_entities() const;
 
     bool operator==(const Agent<TSeq> & other) const;

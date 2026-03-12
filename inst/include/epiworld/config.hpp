@@ -72,10 +72,19 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Entity;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
+class GlobalEvent;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
 using VirusPtr = std::shared_ptr< Virus< TSeq > >;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using ToolPtr = std::shared_ptr< Tool< TSeq > >;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+using EntityPtr = std::shared_ptr< Entity< TSeq > >;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+using GlobalEventPtr = std::shared_ptr< GlobalEvent< TSeq > >;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using ToolFun = std::function<epiworld_double(Tool<TSeq>&,Agent<TSeq>*,VirusPtr<TSeq>,Model<TSeq>*)>;

@@ -103,9 +103,11 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
   model <- attr(x, "model")
   cat(sprintf("Agents from the model \"%s\":\n", get_name(model)))
   n <- size(model)
-  for (i in 1L:min(max_print, n)) {
+  for (i in 1L:min(max_print, max(n - 1L, 1L))) {
 
-    print(x[i - 1L], compressed)
+    x_i <- x[i]
+    attr(x_i, "model") <- model
+    print(x_i, compressed)
 
   }
 

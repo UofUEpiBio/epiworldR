@@ -1,6 +1,11 @@
 #ifndef EPIWORLD_DIFFNET_H 
 #define EPIWORLD_DIFFNET_H
 
+#include <string>
+#include <vector>
+#include "../config.hpp"
+#include "../model-bones.hpp"
+
 /**
  * @brief Template for a Network Diffusion Model
  * @ingroup special_models
@@ -13,7 +18,7 @@
  * 
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelDiffNet : public epiworld::Model<TSeq>
+class ModelDiffNet : public Model<TSeq>
 {
 private:
 public:
@@ -70,8 +75,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     this->data_cols = data_cols;
     this->params = params;
 
-    epiworld::UpdateFun<TSeq> update_non_adopters = [](
-        epiworld::Agent<TSeq> * p, epiworld::Model<TSeq> * m
+    UpdateFun<TSeq> update_non_adopters = [](
+        Agent<TSeq> * p, Model<TSeq> * m
     ) -> void {
 
         // Measuring exposure
@@ -87,7 +92,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
 
         // For each one of the possible innovations, we have to compute
         // the adoption probability, which is a function of exposure
-        for (auto & neighbor: agent.get_neighbors())
+        auto & m_ref = *m;
+        for (auto & neighbor: agent.get_neighbors(*m))
         {
 
             if (neighbor->get_state() == ModelDiffNet<TSeq>::ADOPTER)
@@ -100,8 +106,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     
                 /* And it is a function of susceptibility_reduction as well */ 
                 double p_i =
-                    (1.0 - agent.get_susceptibility_reduction(v, m)) * 
-                    (1.0 - agent.get_transmission_reduction(v, m)) 
+                    (1.0 - agent.get_susceptibility_reduction(v, m_ref)) *
+                    (1.0 - agent.get_transmission_reduction(v, m_ref)) 
                     ; 
             
                 size_t vid = v->get_id();
@@ -125,7 +131,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
                 exposure.at(i) /= agent.get_n_neighbors();
 
             for (auto & j: diffmodel->data_cols)
-                exposure.at(i) += agent(j) * diffmodel->params.at(j);
+                exposure.at(i) += agent(j, m_ref) * diffmodel->params.at(j);
 
             // Baseline probability of adoption
             double p = m->get_viruses()[i]->get_prob_infecting(m);
@@ -144,9 +150,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
             return;
 
         // Otherwise, it is adopted from any of the neighbors
-        agent.set_virus(
+        agent.set_virus(*m, 
             *innovations.at(which),
-            m,
             ModelDiffNet::ADOPTER
         );
 
@@ -166,7 +171,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     model.add_param(prob_adopt, parname);
 
     // Preparing the virus -------------------------------------------
-    epiworld::Virus<TSeq> innovation(innovation_name, prevalence, true);
+    Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
     innovation.set_prob_infecting(&model(parname));

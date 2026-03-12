@@ -60,7 +60,7 @@ inline ToolFun<TSeq> tool_fun_logit(
         Tool<TSeq>&,
         Agent<TSeq> * agent,
         VirusPtr<TSeq>,
-        Model<TSeq> *
+        Model<TSeq> * model
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();
@@ -70,7 +70,7 @@ inline ToolFun<TSeq> tool_fun_logit(
         #pragma omp simd reduction(+:res)
         #endif
         for (size_t i = 0u; i < K; ++i)
-            res += agent->operator[](vars.at(i)) * coefs_f.at(i);
+            res += agent->operator()(vars.at(i), *model) * coefs_f.at(i);
 
         return 1.0/(1.0 + std::exp(-res));
 
@@ -570,6 +570,12 @@ template<typename TSeq>
 inline void Tool<TSeq>::set_distribution(ToolToAgentFun<TSeq> fun)
 {
     tool_functions->dist = fun;
+}
+
+template<typename TSeq>
+inline std::unique_ptr<Tool<TSeq>> Tool<TSeq>::clone_ptr() const
+{
+    return std::make_unique<Tool<TSeq>>(*this);
 }
 
 #endif
