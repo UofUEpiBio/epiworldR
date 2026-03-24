@@ -464,7 +464,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
                 // Odd: Die, Even: Recover
                 epiworld_fast_uint n_events = 0u;
-                const auto & v = p->get_virus();
+                auto & v = p->get_virus();
 
                 // Recover
                 m->array_double_tmp[n_events++] =
@@ -539,9 +539,9 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
         ModelSEIRMixing<TSeq>::RECOVERED
         );
 
-    virus.set_prob_infecting(&model("Prob. Transmission"));
-    virus.set_prob_recovery(&model("Prob. Recovery"));
-    virus.set_incubation(&model("Avg. Incubation days"));
+    virus.set_prob_infecting("Prob. Transmission");
+    virus.set_prob_recovery("Prob. Recovery");
+    virus.set_incubation("Avg. Incubation days");
 
     model.add_virus(virus);
 

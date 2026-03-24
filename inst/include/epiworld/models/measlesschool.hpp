@@ -787,9 +787,9 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     // Designing the disease
     Virus<> measles("Measles");
     measles.set_state(EXPOSED, RECOVERED);
-    measles.set_prob_infecting(&model("Transmission rate"));
-    measles.set_prob_recovery(&model("Rash period"));
-    measles.set_incubation(&model("Incubation period"));
+    measles.set_prob_infecting("Transmission rate");
+    measles.set_prob_recovery("Rash period");
+    measles.set_incubation("Incubation period");
     measles.set_distribution(
         distribute_virus_randomly(n_exposed, false)
     );

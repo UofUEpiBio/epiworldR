@@ -203,7 +203,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                     continue;
 
                 // All neighbors in this set are infected by construction
-                const auto & v = neighbor.get_virus();
+                auto & v = neighbor.get_virus();
             
                 #ifdef EPI_DEBUG
                 if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
@@ -266,7 +266,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
 
                 // Odd: Die, Even: Recover
                 epiworld_fast_uint n_events = 0u;
-                const auto & v = p->get_virus();
+                auto & v = p->get_virus();
                 
                 // Die
                 m->array_double_tmp[n_events++] = 
@@ -360,10 +360,10 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
         ModelSEIRDCONN<TSeq>::DECEASED
         );
 
-    virus.set_prob_infecting(&model("Prob. Transmission"));
-    virus.set_prob_recovery(&model("Prob. Recovery"));
-    virus.set_incubation(&model("Avg. Incubation days"));
-    virus.set_prob_death(&model("Death rate"));
+    virus.set_prob_infecting("Prob. Transmission");
+    virus.set_prob_recovery("Prob. Recovery");
+    virus.set_incubation("Avg. Incubation days");
+    virus.set_prob_death("Death rate");
     model.add_virus(virus);
 
     model.queuing_off(); // No queuing need

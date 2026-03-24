@@ -1,3 +1,12 @@
+# epiworldR 0.14.0.0
+
+No significant changes on the user side
+
+## Internal changes
+
+* ([epiworld#189](https://github.com/UofUEpiBio/epiworld/pull/189)) Addressing memory access issues that arise when calling `run_multiple` using OpenMP. The latest version reduces usage of points (including smart) to make the code more reliable. No penalties on its performance are expected.
+
+
 # epiworldR 0.13.0.0
 
 No significant changes on the user side.

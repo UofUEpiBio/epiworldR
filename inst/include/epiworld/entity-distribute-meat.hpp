@@ -70,7 +70,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_randomly(
                 );
 
             // Correcting for possible overflow
-            if ((loc > 0) && (loc >= n_left))
+            if ((n_left > 0) && (loc > n_left))
                 loc = n_left - 1;
 
             m->get_agent(idx[loc]).add_entity(*m, e);
@@ -109,7 +109,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_range(
             for (int i = from; i < to; ++i)
             {
                 if (agents[i].get_n_entities() == 0)
-                    e.add_agent(&agents[i]);
+                    e.add_agent(&agents[i], *m);
                 else
                     throw std::logic_error(
                         "Agent " + std::to_string(i) + " already has an entity."
@@ -129,7 +129,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_to_range(
             auto & agents = m->get_agents();
             for (int i = from; i < to; ++i)
             {
-                e.add_agent(&agents[i]);
+                e.add_agent(&agents[i], *m);
             }
 
             return;

@@ -8,10 +8,6 @@
 #include "agent-bones.hpp"
 #include "agent-events-meat.hpp"
 
-// To large to add directly here
-template<typename TSeq>
-inline Agent<TSeq>::Agent() {}
-
 template<typename TSeq>
 inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     neighbors(std::move(p.neighbors)),
@@ -75,14 +71,12 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     }
     
 
+    tools.clear();
     tools.reserve(p.get_n_tools());
-    n_tools = tools.size();
+    n_tools = p.get_n_tools();
     for (size_t i = 0u; i < n_tools; ++i)
     {
-        
-        // Will create a copy of the virus, with the exeption of
-        // the virus code
-        tools.emplace_back(std::make_shared<Tool<TSeq>>(*p.tools[i]));
+        tools.emplace_back(std::shared_ptr<Tool<TSeq>>(p.tools[i]->clone_ptr()));
         tools.back()->set_agent(this, i);
 
     }
@@ -127,11 +121,14 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
     } else
         virus = nullptr;
     
-    n_tools             = other_agent.n_tools;
+    
+    n_tools = other_agent.n_tools;
+    tools.clear();
+    tools.reserve(n_tools);
     for (size_t i = 0u; i < n_tools; ++i)
     {
-        tools[i] = std::shared_ptr<Tool<TSeq>>(other_agent.tools[i]->clone_ptr());
-        tools[i]->set_agent(this, i);
+        tools.emplace_back(std::shared_ptr<Tool<TSeq>>(other_agent.tools[i]->clone_ptr()));
+        tools.back()->set_agent(this, i);
     }
     
     return *this;
@@ -165,7 +162,7 @@ inline void Agent<TSeq>::add_tool(
             " included in the model.");
 
     model.events_add(
-        this, nullptr, tool, nullptr, state_new, queue, default_add_tool<TSeq>, -1, -1
+        this, nullptr, tool, nullptr, state_new, queue, default_add_tool<TSeq>
         );
 
 }
@@ -204,7 +201,7 @@ inline void Agent<TSeq>::set_virus(
         virus->get_queue(&queue, nullptr, nullptr);
 
     model.events_add(
-        this, virus, nullptr, nullptr, state_new, queue, default_add_virus<TSeq>, -1, -1
+        this, virus, nullptr, nullptr, state_new, queue, default_add_virus<TSeq>
         );
 
 }
@@ -231,7 +228,7 @@ inline void Agent<TSeq>::add_entity(
 {
 
     model.events_add(
-        this, nullptr, nullptr, &entity, state_new, queue, default_add_entity<TSeq>, -1, -1
+        this, nullptr, nullptr, &entity, state_new, queue, default_add_entity<TSeq>
     );
 
 }
@@ -252,7 +249,7 @@ inline void Agent<TSeq>::rm_tool(
         );
 
     model.events_add(
-        this, nullptr, tools[tool_idx], nullptr, state_new, queue, default_rm_tool<TSeq>, -1, -1
+        this, nullptr, tools[tool_idx], nullptr, state_new, queue, default_rm_tool<TSeq>
         );
 
 }
@@ -270,7 +267,7 @@ inline void Agent<TSeq>::rm_tool(
         throw std::logic_error("Cannot remove a virus from another agent!");
 
     model.events_add(
-        this, nullptr, tool, nullptr, state_new, queue, default_rm_tool<TSeq>, -1, -1
+        this, nullptr, tool, nullptr, state_new, queue, default_rm_tool<TSeq>
         );
 
 }
@@ -298,7 +295,7 @@ inline void Agent<TSeq>::rm_virus(
         this, virus, nullptr, nullptr,
         state_new,
         queue,
-        default_rm_virus<TSeq>, -1, -1
+        default_rm_virus<TSeq>
         );
 
 }
@@ -329,9 +326,7 @@ inline void Agent<TSeq>::rm_entity(
         &model.get_entity(entities[entity_idx]),
         state_new,
         queue,
-        default_rm_entity<TSeq>,
-        -1,
-        -1
+        default_rm_entity<TSeq>
     );
 }
 
@@ -366,9 +361,7 @@ inline void Agent<TSeq>::rm_entity(
         &model.get_entity(entity.get_id()),
         state_new,
         queue,
-        default_rm_entity<TSeq>,
-        -1,
-        -1
+        default_rm_entity<TSeq>
     );
 }
 
@@ -380,42 +373,42 @@ inline void Agent<TSeq>::rm_agent_by_virus(Model<TSeq> & model)
         this, virus, nullptr, nullptr,
         virus->state_removed,
         virus->queue_removed,
-        default_rm_virus<TSeq>, -1, -1
+        default_rm_virus<TSeq>
         );
 
 }
 
 template<typename TSeq>
 inline epiworld_double Agent<TSeq>::get_susceptibility_reduction(
-    VirusPtr<TSeq> v,
+    VirusPtr<TSeq> & v,
     Model<TSeq> & model
 ) {
 
-    return model.susceptibility_reduction_mixer(this, v, &model);
+    return model.susceptibility_reduction_mixer(this, v);
 }
 
 template<typename TSeq>
 inline epiworld_double Agent<TSeq>::get_transmission_reduction(
-    VirusPtr<TSeq> v,
+    VirusPtr<TSeq> & v,
     Model<TSeq> & model
 ) {
-    return model.transmission_reduction_mixer(this, v, &model);
+    return model.transmission_reduction_mixer(this, v);
 }
 
 template<typename TSeq>
 inline epiworld_double Agent<TSeq>::get_recovery_enhancer(
-    VirusPtr<TSeq> v,
+    VirusPtr<TSeq> & v,
     Model<TSeq> & model
 ) {
-    return model.recovery_enhancer_mixer(this, v, &model);
+    return model.recovery_enhancer_mixer(this, v);
 }
 
 template<typename TSeq>
 inline epiworld_double Agent<TSeq>::get_death_reduction(
-    VirusPtr<TSeq> v,
+    VirusPtr<TSeq> & v,
     Model<TSeq> & model
 ) {
-    return model.death_reduction_mixer(this, v, &model);
+    return model.death_reduction_mixer(this, v);
 }
 
 template<typename TSeq>
@@ -612,7 +605,7 @@ inline void Agent<TSeq>::change_state(
 
     model.events_add(
         this, nullptr, nullptr, nullptr, new_state, queue,
-        default_change_state<TSeq>, -1, -1
+        default_change_state<TSeq>
     );
 
     return;
@@ -625,15 +618,22 @@ inline const unsigned int & Agent<TSeq>::get_state() const {
 }
 
 template<typename TSeq>
+inline const unsigned int & Agent<TSeq>::get_state_prev() const {
+    return state_prev;
+}
+
+template<typename TSeq>
 inline void Agent<TSeq>::reset()
 {
 
     this->virus = nullptr;
 
     this->tools.clear();
+    this->tools.shrink_to_fit();
     n_tools = 0u;
 
     this->entities.clear();
+    this->entities.shrink_to_fit();
 
     this->state = 0u;
     this->state_prev = 0u;
@@ -825,7 +825,13 @@ inline const Entity<TSeq> & Agent<TSeq>::get_entity(size_t i, const Model<TSeq> 
     if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model.get_entity(entities[i]);
+    return model.get_entity(
+        #ifdef EPI_DEBUG
+        entities.at(i)
+        #else
+        entities[i]
+        #endif
+    );
 }
 
 template<typename TSeq>
@@ -837,7 +843,13 @@ inline Entity<TSeq> & Agent<TSeq>::get_entity(size_t i, Model<TSeq> & model)
     if (i >= entities.size())
         throw std::range_error("Trying to get to an agent's entity outside of the range.");
 
-    return model.get_entity(entities[i]);
+    return model.get_entity(
+        #ifdef EPI_DEBUG
+        entities.at(i)
+        #else
+        entities[i]
+        #endif
+    );
 }
 
 template<typename TSeq>
@@ -849,6 +861,10 @@ inline size_t Agent<TSeq>::get_n_entities() const
 template<typename TSeq>
 inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
 {
+
+    // Checking the address
+    if (this == &other)
+        return true;
 
     EPI_DEBUG_FAIL_AT_TRUE(
         n_neighbors != other.n_neighbors,
@@ -915,7 +931,7 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
     {
         
         EPI_DEBUG_FAIL_AT_TRUE(
-            tools[i] != other.tools[i],
+            *tools[i] != *other.tools[i],
             "Agent:: tools[i] don't match"
         )
          

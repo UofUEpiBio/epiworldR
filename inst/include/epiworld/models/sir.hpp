@@ -73,8 +73,8 @@ inline ModelSIR<TSeq>::ModelSIR(
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,2);
     
-    virus.set_prob_recovery(&model("Recovery rate"));
-    virus.set_prob_infecting(&model("Transmission rate"));
+    virus.set_prob_recovery("Recovery rate");
+    virus.set_prob_infecting("Transmission rate");
     
     model.add_virus(virus);
 

@@ -340,8 +340,8 @@ inline ModelSURV<TSeq>::ModelSURV(
     // Virus ------------------------------------------------------------------
     Virus<TSeq> covid(vname, prevalence, false);
     covid.set_state(LATENT, RECOVERED, REMOVED);
-    covid.set_post_immunity(&model("Prob. no reinfect"));
-    covid.set_prob_death(&model("Prob. death"));
+    covid.set_post_immunity("Prob. no reinfect");
+    covid.set_prob_death("Prob. death");
 
     VirusFun<TSeq> ptransmitfun = [](
         Agent<TSeq> * p,
@@ -371,8 +371,8 @@ inline ModelSURV<TSeq>::ModelSURV(
    
     // Vaccine tool -----------------------------------------------------------
     Tool<TSeq> vax("Vaccine", prop_vaccinated, true);
-    vax.set_susceptibility_reduction(&model("Vax efficacy"));
-    vax.set_transmission_reduction(&model("Vax redux transmission"));
+    vax.set_susceptibility_reduction("Vax efficacy");
+    vax.set_transmission_reduction("Vax redux transmission");
     
     model.add_tool(vax);
 

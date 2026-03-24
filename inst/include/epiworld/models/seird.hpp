@@ -87,7 +87,7 @@ public:
     // Odd: Die, Even: Recover
     epiworld_fast_uint n_events = 0u;
 
-    const auto & v = p->get_virus();
+    auto & v = p->get_virus();
       
     // Die
     m->array_double_tmp[n_events++] = 
@@ -177,10 +177,10 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   Virus<TSeq> virus(vname, prevalence, true);
   virus.set_state(ModelSEIRD<TSeq>::EXPOSED, ModelSEIRD<TSeq>::REMOVED, ModelSEIRD<TSeq>::DECEASED);
   
-  virus.set_prob_infecting(&model("Transmission rate"));
-  virus.set_incubation(&model("Incubation days"));
-  virus.set_prob_death(&model("Death rate"));
-  virus.set_prob_recovery(&model("Recovery rate"));
+  virus.set_prob_infecting("Transmission rate");
+  virus.set_incubation("Incubation days");
+  virus.set_prob_death("Death rate");
+  virus.set_prob_recovery("Recovery rate");
   
   // Adding the tool and the virus
   model.add_virus(virus);

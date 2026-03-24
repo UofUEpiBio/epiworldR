@@ -70,8 +70,8 @@ inline ModelSISD<TSeq>::ModelSISD(
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,0,2);
     
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_recovery("Recovery rate");
     virus.set_prob_death(0.01);
     
     model.add_virus(virus);

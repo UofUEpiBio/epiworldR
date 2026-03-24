@@ -113,9 +113,9 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(ModelSEIR<TSeq>::EXPOSED, ModelSEIR<TSeq>::REMOVED, ModelSEIR<TSeq>::REMOVED);
 
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_incubation(&model("Incubation days"));
-    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_incubation("Incubation days");
+    virus.set_prob_recovery("Recovery rate");
 
     // Adding the tool and the virus
     model.add_virus(virus);

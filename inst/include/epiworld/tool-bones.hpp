@@ -14,23 +14,6 @@ template<typename TSeq>
 class Tool;
 
 /**
- * @brief Helper class to store the functions avoiding
- * multiple shared_pointers (we have only one for the four of these)
- */
-template<typename TSeq>
-class ToolFunctions {
-public:
-    ToolFun<TSeq> susceptibility_reduction = nullptr;
-    ToolFun<TSeq> transmission_reduction   = nullptr;
-    ToolFun<TSeq> recovery_enhancer        = nullptr;
-    ToolFun<TSeq> death_reduction          = nullptr;
-
-    ToolToAgentFun<TSeq> dist = nullptr;
-
-    ToolFunctions() = default;
-};
-
-/**
  * @brief Tools for defending the agent against the virus
  * 
  * @tparam TSeq Type of sequence
@@ -53,8 +36,12 @@ private:
     EPI_TYPENAME_TRAITS(TSeq, int) sequence = 
         EPI_TYPENAME_TRAITS(TSeq, int)(); ///< Sequence of the tool
 
-    std::shared_ptr<ToolFunctions<TSeq>> tool_functions = 
-        std::make_shared< ToolFunctions<TSeq> >();
+    ToolFun<TSeq> susceptibility_reduction = nullptr;
+    ToolFun<TSeq> transmission_reduction   = nullptr;
+    ToolFun<TSeq> recovery_enhancer        = nullptr;
+    ToolFun<TSeq> death_reduction          = nullptr;
+
+    ToolToAgentFun<TSeq> dist = nullptr;
 
     epiworld_fast_int state_init = -99;
     epiworld_fast_int state_post = -99;
@@ -88,20 +75,26 @@ public:
      * @return epiworld_double 
      */
     ///@{
-    virtual epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
-    virtual epiworld_double get_transmission_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
-    virtual epiworld_double get_recovery_enhancer(VirusPtr<TSeq> v, Model<TSeq> * model);
-    virtual epiworld_double get_death_reduction(VirusPtr<TSeq> v, Model<TSeq> * model);
+    virtual epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> & v, Model<TSeq> * model);
+    virtual epiworld_double get_transmission_reduction(VirusPtr<TSeq> & v, Model<TSeq> * model);
+    virtual epiworld_double get_recovery_enhancer(VirusPtr<TSeq> & v, Model<TSeq> * model);
+    virtual epiworld_double get_death_reduction(VirusPtr<TSeq> & v, Model<TSeq> * model);
     
     virtual void set_susceptibility_reduction_fun(ToolFun<TSeq> fun);
     virtual void set_transmission_reduction_fun(ToolFun<TSeq> fun);
     virtual void set_recovery_enhancer_fun(ToolFun<TSeq> fun);
     virtual void set_death_reduction_fun(ToolFun<TSeq> fun);
 
-    virtual void set_susceptibility_reduction(epiworld_double * prob);
-    virtual void set_transmission_reduction(epiworld_double * prob);
-    virtual void set_recovery_enhancer(epiworld_double * prob);
-    virtual void set_death_reduction(epiworld_double * prob);
+    virtual void set_susceptibility_reduction(std::string param);
+    virtual void set_transmission_reduction(std::string param);
+    virtual void set_recovery_enhancer(std::string param);
+    virtual void set_death_reduction(std::string param);
+
+    // Deleting pointer versions to avoid mistakes
+    virtual void set_susceptibility_reduction(epiworld_double * prob) = delete;
+    virtual void set_transmission_reduction(epiworld_double * prob) = delete;
+    virtual void set_recovery_enhancer(epiworld_double * prob) = delete;
+    virtual void set_death_reduction(epiworld_double * prob) = delete;
 
     virtual void set_susceptibility_reduction(epiworld_double prob);
     virtual void set_transmission_reduction(epiworld_double prob);

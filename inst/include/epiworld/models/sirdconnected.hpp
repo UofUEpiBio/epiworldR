@@ -181,7 +181,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
                 if (neighbor.get_state() == ModelSIRDCONN<TSeq>::INFECTED)
                 {
 
-                    const auto & v = neighbor.get_virus();
+                    auto & v = neighbor.get_virus();
                     
                     #ifdef EPI_DEBUG
                     if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
@@ -229,7 +229,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
 
                 // Odd: Die, Even: Recover
                 epiworld_fast_uint n_events = 0u;
-                const auto & v = p->get_virus();
+                auto & v = p->get_virus();
                     
                 // Die
                 m->array_double_tmp[n_events++] = 
@@ -299,9 +299,9 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1, 2, 3);
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_recovery(&model("Recovery rate"));
-    virus.set_prob_death(&model("Death rate"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_recovery("Recovery rate");
+    virus.set_prob_death("Death rate");
     
     model.add_virus(virus);
 

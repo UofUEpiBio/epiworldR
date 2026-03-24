@@ -306,8 +306,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
         ModelSIRLogit<TSeq>::RECOVERED
         );
 
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_recovery(&model("Recovery rate"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_recovery("Recovery rate");
 
     // virus.set_prob
 

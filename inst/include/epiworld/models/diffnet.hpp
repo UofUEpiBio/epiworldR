@@ -174,7 +174,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
-    innovation.set_prob_infecting(&model(parname));
+    innovation.set_prob_infecting(parname);
     
     model.add_virus(innovation);
 

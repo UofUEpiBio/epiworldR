@@ -125,9 +125,7 @@ SEXP set_prob_infecting_ptr_cpp(SEXP virus, SEXP model, std::string param) {
   WrapVirus(vptr)(virus);
   external_pointer<Model<>> mptr(model);
 
-  vptr->set_prob_infecting(
-    &(mptr->operator()(param))
-  );
+  vptr->set_prob_infecting(param);
 
   return virus;
 
@@ -162,9 +160,7 @@ SEXP set_prob_recovery_ptr_cpp(SEXP virus, SEXP model, std::string param) {
  WrapVirus(vptr)(virus);
  external_pointer<Model<>> mptr(model);
 
- vptr->set_prob_recovery(
-     &(mptr->operator()(param))
- );
+ vptr->set_prob_recovery(param);
 
  return virus;
 
@@ -199,9 +195,7 @@ SEXP set_prob_death_ptr_cpp(SEXP virus, SEXP model, std::string param) {
  WrapVirus(vptr)(virus);
  external_pointer<Model<>> mptr(model);
 
- vptr->set_prob_death(
-     &(mptr->operator()(param))
- );
+ vptr->set_prob_death(param);
 
  return virus;
 
@@ -236,9 +230,7 @@ SEXP set_incubation_ptr_cpp(SEXP virus, SEXP model, std::string param) {
  WrapVirus(vptr)(virus);
  external_pointer<Model<>> mptr(model);
 
- vptr->set_incubation(
-     &(mptr->operator()(param))
- );
+ vptr->set_incubation(param);
 
  return virus;
 

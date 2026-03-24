@@ -163,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 143.00ms
-#> Last run speed      : 34.82 million agents x day / second
+#> Last run elapsed t  : 232.00ms
+#> Last run speed      : 21.51 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -244,8 +244,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 77.00ms
-#> Last run speed      : 12.90 million agents x day / second
+#> Last run elapsed t  : 43.00ms
+#> Last run speed      : 23.07 million agents x day / second
 #> Rewiring            : off
 #>
 #> Global events:
@@ -265,15 +265,15 @@ summary(model_seirconn)
 #>  - Prob. Transmission   : 0.1000
 #>
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  9800 -> 59
+#>   - (0) Susceptible :  9800 -> 60
 #>   - (1) Exposed     :   200 -> 0
 #>   - (2) Infected    :     0 -> 0
-#>   - (3) Recovered   :     0 -> 9941
+#>   - (3) Recovered   :     0 -> 9940
 #>
 #> Transition Probabilities:
 #>  - Susceptible  0.95  0.05     -     -
 #>  - Exposed         -  0.86  0.14     -
-#>  - Infected        -     -  0.79  0.21
+#>  - Infected        -     -  0.78  0.22
 #>  - Recovered       -     -     -  1.00
 ```
 
@@ -296,13 +296,13 @@ head(plot(repnum))
 <img src="man/figures/README-seir-conn-figures-2.png"
 style="width:100.0%" />
 
-    #>   virus_id    virus date      avg   n       sd lb    ub
-    #> 1        0 COVID-19    0 4.880000 100 4.159157  0 14.05
-    #> 2        0 COVID-19    2 5.333333   9 4.415880  1 12.60
-    #> 3        0 COVID-19    3 5.416667  12 3.369875  1 10.45
-    #> 4        0 COVID-19    4 3.480000  25 2.740438  0  9.80
-    #> 5        0 COVID-19    5 2.580645  31 2.790152  0  9.00
-    #> 6        0 COVID-19    6 3.339623  53 3.031523  0 10.40
+    #>   virus_id    virus date      avg   n       sd lb     ub
+    #> 1        0 COVID-19    0 4.980000 100 4.442631  0 15.525
+    #> 2        0 COVID-19    2 2.818182  11 2.638870  0  7.500
+    #> 3        0 COVID-19    3 4.285714  21 4.112698  0 13.500
+    #> 4        0 COVID-19    4 4.520000  25 3.809199  0 12.200
+    #> 5        0 COVID-19    5 3.363636  33 2.859394  0  9.000
+    #> 6        0 COVID-19    6 3.961538  52 2.976783  0 10.000
 
     head(plot_generation_time(model_seirconn))
 
@@ -310,12 +310,12 @@ style="width:100.0%" />
 style="width:100.0%" />
 
     #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    0 8.318681 91 5.599363     2.00   20.500 COVID-19        0
-    #> 2    2 6.888889  9 4.648775     2.20   14.000 COVID-19        0
-    #> 3    3 5.083333 12 2.503028     3.00    9.725 COVID-19        0
-    #> 4    4 6.095238 21 3.096849     2.00   12.500 COVID-19        0
-    #> 5    5 8.173913 23 6.846712     2.55   24.000 COVID-19        0
-    #> 6    6 7.272727 44 5.332496     2.00   19.000 COVID-19        0
+    #> 1    0 7.788889 90 5.042503    2.000   18.550 COVID-19        0
+    #> 2    2 9.333333  9 5.916080    2.400   19.600 COVID-19        0
+    #> 3    3 9.000000 18 8.116794    2.000   27.375 COVID-19        0
+    #> 4    4 6.523810 21 3.776494    2.000   14.500 COVID-19        0
+    #> 5    5 8.666667 27 6.120583    2.000   22.750 COVID-19        0
+    #> 6    6 6.727273 44 4.576805    2.075   17.925 COVID-19        0
 
 ## SIR Logit
 
@@ -381,12 +381,11 @@ rn <- get_reproductive_number(model_logit)
   (1:n %in% rn$source)
 ) |> prop.table())[, 2]
 #>       0       1
-#> 0.20717 0.22397
+#> 0.20317 0.21753
 
 # Looking into the agents
 get_agents(model_logit)
 #> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
-#> Agent: 0, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 1, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 2, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 3, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
@@ -396,6 +395,7 @@ get_agents(model_logit)
 #> Agent: 7, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 9, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 10, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> ... 99990 more agents ...
 ```
 
@@ -479,17 +479,17 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    973
-#> 5       1    1        1    Infected     27
-#> 6       1    1        1   Recovered      0
+#> 4       1    1        1 Susceptible    976
+#> 5       1    1        1    Infected     23
+#> 6       1    1        1   Recovered      1
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    683                    9  0
-#> 2       1        0 COVID-19    983                    8  0
-#> 3       1        0 COVID-19    875                    8  0
-#> 4       1        0 COVID-19    801                    8  0
-#> 5       1        0 COVID-19    770                    8  0
-#> 6       1        0 COVID-19    758                    8  0
+#> 1       1        0 COVID-19    568                   10  0
+#> 2       1        0 COVID-19    994                    8  0
+#> 3       1        0 COVID-19    902                    8  0
+#> 4       1        0 COVID-19    859                    8  0
+#> 5       1        0 COVID-19    833                    8  0
+#> 6       1        0 COVID-19    820                    8  0
 
 plot(ans$reproductive)
 ```
@@ -520,7 +520,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.11.3.0,
+#>   Epi Models_. R package version 0.14.0.0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,

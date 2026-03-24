@@ -1128,7 +1128,6 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
     for (auto & agent_i_idx: contacted_agents)
     {
         auto & agent_i = Model<TSeq>::get_agent(agent_i_idx);
-        auto state = agent_i.get_state();
 
         // If has a tool, then skip (is vaxxed)
         if (agent_i.get_n_tools() != 0u)
@@ -1138,7 +1137,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
         // contact tracing
         if (agent_i.get_n_entities() != 0u)
         {
-            size_t group_id = agent_i.get_entity(0u, *m).get_id();
+            size_t group_id = agent_i.get_entity(0u, *this).get_id();
             if (groups_ids.find(group_id) != groups_ids.end())
                 continue;
         }
@@ -1252,9 +1251,9 @@ inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
         ModelMeaslesMixingRiskQuarantine<TSeq>::RECOVERED
         );
 
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_recovery(&model("Rash period"));
-    virus.set_incubation(&model("Incubation period"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_recovery("Rash period");
+    virus.set_incubation("Incubation period");
 
     model.add_virus(virus);
 
