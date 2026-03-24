@@ -6,6 +6,8 @@ No significant changes on the user side
 
 * ([epiworld#189](https://github.com/UofUEpiBio/epiworld/pull/189)) Addressing memory access issues that arise when calling `run_multiple` using OpenMP. The latest version reduces usage of points (including smart) to make the code more reliable. No penalties on its performance are expected.
 
+* Switch vignette building engine to `quarto`.
+
 
 # epiworldR 0.13.0.0
 

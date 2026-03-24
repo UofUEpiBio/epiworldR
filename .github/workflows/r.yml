@@ -39,7 +39,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -77,7 +77,7 @@ jobs:
         if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') }}
         run: R CMD build .
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ matrix.config.os == 'ubuntu-latest' && (matrix.config.r == 'release' || matrix.config.r == 'devel') }}
         with:
           name: epiworldR-built-package-${{ matrix.config.os }}-${{ matrix.config.r }}
@@ -89,7 +89,7 @@ jobs:
     container: rocker/tidyverse:4.4.0
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: 'UofUEpiBio/epiworldRShiny'
           ref: 'main'
@@ -132,7 +132,7 @@ jobs:
     container: rocker/tidyverse:4.4.0
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           repository: 'UofUEpiBio/measles'
           ref: 'main'

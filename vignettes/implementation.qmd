@@ -4,10 +4,9 @@ author:
   - George Vega Yon
   - Derek Meyer
 date: "2023-06-20"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Implementation details of epiworldR}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
 

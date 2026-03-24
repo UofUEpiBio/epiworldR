@@ -3,19 +3,11 @@ title: "Likelihood Free Markhov Chain Monte Carlo (LFMCMC)"
 author:
   - Andrew Pulsipher
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Likelihood Free Markhov Chain Monte Carlo (LFMCMC)}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
-  fig.align = "center"
-)
-```
 
 # Introduction
 
@@ -36,7 +28,8 @@ Our SIR model will have the following characteristics:
 
 We use the `ModelSIR` and `agents_smallworld` functions to construct the model in epiworldR.
 
-```{r setup-sir}
+```{r}
+#| label: setup-sir
 library(epiworldR)
 
 model_seed <- 122
@@ -59,7 +52,8 @@ agents_smallworld(
 
 Then we run the model for 50 days and print the results.
 
-```{r run-sir}
+```{r}
+#| label: run-sir
 verbose_off(model_sir)
 
 run(
@@ -73,7 +67,8 @@ summary(model_sir)
 
 Note the "Model parameters" and the "Distribution of the population at time 50" from the above output. Our goal is to recover the model parameters (Recovery and Transmission rates) through LFMCMC. We accomplish this by comparing the population distribution from each simulation run to the "observed" distribution from our model. We get this distribution using the `get_today_total` function in epiworldR.
 
-```{r get-sir-model-data}
+```{r}
+#| label: get-sir-model-data
 model_sir_data <- get_today_total(model_sir)
 ```
 
@@ -85,7 +80,8 @@ In epiworldR, LFMCMC requires four functions:
 
 The **simulation function** runs a model with a given set of parameters and produces output that matches the structure of our observed data. For our example, we set the Recovery and Transmission rate parameters, run an SIR model for 50 days, and return the distribution of the population at the end of the run.
 
-```{r simfun}
+```{r}
+#| label: simfun
 simulation_fun <- function(params, lfmcmc_obj) {
 
   set_param(model_sir, "Recovery rate", params[1])
@@ -104,7 +100,8 @@ simulation_fun <- function(params, lfmcmc_obj) {
 The **summary function** extracts summary statistics from the given data.
 This should produce the same output format for both the observed data and the simulated data from `simulation_fun`. For our example, since the population distribution is already a summary of the data, our summary function simply passes that data through. With more complicated use cases, you might instead compute summary statistics such as the mean or standard deviation.
 
-```{r sumfun}
+```{r}
+#| label: sumfun
 summary_fun <- function(data, lfmcmc_obj) {
   return(data)
 }
@@ -112,7 +109,8 @@ summary_fun <- function(data, lfmcmc_obj) {
 
 The **proposal function** returns a new set of parameters, which it is "proposing" parameters for the LFMCMC algorithm to try in the simulation function. In our example, it takes the parameters from the previous run (`old_params`) and does a random step away from those values.
 
-```{r propfun}
+```{r}
+#| label: propfun
 proposal_fun <- function(old_params, lfmcmc_obj) {
   res <- plogis(qlogis(old_params) + rnorm(length(old_params), sd = .1))
   return(res)
@@ -121,7 +119,8 @@ proposal_fun <- function(old_params, lfmcmc_obj) {
 
 The **kernel function** effectively scores the results of the latest simulation run against the observed data, by comparing the summary statistics from `summary_fun` for each. LFMCMC uses the kernel score and the Hastings Ratio to determine whether or not to accept the parameters for that run. In our example, since `summary_fun` simply passes the data through, `simulated_stats` and `observed_stats` are our simulated and observed data respectively.
 
-```{r kernfun}
+```{r}
+#| label: kernfun
 kernel_fun <- function(
   simulated_stats, observed_stats, epsilon, lfmcmc_obj
 ) {
@@ -134,7 +133,8 @@ kernel_fun <- function(
 
 With all four functions defined, we can initialize the simulation object using the `LFMCMC` function in epiworldR along with the appropriate setter functions.
 
-```{r lfmcmc-setup}
+```{r}
+#| label: lfmcmc-setup
 lfmcmc_model <- LFMCMC(model_sir) |>
   set_simulation_fun(simulation_fun) |>
   set_summary_fun(summary_fun) |>
@@ -147,7 +147,8 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 To run LFMCMC, we need to set the initial model parameters. For our example, we use an initial Recovery rate of 0.3 and an initial Transmission rate of 0.3. We set the kernel epsilon to 1.0 and run the simulation for 2,000 samples (iterations) using the `run_lfmcmc` function.
 
-```{r lfmcmc-run}
+```{r}
+#| label: lfmcmc-run
 initial_params <- c(0.3, 0.3)
 epsilon <- 1.0
 n_samples <- 2000
@@ -165,7 +166,8 @@ run_lfmcmc(
 # Results
 To make the printed results easier to read, we use the `set_params_names` and `set_stats_names` functions before calling `print`. We also use a burn-in period of 1,500 samples.
 
-```{r lfmcmc-print}
+```{r}
+#| label: lfmcmc-print
 set_params_names(lfmcmc_model, c("Recovery rate", "Transmission rate"))
 set_stats_names(lfmcmc_model, get_states(model_sir))
 
@@ -174,7 +176,8 @@ print(lfmcmc_model, burnin = 1500)
 
 We can also look at the trace of the parameters:
 
-```{r post-dist}
+```{r}
+#| label: post-dist
 # Extracting the accepted parameters
 accepted <- get_all_accepted_params(lfmcmc_model)
 

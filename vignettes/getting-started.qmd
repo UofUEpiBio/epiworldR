@@ -5,22 +5,11 @@ author:
   - George Vega Yon
   - Andrew Pulsipher
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Getting started with epiworldR}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
-  fig.align = "center"
-)
-```
-
-
 
 epiworldR is an R package that provides a fast (C++ backend) and highly-
 customizable framework for building network-based transmission/diffusion agent-
@@ -41,7 +30,8 @@ any given agent is 0.3, and the recovery rate is set to $\frac{1}{3}$.
 To create this model on epiworldR, simply use the `ModelSIRCONN` function.
 From here, the example will take you through the basic features of epiworldR.
 
-```{r sirconn-setup}
+```{r}
+#| label: sirconn-setup
 library(epiworldR)
 model_sir <- ModelSIRCONN(
   name              = "COVID-19",
@@ -58,7 +48,8 @@ model_sir
 
 Printing the model shows us some information. Nevertheless, we can extract detailed information using the summary method.
 
-```{r summary-method}
+```{r}
+#| label: summary-method
 summary(model_sir)
 ```
 
@@ -80,7 +71,9 @@ run(model_sir, ndays = 50, seed = 1912)
 summary(model_sir)
 ```
 
-```{r getting-totals, echo=FALSE}
+```{r}
+#| label: getting-totals
+#| echo: false
 initials <- get_hist_total(model_sir)[1:3, ]$counts |> prettyNum(big.mark = ",")
 finals   <- get_today_total(model_sir) |> prettyNum(big.mark = ",")
 tmat     <- get_transition_probability(model_sir)
@@ -103,14 +96,16 @@ infection.
 
 To make a mermaid diagram of the model states and transition probabilities, use the `draw_mermaid()` function. By default, we can print the diagram to the console like this:
 
-```{r generate-diagram}
+```{r}
+#| label: generate-diagram
 diagram <- draw_mermaid(model_sir)
 print(diagram)
 ```
 
 If the `DiagrammeR` package is installed, we can visualize the diagram directly in R:
 
-```{r mermaid-diagram}
+```{r}
+#| label: mermaid-diagram
 plot(diagram)
 ```
 
@@ -119,7 +114,8 @@ plot(diagram)
 After running the epiworldR model, below is a list of all the functions that can
 be called using the epiworld model object.
 
-```{r showing-methods}
+```{r}
+#| label: showing-methods
 methods(class = "epiworld_model")
 ```
 
@@ -135,13 +131,15 @@ time (days). Notice after a certain amount of time, the curves flatten. Below,
 a table representation of the above plot is printed, complete with each state
 within the SIR model, date, and agent counts.
 
-```{r get-hist-total}
+```{r}
+#| label: get-hist-total
 head(get_hist_total(model_sir))
 ```
 
 An essential statistic in epidemiological models is the reproductive number:
 
-```{r repnum}
+```{r}
+#| label: repnum
 repnum <- get_reproductive_number(model_sir)
 head(repnum)
 ```
@@ -173,7 +171,8 @@ To officially add this new virus to the model, use the `add_virus`
 function by calling the original epiworldR model object, the new virus, and
 the new virus' prevalence (which is set to 0.01 in this example).
 
-```{r design-and-add}
+```{r}
+#| label: design-and-add
 # Building the virus
 flu <- virus(
   name = "Flu", prob_infecting = .3,
@@ -198,7 +197,8 @@ Plotting the previous model (including the flu) yields the following. Notice
 the presence of two reproductive numbers plotted over time. Variant 0 refers
 to COVID-19, and virus 1 refers to the flu.
 
-```{r, fig.height=10}
+```{r}
+#| fig-height: 10
 repnum2 <- get_reproductive_number(model_sir)
 
 op <- par(mfrow = c(2, 1))
@@ -238,7 +238,9 @@ add_tool(model_sir, vaccine)
 run(model_sir, ndays = 50, seed = 1231)
 ```
 
-```{r curves-including-vaccine, fig.height=10}
+```{r}
+#| label: curves-including-vaccine
+#| fig-height: 10
 repnum3 <- get_reproductive_number(model_sir)
 
 op <- par(mfrow = c(2, 1))

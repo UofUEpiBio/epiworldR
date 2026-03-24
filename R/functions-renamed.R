@@ -13,10 +13,6 @@
 #' @param tool Tool object of class `epiworld_tool`.
 #' @param virus Virus object of class `epiworld_virus`.
 #' @name epiworldR-deprecated
-#' @aliases ModelMeaslesSchool
-#' @aliases ModelMeaslesMixing
-#' @aliases ModelMeaslesMixingRiskQuarantine
-#' @aliases ModelMeaslesQuarantine
 #' @concept deprecated-functions
 NULL
 
