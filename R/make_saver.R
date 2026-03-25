@@ -139,7 +139,7 @@ run_multiple.epiworld_model <- function(
     m,
     ndays,
     nsims,
-    seed,
+    as.integer(seed),
     saver$ptr,
     reset,
     verbose,

@@ -117,15 +117,15 @@ run_lfmcmc <- function(
 
   stopifnot_lfmcmc(lfmcmc)
 
-  if (length(seed))
-    set.seed(seed)
+  if (!length(seed))
+    seed <- sample.int(1e4, 1)
 
   run_lfmcmc_cpp(
     lfmcmc,
     as.double(params_init),
     as.integer(n_samples),
     as.double(epsilon),
-    sample.int(1e4, 1)
+    seed
   )
 
   invisible(lfmcmc)

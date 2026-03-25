@@ -171,10 +171,10 @@ run <- function(model, ndays, seed = NULL) UseMethod("run")
 
 #' @export
 run.epiworld_model <- function(model, ndays, seed = NULL) {
-  if (length(seed))
-    seed <- set.seed(seed)
+  if (!length(seed))
+    seed <- sample.int(1e4, 1)
 
-  run_cpp(model, ndays, seed)
+  run_cpp(model, ndays, as.integer(seed))
 
   # For now, just adding a new line (which is currently skipped
   # in C++)

@@ -366,19 +366,6 @@ inline void Agent<TSeq>::rm_entity(
 }
 
 template<typename TSeq>
-inline void Agent<TSeq>::rm_agent_by_virus(Model<TSeq> & model)
-{
-
-    model.events_add(
-        this, virus, nullptr, nullptr,
-        virus->state_removed,
-        virus->queue_removed,
-        default_rm_virus<TSeq>
-        );
-
-}
-
-template<typename TSeq>
 inline epiworld_double Agent<TSeq>::get_susceptibility_reduction(
     VirusPtr<TSeq> & v,
     Model<TSeq> & model

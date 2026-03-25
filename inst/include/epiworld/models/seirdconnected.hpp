@@ -301,11 +301,11 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 if ((which % 2) == 0) // If odd
                 {
                 
-                    p->rm_agent_by_virus(*m);
+                    p->rm_virus(*m, ModelSEIRDCONN<TSeq>::DECEASED);
                 
                 } else {
                 
-                    p->rm_virus(*m);
+                    p->rm_virus(*m, ModelSEIRDCONN<TSeq>::REMOVED);
                 
                 }
 

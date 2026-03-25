@@ -190,7 +190,7 @@ public:
         epiworld_fast_int queue = -99
     );
 
-    void rm_agent_by_virus(Model<TSeq> & model); ///< Agent removed by virus
+    void rm_agent_by_virus(Model<TSeq> & model) = delete; ///< Agent removed by virus
     ///@}
     
     /**

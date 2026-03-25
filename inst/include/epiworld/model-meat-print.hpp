@@ -116,10 +116,12 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     
     if (rewire_fun)
     {
-        printf_epiworld("Rewiring            : on (%.2f)\n\n", rewire_prop);
+        printf_epiworld("Rewiring            : on (%.2f)\n", rewire_prop);
     } else {
-        printf_epiworld("Rewiring            : off\n\n");
+        printf_epiworld("Rewiring            : off\n");
     }
+
+    printf_epiworld("Last seed used      : %i\n\n", static_cast<int>(last_seed));
     
     // Printing Global events
     printf_epiworld("Global events:\n");

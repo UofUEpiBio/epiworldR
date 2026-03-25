@@ -123,7 +123,7 @@ public:
     if ((which % 2) == 0) // If odd
     {
       
-      p->rm_agent_by_virus(*m);
+      p->rm_virus(*m, ModelSEIRD<TSeq>::DECEASED);
       
     } else {
       

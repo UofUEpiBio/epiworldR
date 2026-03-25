@@ -1386,6 +1386,8 @@ inline Model<TSeq> & Model<TSeq>::run(
     if (seed >= 0)
         engine->seed(seed);
 
+    last_seed = seed;
+
     // Checking whether the proposed state in/out/removed
     // are valid
     epiworld_fast_int _init, _end, _removed;

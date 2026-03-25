@@ -63,7 +63,9 @@ inline void default_update_exposed(Agent<TSeq> * p, Model<TSeq> * m) {
     if (which == 0u) // If odd
     {
 
-        p->rm_agent_by_virus(*m);
+        int rm_state = -1;
+        p->get_virus()->get_state(nullptr, nullptr, &rm_state);
+        p->rm_virus(*m, rm_state);
         
     } else {
 
