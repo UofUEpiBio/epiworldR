@@ -68,29 +68,6 @@ public:
     /**
      * @brief Constructs a ModelSIRMixing object.
      *
-     * @param model A reference to an existing ModelSIRMixing object.
-     * @param vname The name of the ModelSIRMixing object.
-     * @param n The number of entities in the model.
-     * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
-     * @param transmission_rate The transmission rate of the disease in the model.
-     * @param recovery_rate The recovery rate of the disease in the model.
-     * @param contact_matrix The contact matrix between entities in the model.
-     */
-    ModelSIRMixing(
-        ModelSIRMixing<TSeq> & model,
-        const std::string & vname,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double recovery_rate,
-        std::vector< double > contact_matrix
-    );
-
-    /**
-     * @brief Constructs a ModelSIRMixing object.
-     *
      * @param vname The name of the ModelSIRMixing object.
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
@@ -109,12 +86,7 @@ public:
         std::vector< double > contact_matrix
     );
 
-    ModelSIRMixing<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    void reset();
+    void reset() override;
 
     std::unique_ptr< Model<TSeq> > clone_ptr();
 
@@ -238,18 +210,6 @@ inline size_t ModelSIRMixing<TSeq>::sample_agents(
 }
 
 template<typename TSeq>
-inline ModelSIRMixing<TSeq> & ModelSIRMixing<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-    return *this;
-
-}
-
-template<typename TSeq>
 inline void ModelSIRMixing<TSeq>::reset()
 {
 
@@ -350,7 +310,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSIRMixing<TSeq>::clone_ptr()
  */
 template<typename TSeq>
 inline ModelSIRMixing<TSeq>::ModelSIRMixing(
-    ModelSIRMixing<TSeq> & model,
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -475,14 +434,14 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
         };
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Prob. Transmission");
-    model.add_param(recovery_rate, "Prob. Recovery");
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Prob. Transmission");
+    this->add_param(recovery_rate, "Prob. Recovery");
 
     // state
-    model.add_state("Susceptible", update_susceptible);
-    model.add_state("Infected", update_infected);
-    model.add_state("Recovered");
+    this->add_state("Susceptible", update_susceptible);
+    this->add_state("Infected", update_infected);
+    this->add_state("Recovered");
 
     // Global function
     GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
@@ -496,57 +455,24 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
 
     };
 
-    model.add_globalevent(update, "Update infected individuals");
+    this->add_globalevent(update, "Update infected individuals");
 
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
-    virus.set_state(
-        ModelSIRMixing<TSeq>::INFECTED,
-        ModelSIRMixing<TSeq>::RECOVERED,
-        ModelSIRMixing<TSeq>::RECOVERED
-        );
+    virus.set_state(INFECTED, RECOVERED, RECOVERED);
 
     virus.set_prob_infecting("Prob. Transmission");
     virus.set_prob_recovery("Prob. Recovery");
 
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Susceptible-Infected-Removed (SIR) with Mixing");
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelSIRMixing<TSeq>::ModelSIRMixing(
-    const std::string & vname,
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double recovery_rate,
-    std::vector< double > contact_matrix
-    )
-{
-
-    this->contact_matrix = contact_matrix;
-
-    ModelSIRMixing(
-        *this,
-        vname,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        recovery_rate,
-        contact_matrix
-    );
+    this->set_name("Susceptible-Infected-Removed (SIR) with Mixing");
 
     return;
 

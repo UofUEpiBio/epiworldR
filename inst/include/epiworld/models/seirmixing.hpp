@@ -113,12 +113,7 @@ public:
         std::vector< double > contact_matrix
     );
 
-    ModelSEIRMixing<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    void reset();
+    void reset() override;
 
     std::unique_ptr< Model<TSeq> > clone_ptr();
 
@@ -238,19 +233,6 @@ inline size_t ModelSEIRMixing<TSeq>::sample_agents(
 }
 
 template<typename TSeq>
-inline ModelSEIRMixing<TSeq> & ModelSEIRMixing<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-
-    return *this;
-
-}
-
-template<typename TSeq>
 inline void ModelSEIRMixing<TSeq>::reset()
 {
 
@@ -357,7 +339,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSEIRMixing<TSeq>::clone_ptr()
  */
 template<typename TSeq>
 inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
-    ModelSEIRMixing<TSeq> & model,
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -505,16 +486,16 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
         };
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Prob. Transmission");
-    model.add_param(recovery_rate, "Prob. Recovery");
-    model.add_param(avg_incubation_days, "Avg. Incubation days");
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Prob. Transmission");
+    this->add_param(recovery_rate, "Prob. Recovery");
+    this->add_param(avg_incubation_days, "Avg. Incubation days");
 
     // state
-    model.add_state("Susceptible", update_susceptible);
-    model.add_state("Exposed", update_exposed_and_infected);
-    model.add_state("Infected", update_exposed_and_infected);
-    model.add_state("Recovered");
+    this->add_state("Susceptible", update_susceptible);
+    this->add_state("Exposed", update_exposed_and_infected);
+    this->add_state("Infected", update_exposed_and_infected);
+    this->add_state("Recovered");
 
     // Global function
     GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
@@ -528,62 +509,25 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 
     };
 
-    model.add_globalevent(update, "Update infected individuals");
+    this->add_globalevent(update, "Update infected individuals");
 
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
-    virus.set_state(
-        ModelSEIRMixing<TSeq>::EXPOSED,
-        ModelSEIRMixing<TSeq>::RECOVERED,
-        ModelSEIRMixing<TSeq>::RECOVERED
-        );
+    virus.set_state(EXPOSED, RECOVERED, RECOVERED);
 
     virus.set_prob_infecting("Prob. Transmission");
     virus.set_prob_recovery("Prob. Recovery");
     virus.set_incubation("Avg. Incubation days");
 
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Susceptible-Exposed-Infected-Removed (SEIR) with Mixing");
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
-    const std::string & vname,
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
-    epiworld_double recovery_rate,
-    std::vector< double > contact_matrix
-    )
-{
-
-    this->contact_matrix = contact_matrix;
-
-    ModelSEIRMixing(
-        *this,
-        vname,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        avg_incubation_days,
-        recovery_rate,
-        contact_matrix
-    );
-
-    return;
+    this->set_name("Susceptible-Exposed-Infected-Removed (SEIR) with Mixing");
 
 }
 

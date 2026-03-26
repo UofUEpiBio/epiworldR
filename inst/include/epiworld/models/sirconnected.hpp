@@ -28,30 +28,15 @@ public:
     ModelSIRCONN() {};
 
     ModelSIRCONN(
-        ModelSIRCONN<TSeq> & model,
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
-    );
-
-    ModelSIRCONN(
-        const std::string & vname,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double recovery_rate
-    );
-
-    ModelSIRCONN<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
     );
     
-    void reset();
+    void reset() override;
 
     std::unique_ptr< Model<TSeq> > clone_ptr();
 
@@ -112,18 +97,6 @@ inline void ModelSIRCONN<TSeq>::update_infected()
 }
 
 template<typename TSeq>
-inline ModelSIRCONN<TSeq> & ModelSIRCONN<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-    return *this;
-
-}
-
-template<typename TSeq>
 inline void ModelSIRCONN<TSeq>::reset()
 {
 
@@ -155,7 +128,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSIRCONN<TSeq>::clone_ptr()
  */
 template<typename TSeq>
 inline ModelSIRCONN<TSeq>::ModelSIRCONN(
-    ModelSIRCONN<TSeq> & model,
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -176,7 +148,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             if (ndraw == 0)
                 return;
 
-            ModelSIRCONN<TSeq> * model = dynamic_cast<ModelSIRCONN<TSeq> *>(m);
+            ModelSIRCONN<TSeq> * model = model_cast<ModelSIRCONN<TSeq>,TSeq>(m);
             size_t ninfected = model->get_n_infected();
 
             // Drawing from the set
@@ -297,26 +269,26 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
         };
 
     // state
-    model.add_state("Susceptible", update_susceptible);
-    model.add_state("Infected", update_infected);
-    model.add_state("Recovered");
+    this->add_state("Susceptible", update_susceptible);
+    this->add_state("Infected", update_infected);
+    this->add_state("Recovered");
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Transmission rate");
-    model.add_param(recovery_rate, "Recovery rate");
-    // model.add_param(prob_reinfection, "Prob. Reinfection");
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(recovery_rate, "Recovery rate");
+    // this->add_param(prob_reinfection, "Prob. Reinfection");
 
     // Adding update function
     GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
     {
-        ModelSIRCONN<TSeq> * model = dynamic_cast<ModelSIRCONN<TSeq> *>(m);
+        ModelSIRCONN<TSeq> * model = model_cast<ModelSIRCONN<TSeq>,TSeq>(m);
         model->update_infected();
         
         return;
     };
 
-    model.add_globalevent(update, "Update infected individuals");
+    this->add_globalevent(update, "Update infected individuals");
     
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
@@ -324,40 +296,13 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
     virus.set_prob_infecting("Transmission rate");
     virus.set_prob_recovery("Recovery rate");
 
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Susceptible-Infected-Removed (SIR) (connected)");
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelSIRCONN<TSeq>::ModelSIRCONN(
-    const std::string & vname,
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double recovery_rate
-    )
-{
-
-    ModelSIRCONN(
-        *this,
-        vname,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        recovery_rate
-    );
-
-    return;
+    this->set_name("Susceptible-Infected-Removed (SIR) (connected)");
 
 }
 

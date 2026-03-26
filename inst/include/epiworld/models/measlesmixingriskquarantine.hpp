@@ -8,22 +8,6 @@
 #define COL_MAJOR_POS(i, j, n) \
     (j * n + i)
 
-#if defined(__clang__)
-    // Clang
-    #define GET_MODEL(model, output) \
-        auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
-        __builtin_assume((output) != nullptr);
-#elif defined(__GNUC__) && __GNUC__ >= 13
-    // GCC 13 or later
-    #define GET_MODEL(model, output) \
-        auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
-        [[assume((output) != nullptr)]];
-#else
-    #define GET_MODEL(model, output) \
-        auto * output = dynamic_cast< ModelMeaslesMixingRiskQuarantine<TSeq> * >( (model) ); \
-        assert((output) != nullptr); // Use assert for runtime checks
-#endif
-
 /**
  * @brief Macro to sample from a list of probabilities
  * @return The index of the sampled probability; and the total length
@@ -67,7 +51,7 @@
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesMixingRiskQuarantine : public Model<TSeq> 
+class ModelMeaslesMixingRiskQuarantine final : public Model<TSeq> 
 {
 private:
     // Vector of vectors of infected agents (prodromal agents are infectious)
@@ -170,62 +154,7 @@ public:
     static constexpr int RISK_HIGH   = 2;
 
     ModelMeaslesMixingRiskQuarantine() {};
-    
-    /**
-     * @brief Constructs a ModelMeaslesMixingRiskQuarantine object.
-     *
-     * @param model A reference to an existing ModelMeaslesMixingRiskQuarantine object.
-     * @param n The number of entities in the model.
-     * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
-     * @param transmission_rate The transmission rate of the disease in the model.
-     * @param vax_efficacy The efficacy of the vaccine.
-     * @param incubation_period The incubation period of the disease in the model.
-     * @param prodromal_period The prodromal period of the disease in the model.
-     * @param rash_period The rash period of the disease in the model.
-     * @param contact_matrix The contact matrix between entities in the model. Specified in
-     * column-major order.
-     * @param hospitalization_rate The rate at which infected individuals are hospitalized.
-     * @param hospitalization_period The average duration of hospitalization in days.
-     * @param days_undetected The average number of days an infected individual remains undetected.
-     * @param quarantine_period_high The duration of quarantine in days for high-risk contacts.
-     * @param quarantine_period_medium The duration of quarantine in days for medium-risk contacts.
-     * @param quarantine_period_low The duration of quarantine in days for low-risk contacts.
-     * @param quarantine_willingness The proportion of individuals willing to comply with quarantine measures.
-     * @param isolation_willingness The proportion of individuals willing to self-isolate when detected.
-     * @param isolation_period The duration of isolation in days for detected infected individuals.
-     * @param prop_vaccinated The proportion of vaccinated agents.
-     * @param detection_rate_quarantine The detection rate during active quarantine periods.
-     * @param contact_tracing_success_rate The probability of successfully identifying and tracing contacts (default: 1.0).
-     * @param contact_tracing_days_prior The number of days prior to detection for which contacts are traced (default: 4).
-     */
-    ModelMeaslesMixingRiskQuarantine(
-        ModelMeaslesMixingRiskQuarantine<TSeq> & model,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double vax_efficacy,
-        epiworld_double incubation_period,
-        epiworld_double prodromal_period,
-        epiworld_double rash_period,
-        std::vector< double > contact_matrix,
-        epiworld_double hospitalization_rate,
-        epiworld_double hospitalization_period,
-        // Policy parameters
-        epiworld_double days_undetected,
-        epiworld_fast_int quarantine_period_high,
-        epiworld_fast_int quarantine_period_medium,
-        epiworld_fast_int quarantine_period_low,
-        epiworld_double quarantine_willingness,
-        epiworld_double isolation_willingness,
-        epiworld_fast_int isolation_period,
-        epiworld_double prop_vaccinated,
-        epiworld_double detection_rate_quarantine,
-        epiworld_double contact_tracing_success_rate = 1.0,
-        epiworld_fast_uint contact_tracing_days_prior = 4u
-    );
-    
+
     /**
      * @brief Constructs a ModelMeaslesMixingRiskQuarantine object.
      *
@@ -279,20 +208,9 @@ public:
     );
 
     /**
-     * @brief Run the model simulation
-     * @param ndays Number of days to simulate
-     * @param seed Random seed for reproducibility (default: -1 for random seed)
-     * @return Reference to this model instance
-     */
-    ModelMeaslesMixingRiskQuarantine<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    /**
      * @brief Reset the model to initial state
      */
-    void reset();
+    void reset() override;
 
     /**
      * @brief Create a clone of this model
@@ -377,8 +295,8 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_model(
     Model<TSeq> * m
 )
 {
-    GET_MODEL(m, model);
-
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
+    
     // This will move agents between states
     model->m_quarantine_process();
 
@@ -558,8 +476,8 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_susceptible(
 
     // Downcasting to retrieve the sampler attached to the
     // class
-    GET_MODEL(m, m_down);
-    
+    auto * m_down = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>, TSeq>(m);
+
     // Sampling infected agents
     size_t ndraws = m_down->sample_infectious_agents(p, m_down->sampled_agents);
 
@@ -636,7 +554,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_prodromal(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
     
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Does the agent transition to rash?
     if (m->runif() < 1.0/m->par("Prodromal period"))
@@ -662,7 +580,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_rash(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Checking if the agent will be detected or not
     bool detected = false;
@@ -709,7 +627,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Figuring out if the agent can be released from isolation
     // if the isolation period is over.
@@ -753,7 +671,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_isolated_recovered(
     Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Figuring out if the agent can be released from isolation
     // if the isolation period is over.
@@ -770,7 +688,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_suscep(
     Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Get the appropriate quarantine period based on risk level
     auto quarantine_period = model->m_get_risk_period(p->get_id());
@@ -789,7 +707,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_exposed(
     Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Get the appropriate quarantine period based on risk level
     auto quarantine_period = model->m_get_risk_period(p->get_id());
@@ -822,7 +740,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_prodroma
     Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Get the appropriate quarantine period based on risk level
     auto quarantine_period = model->m_get_risk_period(p->get_id());
@@ -855,7 +773,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_update_quarantine_recovere
     Model<TSeq> * m
 ) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesMixingRiskQuarantine<TSeq>,TSeq>(m);
 
     // Get the appropriate quarantine period based on risk level
     auto quarantine_period = model->m_get_risk_period(p->get_id());
@@ -1165,7 +1083,6 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::m_quarantine_process() {
 
 template<typename TSeq>
 inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
-    ModelMeaslesMixingRiskQuarantine<TSeq> & model,
     epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double contact_rate,
@@ -1196,52 +1113,52 @@ inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
     this->contact_matrix = contact_matrix;
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Transmission rate");
-    model.add_param(incubation_period, "Incubation period");
-    model.add_param(prodromal_period, "Prodromal period");
-    model.add_param(rash_period, "Rash period");
-    model.add_param(hospitalization_rate, "Hospitalization rate");
-    model.add_param(hospitalization_period, "Hospitalization period");
-    model.add_param(days_undetected, "Days undetected");
-    model.add_param(quarantine_period_high, "Quarantine period high");
-    model.add_param(quarantine_period_medium, "Quarantine period medium");
-    model.add_param(quarantine_period_low, "Quarantine period low");
-    model.add_param(
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(incubation_period, "Incubation period");
+    this->add_param(prodromal_period, "Prodromal period");
+    this->add_param(rash_period, "Rash period");
+    this->add_param(hospitalization_rate, "Hospitalization rate");
+    this->add_param(hospitalization_period, "Hospitalization period");
+    this->add_param(days_undetected, "Days undetected");
+    this->add_param(quarantine_period_high, "Quarantine period high");
+    this->add_param(quarantine_period_medium, "Quarantine period medium");
+    this->add_param(quarantine_period_low, "Quarantine period low");
+    this->add_param(
         quarantine_willingness, "Quarantine willingness"
     );
-    model.add_param(
+    this->add_param(
         isolation_willingness, "Isolation willingness"
     );
-    model.add_param(isolation_period, "Isolation period");
-    model.add_param(detection_rate_quarantine, "Detection rate quarantine");
-    model.add_param(
+    this->add_param(isolation_period, "Isolation period");
+    this->add_param(detection_rate_quarantine, "Detection rate quarantine");
+    this->add_param(
         contact_tracing_success_rate, "Contact tracing success rate"
     );
-    model.add_param(
+    this->add_param(
         contact_tracing_days_prior, "Contact tracing days prior"
     );
-    model.add_param(prop_vaccinated, "Vaccination rate");
-    model.add_param(vax_efficacy, "Vax efficacy");
+    this->add_param(prop_vaccinated, "Vaccination rate");
+    this->add_param(vax_efficacy, "Vax efficacy");
     
     // state
-    model.add_state("Susceptible", m_update_susceptible);
-    model.add_state("Exposed", m_update_exposed);
-    model.add_state("Prodromal", m_update_prodromal);
-    model.add_state("Rash", m_update_rash);
-    model.add_state("Isolated", m_update_isolated);
-    model.add_state("Isolated Recovered", m_update_isolated_recovered);
-    model.add_state("Detected Hospitalized", m_update_hospitalized);
-    model.add_state("Quarantined Exposed", m_update_quarantine_exposed);
-    model.add_state("Quarantined Susceptible", m_update_quarantine_suscep);
-    model.add_state("Quarantined Prodromal", m_update_quarantine_prodromal);
-    model.add_state("Quarantined Recovered", m_update_quarantine_recovered);
-    model.add_state("Hospitalized", m_update_hospitalized);
-    model.add_state("Recovered");
+    this->add_state("Susceptible", m_update_susceptible);
+    this->add_state("Exposed", m_update_exposed);
+    this->add_state("Prodromal", m_update_prodromal);
+    this->add_state("Rash", m_update_rash);
+    this->add_state("Isolated", m_update_isolated);
+    this->add_state("Isolated Recovered", m_update_isolated_recovered);
+    this->add_state("Detected Hospitalized", m_update_hospitalized);
+    this->add_state("Quarantined Exposed", m_update_quarantine_exposed);
+    this->add_state("Quarantined Susceptible", m_update_quarantine_suscep);
+    this->add_state("Quarantined Prodromal", m_update_quarantine_prodromal);
+    this->add_state("Quarantined Recovered", m_update_quarantine_recovered);
+    this->add_state("Hospitalized", m_update_hospitalized);
+    this->add_state("Recovered");
 
     // Global function
-    model.add_globalevent(this->m_update_model, "Update infected individuals");
-    model.queuing_off();
+    this->add_globalevent(this->m_update_model, "Update infected individuals");
+    this->queuing_off();
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus("Measles", prevalence, true);
@@ -1255,93 +1172,29 @@ inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
     virus.set_prob_recovery("Rash period");
     virus.set_incubation("Incubation period");
 
-    model.add_virus(virus);
+    this->add_virus(virus);
 
     // Designing the vaccine
     ToolVaccine<TSeq> vaccine(
         std::string("MMR ") +
-        std::to_string(model("Vax efficacy"))
+        std::to_string(this->get_param("Vax efficacy"))
     );
     
-    vaccine.set_susceptibility_reduction(model("Vax efficacy"));
+    vaccine.set_susceptibility_reduction(this->get_param("Vax efficacy"));
 
     vaccine.set_distribution(
         distribute_tool_randomly(prop_vaccinated, true)
     );
 
-    model.add_tool(vaccine);
+    this->add_tool(vaccine);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Measles with Mixing and Risk-based Quarantine");
+    this->set_name("Measles with Mixing and Risk-based Quarantine");
 
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double vax_efficacy,
-    epiworld_double incubation_period,
-    epiworld_double prodromal_period,
-    epiworld_double rash_period,
-    std::vector< double > contact_matrix,
-    epiworld_double hospitalization_rate,
-    epiworld_double hospitalization_period,
-    // Policy parameters
-    epiworld_double days_undetected,
-    epiworld_fast_int quarantine_period_high,
-    epiworld_fast_int quarantine_period_medium,
-    epiworld_fast_int quarantine_period_low,
-    epiworld_double quarantine_willingness,
-    epiworld_double isolation_willingness,
-    epiworld_fast_int isolation_period,
-    epiworld_double prop_vaccinated,
-    epiworld_double detection_rate_quarantine,
-    epiworld_double contact_tracing_success_rate,
-    epiworld_fast_uint contact_tracing_days_prior
-    ) : ModelMeaslesMixingRiskQuarantine<TSeq>(
-        *this,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        vax_efficacy,
-        incubation_period,
-        prodromal_period,
-        rash_period,
-        contact_matrix,
-        hospitalization_rate,
-        hospitalization_period,
-        // Policy parameters
-        days_undetected,
-        quarantine_period_high,
-        quarantine_period_medium,
-        quarantine_period_low,
-        quarantine_willingness,
-        isolation_willingness,
-        isolation_period,
-        prop_vaccinated,
-        detection_rate_quarantine,
-        contact_tracing_success_rate,
-        contact_tracing_days_prior
-    ) {};
-
-template<typename TSeq>
-inline ModelMeaslesMixingRiskQuarantine<TSeq> & ModelMeaslesMixingRiskQuarantine<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-    Model<TSeq>::run(ndays, seed);
-    return *this;
 }
 
 template<typename TSeq>
@@ -1463,6 +1316,5 @@ inline ModelMeaslesMixingRiskQuarantine<TSeq> & ModelMeaslesMixingRiskQuarantine
 }
 
 #undef SAMPLE_FROM_PROBS
-#undef GET_MODEL
 
 #endif

@@ -225,20 +225,9 @@ public:
     );
 
     /**
-     * @brief Run the model simulation
-     * @param ndays Number of days to simulate
-     * @param seed Random seed for reproducibility (default: -1 for random seed)
-     * @return Reference to this model instance
-     */
-    ModelSEIRMixingQuarantine<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    /**
      * @brief Reset the model to initial state
      */
-    void reset();
+    void reset() override;
 
     /**
      * @brief Create a clone of this model
@@ -470,19 +459,6 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::sample_agents(
     }
 
     return samp_id;
-
-}
-
-template<typename TSeq>
-inline ModelSEIRMixingQuarantine<TSeq> & ModelSEIRMixingQuarantine<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-
-    return *this;
 
 }
 

@@ -22,29 +22,7 @@ public:
   static const int DECEASED    = 4;
   
   ModelSEIRD() {};
-  
-  /**
-   * @brief Constructor for the SEIRD model.
-   * 
-   * @tparam TSeq Type of the sequence used in the model.
-   * @param model Reference to the SEIRD model.
-   * @param vname Name of the model.
-   * @param prevalence Prevalence of the disease.
-   * @param transmission_rate Transmission rate of the disease.
-   * @param avg_incubation_days Average incubation period of the disease.
-   * @param recovery_rate Recovery rate of the disease.
-   * @param death_rate Death rate of the disease.
-   */
-  ModelSEIRD(
-    ModelSEIRD<TSeq> & model,
-    const std::string & vname,
-    epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
-    epiworld_double recovery_rate,
-    epiworld_double death_rate
-  );
-  
+
   /**
    * @brief Constructor for the SEIRD model.
    * 
@@ -150,7 +128,6 @@ public:
 
 template<typename TSeq>
 inline ModelSEIRD<TSeq>::ModelSEIRD(
-    ModelSEIRD<TSeq> & model,
     const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
@@ -161,17 +138,17 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
 {
   
   // Adding statuses
-  model.add_state("Susceptible", default_update_susceptible<TSeq>);
-  model.add_state("Exposed",  model.update_exposed_seir);
-  model.add_state("Infected", model.update_infected);
-  model.add_state("Removed");
-  model.add_state("Deceased");
+  this->add_state("Susceptible", default_update_susceptible<TSeq>);
+  this->add_state("Exposed",  this->update_exposed_seir);
+  this->add_state("Infected", this->update_infected);
+  this->add_state("Removed");
+  this->add_state("Deceased");
   
   // Setting up parameters
-  model.add_param(transmission_rate, "Transmission rate");
-  model.add_param(avg_incubation_days, "Incubation days");
-  model.add_param(recovery_rate, "Recovery rate");
-  model.add_param(death_rate, "Death rate");
+  this->add_param(transmission_rate, "Transmission rate");
+  this->add_param(avg_incubation_days, "Incubation days");
+  this->add_param(recovery_rate, "Recovery rate");
+  this->add_param(death_rate, "Death rate");
   
   // Preparing the virus -------------------------------------------
   Virus<TSeq> virus(vname, prevalence, true);
@@ -183,36 +160,9 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   virus.set_prob_recovery("Recovery rate");
   
   // Adding the tool and the virus
-  model.add_virus(virus);
+  this->add_virus(virus);
   
-  model.set_name("Susceptible-Exposed-Infected-Removed-Deceased (SEIRD)");
-  
-  return;
-  
-}
-
-template<typename TSeq>
-inline ModelSEIRD<TSeq>::ModelSEIRD(
-    const std::string & vname,
-    epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
-    epiworld_double recovery_rate,
-    epiworld_double death_rate
-)
-{
-  
-  ModelSEIRD<TSeq>(
-    *this,
-    vname,
-    prevalence,
-    transmission_rate,
-    avg_incubation_days,
-    recovery_rate,
-    death_rate
-  );
-  
-  return;
+  this->set_name("Susceptible-Exposed-Infected-Removed-Deceased (SEIRD)");
   
 }
 

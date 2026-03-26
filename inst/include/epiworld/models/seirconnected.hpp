@@ -28,17 +28,6 @@ public:
     ModelSEIRCONN() {};
 
     ModelSEIRCONN(
-        ModelSEIRCONN<TSeq> & model,
-        const std::string & vname,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double avg_incubation_days,
-        epiworld_double recovery_rate
-    );
-    
-    ModelSEIRCONN(
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
@@ -48,12 +37,7 @@ public:
         epiworld_double recovery_rate
     );
 
-    ModelSEIRCONN<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    void reset();
+    void reset() override;
 
     std::unique_ptr< Model<TSeq> > clone_ptr();
 
@@ -107,19 +91,6 @@ inline void ModelSEIRCONN<TSeq>::update_infected()
 }
 
 template<typename TSeq>
-inline ModelSEIRCONN<TSeq> & ModelSEIRCONN<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-    
-    Model<TSeq>::run(ndays, seed);
-
-    return *this;
-
-}
-
-template<typename TSeq>
 inline void ModelSEIRCONN<TSeq>::reset()
 {
 
@@ -141,7 +112,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSEIRCONN<TSeq>::clone_ptr()
 /**
  * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model
  * 
- * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
  * @param contact_rate Average number of contacts (interactions) per step.
@@ -150,7 +120,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSEIRCONN<TSeq>::clone_ptr()
  */
 template<typename TSeq>
 inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
-    ModelSEIRCONN<TSeq> & model,
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -173,7 +142,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
             if (ndraw == 0)
                 return;
 
-            ModelSEIRCONN<TSeq> * model = dynamic_cast<ModelSEIRCONN<TSeq> *>(m);
+            auto * model = model_cast<ModelSEIRCONN<TSeq>,TSeq>(m);
             size_t ninfected = model->get_n_infected();
 
             // Drawing from the set
@@ -309,16 +278,16 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
         };
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Prob. Transmission");
-    model.add_param(recovery_rate, "Prob. Recovery");
-    model.add_param(avg_incubation_days, "Avg. Incubation days");
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Prob. Transmission");
+    this->add_param(recovery_rate, "Prob. Recovery");
+    this->add_param(avg_incubation_days, "Avg. Incubation days");
     
     // state
-    model.add_state("Susceptible", update_susceptible);
-    model.add_state("Exposed", update_infected);
-    model.add_state("Infected", update_infected);
-    model.add_state("Recovered");
+    this->add_state("Susceptible", update_susceptible);
+    this->add_state("Exposed", update_infected);
+    this->add_state("Infected", update_infected);
+    this->add_state("Recovered");
 
     // Adding update function
     GlobalFun<TSeq> update = [](
@@ -326,7 +295,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
         ) -> void
         {
 
-            ModelSEIRCONN<TSeq> * model = dynamic_cast<ModelSEIRCONN<TSeq> *>(m);
+            ModelSEIRCONN<TSeq> * model = model_cast<ModelSEIRCONN<TSeq>,TSeq>(m);
 
             model->update_infected();
 
@@ -334,7 +303,7 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
 
         };
 
-    model.add_globalevent(update, "Update infected individuals");
+    this->add_globalevent(update, "Update infected individuals");
 
 
     // Preparing the virus -------------------------------------------
@@ -349,43 +318,14 @@ inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
     virus.set_prob_recovery("Prob. Recovery");
     virus.set_incubation("Avg. Incubation days");
 
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Susceptible-Exposed-Infected-Removed (SEIR) (connected)");
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelSEIRCONN<TSeq>::ModelSEIRCONN(
-    const std::string & vname,
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
-    epiworld_double recovery_rate
-    )
-{
-
-    ModelSEIRCONN(
-        *this,
-        vname,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        avg_incubation_days,
-        recovery_rate
-    );
-
-    return;
+    this->set_name("Susceptible-Exposed-Infected-Removed (SEIR) (connected)");
 
 }
 
