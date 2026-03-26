@@ -37,29 +37,6 @@ class Entities;
 template<typename TSeq>
 class AgentsSample;
 
-template<typename TSeq>
-inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_add_entity(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m);
-
-
-
 /**
  * @brief Agent (agents)
  * 
@@ -74,13 +51,6 @@ class Agent {
     friend class Tools_const<TSeq>;
     friend class Queue<TSeq>;
     friend class AgentsSample<TSeq>;
-    friend void default_add_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_change_state<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
 
     std::vector< size_t > * neighbors = nullptr;
@@ -104,7 +74,7 @@ private:
 
 public:
 
-    Agent();
+    Agent() = default;
     Agent(Agent<TSeq> && p);
     Agent(const Agent<TSeq> & p);
     Agent<TSeq> & operator=(const Agent<TSeq> & other_agent);
@@ -190,7 +160,7 @@ public:
         epiworld_fast_int queue = -99
     );
 
-    void rm_agent_by_virus(Model<TSeq> & model); ///< Agent removed by virus
+    void rm_agent_by_virus(Model<TSeq> & model) = delete; ///< Agent removed by virus
     ///@}
     
     /**
@@ -200,10 +170,10 @@ public:
      * @return epiworld_double 
      */
     ///@{
-    epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
-    epiworld_double get_transmission_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
-    epiworld_double get_recovery_enhancer(VirusPtr<TSeq> v, Model<TSeq> & model);
-    epiworld_double get_death_reduction(VirusPtr<TSeq> v, Model<TSeq> & model);
+    epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
+    epiworld_double get_transmission_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
+    epiworld_double get_recovery_enhancer(VirusPtr<TSeq> & v, Model<TSeq> & model);
+    epiworld_double get_death_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
     ///@}
 
     int get_id() const; ///< Id of the individual
@@ -247,6 +217,7 @@ public:
         );
 
     const unsigned int & get_state() const;
+    const unsigned int & get_state_prev() const;
 
     bool has_tool(epiworld_fast_uint t) const;
     bool has_tool(std::string name) const;

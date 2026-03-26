@@ -5,27 +5,6 @@
 #include "../tools/vaccine.hpp"
 #include "../model-bones.hpp"
 
-
-#if defined(__clang__)
-    // Clang
-    #define GET_MODEL(model, output) \
-        ModelMeaslesSchool<TSeq> * output = \
-            dynamic_cast<ModelMeaslesSchool<TSeq> *>(model); \
-        __builtin_assume(output != nullptr);
-#elif defined(__GNUC__) && __GNUC__ >= 13
-    // GCC 13 or later
-    #define GET_MODEL(model, output) \
-        ModelMeaslesSchool<TSeq> * output = \
-            dynamic_cast<ModelMeaslesSchool<TSeq> *>(model); \
-        [[assume(output != nullptr)]];
-#else
-    // C++17 or C++20
-    #define GET_MODEL(model, output) \
-        ModelMeaslesSchool<TSeq> * output = \
-            dynamic_cast<ModelMeaslesSchool<TSeq> *>(model); \
-        assert(output != nullptr); // Use assert for runtime checks
-#endif
-
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \
     inline void ModelMeaslesSchool<TSeq>:: name \
@@ -62,7 +41,7 @@
  * @ingroup disease_specific
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelMeaslesSchool: public Model<TSeq> {
+class ModelMeaslesSchool final : public Model<TSeq> {
 
 private:
 
@@ -115,47 +94,6 @@ public:
     // Default constructor
     ModelMeaslesSchool() {};
 
-    /**
-     * @param n The number of agents in the system.
-     * @param n_exposed The number of exposed agents in the system.
-     * @param contact_rate The rate of contact between agents.
-     * @param transmission_rate The rate of transmission of the virus.
-     * @param vax_efficacy The efficacy of the vaccine.
-     * @param vax_reduction_recovery_rate The reduction in recovery rate due to  the vaccine.
-     * @param incubation_period The incubation period of the virus.
-     * @param prodromal_period The prodromal period of the virus.
-     * @param rash_period The rash period of the virus.
-     * @param days_undetected The number of days the virus goes undetected.
-     * @param hospitalization_rate The rate of hospitalization.
-     * @param hospitalization_period The duration of hospitalization.
-     * @param prop_vaccinated The proportion of vaccinated agents.
-     * @param quarantine_period The number of days for quarantine.
-     * @param quarantine_willingness The willingness to be quarantined.
-     * @param isolation_period The number of days for isolation.
-     */
-    ///@{
-    ModelMeaslesSchool(
-        ModelMeaslesSchool<TSeq> & model,
-        epiworld_fast_uint n,
-        epiworld_fast_uint n_exposed,
-        // Disease parameters
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double vax_efficacy,
-        epiworld_double vax_reduction_recovery_rate,
-        epiworld_double incubation_period,
-        epiworld_double prodromal_period,
-        epiworld_double rash_period,
-        epiworld_double days_undetected,
-        epiworld_double hospitalization_rate,
-        epiworld_double hospitalization_period,
-        // Policy parameters
-        epiworld_double prop_vaccinated,
-        epiworld_fast_int quarantine_period,
-        epiworld_double quarantine_willingness,
-        epiworld_fast_int isolation_period
-    );
-
     ModelMeaslesSchool(
         epiworld_fast_uint n,
         epiworld_fast_uint n_exposed,
@@ -205,10 +143,10 @@ public:
      */
     void quarantine_agents();
 
-    void reset();
+    void reset() override;
     void update_infectious();
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
 };
 
@@ -275,7 +213,7 @@ inline void ModelMeaslesSchool<TSeq>::quarantine_agents() {
 template<typename TSeq>
 inline void ModelMeaslesSchool<TSeq>::m_update_model(Model<TSeq> * m) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     model->quarantine_agents();
     model->events_run();
     model->update_infectious();
@@ -302,7 +240,7 @@ inline void ModelMeaslesSchool<TSeq>::reset() {
         day_rash_onset.end(),
         0);
 
-    this->m_update_model(dynamic_cast<Model<TSeq>*>(this));
+    this->m_update_model(this);
     return;
 
 }
@@ -373,7 +311,7 @@ LOCAL_UPDATE_FUN(m_update_susceptible) {
     if (ndraw == 0)
         return;
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     size_t n_infectious = model->infectious.size();
 
     if (n_infectious == 0)
@@ -466,7 +404,7 @@ LOCAL_UPDATE_FUN(m_update_prodromal) {
     if (m->runif() < (1.0/m->par("Prodromal period")))
     {
 
-        GET_MODEL(m, model);
+        auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
         model->day_rash_onset[p->get_id()] = m->today();
         p->change_state(*m, ModelMeaslesSchool<TSeq>::RASH);
 
@@ -479,7 +417,7 @@ LOCAL_UPDATE_FUN(m_update_prodromal) {
 LOCAL_UPDATE_FUN(m_update_rash) {
 
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
 
     #ifdef EPI_DEBUG
     if (static_cast<int>(model->day_flagged.size()) <= p->get_id())
@@ -548,7 +486,7 @@ LOCAL_UPDATE_FUN(m_update_rash) {
 
 LOCAL_UPDATE_FUN(m_update_isolated) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
 
     // Figuring out if the agent can be released from isolation
     // if the quarantine period is over.
@@ -603,7 +541,7 @@ LOCAL_UPDATE_FUN(m_update_isolated) {
 
 LOCAL_UPDATE_FUN(m_update_isolated_recovered) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
 
     // Figuring out if the agent can be released from isolation
     // if the quarantine period is over.
@@ -621,7 +559,7 @@ LOCAL_UPDATE_FUN(m_update_isolated_recovered) {
 LOCAL_UPDATE_FUN(m_update_q_exposed) {
 
     // How many days since quarantine started
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     int days_since =
         m->today() - model->day_flagged[p->get_id()];
 
@@ -656,7 +594,7 @@ LOCAL_UPDATE_FUN(m_update_q_exposed) {
 
 LOCAL_UPDATE_FUN(m_update_q_susceptible) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     int days_since =
         m->today() - model->day_flagged[p->get_id()];
 
@@ -667,7 +605,7 @@ LOCAL_UPDATE_FUN(m_update_q_susceptible) {
 
 LOCAL_UPDATE_FUN(m_update_q_prodromal) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
 
     // Otherwise, these are moved to the prodromal period, if
     // the quanrantine period is over.
@@ -695,7 +633,7 @@ LOCAL_UPDATE_FUN(m_update_q_prodromal) {
 
 LOCAL_UPDATE_FUN(m_update_q_recovered) {
 
-    GET_MODEL(m, model);
+    auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     if (days_since >= m->par("Quarantine period"))
@@ -716,7 +654,6 @@ LOCAL_UPDATE_FUN(m_update_hospitalized) {
 
 template<typename TSeq>
 inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
-    ModelMeaslesSchool<TSeq> & model,
     epiworld_fast_uint n,
     epiworld_fast_uint n_exposed,
     // Disease parameters
@@ -737,138 +674,88 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     epiworld_fast_int isolation_period
 ) {
 
-    model.add_state("Susceptible", this->m_update_susceptible);
-    model.add_state("Exposed", this->m_update_exposed);
-    model.add_state("Prodromal", this->m_update_prodromal);
-    model.add_state("Rash", this->m_update_rash);
-    model.add_state("Isolated", this->m_update_isolated);
-    model.add_state(
+    this->add_state("Susceptible", this->m_update_susceptible);
+    this->add_state("Exposed", this->m_update_exposed);
+    this->add_state("Prodromal", this->m_update_prodromal);
+    this->add_state("Rash", this->m_update_rash);
+    this->add_state("Isolated", this->m_update_isolated);
+    this->add_state(
         "Isolated Recovered", this->m_update_isolated_recovered
     );
-    model.add_state("Detected Hospitalized", this->m_update_hospitalized);
-    model.add_state(
+    this->add_state("Detected Hospitalized", this->m_update_hospitalized);
+    this->add_state(
         "Quarantined Exposed", this->m_update_q_exposed
     );
 
-    model.add_state(
+    this->add_state(
         "Quarantined Susceptible", this->m_update_q_susceptible
     );
 
-    model.add_state(
+    this->add_state(
         "Quarantined Prodromal", this->m_update_q_prodromal
     );
 
-    model.add_state(
+    this->add_state(
         "Quarantined Recovered", this->m_update_q_recovered
     );
 
-    model.add_state("Hospitalized", this->m_update_hospitalized);
+    this->add_state("Hospitalized", this->m_update_hospitalized);
 
-    model.add_state("Recovered");
+    this->add_state("Recovered");
 
     // Adding the model parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Transmission rate");
-    model.add_param(incubation_period, "Incubation period");
-    model.add_param(prodromal_period, "Prodromal period");
-    model.add_param(rash_period, "Rash period");
-    model.add_param(days_undetected, "Days undetected");
-    model.add_param(quarantine_period, "Quarantine period");
-    model.add_param(
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(incubation_period, "Incubation period");
+    this->add_param(prodromal_period, "Prodromal period");
+    this->add_param(rash_period, "Rash period");
+    this->add_param(days_undetected, "Days undetected");
+    this->add_param(quarantine_period, "Quarantine period");
+    this->add_param(
         quarantine_willingness, "Quarantine willingness"
     );
-    model.add_param(isolation_period, "Isolation period");
-    model.add_param(hospitalization_rate, "Hospitalization rate");
-    model.add_param(hospitalization_period, "Hospitalization period");
-    model.add_param(prop_vaccinated, "Vaccination rate");
-    model.add_param(vax_efficacy, "Vax efficacy");
-    model.add_param(vax_reduction_recovery_rate, "(IGNORED) Vax improved recovery");
+    this->add_param(isolation_period, "Isolation period");
+    this->add_param(hospitalization_rate, "Hospitalization rate");
+    this->add_param(hospitalization_period, "Hospitalization period");
+    this->add_param(prop_vaccinated, "Vaccination rate");
+    this->add_param(vax_efficacy, "Vax efficacy");
+    this->add_param(vax_reduction_recovery_rate, "(IGNORED) Vax improved recovery");
 
     // Designing the disease
     Virus<> measles("Measles");
     measles.set_state(EXPOSED, RECOVERED);
-    measles.set_prob_infecting(&model("Transmission rate"));
-    measles.set_prob_recovery(&model("Rash period"));
-    measles.set_incubation(&model("Incubation period"));
+    measles.set_prob_infecting("Transmission rate");
+    measles.set_prob_recovery("Rash period");
+    measles.set_incubation("Incubation period");
     measles.set_distribution(
         distribute_virus_randomly(n_exposed, false)
     );
 
-    model.add_virus(measles);
+    this->add_virus(measles);
 
     // Designing the vaccine
     ToolVaccine<TSeq> vaccine(
         std::string("MMR ") +
-        std::to_string(model("Vax efficacy"))
+        std::to_string(this->par("Vax efficacy"))
     );
     
-    vaccine.set_susceptibility_reduction(model("Vax efficacy"));
+    vaccine.set_susceptibility_reduction(this->par("Vax efficacy"));
 
     vaccine.set_distribution(
         distribute_tool_randomly(prop_vaccinated, true)
     );
 
-    model.add_tool(vaccine);
+    this->add_tool(vaccine);
 
     // Global actions
-    model.add_globalevent(this->m_update_model, "Update model");
-    model.queuing_off();
+    this->add_globalevent(this->m_update_model, "Update model");
+    this->queuing_off();
 
     // Setting the population
-    model.agents_empty_graph(n);
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
-    epiworld_fast_uint n,
-    epiworld_fast_uint n_exposed,
-    // Disease parameters
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double vax_efficacy,
-    epiworld_double vax_reduction_recovery_rate,
-    epiworld_double incubation_period,
-    epiworld_double prodromal_period,
-    epiworld_double rash_period,
-    epiworld_double days_undetected,
-    epiworld_double hospitalization_rate,
-    epiworld_double hospitalization_period,
-    // Policy parameters
-    epiworld_double prop_vaccinated,
-    epiworld_fast_int quarantine_period,
-    epiworld_double quarantine_willingness,
-    epiworld_fast_int isolation_period
-
-) {
-
-    ModelMeaslesSchool(
-        *this,
-        n,
-        n_exposed,
-        contact_rate,
-        transmission_rate,
-        vax_efficacy,
-        vax_reduction_recovery_rate,
-        incubation_period,
-        prodromal_period,
-        rash_period,
-        days_undetected,
-        hospitalization_rate,
-        hospitalization_period,
-        prop_vaccinated,
-        quarantine_period,
-        quarantine_willingness,
-        isolation_period
-    );
-
-    return;
+    this->agents_empty_graph(n);
 
 }
 
 #undef SAMPLE_FROM_PROBS
 #undef LOCAL_UPDATE_FUN
-#undef GET_MODEL
 #endif

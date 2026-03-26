@@ -101,7 +101,7 @@
 #' returns a model object of class [epiworld_model].
 run_multiple <- function(
   m, ndays, nsims,
-  seed = sample.int(1e4, 1),
+  seed = NULL,
   saver = make_saver(),
   reset = TRUE,
   verbose = TRUE,
@@ -111,12 +111,15 @@ run_multiple <- function(
 #' @export
 run_multiple.epiworld_model <- function(
   m, ndays, nsims,
-  seed     = sample.int(1e4, 1),
+  seed     = NULL,
   saver    = make_saver(),
   reset    = TRUE,
   verbose  = TRUE,
   nthreads = 1L
 ) {
+
+  if (!length(seed))
+    seed <- sample.int(1e4, 1)
 
   if (!inherits(saver, "epiworld_saver"))
     stop("-saver- should be of class \"epiworld_saver\"")
@@ -136,7 +139,7 @@ run_multiple.epiworld_model <- function(
     m,
     ndays,
     nsims,
-    seed,
+    as.integer(seed),
     saver$ptr,
     reset,
     verbose,

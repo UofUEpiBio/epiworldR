@@ -11,7 +11,7 @@ run_multiple(
   m,
   ndays,
   nsims,
-  seed = sample.int(10000, 1),
+  seed = NULL,
   saver = make_saver(),
   reset = TRUE,
   verbose = TRUE,

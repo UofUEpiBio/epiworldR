@@ -159,6 +159,7 @@ inline void Entity<TSeq>::reset()
 {
 
     this->agents.clear();
+    this->agents.shrink_to_fit();
 
     return;
 

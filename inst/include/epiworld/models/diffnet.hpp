@@ -86,7 +86,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         std::vector< bool > stored(nviruses, false);
         std::vector< double > exposure(nviruses, 0.0);
 
-        ModelDiffNet<TSeq> * diffmodel = dynamic_cast<ModelDiffNet<TSeq>*>(m);
+        ModelDiffNet<TSeq> * diffmodel = model_cast<ModelDiffNet<TSeq>,TSeq>(m);
 
         Agent<TSeq> & agent = *p;
 
@@ -174,7 +174,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     Virus<TSeq> innovation(innovation_name, prevalence, true);
     innovation.set_state(1,1,1);
     
-    innovation.set_prob_infecting(&model(parname));
+    innovation.set_prob_infecting(parname);
     
     model.add_virus(innovation);
 

@@ -3,19 +3,11 @@ title: "Advanced Modeling - Multiple Diseases, Tools, and Events"
 author:
   - Andrew Pulsipher
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Advanced Modeling - Multiple Diseases, Tools, and Events}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
-  fig.align = "center"
-)
-```
 
 # Introduction
 
@@ -43,7 +35,8 @@ We'll go through the process step-by-step. After each step, we'll run the model 
 
 We start with a `ModelSIRCONN` model for COVID-19. We'll add the flu virus and our tools and events to this base model.
 
-```{r create-base-model}
+```{r}
+#| label: create-base-model
 library(epiworldR)
 
 model_sirconn <- ModelSIRCONN(
@@ -56,7 +49,8 @@ model_sirconn <- ModelSIRCONN(
 )
 ```
 
-```{r run-base-model}
+```{r}
+#| label: run-base-model
 verbose_off(model_sirconn)
 run(model_sirconn, ndays = 50, seed = 1912)
 plot(model_sirconn)
@@ -66,17 +60,20 @@ plot(model_sirconn)
 
 Create the second virus using the `virus()` function. The parameter `prob_infecting` is the transmission rate. The parameter `as_proportion` tells the function to interpret the prevalence as a proportion of the population, rather than a fixed value.
 
-```{r create-flu-virus}
+```{r}
+#| label: create-flu-virus
 flu_virus <- virus(name = "Flu", prob_infecting = .35, prevalence = 0.001, as_proportion = TRUE)
 ```
 
 Add the virus to the model with the `add_virus()` function.
 
-```{r add-flu}
+```{r}
+#| label: add-flu
 add_virus(model_sirconn, flu_virus)
 ```
 
-```{r run-model-flu}
+```{r}
+#| label: run-model-flu
 run(model_sirconn, ndays = 50, seed = 1912)
 plot(model_sirconn)
 ```
@@ -85,7 +82,8 @@ plot(model_sirconn)
 
 In `epiworldR`, agents use tools to fight diseases. Create the vaccine tool using the `tool()` function, with parameters that indicate how the tool modifies the disease parameters. We set our vaccine to reduce the susceptibility of agents by 90%, the transmission rate of infected agents by 50%, and the death rate by 90%. The vaccine further enhances the recovery rate by 50%.
 
-```{r create-vaccine}
+```{r}
+#| label: create-vaccine
 vaccine_tool <- tool(
   name = "Vaccine",
   susceptibility_reduction = .9,
@@ -99,7 +97,8 @@ vaccine_tool <- tool(
 
 Use the `set_distribution_tool()` function to define the proportion of the population to receive the tool (set here to 50%).
 
-```{r set-vaccine-distribution}
+```{r}
+#| label: set-vaccine-distribution
 set_distribution_tool(
   tool = vaccine_tool,
   distfun = distribute_tool_randomly(0.5, TRUE)
@@ -108,11 +107,13 @@ set_distribution_tool(
 
 Add the vaccine to the model using the `add_tool()` function.
 
-```{r add-vaccine}
+```{r}
+#| label: add-vaccine
 add_tool(model_sirconn, vaccine_tool)
 ```
 
-```{r run-model-vaccine}
+```{r}
+#| label: run-model-vaccine
 run(model_sirconn, ndays = 50, seed = 1912)
 plot(model_sirconn)
 ```
@@ -128,19 +129,22 @@ In `epiworldR`, all models automatically have a global event that runs each day 
 
 Create these events using the `globalevent_set_params()` function, specifying the day to run the event.
 
-```{r set-events}
+```{r}
+#| label: set-events
 isolation_day_10 <- globalevent_set_params("Contact rate", 2, day = 10)
 advertisement_day_20 <- globalevent_set_params("Contact rate", 1.5, day = 20)
 ```
 
 Add the events to the model with the `add_globalevent()` function.
 
-```{r add-events}
+```{r}
+#| label: add-events
 add_globalevent(model_sirconn, isolation_day_10)
 add_globalevent(model_sirconn, advertisement_day_20)
 ```
 
-```{r run-full-model}
+```{r}
+#| label: run-full-model
 run(model_sirconn, ndays = 50, seed = 1912)
 plot(model_sirconn)
 ```
@@ -151,7 +155,8 @@ Note the sharp change to the infected curve corresponding to adoptiong of the so
 
 With our advanced model complete, we can view the summary, noting the events, viruses, and tools we added to the model.
 
-```{r model-summary}
+```{r}
+#| label: model-summary
 summary(model_sirconn)
 ```
 
@@ -159,7 +164,8 @@ summary(model_sirconn)
 
 The model computes two reproductive numbers, one for each virus.
 
-```{r reproductive-numbers}
+```{r}
+#| label: reproductive-numbers
 repnum2 <- get_reproductive_number(model_sirconn)
 plot(repnum2, type = "b")
 ```

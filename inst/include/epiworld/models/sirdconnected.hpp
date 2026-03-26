@@ -47,57 +47,10 @@ public:
         epiworld_double death_rate
     );
 
-    // Tracking who is infected and who is not
-    // std::vector< Agent<TSeq>* > tracked_agents_infected = {};
-    // std::vector< Agent<TSeq>* > tracked_agents_infected_next = {};
-    // std::vector< epiworld_double >        tracked_agents_weight        = {};
-    // std::vector< epiworld_double >        tracked_agents_weight_next   = {};
-
-    // int tracked_ninfected = 0;
-    // int tracked_ninfected_next = 0;
-    // epiworld_double tracked_current_infect_prob = 0.0;
-
-    ModelSIRDCONN<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-    
-    void reset();
-
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
 
 };
-
-template<typename TSeq>
-inline ModelSIRDCONN<TSeq> & ModelSIRDCONN<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-
-    return *this;
-
-}
-
-template<typename TSeq>
-inline void ModelSIRDCONN<TSeq>::reset()
-{
-
-    Model<TSeq>::reset();
-
-    // Model<TSeq>::set_rand_binom(
-    //     Model<TSeq>::size(),
-    //     static_cast<double>(
-    //         Model<TSeq>::par("Contact rate"))/
-    //         static_cast<double>(Model<TSeq>::size())
-    //     );
-
-    return;
-
-}
 
 template<typename TSeq>
 inline std::unique_ptr<Model<TSeq>> ModelSIRDCONN<TSeq>::clone_ptr()
@@ -110,7 +63,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSIRDCONN<TSeq>::clone_ptr()
 /**
  * @brief Template for a Susceptible-Infected-Removed-Deceased (SIRD) model
  * 
- * @param model A Model<TSeq> object where to set up the SIRD.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
  * @param contact_rate Average number of contacts (interactions) per step.
@@ -120,7 +72,6 @@ inline std::unique_ptr<Model<TSeq>> ModelSIRDCONN<TSeq>::clone_ptr()
  */
 template<typename TSeq>
 inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
-    ModelSIRDCONN<TSeq> & model,
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -131,8 +82,6 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
     // epiworld_double prob_reinfection
     )
 {
-
-
 
     UpdateFun<TSeq> update_susceptible = [](
         Agent<TSeq> * p, Model<TSeq> * m
@@ -181,7 +130,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
                 if (neighbor.get_state() == ModelSIRDCONN<TSeq>::INFECTED)
                 {
 
-                    const auto & v = neighbor.get_virus();
+                    auto & v = neighbor.get_virus();
                     
                     #ifdef EPI_DEBUG
                     if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
@@ -229,7 +178,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
 
                 // Odd: Die, Even: Recover
                 epiworld_fast_uint n_events = 0u;
-                const auto & v = p->get_virus();
+                auto & v = p->get_virus();
                     
                 // Die
                 m->array_double_tmp[n_events++] = 
@@ -265,7 +214,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
                 if ((which % 2) == 0) // If odd
                 {
                     
-                    p->rm_agent_by_virus(*m);
+                    p->rm_virus(*m, ModelSIRDCONN<TSeq>::DECEASED);
                     
                 } else {
                     
@@ -283,62 +232,33 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
         };
 
     // state
-    model.add_state("Susceptible", update_susceptible);
-    model.add_state("Infected", update_infected);
-    model.add_state("Recovered");
-    model.add_state("Deceased");
+    this->add_state("Susceptible", update_susceptible);
+    this->add_state("Infected", update_infected);
+    this->add_state("Recovered");
+    this->add_state("Deceased");
       
 
     // Setting up parameters
-    model.add_param(contact_rate, "Contact rate");
-    model.add_param(transmission_rate, "Transmission rate");
-    model.add_param(recovery_rate, "Recovery rate");
-    model.add_param(death_rate, "Death rate");
-    // model.add_param(prob_reinfection, "Prob. Reinfection");
+    this->add_param(contact_rate, "Contact rate");
+    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(recovery_rate, "Recovery rate");
+    this->add_param(death_rate, "Death rate");
+    // this->add_param(prob_reinfection, "Prob. Reinfection");
     
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1, 2, 3);
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_recovery(&model("Recovery rate"));
-    virus.set_prob_death(&model("Death rate"));
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_recovery("Recovery rate");
+    virus.set_prob_death("Death rate");
     
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.queuing_off(); // No queuing need
+    this->queuing_off(); // No queuing need
 
-    model.agents_empty_graph(n);
+    this->agents_empty_graph(n);
 
-    model.set_name("Susceptible-Infected-Removed-Deceased (SIRD) (connected)");
-
-    return;
-
-}
-
-template<typename TSeq>
-inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
-    const std::string & vname,
-    epiworld_fast_uint n,
-    epiworld_double prevalence,
-    epiworld_double contact_rate,
-    epiworld_double transmission_rate,
-    epiworld_double recovery_rate,
-    epiworld_double death_rate
-    )
-{
-
-    ModelSIRDCONN(
-        *this,
-        vname,
-        n,
-        prevalence,
-        contact_rate,
-        transmission_rate,
-        recovery_rate,
-        death_rate
-    );
-
-    return;
+    this->set_name("Susceptible-Infected-Removed-Deceased (SIRD) (connected)");
 
 }
 

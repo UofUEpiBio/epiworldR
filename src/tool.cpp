@@ -102,9 +102,7 @@ SEXP set_transmission_reduction_ptr_cpp(SEXP tool, SEXP model, std::string param
   WrapTool(toolptr)(tool);
   external_pointer<Model<>> mptr(model);
 
-  toolptr->set_transmission_reduction(
-      &(mptr->operator()(param))
-  );
+  toolptr->set_transmission_reduction(param);
 
   return tool;
 
@@ -139,9 +137,7 @@ SEXP set_susceptibility_reduction_ptr_cpp(SEXP tool, SEXP model, std::string par
   WrapTool(toolptr)(tool);
   external_pointer<Model<>> mptr(model);
 
-  toolptr->set_susceptibility_reduction(
-      &(mptr->operator()(param))
-  );
+  toolptr->set_susceptibility_reduction(param);
 
   return tool;
 
@@ -177,7 +173,7 @@ SEXP set_recovery_enhancer_ptr_cpp(SEXP tool, SEXP model, std::string param) {
   external_pointer<Model<>> mptr(model);
 
   toolptr->set_recovery_enhancer(
-      &(mptr->operator()(param))
+      param
   );
 
   return tool;
@@ -214,7 +210,7 @@ SEXP set_death_reduction_ptr_cpp(SEXP tool, SEXP model, std::string param) {
   external_pointer<Model<>> mptr(model);
 
   toolptr->set_death_reduction(
-      &(mptr->operator()(param))
+      param
   );
 
   return tool;

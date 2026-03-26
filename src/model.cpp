@@ -160,7 +160,7 @@ double get_param_cpp(SEXP model, std::string pname) {
 SEXP set_param_cpp(SEXP model, std::string pname, double val) {
 
   external_pointer<Model<>> ptr(model);
-  ptr->operator()(pname) = val;
+  ptr->set_param(pname, val);
 
   return model;
 }

@@ -6,10 +6,6 @@
 \alias{globalaction_set_params}
 \alias{globalaction_fun}
 \alias{epiworldR-deprecated}
-\alias{ModelMeaslesSchool}
-\alias{ModelMeaslesMixing}
-\alias{ModelMeaslesMixingRiskQuarantine}
-\alias{ModelMeaslesQuarantine}
 \alias{add_tool_n}
 \alias{add_virus_n}
 \title{Deprecated and removed functions in epiworldR}

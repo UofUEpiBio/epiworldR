@@ -3,20 +3,11 @@ title: "Mixing models"
 author:
   - George Vega Yon
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Mixing models}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>", out.width = "80%", fig.width = 7, fig.height = 5,
-  fig.align = "center"
-)
-```
 
 ## Introduction
 
@@ -40,7 +31,8 @@ This matrix represents the probability of an agent from population $i$ interacti
 
 We will build this model using the `entity` class in epiworld. The following code chunk instantiates three entities and the contact matrix.
 
-```{r entity-matrix-setup}
+```{r}
+#| label: entity-matrix-setup
 library(epiworldR)
 
 e1 <- entity("Population 1", 3e3, as_proportion = FALSE)
@@ -57,7 +49,8 @@ cmatrix <- c(
 
 With these in hand, we can proceed to create a mixing model. The following code chunk creates a model, an SEIR with mixing, and adds the entities to the model:
 
-```{r model-build}
+```{r}
+#| label: model-build
 N <- 9e3
 
 flu_model <- ModelSEIRMixing(
@@ -80,7 +73,8 @@ flu_model |>
 
 The function `add_entity` adds the corresponding entity. The default behavior randomly assigns agents to the entities at the beginning of the simulation. Agents may be assigned to more than one entity. The following code-chunk simulates the model for 100 days, summarizes the results, and plots the incidence curve:
 
-```{r model-simulate}
+```{r}
+#| label: model-simulate
 set.seed(331)
 run(flu_model, ndays = 100)
 summary(flu_model)
@@ -91,7 +85,9 @@ plot_incidence(flu_model)
 
 After running the simulation, a possible question is: how many agents from each entity were infected each day? The following code chunk retrieves the agents from each entity and the transmissions that occurred during the simulation:
 
-```{r investigate, eval=TRUE}
+```{r}
+#| label: investigate
+#| eval: true
 library(data.table)
 
 agents_entities <- lapply(get_entities(flu_model), \(e) {
@@ -103,7 +99,8 @@ head(agents_entities)
 
 We can retrieve the daily incidence for each entity by merging the transmissions with the agents' entities. The following code chunk accomplishes this:
 
-```{r transmissions}
+```{r}
+#| label: transmissions
 # Retrieving the transmissions
 transmissions <- get_transmissions(flu_model) |>
   data.table()
@@ -130,7 +127,8 @@ head(transmissions)
 
 With this information, we can now visualize the daily incidence for each entity. The following code chunk plots the daily incidence for each entity:
 
-```{r transmissions-plot}
+```{r}
+#| label: transmissions-plot
 setorder(transmissions, date, entity)
 
 ran <- range(transmissions$N)

@@ -83,102 +83,33 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
         size_t niter, Model<TSeq> * m
     ) -> void {
 
-        std::string virus_info = "";
-        std::string virus_hist = "";
-        std::string tool_info = "";
-        std::string tool_hist = "";
-        std::string total_hist = "";
-        std::string transmission = "";
-        std::string transition = "";
-        std::string reproductive = "";
-        std::string generation = "";
-        std::string active_cases = "";
-        std::string outbreak_size = "";
-        std::string hospitalizations = "";
+        auto set_saver = [fmt,niter](
+            bool condition,
+            std::string suffix
+        ) -> std::string
+        {
+            if (condition)
+            {
+                std::string var = fmt + suffix;
+                char buff[1024u];
+                snprintf(buff, sizeof(buff), var.c_str(), niter);
+                return std::string(buff);
+            }
+            return std::string("");
+        };
 
-        char buff[1024u];
-        if (what_to_save[0u])
-        {
-            virus_info = fmt + std::string("_virus_info.csv");
-            snprintf(buff, sizeof(buff), virus_info.c_str(), niter);
-            virus_info = buff;
-        }
-        if (what_to_save[1u])
-        {
-            virus_hist = fmt + std::string("_virus_hist.csv");
-            snprintf(buff, sizeof(buff), virus_hist.c_str(), niter);
-            virus_hist = buff;
-        }
-        if (what_to_save[2u])
-        {
-            tool_info = fmt + std::string("_tool_info.csv");
-            snprintf(buff, sizeof(buff), tool_info.c_str(), niter);
-            tool_info = buff;
-        }
-        if (what_to_save[3u])
-        {
-            tool_hist = fmt + std::string("_tool_hist.csv");
-            snprintf(buff, sizeof(buff), tool_hist.c_str(), niter);
-            tool_hist = buff;
-        }
-        if (what_to_save[4u])
-        {
-            total_hist = fmt + std::string("_total_hist.csv");
-            snprintf(buff, sizeof(buff), total_hist.c_str(), niter);
-            total_hist = buff;
-        }
-        if (what_to_save[5u])
-        {
-            transmission = fmt + std::string("_transmission.csv");
-            snprintf(buff, sizeof(buff), transmission.c_str(), niter);
-            transmission = buff;
-        }
-        if (what_to_save[6u])
-        {
-            transition = fmt + std::string("_transition.csv");
-            snprintf(buff, sizeof(buff), transition.c_str(), niter);
-            transition = buff;
-        }
-        if (what_to_save[7u])
-        {
-
-            reproductive = fmt + std::string("_reproductive.csv");
-            snprintf(buff, sizeof(buff), reproductive.c_str(), niter);
-            reproductive = buff;
-
-        }
-        if (what_to_save[8u])
-        {
-
-            generation = fmt + std::string("_generation.csv");
-            snprintf(buff, sizeof(buff), generation.c_str(), niter);
-            generation = buff;
-
-        }
-        if (what_to_save[9u])
-        {
-
-            active_cases = fmt + std::string("_active_cases.csv");
-            snprintf(buff, sizeof(buff), active_cases.c_str(), niter);
-            active_cases = buff;
-
-        }
-        if (what_to_save[10u])
-        {
-
-            outbreak_size = fmt + std::string("_outbreak_size.csv");
-            snprintf(buff, sizeof(buff), outbreak_size.c_str(), niter);
-            outbreak_size = buff;
-
-        }
-        if (what_to_save[11u])
-        {
-
-            hospitalizations = fmt + std::string("_hospitalizations.csv");
-            snprintf(buff, sizeof(buff), hospitalizations.c_str(), niter);
-            hospitalizations = buff;
-
-        }
+        auto virus_info = set_saver(what_to_save[0u], "_virus_info.csv");
+        auto virus_hist = set_saver(what_to_save[1u], "_virus_hist.csv");
+        auto tool_info = set_saver(what_to_save[2u], "_tool_info.csv");
+        auto tool_hist = set_saver(what_to_save[3u], "_tool_hist.csv");
+        auto total_hist = set_saver(what_to_save[4u], "_total_hist.csv");
+        auto transmission = set_saver(what_to_save[5u], "_transmission.csv");
+        auto transition = set_saver(what_to_save[6u], "_transition.csv");
+        auto reproductive = set_saver(what_to_save[7u], "_reproductive.csv");
+        auto generation = set_saver(what_to_save[8u], "_generation.csv");
+        auto active_cases = set_saver(what_to_save[9u], "_active_cases.csv");
+        auto outbreak_size = set_saver(what_to_save[10u], "_outbreak_size.csv");
+        auto hospitalizations = set_saver(what_to_save[11u], "_hospitalizations.csv");
 
         m->write_data(
             virus_info,
@@ -202,16 +133,14 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
 
 
 template<typename TSeq>
-inline void Model<TSeq>::events_add(
+inline void Model<TSeq>::_add_event(
     Agent<TSeq> * agent_,
     VirusPtr<TSeq> virus_,
     ToolPtr<TSeq> tool_,
     Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
-    EventFun<TSeq> call_,
-    int idx_agent_,
-    int idx_object_
+    EventAction action_
 ) {
 
     ++nactions;
@@ -226,8 +155,7 @@ inline void Model<TSeq>::events_add(
 
         events.emplace_back(
             Event<TSeq>(
-                agent_, virus_, tool_, entity_, new_state_, queue_, call_,
-                idx_agent_, idx_object_
+                agent_, virus_, tool_, entity_, new_state_, queue_, action_
             ));
 
     }
@@ -242,9 +170,7 @@ inline void Model<TSeq>::events_add(
         A.entity     = std::move(entity_);
         A.new_state  = std::move(new_state_);
         A.queue      = std::move(queue_);
-        A.call       = std::move(call_);
-        A.idx_agent  = std::move(idx_agent_);
-        A.idx_object = std::move(idx_object_);
+        A.action     = std::move(action_);
 
     }
 
@@ -293,11 +219,31 @@ inline void Model<TSeq>::events_run()
         } else if (p->state_last_changed != today())
             p->state_prev = p->state; // Recording the previous state
 
-        // Applying function after the fact. This way, if there were
-        // updates, they can be recorded properly, before losing the information
-        if (a.call)
+        switch (a.action)
         {
-            a.call(a, this);
+        case EventAction::AddVirus:
+            _event_add_virus(a);
+            break;
+        case EventAction::AddTool:
+            _event_add_tool(a);
+            break;
+        case EventAction::AddEntity:
+            _event_add_entity(a);
+            break;
+        case EventAction::RemoveVirus:
+            _event_rm_virus(a);
+            break;
+        case EventAction::RemoveTool:
+            _event_rm_tool(a);
+            break;
+        case EventAction::RemoveEntity:
+            _event_rm_entity(a);
+            break;
+        case EventAction::ChangeState:
+            _event_change_state(a);
+            break;
+        default:
+            throw std::logic_error("The requested event action is not supported.");
         }
 
         if (a.new_state != -99)
@@ -351,61 +297,57 @@ inline void Model<TSeq>::events_run()
  */
 ///@{
 template<typename TSeq>
-inline epiworld_double susceptibility_reduction_mixer_default(
+inline epiworld_double Model<TSeq>::susceptibility_reduction_mixer(
     Agent<TSeq>* p,
-    VirusPtr<TSeq> v,
-    Model<TSeq> * m
+    VirusPtr<TSeq> & v
 )
 {
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
-        total *= (1.0 - tool->get_susceptibility_reduction(v, m));
+        total *= (1.0 - tool->get_susceptibility_reduction(v, this));
 
     return 1.0 - total;
 
 }
 
 template<typename TSeq>
-inline epiworld_double transmission_reduction_mixer_default(
+inline epiworld_double Model<TSeq>::transmission_reduction_mixer(
     Agent<TSeq>* p,
-    VirusPtr<TSeq> v,
-    Model<TSeq>* m
+    VirusPtr<TSeq> & v
 )
 {
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
-        total *= (1.0 - tool->get_transmission_reduction(v, m));
+        total *= (1.0 - tool->get_transmission_reduction(v, this));
 
     return (1.0 - total);
 
 }
 
 template<typename TSeq>
-inline epiworld_double recovery_enhancer_mixer_default(
+inline epiworld_double Model<TSeq>::recovery_enhancer_mixer(
     Agent<TSeq>* p,
-    VirusPtr<TSeq> v,
-    Model<TSeq>* m
+    VirusPtr<TSeq> & v
 )
 {
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
-        total *= (1.0 - tool->get_recovery_enhancer(v, m));
+        total *= (1.0 - tool->get_recovery_enhancer(v, this));
 
     return 1.0 - total;
 
 }
 
 template<typename TSeq>
-inline epiworld_double death_reduction_mixer_default(
+inline epiworld_double Model<TSeq>::death_reduction_mixer(
     Agent<TSeq>* p,
-    VirusPtr<TSeq> v,
-    Model<TSeq>* m
+    VirusPtr<TSeq> & v
 ) {
 
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
     {
-        total *= (1.0 - tool->get_death_reduction(v, m));
+        total *= (1.0 - tool->get_death_reduction(v, this));
     }
 
     return 1.0 - total;
@@ -417,7 +359,7 @@ template<typename TSeq>
 inline std::unique_ptr<Model<TSeq>> Model<TSeq>::clone_ptr()
 {
     // Everything is copied
-    auto ptr = std::make_unique<Model<TSeq>>(*dynamic_cast<const Model<TSeq>*>(this));
+    auto ptr = std::make_unique<Model<TSeq>>(*this);
 
     #ifdef EPI_DEBUG
     if (*this != *ptr)
@@ -443,8 +385,8 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     population(model.population),
     population_backup(model.population_backup),
     directed(model.directed),
-    viruses(model.viruses),
-    tools(model.tools),
+    viruses(),
+    tools(),
     entities(model.entities),
     rewire_fun(model.rewire_fun),
     rewire_prop(model.rewire_prop),
@@ -457,12 +399,10 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     nstates(model.nstates),
     verbose(model.verbose),
     current_date(model.current_date),
-    globalevents(model.globalevents),
+    globalevents(),
     queue(model.queue),
     use_queuing(model.use_queuing),
-    sim_id(model.sim_id),
-    array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size())
+    sim_id(model.sim_id)
 {
 
     // Pointing to the right place. This needs
@@ -477,14 +417,23 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     agents_data = model.agents_data;
     agents_data_ncols = model.agents_data_ncols;
 
+    // Deep-copy model-level objects so clones can run independently in parallel.
+    viruses.reserve(model.viruses.size());
+    for (const auto & v : model.viruses)
+        viruses.emplace_back(std::shared_ptr<Virus<TSeq>>(v->clone_ptr()));
+
+    tools.reserve(model.tools.size());
+    for (const auto & t : model.tools)
+        tools.emplace_back(std::shared_ptr<Tool<TSeq>>(t->clone_ptr()));
+
+    globalevents.reserve(model.globalevents.size());
+    for (const auto & ge : model.globalevents)
+        globalevents.emplace_back(std::shared_ptr<GlobalEvent<TSeq>>(ge->clone_ptr()));
+
     // Entity-agent relationships now use size_t IDs, so they copy
     // correctly without any rebinding needed.
 
 }
-
-template<typename TSeq>
-inline Model<TSeq>::Model(Model<TSeq> & model) :
-    Model(dynamic_cast< const Model<TSeq> & >(model)) {}
 
 template<typename TSeq>
 inline Model<TSeq>::Model(Model<TSeq> && model) :
@@ -525,9 +474,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     globalevents(std::move(model.globalevents)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
-    sim_id(model.sim_id),
-    array_double_tmp(model.array_double_tmp.size()),
-    array_virus_tmp(model.array_virus_tmp.size())
+    sim_id(model.sim_id)
 {
 
     db.model = this;
@@ -541,6 +488,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
 template<typename TSeq>
 inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 {
+    if (this == &m)
+        return *this;
 
     name = m.name;
 
@@ -553,9 +502,15 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     directed = m.directed;
 
-    viruses                        = m.viruses;
+    viruses.clear();
+    viruses.reserve(m.viruses.size());
+    for (const auto & v : m.viruses)
+        viruses.emplace_back(std::shared_ptr<Virus<TSeq>>(v->clone_ptr()));
 
-    tools                         = m.tools;
+    tools.clear();
+    tools.reserve(m.tools.size());
+    for (const auto & t : m.tools)
+        tools.emplace_back(std::shared_ptr<Tool<TSeq>>(t->clone_ptr()));
 
     entities        = m.entities;
 
@@ -575,17 +530,15 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     current_date = m.current_date;
 
-    globalevents = m.globalevents;
+    globalevents.clear();
+    globalevents.reserve(m.globalevents.size());
+    for (const auto & ge : m.globalevents)
+        globalevents.emplace_back(std::shared_ptr<GlobalEvent<TSeq>>(ge->clone_ptr()));
 
-    queue       = m.queue;
+    queue = m.queue;
     use_queuing = m.use_queuing;
 
-    // Making sure population is passed correctly
-    // Pointing to the right place
-    db.model = this;
-    db.user_data.model = this;
-
-    agents_data            = m.agents_data;
+    agents_data = m.agents_data;
     agents_data_ncols = m.agents_data_ncols;
 
     // Figure out the queuing
@@ -593,10 +546,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
         queue.model = this;
 
     sim_id = m.sim_id;
-
-    array_double_tmp.resize(static_cast<size_t>(1024u), 0.0);
-    array_virus_tmp.resize(1024u);
-
     // Entity-agent relationships now use size_t IDs, so they copy
     // correctly without any rebinding needed.
 
@@ -732,7 +681,7 @@ inline void Model<TSeq>::agents_empty_graph(
 
     // Resizing the people
     population.clear();
-    population.resize(n, Agent<TSeq>());
+    population.resize(n);
 
     // Filling the model and ids
     size_t i = 0u;
@@ -800,7 +749,7 @@ inline void Model<TSeq>::set_rand_poiss(epiworld_double lambda)
 }
 
 template<typename TSeq>
-inline epiworld_double & Model<TSeq>::operator()(std::string pname) {
+inline epiworld_double Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())
         throw std::range_error("The parameter '"+ pname + "' is not in the model.");
@@ -1457,13 +1406,7 @@ inline Model<TSeq> & Model<TSeq>::run(
     if (seed >= 0)
         engine->seed(seed);
 
-    array_double_tmp.resize(std::max(
-        size(),
-        static_cast<size_t>(1024)
-    ));
-
-
-    array_virus_tmp.resize(1024);
+    last_seed = seed;
 
     // Checking whether the proposed state in/out/removed
     // are valid
@@ -1567,6 +1510,9 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
     if (seed_ >= 0)
         this->seed(seed_);
 
+    if (nexperiments == 0u)
+        throw std::logic_error("The number of experiments must be above 0.");
+
     // Seeds will be reproducible by default
     std::vector< int > seeds_n(nexperiments);
     for (auto & s : seeds_n)
@@ -1593,11 +1539,11 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
 
     #ifdef _OPENMP
 
-    omp_set_num_threads(nthreads);
-
     // Not more than the number of experiments
     nthreads =
         static_cast<size_t>(nthreads) > nexperiments ? nexperiments : nthreads;
+    
+    omp_set_num_threads(nthreads);
 
     // Generating copies of the model (done serially to avoid races on original)
     std::vector< std::unique_ptr< Model<TSeq> > > these;
@@ -1659,16 +1605,19 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
     }
     #endif
 
-    #pragma omp parallel shared(these, nreplicates, nreplicates_csum, seeds_n) \
-        firstprivate(nexperiments, nthreads, fun, reset, verbose, pb_multiple, ndays) \
-        default(shared)
+    #pragma omp parallel shared(these) \
+        firstprivate(nexperiments, nthreads, fun, reset, verbose, pb_multiple, \
+        ndays, nreplicates, nreplicates_csum, seeds_n) default(none)
     {
 
-        auto iam = omp_get_thread_num();
+        auto iam = static_cast<size_t>(omp_get_thread_num());
+        Model<TSeq> * model_ptr = iam == 0 ? this : &(*these[iam - 1u]);
+        size_t my_replicates = nreplicates[iam];
+        size_t my_replicates_csum = nreplicates_csum[iam];
 
-        for (size_t n = 0u; n < nreplicates[iam]; ++n)
+        for (size_t n = 0u; n < my_replicates; ++n)
         {
-            size_t run_id = nreplicates_csum[iam] + n;
+            size_t run_id = my_replicates_csum + n;
             if (iam == 0)
             {
 
@@ -1676,13 +1625,10 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
                 EPI_CHECK_USER_INTERRUPT(n);
 
                 // Setting the simulation id
-                set_sim_id(run_id);
+                model_ptr->set_sim_id(run_id);
 
                 // Initializing the seed
-                run(ndays, seeds_n[run_id]);
-
-                if (fun)
-                    fun(run_id, this);
+                model_ptr->run(ndays, seeds_n[run_id]);
 
                 // Only the first one prints
                 if (verbose)
@@ -1691,14 +1637,21 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
             } else {
 
                 // Setting the simulation id
-                these[iam - 1]->set_sim_id(run_id);
+                model_ptr->set_sim_id(run_id);
 
                 // Initializing the seed
-                these[iam - 1]->run(ndays, seeds_n[run_id]);
+                model_ptr->run(ndays, seeds_n[run_id]);
 
-                if (fun)
-                    fun(run_id, &(*these[iam - 1]));
+            }
 
+            if (fun)
+            {
+                // User callbacks often write into shared result containers.
+                // Serialize callback execution to avoid callback-induced races.
+                #pragma omp critical(epiworld_run_multiple_fun)
+                {
+                    fun(run_id, model_ptr);
+                }
             }
 
         }
@@ -1788,7 +1741,7 @@ inline void Model<TSeq>::mutate_virus() {
     // Checking if any virus has mutation
     size_t nmutates = 0u;
     for (const auto & v: viruses)
-        if (v->virus_functions->mutation)
+        if (v->mutation)
             nmutates++;
 
     if (nmutates == 0u)
@@ -2637,11 +2590,18 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
 
     }
 
-    VECT_MATCH(
-        entities,
-        other.entities,
-        "entities don't match"
-    )
+    EPI_DEBUG_FAIL_AT_TRUE(
+        entities.size() != other.entities.size(),
+        "Model:: entities.size() don't match"
+        )
+    for (size_t i = 0u; i < entities.size(); ++i)
+    {
+        EPI_DEBUG_FAIL_AT_TRUE(
+            entities[i] != other.entities[i],
+            "Model:: *entities[i] don't match"
+        )
+
+    }
 
     EPI_DEBUG_FAIL_AT_TRUE(
         rewire_prop != other.rewire_prop,

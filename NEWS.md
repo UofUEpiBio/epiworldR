@@ -1,3 +1,15 @@
+# epiworldR 0.14.0.0
+
+* The way `seed` is passed to `run()` and `run_multiple()` has been modified to ensure comparability with the C++ version. Now, a random seed number is drawn only if seed is not specified.
+
+
+## Internal changes
+
+* ([epiworld#189](https://github.com/UofUEpiBio/epiworld/pull/189)) Addressing memory access issues that arise when calling `run_multiple` using OpenMP. The latest version reduces usage of points (including smart) to make the code more reliable. No penalties on its performance are expected.
+
+* Switch vignette building engine to `quarto`.
+
+
 # epiworldR 0.13.0.0
 
 No significant changes on the user side.

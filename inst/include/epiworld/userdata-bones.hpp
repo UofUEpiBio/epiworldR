@@ -19,7 +19,7 @@ class UserData
     friend class DataBase<TSeq>;
 
 private:
-    Model<TSeq> * model;
+    Model<TSeq> * model = nullptr;
 
     std::vector< std::string > data_names;
     std::vector< int > data_dates;

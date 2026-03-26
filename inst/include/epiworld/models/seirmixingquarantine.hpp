@@ -225,26 +225,15 @@ public:
     );
 
     /**
-     * @brief Run the model simulation
-     * @param ndays Number of days to simulate
-     * @param seed Random seed for reproducibility (default: -1 for random seed)
-     * @return Reference to this model instance
-     */
-    ModelSEIRMixingQuarantine<TSeq> & run(
-        epiworld_fast_uint ndays,
-        int seed = -1
-    );
-
-    /**
      * @brief Reset the model to initial state
      */
-    void reset();
+    void reset() override;
 
     /**
      * @brief Create a clone of this model
      * @return Pointer to a new model instance with the same configuration
      */
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     /**
      * @brief Set the initial states of the model
@@ -256,7 +245,7 @@ public:
     ModelSEIRMixingQuarantine<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
 
     /**
      * @brief Set the contact matrix for population mixing
@@ -470,19 +459,6 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::sample_agents(
     }
 
     return samp_id;
-
-}
-
-template<typename TSeq>
-inline ModelSEIRMixingQuarantine<TSeq> & ModelSEIRMixingQuarantine<TSeq>::run(
-    epiworld_fast_uint ndays,
-    int seed
-)
-{
-
-    Model<TSeq>::run(ndays, seed);
-
-    return *this;
 
 }
 
@@ -746,7 +722,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::m_update_infected(
         model->day_flagged[p->get_id()] = m->today();
 
     // Computing probabilities for state change
-    const auto & v = p->get_virus();
+    auto & v = p->get_virus();
     m->array_double_tmp[0] = 1.0 - (1.0 - v->get_prob_recovery(m)) *
         (1.0 - p->get_recovery_enhancer(v, *m));
     m->array_double_tmp[1] = m->par("Hospitalization rate");
@@ -1147,9 +1123,9 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
         ModelSEIRMixingQuarantine<TSeq>::RECOVERED
         );
 
-    virus.set_prob_infecting(&model("Prob. Transmission"));
-    virus.set_prob_recovery(&model("Prob. Recovery"));
-    virus.set_incubation(&model("Avg. Incubation days"));
+    virus.set_prob_infecting("Prob. Transmission");
+    virus.set_prob_recovery("Prob. Recovery");
+    virus.set_incubation("Avg. Incubation days");
 
     model.add_virus(virus);
 

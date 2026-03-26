@@ -31,12 +31,12 @@ public:
     ToolVaccine(std::string name = "Vaccine") : Tool<TSeq>(name) {};
 
     virtual epiworld_double get_susceptibility_reduction(
-        VirusPtr<TSeq> v,
+        VirusPtr<TSeq> & v,
         Model<TSeq> * model
     ) override;
     
     virtual void set_susceptibility_reduction_fun(ToolFun<TSeq> fun) override;
-    virtual void set_susceptibility_reduction(epiworld_double * prob) override;
+    virtual void set_susceptibility_reduction(std::string param) override;
     virtual void set_susceptibility_reduction(epiworld_double prob) override;
 
     std::unique_ptr<Tool<TSeq>> clone_ptr() const override;
@@ -45,7 +45,7 @@ public:
 
 template<typename TSeq>
 inline epiworld_double ToolVaccine<TSeq>::get_susceptibility_reduction(
-    VirusPtr<TSeq>,
+    VirusPtr<TSeq> &,
     Model<TSeq> * model
 )
 {
@@ -75,7 +75,7 @@ inline void ToolVaccine<TSeq>::set_susceptibility_reduction_fun(
 }
 
 template<typename TSeq>
-inline void ToolVaccine<TSeq>::set_susceptibility_reduction(epiworld_double *)
+inline void ToolVaccine<TSeq>::set_susceptibility_reduction(std::string)
 {
     throw std::logic_error(
         std::string(

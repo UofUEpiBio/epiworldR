@@ -10,12 +10,6 @@ class Agent;
 template<typename TSeq>
 class AgentsSample;
 
-template<typename TSeq>
-inline void default_add_entity(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m);
-
 /**
  * @brief Groups of agents within a model.
  */
@@ -24,8 +18,6 @@ class Entity {
     friend class Agent<TSeq>;
     friend class AgentsSample<TSeq>;
     friend class Model<TSeq>;
-    friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
     
     int id = -1;

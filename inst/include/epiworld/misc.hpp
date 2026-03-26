@@ -329,4 +329,37 @@ inline std::map< std::string, T > read_yaml(std::string fn)
 
 }
 
+
+
+/**
+ * @brief Cast a `Model` pointer to a specific model type
+ */
+#ifndef EPI_ASSUME
+    #if defined(EPI_DEBUG)
+        #include <cassert>
+        #define EPI_ASSUME(cond) assert(cond)
+    #elif defined(__clang__)
+        #define EPI_ASSUME(cond) __builtin_assume(cond)
+    #elif defined(_MSC_VER)
+        #define EPI_ASSUME(cond) __assume(cond)
+    #elif defined(__GNUC__)
+        #define EPI_ASSUME(cond) do { if (!(cond)) __builtin_unreachable(); } while (0)
+    #else
+        #define EPI_ASSUME(cond) ((void)0)
+    #endif
+#endif
+
+template<class To, class TSeq>
+inline To* model_cast(Model<TSeq>* m) {
+#ifdef EPI_DEBUG
+    auto* out = dynamic_cast<To*>(m);
+    assert(out != nullptr);
+    return out;
+#else
+    auto* out = static_cast<To*>(m);
+    EPI_ASSUME(out != nullptr);
+    return out;
+#endif
+}
+
 #endif

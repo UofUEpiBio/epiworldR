@@ -21,7 +21,6 @@ public:
     /**
      * @brief Constructs a new SIRD model with the given parameters.
      * 
-     * @param model The SIRD model to copy from.
      * @param vname The name of the vertex associated with this model.
      * @param prevalence The initial prevalence of the disease in the population.
      * @param transmission_rate The rate at which the disease spreads from infected to susceptible individuals.
@@ -29,15 +28,6 @@ public:
      * @param death_rate The rate at which infected individuals die.
      */
     ///@{
-    ModelSIRD(
-        ModelSIRD<TSeq> & model,
-        const std::string & vname,
-        epiworld_double prevalence,
-        epiworld_double transmission_rate,
-        epiworld_double recovery_rate, 
-        epiworld_double death_rate
-    );
-
     ModelSIRD(
         const std::string & vname,
         epiworld_double prevalence,
@@ -56,13 +46,12 @@ public:
     ModelSIRD<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
     
 };
 
 template<typename TSeq>
 inline ModelSIRD<TSeq>::ModelSIRD(
-    ModelSIRD<TSeq> & model,
     const std::string & vname,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
@@ -72,53 +61,28 @@ inline ModelSIRD<TSeq>::ModelSIRD(
 {
 
     // Adding statuses
-    model.add_state("Susceptible", default_update_susceptible<TSeq>);
-    model.add_state("Infected", default_update_exposed<TSeq>);
-    model.add_state("Recovered"),
-    model.add_state("Deceased")
-    ;
+    this->add_state("Susceptible", default_update_susceptible<TSeq>);
+    this->add_state("Infected", default_update_exposed<TSeq>);
+    this->add_state("Recovered");
+    this->add_state("Deceased");
 
     // Setting up parameters
-    model.add_param(recovery_rate, "Recovery rate");
-    model.add_param(transmission_rate, "Transmission rate"),
-    model.add_param(death_rate, "Death rate");
+    this->add_param(recovery_rate, "Recovery rate");
+    this->add_param(transmission_rate, "Transmission rate"),
+    this->add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,3);
-    virus.set_prob_recovery(&model("Recovery rate"));
-    virus.set_prob_infecting(&model("Transmission rate"));
-    virus.set_prob_death(&model("Death rate"));
+    virus.set_prob_recovery("Recovery rate");
+    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_death("Death rate");
     
-    model.add_virus(virus);
+    this->add_virus(virus);
 
-    model.set_name("Susceptible-Infected-Recovered-Deceased (SIRD)");
+    this->set_name("Susceptible-Infected-Recovered-Deceased (SIRD)");
 
-    return;
    
-}
-
-template<typename TSeq>
-inline ModelSIRD<TSeq>::ModelSIRD(
-    const std::string & vname,
-    epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double recovery_rate,
-    epiworld_double death_rate
-    )
-{
-
-    ModelSIRD<TSeq>(
-        *this,
-        vname,
-        prevalence,
-        transmission_rate,
-        recovery_rate, 
-        death_rate
-        );
-
-    return;
-
 }
 
 template<typename TSeq>

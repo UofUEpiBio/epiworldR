@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.13.0.0
+Version: 0.14.0.0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
@@ -28,8 +28,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
 Suggests:
-    knitr,
-    rmarkdown,
+    quarto,
     tinytest,
     netplot,
     igraph,
@@ -40,4 +39,5 @@ Imports:
     parallel,
     methods
 SystemRequirements: C++17
-VignetteBuilder: knitr
+VignetteBuilder:
+    quarto
