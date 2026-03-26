@@ -40,7 +40,7 @@ public:
 
     void reset() override;
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     /**
      * @brief Set up the initial states of the model.
@@ -51,7 +51,7 @@ public:
     ModelSEIRDCONN<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
 
     size_t get_n_infected() const
     {

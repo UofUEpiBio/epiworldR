@@ -46,7 +46,7 @@ public:
     ModelSIRD<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
     
 };
 

@@ -113,6 +113,16 @@ struct Event;
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using EventFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
 
+enum class EventAction : uint8_t {
+    AddVirus,
+    AddTool,
+    AddEntity,
+    RemoveVirus,
+    RemoveTool,
+    RemoveEntity,
+    ChangeState
+};
+
 /**
  * @brief Decides how to distribute viruses at initialization
  */
@@ -144,7 +154,7 @@ struct Event {
     Entity<TSeq> * entity;
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
-    EventFun<TSeq> call;
+    EventAction action;
 public:
 /**
      * @brief Construct a new Event object
@@ -158,7 +168,7 @@ public:
      * @param tool_idx Index of tool to be removed (if needed)
      * @param new_state_ Next state
      * @param queue_ Efect on the queue
-     * @param call_ The action call (if needed)
+     * @param action_ The action to execute
      */
     Event(
         Agent<TSeq> * agent_,
@@ -167,10 +177,10 @@ public:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        EventFun<TSeq> & call_
+        EventAction action_
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
         new_state(new_state_),
-        queue(queue_), call(call_) {
+        queue(queue_), action(action_) {
             return;
         };
 };

@@ -37,29 +37,6 @@ class Entities;
 template<typename TSeq>
 class AgentsSample;
 
-template<typename TSeq>
-inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_add_entity(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> * m);
-
-template<typename TSeq>
-inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m);
-
-
-
 /**
  * @brief Agent (agents)
  * 
@@ -74,13 +51,6 @@ class Agent {
     friend class Tools_const<TSeq>;
     friend class Queue<TSeq>;
     friend class AgentsSample<TSeq>;
-    friend void default_add_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_add_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_virus<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_tool<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_rm_entity<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
-    friend void default_change_state<TSeq>(Event<TSeq> & a, Model<TSeq> * m);
 private:
 
     std::vector< size_t > * neighbors = nullptr;

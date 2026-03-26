@@ -161,8 +161,8 @@ inline void Agent<TSeq>::add_tool(
             " has not been registered. There are only " + std::to_string(model.get_n_tools()) +
             " included in the model.");
 
-    model.events_add(
-        this, nullptr, tool, nullptr, state_new, queue, default_add_tool<TSeq>
+    model._add_event(
+        this, nullptr, tool, nullptr, state_new, queue, EventAction::AddTool
         );
 
 }
@@ -200,8 +200,8 @@ inline void Agent<TSeq>::set_virus(
     if (queue == -99)
         virus->get_queue(&queue, nullptr, nullptr);
 
-    model.events_add(
-        this, virus, nullptr, nullptr, state_new, queue, default_add_virus<TSeq>
+    model._add_event(
+        this, virus, nullptr, nullptr, state_new, queue, EventAction::AddVirus
         );
 
 }
@@ -227,8 +227,8 @@ inline void Agent<TSeq>::add_entity(
 )
 {
 
-    model.events_add(
-        this, nullptr, nullptr, &entity, state_new, queue, default_add_entity<TSeq>
+    model._add_event(
+        this, nullptr, nullptr, &entity, state_new, queue, EventAction::AddEntity
     );
 
 }
@@ -248,8 +248,8 @@ inline void Agent<TSeq>::rm_tool(
             std::to_string(n_tools) + " tools."
         );
 
-    model.events_add(
-        this, nullptr, tools[tool_idx], nullptr, state_new, queue, default_rm_tool<TSeq>
+    model._add_event(
+        this, nullptr, tools[tool_idx], nullptr, state_new, queue, EventAction::RemoveTool
         );
 
 }
@@ -266,8 +266,8 @@ inline void Agent<TSeq>::rm_tool(
     if (tool->agent != this)
         throw std::logic_error("Cannot remove a virus from another agent!");
 
-    model.events_add(
-        this, nullptr, tool, nullptr, state_new, queue, default_rm_tool<TSeq>
+    model._add_event(
+        this, nullptr, tool, nullptr, state_new, queue, EventAction::RemoveTool
         );
 
 }
@@ -291,11 +291,11 @@ inline void Agent<TSeq>::rm_virus(
     if (queue == -99)
         virus->get_queue(nullptr, &queue, nullptr);
 
-    model.events_add(
+    model._add_event(
         this, virus, nullptr, nullptr,
         state_new,
         queue,
-        default_rm_virus<TSeq>
+        EventAction::RemoveVirus
         );
 
 }
@@ -319,14 +319,14 @@ inline void Agent<TSeq>::rm_entity(
             "There is no entity to remove here!"
         );
 
-    model.events_add(
+    model._add_event(
         this,
         nullptr,
         nullptr,
         &model.get_entity(entities[entity_idx]),
         state_new,
         queue,
-        default_rm_entity<TSeq>
+        EventAction::RemoveEntity
     );
 }
 
@@ -354,14 +354,14 @@ inline void Agent<TSeq>::rm_entity(
             std::string("\".")
             );
 
-    model.events_add(
+    model._add_event(
         this,
         nullptr,
         nullptr,
         &model.get_entity(entity.get_id()),
         state_new,
         queue,
-        default_rm_entity<TSeq>
+        EventAction::RemoveEntity
     );
 }
 
@@ -590,9 +590,9 @@ inline void Agent<TSeq>::change_state(
     )
 {
 
-    model.events_add(
+    model._add_event(
         this, nullptr, nullptr, nullptr, new_state, queue,
-        default_change_state<TSeq>
+        EventAction::ChangeState
     );
 
     return;

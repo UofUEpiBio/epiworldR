@@ -133,14 +133,14 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
 
 
 template<typename TSeq>
-inline void Model<TSeq>::events_add(
+inline void Model<TSeq>::_add_event(
     Agent<TSeq> * agent_,
     VirusPtr<TSeq> virus_,
     ToolPtr<TSeq> tool_,
     Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
-    EventFun<TSeq> call_
+    EventAction action_
 ) {
 
     ++nactions;
@@ -155,7 +155,7 @@ inline void Model<TSeq>::events_add(
 
         events.emplace_back(
             Event<TSeq>(
-                agent_, virus_, tool_, entity_, new_state_, queue_, call_
+                agent_, virus_, tool_, entity_, new_state_, queue_, action_
             ));
 
     }
@@ -170,7 +170,7 @@ inline void Model<TSeq>::events_add(
         A.entity     = std::move(entity_);
         A.new_state  = std::move(new_state_);
         A.queue      = std::move(queue_);
-        A.call       = std::move(call_);
+        A.action     = std::move(action_);
 
     }
 
@@ -219,11 +219,31 @@ inline void Model<TSeq>::events_run()
         } else if (p->state_last_changed != today())
             p->state_prev = p->state; // Recording the previous state
 
-        // Applying function after the fact. This way, if there were
-        // updates, they can be recorded properly, before losing the information
-        if (a.call)
+        switch (a.action)
         {
-            a.call(a, this);
+        case EventAction::AddVirus:
+            _event_add_virus(a);
+            break;
+        case EventAction::AddTool:
+            _event_add_tool(a);
+            break;
+        case EventAction::AddEntity:
+            _event_add_entity(a);
+            break;
+        case EventAction::RemoveVirus:
+            _event_rm_virus(a);
+            break;
+        case EventAction::RemoveTool:
+            _event_rm_tool(a);
+            break;
+        case EventAction::RemoveEntity:
+            _event_rm_entity(a);
+            break;
+        case EventAction::ChangeState:
+            _event_change_state(a);
+            break;
+        default:
+            throw std::logic_error("The requested event action is not supported.");
         }
 
         if (a.new_state != -99)

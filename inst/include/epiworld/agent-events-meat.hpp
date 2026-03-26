@@ -2,13 +2,13 @@
 #define EPIWORLD_AGENT_EVENTS_MEAT_HPP
 
 template<typename TSeq>
-inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
+inline void Model<TSeq>::_event_add_virus(Event<TSeq> & a)
 {
 
     Agent<TSeq> *  p = a.agent;
     VirusPtr<TSeq> & v = a.virus;
     
-    m->get_db().record_transmission(
+    db.record_transmission(
         v->get_agent() ? v->get_agent()->get_id() : -1,
         p->get_id(),
         v->get_id(),
@@ -16,14 +16,13 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
     );
     
     p->virus = std::move(v);
-    p->virus->set_date(m->today());
+    p->virus->set_date(today());
     p->virus->set_agent(p);
 
     // Change of state needs to be recorded and updated on the
     // tools.
     if ((a.new_state != -99) && (static_cast<int>(p->state) != a.new_state))
     {
-        auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
         // For tool counts, use current state (p->state) not state_prev
@@ -38,11 +37,11 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 
     // Lastly, we increase the daily count of the virus
     #ifdef EPI_DEBUG
-    m->get_db().today_virus.at(p->virus->get_id()).at(
+    db.today_virus.at(p->virus->get_id()).at(
         a.new_state != -99 ? a.new_state : p->state
     )++;
     #else
-    m->get_db().today_virus[p->virus->get_id()][
+    db.today_virus[p->virus->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
     #endif
@@ -50,7 +49,7 @@ inline void default_add_virus(Event<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
+inline void Model<TSeq>::_event_add_tool(Event<TSeq> & a)
 {
 
     Agent<TSeq> * p = a.agent;
@@ -67,14 +66,13 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
 
     n_tools--;
 
-    p->tools[n_tools]->set_date(m->today());
+    p->tools[n_tools]->set_date(today());
     p->tools[n_tools]->set_agent(p, n_tools);
 
     // Change of state needs to be recorded and updated on the
     // tools.
     if ((a.new_state != -99) && static_cast<int>(p->state) != a.new_state)
     {
-        auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
         // For virus counts, use current state (p->state) not state_prev
@@ -87,7 +85,7 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
             );
     }
 
-    m->get_db().today_tool[p->tools.back()->get_id()][
+    db.today_tool[p->tools.back()->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
 
@@ -95,14 +93,14 @@ inline void default_add_tool(Event<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
+inline void Model<TSeq>::_event_rm_virus(Event<TSeq> & a)
 {
 
     Agent<TSeq> * p    = a.agent;
     VirusPtr<TSeq> & v = a.virus;
 
     // Calling the virus action over the removed virus
-    v->post_recovery(model);
+    v->post_recovery(this);
 
     p->virus = nullptr;
 
@@ -110,7 +108,6 @@ inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
     // tools.
     if ((a.new_state != -99) && (static_cast<int>(p->state) != a.new_state))
     {
-        auto & db = model->get_db();
         db.update_state(p->state_prev, a.new_state);
 
         // For tool counts, use current state (p->state) not state_prev
@@ -127,9 +124,9 @@ inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
     // We use the previous state of the agent as that was
     // the state when the virus was added.
     #ifdef EPI_DEBUG
-    model->get_db().today_virus.at(v->get_id()).at(p->state_prev)--;
+    db.today_virus.at(v->get_id()).at(p->state_prev)--;
     #else
-    model->get_db().today_virus[v->get_id()][p->state_prev]--;
+    db.today_virus[v->get_id()][p->state_prev]--;
     #endif
 
     
@@ -138,7 +135,7 @@ inline void default_rm_virus(Event<TSeq> & a, Model<TSeq> * model)
 }
 
 template<typename TSeq>
-inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
+inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
 {
 
     Agent<TSeq> * p   = a.agent;    
@@ -157,7 +154,6 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
     // tools.
     if ((a.new_state != -99) && (static_cast<int>(p->state) != a.new_state))
     {
-        auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
         // For virus counts, use current state (p->state) not state_prev
@@ -174,9 +170,9 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
     // Like rm_virus, we use the previous state of the agent
     // as that was the state when the tool was added.
     #ifdef EPI_DEBUG
-    m->get_db().today_tool.at(t->get_id()).at(p->state_prev)--;
+    db.today_tool.at(t->get_id()).at(p->state_prev)--;
     #else
-    m->get_db().today_tool[t->get_id()][p->state_prev]--;
+    db.today_tool[t->get_id()][p->state_prev]--;
     #endif
 
     return;
@@ -184,14 +180,13 @@ inline void default_rm_tool(Event<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m)
+inline void Model<TSeq>::_event_change_state(Event<TSeq> & a)
 {
 
     Agent<TSeq> * p = a.agent;
 
     if ((a.new_state != -99) && (static_cast<int>(p->state) != a.new_state))
     {
-        auto & db = m->get_db();
         db.update_state(p->state_prev, a.new_state);
 
         // For virus and tool counts, use current state (p->state) not state_prev
@@ -213,7 +208,7 @@ inline void default_change_state(Event<TSeq> & a, Model<TSeq> * m)
 }
 
 template<typename TSeq>
-inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
+inline void Model<TSeq>::_event_add_entity(Event<TSeq> & a)
 {
 
     Agent<TSeq> *  p = a.agent;
@@ -246,7 +241,7 @@ inline void default_add_entity(Event<TSeq> & a, Model<TSeq> *)
 }
 
 template<typename TSeq>
-inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> *)
+inline void Model<TSeq>::_event_rm_entity(Event<TSeq> & a)
 {
 
     Agent<TSeq> &  p = *a.agent;
@@ -274,6 +269,6 @@ inline void default_rm_entity(Event<TSeq> & a, Model<TSeq> *)
 
     return;
 
-};
+}
 
 #endif

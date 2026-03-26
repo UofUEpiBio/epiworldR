@@ -233,7 +233,7 @@ public:
      * @brief Create a clone of this model
      * @return Pointer to a new model instance with the same configuration
      */
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     /**
      * @brief Set the initial states of the model
@@ -245,7 +245,7 @@ public:
     ModelSEIRMixingQuarantine<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
 
     /**
      * @brief Set the contact matrix for population mixing

@@ -146,7 +146,7 @@ public:
     void reset() override;
     void update_infectious();
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
 };
 

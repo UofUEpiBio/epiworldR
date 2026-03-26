@@ -183,18 +183,34 @@ protected:
      * @param tool_ Tool pointer included in the action
      * @param entity_ Entity pointer included in the action
      * @param new_state_ New state of the agent
-     * @param call_ Function the action will call
      * @param queue_ Change in the queue
+      * @param action_ Action to execute when processing the event
      */
-    void events_add(
+    void _add_event(
         Agent<TSeq> * agent_,
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        EventFun<TSeq> call_
+          EventAction action_
         );
+
+    /**
+     * @name Default event handlers
+     *
+     * These member functions implement the default behavior for each
+     * event action (add/remove virus, tool, entity, or change state).
+     */
+    ///@{
+    void _event_add_virus(Event<TSeq> & a);
+    void _event_add_tool(Event<TSeq> & a);
+    void _event_add_entity(Event<TSeq> & a);
+    void _event_rm_virus(Event<TSeq> & a);
+    void _event_rm_tool(Event<TSeq> & a);
+    void _event_rm_entity(Event<TSeq> & a);
+    void _event_change_state(Event<TSeq> & a);
+    ///@}
 
     /**
      * @name Tool Mixers

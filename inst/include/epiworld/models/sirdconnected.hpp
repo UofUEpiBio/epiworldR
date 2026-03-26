@@ -47,7 +47,7 @@ public:
         epiworld_double death_rate
     );
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
 
 };

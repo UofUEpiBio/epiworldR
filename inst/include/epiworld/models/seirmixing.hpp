@@ -115,7 +115,7 @@ public:
 
     void reset() override;
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     /**
      * @brief Set the initial states of the model
@@ -125,7 +125,7 @@ public:
     ModelSEIRMixing<TSeq> & initial_states(
         std::vector< double > proportions_,
         std::vector< int > queue_ = {}
-    );
+    ) override;
 
     void set_contact_matrix(std::vector< double > cmat)
     {

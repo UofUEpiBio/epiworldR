@@ -68,7 +68,7 @@ public:
         epiworld_double prevalence
     );
 
-    std::unique_ptr< Model<TSeq> > clone_ptr();
+    std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     void reset() override;
     
