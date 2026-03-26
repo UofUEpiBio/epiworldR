@@ -616,11 +616,11 @@ inline void Agent<TSeq>::reset()
     this->virus = nullptr;
 
     this->tools.clear();
-    this->tools.shrink_to_fit();
+    decltype(this->tools)().swap(this->tools);
     n_tools = 0u;
 
     this->entities.clear();
-    this->entities.shrink_to_fit();
+    decltype(this->entities)().swap(this->entities);
 
     this->state = 0u;
     this->state_prev = 0u;

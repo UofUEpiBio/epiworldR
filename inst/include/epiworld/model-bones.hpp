@@ -157,7 +157,7 @@ protected:
     std::chrono::duration<epiworld_double,std::micro> time_elapsed =
         std::chrono::duration<epiworld_double,std::micro>::zero();
     epiworld_fast_uint n_replicates = 0u;
-    size_t last_seed = 0;
+    int last_seed = 0;
     void chrono_start();
     void chrono_end();
 
