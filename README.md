@@ -163,9 +163,10 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 232.00ms
-#> Last run speed      : 21.51 million agents x day / second
+#> Last run elapsed t  : 206.00ms
+#> Last run speed      : 24.26 million agents x day / second
 #> Rewiring            : off
+#> Last seed used      : 1912
 #>
 #> Global events:
 #>  (none)
@@ -244,9 +245,10 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 43.00ms
-#> Last run speed      : 23.07 million agents x day / second
+#> Last run elapsed t  : 28.00ms
+#> Last run speed      : 35.65 million agents x day / second
 #> Rewiring            : off
+#> Last seed used      : 2587
 #>
 #> Global events:
 #>  - Update infected individuals (runs daily)
@@ -479,17 +481,17 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    976
-#> 5       1    1        1    Infected     23
-#> 6       1    1        1   Recovered      1
+#> 4       1    1        1 Susceptible    967
+#> 5       1    1        1    Infected     33
+#> 6       1    1        1   Recovered      0
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    568                   10  0
-#> 2       1        0 COVID-19    994                    8  0
-#> 3       1        0 COVID-19    902                    8  0
-#> 4       1        0 COVID-19    859                    8  0
-#> 5       1        0 COVID-19    833                    8  0
-#> 6       1        0 COVID-19    820                    8  0
+#> 1       1        0 COVID-19    855                   10  0
+#> 2       1        0 COVID-19    427                   10  0
+#> 3       1        0 COVID-19    577                    9  0
+#> 4       1        0 COVID-19    951                    8  1
+#> 5       1        0 COVID-19    783                    8  0
+#> 6       1        0 COVID-19    778                    8  0
 
 plot(ans$reproductive)
 ```
