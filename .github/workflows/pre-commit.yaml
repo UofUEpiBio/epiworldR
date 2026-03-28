@@ -27,7 +27,7 @@ jobs:
           r-version: '4.4.0'
 
       - name: Cache R packages for pre-commit (live in renv)
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.cache/R/renv
