@@ -77,7 +77,7 @@ inline void ModelSEIRDCONN<TSeq>::update_infected()
     Model<TSeq>::set_rand_binom(
         this->get_n_infected(),
         static_cast<double>(Model<TSeq>::par("Contact rate"))/
-            static_cast<double>(Model<TSeq>::size())
+            static_cast<double>(this->size())
     );
 
     return; 
@@ -143,7 +143,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 m
                 );
 
-            size_t ninfected = model->get_n_infected();
+            int ninfected = static_cast<int>(model->get_n_infected());
 
             // Drawing from the set
             int nviruses_tmp = 0;
@@ -151,19 +151,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
             for (int i = 0; i < ndraw; ++i)
             {
                 // Now selecting who is transmitting the disease
-                int which = static_cast<int>(
-                    std::floor(ninfected * m->runif())
-                );
-
-                /* There is a bug in which runif() returns 1.0. It is rare, but
-                 * we saw it here. See the Notes section in the C++ manual
-                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
-                 * And the reported bug in GCC:
-                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
-                 * 
-                 */
-                if (which == static_cast<int>(ninfected))
-                    --which;
+                int which = m->runif_int(0, ninfected - 1);
 
                 Agent<TSeq> & neighbor = *model->infected[which];
 

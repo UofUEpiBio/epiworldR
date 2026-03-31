@@ -150,58 +150,21 @@ inline Agent<TSeq>::~Agent()
 template<typename TSeq>
 inline void Agent<TSeq>::add_tool(
     Model<TSeq> & model,
-    ToolPtr<TSeq> & tool,
+    const Tool<TSeq> & tool,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
 ) {
 
-    // Checking the virus exists
-    if (tool->get_id() >= static_cast<int>(model.get_db().get_n_tools()))
-        throw std::range_error("The tool with id: " + std::to_string(tool->get_id()) +
+    // Checking the tool exists
+    if (tool.get_id() >= static_cast<int>(model.get_db().get_n_tools()))
+        throw std::range_error("The tool with id: " + std::to_string(tool.get_id()) +
             " has not been registered. There are only " + std::to_string(model.get_n_tools()) +
             " included in the model.");
 
-    model._add_event(
-        this, nullptr, tool, nullptr, state_new, queue, EventAction::AddTool
-        );
-
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::add_tool(
-    Model<TSeq> & model,
-    const Tool<TSeq> & tool,
-    epiworld_fast_int state_new,
-    epiworld_fast_int queue
-)
-{
     ToolPtr<TSeq> tool_ptr = std::shared_ptr<Tool<TSeq>>(tool.clone_ptr());
-    add_tool(model, tool_ptr, state_new, queue);
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::set_virus(
-    Model<TSeq> & model,
-    VirusPtr<TSeq> & virus,
-    epiworld_fast_int state_new,
-    epiworld_fast_int queue
-)
-{
-
-    // Checking the virus exists
-    if (virus->get_id() >= static_cast<int>(model.get_db().get_n_viruses()))
-        throw std::range_error("The virus with id: " + std::to_string(virus->get_id()) +
-            " has not been registered. There are only " + std::to_string(model.get_n_viruses()) +
-            " included in the model.");
-
-    if (state_new == -99)
-        virus->get_state(&state_new, nullptr, nullptr);
-
-    if (queue == -99)
-        virus->get_queue(&queue, nullptr, nullptr);
 
     model._add_event(
-        this, virus, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        this, nullptr, tool_ptr, nullptr, state_new, queue, EventAction::AddTool
         );
 
 }
@@ -214,8 +177,25 @@ inline void Agent<TSeq>::set_virus(
     epiworld_fast_int queue
 )
 {
+    
+        // Checking the virus exists
+    if (virus.get_id() >= static_cast<int>(model.get_db().get_n_viruses()))
+        throw std::range_error("The virus with id: " + std::to_string(virus.get_id()) +
+            " has not been registered. There are only " + std::to_string(model.get_n_viruses()) +
+            " included in the model.");
+
+    if (state_new == -99)
+        virus.get_state(&state_new, nullptr, nullptr);
+
+    if (queue == -99)
+        virus.get_queue(&queue, nullptr, nullptr);
+
     VirusPtr<TSeq> virus_ptr = std::shared_ptr<Virus<TSeq>>(virus.clone_ptr());
-    set_virus(model, virus_ptr, state_new, queue);
+
+    model._add_event(
+        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        );
+
 }
 
 template<typename TSeq>
@@ -429,6 +409,19 @@ template<typename TSeq>
 inline ToolPtr<TSeq> & Agent<TSeq>::get_tool(int i)
 {
     return tools.at(i);
+}
+
+template<typename TSeq>
+inline ToolPtr<TSeq> & Agent<TSeq>::get_tool(std::string name)
+{
+    for (auto & tool : tools)
+        if (tool->get_name() == name)
+            return tool;
+
+    throw std::logic_error(
+        "The agent does not have a tool with name: " + name
+    );
+
 }
 
 template<typename TSeq>

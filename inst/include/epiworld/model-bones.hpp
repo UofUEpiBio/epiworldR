@@ -292,6 +292,7 @@ public:
     void set_rand_poiss(epiworld_double lambda);
     epiworld_double runif();
     epiworld_double runif(epiworld_double a, epiworld_double b);
+    int runif_int(int a, int b);
     epiworld_double rnorm();
     epiworld_double rnorm(epiworld_double mean, epiworld_double sd);
     epiworld_double rgamma();
@@ -309,6 +310,17 @@ public:
     int rpoiss();
     int rpoiss(epiworld_double lambda);
     ///@}
+
+    /**
+     * @brief Sample from a set of probabilities stored in array_double_tmp.
+     * @details Uses a cumulative probability approach: draws a uniform random
+     * number and walks through array_double_tmp[0..n-1], accumulating
+     * probabilities until the draw is exceeded. If no event fires, returns n
+     * (meaning "none of the above").
+     * @param n Number of probability entries in array_double_tmp to consider.
+     * @return Index in [0, n] of the sampled event (n = no event).
+     */
+    size_t sample_from_probs(size_t n);
 
     /**
      * @name Add Virus/Tool to the model
@@ -420,7 +432,7 @@ public:
     ///@{
     void update_state();
     void mutate_virus();
-    void next();
+    virtual void next();
     virtual Model<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
@@ -684,7 +696,12 @@ public:
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
     Virus<TSeq> & get_virus(size_t id);
+    Virus<TSeq> & get_virus(std::string name);
     Tool<TSeq> & get_tool(size_t id);
+    Tool<TSeq> & get_tool(std::string name);
+
+    bool has_virus(std::string name) const;
+    bool has_tool(std::string name) const;
 
     /**
      * @brief Set the agents data object

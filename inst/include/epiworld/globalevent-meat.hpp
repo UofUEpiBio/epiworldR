@@ -1,6 +1,9 @@
 #ifndef EPIWORLD_GLOBALEVENT_MEAT_HPP
 #define EPIWORLD_GLOBALEVENT_MEAT_HPP
 
+#include <memory>
+#include "globalevent-bones.hpp"
+
 template<typename TSeq>
 inline GlobalEvent<TSeq>::GlobalEvent(
     GlobalFun<TSeq> fun,

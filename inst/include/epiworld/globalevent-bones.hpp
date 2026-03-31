@@ -1,8 +1,8 @@
 #ifndef EPIWORLD_GLOBALEVENT_BONES_HPP
 #define EPIWORLD_GLOBALEVENT_BONES_HPP
 
-// template<typename TSeq = EPI_DEFAULT_TSEQ>
-// using GlobalFun = std::function<void(Model<TSeq>*)>;
+#include <string>
+#include "config.hpp"
 
 /**
  * @brief Template for a Global Event
@@ -32,7 +32,7 @@ public:
     
     virtual ~GlobalEvent() = default;
 
-    void operator()(Model<TSeq> * m, int day);
+    virtual void operator()(Model<TSeq> * m, int day);
 
     void set_name(std::string name);
     std::string get_name() const;

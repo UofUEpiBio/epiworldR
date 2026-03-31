@@ -694,61 +694,6 @@ inline void Model<TSeq>::agents_empty_graph(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::set_rand_gamma(epiworld_double alpha, epiworld_double beta)
-{
-    rgammad = std::gamma_distribution<>(alpha,beta);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_norm(epiworld_double mean, epiworld_double sd)
-{
-    rnormd  = std::normal_distribution<>(mean, sd);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_unif(epiworld_double a, epiworld_double b)
-{
-    runifd_a = a;
-    runifd_b = b;
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_lognormal(epiworld_double mean, epiworld_double shape)
-{
-    rlognormald  = std::lognormal_distribution<>(mean, shape);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_exp(epiworld_double lambda)
-{
-    rexpd  = std::exponential_distribution<>(lambda);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_binom(int n, epiworld_double p)
-{
-    rbinomd  = std::binomial_distribution<>(n, p);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_nbinom(int n, epiworld_double p)
-{
-    rnbinomd  = std::negative_binomial_distribution<>(n, p);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_geom(epiworld_double p)
-{
-    rgeomd  = std::geometric_distribution<>(p);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_poiss(epiworld_double lambda)
-{
-    rpoissd  = std::poisson_distribution<>(lambda);
-}
-
-template<typename TSeq>
 inline epiworld_double Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())
@@ -829,154 +774,6 @@ inline void Model<TSeq>::set_backup()
     if (population_backup.size() == 0u)
         population_backup = std::vector< Agent<TSeq> >(population);
 
-}
-
-template<typename TSeq>
-inline std::shared_ptr< epi_xoshiro256ss > & Model<TSeq>::get_rand_endgine()
-{
-    return engine;
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng)
-{
-    engine = eng;
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::runif() {
-    // CHECK_INIT()
-    epiworld_double res = runif_epi(*engine);
-    return res * (runifd_b - runifd_a) + runifd_a;
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::runif(epiworld_double a, epiworld_double b) {
-    // CHECK_INIT()
-    return runif_epi(*engine) * (b - a) + a;
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rnorm() {
-    // CHECK_INIT()
-    return rnormd(*engine);
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rnorm(epiworld_double mean, epiworld_double sd) {
-    // CHECK_INIT()
-    return rnormd(*engine) * sd + mean;
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rgamma() {
-    return rgammad(*engine);
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_double beta) {
-
-    return rgammad(
-        *engine,
-        std::gamma_distribution<>::param_type(alpha, beta)
-    );
-
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rexp() {
-    return rexpd(*engine);
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rexp(epiworld_double lambda) {
-
-    return rexpd(
-        *engine,
-        std::exponential_distribution<>::param_type(lambda)
-    );
-
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rlognormal() {
-    return rlognormald(*engine);
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_double shape) {
-
-    return rlognormald(
-        *engine,
-        std::lognormal_distribution<>::param_type(mean, shape)
-    );
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rbinom() {
-    return rbinomd(*engine);
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
-
-    if (n == 0 || p == 0.0)
-        return 0;
-
-    return rbinomd(
-        *engine,
-        std::binomial_distribution<>::param_type(n, p)
-    );
-
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rnbinom() {
-    return rnbinomd(*engine);
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rnbinom(int n, epiworld_double p) {
-
-    return rnbinomd(
-        *engine,
-        std::negative_binomial_distribution<>::param_type(n, p)
-    );
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rgeom() {
-    return rgeomd(*engine);
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rgeom(epiworld_double p) {
-
-    return rgeomd(
-        *engine,
-        std::geometric_distribution<>::param_type(p)
-    );
-
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rpoiss() {
-    return rpoissd(*engine);
-}
-
-template<typename TSeq>
-inline int Model<TSeq>::rpoiss(epiworld_double lambda) {
-
-    return rpoissd(
-        *engine,
-        std::poisson_distribution<>::param_type(lambda)
-    );
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::seed(size_t s) {
-    this->engine->seed(s);
 }
 
 template<typename TSeq>
@@ -1397,7 +1194,8 @@ inline Model<TSeq> & Model<TSeq>::run(
     if (nstates == 0u)
         throw std::logic_error(
             std::string("No states registered in this model. ") +
-            std::string("At least one state should be included. See the function -Model::add_state()-")
+            std::string("At least one state should be included. See the ") +
+            std::string("function -Model::add_state()-")
             );
 
     // Setting up the number of steps
@@ -1412,23 +1210,23 @@ inline Model<TSeq> & Model<TSeq>::run(
     // are valid
     epiworld_fast_int _init, _end, _removed;
     int nstate_int = static_cast<int>(nstates);
+
+    // Function to validate the states of viruses
+    // and tools.
+    auto check_init_states = [nstate_int](int x) -> void {
+
+        if (((x != -99) && (x < 0)) || (x >= nstate_int))
+            throw std::range_error("States must be between 0 and " +
+                std::to_string(nstate_int - 1));
+    };
+
     for (auto & v : viruses)
     {
         v->get_state(&_init, &_end, &_removed);
 
-        // Negative unspecified state
-        if (((_init != -99) && (_init < 0)) || (_init >= nstate_int))
-            throw std::range_error("States must be between 0 and " +
-                std::to_string(nstates - 1));
-
-        // Negative unspecified state
-        if (((_end != -99) && (_end < 0)) || (_end >= nstate_int))
-            throw std::range_error("States must be between 0 and " +
-                std::to_string(nstates - 1));
-
-        if (((_removed != -99) && (_removed < 0)) || (_removed >= nstate_int))
-            throw std::range_error("States must be between 0 and " +
-                std::to_string(nstates - 1));
+        check_init_states(_init);
+        check_init_states(_end);
+        check_init_states(_removed);
 
     }
 
@@ -1436,20 +1234,18 @@ inline Model<TSeq> & Model<TSeq>::run(
     {
         t->get_state(&_init, &_end);
 
-        // Negative unspecified state
-        if (((_init != -99) && (_init < 0)) || (_init >= nstate_int))
-            throw std::range_error("States must be between 0 and " +
-                std::to_string(nstates - 1));
-
-        // Negative unspecified state
-        if (((_end != -99) && (_end < 0)) || (_end >= nstate_int))
-            throw std::range_error("States must be between 0 and " +
-                std::to_string(nstates - 1));
+        check_init_states(_init);
+        check_init_states(_end);
 
     }
 
     // Starting first infection and tools
     reset();
+
+    // Record the baseline (day 0) and advance to day 1 using the base
+    // implementation only. Calling virtual next() from reset() can invoke
+    // model-specific logic before derived reset state is fully initialized.
+    Model<TSeq>::next();
 
     // Initializing the simulation
     chrono_start();
@@ -1662,8 +1458,6 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
     n_replicates += (nexperiments - nreplicates[0u]);
 
     #else
-    // if (reset)
-    //     set_backup();
 
     Progress pb_multiple(
         nexperiments,
@@ -2050,9 +1844,10 @@ inline void Model<TSeq>::reset() {
     // Distributing initial state, if specified
     initial_states_fun(this);
 
-    // Recording the original state (at time 0) and advancing
-    // to time 1
-    next();
+    // Recording day 0 and advancing to day 1 is handled by Model::run().
+    // Keeping reset() side-effect free from virtual next() prevents
+    // derived-model update code from running before derived reset state
+    // is fully initialized.
 
 
 }
@@ -2194,21 +1989,6 @@ inline void Model<TSeq>::set_param(std::string pname, epiworld_double value)
 
 }
 
-// // Same as before but using the size_t method
-// template<typename TSeq>
-// inline void Model<TSeq>::set_param(size_t k, epiworld_double value)
-// {
-//     if (k >= parameters.size())
-//         throw std::logic_error("The parameter index " + std::to_string(k) + " does not exists.");
-
-//     // Access the k-th element of the std::unordered_map parameters
-
-
-//     *(parameters.begin() + k) = value;
-
-//     return;
-// }
-
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::par(std::string pname) const
 {
@@ -2327,7 +2107,6 @@ inline void Model<TSeq>::add_globalevent(
     int date
 )
 {
-
     auto event = GlobalEvent<TSeq>(fun, name, date);
     add_globalevent(event);
 
@@ -2407,11 +2186,11 @@ template<typename TSeq>
 inline void Model<TSeq>::run_globalevents()
 {
 
-    for (auto & action: globalevents)
+    for (auto & event: globalevents)
     {
-        (*action)(this, today());
+        event->operator()(this, today());
         events_run();
-    }
+    }    
 
 }
 
@@ -2464,6 +2243,18 @@ inline Virus<TSeq> & Model<TSeq>::get_virus(size_t id)
 }
 
 template<typename TSeq>
+inline Virus<TSeq> & Model<TSeq>::get_virus(std::string name)
+{
+
+    for (auto & v : viruses)
+        if (v->get_name() == name)
+            return *v;
+
+    throw std::logic_error("The virus " + name + " was not found.");
+
+}
+
+template<typename TSeq>
 inline Tool<TSeq> & Model<TSeq>::get_tool(size_t id)
 {
 
@@ -2472,6 +2263,36 @@ inline Tool<TSeq> & Model<TSeq>::get_tool(size_t id)
 
     return *tools[id];
 
+}
+
+template<typename TSeq>
+inline Tool<TSeq> & Model<TSeq>::get_tool(std::string name)
+{
+    for (auto & t : tools)
+        if (t->get_name() == name)
+            return *t;
+
+    throw std::logic_error("The tool " + name + " was not found.");
+
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_virus(std::string name) const
+{
+    for (const auto & v : viruses)
+        if (v->get_name() == name)
+            return true;
+
+    return false;
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_tool(std::string name) const
+{
+    for (const auto & t : tools)
+        if (t->get_name() == name)
+            return true;
+    return false;
 }
 
 

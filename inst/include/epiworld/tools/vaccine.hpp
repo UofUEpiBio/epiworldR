@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <vector>
+#include <cassert>
 #include "../config.hpp"
 #include "../tool-bones.hpp"
 
@@ -24,7 +25,6 @@ class ToolVaccine: public Tool<TSeq> {
 private:
 
     int immune = -1;
-    int model_id = -1;
     epiworld_double efficacy = 0.0;
 
 public:
@@ -38,6 +38,7 @@ public:
     virtual void set_susceptibility_reduction_fun(ToolFun<TSeq> fun) override;
     virtual void set_susceptibility_reduction(std::string param) override;
     virtual void set_susceptibility_reduction(epiworld_double prob) override;
+    epiworld_double set_immunity(Model<TSeq> * model);
 
     std::unique_ptr<Tool<TSeq>> clone_ptr() const override;
 
@@ -51,10 +52,9 @@ inline epiworld_double ToolVaccine<TSeq>::get_susceptibility_reduction(
 {
 
     // Updating a single agent (if needed)
-    if (model_id != static_cast<int>(model->get_sim_id()))
+    if (immune == -1)
     {
-        model_id = static_cast<int>(model->get_sim_id());
-        immune = (model->runif() < efficacy) ? 1 : 0;
+        set_immunity(model);
     }
 
     return  (immune == 1) ? 1.0 : 0.0;
@@ -91,15 +91,25 @@ inline void ToolVaccine<TSeq>::set_susceptibility_reduction(std::string)
 template<typename TSeq>
 inline void ToolVaccine<TSeq>::set_susceptibility_reduction(epiworld_double prob)
 {
+
+    // assertm(prob >= 0 && prob <= 1, "The efficacy must be between 0 and 1.");
     efficacy = prob;
+
 }
 
+template<typename TSeq>
+inline epiworld_double ToolVaccine<TSeq>::set_immunity(Model<TSeq> * model)
+{
+    immune = (model->runif() < efficacy) ? 1 : 0;
+    return immune;
+}
 
 template<typename TSeq>
 inline std::unique_ptr<Tool<TSeq>> ToolVaccine<TSeq>::clone_ptr() const
 {
-    return std::make_unique<ToolVaccine<TSeq>>(*this);
+    auto ans =  std::make_unique<ToolVaccine<TSeq>>(*this);
+    ans->immune = -1;
+    return ans;
 }
-
 
 #endif

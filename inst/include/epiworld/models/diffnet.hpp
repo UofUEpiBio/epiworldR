@@ -152,7 +152,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         // Otherwise, it is adopted from any of the neighbors
         agent.set_virus(*m, 
             *innovations.at(which),
-            ModelDiffNet::ADOPTER
+            ADOPTER
         );
 
         return;
