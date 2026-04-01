@@ -69,7 +69,7 @@ public:
 
     std::unique_ptr< GlobalEvent<TSeq> > clone_ptr() const override;
 
-    static bool agent_recovers(Agent<TSeq> * p, Model<TSeq> * m, int next_state);
+    static bool agent_recovers(Agent<TSeq> & p, Model<TSeq> & m, int next_state);
 
 };
 
@@ -180,20 +180,20 @@ inline std::unique_ptr< GlobalEvent<TSeq> > InterventionPEP<TSeq>::clone_ptr() c
 
 template<typename TSeq>
 inline bool InterventionPEP<TSeq>::agent_recovers(
-    Agent<TSeq> * p,
-    Model<TSeq> * m,
+    Agent<TSeq> & p,
+    Model<TSeq> & m,
     int next_state
 ) {
 
     // If the agent has PEP, then we have to figure out if it works or not
-    if (p->has_tool("PEP MMR"))
+    if (p.has_tool("PEP MMR"))
     {
 
         // Adding the tool
-        auto & tool = p->get_tool("PEP MMR");
-        if (tool->get_susceptibility_reduction(p->get_virus(), m) > 0.0)
+        auto & tool = p.get_tool("PEP MMR");
+        if (tool.get_susceptibility_reduction(p.get_virus(), m) > 0.0)
         {
-            p->rm_virus(*m, next_state);
+            p.rm_virus(m, next_state);
             return true;
         }
     }

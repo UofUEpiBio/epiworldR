@@ -368,8 +368,8 @@ LOCAL_UPDATE_FUN(_update_susceptible) {
 
 LOCAL_UPDATE_FUN(_update_exposed) {
 
-    if (InterventionPEP<TSeq>::agent_recovers(p, m, RECOVERED))
-        return;
+    // if (InterventionPEP<TSeq>::agent_recovers(*p, *m, RECOVERED))
+    //     return;
 
     if (m->runif() < (1.0/p->get_virus()->get_incubation(m)))
         p->change_state(*m, ModelMeaslesSchool<TSeq>::PRODROMAL);
@@ -702,7 +702,7 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
         "PEP efficacy",
         "PEP willingness",
         {QUARANTINED_EXPOSED, QUARANTINED_SUSCEPTIBLE},
-        {EXPOSED, SUSCEPTIBLE}
+        {RECOVERED, SUSCEPTIBLE}
     );
 
     pep.set_name("PEP intervention");
