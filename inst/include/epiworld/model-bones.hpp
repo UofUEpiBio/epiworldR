@@ -622,9 +622,7 @@ public:
     );
     Model<TSeq> & read_params(std::string fn, bool overwrite = false);
     epiworld_double get_param(std::string pname);
-    // void set_param(size_t k, epiworld_double val);
     void set_param(std::string pname, epiworld_double val);
-    // epiworld_double par(epiworld_fast_uint k);
     epiworld_double par(std::string pname) const;
     ///@}
 

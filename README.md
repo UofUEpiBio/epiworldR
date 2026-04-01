@@ -163,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 206.00ms
-#> Last run speed      : 24.26 million agents x day / second
+#> Last run elapsed t  : 129.00ms
+#> Last run speed      : 38.71 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 1912
 #>
@@ -245,8 +245,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 28.00ms
-#> Last run speed      : 35.65 million agents x day / second
+#> Last run elapsed t  : 24.00ms
+#> Last run speed      : 41.18 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 2587
 #>
@@ -522,7 +522,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.14.0.0,
+#>   Epi Models_. R package version 0.14.99-99,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,

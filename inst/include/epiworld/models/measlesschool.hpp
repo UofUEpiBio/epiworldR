@@ -5,7 +5,7 @@
 #include <cassert>
 #include "../tools/vaccine.hpp"
 #include "../model-bones.hpp"
-#include "interventions.hpp"
+#include "../globalevents/pep.hpp"
 
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \
@@ -28,6 +28,11 @@
  * isolation_period days.
  * 
  * ![Model Diagram](../assets/img/measlesschool.png)
+ * 
+ * In the case of post-exposure prophylaxis (PEP), agents who are quarantined
+ * and exposed or susceptible can receive PEP with a certain willingness and
+ * efficacy. If they receive PEP, then they have a probability of moving to the
+ * recovered state, which is a function of the PEP efficacy.
  * 
  * 
  * @ingroup disease_specific
@@ -229,7 +234,12 @@ inline void ModelMeaslesSchool<TSeq>::_update_infectious() {
     for (auto & agent: this->get_agents())
     {
         auto s = agent.get_state();
-        if (IN(s, {EXPOSED, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED, QUARANTINED_EXPOSED, QUARANTINED_PRODROMAL, HOSPITALIZED}))
+        static const std::vector< int > states_with_virus = {
+            EXPOSED, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED,
+            QUARANTINED_EXPOSED, QUARANTINED_PRODROMAL, HOSPITALIZED
+        };
+
+        if (IN(s, states_with_virus))
         {
             if (agent.get_virus() == nullptr)
                 throw std::logic_error("The agent has no virus.");
@@ -688,15 +698,14 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
 
     // Creating the PEP intervention and 
     // setting it up so we can call it as a global event.
-    InterventionPEP<TSeq> pep{};
-    pep.set_name("PEP intervention");
-
-    pep.configure(
+    InterventionPEP<TSeq> pep(
         "PEP efficacy",
         "PEP willingness",
         {QUARANTINED_EXPOSED, QUARANTINED_SUSCEPTIBLE},
         {EXPOSED, SUSCEPTIBLE}
     );
+
+    pep.set_name("PEP intervention");
 
     this->add_globalevent(pep);
 

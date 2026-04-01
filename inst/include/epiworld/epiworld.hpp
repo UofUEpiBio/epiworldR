@@ -31,9 +31,27 @@
 #define EPIWORLD_VERSION_MINOR 15
 #define EPIWORLD_VERSION_PATCH 0
 
-static const int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
-static const int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
-static const int epiworld_version_patch = EPIWORLD_VERSION_PATCH;
+#define EPIWORLD_VERSION_PRERELEASE "dev"
+
+static constexpr int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
+static constexpr int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
+static constexpr int epiworld_version_patch = EPIWORLD_VERSION_PATCH;
+static constexpr std::string_view epiworld_version_prerelease =
+    EPIWORLD_VERSION_PRERELEASE;
+
+inline std::string epiworld_version() {
+    std::string v =
+        std::to_string(epiworld_version_major) + "." +
+        std::to_string(epiworld_version_minor) + "." +
+        std::to_string(epiworld_version_patch);
+
+    if (!epiworld_version_prerelease.empty()) {
+        v += "-";
+        v += epiworld_version_prerelease;
+    }
+
+    return v;
+}
 
 namespace epiworld {
 

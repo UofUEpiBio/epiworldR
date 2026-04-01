@@ -1245,11 +1245,18 @@ inline Model<TSeq> & Model<TSeq>::run(
     // Record the baseline (day 0) and advance to day 1 using the base
     // implementation only. Calling virtual next() from reset() can invoke
     // model-specific logic before derived reset state is fully initialized.
-    Model<TSeq>::next();
+    next();
 
     // Initializing the simulation
     chrono_start();
-    EPIWORLD_RUN((*this))
+
+    // Verifying if the user wants to see the progress bar
+    if (get_verbose())
+    {
+        printf_epiworld("Running the model...\n");
+    }
+
+    for (epiworld_fast_uint niter = 0; niter < get_ndays(); ++niter)
     {
 
         #ifdef EPI_DEBUG

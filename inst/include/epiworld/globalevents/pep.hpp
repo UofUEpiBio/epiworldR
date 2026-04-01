@@ -48,7 +48,7 @@ public:
      * example, if the intervention applies to agents in quarantine, then this
      * should include the states that correspond to quarantine.
      */
-    void configure(
+    InterventionPEP(
         std::string parameter_efficacy,
         std::string parameter_willingness,
         std::vector< int > quarantine_states,
@@ -74,7 +74,7 @@ public:
 };
 
 template<typename TSeq>
-inline void InterventionPEP<TSeq>::configure(
+inline InterventionPEP<TSeq>::InterventionPEP(
     std::string parameter_efficacy,
     std::string parameter_willingness,
     std::vector< int > quarantine_states,
