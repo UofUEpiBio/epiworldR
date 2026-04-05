@@ -184,7 +184,7 @@ inline void InterventionMeaslesPEP<TSeq>::operator()(Model<TSeq> * model, int) {
             agent.get_virus(), *model
         ); 
 
-        if (recovers > 0.5)
+        if (recovers > model->runif())
         {
             agent.rm_virus(*model, next_state);
         }
