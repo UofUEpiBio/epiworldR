@@ -100,7 +100,7 @@ inline void ModelSURV<TSeq>::reset()
 
     days_latent_and_infectious.clear();
     days_latent_and_infectious.resize(
-        2u * Model<TSeq>::size(),
+        2u * this->size(),
         -1.0
     );
 }

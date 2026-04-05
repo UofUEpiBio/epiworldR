@@ -63,12 +63,6 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Tool;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Tools;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Tools_const;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Entity;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>

@@ -1,3 +1,12 @@
+# epiworldR 0.14.99-99 (dev)
+
+* Updates to epiworld C++ 0.15.0.
+
+## Internal changes
+
+* Fixes a bug in how `GlobalEvent`s polymorphism is implemented in the core library.
+
+
 # epiworldR 0.14.0.0
 
 * The way `seed` is passed to `run()` and `run_multiple()` has been modified to ensure comparability with the C++ version. Now, a random seed number is drawn only if seed is not specified.

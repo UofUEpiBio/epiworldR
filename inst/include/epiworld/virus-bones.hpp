@@ -175,13 +175,13 @@ public:
         epiworld_fast_int * init,
         epiworld_fast_int * end,
         epiworld_fast_int * removed = nullptr
-        );
+        ) const;
 
     void get_queue(
         epiworld_fast_int * init,
         epiworld_fast_int * end,
         epiworld_fast_int * removed = nullptr
-        );
+        ) const;
     ///@}
 
     bool operator==(const Virus<TSeq> & other) const;

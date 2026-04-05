@@ -27,7 +27,7 @@ inline void Model<TSeq>::_event_add_virus(Event<TSeq> & a)
 
         // For tool counts, use current state (p->state) not state_prev
         // because state_prev may be stale if multiple changes occurred today
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,
@@ -56,18 +56,11 @@ inline void Model<TSeq>::_event_add_tool(Event<TSeq> & a)
     ToolPtr<TSeq> & t = a.tool;
     
     // Update tool accounting
-    p->n_tools++;
-    size_t n_tools = p->n_tools;
+    p->tools.emplace_back(std::move(t));
+    size_t tool_pos = p->tools.size() - 1u;
 
-    if (n_tools <= p->tools.size())
-        p->tools[n_tools - 1] = std::move(t);
-    else
-        p->tools.emplace_back(std::move(t));
-
-    n_tools--;
-
-    p->tools[n_tools]->set_date(today());
-    p->tools[n_tools]->set_agent(p, n_tools);
+    p->tools[tool_pos]->set_date(today());
+    p->tools[tool_pos]->set_agent(p, tool_pos);
 
     // Change of state needs to be recorded and updated on the
     // tools.
@@ -85,7 +78,7 @@ inline void Model<TSeq>::_event_add_tool(Event<TSeq> & a)
             );
     }
 
-    db.today_tool[p->tools.back()->get_id()][
+    db.today_tool[p->tools[tool_pos]->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
 
@@ -112,7 +105,7 @@ inline void Model<TSeq>::_event_rm_virus(Event<TSeq> & a)
 
         // For tool counts, use current state (p->state) not state_prev
         // because state_prev may be stale if multiple changes occurred today
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,
@@ -120,13 +113,13 @@ inline void Model<TSeq>::_event_rm_virus(Event<TSeq> & a)
             );
     }
 
-    // The counters of the virus only needs to decrease.
-    // We use the previous state of the agent as that was
-    // the state when the virus was added.
+    // The counter of the removed virus must be decremented from the
+    // agent's current state (pre-transition), not state_prev.
+    // state_prev may refer to an earlier same-day state.
     #ifdef EPI_DEBUG
-    db.today_virus.at(v->get_id()).at(p->state_prev)--;
+    db.today_virus.at(v->get_id()).at(p->state)--;
     #else
-    db.today_virus[v->get_id()][p->state_prev]--;
+    db.today_virus[v->get_id()][p->state]--;
     #endif
 
     
@@ -138,16 +131,27 @@ template<typename TSeq>
 inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
 {
 
-    Agent<TSeq> * p   = a.agent;    
-    ToolPtr<TSeq> & t = a.agent->tools[a.tool->pos_in_agent];
+    Agent<TSeq> * p = a.agent;
+    ToolPtr<TSeq> & t = a.tool;
+    bool removed = false;
 
-    if (--p->n_tools > 0)
+    if (t)
     {
-        p->tools[p->n_tools]->pos_in_agent = t->pos_in_agent;
-        std::swap(
-            p->tools[t->pos_in_agent],
-            p->tools[p->n_tools]
-            );
+        // Remove tool(s) by id, following an erase/remove approach.
+        auto new_end = std::remove_if(
+            p->tools.begin(),
+            p->tools.end(),
+            [&t](const ToolPtr<TSeq> & tool_ptr) -> bool
+            {
+                return tool_ptr && (tool_ptr->get_id() == t->get_id());
+            }
+        );
+
+        removed = (new_end != p->tools.end());
+        p->tools.erase(new_end, p->tools.end());
+
+        for (size_t i = 0u; i < p->tools.size(); ++i)
+            p->tools[i]->pos_in_agent = static_cast<int>(i);
     }
 
     // Change of state needs to be recorded and updated on the
@@ -166,14 +170,20 @@ inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
             );
     }
 
-    // Lastly, we increase the daily count of the tool.
-    // Like rm_virus, we use the previous state of the agent
-    // as that was the state when the tool was added.
-    #ifdef EPI_DEBUG
-    db.today_tool.at(t->get_id()).at(p->state_prev)--;
-    #else
-    db.today_tool[t->get_id()][p->state_prev]--;
-    #endif
+    // Like rm_virus, remove the tool count from the agent's current
+    // state (pre-transition). Using state_prev can underflow when
+    // the agent changed state earlier in the day.
+    if (removed)
+    {
+        #ifdef EPI_DEBUG
+        db.today_tool.at(t->get_id()).at(p->state)--;
+        #else
+        db.today_tool[t->get_id()][p->state]--;
+        #endif
+
+        t->agent = nullptr;
+        t->pos_in_agent = -99;
+    }
 
     return;
 
@@ -196,7 +206,7 @@ inline void Model<TSeq>::_event_change_state(Event<TSeq> & a)
                 p->virus->get_id(), p->state, a.new_state
             );
 
-        for (size_t i = 0u; i < p->n_tools; ++i)
+        for (size_t i = 0u; i < p->tools.size(); ++i)
             db.update_tool(
                 p->tools[i]->get_id(),
                 p->state,

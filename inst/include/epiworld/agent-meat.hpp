@@ -18,8 +18,7 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     state_prev(p.state_prev), 
     state_last_changed(p.state_last_changed),
     id(p.id),
-    tools(std::move(p.tools)), /// Needs to be adjusted
-    n_tools(p.n_tools)
+    tools(std::move(p.tools)) /// Needs to be adjusted
 {
 
     state = p.state;
@@ -73,8 +72,7 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
 
     tools.clear();
     tools.reserve(p.get_n_tools());
-    n_tools = p.get_n_tools();
-    for (size_t i = 0u; i < n_tools; ++i)
+    for (size_t i = 0u; i < p.get_n_tools(); ++i)
     {
         tools.emplace_back(std::shared_ptr<Tool<TSeq>>(p.tools[i]->clone_ptr()));
         tools.back()->set_agent(this, i);
@@ -122,10 +120,9 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
         virus = nullptr;
     
     
-    n_tools = other_agent.n_tools;
     tools.clear();
-    tools.reserve(n_tools);
-    for (size_t i = 0u; i < n_tools; ++i)
+    tools.reserve(other_agent.get_n_tools());
+    for (size_t i = 0u; i < other_agent.get_n_tools(); ++i)
     {
         tools.emplace_back(std::shared_ptr<Tool<TSeq>>(other_agent.tools[i]->clone_ptr()));
         tools.back()->set_agent(this, i);
@@ -150,58 +147,21 @@ inline Agent<TSeq>::~Agent()
 template<typename TSeq>
 inline void Agent<TSeq>::add_tool(
     Model<TSeq> & model,
-    ToolPtr<TSeq> & tool,
+    const Tool<TSeq> & tool,
     epiworld_fast_int state_new,
     epiworld_fast_int queue
 ) {
 
-    // Checking the virus exists
-    if (tool->get_id() >= static_cast<int>(model.get_db().get_n_tools()))
-        throw std::range_error("The tool with id: " + std::to_string(tool->get_id()) +
+    // Checking the tool exists
+    if (tool.get_id() >= static_cast<int>(model.get_db().get_n_tools()))
+        throw std::range_error("The tool with id: " + std::to_string(tool.get_id()) +
             " has not been registered. There are only " + std::to_string(model.get_n_tools()) +
             " included in the model.");
 
-    model._add_event(
-        this, nullptr, tool, nullptr, state_new, queue, EventAction::AddTool
-        );
-
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::add_tool(
-    Model<TSeq> & model,
-    const Tool<TSeq> & tool,
-    epiworld_fast_int state_new,
-    epiworld_fast_int queue
-)
-{
     ToolPtr<TSeq> tool_ptr = std::shared_ptr<Tool<TSeq>>(tool.clone_ptr());
-    add_tool(model, tool_ptr, state_new, queue);
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::set_virus(
-    Model<TSeq> & model,
-    VirusPtr<TSeq> & virus,
-    epiworld_fast_int state_new,
-    epiworld_fast_int queue
-)
-{
-
-    // Checking the virus exists
-    if (virus->get_id() >= static_cast<int>(model.get_db().get_n_viruses()))
-        throw std::range_error("The virus with id: " + std::to_string(virus->get_id()) +
-            " has not been registered. There are only " + std::to_string(model.get_n_viruses()) +
-            " included in the model.");
-
-    if (state_new == -99)
-        virus->get_state(&state_new, nullptr, nullptr);
-
-    if (queue == -99)
-        virus->get_queue(&queue, nullptr, nullptr);
 
     model._add_event(
-        this, virus, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        this, nullptr, tool_ptr, nullptr, state_new, queue, EventAction::AddTool
         );
 
 }
@@ -214,8 +174,25 @@ inline void Agent<TSeq>::set_virus(
     epiworld_fast_int queue
 )
 {
+    
+        // Checking the virus exists
+    if (virus.get_id() >= static_cast<int>(model.get_db().get_n_viruses()))
+        throw std::range_error("The virus with id: " + std::to_string(virus.get_id()) +
+            " has not been registered. There are only " + std::to_string(model.get_n_viruses()) +
+            " included in the model.");
+
+    if (state_new == -99)
+        virus.get_state(&state_new, nullptr, nullptr);
+
+    if (queue == -99)
+        virus.get_queue(&queue, nullptr, nullptr);
+
     VirusPtr<TSeq> virus_ptr = std::shared_ptr<Virus<TSeq>>(virus.clone_ptr());
-    set_virus(model, virus_ptr, state_new, queue);
+
+    model._add_event(
+        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        );
+
 }
 
 template<typename TSeq>
@@ -242,10 +219,10 @@ inline void Agent<TSeq>::rm_tool(
 )
 {
 
-    if (tool_idx >= n_tools)
+    if (tool_idx >= tools.size())
         throw std::range_error(
             "The Tool you want to remove is out of range. This Agent only has " +
-            std::to_string(n_tools) + " tools."
+            std::to_string(tools.size()) + " tools."
         );
 
     model._add_event(
@@ -416,13 +393,13 @@ inline const VirusPtr<TSeq> & Agent<TSeq>::get_virus() const {
 
 
 template<typename TSeq>
-inline Tools<TSeq> Agent<TSeq>::get_tools() {
-    return Tools<TSeq>(*this);
+inline std::vector< ToolPtr<TSeq> > Agent<TSeq>::get_tools() {
+    return tools;
 }
 
 template<typename TSeq>
-inline const Tools_const<TSeq> Agent<TSeq>::get_tools() const {
-    return Tools_const<TSeq>(*this);
+inline const std::vector< ToolPtr<TSeq> > Agent<TSeq>::get_tools() const {
+    return tools;
 }
 
 template<typename TSeq>
@@ -432,9 +409,22 @@ inline ToolPtr<TSeq> & Agent<TSeq>::get_tool(int i)
 }
 
 template<typename TSeq>
+inline ToolPtr<TSeq> & Agent<TSeq>::get_tool(std::string name)
+{
+    for (auto & tool : tools)
+        if (tool->get_name() == name)
+            return tool;
+
+    throw std::logic_error(
+        "The agent does not have a tool with name: " + name
+    );
+
+}
+
+template<typename TSeq>
 inline size_t Agent<TSeq>::get_n_tools() const noexcept
 {
-    return n_tools;
+    return tools.size();
 }
 
 template<typename TSeq>
@@ -617,7 +607,6 @@ inline void Agent<TSeq>::reset()
 
     this->tools.clear();
     decltype(this->tools)().swap(this->tools);
-    n_tools = 0u;
 
     this->entities.clear();
     decltype(this->entities)().swap(this->entities);
@@ -642,7 +631,7 @@ inline bool Agent<TSeq>::has_tool(epiworld_fast_uint t) const
 }
 
 template<typename TSeq>
-inline bool Agent<TSeq>::has_tool(std::string name) const
+inline bool Agent<TSeq>::has_tool(std::string_view name) const
 {
 
     for (auto & tool : tools)
@@ -671,7 +660,7 @@ inline bool Agent<TSeq>::has_virus(epiworld_fast_uint t) const
 }
 
 template<typename TSeq>
-inline bool Agent<TSeq>::has_virus(std::string name) const
+inline bool Agent<TSeq>::has_virus(std::string_view name) const
 {
     
     if (virus->get_name() == name)
@@ -702,7 +691,7 @@ inline bool Agent<TSeq>::has_entity(epiworld_fast_uint t) const
 }
 
 template<typename TSeq>
-inline bool Agent<TSeq>::has_entity(std::string name, const Model<TSeq> & model) const
+inline bool Agent<TSeq>::has_entity(std::string_view name, const Model<TSeq> & model) const
 {
 
     for (auto & entity_id : entities)
@@ -728,7 +717,7 @@ inline void Agent<TSeq>::print(
             model.states_labels[state].c_str(),
             static_cast<int>(state),
             virus == nullptr ? std::string("no").c_str() : std::string("yes").c_str(),
-            static_cast<int>(n_tools),
+            static_cast<int>(tools.size()),
             static_cast<int>(n_neighbors)
         );
     }
@@ -740,7 +729,7 @@ inline void Agent<TSeq>::print(
             model.states_labels[state].c_str(), static_cast<int>(state));
         printf_epiworld("  Has virus    : %s\n", virus == nullptr ?
             std::string("no").c_str() : std::string("yes").c_str());
-        printf_epiworld("  Tool count   : %i\n", static_cast<int>(n_tools));
+        printf_epiworld("  Tool count   : %i\n", static_cast<int>(tools.size()));
         printf_epiworld("  Neigh. count : %i\n", static_cast<int>(n_neighbors));
 
         size_t nfeats = model.get_agents_data_ncols();
@@ -912,9 +901,12 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
         )
     }
     
-    EPI_DEBUG_FAIL_AT_TRUE(n_tools != other.n_tools, "Agent:: n_tools don't match")
+    EPI_DEBUG_FAIL_AT_TRUE(
+        tools.size() != other.tools.size(),
+        "Agent:: n_tools don't match"
+    )
 
-    for (size_t i = 0u; i < n_tools; ++i)
+    for (size_t i = 0u; i < tools.size(); ++i)
     {
         
         EPI_DEBUG_FAIL_AT_TRUE(

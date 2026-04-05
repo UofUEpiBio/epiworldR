@@ -13,8 +13,7 @@ inline void DataBase<TSeq>::reset()
 {
 
     // Initializing the counts
-    today_total.resize(model->nstates);
-    std::fill(today_total.begin(), today_total.end(), 0);
+    today_total.assign(model->nstates, 0);
     for (auto & p : model->get_agents())
         ++today_total[p.get_state()];
 
@@ -32,8 +31,7 @@ inline void DataBase<TSeq>::reset()
     #endif
 
     
-    transition_matrix.resize(model->nstates * model->nstates);
-    std::fill(transition_matrix.begin(), transition_matrix.end(), 0);
+    transition_matrix.assign(model->nstates * model->nstates, 0);
     for (size_t s = 0u; s < model->nstates; ++s)
         transition_matrix[s + s * model->nstates] = today_total[s];
 

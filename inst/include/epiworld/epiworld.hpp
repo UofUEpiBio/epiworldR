@@ -28,12 +28,30 @@
 
 /* Versioning */
 #define EPIWORLD_VERSION_MAJOR 0
-#define EPIWORLD_VERSION_MINOR 14
+#define EPIWORLD_VERSION_MINOR 15
 #define EPIWORLD_VERSION_PATCH 0
 
-static const int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
-static const int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
-static const int epiworld_version_patch = EPIWORLD_VERSION_PATCH;
+#define EPIWORLD_VERSION_PRERELEASE "dev"
+
+static constexpr int epiworld_version_major = EPIWORLD_VERSION_MAJOR;
+static constexpr int epiworld_version_minor = EPIWORLD_VERSION_MINOR;
+static constexpr int epiworld_version_patch = EPIWORLD_VERSION_PATCH;
+static constexpr std::string_view epiworld_version_prerelease =
+    EPIWORLD_VERSION_PRERELEASE;
+
+inline std::string epiworld_version() {
+    std::string v =
+        std::to_string(epiworld_version_major) + "." +
+        std::to_string(epiworld_version_minor) + "." +
+        std::to_string(epiworld_version_patch);
+
+    if (!epiworld_version_prerelease.empty()) {
+        v += "-";
+        v += epiworld_version_prerelease;
+    }
+
+    return v;
+}
 
 namespace epiworld {
 
@@ -72,6 +90,7 @@ namespace epiworld {
     #include "globalevent-meat.hpp"
 
     #include "model-bones.hpp"
+    #include "model-rand-meat.hpp"
     #include "model-meat.hpp"
 
     #include "viruses-bones.hpp"
@@ -80,7 +99,7 @@ namespace epiworld {
     #include "virus-distribute-meat.hpp"
     #include "virus-meat.hpp"
     
-    #include "tools-bones.hpp"
+    // #include "tools-bones.hpp"
 
     #include "tool-bones.hpp"
     #include "tool-distribute-meat.hpp"
@@ -98,6 +117,7 @@ namespace epiworld {
     #include "agentssample-bones.hpp"
 
     #include "contacttracing-bones.hpp"
+    #include "contacttracing-meat.hpp"
     
     #include "tools/vaccine.hpp"
     #include "models/models.hpp"

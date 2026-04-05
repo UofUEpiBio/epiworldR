@@ -703,7 +703,7 @@ inline void Virus<TSeq>::get_state(
     epiworld_fast_int * init,
     epiworld_fast_int * end,
     epiworld_fast_int * removed
-)
+) const
 {
 
     if (init != nullptr)
@@ -722,7 +722,7 @@ inline void Virus<TSeq>::get_queue(
     epiworld_fast_int * init,
     epiworld_fast_int * end,
     epiworld_fast_int * removed
-)
+) const
 {
 
     if (init != nullptr)

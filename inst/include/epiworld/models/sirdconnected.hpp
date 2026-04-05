@@ -107,19 +107,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
             for (int i = 0; i < ndraw; ++i)
             {
                 // Now selecting who is transmitting the disease
-                int which = static_cast<int>(
-                    std::floor(m->size() * m->runif())
-                );
-
-                /* There is a bug in which runif() returns 1.0. It is rare, but
-                 * we saw it here. See the Notes section in the C++ manual
-                 * https://en.cppreference.com/mwiki/index.php?title=cpp/numeric/random/uniform_real_distribution&oldid=133329
-                 * And the reported bug in GCC:
-                 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63176
-                 * 
-                 */
-                if (which == static_cast<int>(m->size()))
-                    --which;
+                int which = m->runif_int(0, static_cast<int>(m->size()) - 1);
 
                 // Can't sample itself
                 if (which == static_cast<int>(p->get_id()))

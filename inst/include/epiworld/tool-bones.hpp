@@ -22,7 +22,7 @@ template<typename TSeq>
 class Tool {
     friend class Agent<TSeq>;
     friend class Model<TSeq>;
-private:
+protected:
 
     Agent<TSeq> * agent = nullptr;
     int pos_in_agent        = -99; ///< Location in the agent
@@ -101,7 +101,7 @@ public:
     ///@}
 
     void set_name(std::string name);
-    std::string get_name() const;
+    virtual std::string get_name() const;
 
     Agent<TSeq> * get_agent();
     int get_id() const;
