@@ -5,7 +5,6 @@
 #include <cassert>
 #include "../tools/vaccine.hpp"
 #include "../model-bones.hpp"
-#include "../globalevents/pep.hpp"
 
 #define LOCAL_UPDATE_FUN(name) \
     template<typename TSeq> \
@@ -28,11 +27,6 @@
  * isolation_period days.
  * 
  * ![Model Diagram](../assets/img/measlesschool.png)
- * 
- * In the case of post-exposure prophylaxis (PEP), agents who are quarantined
- * and exposed or susceptible can receive PEP with a certain willingness and
- * efficacy. If they receive PEP, then they have a probability of moving to the
- * recovered state, which is a function of the PEP efficacy.
  * 
  * 
  * @ingroup disease_specific
@@ -125,10 +119,7 @@ public:
         epiworld_double prop_vaccinated,
         epiworld_fast_int quarantine_period,
         epiworld_double quarantine_willingness,
-        epiworld_fast_int isolation_period,
-        // Policy parameters 2
-        epiworld_double pep_efficacy = 0.0,
-        epiworld_double pep_willingness = 0.0
+        epiworld_fast_int isolation_period
     );
     ///@}
 
@@ -179,7 +170,6 @@ inline void ModelMeaslesSchool<TSeq>::_quarantine_agents(Model<TSeq> * m) {
         // If the agent has a vaccine, then no need for quarantine
         if (agent.get_n_tools() != 0u)
             continue;
-
 
         // Quarantine will depend on the willingness of the agent
         // to be quarantined. If negative, then quarantine never happens.
@@ -233,7 +223,7 @@ inline void ModelMeaslesSchool<TSeq>::_update_infectious() {
     // All agents with state >= EXPOSED should have a virus
     for (auto & agent: this->get_agents())
     {
-        auto s = agent.get_state();
+        int s = static_cast<int>(agent.get_state());
         static const std::vector< int > states_with_virus = {
             EXPOSED, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED,
             QUARANTINED_EXPOSED, QUARANTINED_PRODROMAL, HOSPITALIZED
@@ -368,8 +358,6 @@ LOCAL_UPDATE_FUN(_update_susceptible) {
 
 LOCAL_UPDATE_FUN(_update_exposed) {
 
-    // if (InterventionPEP<TSeq>::agent_recovers(*p, *m, RECOVERED))
-    //     return;
 
     if (m->runif() < (1.0/p->get_virus()->get_incubation(m)))
         p->change_state(*m, ModelMeaslesSchool<TSeq>::PRODROMAL);
@@ -515,17 +503,6 @@ LOCAL_UPDATE_FUN(_update_isolated_recovered) {
 
 LOCAL_UPDATE_FUN(_update_q_exposed) {
 
-    #ifdef EPI_DEBUG
-    if (m->par("PEP willingness") >= 0.999999999)
-    {
-        throw std::logic_error(
-            std::string("This shouldn't happen. ") +
-            std::string("When PEP willingness is 1, then no agent should be ") +
-            std::string("in QUARANTINED_EXPOSED state.")
-        );
-    }
-    #endif
-
     // How many days since quarantine started
     auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
     int days_since =
@@ -632,9 +609,7 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     epiworld_double prop_vaccinated,
     epiworld_fast_int quarantine_period,
     epiworld_double quarantine_willingness,
-    epiworld_fast_int isolation_period,
-    epiworld_double pep_efficacy,
-    epiworld_double pep_willingness
+    epiworld_fast_int isolation_period
 ) {
 
     this->add_state("Susceptible",             this->_update_susceptible);
@@ -666,8 +641,6 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     this->add_param(prop_vaccinated, "Vaccination rate");
     this->add_param(vax_efficacy, "Vax efficacy");
     this->add_param(vax_reduction_recovery_rate, "(IGNORED) Vax improved recovery");
-    this->add_param(pep_efficacy, "PEP efficacy");
-    this->add_param(pep_willingness, "PEP willingness");
 
     // Designing the disease
     Virus<> measles("Measles");
@@ -695,19 +668,6 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
         this->_quarantine_agents, "Quarantine process"
     );
     this->add_globalevent(quarantine_event);
-
-    // Creating the PEP intervention and 
-    // setting it up so we can call it as a global event.
-    InterventionPEP<TSeq> pep(
-        "PEP efficacy",
-        "PEP willingness",
-        {QUARANTINED_EXPOSED, QUARANTINED_SUSCEPTIBLE},
-        {RECOVERED, SUSCEPTIBLE}
-    );
-
-    pep.set_name("PEP intervention");
-
-    this->add_globalevent(pep);
 
     // Setting the population
     this->agents_empty_graph(n);

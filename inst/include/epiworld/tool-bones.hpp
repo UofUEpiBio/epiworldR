@@ -22,7 +22,7 @@ template<typename TSeq>
 class Tool {
     friend class Agent<TSeq>;
     friend class Model<TSeq>;
-private:
+protected:
 
     Agent<TSeq> * agent = nullptr;
     int pos_in_agent        = -99; ///< Location in the agent

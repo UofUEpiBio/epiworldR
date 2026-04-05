@@ -99,7 +99,7 @@ namespace epiworld {
     #include "virus-distribute-meat.hpp"
     #include "virus-meat.hpp"
     
-    #include "tools-bones.hpp"
+    // #include "tools-bones.hpp"
 
     #include "tool-bones.hpp"
     #include "tool-distribute-meat.hpp"

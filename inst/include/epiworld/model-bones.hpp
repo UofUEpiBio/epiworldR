@@ -694,12 +694,12 @@ public:
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
     Virus<TSeq> & get_virus(size_t id);
-    Virus<TSeq> & get_virus(std::string name);
+    Virus<TSeq> & get_virus(std::string_view name);
     Tool<TSeq> & get_tool(size_t id);
-    Tool<TSeq> & get_tool(std::string name);
+    Tool<TSeq> & get_tool(std::string_view name);
 
-    bool has_virus(std::string name) const;
-    bool has_tool(std::string name) const;
+    bool has_virus(std::string_view name) const;
+    bool has_tool(std::string_view name) const;
 
     /**
      * @brief Set the agents data object

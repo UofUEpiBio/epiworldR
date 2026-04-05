@@ -261,8 +261,8 @@ cpp11::writable::list get_agents_tools_cpp(SEXP model) {
 
   for (auto & agent : ptr->get_agents())
     tools.push_back(
-      cpp11::external_pointer< Tools<> >(
-          new Tools<>(agent.get_tools())
+      cpp11::external_pointer< std::vector<ToolPtr<>> >(
+          new std::vector<ToolPtr<>>(agent.get_tools())
       )
     );
 
@@ -272,8 +272,11 @@ cpp11::writable::list get_agents_tools_cpp(SEXP model) {
 
 [[cpp11::register]]
 SEXP print_agent_tools_cpp(SEXP tools) {
-  external_pointer<Tools<>> vptr(tools);
-  vptr->print();
+  external_pointer<std::vector<ToolPtr<>> > vptr(tools);
+
+  for (auto & tool : *vptr)
+     tool->print();
+
   return tools;
 }
 
