@@ -29,9 +29,10 @@ private:
     // Willingness of the agents to receive PEP
     std::vector< bool > _willing_to_receive_pep;
 
-    // Quarantine states to which the intervention applies
-    std::vector< int > _quarantine_states;
-    std::vector< int > _quarantine_states_for_pep;
+    // Target states to which the intervention applies
+    std::vector< int > _target_states;
+    std::vector< int > _states_if_pep_effective;
+    std::vector< int > _states_if_pep_ineffective;
 
     // Id of the model
     int model_id = -1;
@@ -49,8 +50,9 @@ private:
 
     // List of agents that will receive PEP
     // This is used to avoid iterating over the agents twice.
-    std::vector< size_t > _agents_to_receive_pep;
-    std::vector< int > _agents_to_receive_pep_next_state;
+    std::vector< size_t > _to_receive_pep;
+    std::vector< int > _next_if_effective;
+    std::vector< int > _next_if_ineffective;
 
 public:
 
@@ -60,7 +62,7 @@ public:
      * and 1.
      * @param par_pep_willingness The willingness of the agents to receive
      * PEP. Must be between 0 and 1.
-     * @param quarantine_states The states to which the intervention applies. For
+     * @param target_states The states to which the intervention applies. For
      * example, if the intervention applies to agents in quarantine, then this
      * should include the states that correspond to quarantine.
      * @param quarantine_states_for_pep The states to which the agents will be
@@ -78,8 +80,9 @@ public:
         epiworld_double ig_half_life_sd,
         epiworld_double pep_willingness,
         epiworld_double mmr_window,
-        std::vector< int > quarantine_states,
-        std::vector< int > quarantine_states_for_pep
+        std::vector< int > target_states,
+        std::vector< int > states_if_pep_effective,
+        std::vector< int > states_if_pep_ineffective
     );
 
     /**
