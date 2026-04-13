@@ -58,6 +58,8 @@ namespace epiworld {
     #include "config.hpp"
     #include "epiworld-macros.hpp"
 
+    #include "epiassert-bones.hpp"
+
     #include "misc.hpp"
     #include "progress.hpp"
 
