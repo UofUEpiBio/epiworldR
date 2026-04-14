@@ -694,6 +694,21 @@ inline void Model<TSeq>::agents_empty_graph(
 }
 
 template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::agents_sbm(
+    const std::vector< size_t > & block_sizes,
+    const std::vector< double > & mixing_matrix,
+    bool row_major
+)
+{
+
+    agents_from_adjlist(
+        rgraph_sbm(block_sizes, mixing_matrix, row_major, *this)
+    );
+
+    return *this;
+}
+
+template<typename TSeq>
 inline epiworld_double Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())

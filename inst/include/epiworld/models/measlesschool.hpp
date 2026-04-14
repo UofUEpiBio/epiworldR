@@ -18,7 +18,7 @@
  * @details
  * This model can be described as a SEIHR model with isolation and quarantine.
  * The infectious state is divided into prodromal and rash phases. Furthermore,
- * the quarantine state includes latent, susceptible, prodromal, and recovered
+ * the quarantine state includes exposed, susceptible, prodromal, and recovered
  * states.
  *
  * The quarantine process is triggered any time that an agent with rash is
@@ -41,12 +41,12 @@ private:
      */
     ///@{
     static void _update_susceptible(Agent<TSeq> * p, Model<TSeq> * m);
-    static void _update_latent(Agent<TSeq> * p, Model<TSeq> * m);
+    static void _update_exposed(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_prodromal(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_rash(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_isolated(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_isolated_recovered(Agent<TSeq> * p, Model<TSeq> * m);
-    static void _update_q_latent(Agent<TSeq> * p, Model<TSeq> * m);
+    static void _update_q_exposed(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_q_susceptible(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_q_prodromal(Agent<TSeq> * p, Model<TSeq> * m);
     static void _update_q_recovered(Agent<TSeq> * p, Model<TSeq> * m);
@@ -66,7 +66,7 @@ private:
      *
      * - Vaccinated agents are ignored.
      *
-     * - Susceptible, Latent, and Prodromal agents are moved to the
+     * - Susceptible, Exposed, and Prodromal agents are moved to the
      *   QUARANTINED_* state.
      *
      * - At the end of the function, the quarantine status is set false.
@@ -84,13 +84,13 @@ public:
      */
     ///@{
     static constexpr epiworld_fast_uint SUSCEPTIBLE             = 0u;
-    static constexpr epiworld_fast_uint LATENT                  = 1u;
+    static constexpr epiworld_fast_uint EXPOSED                 = 1u;
     static constexpr epiworld_fast_uint PRODROMAL               = 2u;
     static constexpr epiworld_fast_uint RASH                    = 3u;
     static constexpr epiworld_fast_uint ISOLATED                = 4u;
     static constexpr epiworld_fast_uint ISOLATED_RECOVERED      = 5u;
     static constexpr epiworld_fast_uint DETECTED_HOSPITALIZED   = 6u;
-    static constexpr epiworld_fast_uint QUARANTINED_LATENT      = 7u;
+    static constexpr epiworld_fast_uint QUARANTINED_EXPOSED     = 7u;
     static constexpr epiworld_fast_uint QUARANTINED_SUSCEPTIBLE = 8u;
     static constexpr epiworld_fast_uint QUARANTINED_PRODROMAL   = 9u;
     static constexpr epiworld_fast_uint QUARANTINED_RECOVERED   = 10u;
@@ -103,7 +103,7 @@ public:
 
     ModelMeaslesSchool(
         epiworld_fast_uint n,
-        epiworld_fast_uint n_latent,
+        epiworld_fast_uint n_exposed,
         // Disease parameters
         epiworld_double contact_rate,
         epiworld_double transmission_rate,
@@ -181,8 +181,8 @@ inline void ModelMeaslesSchool<TSeq>::_quarantine_agents(Model<TSeq> * m) {
 
             if (agent_state == SUSCEPTIBLE)
                 agent.change_state(*model, QUARANTINED_SUSCEPTIBLE);
-            else if (agent_state == LATENT)
-                agent.change_state(*model, QUARANTINED_LATENT);
+            else if (agent_state == EXPOSED)
+                agent.change_state(*model, QUARANTINED_EXPOSED);
             else if (agent_state == PRODROMAL)
                 agent.change_state(*model, QUARANTINED_PRODROMAL);
 
@@ -220,13 +220,13 @@ template<typename TSeq>
 inline void ModelMeaslesSchool<TSeq>::_update_infectious() {
 
     #ifdef EPI_DEBUG
-    // All agents with state >= LATENT should have a virus
+    // All agents with state >= EXPOSED should have a virus
     for (auto & agent: this->get_agents())
     {
         int s = static_cast<int>(agent.get_state());
         static const std::vector< int > states_with_virus = {
-            LATENT, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED,
-            QUARANTINED_LATENT, QUARANTINED_PRODROMAL, HOSPITALIZED
+            EXPOSED, PRODROMAL, RASH, ISOLATED, DETECTED_HOSPITALIZED,
+            QUARANTINED_EXPOSED, QUARANTINED_PRODROMAL, HOSPITALIZED
         };
 
         if (IN(s, states_with_virus))
@@ -356,7 +356,7 @@ LOCAL_UPDATE_FUN(_update_susceptible) {
 
 };
 
-LOCAL_UPDATE_FUN(_update_latent) {
+LOCAL_UPDATE_FUN(_update_exposed) {
 
 
     if (m->runif() < (1.0/p->get_virus()->get_incubation(m)))
@@ -501,7 +501,7 @@ LOCAL_UPDATE_FUN(_update_isolated_recovered) {
 
 }
 
-LOCAL_UPDATE_FUN(_update_q_latent) {
+LOCAL_UPDATE_FUN(_update_q_exposed) {
 
     // How many days since quarantine started
     auto* model = model_cast<ModelMeaslesSchool<TSeq>,TSeq>(m);
@@ -524,7 +524,7 @@ LOCAL_UPDATE_FUN(_update_q_latent) {
     else if (unquarantine)
     {
         p->change_state(*m, 
-            LATENT
+            EXPOSED
         );
     }
 
@@ -593,7 +593,7 @@ LOCAL_UPDATE_FUN(_update_hospitalized) {
 template<typename TSeq>
 inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     epiworld_fast_uint n,
-    epiworld_fast_uint n_latent,
+    epiworld_fast_uint n_exposed,
     // Disease parameters
     epiworld_double contact_rate,
     epiworld_double transmission_rate,
@@ -617,7 +617,7 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     auto max_double = std::numeric_limits< double >::max();
     auto max_int = std::numeric_limits< int >::max();
     EpiAssert::check_bounds(n, static_cast<size_t>(1), max_uint, "n", "ModelMeaslesSchool");
-    EpiAssert::check_bounds(n_latent, static_cast<size_t>(0), static_cast<size_t>(n), "n_latent", "ModelMeaslesSchool");
+    EpiAssert::check_bounds(n_exposed, static_cast<size_t>(0), static_cast<size_t>(n), "n_exposed", "ModelMeaslesSchool");
     EpiAssert::check_bounds(contact_rate, 0.0, max_double, "contact_rate", "ModelMeaslesSchool");
     EpiAssert::check_bounds(transmission_rate, 0.0, 1.0, "transmission_rate", "ModelMeaslesSchool");
     EpiAssert::check_bounds(vax_efficacy, 0.0, 1.0, "vax_efficacy", "ModelMeaslesSchool");
@@ -634,13 +634,13 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
     EpiAssert::check_bounds(isolation_period, -1, max_int, "isolation_period", "ModelMeaslesSchool");
 
     this->add_state("Susceptible",             this->_update_susceptible);
-    this->add_state("Latent",                  this->_update_latent);
+    this->add_state("Exposed",                 this->_update_exposed);
     this->add_state("Prodromal",               this->_update_prodromal);
     this->add_state("Rash",                    this->_update_rash);
     this->add_state("Isolated",                this->_update_isolated);
     this->add_state("Isolated Recovered",      this->_update_isolated_recovered);
     this->add_state("Detected Hospitalized",   this->_update_hospitalized);
-    this->add_state("Quarantined Latent",      this->_update_q_latent);
+    this->add_state("Quarantined Exposed",     this->_update_q_exposed);
     this->add_state("Quarantined Susceptible", this->_update_q_susceptible);
     this->add_state("Quarantined Prodromal",   this->_update_q_prodromal);
     this->add_state("Quarantined Recovered",   this->_update_q_recovered);
@@ -665,12 +665,12 @@ inline ModelMeaslesSchool<TSeq>::ModelMeaslesSchool(
 
     // Designing the disease
     Virus<> measles("Measles");
-    measles.set_state(LATENT, RECOVERED);
+    measles.set_state(EXPOSED, RECOVERED);
     measles.set_prob_infecting("Transmission rate");
     measles.set_prob_recovery("Rash period");
     measles.set_incubation("Incubation period");
     measles.set_distribution(
-        distribute_virus_randomly(n_latent, false)
+        distribute_virus_randomly(n_exposed, false)
     );
 
     this->add_virus(measles);

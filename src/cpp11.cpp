@@ -681,20 +681,6 @@ extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
   END_CPP11
 }
 // model.cpp
-SEXP agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, double p);
-extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(agents_smallworld_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
-  END_CPP11
-}
-// model.cpp
-SEXP agents_from_edgelist_cpp(SEXP m, const std::vector<int> & source, const std::vector<int> & target, int size, bool directed);
-extern "C" SEXP _epiworldR_agents_from_edgelist_cpp(SEXP m, SEXP source, SEXP target, SEXP size, SEXP directed) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(agents_from_edgelist_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(source), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(target), cpp11::as_cpp<cpp11::decay_t<int>>(size), cpp11::as_cpp<cpp11::decay_t<bool>>(directed)));
-  END_CPP11
-}
-// model.cpp
 SEXP run_cpp(SEXP m, int ndays, int seed);
 extern "C" SEXP _epiworldR_run_cpp(SEXP m, SEXP ndays, SEXP seed) {
   BEGIN_CPP11
@@ -856,13 +842,6 @@ extern "C" SEXP _epiworldR_get_tool_model_cpp(SEXP model, SEXP tool_pos) {
   END_CPP11
 }
 // model.cpp
-cpp11::data_frame get_network_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_network_cpp(SEXP model) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(get_network_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
-  END_CPP11
-}
-// model.cpp
 SEXP initial_states_cpp(SEXP model, cpp11::doubles proportions);
 extern "C" SEXP _epiworldR_initial_states_cpp(SEXP model, SEXP proportions) {
   BEGIN_CPP11
@@ -882,6 +861,34 @@ extern "C" SEXP _epiworldR_draw_mermaid_cpp(SEXP model, SEXP fn_output, SEXP sel
   BEGIN_CPP11
     draw_mermaid_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(fn_output), cpp11::as_cpp<cpp11::decay_t<bool>>(self));
     return R_NilValue;
+  END_CPP11
+}
+// network.cpp
+SEXP agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, double p);
+extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_smallworld_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(k), cpp11::as_cpp<cpp11::decay_t<bool>>(d), cpp11::as_cpp<cpp11::decay_t<double>>(p)));
+  END_CPP11
+}
+// network.cpp
+SEXP agents_sbm_cpp(SEXP m, const std::vector<int> & block_sizes, const std::vector<double> & mixing_matrix, bool row_major);
+extern "C" SEXP _epiworldR_agents_sbm_cpp(SEXP m, SEXP block_sizes, SEXP mixing_matrix, SEXP row_major) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_sbm_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(block_sizes), cpp11::as_cpp<cpp11::decay_t<const std::vector<double> &>>(mixing_matrix), cpp11::as_cpp<cpp11::decay_t<bool>>(row_major)));
+  END_CPP11
+}
+// network.cpp
+SEXP agents_from_edgelist_cpp(SEXP m, const std::vector<int> & source, const std::vector<int> & target, int size, bool directed);
+extern "C" SEXP _epiworldR_agents_from_edgelist_cpp(SEXP m, SEXP source, SEXP target, SEXP size, SEXP directed) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(agents_from_edgelist_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(m), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(source), cpp11::as_cpp<cpp11::decay_t<const std::vector<int> &>>(target), cpp11::as_cpp<cpp11::decay_t<int>>(size), cpp11::as_cpp<cpp11::decay_t<bool>>(directed)));
+  END_CPP11
+}
+// network.cpp
+cpp11::data_frame get_network_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_network_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_network_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // tool.cpp
@@ -1255,6 +1262,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         2},
     {"_epiworldR_agents_from_edgelist_cpp",             (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,              5},
+    {"_epiworldR_agents_sbm_cpp",                       (DL_FUNC) &_epiworldR_agents_sbm_cpp,                        4},
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},

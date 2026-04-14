@@ -418,6 +418,26 @@ public:
         epiworld_double p = .01
         );
     void agents_empty_graph(epiworld_fast_uint n = 1000);
+
+    /**
+     * @brief Initialize agents using a Stochastic Block Model (SBM).
+     *
+     * Creates agents and connects them according to an SBM defined by
+     * `block_sizes` and `mixing_matrix`.
+     *
+     * @param block_sizes Number of agents per block.
+     * @param mixing_matrix Mixing matrix of size K*K; row sums give average
+     *   expected degree per group.
+     * @param row_major If `true`, matrix is row-major; otherwise column-major.
+     * @return Reference to this Model.
+     *
+     * @see rgraph_sbm
+     */
+    Model<TSeq> & agents_sbm(
+        const std::vector< size_t > & block_sizes,
+        const std::vector< double > & mixing_matrix,
+        bool row_major = true
+        );
     ///@}
 
     /**

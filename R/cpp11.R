@@ -384,14 +384,6 @@ print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
 
-agents_smallworld_cpp <- function(m, n, k, d, p) {
-  .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
-}
-
-agents_from_edgelist_cpp <- function(m, source, target, size, directed) {
-  .Call(`_epiworldR_agents_from_edgelist_cpp`, m, source, target, size, directed)
-}
-
 run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
@@ -484,10 +476,6 @@ get_tool_model_cpp <- function(model, tool_pos) {
   .Call(`_epiworldR_get_tool_model_cpp`, model, tool_pos)
 }
 
-get_network_cpp <- function(model) {
-  .Call(`_epiworldR_get_network_cpp`, model)
-}
-
 initial_states_cpp <- function(model, proportions) {
   .Call(`_epiworldR_initial_states_cpp`, model, proportions)
 }
@@ -498,6 +486,22 @@ clone_model_cpp <- function(model) {
 
 draw_mermaid_cpp <- function(model, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
+}
+
+agents_smallworld_cpp <- function(m, n, k, d, p) {
+  .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
+}
+
+agents_sbm_cpp <- function(m, block_sizes, mixing_matrix, row_major) {
+  .Call(`_epiworldR_agents_sbm_cpp`, m, block_sizes, mixing_matrix, row_major)
+}
+
+agents_from_edgelist_cpp <- function(m, source, target, size, directed) {
+  .Call(`_epiworldR_agents_from_edgelist_cpp`, m, source, target, size, directed)
+}
+
+get_network_cpp <- function(model) {
+  .Call(`_epiworldR_get_network_cpp`, model)
 }
 
 tool_cpp <- function(name, prevalence, as_proportion, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

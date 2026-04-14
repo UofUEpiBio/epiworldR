@@ -16,39 +16,6 @@ SEXP print_cpp(SEXP m, bool lite) {
 }
 
 [[cpp11::register]]
-SEXP agents_smallworld_cpp(
-    SEXP m,
-    unsigned int n = 1000,
-    unsigned int k = 5,
-    bool d = false,
-    double p = .01
-
-) {
-
-  external_pointer<Model<>> ptr(m);
-  ptr->agents_smallworld(n, k, d, p);
-
-  return m;
-
-}
-
-[[cpp11::register]]
-SEXP agents_from_edgelist_cpp(
-  SEXP m,
-  const std::vector<int> & source,
-  const std::vector<int> & target,
-  int size,
-  bool directed
-) {
-
-  external_pointer<Model<>> ptr(m);
-  ptr->agents_from_edgelist(source, target, size, directed);
-
-  return m;
-
-}
-
-[[cpp11::register]]
 SEXP run_cpp(SEXP m, int ndays, int seed) {
 
   external_pointer<Model<>> ptr(m);
@@ -306,23 +273,6 @@ SEXP get_tool_model_cpp(SEXP model, int tool_pos) {
   );
 
   return res;
-
-}
-
-[[cpp11::register]]
-cpp11::data_frame get_network_cpp(SEXP model) {
-
-  external_pointer<Model<>> modelptr(model);
-
-  std::vector<int> from;
-  std::vector<int> to;
-
-  modelptr->write_edgelist(from, to);
-
-  return cpp11::writable::data_frame({
-    "from"_nm = from,
-    "to"_nm   = to
-  });
 
 }
 
