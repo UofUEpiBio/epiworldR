@@ -2,6 +2,13 @@
 
 * Updates to epiworld C++ 0.15.0.
 
+## User-visible changes
+
+* The `ModelSEIRMixingQuarantine` now features a single hospitalization state instead of two. The model now assumes that hospitalized individuals are detected immediately and trigger the quarantine process.
+
+* The package now includes the function `agents_sbm()`, which implements the Stochastic-Block Model by Batahelj and Brandes (2005).
+
+
 ## Internal changes
 
 * Fixes a bug in how `GlobalEvent`s polymorphism is implemented in the core library.

@@ -58,16 +58,18 @@ public:
      * @return size_t Number of contacts recorded for that agent (can be more than max_contacts)
      */
     size_t get_n_contacts(size_t agent); 
+
+    size_t get_max_contacts() const;
     
     /**
      * @brief Get the contact object
      * 
      * @param agent Source agent (id)
      * @param idx Index of the contact (0 to get_n_contacts(agent)-1)
-     * @return std::pair<size_t, size_t> with (contact_id, contact_day)
+     * @return std::pair<size_t, int> with (contact_id, contact_day)
      * @throws std::out_of_range if idx is out of range.
      */
-    std::pair<size_t, size_t> get_contact(size_t agent, size_t idx);
+    std::pair<size_t, int> get_contact(size_t agent, size_t idx);
 
     /**
      * @brief Reset the contact tracing data

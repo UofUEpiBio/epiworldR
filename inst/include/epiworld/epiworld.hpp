@@ -88,6 +88,9 @@ namespace epiworld {
 
     #include "queue-bones.hpp"
 
+    #include "contacttracing-bones.hpp"
+    #include "contacttracing-meat.hpp"
+
     #include "globalevent-bones.hpp"
     #include "globalevent-meat.hpp"
 
@@ -118,9 +121,6 @@ namespace epiworld {
 
     #include "agentssample-bones.hpp"
 
-    #include "contacttracing-bones.hpp"
-    #include "contacttracing-meat.hpp"
-    
     #include "tools/vaccine.hpp"
     #include "models/models.hpp"
 

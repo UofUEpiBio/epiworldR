@@ -15,6 +15,7 @@
 #include "database-bones.hpp"
 #include "queue-bones.hpp"
 #include "globalevent-bones.hpp"
+#include "contacttracing-bones.hpp"
 
 template<typename TSeq>
 class AgentsSample;
@@ -167,6 +168,10 @@ protected:
     bool use_queuing   = true;
     size_t sim_id = 0u;
     void set_sim_id(size_t id);
+
+    std::unique_ptr<ContactTracing> contact_tracing;
+    bool use_contact_tracing = false;
+    size_t contact_tracing_max_contacts = EPI_MAX_TRACKING;
 
     /**
      * @brief Variables used to keep track of the events
@@ -709,6 +714,23 @@ public:
     Model<TSeq> & queuing_off(); ///< Deactivates the queuing system.
     bool is_queuing_on() const; ///< Query if the queuing system is on.
     Queue<TSeq> & get_queue(); ///< Retrieve the `Queue` object.
+    ///@}
+
+    /**
+     * @name Contact tracing
+     * @details When contact tracing is on, the model will track contacts
+     * between agents. Users must actively record contacts in their update
+     * functions by calling `get_contact_tracing().add_contact(...)`.
+     * Contact tracing is off by default.
+     *
+     * @param max_contacts Maximum number of contacts to track per agent
+     * (default: EPI_MAX_TRACKING). Only used when turning tracing on.
+     */
+    ///@{
+    Model<TSeq> & contact_tracing_on(size_t max_contacts = EPI_MAX_TRACKING); ///< Activates contact tracing.
+    Model<TSeq> & contact_tracing_off(); ///< Deactivates contact tracing.
+    bool is_contact_tracing_on() const; ///< Query if contact tracing is on.
+    ContactTracing & get_contact_tracing(); ///< Retrieve the `ContactTracing` object.
     ///@}
 
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;

@@ -1,4 +1,8 @@
 #' Network models in epiworld
+#' @references
+#' Batagelj, V., & Brandes, U. (2005). Efficient generation of large random
+#' networks. *Physical Review E*, 71(3), 036113.
+#' \doi{10.1103/PhysRevE.71.036113}
 #' @name network-models
 NULL
 
@@ -9,6 +13,7 @@ NULL
 #' - The function `agents_sbm` generates an stochastic block model (SBM) network.
 #' @rdname network-models
 #' @export
+#'
 agents_sbm <- function(model, block_sizes, mixing_matrix) UseMethod("agents_sbm")
 
 #' @rdname network-models

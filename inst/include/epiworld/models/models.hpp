@@ -125,6 +125,7 @@ namespace epimodels {
     #include "sirmixing.hpp"
     #include "measlesschool.hpp"
     #include "seirmixingquarantine.hpp"
+    #include "seirnetworkquarantine.hpp"
     #include "measlesmixing.hpp"
     #include "measlesmixingriskquarantine.hpp"
 

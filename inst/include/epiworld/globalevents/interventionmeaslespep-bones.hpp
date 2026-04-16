@@ -10,24 +10,29 @@ class InterventionMeaslesPEP final : public GlobalEvent<TSeq> {
 
 private:
 
-    static inline const std::string _par_willingness{"PEP willingness"};
+    static inline const std::string _par_mmr_willingness{"PEP MMR willingness"};
+    static inline const std::string _par_ig_willingness{"PEP IG willingness"};
     static inline const std::string _par_mmr_efficacy{"PEP MMR efficacy"};
     static inline const std::string _par_ig_efficacy{"PEP IG efficacy"};
     static inline const std::string _par_pep_mmr_window{"PEP MMR window"};
+    static inline const std::string _par_pep_ig_window{"PEP IG window"};
     static inline const std::string _par_half_life_mean{"PEP IG half-life (mean)"};
     static inline const std::string _par_half_life_sd{"PEP IG half-life (sd)"};
 
 
     // Willigness and efficacy of the PEP
-    epiworld_double _willingness;
+    epiworld_double _mmr_willingness;
+    epiworld_double _ig_willingness;
     epiworld_double _mmr_efficacy;
     epiworld_double _ig_efficacy;
     epiworld_double _ig_half_life_mean;
     epiworld_double _ig_half_life_sd;
     epiworld_double _pep_mmr_window;
+    epiworld_double _pep_ig_window;
 
-    // Willingness of the agents to receive PEP
-    std::vector< bool > _willing_to_receive_pep;
+    // Willingness of the agents to receive MMR and IG as PEP
+    std::vector< bool > _willing_to_receive_mmr;
+    std::vector< bool > _willing_to_receive_ig;
 
     // Target states to which the intervention applies
     std::vector< int > _target_states;
@@ -78,8 +83,10 @@ public:
         epiworld_double ig_efficacy,
         epiworld_double ig_half_life_mean,
         epiworld_double ig_half_life_sd,
-        epiworld_double pep_willingness,
+        epiworld_double mmr_willingness,
+        epiworld_double ig_willingness,
         epiworld_double mmr_window,
+        epiworld_double ig_window,
         std::vector< int > target_states,
         std::vector< int > states_if_pep_effective,
         std::vector< int > states_if_pep_ineffective

@@ -590,13 +590,18 @@ inline void Agent<TSeq>::change_state(
 }
 
 template<typename TSeq>
-inline const unsigned int & Agent<TSeq>::get_state() const {
+inline unsigned int Agent<TSeq>::get_state() const {
     return state;
 }
 
 template<typename TSeq>
-inline const unsigned int & Agent<TSeq>::get_state_prev() const {
+inline unsigned int Agent<TSeq>::get_state_prev() const {
     return state_prev;
+}
+
+template<typename TSeq>
+inline int Agent<TSeq>::get_state_last_changed() const {
+    return state_last_changed;
 }
 
 template<typename TSeq>

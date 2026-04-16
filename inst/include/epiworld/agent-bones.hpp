@@ -196,8 +196,10 @@ public:
         epiworld_fast_int queue = 0
         );
 
-    const unsigned int & get_state() const;
-    const unsigned int & get_state_prev() const;
+    unsigned int get_state() const;
+    unsigned int get_state_prev() const;
+    int get_state_last_changed() const;
+
 
     bool has_tool(epiworld_fast_uint t) const;
     bool has_tool(std::string_view name) const;

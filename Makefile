@@ -64,11 +64,6 @@ check:
 
 clean:
 	rm -f src/*.dll src/*.so src/*.o
-	sed -i -E 's/@useDynLib\s+[a-zA-Z]+/@useDynLib epiworldR/g' R/epiworldR-package.R
-	sed -i -E 's/useDynLib\(+[a-zA-Z]+/useDynLib(epiworldR/g' NAMESPACE
-	sed -i -E 's/^Package:.+/Package: epiworldR/g' DESCRIPTION
-	# sed -i -E 's/^\\(name|alias|title)\{[a-zA-Z]+/\\\1{epiworldR/g' man/epiworldR-package.Rd
-	sed -i -E 's/^library\(epiworldRdev\)/library(epiworldR)/g' README.*
 
 docs:
 	Rscript -e 'devtools::document()'

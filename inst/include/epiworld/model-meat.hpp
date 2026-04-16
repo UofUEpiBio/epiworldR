@@ -402,7 +402,14 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     globalevents(),
     queue(model.queue),
     use_queuing(model.use_queuing),
-    sim_id(model.sim_id)
+    sim_id(model.sim_id),
+    contact_tracing(
+        model.contact_tracing
+            ? std::make_unique<ContactTracing>(*model.contact_tracing)
+            : nullptr
+    ),
+    use_contact_tracing(model.use_contact_tracing),
+    contact_tracing_max_contacts(model.contact_tracing_max_contacts)
 {
 
     // Pointing to the right place. This needs
@@ -474,7 +481,10 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     globalevents(std::move(model.globalevents)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
-    sim_id(model.sim_id)
+    sim_id(model.sim_id),
+    contact_tracing(std::move(model.contact_tracing)),
+    use_contact_tracing(model.use_contact_tracing),
+    contact_tracing_max_contacts(model.contact_tracing_max_contacts)
 {
 
     db.model = this;
@@ -537,6 +547,12 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     queue = m.queue;
     use_queuing = m.use_queuing;
+
+    contact_tracing = m.contact_tracing
+        ? std::make_unique<ContactTracing>(*m.contact_tracing)
+        : nullptr;
+    use_contact_tracing = m.use_contact_tracing;
+    contact_tracing_max_contacts = m.contact_tracing_max_contacts;
 
     agents_data = m.agents_data;
     agents_data_ncols = m.agents_data_ncols;
@@ -1856,6 +1872,12 @@ inline void Model<TSeq>::reset() {
     if (use_queuing)
         queue.reset();
 
+    // Reset contact tracing if active
+    if (use_contact_tracing)
+        contact_tracing = std::make_unique<ContactTracing>(
+            population.size(), contact_tracing_max_contacts
+        );
+
     // Re distributing tools and virus
     dist_entities();
     dist_virus();
@@ -2237,6 +2259,43 @@ template<typename TSeq>
 inline Queue<TSeq> & Model<TSeq>::get_queue()
 {
     return queue;
+}
+
+template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::contact_tracing_on(size_t max_contacts)
+{
+    if (max_contacts < 1u)
+        throw std::logic_error("Contact tracing should use at least one contact.");
+    use_contact_tracing = true;
+    contact_tracing_max_contacts = max_contacts;
+    return *this;
+}
+
+template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::contact_tracing_off()
+{
+    use_contact_tracing = false;
+    contact_tracing.reset();
+    return *this;
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::is_contact_tracing_on() const
+{
+    return use_contact_tracing;
+}
+
+template<typename TSeq>
+inline ContactTracing & Model<TSeq>::get_contact_tracing()
+{
+    if (!use_contact_tracing)
+        throw std::logic_error(
+            "Contact tracing is not active. Call contact_tracing_on() first."
+        );
+
+    if (!contact_tracing)
+        contact_tracing = std::make_unique<ContactTracing>();
+    return *contact_tracing;
 }
 
 template<typename TSeq>

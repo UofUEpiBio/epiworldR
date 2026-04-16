@@ -34,7 +34,11 @@ agents_sbm(
   block_sizes = c(500, 500),
   mixing_matrix = matrix(c(0.9, 0.1, 0.1, 0.9), nrow = 2)
 )
-)
 run(sir, ndays = 100, seed = 1912)
 sir
+}
+\references{
+Batagelj, V., & Brandes, U. (2005). Efficient generation of large random
+networks. \emph{Physical Review E}, 71(3), 036113.
+\doi{10.1103/PhysRevE.71.036113}
 }

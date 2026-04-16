@@ -43,7 +43,12 @@ inline size_t ContactTracing::get_n_contacts(size_t agent)
     return contacts_per_agent[agent];
 }
 
-inline std::pair< size_t, size_t> ContactTracing::get_contact(size_t agent, size_t idx)
+inline size_t ContactTracing::get_max_contacts() const
+{
+    return max_contacts;
+}
+
+inline std::pair< size_t, int> ContactTracing::get_contact(size_t agent, size_t idx)
 {
     if (
         (idx >= contacts_per_agent[agent]) ||
@@ -79,7 +84,7 @@ inline void ContactTracing::print(size_t agent)
     for (size_t i = 0u; i < n_contacts; ++i)
     {
         auto [contact_id, contact_day] = get_contact(agent, i);
-        printf_epiworld("(%zu, day %zu) ", contact_id, contact_day);
+        printf_epiworld("(%zu, day %i) ", contact_id, contact_day);
     }
     printf_epiworld("\n");
 
