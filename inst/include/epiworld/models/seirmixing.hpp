@@ -57,19 +57,18 @@ public:
      * @param vname The name of the ModelSEIRMixing object.
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param avg_incubation_days The average incubation period of the disease in the model.
      * @param recovery_rate The recovery rate of the disease in the model.
      * @param contact_matrix The contact matrix between entities in the model. Specified in
-     * column-major order.
+     * column-major order. Each entry (i,j) represents the expected number of
+     * contacts an agent in group i has with agents in group j per day.
      */
     ModelSEIRMixing(
         ModelSEIRMixing<TSeq> & model,
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
         epiworld_double recovery_rate,
@@ -82,17 +81,17 @@ public:
      * @param vname The name of the ModelSEIRMixing object.
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param avg_incubation_days The average incubation period of the disease in the model.
      * @param recovery_rate The recovery rate of the disease in the model.
-     * @param contact_matrix The contact matrix between entities in the model.
+     * @param contact_matrix The contact matrix between entities in the model. Each entry
+     * (i,j) represents the expected number of contacts an agent in group i has
+     * with agents in group j per day.
      */
     ModelSEIRMixing(
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
         epiworld_double recovery_rate,
@@ -224,7 +223,7 @@ inline void ModelSEIRMixing<TSeq>::reset()
 
     Model<TSeq>::reset();
 
-    // Checking contact matrix's rows add to one
+    // Checking contact matrix dimensions
     size_t nentities = this->entities.size();
     if (this->contact_matrix.size() !=  nentities*nentities)
         throw std::length_error(
@@ -237,7 +236,6 @@ inline void ModelSEIRMixing<TSeq>::reset()
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-        double sum = 0.0;
         for (size_t j = 0u; j < this->entities.size(); ++j)
         {
             if (this->contact_matrix[MM(i, j, nentities)] < 0.0)
@@ -246,14 +244,7 @@ inline void ModelSEIRMixing<TSeq>::reset()
                     std::to_string(this->contact_matrix[MM(i, j, nentities)]) +
                     std::string(" < 0.")
                     );
-            sum += this->contact_matrix[MM(i, j, nentities)];
         }
-        if (sum < 0.999 || sum > 1.001)
-            throw std::range_error(
-                std::string("The contact matrix must have rows that add to one. ") +
-                std::to_string(sum) +
-                std::string(" != 1.")
-                );
     }
 
     // Do it the first time only
@@ -284,7 +275,7 @@ inline void ModelSEIRMixing<TSeq>::reset()
     {
 
         adjusted_contact_rate[i] =
-            Model<TSeq>::get_param("Contact rate") /
+            1.0 /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
 
@@ -315,16 +306,17 @@ inline std::unique_ptr<Model<TSeq>> ModelSEIRMixing<TSeq>::clone_ptr()
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
- * @param contact_rate Average number of contacts (interactions) per step.
  * @param transmission_rate Probability of transmission
  * @param recovery_rate Probability of recovery
+ * @param contact_matrix Contact matrix specifying expected contacts between groups.
+ * Each entry (i,j) represents the expected number of contacts an agent in
+ * group i has with agents in group j per day.
  */
 template<typename TSeq>
 inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double contact_rate,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
     epiworld_double recovery_rate,
@@ -468,7 +460,6 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
         };
 
     // Setting up parameters
-    this->add_param(contact_rate, "Contact rate");
     this->add_param(transmission_rate, "Prob. Transmission");
     this->add_param(recovery_rate, "Prob. Recovery");
     this->add_param(avg_incubation_days, "Avg. Incubation days");

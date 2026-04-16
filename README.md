@@ -163,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 129.00ms
-#> Last run speed      : 38.71 million agents x day / second
+#> Last run elapsed t  : 115.00ms
+#> Last run speed      : 43.14 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 1912
 #>
@@ -245,8 +245,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 24.00ms
-#> Last run speed      : 41.18 million agents x day / second
+#> Last run elapsed t  : 22.00ms
+#> Last run speed      : 43.76 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 2587
 #>

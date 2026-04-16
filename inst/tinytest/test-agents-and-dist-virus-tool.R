@@ -132,17 +132,16 @@ e1 <- entity("Population 1", 300, FALSE)
 e2 <- entity("Population 2", 300, FALSE)
 e3 <- entity("Population 3", 300, FALSE)
 
-contact_matrix <- c(
+contact_matrix <- (c(
   c(1/3, 1/3, 1/3),
   c(1/3, 1/3, 1/3),
   c(1/3, 1/3, 1/3)
-) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
+) * (15/0.9/4)) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
 
 abm <- ModelSEIRMixing(
   name = "COVID-19",
   n = 900,
   prevalence = 1 / 900,
-  contact_rate = 15 / 0.9 / 4,
   transmission_rate = 0.9,
   recovery_rate = 1 / 10,
   incubation_days = 1/12,
@@ -220,7 +219,6 @@ set_distribution_tool(
 
 # Making sure that the agents become infected
 set_param(abm, "Prob. Transmission", 1.0)
-set_param(abm, "Contact rate", 100)
 
 run(abm, 100, 200)
 states <- get_agents_states(abm)

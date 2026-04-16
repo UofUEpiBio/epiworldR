@@ -124,7 +124,6 @@ public:
      *
      * @param n The number of entities in the model.
      * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param vax_efficacy The efficacy of the vaccine.
      * @param vax_reduction_recovery_rate The reduction in recovery rate due to the vaccine.
@@ -132,7 +131,8 @@ public:
      * @param prodromal_period The prodromal period of the disease in the model.
      * @param rash_period The rash period of the disease in the model.
      * @param contact_matrix The contact matrix between entities in the model. Specified in
-     * column-major order.
+     * column-major order. Each entry (i,j) represents the expected number of
+     * contacts an agent in group i has with agents in group j per day.
      * @param hospitalization_rate The rate at which infected individuals are hospitalized.
      * @param hospitalization_period The average duration of hospitalization in days.
      * @param days_undetected The average number of days an infected individual remains undetected.
@@ -147,7 +147,6 @@ public:
     ModelMeaslesMixing(
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double vax_efficacy,
         epiworld_double vax_reduction_recovery_rate,
@@ -298,7 +297,7 @@ inline void ModelMeaslesMixing<TSeq>::m_update_infectious_list()
     for (auto & rate: adjusted_contact_rate)
     {
         if (rate > 0.0)
-            rate = this->get_param("Contact rate") / rate;
+            rate = 1.0 / rate;
         else
             rate = 0.0;  // No available contacts in this group
 
@@ -384,7 +383,7 @@ inline void ModelMeaslesMixing<TSeq>::reset()
 
     Model<TSeq>::reset();
 
-    // Checking contact matrix's rows add to one
+    // Checking contact matrix dimensions
     size_t nentities = this->entities.size();
     if (this->contact_matrix.size() !=  nentities*nentities)
         throw std::length_error(
@@ -397,7 +396,6 @@ inline void ModelMeaslesMixing<TSeq>::reset()
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-        double sum = 0.0;
         for (size_t j = 0u; j < this->entities.size(); ++j)
         {
             if (this->contact_matrix[MM(i, j, nentities)] < 0.0)
@@ -406,14 +404,7 @@ inline void ModelMeaslesMixing<TSeq>::reset()
                     std::to_string(this->contact_matrix[MM(i, j, nentities)]) +
                     std::string(" < 0.")
                     );
-            sum += this->contact_matrix[MM(i, j, nentities)];
         }
-        if (sum < 0.999 || sum > 1.001)
-            throw std::range_error(
-                std::string("The contact matrix must have rows that add to one. ") +
-                std::to_string(sum) +
-                std::string(" != 1.")
-                );
     }
 
     // Do it the first time only
@@ -888,14 +879,15 @@ inline void ModelMeaslesMixing<TSeq>::m_quarantine_process() {
  * @param model A ModelMeaslesMixing<TSeq> object where to set up the model.
  * @param n Number of agents in the population
  * @param prevalence Initial prevalence (proportion of infected individuals)
- * @param contact_rate Average number of contacts (interactions) per step
  * @param transmission_rate Probability of transmission per contact
  * @param vax_efficacy The efficacy of the vaccine
  * @param vax_reduction_recovery_rate The reduction in recovery rate due to the vaccine
  * @param incubation_period Average incubation period in days
  * @param prodromal_period Average prodromal period in days
  * @param rash_period Average rash period in days
- * @param contact_matrix Contact matrix specifying mixing patterns between population groups
+ * @param contact_matrix Contact matrix specifying expected contacts between population groups.
+ * Each entry (i,j) represents the expected number of contacts an agent in
+ * group i has with agents in group j per day.
  * @param hospitalization_rate Rate at which infected individuals are hospitalized
  * @param hospitalization_period Average duration of hospitalization in days
  * @param days_undetected Average number of days an infected individual remains undetected
@@ -911,7 +903,6 @@ template<typename TSeq>
 inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double contact_rate,
     epiworld_double transmission_rate,
     epiworld_double vax_efficacy,
     epiworld_double vax_reduction_recovery_rate,
@@ -937,7 +928,6 @@ inline ModelMeaslesMixing<TSeq>::ModelMeaslesMixing(
     this->contact_matrix = contact_matrix;
 
     // Setting up parameters
-    this->add_param(contact_rate, "Contact rate");
     this->add_param(transmission_rate, "Transmission rate");
     this->add_param(incubation_period, "Incubation period");
     this->add_param(prodromal_period, "Prodromal period");

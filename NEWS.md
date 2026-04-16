@@ -8,6 +8,8 @@
 
 * The package now includes the function `agents_sbm()`, which implements the Stochastic-Block Model by Batahelj and Brandes (2005).
 
+* The `ModelSEIRMixing()` function lost the `contact_rate` parameter in favor of a more flexible model: instead of using mixing matrices (row-stochastic), the model now uses a contact matrix, which allows groups to have different contact rates.
+
 
 ## Internal changes
 

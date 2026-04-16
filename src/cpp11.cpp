@@ -356,10 +356,10 @@ extern "C" SEXP _epiworldR_ModelSIRMixing_cpp(SEXP name, SEXP n, SEXP prevalence
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSEIRMixing_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double incubation_days, double recovery_rate, std::vector< double > contact_matrix);
-extern "C" SEXP _epiworldR_ModelSEIRMixing_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate, SEXP contact_matrix) {
+SEXP ModelSEIRMixing_cpp(std::string name, unsigned int n, double prevalence, double transmission_rate, double incubation_days, double recovery_rate, std::vector< double > contact_matrix);
+extern "C" SEXP _epiworldR_ModelSEIRMixing_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate, SEXP contact_matrix) {
   BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIRMixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
+    return cpp11::as_sexp(ModelSEIRMixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
   END_CPP11
 }
 // epimodels.cpp
@@ -1243,7 +1243,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},
     {"_epiworldR_ModelSEIRD_cpp",                       (DL_FUNC) &_epiworldR_ModelSEIRD_cpp,                        6},
     {"_epiworldR_ModelSEIRMixingQuarantine_cpp",        (DL_FUNC) &_epiworldR_ModelSEIRMixingQuarantine_cpp,        17},
-    {"_epiworldR_ModelSEIRMixing_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIRMixing_cpp,                   8},
+    {"_epiworldR_ModelSEIRMixing_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIRMixing_cpp,                   7},
     {"_epiworldR_ModelSEIR_cpp",                        (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                         5},
     {"_epiworldR_ModelSIRCONN_cpp",                     (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                      6},
     {"_epiworldR_ModelSIRDCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRDCONN_cpp,                     7},

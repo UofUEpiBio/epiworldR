@@ -22,11 +22,10 @@ model <- ModelSEIRMixing(
   name = "R number check",
   n = 600,
   prevalence = 1 / 600,
-  contact_rate = contact_rate,
   transmission_rate = transmission_rate,
   incubation_days = 3,
   recovery_rate = recovery_rate,
-  contact_matrix = mixing_matrix
+  contact_matrix = mixing_matrix * contact_rate
 )
 
 model |>
