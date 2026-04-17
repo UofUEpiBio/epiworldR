@@ -60,6 +60,7 @@ reference:
       - epiworld-repnum
       - get_reproductive_number
       - plot_reproductive_number
+      - compute_reproduction_number
 
   - title: "Generation Time"
     desc: >
@@ -69,12 +70,13 @@ reference:
       - get_generation_time
       - plot_generation_time
 
-  - title: "Transmission Network"
+  - title: "Network functions"
     desc: >
-      Transmission edges, including seeded infections.
+      Random graphs, transmission edges, including seeded infections.
     contents:
       - epiworld-transmissions
       - get_transmissions
+      - network-models
 
   - title: "Summaries"
     desc: >
@@ -98,11 +100,23 @@ reference:
     contents:
       - has_concept("virus-functions")
 
+  - title: "Virus Distribution"
+    desc: >
+      Functions for assigning viruses across agents at initialization.
+    contents:
+      - has_concept("virus-distribution")
+
   - title: "Tool Functions"
     desc: >
       Functions for creating and managing tools (e.g., vaccines, interventions).
     contents:
       - has_concept("tool-functions")
+
+  - title: "Tool Distribution"
+    desc: >
+      Functions for assigning tools across agents at initialization.
+    contents:
+      - has_concept("tool-distribution")
 
   - title: "Entity Functions"
     desc: >
@@ -115,6 +129,12 @@ reference:
       Functions for defining and managing global events in simulations.
     contents:
       - has_concept("global-events")
+
+  - title: "Model building"
+    desc: >
+      Functions for constructing models from components and running simulations.
+    contents:
+      - has_concept("model-building-functions")
 
   - title: "Deprecated Functions"
     desc: >

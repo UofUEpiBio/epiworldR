@@ -6,12 +6,12 @@ e1 <- entity("Population 1", 3e3, FALSE)
 e2 <- entity("Population 2", 3e3, FALSE)
 e3 <- entity("Population 3", 3e3, FALSE)
 
-# Row-stochastic matrix (rowsums 1)
-cmatrix <- c(
+# Contact matrix with 40 expected contacts per day
+cmatrix <- (c(
   c(1, 0, 0),
   c(0, 1, 0),
   c(0, 0, 1)
-) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
+) * 40) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
 
 N <- 9e3
 
@@ -19,7 +19,6 @@ flu_model <- ModelSEIRMixingQuarantine(
   name                         = "Flu",
   n                           = N,
   prevalence                  = 1 / N,
-  contact_rate                = 40,
   transmission_rate           = 1.0,
   recovery_rate               = 1 / 10,
   incubation_days             = .009,
@@ -79,7 +78,6 @@ model_factory <- function(
   name = "A Virus",
   n = 9e3,
   prevalence = 1 / 9e3,
-  contact_rate = 40,
   transmission_rate = 1.0,
   recovery_rate = 1 / 10,
   incubation_days = .009,
@@ -98,7 +96,6 @@ model_factory <- function(
     name = name,
     n = n,
     prevalence = prevalence,
-    contact_rate = contact_rate,
     transmission_rate = transmission_rate,
     recovery_rate = recovery_rate,
     incubation_days = incubation_days,
@@ -133,7 +130,6 @@ expect_silent(model_factory())
 expect_error(model_factory(name = bad_name), expected_error_msg_str)
 expect_error(model_factory(n = bad_numeric_input), expected_error_msg_int)
 expect_error(model_factory(prevalence = bad_numeric_input), expected_error_msg_double)
-expect_error(model_factory(contact_rate = bad_numeric_input), expected_error_msg_double)
 expect_error(model_factory(transmission_rate = bad_numeric_input), expected_error_msg_double)
 expect_error(model_factory(recovery_rate = bad_numeric_input), expected_error_msg_double)
 expect_error(model_factory(incubation_days = bad_numeric_input), expected_error_msg_double)

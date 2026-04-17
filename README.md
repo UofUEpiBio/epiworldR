@@ -163,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 206.00ms
-#> Last run speed      : 24.26 million agents x day / second
+#> Last run elapsed t  : 217.00ms
+#> Last run speed      : 22.94 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 1912
 #>
@@ -190,16 +190,21 @@ summary(sir)
 #>  - Susceptible  0.85  0.15     -
 #>  - Infected        -  0.70  0.30
 #>  - Recovered       -     -  1.00
+```
+
+``` r
 plot(sir)
 ```
 
-<img src="man/figures/README-sir-figures-1.png" style="width:100.0%" />
+<img src="man/figures/README-sir-plot-1.png" style="width:100.0%"
+data-fig-alt="State trajectories for the SIR random-graph example over time." />
 
 ``` r
 plot_incidence(sir)
 ```
 
-<img src="man/figures/README-sir-figures-2.png" style="width:100.0%" />
+<img src="man/figures/README-sir-incidence-1.png" style="width:100.0%"
+data-fig-alt="Incidence curve for the SIR random-graph example." />
 
 ## SEIR model with a fully connected graph
 
@@ -245,8 +250,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 28.00ms
-#> Last run speed      : 35.65 million agents x day / second
+#> Last run elapsed t  : 47.00ms
+#> Last run speed      : 20.97 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 2587
 #>
@@ -285,18 +290,18 @@ Computing some key statistics
 plot(model_seirconn)
 ```
 
-<img src="man/figures/README-seir-conn-figures-1.png"
-style="width:100.0%" />
+<img src="man/figures/README-seir-conn-plot-1.png" style="width:100.0%"
+data-fig-alt="State trajectories for the fully connected SEIR example over time." />
 
 ``` r
-
 repnum <- get_reproductive_number(model_seirconn)
 
 head(plot(repnum))
 ```
 
-<img src="man/figures/README-seir-conn-figures-2.png"
-style="width:100.0%" />
+<img src="man/figures/README-seir-conn-repnum-1.png"
+style="width:100.0%"
+data-fig-alt="Estimated reproductive number over time for the fully connected SEIR example." />
 
     #>   virus_id    virus date      avg   n       sd lb     ub
     #> 1        0 COVID-19    0 4.980000 100 4.442631  0 15.525
@@ -306,10 +311,13 @@ style="width:100.0%" />
     #> 5        0 COVID-19    5 3.363636  33 2.859394  0  9.000
     #> 6        0 COVID-19    6 3.961538  52 2.976783  0 10.000
 
-    head(plot_generation_time(model_seirconn))
+``` r
+head(plot_generation_time(model_seirconn))
+```
 
-<img src="man/figures/README-seir-conn-figures-3.png"
-style="width:100.0%" />
+<img src="man/figures/README-seir-conn-gentime-1.png"
+style="width:100.0%"
+data-fig-alt="Generation time over time for the fully connected SEIR example." />
 
     #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
     #> 1    0 7.788889 90 5.042503    2.000   18.550 COVID-19        0
@@ -368,13 +376,17 @@ run(model_logit, 50)
 #> |Running the model...
 #> |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.
 #> |
+```
+
+``` r
 plot(model_logit)
 ```
 
-<img src="man/figures/README-logit-model-1.png" style="width:100.0%" />
+<img src="man/figures/README-logit-model-plot-1.png"
+style="width:100.0%"
+data-fig-alt="State trajectories for the SIR logit example over time." />
 
 ``` r
-
 # Females are supposed to be more likely to become infected
 rn <- get_reproductive_number(model_logit)
 
@@ -442,7 +454,8 @@ nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex = TRUE)
 ```
 
 <img src="man/figures/README-transmission-net-1.png"
-style="width:100.0%" />
+style="width:100.0%"
+data-fig-alt="Transmission network from the simulated SIR outbreak, shown as a node-link graph." />
 
 ## Multiple simulations
 
@@ -497,7 +510,8 @@ plot(ans$reproductive)
 ```
 
 <img src="man/figures/README-multiple-example-1.png"
-style="width:100.0%" />
+style="width:100.0%"
+data-fig-alt="Plot of reproductive-number results from multiple SIR simulations." />
 
 # Tutorials
 
@@ -522,7 +536,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.14.0.0,
+#>   Epi Models_. R package version 0.14.99-99,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,

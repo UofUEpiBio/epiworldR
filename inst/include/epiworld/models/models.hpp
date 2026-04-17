@@ -106,6 +106,7 @@ namespace epimodels {
     #include "init-functions.hpp"
 
     #include "globalevents.hpp"
+    #include "../globalevents/interventionmeaslespep-meat.hpp"
 
     #include "sis.hpp"
     #include "sir.hpp"
@@ -124,6 +125,7 @@ namespace epimodels {
     #include "sirmixing.hpp"
     #include "measlesschool.hpp"
     #include "seirmixingquarantine.hpp"
+    #include "seirnetworkquarantine.hpp"
     #include "measlesmixing.hpp"
     #include "measlesmixingriskquarantine.hpp"
 

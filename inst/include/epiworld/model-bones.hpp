@@ -15,6 +15,7 @@
 #include "database-bones.hpp"
 #include "queue-bones.hpp"
 #include "globalevent-bones.hpp"
+#include "contacttracing-bones.hpp"
 
 template<typename TSeq>
 class AgentsSample;
@@ -168,6 +169,10 @@ protected:
     size_t sim_id = 0u;
     void set_sim_id(size_t id);
 
+    std::unique_ptr<ContactTracing> contact_tracing;
+    bool use_contact_tracing = false;
+    size_t contact_tracing_max_contacts = EPI_MAX_TRACKING;
+
     /**
      * @brief Variables used to keep track of the events
      * to be made regarding viruses.
@@ -292,6 +297,7 @@ public:
     void set_rand_poiss(epiworld_double lambda);
     epiworld_double runif();
     epiworld_double runif(epiworld_double a, epiworld_double b);
+    int runif_int(int a, int b);
     epiworld_double rnorm();
     epiworld_double rnorm(epiworld_double mean, epiworld_double sd);
     epiworld_double rgamma();
@@ -309,6 +315,17 @@ public:
     int rpoiss();
     int rpoiss(epiworld_double lambda);
     ///@}
+
+    /**
+     * @brief Sample from a set of probabilities stored in array_double_tmp.
+     * @details Uses a cumulative probability approach: draws a uniform random
+     * number and walks through array_double_tmp[0..n-1], accumulating
+     * probabilities until the draw is exceeded. If no event fires, returns n
+     * (meaning "none of the above").
+     * @param n Number of probability entries in array_double_tmp to consider.
+     * @return Index in [0, n] of the sampled event (n = no event).
+     */
+    size_t sample_from_probs(size_t n);
 
     /**
      * @name Add Virus/Tool to the model
@@ -406,6 +423,26 @@ public:
         epiworld_double p = .01
         );
     void agents_empty_graph(epiworld_fast_uint n = 1000);
+
+    /**
+     * @brief Initialize agents using a Stochastic Block Model (SBM).
+     *
+     * Creates agents and connects them according to an SBM defined by
+     * `block_sizes` and `mixing_matrix`.
+     *
+     * @param block_sizes Number of agents per block.
+     * @param mixing_matrix Mixing matrix of size K*K; row sums give average
+     *   expected degree per group.
+     * @param row_major If `true`, matrix is row-major; otherwise column-major.
+     * @return Reference to this Model.
+     *
+     * @see rgraph_sbm
+     */
+    Model<TSeq> & agents_sbm(
+        const std::vector< size_t > & block_sizes,
+        const std::vector< double > & mixing_matrix,
+        bool row_major = true
+        );
     ///@}
 
     /**
@@ -420,7 +457,7 @@ public:
     ///@{
     void update_state();
     void mutate_virus();
-    void next();
+    virtual void next();
     virtual Model<TSeq> & run(
         epiworld_fast_uint ndays,
         int seed = -1
@@ -610,9 +647,7 @@ public:
     );
     Model<TSeq> & read_params(std::string fn, bool overwrite = false);
     epiworld_double get_param(std::string pname);
-    // void set_param(size_t k, epiworld_double val);
     void set_param(std::string pname, epiworld_double val);
-    // epiworld_double par(epiworld_fast_uint k);
     epiworld_double par(std::string pname) const;
     ///@}
 
@@ -681,10 +716,32 @@ public:
     Queue<TSeq> & get_queue(); ///< Retrieve the `Queue` object.
     ///@}
 
+    /**
+     * @name Contact tracing
+     * @details When contact tracing is on, the model will track contacts
+     * between agents. Users must actively record contacts in their update
+     * functions by calling `get_contact_tracing().add_contact(...)`.
+     * Contact tracing is off by default.
+     *
+     * @param max_contacts Maximum number of contacts to track per agent
+     * (default: EPI_MAX_TRACKING). Only used when turning tracing on.
+     */
+    ///@{
+    Model<TSeq> & contact_tracing_on(size_t max_contacts = EPI_MAX_TRACKING); ///< Activates contact tracing.
+    Model<TSeq> & contact_tracing_off(); ///< Deactivates contact tracing.
+    bool is_contact_tracing_on() const; ///< Query if contact tracing is on.
+    ContactTracing & get_contact_tracing(); ///< Retrieve the `ContactTracing` object.
+    ///@}
+
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
     const std::vector< ToolPtr<TSeq> > & get_tools() const;
     Virus<TSeq> & get_virus(size_t id);
+    Virus<TSeq> & get_virus(std::string_view name);
     Tool<TSeq> & get_tool(size_t id);
+    Tool<TSeq> & get_tool(std::string_view name);
+
+    bool has_virus(std::string_view name) const;
+    bool has_tool(std::string_view name) const;
 
     /**
      * @brief Set the agents data object

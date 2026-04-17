@@ -21,10 +21,6 @@
 \alias{set_death_reduction_ptr}
 \alias{set_death_reduction_fun}
 \alias{print.epiworld_agents_tools}
-\alias{set_distribution_tool}
-\alias{distribute_tool_randomly}
-\alias{distribute_tool_to_set}
-\alias{distribute_tool_to_entities}
 \title{Tools in epiworld}
 \usage{
 tool(
@@ -72,24 +68,16 @@ set_death_reduction_ptr(tool, model, param)
 set_death_reduction_fun(tool, model, tfun)
 
 \method{print}{epiworld_agents_tools}(x, max_print = 10, ...)
-
-set_distribution_tool(tool, distfun)
-
-distribute_tool_randomly(prevalence, as_proportion, agents_ids = integer(0))
-
-distribute_tool_to_set(agents_ids)
-
-distribute_tool_to_entities(prevalence, as_proportion)
 }
 \arguments{
 \item{name}{Name of the tool}
 
-\item{prevalence}{Numeric scalar. Prevalence of the tool. In the case of
-\code{distribute_tool_to_entities}, it is a vector of prevalences, one per
-entity.}
+\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
+assigned the tool. The interpretation of this argument depends on the value
+of \code{as_proportion}.}
 
-\item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
-as a proportion of the total number of agents in the model.}
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
+treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
 
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
@@ -97,7 +85,7 @@ as a proportion of the total number of agents in the model.}
 
 \item{recovery_enhancer}{Numeric. Proportion it improves recovery.}
 
-\item{death_reduction}{Numeric. Proportion it reduces probability of death.e}
+\item{death_reduction}{Numeric. Proportion it reduces probability of death.}
 
 \item{tool}{An object of class \code{epiworld_tool}}
 
@@ -125,11 +113,6 @@ will be added to the tool (see details).}
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
 
 \item{...}{Currently ignored.}
-
-\item{distfun}{An object of class \code{epiworld_tool_distfun}.}
-
-\item{agents_ids}{Integer vector. Indices of the agents to which the tool
-will be assigned.}
 }
 \value{
 \itemize{
@@ -169,18 +152,6 @@ to the specified tool of class \link{epiworld_tool}.
 \item The \code{set_death_reduction} function assigns a probability decrease
 to the specified tool of class \link{epiworld_tool}.
 }
-
-\itemize{
-\item The \code{distribute_tool_randomly} function returns a distribution function of
-class \code{epiworld_tool_distfun}. When \code{agents_ids} is not empty,
-it will distribute the tool randomly within that set. Otherwise it uses
-all the agents in the model.
-}
-
-\itemize{
-\item The \code{distribute_tool_to_set} function returns a distribution function of
-class \code{epiworld_tool_distfun}.
-}
 }
 \description{
 Tools are functions that affect how agents react to the virus. They can be
@@ -199,21 +170,6 @@ In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_r
 \code{set_death_reduction_ptr}, the corresponding parameters are passed as a pointer to
 the tool. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
-
-The \code{set_distribution_tool} function assigns a distribution function to the
-specified tool of class \link{epiworld_tool}. The distribution function can be
-created using the functions \code{\link[=distribute_tool_randomly]{distribute_tool_randomly()}} and
-\code{\link[=distribute_tool_to_set]{distribute_tool_to_set()}}.
-
-The \code{distribute_tool_randomly} function creates a distribution function that
-randomly assigns the tool to a proportion of the population.
-
-The \code{distribute_tool_to_set} function creates a distribution function that
-assigns the tool to a set of agents.
-
-The \code{distribute_tool_to_entities} function creates a distribution function
-that assigns the tool to a number of agents based on prevalence at the
-entity level. This is only useful for the mixing models.
 }
 \examples{
 # Simple model
@@ -248,13 +204,6 @@ add_tool(model_sirconn, epitool)
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
-
-# To declare a certain number of individuals with the tool
-rm_tool(model_sirconn, 0) # Removing epitool from the model
-# Setting prevalence to 0.1
-set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
-add_tool(model_sirconn, epitool)
-run(model_sirconn, ndays = 100, seed = 1912)
 
 # Adjusting probabilities due to tool
 set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction

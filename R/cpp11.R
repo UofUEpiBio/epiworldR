@@ -196,16 +196,16 @@ ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, d
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
-ModelSIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix) {
-  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix)
+ModelSIRMixing_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate, contact_matrix) {
+  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, transmission_rate, recovery_rate, contact_matrix)
 }
 
-ModelSEIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix) {
-  .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix)
+ModelSEIRMixing_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix) {
+  .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix)
 }
 
-ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
-  .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
+ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
+  .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
 }
 
 globalevent_tool_logit_cpp <- function(tool, vars, coefs, name, day) {
@@ -384,14 +384,6 @@ print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }
 
-agents_smallworld_cpp <- function(m, n, k, d, p) {
-  .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
-}
-
-agents_from_edgelist_cpp <- function(m, source, target, size, directed) {
-  .Call(`_epiworldR_agents_from_edgelist_cpp`, m, source, target, size, directed)
-}
-
 run_cpp <- function(m, ndays, seed) {
   .Call(`_epiworldR_run_cpp`, m, ndays, seed)
 }
@@ -484,10 +476,6 @@ get_tool_model_cpp <- function(model, tool_pos) {
   .Call(`_epiworldR_get_tool_model_cpp`, model, tool_pos)
 }
 
-get_network_cpp <- function(model) {
-  .Call(`_epiworldR_get_network_cpp`, model)
-}
-
 initial_states_cpp <- function(model, proportions) {
   .Call(`_epiworldR_initial_states_cpp`, model, proportions)
 }
@@ -498,6 +486,38 @@ clone_model_cpp <- function(model) {
 
 draw_mermaid_cpp <- function(model, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
+}
+
+new_model_cpp <- function() {
+  .Call(`_epiworldR_new_model_cpp`)
+}
+
+add_state_cpp <- function(model, state_label, update_fun) {
+  .Call(`_epiworldR_add_state_cpp`, model, state_label, update_fun)
+}
+
+update_fun_susceptible_cpp <- function(exclude) {
+  .Call(`_epiworldR_update_fun_susceptible_cpp`, exclude)
+}
+
+update_fun_rate_cpp <- function(param_names, target_states) {
+  .Call(`_epiworldR_update_fun_rate_cpp`, param_names, target_states)
+}
+
+agents_smallworld_cpp <- function(m, n, k, d, p) {
+  .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
+}
+
+agents_sbm_cpp <- function(m, block_sizes, mixing_matrix, row_major) {
+  .Call(`_epiworldR_agents_sbm_cpp`, m, block_sizes, mixing_matrix, row_major)
+}
+
+agents_from_edgelist_cpp <- function(m, source, target, size, directed) {
+  .Call(`_epiworldR_agents_from_edgelist_cpp`, m, source, target, size, directed)
+}
+
+get_network_cpp <- function(model) {
+  .Call(`_epiworldR_get_network_cpp`, model)
 }
 
 tool_cpp <- function(name, prevalence, as_proportion, susceptibility_reduction, transmission_reduction, recovery_enhancer, death_reduction) {

@@ -6,12 +6,12 @@ e1 <- entity("Population 1", 3e3, FALSE)
 e2 <- entity("Population 2", 3e3, FALSE)
 e3 <- entity("Population 3", 3e3, FALSE)
 
-# Row-stochastic matrix (rowsums 1)
-cmatrix <- c(
+# Contact matrix with 40 expected contacts per day
+cmatrix <- (c(
   c(1, 0, 0),
   c(0, 1, 0),
   c(0, 0, 1)
-) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
+) * 40) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
 
 N <- 9e3
 
@@ -19,7 +19,6 @@ flu_model <- ModelSEIRMixing(
   name              = "Flu",
   n                 = N,
   prevalence        = 1 / N,
-  contact_rate      = 40,
   transmission_rate = 1.0,
   recovery_rate     = 1 / 10,
   incubation_days   = .009,
@@ -88,7 +87,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = bad_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -99,7 +97,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = bad_numeric_input,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -110,7 +107,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = bad_numeric_input,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -121,18 +117,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = bad_numeric_input,
-  transmission_rate = good_transmission_rate,
-  recovery_rate     = good_recovery_rate,
-  incubation_days   = good_incubation_days,
-  contact_matrix    = good_contact_matrix
-), expected_error_msg_double)
-
-expect_error(test_model <- ModelSEIRMixing(
-  name              = good_name,
-  n                 = good_n,
-  prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = bad_numeric_input,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -143,7 +127,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = bad_numeric_input,
   incubation_days   = good_incubation_days,
@@ -154,7 +137,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = bad_numeric_input,
@@ -165,7 +147,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -178,7 +159,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = NA,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -189,7 +169,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = NA,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -200,29 +179,17 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = NA,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
   contact_matrix    = good_contact_matrix
 ), expected_error_msg_na)
 
-expect_error(test_model <- ModelSEIRMixing(
-  name              = good_name,
-  n                 = good_n,
-  prevalence        = good_prevalence,
-  contact_rate      = NA,
-  transmission_rate = good_transmission_rate,
-  recovery_rate     = good_recovery_rate,
-  incubation_days   = good_incubation_days,
-  contact_matrix    = good_contact_matrix
-), expected_error_msg_na)
 
 expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = NA,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,
@@ -233,7 +200,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = NA,
   incubation_days   = good_incubation_days,
@@ -244,7 +210,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = NA,
@@ -255,7 +220,6 @@ expect_error(test_model <- ModelSEIRMixing(
   name              = good_name,
   n                 = good_n,
   prevalence        = good_prevalence,
-  contact_rate      = good_contact_rate,
   transmission_rate = good_transmission_rate,
   recovery_rate     = good_recovery_rate,
   incubation_days   = good_incubation_days,

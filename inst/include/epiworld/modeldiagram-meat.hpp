@@ -87,8 +87,7 @@ inline void ModelDiagram::transition_probability(
     // Generating the transition matrix
     states = std::vector< std::string >(states_set.begin(), states_set.end());
     size_t n_states = states.size();
-    tprob.resize(n_states * n_states);
-    std::fill(tprob.begin(), tprob.end(), 0.0);
+    tprob.assign(n_states * n_states, 0.0);
 
     std::vector< epiworld_double > rowsum(n_states, 0.0);
     for (size_t i = 0; i < n_states; ++i)

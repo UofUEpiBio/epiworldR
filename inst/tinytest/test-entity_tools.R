@@ -1,20 +1,21 @@
+library(epiworldR)
+
 entities <- data.frame(
   name = c("Pop 1", "Pop 2", "Pop 3"),
   size = rep(3e3, 3)
 )
 
-# Row-stochastic matrix (rowsums 1)
-cmatrix <- c(
+# Contact matrix with 20 expected contacts per day
+cmatrix <- (c(
   c(0.9, 0.05, 0.05),
   c(0.1, 0.8, 0.1),
   c(0.1, 0.2, 0.7)
-) |> matrix(byrow = TRUE, nrow = 3)
+) * 20) |> matrix(byrow = TRUE, nrow = 3)
 
 measles_model <- ModelSIRMixing(
   name              = "Flu",
   n                 = 9e3,
   prevalence        = 1 / 9e3,
-  contact_rate      = 20,
   transmission_rate = 0.1,
   recovery_rate     = 1 / 7,
   contact_matrix    = cmatrix

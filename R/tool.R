@@ -9,8 +9,13 @@
 #' @param susceptibility_reduction Numeric. Proportion it reduces susceptibility.
 #' @param transmission_reduction Numeric. Proportion it reduces transmission.
 #' @param recovery_enhancer Numeric. Proportion it improves recovery.
-#' @param death_reduction Numeric. Proportion it reduces probability of death.e
+#' @param death_reduction Numeric. Proportion it reduces probability of death.
 #' @param tool_pos Positive integer. Index of the tool's position in the model.
+#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
+#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
+#' @param prevalence Numeric scalar. Proportion or count of agents that will be
+#' assigned the tool. The interpretation of this argument depends on the value
+#' of `as_proportion`.
 #' @examples
 #' # Simple model
 #' model_sirconn <- ModelSIRCONN(
@@ -44,13 +49,6 @@
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' plot(model_sirconn)
-#'
-#' # To declare a certain number of individuals with the tool
-#' rm_tool(model_sirconn, 0) # Removing epitool from the model
-#' # Setting prevalence to 0.1
-#' set_distribution_tool(epitool, distribute_tool_randomly(0.1, TRUE))
-#' add_tool(model_sirconn, epitool)
-#' run(model_sirconn, ndays = 100, seed = 1912)
 #'
 #' # Adjusting probabilities due to tool
 #' set_susceptibility_reduction(epitool, 0.1) # Susceptibility reduction
@@ -497,97 +495,5 @@ print.epiworld_agents_tools <- function(x, max_print = 10, ...) {
   }
 
   invisible(x)
-
-}
-
-#' @export
-#' @details
-#' The `set_distribution_tool` function assigns a distribution function to the
-#' specified tool of class [epiworld_tool]. The distribution function can be
-#' created using the functions [distribute_tool_randomly()] and
-#' [distribute_tool_to_set()].
-#' @param distfun An object of class `epiworld_tool_distfun`.
-#' @rdname tool
-set_distribution_tool <- function(tool, distfun) {
-
-  stopifnot_tool(tool)
-  stopifnot_tool_distfun(distfun)
-  invisible(set_distribution_tool_cpp(tool = tool, distfun = distfun))
-
-}
-
-#' @export
-#' @rdname tool
-#' @details
-#' The `distribute_tool_randomly` function creates a distribution function that
-#' randomly assigns the tool to a proportion of the population.
-#' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
-#' as a proportion of the total number of agents in the model.
-#' @param prevalence Numeric scalar. Prevalence of the tool. In the case of
-#' `distribute_tool_to_entities`, it is a vector of prevalences, one per
-#' entity.
-#' @return
-#' - The `distribute_tool_randomly` function returns a distribution function of
-#' class `epiworld_tool_distfun`. When `agents_ids` is not empty,
-#' it will distribute the tool randomly within that set. Otherwise it uses
-#' all the agents in the model.
-distribute_tool_randomly <- function(
-  prevalence,
-  as_proportion,
-  agents_ids = integer(0)
-) {
-
-  structure(
-    distribute_tool_randomly_cpp(
-      as.double(prevalence),
-      as.logical(as_proportion),
-      as.integer(agents_ids)
-    ),
-    class = "epiworld_tool_distfun"
-  )
-
-}
-
-#' @export
-#' @rdname tool
-#' @details
-#' The `distribute_tool_to_set` function creates a distribution function that
-#' assigns the tool to a set of agents.
-#' @param agents_ids Integer vector. Indices of the agents to which the tool
-#' will be assigned.
-#' @return
-#' - The `distribute_tool_to_set` function returns a distribution function of
-#' class `epiworld_tool_distfun`.
-distribute_tool_to_set <- function(
-  agents_ids
-) {
-
-  structure(
-    distribute_tool_to_set_cpp(
-      agents_ids
-    ),
-    class = "epiworld_tool_distfun"
-  )
-
-}
-
-#' @export
-#' @rdname tool
-#' @details
-#' The `distribute_tool_to_entities` function creates a distribution function
-#' that assigns the tool to a number of agents based on prevalence at the
-#' entity level. This is only useful for the mixing models.
-distribute_tool_to_entities <- function(
-  prevalence,
-  as_proportion
-) {
-
-  structure(
-    distribute_tool_to_entities_cpp(
-      as.double(prevalence),
-      as.logical(as_proportion)
-    ),
-    class = "epiworld_tool_distfun"
-  )
 
 }

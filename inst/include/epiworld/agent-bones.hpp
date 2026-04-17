@@ -16,11 +16,6 @@ class Viruses_const;
 template<typename TSeq>
 class Tool;
 
-template<typename TSeq>
-class Tools;
-
-template<typename TSeq>
-class Tools_const;
 
 template<typename TSeq>
 class Queue;
@@ -47,11 +42,9 @@ class Agent {
     friend class Model<TSeq>;
     friend class Virus<TSeq>;
     friend class Tool<TSeq>;
-    friend class Tools<TSeq>;
-    friend class Tools_const<TSeq>;
     friend class Queue<TSeq>;
     friend class AgentsSample<TSeq>;
-private:
+protected:
 
     std::vector< size_t > * neighbors = nullptr;
     std::vector< size_t > * neighbors_locations = nullptr;
@@ -68,7 +61,6 @@ private:
     VirusPtr<TSeq> virus = nullptr;
 
     std::vector< ToolPtr<TSeq> > tools;
-    unsigned int n_tools = 0u;
 
     void reset(); ///< Resets the agent to the initial state (no virus, no tools, no entities, state 0.)
 
@@ -93,21 +85,7 @@ public:
     ///@{
     void add_tool(
         Model<TSeq> & model,
-        ToolPtr<TSeq> & tool,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-        );
-
-    void add_tool(
-        Model<TSeq> & model,
         const Tool<TSeq> & tool,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-        );
-
-    void set_virus(
-        Model<TSeq> & model,
-        VirusPtr<TSeq> & virus,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
         );
@@ -182,8 +160,10 @@ public:
     const VirusPtr<TSeq> & get_virus() const;
 
     ToolPtr<TSeq> & get_tool(int i);
-    Tools<TSeq> get_tools();
-    const Tools_const<TSeq> get_tools() const;
+    ToolPtr<TSeq> & get_tool(std::string name);
+
+    std::vector<ToolPtr<TSeq>> get_tools();
+    const std::vector<ToolPtr<TSeq>> get_tools() const;
     size_t get_n_tools() const noexcept;
 
     void mutate_virus();
@@ -216,17 +196,19 @@ public:
         epiworld_fast_int queue = 0
         );
 
-    const unsigned int & get_state() const;
-    const unsigned int & get_state_prev() const;
+    unsigned int get_state() const;
+    unsigned int get_state_prev() const;
+    int get_state_last_changed() const;
+
 
     bool has_tool(epiworld_fast_uint t) const;
-    bool has_tool(std::string name) const;
+    bool has_tool(std::string_view name) const;
     bool has_tool(const Tool<TSeq> & t) const;
     bool has_virus(epiworld_fast_uint t) const;
-    bool has_virus(std::string name) const;
+    bool has_virus(std::string_view name) const;
     bool has_virus(const Virus<TSeq> & v) const;
     bool has_entity(epiworld_fast_uint t) const;
-    bool has_entity(std::string name, const Model<TSeq> & model) const;
+    bool has_entity(std::string_view name, const Model<TSeq> & model) const;
 
     void print(Model<TSeq> & model, bool compressed = false) const;
 

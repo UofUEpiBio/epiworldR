@@ -74,13 +74,6 @@
 
 #define EPI_RUNIF() m->runif()
 
-#define EPIWORLD_RUN(a) \
-    if (a.get_verbose()) \
-    { \
-        printf_epiworld("Running the model...\n");\
-    } \
-    for (epiworld_fast_uint niter = 0; niter < a.get_ndays(); ++niter)
-
 #define EPI_TOKENPASTE(a,b) a ## b
 #define MPAR(num) *(m->EPI_TOKENPASTE(p,num))
 

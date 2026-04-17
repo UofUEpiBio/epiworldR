@@ -11,6 +11,11 @@
 #' @param prob_death Numeric scalar. Probability of death.
 #' @param virus_pos Positive integer. Index of the virus's position in the model.
 #' @param incubation Numeric scalar. Incubation period (in days) of the virus.
+#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
+#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
+#' @param prevalence Numeric scalar. Proportion or count of agents that will be
+#' assigned the virus. The interpretation of this argument depends on the value
+#' of `as_proportion`.
 #' @details
 #' The [virus()] function can be used to initialize a virus. Virus features can
 #' then be modified using the functions `set_prob_*`.
@@ -43,8 +48,6 @@
 #' mseirconn
 #'
 #' rm_virus(mseirconn, 0) # Removing the first virus from the model object
-#' set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
-#' add_virus(mseirconn, delta)
 #'
 #' # Setting parameters for the delta virus manually
 #' set_prob_infecting(delta, 0.5)
@@ -517,90 +520,5 @@ set_incubation_fun <- function(virus, model, vfun) {
   stopifnot_model(model)
   stopifnot_vfun(vfun)
   invisible(set_incubation_fun_cpp(virus, model, vfun))
-
-}
-
-#' @export
-#' @rdname virus
-#' @param distfun An object of class `epiworld_distribution_virus`.
-set_distribution_virus <- function(virus, distfun) {
-
-  stopifnot_virus(virus)
-  stopifnot_virus_distfun(distfun)
-  invisible(set_distribution_virus_cpp(virus, distfun))
-
-}
-
-#' @export
-#' @rdname virus
-#' @details The `distribute_virus_randomly` function is a factory function
-#' used to randomly distribute the virus in the model. The prevalence can be set
-#' as a proportion or as a number of agents. The resulting function can then be
-#' passed to `set_distribution_virus`.
-#' @param prevalence Numeric scalar. Prevalence of the virus. In the case of
-#' `distribute_virus_to_entities`, it is a vector of prevalences, one per
-#' entity.
-#' @param as_proportion Logical scalar. If `TRUE`, the prevalence is set as a
-#' proportion of the total number of agents in the model.
-#' @return
-#' - The `distribute_virus_randomly` function returns a function that can be
-#' used to distribute the virus in the model. When `agents_ids` is not empty,
-#' it will distribute the virus randomly within that set. Otherwise it uses
-#' all the agents in the model.
-distribute_virus_randomly <- function(
-  prevalence,
-  as_proportion,
-  agents_ids = integer(0)
-) {
-
-  structure(
-    distribute_virus_randomly_cpp(
-      as.double(prevalence),
-      as.logical(as_proportion),
-      as.integer(agents_ids)
-    ),
-    class = "epiworld_virus_distfun"
-  )
-
-}
-
-#' @export
-#' @rdname virus
-#' @param agents_ids Integer vector. Indices of the agents that will receive the
-#' virus.
-distribute_virus_to_set <- function(agents_ids) {
-
-  structure(
-    distribute_virus_to_set_cpp(as.vector(agents_ids)),
-    class = "epiworld_virus_distfun"
-  )
-
-}
-
-#' @export
-#' @rdname virus
-distribute_virus_set <- function(agents_ids) {
-
-  .Deprecated("distribute_virus_to_set")
-
-}
-
-#' @export
-#' @rdname virus
-#' @details The `distribute_virus_to_entities` function is a factory function
-#' used to distribute the virus to a number of agents based on a prevalence
-#' at the entity level.
-distribute_virus_to_entities <- function(
-  prevalence,
-  as_proportion
-) {
-
-  structure(
-    distribute_virus_to_entities_cpp(
-      as.double(prevalence),
-      as.logical(as_proportion)
-    ),
-    class = "epiworld_virus_distfun"
-  )
 
 }

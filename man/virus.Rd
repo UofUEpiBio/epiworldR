@@ -21,11 +21,6 @@
 \alias{set_incubation}
 \alias{set_incubation_ptr}
 \alias{set_incubation_fun}
-\alias{set_distribution_virus}
-\alias{distribute_virus_randomly}
-\alias{distribute_virus_to_set}
-\alias{distribute_virus_set}
-\alias{distribute_virus_to_entities}
 \title{Virus design}
 \usage{
 virus(
@@ -74,26 +69,16 @@ set_incubation(virus, incubation)
 set_incubation_ptr(virus, model, param)
 
 set_incubation_fun(virus, model, vfun)
-
-set_distribution_virus(virus, distfun)
-
-distribute_virus_randomly(prevalence, as_proportion, agents_ids = integer(0))
-
-distribute_virus_to_set(agents_ids)
-
-distribute_virus_set(agents_ids)
-
-distribute_virus_to_entities(prevalence, as_proportion)
 }
 \arguments{
 \item{name}{of the virus}
 
-\item{prevalence}{Numeric scalar. Prevalence of the virus. In the case of
-\code{distribute_virus_to_entities}, it is a vector of prevalences, one per
-entity.}
+\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
+assigned the virus. The interpretation of this argument depends on the value
+of \code{as_proportion}.}
 
-\item{as_proportion}{Logical scalar. If \code{TRUE}, the prevalence is set as a
-proportion of the total number of agents in the model.}
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
+treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
 
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
@@ -128,11 +113,6 @@ coefficients associated to the logit probability.}
 will be added to the virus (see details).}
 
 \item{vfun}{An object of class \code{epiworld_virus_fun}.}
-
-\item{distfun}{An object of class \code{epiworld_distribution_virus}.}
-
-\item{agents_ids}{Integer vector. Indices of the agents that will receive the
-virus.}
 }
 \value{
 \itemize{
@@ -182,13 +162,6 @@ assigns a probability to death for the specified virus of class
 \item The \code{set_incubation} function does not return a value, but instead
 assigns an incubation period to the specified virus of class \link{epiworld_virus}.
 }
-
-\itemize{
-\item The \code{distribute_virus_randomly} function returns a function that can be
-used to distribute the virus in the model. When \code{agents_ids} is not empty,
-it will distribute the virus randomly within that set. Otherwise it uses
-all the agents in the model.
-}
 }
 \description{
 Viruses can be considered to be anything that can be transmitted (e.g.,
@@ -210,15 +183,6 @@ In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
 \code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
 the virus. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
-
-The \code{distribute_virus_randomly} function is a factory function
-used to randomly distribute the virus in the model. The prevalence can be set
-as a proportion or as a number of agents. The resulting function can then be
-passed to \code{set_distribution_virus}.
-
-The \code{distribute_virus_to_entities} function is a factory function
-used to distribute the virus to a number of agents based on a prevalence
-at the entity level.
 }
 \examples{
 mseirconn <- ModelSEIRCONN(
@@ -244,8 +208,6 @@ run(mseirconn, ndays = 100, seed = 992)
 mseirconn
 
 rm_virus(mseirconn, 0) # Removing the first virus from the model object
-set_distribution_virus(delta, distribute_virus_randomly(100, as_proportion = FALSE))
-add_virus(mseirconn, delta)
 
 # Setting parameters for the delta virus manually
 set_prob_infecting(delta, 0.5)

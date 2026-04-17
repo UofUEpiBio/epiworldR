@@ -15,9 +15,8 @@ class ModelSIRD : public Model<TSeq>
 {
 public:
 
-    ModelSIRD() {};
+    ModelSIRD() = delete;
 
-    
     /**
      * @brief Constructs a new SIRD model with the given parameters.
      * 
