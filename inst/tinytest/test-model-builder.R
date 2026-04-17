@@ -3,13 +3,17 @@
 # Build a SEIR model using the model_builder framework and compare it with the
 # built-in ModelSEIR implementation.
 
-n          <- 1000L
-prevalence <- 0.01
-trans_rate <- 0.5
-incub_days <- 7.0
-recov_rate <- 0.1
-ndays      <- 50L
-seed       <- 1912L
+n                 <- 1000L
+prevalence        <- 0.01
+trans_rate        <- 0.5
+incub_days        <- 7.0
+recov_rate        <- 0.1
+ndays             <- 50L
+seed              <- 1912L
+# Maximum allowed absolute deviation (as proportion of n) between the two
+# implementations.  The two models use slightly different RNG call patterns
+# (roulette vs. direct Bernoulli comparison) so exact equality is not expected.
+comparison_tol <- 0.15
 
 # ---- Reference: built-in ModelSEIR on a small-world network -----------------
 
@@ -90,7 +94,7 @@ removed_ref <- final_ref$counts[final_ref$state == "Removed"]
 removed_mb  <- final_mb$counts[final_mb$state  == "Removed"]
 
 expect_true(
-  abs(removed_mb - removed_ref) / n < 0.15,
+  abs(removed_mb - removed_ref) / n < comparison_tol,
   info = sprintf(
     "Final Removed counts differ by more than 15%%: ref=%d, mb=%d (n=%d)",
     removed_ref, removed_mb, n
