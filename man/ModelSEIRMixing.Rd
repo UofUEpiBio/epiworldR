@@ -43,7 +43,8 @@ Susceptible Exposed Infected Removed model (SEIR) with mixing
 \details{
 The \code{contact_matrix} is a matrix of contact rates between entities. The
 matrix should be of size \verb{n x n}, where \code{n} is the number of entities.
-This is a row-stochastic matrix, i.e., the sum of each row should be 1.
+The row-sums of the \code{contact_matrix} equal to the expected number of
+contacts per day for each entity.
 
 The \link{initial_states} function allows the user to set the initial state of the
 model. In particular, the user can specify how many of the non-infected

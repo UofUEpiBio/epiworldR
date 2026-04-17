@@ -25,11 +25,26 @@ update_fun_rate(param_names, target_states)
 \item{update_fun}{An object of class \code{epiworld_update_fun} with
 the update function to be used for the new state. A \code{NULL} value
 can be used if the state does not update (e.g., a "dead" state).}
+
+\item{exclude}{An integer vector with the state indices to be
+excluded from the infection process (see details).}
+
+\item{param_names}{A string vector with the name(s) of the parameter(s) to be
+used in the update function.}
+
+\item{target_states}{An integer vector with the state index(es) to which the
+agent will transition when the update function is executed.}
 }
 \value{
 \itemize{
 \item The function \code{new_model()} returns a new model object of class
 \link{epiworld_model}.
+}
+
+\itemize{
+\item The function \code{add_state()} returns the modified model object
+with the new state added. The function is called for its side
+effects and returns the modified model invisibly.
 }
 
 \itemize{
@@ -46,6 +61,32 @@ for a state that updates at a constant rate (e.g., recovery, death).
 }
 \description{
 Functions to build models from scratch (or to modify existing models).
+}
+\details{
+The model building functions allow users to create new models by adding
+states, parameters, viruses, tools and other components. These functions are
+useful for users who want to create custom models that are not included in
+the package or to modify existing models.
+
+When using \code{update_fun_susceptible()}, the \code{exclude} argument can
+be used to specify which agents carrying the virus should be excluded
+from infecting susceptible agents. This can be useful in cases where
+a virus may have a delayed effect on agents (e.g., an incubation period) or
+when agents can recover but still carry the virus for some time.
+
+The \code{update_fun_rate()} function creates an update function for a state that
+updates at a constant rate (e.g., recovery, death). The \code{param_names}
+argument specifies the name(s) of the parameter(s) that will be used in the
+update function (e.g., "Recovery rate"). The \code{target_states} argument
+specifies the state index(es) to which the agent will transition when the
+update function is executed (e.g., 3 for a transition to a "Removed" state).
+The function returns an object of class \code{epiworld_update_fun} that can be
+used as an update function for a state in the model.
+
+Rates in the \code{update_fun_rate()} are daily probabilities of transitioning
+to the target state(s). For example, if the recovery rate is 0.1, then there
+is a 10\% chance that an infected agent will transition to the "Removed"
+state each day.
 }
 \examples{
 # Create a new model
@@ -79,8 +120,15 @@ flu <- virus(
   prevalence = 0, as_proportion = TRUE
 )
 
+# We need to specify the effect that the virus
+# has on agents when assigned, recovered, or removed.
+# States are indexed starting at 0. In this model:
+# 0 = S, 1 = I, 2 = R
 virus_set_state(flu, 1, 2, 2)
 
+# We can set the transmission rate to be a function
+# of the parameter "Trans Rate" using the
+# set_prob_infecting_ptr function.
 set_prob_infecting_ptr(flu, model, "Trans Rate")
 
 set_distribution_virus(
@@ -100,3 +148,4 @@ run(model, ndays = 100, seed = 1912)
 summary(model)
 
 }
+\concept{model-building-functions}

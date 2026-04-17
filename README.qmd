@@ -113,9 +113,17 @@ sir
 
 Visualizing the outputs
 
-```{r sir-figures}
+```{r sir-summary}
 summary(sir)
+```
+
+```{r sir-plot}
+#| fig-alt: "State trajectories for the SIR random-graph example over time."
 plot(sir)
+```
+
+```{r sir-incidence}
+#| fig-alt: "Incidence curve for the SIR random-graph example."
 plot_incidence(sir)
 ```
 
@@ -150,13 +158,20 @@ summary(model_seirconn)
 
 Computing some key statistics
 
-```{r seir-conn-figures}
+```{r seir-conn-plot}
+#| fig-alt: "State trajectories for the fully connected SEIR example over time."
 plot(model_seirconn)
+```
 
+```{r seir-conn-repnum}
+#| fig-alt: "Estimated reproductive number over time for the fully connected SEIR example."
 repnum <- get_reproductive_number(model_seirconn)
 
 head(plot(repnum))
+```
 
+```{r seir-conn-gentime}
+#| fig-alt: "Generation time over time for the fully connected SEIR example."
 head(plot_generation_time(model_seirconn))
 ```
 
@@ -205,8 +220,14 @@ agents_smallworld(model_logit, n, 8, FALSE, .01)
 
 # Running the model
 run(model_logit, 50)
-plot(model_logit)
+```
 
+```{r logit-model-plot}
+#| fig-alt: "State trajectories for the SIR logit example over time."
+plot(model_logit)
+```
+
+```{r logit-model-analysis}
 # Females are supposed to be more likely to become infected
 rn <- get_reproductive_number(model_logit)
 
@@ -224,6 +245,7 @@ get_agents(model_logit)
 This example shows how we can draw a transmission network from a simulation. The following code simulates a population of 500 agents in a small-world network. Each agent is connected to ten other agents. One percent of the population has the virus, with a 50% chance of transmission. Infected individuals recover at a 0.5 rate:
 
 ```{r transmission-net}
+#| fig-alt: "Transmission network from the simulated SIR outbreak, shown as a node-link graph."
 # Creating a SIR model
 sir <- ModelSIR(
   name           = "COVID-19",
@@ -255,6 +277,7 @@ nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex = TRUE)
 `epiworldR` supports running multiple simulations using the `run_multiple` function. The following code simulates 50 SIR models with 1000 agents each. Each agent is connected to ten other agents. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a `data.frame`:
 
 ```{r multiple-example}
+#| fig-alt: "Plot of reproductive-number results from multiple SIR simulations."
 model_sir <- ModelSIRCONN(
   name = "COVID-19",
   prevalence = 0.01,

@@ -100,11 +100,23 @@ reference:
     contents:
       - has_concept("virus-functions")
 
+  - title: "Virus Distribution"
+    desc: >
+      Functions for assigning viruses across agents at initialization.
+    contents:
+      - has_concept("virus-distribution")
+
   - title: "Tool Functions"
     desc: >
       Functions for creating and managing tools (e.g., vaccines, interventions).
     contents:
       - has_concept("tool-functions")
+
+  - title: "Tool Distribution"
+    desc: >
+      Functions for assigning tools across agents at initialization.
+    contents:
+      - has_concept("tool-distribution")
 
   - title: "Entity Functions"
     desc: >
@@ -122,12 +134,7 @@ reference:
     desc: >
       Functions for constructing models from components and running simulations.
     contents:
-      - epiworld_model
-      - epiworld_update_fun
-      - new_model
-      - add_state
-      - update_fun_susceptible
-      - model_builder
+      - has_concept("model-building-functions")
 
   - title: "Deprecated Functions"
     desc: >
