@@ -23,33 +23,22 @@ class ModelDiffNet : public Model<TSeq>
 private:
 public:
 
-    ModelDiffNet() {};
-
-    ModelDiffNet(
-        ModelDiffNet<TSeq> & model,
-        const std::string & innovation_name,
-        epiworld_double prevalence,
-        epiworld_double prob_adopt,
-        bool normalize_exposure = true,
-        double * agents_data = nullptr,
-        size_t data_ncols = 0u,
-        std::vector< size_t > data_cols = {},
-        std::vector< double > params = {}
-    );
-
-    ModelDiffNet(
-        const std::string & innovation_name,
-        epiworld_double prevalence,
-        epiworld_double prob_adopt,
-        bool normalize_exposure = true,
-        double * agents_data = nullptr,
-        size_t data_ncols = 0u,
-        std::vector< size_t > data_cols = {},
-        std::vector< double > params = {}
-    );
-    
+    // Statuses
     static const int NONADOPTER = 0;
     static const int ADOPTER    = 1;
+
+    ModelDiffNet() = delete;
+
+    ModelDiffNet(
+        const std::string & innovation_name,
+        epiworld_double prevalence,
+        epiworld_double prob_adopt,
+        bool normalize_exposure = true,
+        double * agents_data = nullptr,
+        size_t data_ncols = 0u,
+        std::vector< size_t > data_cols = {},
+        std::vector< double > params = {}
+    );
 
     bool normalize_exposure = true;
     std::vector< size_t > data_cols;
@@ -58,7 +47,6 @@ public:
 
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
-    ModelDiffNet<TSeq> & model,
     const std::string & innovation_name,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
@@ -160,15 +148,15 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         };
 
     // Adding agents data
-    model.set_agents_data(agents_data, data_ncols);
+    this->set_agents_data(agents_data, data_ncols);
     
     // Adding statuses
-    model.add_state("Non adopters", update_non_adopters);
-    model.add_state("Adopters");
+    this->add_state("Non adopters", update_non_adopters);
+    this->add_state("Adopters");
 
     // Adding parameters
     std::string parname = std::string("Prob. Adopting ") + innovation_name;
-    model.add_param(prob_adopt, parname);
+    this->add_param(prob_adopt, parname);
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> innovation(innovation_name, prevalence, true);
@@ -176,42 +164,13 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     
     innovation.set_prob_infecting(parname);
     
-    model.add_virus(innovation);
+    this->add_virus(innovation);
 
-    model.set_name(
+    this->set_name(
         std::string("Diffusion of Innovations - ") + innovation_name);
 
     return;
    
-}
-
-template<typename TSeq>
-inline ModelDiffNet<TSeq>::ModelDiffNet(
-    const std::string & innovation_name,
-    epiworld_double prevalence,
-    epiworld_double prob_adopt,
-    bool normalize_exposure,
-    double * agents_data,
-    size_t data_ncols,
-    std::vector< size_t > data_cols,
-    std::vector< double > params
-    )
-{
-
-    ModelDiffNet<TSeq>(
-        *this,
-        innovation_name,
-        prevalence,
-        prob_adopt,
-        normalize_exposure,
-        agents_data,
-        data_ncols,
-        data_cols,
-        params
-        );
-
-    return;
-
 }
 
 #endif

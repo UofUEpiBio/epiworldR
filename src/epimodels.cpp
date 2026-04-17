@@ -439,7 +439,6 @@ SEXP ModelSIRMixing_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double contact_rate,
     double transmission_rate,
     double recovery_rate,
     std::vector< double > contact_matrix
@@ -451,7 +450,6 @@ SEXP ModelSIRMixing_cpp(
           name,
           n,
           prevalence,
-          contact_rate,
           transmission_rate,
           recovery_rate,
           contact_matrix
@@ -495,7 +493,6 @@ SEXP ModelSEIRMixingQuarantine_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double contact_rate,
     double transmission_rate,
     double incubation_days,
     double recovery_rate,
@@ -518,7 +515,6 @@ SEXP ModelSEIRMixingQuarantine_cpp(
           name,
           n,
           prevalence,
-          contact_rate,
           transmission_rate,
           incubation_days,
           recovery_rate,

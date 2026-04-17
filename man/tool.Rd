@@ -72,13 +72,20 @@ set_death_reduction_fun(tool, model, tfun)
 \arguments{
 \item{name}{Name of the tool}
 
+\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
+assigned the tool. The interpretation of this argument depends on the value
+of \code{as_proportion}.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
+treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
+
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
 \item{transmission_reduction}{Numeric. Proportion it reduces transmission.}
 
 \item{recovery_enhancer}{Numeric. Proportion it improves recovery.}
 
-\item{death_reduction}{Numeric. Proportion it reduces probability of death.e}
+\item{death_reduction}{Numeric. Proportion it reduces probability of death.}
 
 \item{tool}{An object of class \code{epiworld_tool}}
 

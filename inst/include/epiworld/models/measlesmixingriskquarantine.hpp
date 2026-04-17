@@ -132,20 +132,22 @@ public:
     static constexpr int RISK_MEDIUM = 1;
     static constexpr int RISK_HIGH   = 2;
 
-    ModelMeaslesMixingRiskQuarantine() {};
+    ModelMeaslesMixingRiskQuarantine() = delete;
 
     /**
      * @brief Constructs a ModelMeaslesMixingRiskQuarantine object.
      *
-     * @param n The number of entities in the model.
+     * @param n The number of agents in the model.
      * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param vax_efficacy The efficacy of the vaccine.
      * @param incubation_period The incubation period of the disease in the model.
      * @param prodromal_period The prodromal period of the disease in the model.
      * @param rash_period The rash period of the disease in the model.
      * @param contact_matrix The contact matrix between entities in the model.
+     * Specified in column-major order. Each entry (i,j) represents the
+     * expected number of contacts an agent in group i has with agents in
+     * group j per day.
      * @param hospitalization_rate The rate at which infected individuals are hospitalized.
      * @param hospitalization_period The average duration of hospitalization in days.
      * @param days_undetected The average number of days an infected individual remains undetected.
@@ -163,7 +165,6 @@ public:
     ModelMeaslesMixingRiskQuarantine(
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double vax_efficacy,
         epiworld_double incubation_period,
@@ -340,7 +341,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::_update_infectious_list()
     for (auto & rate: adjusted_contact_rate)
     {
         if (rate > 0.0)
-            rate = Model<TSeq>::get_param("Contact rate") / rate;
+            rate = 1.0 / rate;
         else
             rate = 0.0;  // No available contacts in this group
 
@@ -1047,7 +1048,6 @@ template<typename TSeq>
 inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double contact_rate,
     epiworld_double transmission_rate,
     epiworld_double vax_efficacy,
     epiworld_double incubation_period,
@@ -1075,7 +1075,6 @@ inline ModelMeaslesMixingRiskQuarantine<TSeq>::ModelMeaslesMixingRiskQuarantine(
     this->contact_matrix = contact_matrix;
 
     // Setting up parameters
-    this->add_param(contact_rate, "Contact rate");
     this->add_param(transmission_rate, "Transmission rate");
     this->add_param(incubation_period, "Incubation period");
     this->add_param(prodromal_period, "Prodromal period");
@@ -1164,7 +1163,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::reset()
 
     Model<TSeq>::reset();
 
-    // Checking contact matrix's rows add to one
+    // Checking contact matrix dimensions
     size_t nentities = this->entities.size();
     if (this->contact_matrix.size() !=  nentities*nentities)
         throw std::length_error(
@@ -1177,7 +1176,6 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::reset()
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-        double sum = 0.0;
         for (size_t j = 0u; j < this->entities.size(); ++j)
         {
             if (this->contact_matrix[COL_MAJOR_POS(i, j, nentities)] < 0.0)
@@ -1186,14 +1184,7 @@ inline void ModelMeaslesMixingRiskQuarantine<TSeq>::reset()
                     std::to_string(this->contact_matrix[COL_MAJOR_POS(i, j, nentities)]) +
                     std::string(" < 0.")
                     );
-            sum += this->contact_matrix[COL_MAJOR_POS(i, j, nentities)];
         }
-        if (sum < 0.999 || sum > 1.001)
-            throw std::range_error(
-                std::string("The contact matrix must have rows that add to one. ") +
-                std::to_string(sum) +
-                std::string(" != 1.")
-                );
     }
 
     // Do it the first time only

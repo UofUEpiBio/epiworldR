@@ -11,6 +11,11 @@
 #' @param prob_death Numeric scalar. Probability of death.
 #' @param virus_pos Positive integer. Index of the virus's position in the model.
 #' @param incubation Numeric scalar. Incubation period (in days) of the virus.
+#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
+#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
+#' @param prevalence Numeric scalar. Proportion or count of agents that will be
+#' assigned the virus. The interpretation of this argument depends on the value
+#' of `as_proportion`.
 #' @details
 #' The [virus()] function can be used to initialize a virus. Virus features can
 #' then be modified using the functions `set_prob_*`.

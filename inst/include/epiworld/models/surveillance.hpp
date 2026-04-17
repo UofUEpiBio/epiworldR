@@ -10,18 +10,16 @@
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSURV : public Model<TSeq> {
 
-private:
-    // state
-    static const int SUSCEPTIBLE           = 0;
-    static const int LATENT                = 1;
-    static const int SYMPTOMATIC           = 2;
-    static const int SYMPTOMATIC_ISOLATED  = 3; // sampled and discovered
-    static const int ASYMPTOMATIC          = 4;
-    static const int ASYMPTOMATIC_ISOLATED = 5;
-    static const int RECOVERED             = 6;
-    static const int REMOVED               = 7;
-
 public:
+    // state
+    static constexpr int SUSCEPTIBLE           = 0;
+    static constexpr int LATENT                = 1;
+    static constexpr int SYMPTOMATIC           = 2;
+    static constexpr int SYMPTOMATIC_ISOLATED  = 3; // sampled and discovered
+    static constexpr int ASYMPTOMATIC          = 4;
+    static constexpr int ASYMPTOMATIC_ISOLATED = 5;
+    static constexpr int RECOVERED             = 6;
+    static constexpr int REMOVED               = 7;
 
     /**
      * @brief Vector of days spent in latent and infectious states
@@ -70,7 +68,7 @@ public:
      * 
      */
     ///@{
-    ModelSURV() {};
+    ModelSURV() = delete;
 
     ModelSURV(
         const std::string & vname,

@@ -6,7 +6,7 @@ e1 <- entity("Population 1", 3e3, FALSE)
 e2 <- entity("Population 2", 3e3, FALSE)
 e3 <- entity("Population 3", 3e3, FALSE)
 
-# Row-stochastic matrix (rowsums 1)
+# Contact matrix with 40 expected contacts per day
 cmatrix <- (c(
   c(1, 0, 0),
   c(0, 1, 0),

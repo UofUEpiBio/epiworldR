@@ -73,6 +73,13 @@ set_incubation_fun(virus, model, vfun)
 \arguments{
 \item{name}{of the virus}
 
+\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
+assigned the virus. The interpretation of this argument depends on the value
+of \code{as_proportion}.}
+
+\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
+treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
+
 \item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
 
 \item{recovery_rate}{Numeric scalar. Probability of recovery.}

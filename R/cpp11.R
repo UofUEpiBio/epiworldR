@@ -196,16 +196,16 @@ ModelDiffNet_cpp <- function(name, prevalence, prob_adopt, normalize_exposure, d
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
-ModelSIRMixing_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix) {
-  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate, contact_matrix)
+ModelSIRMixing_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate, contact_matrix) {
+  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, transmission_rate, recovery_rate, contact_matrix)
 }
 
 ModelSEIRMixing_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix) {
   .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix)
 }
 
-ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
-  .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
+ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
+  .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
 }
 
 globalevent_tool_logit_cpp <- function(tool, vars, coefs, name, day) {

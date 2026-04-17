@@ -21,7 +21,7 @@ public:
   static const int REMOVED     = 3;
   static const int DECEASED    = 4;
   
-  ModelSEIRD() {};
+  ModelSEIRD() = delete;
 
   /**
    * @brief Constructor for the SEIRD model.

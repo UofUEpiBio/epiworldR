@@ -27,7 +27,7 @@ public:
     static const int INFECTED    = 2;
     static const int REMOVED     = 3;
 
-    ModelSEIR() {};
+    ModelSEIR() = delete;
 
     ModelSEIR(
         const std::string & vname,

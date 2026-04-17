@@ -21,7 +21,7 @@ class ModelSIR : public Model<TSeq>
 {
 public:
 
-    ModelSIR() {};
+    ModelSIR() = delete;
 
     ModelSIR(
         const std::string & vname,

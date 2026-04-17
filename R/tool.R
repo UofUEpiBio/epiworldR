@@ -9,8 +9,13 @@
 #' @param susceptibility_reduction Numeric. Proportion it reduces susceptibility.
 #' @param transmission_reduction Numeric. Proportion it reduces transmission.
 #' @param recovery_enhancer Numeric. Proportion it improves recovery.
-#' @param death_reduction Numeric. Proportion it reduces probability of death.e
+#' @param death_reduction Numeric. Proportion it reduces probability of death.
 #' @param tool_pos Positive integer. Index of the tool's position in the model.
+#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
+#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
+#' @param prevalence Numeric scalar. Proportion or count of agents that will be
+#' assigned the tool. The interpretation of this argument depends on the value
+#' of `as_proportion`.
 #' @examples
 #' # Simple model
 #' model_sirconn <- ModelSIRCONN(

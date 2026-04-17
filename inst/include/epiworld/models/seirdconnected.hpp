@@ -25,8 +25,20 @@ public:
     static const int REMOVED     = 3;
     static const int DECEASED    = 4;
 
-    ModelSEIRDCONN() {};
-    
+    ModelSEIRDCONN() = delete;
+
+     /**
+     * @brief Constructor for the SEIRD model with connected population.
+     * 
+     * @param vname Name of the model.
+     * @param n Population size.
+     * @param prevalence Initial prevalence of the disease.
+     * @param contact_rate Average number of contacts (interactions) per step.
+     * @param transmission_rate Probability of transmission
+     * @param avg_incubation_days Average incubation period of the disease.
+     * @param recovery_rate Probability of recovery
+     * @param death_rate Probability of death
+     */
     ModelSEIRDCONN(
         const std::string & vname,
         epiworld_fast_uint n,

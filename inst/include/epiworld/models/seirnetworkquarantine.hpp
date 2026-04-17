@@ -82,7 +82,7 @@ public:
     static const size_t QUARANTINE_PROCESS_ACTIVE   = 1u;
     static const size_t QUARANTINE_PROCESS_DONE     = 2u;
 
-    ModelSEIRNetworkQuarantine() {};
+    ModelSEIRNetworkQuarantine() = delete;
 
     /**
      * @brief Constructs a ModelSEIRNetworkQuarantine object.

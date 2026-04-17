@@ -37,14 +37,12 @@
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRLogit : public Model<TSeq>
 {
-private:
+public:
     static const int SUSCEPTIBLE = 0;
     static const int INFECTED    = 1;
     static const int RECOVERED   = 2;
 
-public:
-
-    ModelSIRLogit() {};
+    ModelSIRLogit() = delete;
 
     /**
       * @param vname Name of the virus.

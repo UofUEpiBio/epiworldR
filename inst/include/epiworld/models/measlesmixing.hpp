@@ -117,7 +117,7 @@ public:
     static const size_t QUARANTINE_PROCESS_ACTIVE   = 1u;
     static const size_t QUARANTINE_PROCESS_DONE     = 2u;
 
-    ModelMeaslesMixing() {};
+    ModelMeaslesMixing() = delete;
 
     /**
      * @brief Constructs a ModelMeaslesMixing object.

@@ -102,7 +102,7 @@ public:
     ///@}
     
     // Default constructor
-    ModelMeaslesSchool() {};
+    ModelMeaslesSchool() = delete;
 
     ModelMeaslesSchool(
         epiworld_fast_uint n,

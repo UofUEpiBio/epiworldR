@@ -25,7 +25,7 @@ public:
     static const int RECOVERED   = 2;
 
     
-    ModelSIRCONN() {};
+    ModelSIRCONN() = delete;
 
     ModelSIRCONN(
         const std::string & vname,

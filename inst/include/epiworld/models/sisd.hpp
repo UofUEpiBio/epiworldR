@@ -22,7 +22,7 @@ class ModelSISD : public Model<TSeq>
 
 public:
 
-    ModelSISD() {};
+    ModelSISD() = delete;
 
     ModelSISD(
         const std::string & vname,

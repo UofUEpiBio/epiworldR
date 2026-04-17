@@ -4,8 +4,8 @@
 #include "../model-bones.hpp"
 
 /**
- * @file seirentitiesconnected.hpp
- * @brief Template for a Susceptible-Exposed-Infected-Removed (SEIR) model with mixing
+ * @file sirmixing.hpp
+ * @brief Template for a Susceptible-Infected-Removed (SIR) model with mixing
  * 
  * ![Model Diagram](../assets/img/sirmixing.png)
  * 
@@ -46,24 +46,25 @@ public:
     static const int INFECTED    = 1;
     static const int RECOVERED   = 2;
 
-    ModelSIRMixing() {};
+    ModelSIRMixing() = delete;
 
     /**
      * @brief Constructs a ModelSIRMixing object.
      *
      * @param vname The name of the ModelSIRMixing object.
-     * @param n The number of entities in the model.
+     * @param n The number of agents in the model.
      * @param prevalence The initial prevalence of the disease in the model.
-     * @param contact_rate The contact rate between entities in the model.
      * @param transmission_rate The transmission rate of the disease in the model.
      * @param recovery_rate The recovery rate of the disease in the model.
      * @param contact_matrix The contact matrix between entities in the model.
+     * Specified in column-major order. Each entry (i,j) represents the
+     * expected number of contacts an agent in group i has with agents in
+     * group j per day. Entry (i,j) is located at `contact_matrix[j * n + i]`.
      */
     ModelSIRMixing(
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double contact_rate,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate,
         std::vector< double > contact_matrix
@@ -198,7 +199,7 @@ inline void ModelSIRMixing<TSeq>::reset()
 
     Model<TSeq>::reset();
 
-    // Checking contact matrix's rows add to one
+    // Checking contact matrix dimensions
     size_t nentities = this->entities.size();
     if (this->contact_matrix.size() !=  nentities*nentities)
         throw std::length_error(
@@ -211,7 +212,6 @@ inline void ModelSIRMixing<TSeq>::reset()
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
-        double sum = 0.0;
         for (size_t j = 0u; j < this->entities.size(); ++j)
         {
             if (this->contact_matrix[index(i, j, nentities)] < 0.0)
@@ -220,14 +220,7 @@ inline void ModelSIRMixing<TSeq>::reset()
                     std::to_string(this->contact_matrix[index(i, j, nentities)]) +
                     std::string(" < 0.")
                     );
-            sum += this->contact_matrix[index(i, j, nentities)];
         }
-        if (sum < 0.999 || sum > 1.001)
-            throw std::range_error(
-                std::string("The contact matrix must have rows that add to one. ") +
-                std::to_string(sum) +
-                std::string(" != 1.")
-                );
     }
 
     // Do it the first time only
@@ -250,13 +243,12 @@ inline void ModelSIRMixing<TSeq>::reset()
     }
 
     // Adjusting contact rate
-    adjusted_contact_rate.clear();
-    adjusted_contact_rate.resize(this->entities.size(), 0.0);
+    adjusted_contact_rate.assign(this->entities.size(), 0.0);
 
     for (size_t i = 0u; i < this->entities.size(); ++i)
     {
         adjusted_contact_rate[i] =
-            Model<TSeq>::get_param("Contact rate") /
+            1.0 /
                 static_cast< epiworld_double > (this->get_entity(i).size());
 
         // Possibly correcting for a small number of agents
@@ -284,16 +276,17 @@ inline std::unique_ptr<Model<TSeq>> ModelSIRMixing<TSeq>::clone_ptr()
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param prevalence Initial prevalence (proportion)
- * @param contact_rate Average number of contacts (interactions) per step.
  * @param transmission_rate Probability of transmission
  * @param recovery_rate Probability of recovery
+ * @param contact_matrix Contact matrix specifying expected contacts between groups.
+ * Each entry (i,j) represents the expected number of contacts an agent in
+ * group i has with agents in group j per day.
  */
 template<typename TSeq>
 inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double contact_rate,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate,
     std::vector< double > contact_matrix
@@ -414,7 +407,6 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
         };
 
     // Setting up parameters
-    this->add_param(contact_rate, "Contact rate");
     this->add_param(transmission_rate, "Prob. Transmission");
     this->add_param(recovery_rate, "Prob. Recovery");
 

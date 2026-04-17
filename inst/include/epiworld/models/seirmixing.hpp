@@ -48,32 +48,7 @@ public:
     static const int INFECTED    = 2;
     static const int RECOVERED   = 3;
 
-    ModelSEIRMixing() {};
-
-    /**
-     * @brief Constructs a ModelSEIRMixing object.
-     *
-     * @param model A reference to an existing ModelSEIRMixing object.
-     * @param vname The name of the ModelSEIRMixing object.
-     * @param n The number of entities in the model.
-     * @param prevalence The initial prevalence of the disease in the model.
-     * @param transmission_rate The transmission rate of the disease in the model.
-     * @param avg_incubation_days The average incubation period of the disease in the model.
-     * @param recovery_rate The recovery rate of the disease in the model.
-     * @param contact_matrix The contact matrix between entities in the model. Specified in
-     * column-major order. Each entry (i,j) represents the expected number of
-     * contacts an agent in group i has with agents in group j per day.
-     */
-    ModelSEIRMixing(
-        ModelSEIRMixing<TSeq> & model,
-        const std::string & vname,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double transmission_rate,
-        epiworld_double avg_incubation_days,
-        epiworld_double recovery_rate,
-        std::vector< double > contact_matrix
-    );
+    ModelSEIRMixing() = delete;
 
     /**
      * @brief Constructs a ModelSEIRMixing object.

@@ -19,23 +19,7 @@ public:
     static const int RECOVERED   = 2;
     static const int DECEASED    = 3;
 
-    ModelSIRDCONN() {
-        
-        // tracked_agents_infected.reserve(1e4);
-        // tracked_agents_infected_next.reserve(1e4);
-
-    };
-
-    ModelSIRDCONN(
-        ModelSIRDCONN<TSeq> & model,
-        const std::string & vname,
-        epiworld_fast_uint n,
-        epiworld_double prevalence,
-        epiworld_double contact_rate,
-        epiworld_double transmission_rate,
-        epiworld_double recovery_rate, 
-        epiworld_double death_rate
-    );
+    ModelSIRDCONN() = delete;
 
     ModelSIRDCONN(
         const std::string & vname,
