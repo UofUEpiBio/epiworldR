@@ -124,6 +124,10 @@ reference:
     contents:
       - epiworld_model
       - epiworld_update_fun
+      - new_model
+      - add_state
+      - update_fun_susceptible
+      - model_builder
 
   - title: "Deprecated Functions"
     desc: >
