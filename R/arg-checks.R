@@ -249,3 +249,13 @@ stopifnot_columns <- function(df, expected_cols) {
 
   invisible(TRUE)
 }
+
+stopifnot_update_fun <- function(update_fun) {
+  if (!inherits(update_fun, "epiworld_update_fun")) {
+    stop(
+      "The -update_fun- object must be of class 'epiworld_update_fun'. ",
+      "The object passed to the function is of class(es): ",
+      paste(class(update_fun), collapse = ", ")
+    )
+  }
+}

@@ -118,6 +118,13 @@ reference:
     contents:
       - has_concept("global-events")
 
+  - title: "Model building"
+    desc: >
+      Functions for constructing models from components and running simulations.
+    contents:
+      - epiworld_model
+      - epiworld_update_fun
+
   - title: "Deprecated Functions"
     desc: >
       Functions that have been renamed or deprecated in recent versions.

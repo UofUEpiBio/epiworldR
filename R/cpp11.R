@@ -488,6 +488,22 @@ draw_mermaid_cpp <- function(model, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
 }
 
+new_model_cpp <- function() {
+  .Call(`_epiworldR_new_model_cpp`)
+}
+
+add_state_cpp <- function(model, state_label, update_fun) {
+  .Call(`_epiworldR_add_state_cpp`, model, state_label, update_fun)
+}
+
+update_fun_susceptible_cpp <- function(exclude) {
+  .Call(`_epiworldR_update_fun_susceptible_cpp`, exclude)
+}
+
+update_fun_rate_cpp <- function(param_names, target_states) {
+  .Call(`_epiworldR_update_fun_rate_cpp`, param_names, target_states)
+}
+
 agents_smallworld_cpp <- function(m, n, k, d, p) {
   .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
 }

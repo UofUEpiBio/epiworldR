@@ -863,6 +863,34 @@ extern "C" SEXP _epiworldR_draw_mermaid_cpp(SEXP model, SEXP fn_output, SEXP sel
     return R_NilValue;
   END_CPP11
 }
+// model_builder.cpp
+SEXP new_model_cpp();
+extern "C" SEXP _epiworldR_new_model_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(new_model_cpp());
+  END_CPP11
+}
+// model_builder.cpp
+SEXP add_state_cpp(SEXP model, std::string state_label, SEXP update_fun);
+extern "C" SEXP _epiworldR_add_state_cpp(SEXP model, SEXP state_label, SEXP update_fun) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(state_label), cpp11::as_cpp<cpp11::decay_t<SEXP>>(update_fun)));
+  END_CPP11
+}
+// model_builder.cpp
+SEXP update_fun_susceptible_cpp(cpp11::integers exclude);
+extern "C" SEXP _epiworldR_update_fun_susceptible_cpp(SEXP exclude) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(update_fun_susceptible_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(exclude)));
+  END_CPP11
+}
+// model_builder.cpp
+SEXP update_fun_rate_cpp(cpp11::strings param_names, cpp11::integers target_states);
+extern "C" SEXP _epiworldR_update_fun_rate_cpp(SEXP param_names, SEXP target_states) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(update_fun_rate_cpp(cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(param_names), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(target_states)));
+  END_CPP11
+}
 // network.cpp
 SEXP agents_smallworld_cpp(SEXP m, unsigned int n, unsigned int k, bool d, double p);
 extern "C" SEXP _epiworldR_agents_smallworld_cpp(SEXP m, SEXP n, SEXP k, SEXP d, SEXP p) {
@@ -1257,6 +1285,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_entity_cpp",                       (DL_FUNC) &_epiworldR_add_entity_cpp,                        2},
     {"_epiworldR_add_globalevent_cpp",                  (DL_FUNC) &_epiworldR_add_globalevent_cpp,                   2},
     {"_epiworldR_add_param_cpp",                        (DL_FUNC) &_epiworldR_add_param_cpp,                         3},
+    {"_epiworldR_add_state_cpp",                        (DL_FUNC) &_epiworldR_add_state_cpp,                         3},
     {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    5},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          2},
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
@@ -1343,6 +1372,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
     {"_epiworldR_load_agents_entities_ties_cpp",        (DL_FUNC) &_epiworldR_load_agents_entities_ties_cpp,         3},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       13},
+    {"_epiworldR_new_model_cpp",                        (DL_FUNC) &_epiworldR_new_model_cpp,                         0},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             2},
@@ -1403,6 +1433,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              7},
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},
+    {"_epiworldR_update_fun_rate_cpp",                  (DL_FUNC) &_epiworldR_update_fun_rate_cpp,                   2},
+    {"_epiworldR_update_fun_susceptible_cpp",           (DL_FUNC) &_epiworldR_update_fun_susceptible_cpp,            1},
     {"_epiworldR_use_kernel_fun_gaussian_cpp",          (DL_FUNC) &_epiworldR_use_kernel_fun_gaussian_cpp,           1},
     {"_epiworldR_use_proposal_norm_reflective_cpp",     (DL_FUNC) &_epiworldR_use_proposal_norm_reflective_cpp,      1},
     {"_epiworldR_verbose_off_cpp",                      (DL_FUNC) &_epiworldR_verbose_off_cpp,                       1},
