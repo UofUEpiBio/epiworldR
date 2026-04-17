@@ -51,6 +51,10 @@ Functions to build models from scratch (or to modify existing models).
 # Create a new model
 model <- new_model()
 
+# Adding recovery rate
+add_param(model, "Rec Rate", 0.1)
+add_param(model, "Trans Rate", 0.5)
+
 # Creating the update function for the susceptible state
 update_fun_s <- update_fun_susceptible()
 
@@ -60,7 +64,7 @@ add_state(model, "S", update_fun_s)
 # Creating the update function for the infected
 update_fun_i <- update_fun_rate(
   param_names = "Rec Rate",
- target_states = 2L
+  target_states = 2L
 )
 
 # Adding the infected state to the model
@@ -77,7 +81,9 @@ flu <- virus(
 
 virus_set_state(flu, 1, 2, 2)
 
-set_distribtion_virus(
+set_prob_infecting_ptr(flu, model, "Trans Rate")
+
+set_distribution_virus(
   flu,
   distribute_virus_randomly(1L, FALSE)
 )
@@ -86,7 +92,7 @@ set_distribtion_virus(
 add_virus(model, flu)
 
 # Creating a SBM network
-agents_smallworld(model, n = 1000, k = 5, d = FALSE, p = .01)
+agents_smallworld(model, n = 1000, k = 20, d = FALSE, p = .01)
 
 # Running the model
 run(model, ndays = 100, seed = 1912)
