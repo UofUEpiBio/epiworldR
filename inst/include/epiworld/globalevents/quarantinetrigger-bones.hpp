@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../config.hpp"
+#include "quarantinetrigger-bones.hpp"
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class QuarantineTrigger {

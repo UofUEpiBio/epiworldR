@@ -122,6 +122,8 @@ namespace epiworld {
     #include "agentssample-bones.hpp"
 
     #include "tools/vaccine.hpp"
+    #include "globalevents/quarantinetrigger-bones.hpp"
+    
     #include "models/models.hpp"
 
 }
