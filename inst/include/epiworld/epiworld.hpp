@@ -64,7 +64,6 @@ namespace epiworld {
     #include "progress.hpp"
 
     #include "rng-utils.hpp"
-    #include "modeldiagram-bones.hpp"
     #include "modeldiagram-meat.hpp"
 
     #include "math/distributions.hpp"
@@ -122,7 +121,7 @@ namespace epiworld {
     #include "agentssample-bones.hpp"
 
     #include "tools/vaccine.hpp"
-    #include "globalevents/quarantinetrigger-bones.hpp"
+    #include "globalevents/quarantinetrigger-meat.hpp"
     
     #include "models/models.hpp"
 

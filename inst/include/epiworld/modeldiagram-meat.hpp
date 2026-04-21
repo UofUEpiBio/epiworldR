@@ -1,6 +1,8 @@
 #ifndef EPIWORLD_MODELDIAGRAM_MEAT_HPP
 #define EPIWORLD_MODELDIAGRAM_MEAT_HPP
 
+#include "modeldiagram-bones.hpp"
+
 inline void ModelDiagram::read_transitions(
     const std::string & fn_transition
 ) {
