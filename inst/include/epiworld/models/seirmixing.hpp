@@ -12,6 +12,10 @@
  * 
  * ![Model Diagram](../assets/img/seirmixing.png)
  * 
+ * **Implementation details:**
+ * <a href="../impl/mixing-and-entity-distribution.md">Mixing and Entity Distribution</a>,
+ * <a href="../impl/sampling-contacts.md">Sampling Contacts</a>
+ * 
  * @ingroup mixing_models
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>

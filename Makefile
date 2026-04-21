@@ -44,18 +44,17 @@ README.md: README.qmd
 # update:
 # 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
 # 		mv epiworld.hpp inst/include/epiworld.hpp
-local-update:
-	rsync -avz --delete ../epiworld/include/epiworld inst/include/. && \
-	rm inst/include/epiworld/models/*.mmd
+EPIWORLD_BRANCH ?= master
 
-local-update-diagrams:
-	rsync -avz --delete ../epiworld/docs_src/assets/img/* man/figures/
-
-update:
-	git clone --depth=1 https://github.com/UofUEpiBio/epiworld tmp_epiworld && \
+update: clean-update
+	git clone --depth=1 -b $(EPIWORLD_BRANCH) https://github.com/UofUEpiBio/epiworld tmp_epiworld && \
 	rsync -avz --delete tmp_epiworld/include/epiworld inst/include/. && \
-	rm inst/include/epiworld/models/*.mmd && \
-	rsync -avz --delete tmp_epiworld/docs_src/assets/img/* man/figures && \
+	rm -f inst/include/epiworld/models/*.mmd && \
+	rsync -avz --delete tmp_epiworld/docs/assets/img/*png man/figures && \
+	rm -f man/figures/measles*.png && \
+	rm -rf tmp_epiworld
+
+clean-update:
 	rm -rf tmp_epiworld
 
 

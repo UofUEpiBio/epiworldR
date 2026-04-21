@@ -13,6 +13,10 @@ class UserData;
 /**
  * @brief Statistical data about the process
  *
+ * **Implementation details:**
+ * <a href="../impl/data-collection-and-analysis.md">Data Collection and Analysis</a>,
+ * <a href="../impl/generation-interval-and-reproductive-number.md">Generation Interval and Reproductive Number Calculation</a>
+ *
  * @tparam TSeq
  */
 template<typename TSeq>

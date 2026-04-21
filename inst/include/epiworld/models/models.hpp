@@ -9,6 +9,10 @@
  * used in disease simulation and modeling. The models range from basic compartmental 
  * models to specialized scenarios including connected populations, population mixing, 
  * quarantine measures, and disease-specific implementations.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>,
+ * <a href="../impl/extending-the-library-with-models.md">Extending the Library with Models</a>
  */
 
 /**
@@ -18,6 +22,9 @@
  * 
  * These are the foundational compartmental models in epidemiology that divide 
  * populations into distinct states based on disease status.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>
  */
 
 /**
@@ -27,6 +34,9 @@
  * 
  * Extended compartmental models that explicitly track mortality as a separate 
  * compartment in the disease progression.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>
  */
 
 /**
@@ -36,6 +46,9 @@
  * 
  * Models designed for populations with explicit network connections between individuals, 
  * allowing for more realistic contact patterns.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>
  */
 
 /**
@@ -45,6 +58,10 @@
  * 
  * Models that incorporate heterogeneous mixing patterns between different population 
  * groups or entities, often using contact matrices.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/mixing-and-entity-distribution.md">Mixing and Entity Distribution</a>,
+ * <a href="../impl/sampling-contacts.md">Sampling Contacts</a>
  */
 
 /**
@@ -54,6 +71,10 @@
  * 
  * Specialized implementations designed to capture the unique transmission dynamics 
  * and characteristics of specific infectious diseases.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>,
+ * <a href="../impl/quarantine-isolation-and-contact-tracing.md">Quarantine, Isolation, and Contact Tracing</a>
  */
 
 /**
@@ -72,6 +93,10 @@
  * 
  * Helper functions and global event handlers that can be used across different 
  * epidemiological models for initialization and event management.
+ * 
+ * **Implementation details:**
+ * <a href="../impl/events-and-multi-event-handling.md">Events and Multi-Event Handling</a>,
+ * <a href="../impl/extending-the-library.md">Extending the Library</a>
  */
 
 /**
@@ -106,7 +131,6 @@ namespace epimodels {
     #include "init-functions.hpp"
 
     #include "globalevents.hpp"
-    #include "../globalevents/interventionmeaslespep-meat.hpp"
 
     #include "sis.hpp"
     #include "sir.hpp"
@@ -123,12 +147,8 @@ namespace epimodels {
     #include "diffnet.hpp"
     #include "seirmixing.hpp"
     #include "sirmixing.hpp"
-    #include "measlesschool.hpp"
     #include "seirmixingquarantine.hpp"
     #include "seirnetworkquarantine.hpp"
-    #include "measlesmixing.hpp"
-    #include "measlesmixingriskquarantine.hpp"
-
 }
 
 #endif

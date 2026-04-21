@@ -18,6 +18,7 @@
  * iteration since only agents in contact with infected agents need updates.
  *
  * Features:
+ *
  * - Network-based contacts (via adjacency list, e.g., from agents_sbm())
  * - Quarantine measures for exposed contacts
  * - Isolation policies for detected infected individuals
@@ -27,6 +28,7 @@
  * - Queueing system support for computational efficiency
  *
  * The model supports 10 distinct states (identical to SEIRMixingQuarantine):
+ *
  * - Susceptible: Individuals who can become infected
  * - Exposed: Infected but not yet infectious (incubation period)
  * - Infected: Infectious individuals in the community
@@ -37,6 +39,10 @@
  * - Isolated Recovered: Recovered individuals still in isolation
  * - Hospitalized: Individuals requiring hospital care
  * - Recovered: Individuals who have recovered and gained immunity
+ *
+ * **Implementation details:**
+ * <a href="../impl/quarantine-isolation-and-contact-tracing.md">Quarantine, Isolation, and Contact Tracing</a>,
+ * <a href="../impl/queueing-system.md">Queueing System</a>
  *
  * @tparam TSeq Type for genetic sequences (default: EPI_DEFAULT_TSEQ)
  * @ingroup connected_models

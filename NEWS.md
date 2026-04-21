@@ -19,6 +19,8 @@
 
 * Fixes a bug in how `GlobalEvent`s polymorphism is implemented in the core library.
 
+* Removed the `measles`-related headers (were unused by this package).
+
 
 # epiworldR 0.14.0.0
 
