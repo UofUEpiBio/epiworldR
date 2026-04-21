@@ -49,7 +49,7 @@ EPIWORLD_BRANCH ?= master
 update: clean-update
 	git clone --depth=1 -b $(EPIWORLD_BRANCH) https://github.com/UofUEpiBio/epiworld tmp_epiworld && \
 	rsync -avz --delete tmp_epiworld/include/epiworld inst/include/. && \
-	rm -f inst/include/models/*.mmd && \
+	rm -f inst/include/epiworld/models/*.mmd && \
 	rsync -avz --delete tmp_epiworld/docs/assets/img/*png man/figures && \
 	rm -f man/figures/measles*.png && \
 	rm -rf tmp_epiworld
