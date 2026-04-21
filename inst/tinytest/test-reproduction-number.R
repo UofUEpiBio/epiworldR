@@ -30,9 +30,8 @@ model <- ModelSEIRMixing(
 
 model |>
   add_entity(entity("Group 1", 200, FALSE)) |>
-  add_entity(entity("Group 2", 200, FALSE)) |>
-  add_entity(entity("Group 3", 200, FALSE))
-
+  add_entity(entity("Group 2", 300, FALSE)) |>
+  add_entity(entity("Group 3", 100, FALSE))
 
 verbose_off(model)
 
@@ -65,8 +64,24 @@ expected_rt <- compute_reproduction_number(
   transmission_prob = transmission_rate,
   infectious_period_days = infectious_period_days,
   infectiousness = c(1, 1, 1),
-  susceptibility = c(1, 1, 1)
+  susceptibility = c(1, 1, 1),
+  group_sizes = entity_sizes
 )
+
+if (require(multigroup.vaccine)) {
+  
+  mgv_r_calc <- vaxrepnum(
+    meaninf = infectious_period_days,
+    popsize = entity_sizes,
+    trmat = contact_rate * mixing_matrix * transmission_rate,
+    initR = rep(0, 3),
+    initV = rep(0, 3),
+    vaxeff = 0
+  )
+
+  message("The calibrated R0 for multigroup.vaccine is: ", mgv_r_calc)
+
+}
 
 expect_equal(expected_rt$type, "R0")
 expect_equal(length(initial_rt), nsims)
@@ -74,3 +89,64 @@ expect_true(abs(mean(initial_rt) - expected_rt$R) < 1.0)
 
 # R0 = p_t * c / (1 - p_r)
 R0_naive <- transmission_rate * contact_rate / recovery_rate
+expect_equal(expected_rt$R, R0_naive)
+
+weighted_contact_matrix <- matrix(
+  c(
+    10, 4, 1,
+    2, 8, 3,
+    2, 2, 6
+  ),
+  nrow = 3,
+  byrow = TRUE
+)
+weighted_infectiousness <- c(1.0, 0.9, 1.1)
+weighted_susceptibility <- c(0.8, 1.0, 0.7)
+weighted_group_sizes <- c(100, 200, 50)
+
+weighted_rt <- compute_reproduction_number(
+  contact_matrix = weighted_contact_matrix,
+  transmission_prob = 0.15,
+  infectious_period_days = 4,
+  infectiousness = weighted_infectiousness,
+  susceptibility = weighted_susceptibility,
+  group_sizes = weighted_group_sizes
+)
+
+expected_weighted_ngm <-
+  0.15 * 4 *
+    diag(weighted_infectiousness / weighted_group_sizes, nrow = 3, ncol = 3) %*%
+      weighted_contact_matrix %*%
+      diag(weighted_susceptibility * weighted_group_sizes, nrow = 3, ncol = 3)
+
+expect_equal(weighted_rt$next_generation_matrix, expected_weighted_ngm)
+expect_equal(weighted_rt$group_sizes, weighted_group_sizes)
+
+balanced_by_size <- matrix(
+  c(
+    12, 4,
+    2, 9
+  ),
+  nrow = 2,
+  byrow = TRUE
+)
+
+expect_silent(
+  compute_reproduction_number(
+    contact_matrix = balanced_by_size,
+    transmission_prob = 0.1,
+    infectious_period_days = 3,
+    group_sizes = c(100, 200),
+    check_reciprocity = TRUE
+  )
+)
+
+expect_warning(
+  compute_reproduction_number(
+    contact_matrix = balanced_by_size,
+    transmission_prob = 0.1,
+    infectious_period_days = 3,
+    check_reciprocity = TRUE
+  ),
+  "reciprocity check"
+)

@@ -11,7 +11,8 @@ compute_reproduction_number(
   infectious_period_days = 1,
   infectiousness = NULL,
   susceptibility = NULL,
-  check_reciprocity = FALSE
+  check_reciprocity = FALSE,
+  group_sizes = NULL
 )
 }
 \arguments{
@@ -35,10 +36,17 @@ for source group \code{i}. If \code{NULL}, a vector of ones is used.}
 for recipient group \code{j}. If \code{NULL}, a vector of ones is used.}
 
 \item{check_reciprocity}{Logical. If \code{TRUE}, the function issues a warning
-when the contact matrix is not symmetric. This is only a diagnostic and
-does not alter the calculation. Note that reciprocity for empirical contact
-matrices is often assessed after adjusting for group sizes, so lack of
-symmetry is not automatically an error.}
+when the contact matrix is not symmetric. If \code{group_sizes} is supplied, the
+check instead uses size-balanced reciprocity, that is,
+\code{group_sizes[i] * contact_matrix[i, j] = group_sizes[j] * contact_matrix[j, i]}.
+This is only a diagnostic and does not alter the calculation.}
+
+\item{group_sizes}{Optional positive numeric vector of length
+\code{nrow(contact_matrix)}. Entry \code{i} is the size of group \code{i}. When supplied,
+the next-generation matrix is weighted by \code{group_sizes[j] / group_sizes[i]}
+for source-recipient pair \verb{[i, j]}. This is useful when the contact matrix
+should be balanced by group size, for example when aligning the
+calculation with the package's mixing models under unequal group sizes.}
 }
 \value{
 A list with the following elements:
@@ -48,6 +56,7 @@ A list with the following elements:
 \item{next_generation_matrix}{Numeric matrix used in the calculation.}
 \item{infectiousness}{Numeric vector of source-group infectiousness multipliers.}
 \item{susceptibility}{Numeric vector of recipient-group susceptibility multipliers.}
+\item{group_sizes}{Numeric vector of group sizes used in the weighting.}
 \item{eigenvalues}{Complex vector of eigenvalues of the next-generation matrix.}
 }
 }
@@ -55,7 +64,8 @@ A list with the following elements:
 Compute the dominant eigenvalue of a next-generation matrix built from a
 daily contact matrix, a baseline per-contact transmission probability, an
 average infectious period, and optional group-specific infectiousness and
-susceptibility multipliers.
+susceptibility multipliers. Optionally, the calculation can also weight each
+group pair by the relative size of the recipient and source groups.
 }
 \details{
 Let \eqn{C} be a daily contact matrix where \eqn{c_{ij}} is the average number
@@ -71,6 +81,16 @@ next-generation matrix is
 or element-wise
 
 \deqn{k_{ij} = p \cdot D \cdot b_i \cdot c_{ij} \cdot a_j}
+
+If \eqn{n_i} denotes the size of group \eqn{i} and \code{group_sizes} is
+supplied, the matrix is additionally weighted by the recipient-to-source
+size ratio:
+
+\deqn{k_{ij} = p \cdot D \cdot b_i \cdot c_{ij} \cdot a_j \cdot \frac{n_j}{n_i}}
+
+or, equivalently,
+
+\deqn{K = p \cdot D \cdot \mathrm{diag}(b_1 / n_1, \ldots, b_n / n_n) \cdot C \cdot \mathrm{diag}(a_1 n_1, \ldots, a_n n_n)}
 
 The reproduction number is the spectral radius of \eqn{K}, that is, its
 dominant eigenvalue:
@@ -105,6 +125,8 @@ The calculation assumes:
 \item \code{transmission_prob} is a baseline per-contact infection probability,
 \item \code{infectiousness} modifies the source side of transmission,
 \item \code{susceptibility} modifies the recipient side of transmission,
+\item \code{group_sizes}, when supplied, scales each source-recipient pair by the
+recipient-to-source size ratio,
 \item a mean infectious period is an adequate summary of infectious duration.
 }
 
@@ -142,6 +164,14 @@ compute_reproduction_number(
   infectious_period_days = 5,
   infectiousness = c(1.0, 0.8, 1.2),
   susceptibility = c(0.5, 0.9, 0.7)
+)
+
+# Adding group-size weights
+compute_reproduction_number(
+  contact_matrix = C,
+  transmission_prob = 0.04,
+  infectious_period_days = 5,
+  group_sizes = c(1000, 1500, 500)
 )
 
 }

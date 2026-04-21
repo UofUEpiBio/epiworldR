@@ -4,7 +4,8 @@
 #' Compute the dominant eigenvalue of a next-generation matrix built from a
 #' daily contact matrix, a baseline per-contact transmission probability, an
 #' average infectious period, and optional group-specific infectiousness and
-#' susceptibility multipliers.
+#' susceptibility multipliers. Optionally, the calculation can also weight each
+#' group pair by the relative size of the recipient and source groups.
 #'
 #' Let \eqn{C} be a daily contact matrix where \eqn{c_{ij}} is the average number
 #' of daily contacts made by one infectious individual in group \eqn{i} with
@@ -19,6 +20,16 @@
 #' or element-wise
 #'
 #' \deqn{k_{ij} = p \cdot D \cdot b_i \cdot c_{ij} \cdot a_j}
+#'
+#' If \eqn{n_i} denotes the size of group \eqn{i} and `group_sizes` is
+#' supplied, the matrix is additionally weighted by the recipient-to-source
+#' size ratio:
+#'
+#' \deqn{k_{ij} = p \cdot D \cdot b_i \cdot c_{ij} \cdot a_j \cdot \frac{n_j}{n_i}}
+#'
+#' or, equivalently,
+#'
+#' \deqn{K = p \cdot D \cdot \mathrm{diag}(b_1 / n_1, \ldots, b_n / n_n) \cdot C \cdot \mathrm{diag}(a_1 n_1, \ldots, a_n n_n)}
 #'
 #' The reproduction number is the spectral radius of \eqn{K}, that is, its
 #' dominant eigenvalue:
@@ -57,10 +68,16 @@
 #'   `nrow(contact_matrix)`. Entry `j` is the relative susceptibility multiplier
 #'   for recipient group `j`. If `NULL`, a vector of ones is used.
 #' @param check_reciprocity Logical. If `TRUE`, the function issues a warning
-#'   when the contact matrix is not symmetric. This is only a diagnostic and
-#'   does not alter the calculation. Note that reciprocity for empirical contact
-#'   matrices is often assessed after adjusting for group sizes, so lack of
-#'   symmetry is not automatically an error.
+#'   when the contact matrix is not symmetric. If `group_sizes` is supplied, the
+#'   check instead uses size-balanced reciprocity, that is,
+#'   `group_sizes[i] * contact_matrix[i, j] = group_sizes[j] * contact_matrix[j, i]`.
+#'   This is only a diagnostic and does not alter the calculation.
+#' @param group_sizes Optional positive numeric vector of length
+#'   `nrow(contact_matrix)`. Entry `i` is the size of group `i`. When supplied,
+#'   the next-generation matrix is weighted by `group_sizes[j] / group_sizes[i]`
+#'   for source-recipient pair `[i, j]`. This is useful when the contact matrix
+#'   should be balanced by group size, for example when aligning the
+#'   calculation with the package's mixing models under unequal group sizes.
 #'
 #' @return A list with the following elements:
 #' \describe{
@@ -69,6 +86,7 @@
 #'   \item{next_generation_matrix}{Numeric matrix used in the calculation.}
 #'   \item{infectiousness}{Numeric vector of source-group infectiousness multipliers.}
 #'   \item{susceptibility}{Numeric vector of recipient-group susceptibility multipliers.}
+#'   \item{group_sizes}{Numeric vector of group sizes used in the weighting.}
 #'   \item{eigenvalues}{Complex vector of eigenvalues of the next-generation matrix.}
 #' }
 #'
@@ -84,6 +102,8 @@
 #'   \item `transmission_prob` is a baseline per-contact infection probability,
 #'   \item `infectiousness` modifies the source side of transmission,
 #'   \item `susceptibility` modifies the recipient side of transmission,
+#'   \item `group_sizes`, when supplied, scales each source-recipient pair by the
+#'     recipient-to-source size ratio,
 #'   \item a mean infectious period is an adequate summary of infectious duration.
 #' }
 #'
@@ -140,6 +160,14 @@
 #'   susceptibility = c(0.5, 0.9, 0.7)
 #' )
 #'
+#' # Adding group-size weights
+#' compute_reproduction_number(
+#'   contact_matrix = C,
+#'   transmission_prob = 0.04,
+#'   infectious_period_days = 5,
+#'   group_sizes = c(1000, 1500, 500)
+#' )
+#'
 #' @export
 compute_reproduction_number <- function(
   contact_matrix,
@@ -147,7 +175,8 @@ compute_reproduction_number <- function(
   infectious_period_days = 1,
   infectiousness = NULL,
   susceptibility = NULL,
-  check_reciprocity = FALSE
+  check_reciprocity = FALSE,
+  group_sizes = NULL
 ) {
 
   if (!is.matrix(contact_matrix) || !is.numeric(contact_matrix)) {
@@ -190,20 +219,6 @@ compute_reproduction_number <- function(
     stop("'check_reciprocity' must be TRUE or FALSE.")
   }
 
-  if (
-    check_reciprocity &&
-      !isTRUE(all.equal(contact_matrix, t(contact_matrix)))
-  ) {
-    warning(
-      paste(
-        "'contact_matrix' is not symmetric.",
-        "This may be fine if directionality is intentional,",
-        "but empirical contact matrices are often balanced separately by group sizes."
-      ),
-      call. = FALSE
-    )
-  }
-
   if (is.null(infectiousness)) {
     infectiousness <- rep(1, n_groups)
   } else {
@@ -214,6 +229,36 @@ compute_reproduction_number <- function(
       stop(
         "'infectiousness' must be NULL or a non-negative numeric vector ",
         "of length nrow(contact_matrix)."
+      )
+    }
+  }
+
+  if (is.null(group_sizes)) {
+    group_sizes <- rep(1, n_groups)
+  } else {
+    if (
+      !is.numeric(group_sizes) || length(group_sizes) != n_groups ||
+        any(!is.finite(group_sizes)) || any(group_sizes <= 0)
+    ) {
+      stop(
+        "'group_sizes' must be NULL or a positive numeric vector ",
+        "of length nrow(contact_matrix)."
+      )
+    }
+  }
+
+  if (check_reciprocity) {
+    contact_matrix_balanced <- diag(group_sizes, nrow = n_groups, ncol = n_groups) %*%
+      contact_matrix
+
+    if (!isTRUE(all.equal(contact_matrix_balanced, t(contact_matrix_balanced)))) {
+      warning(
+        paste(
+          "'contact_matrix' does not satisfy the requested reciprocity check.",
+          "Without 'group_sizes' this reduces to symmetry;",
+          "with 'group_sizes' it checks size-balanced reciprocity."
+        ),
+        call. = FALSE
       )
     }
   }
@@ -247,9 +292,9 @@ compute_reproduction_number <- function(
 
   next_generation_matrix <-
     transmission_prob * infectious_period_days *
-      diag(infectiousness, nrow = n_groups, ncol = n_groups) %*%
+      diag(infectiousness / group_sizes, nrow = n_groups, ncol = n_groups) %*%
         contact_matrix %*%
-        diag(susceptibility, nrow = n_groups, ncol = n_groups)
+        diag(susceptibility * group_sizes, nrow = n_groups, ncol = n_groups)
 
   eigenvalues <- eigen(next_generation_matrix, only.values = TRUE)$values
   R_value <- max(Mod(eigenvalues))
@@ -263,6 +308,7 @@ compute_reproduction_number <- function(
     next_generation_matrix = next_generation_matrix,
     infectiousness = infectiousness,
     susceptibility = susceptibility,
+    group_sizes = group_sizes,
     eigenvalues = eigenvalues
   )
 }
