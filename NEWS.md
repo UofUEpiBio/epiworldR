@@ -21,6 +21,8 @@
 
 * Removed the `measles`-related headers (were unused by this package).
 
+* Introduced an optimization for accelerating binomial draws based on Le Cam's inequality. The function defaults to poisson draws (faster) in case of rare events.
+
 
 # epiworldR 0.14.0.0
 

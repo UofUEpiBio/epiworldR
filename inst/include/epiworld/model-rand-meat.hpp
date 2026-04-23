@@ -39,6 +39,15 @@ template<typename TSeq>
 inline void Model<TSeq>::set_rand_binom(int n, epiworld_double p)
 {
     rbinomd  = std::binomial_distribution<>(n, p);
+#ifdef EPI_FAST_BINOM
+    rbinomd_fast_lambda = static_cast<epiworld_double>(n) * p;
+    rbinomd_use_poisson =
+        (p <= static_cast<epiworld_double>(0.01)) &&
+        (static_cast<epiworld_double>(n) * p * p <= static_cast<epiworld_double>(0.1));
+#else
+    rbinomd_fast_lambda = 0.0;
+    rbinomd_use_poisson = false;
+#endif
 }
 
 template<typename TSeq>
@@ -158,6 +167,10 @@ inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_do
 
 template<typename TSeq>
 inline int Model<TSeq>::rbinom() {
+#ifdef EPI_FAST_BINOM
+    if (rbinomd_use_poisson)
+        return rpoiss(rbinomd_fast_lambda);
+#endif
     return rbinomd(*engine);
 }
 
@@ -166,6 +179,14 @@ inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
 
     if (n == 0 || p == 0.0)
         return 0;
+
+#ifdef EPI_FAST_BINOM
+    if (
+        (p <= static_cast<epiworld_double>(0.01)) &&
+        (static_cast<epiworld_double>(n) * p * p <= static_cast<epiworld_double>(0.1))
+    )
+        return rpoiss(static_cast<epiworld_double>(n) * p);
+#endif
 
     return rbinomd(
         *engine,

@@ -35,6 +35,13 @@
     #define epiworld_fast_uint unsigned long long int
 #endif
 
+// By default, `Model::rbinom` will use a Poisson approximation in the
+// rare-event regime where p <= 0.01 and n * p^2 <= 0.1. Advanced users can
+// disable this by defining EPI_NO_FAST_BINOM before including epiworld.
+#if !defined(EPI_NO_FAST_BINOM) && !defined(EPI_FAST_BINOM)
+    #define EPI_FAST_BINOM
+#endif
+
 #define EPI_DEFAULT_TSEQ int
 
 #ifndef EPI_MAX_TRACKING

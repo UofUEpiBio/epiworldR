@@ -121,6 +121,8 @@ protected:
         std::exponential_distribution<>();
     std::binomial_distribution<> rbinomd         =
         std::binomial_distribution<>();
+    epiworld_double rbinomd_fast_lambda = 0.0;
+    bool rbinomd_use_poisson = false;
     std::negative_binomial_distribution<> rnbinomd =
         std::negative_binomial_distribution<>();
     std::geometric_distribution<> rgeomd          =
@@ -306,7 +308,29 @@ public:
     epiworld_double rexp(epiworld_double lambda);
     epiworld_double rlognormal();
     epiworld_double rlognormal(epiworld_double mean, epiworld_double shape);
+    /**
+     * @brief Draw from the currently configured binomial distribution.
+     * @details When `EPI_FAST_BINOM` is enabled (default), this uses
+     * `rpoiss(lambda)` with `lambda = n * p` after `set_rand_binom(n, p)` in the
+     * rare-event regime `p <= 0.01` and `n * p * p <= 0.1`. Define
+     * `EPI_NO_FAST_BINOM` before including epiworld to disable this behavior.
+     * @return A random draw from the configured binomial distribution, or from
+     * its Poisson approximation when the fast path is active.
+     */
     int rbinom();
+    /**
+     * @brief Draw from a binomial distribution with parameters `n` and `p`.
+     * @details When `EPI_FAST_BINOM` is enabled (default), this uses
+     * `rpoiss(lambda)` with `lambda = n * p` in the rare-event regime
+     * `p <= 0.01` and `n * p * p <= 0.1`. This preserves the mean and is often
+     * substantially faster in practice while remaining very accurate in that
+     * region. Define `EPI_NO_FAST_BINOM` before including epiworld to disable
+     * this behavior and force the exact binomial draw.
+     * @param n Number of trials.
+     * @param p Success probability.
+     * @return A random draw from the binomial distribution, or from its
+     * Poisson approximation when the fast path is active.
+     */
     int rbinom(int n, epiworld_double p);
     int rnbinom();
     int rnbinom(int n, epiworld_double p);
