@@ -424,6 +424,11 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     agents_data = model.agents_data;
     agents_data_ncols = model.agents_data_ncols;
 
+    rbinomd = model.rbinomd;
+    rbinomd_n = model.rbinomd_n;
+    rbinomd_fast_lambda = model.rbinomd_fast_lambda;
+    rbinomd_use_poisson = model.rbinomd_use_poisson;
+
     // Deep-copy model-level objects so clones can run independently in parallel.
     viruses.reserve(model.viruses.size());
     for (const auto & v : model.viruses)
@@ -465,6 +470,10 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     rgammad(std::move(model.rgammad)),
     rlognormald(std::move(model.rlognormald)),
     rexpd(std::move(model.rexpd)),
+    rbinomd(std::move(model.rbinomd)),
+    rbinomd_n(model.rbinomd_n),
+    rbinomd_fast_lambda(model.rbinomd_fast_lambda),
+    rbinomd_use_poisson(model.rbinomd_use_poisson),
     // Rewiring
     rewire_fun(std::move(model.rewire_fun)),
     rewire_prop(std::move(model.rewire_prop)),
@@ -556,6 +565,11 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     agents_data = m.agents_data;
     agents_data_ncols = m.agents_data_ncols;
+
+    rbinomd = m.rbinomd;
+    rbinomd_n = m.rbinomd_n;
+    rbinomd_fast_lambda = m.rbinomd_fast_lambda;
+    rbinomd_use_poisson = m.rbinomd_use_poisson;
 
     // Figure out the queuing
     if (use_queuing)
@@ -2023,7 +2037,7 @@ template<typename TSeq>
 inline void Model<TSeq>::set_param(std::string pname, epiworld_double value)
 {
     if (parameters.find(pname) == parameters.end())
-        throw std::logic_error("The parameter " + pname + " does not exists.");
+        throw std::logic_error("The parameter '" + pname + "' does not exists.");
 
     parameters[pname] = value;
 
@@ -2036,7 +2050,7 @@ inline epiworld_double Model<TSeq>::par(std::string pname) const
 {
     const auto iter = parameters.find(pname);
     if (iter == parameters.end())
-        throw std::logic_error("The parameter " + pname + " does not exists.");
+        throw std::logic_error("The parameter '" + pname + "' does not exists.");
     return iter->second;
 }
 

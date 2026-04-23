@@ -121,6 +121,7 @@ protected:
         std::exponential_distribution<>();
     std::binomial_distribution<> rbinomd         =
         std::binomial_distribution<>();
+    int rbinomd_n = 1;
     epiworld_double rbinomd_fast_lambda = 0.0;
     bool rbinomd_use_poisson = false;
     std::negative_binomial_distribution<> rnbinomd =
