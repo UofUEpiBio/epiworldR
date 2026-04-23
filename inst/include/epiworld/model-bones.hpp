@@ -298,9 +298,6 @@ public:
     void set_rand_nbinom(int n, epiworld_double p);
     void set_rand_geom(epiworld_double p);
     void set_rand_poiss(epiworld_double lambda);
-    epiworld_double runif();
-    epiworld_double runif(epiworld_double a, epiworld_double b);
-    int runif_int(int a, int b);
     epiworld_double rnorm();
     epiworld_double rnorm(epiworld_double mean, epiworld_double sd);
     epiworld_double rgamma();
@@ -309,6 +306,24 @@ public:
     epiworld_double rexp(epiworld_double lambda);
     epiworld_double rlognormal();
     epiworld_double rlognormal(epiworld_double mean, epiworld_double shape);
+
+    /**
+     * @brief Draw from the currently configured uniform distribution.
+     * @return A random draw from the configured uniform distribution.
+     * @details
+     * These uniform draws make use of Lemire's algorithm for fast
+     * uniform integer generation, which is both faster and more accurate than
+     * the common `std::uniform_int_distribution` approach.
+     * 
+     * 
+     * Lemire, D. (2019). Fast Random Integer Generation in an Interval.
+     * ACM Trans. Model. Comput. Simul., 29(1), 3:1-3:12.
+     * <https://doi.org/10.1145/3230636>
+     */
+    epiworld_double runif();
+    epiworld_double runif(epiworld_double a, epiworld_double b);
+    int runif_int(int a, int b);
+    uint32_t runif_index(uint32_t n);
     /**
      * @brief Draw from the currently configured binomial distribution.
      * @details When `EPI_FAST_BINOM` is enabled (default), this uses

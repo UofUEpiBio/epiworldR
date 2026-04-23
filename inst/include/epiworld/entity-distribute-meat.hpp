@@ -65,9 +65,7 @@ inline EntityToAgentFun<TSeq> distribute_entity_randomly(
         int n_left = n;
         for (int i = 0; i < n_to_sample; ++i)
         {
-            int loc = static_cast<epiworld_fast_uint>(
-                floor(m->runif() * n_left--)
-                );
+            int loc = m->runif_index(n_left--);
 
             // Correcting for possible overflow
             if ((n_left > 0) && (loc > n_left))

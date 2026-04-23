@@ -91,7 +91,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
             for (int i = 0; i < ndraw; ++i)
             {
                 // Now selecting who is transmitting the disease
-                int which = m->runif_int(0, static_cast<int>(m->size()) - 1);
+                auto which = m->runif_index(m->size());
 
                 // Can't sample itself
                 if (which == static_cast<int>(p->get_id()))

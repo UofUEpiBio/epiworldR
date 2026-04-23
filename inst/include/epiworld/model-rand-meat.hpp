@@ -91,17 +91,36 @@ inline epiworld_double Model<TSeq>::runif() {
 template<typename TSeq>
 inline int Model<TSeq>::runif_int(int a, int b) {
     // CHECK_INIT()
-    auto res =
-        static_cast<int>(std::floor(runif_epi(*engine) * (b - a + 1))) + 
-        a;
+    return a + runif_index(static_cast<uint32_t>(b - a + 1));
+}
 
-    // Checking it is within the bounds
-    if (res < a)
-        res = a;
-    else if (res > b)
-        res = b;
+template<typename TSeq>
+inline uint32_t Model<TSeq>::runif_index(uint32_t n) {
 
-    return res;
+    // If asking for a 0-range, return 0 to prevent division by zero in the bias check
+    if (n == 0) return 0;
+
+    // Grab 32 perfectly uniform random bits directly from xoshiro256ss
+    uint32_t x = static_cast<uint32_t>((*engine)());
+    
+    // Multiply by the bound N to get a 64-bit result
+    uint64_t m = static_cast<uint64_t>(x) * static_cast<uint64_t>(n);
+    
+    // The fractional part (lower 32 bits)
+    uint32_t l = static_cast<uint32_t>(m);
+    
+    // Unbiased rejection sampling for the rare edge case
+    if (l < n) {
+        uint32_t t = -n % n; // Two's complement trick to get (2^32 - n) % n
+        while (l < t) {
+            x = static_cast<uint32_t>((*engine)());
+            m = static_cast<uint64_t>(x) * static_cast<uint64_t>(n);
+            l = static_cast<uint32_t>(m);
+        }
+    }
+    
+    // The integer part (upper 32 bits) is our unbiased scaled random index
+    return static_cast<uint32_t>(m >> 32);
 }
 
 template<typename TSeq>

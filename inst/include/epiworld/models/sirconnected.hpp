@@ -157,7 +157,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
             for (int i = 0; i < ndraw; ++i)
             {
                 // Now selecting who is transmitting the disease
-                int which = m->runif_int(0, ninfected - 1);
+                auto which = m->runif_index(ninfected);
                 
                 Agent<TSeq> & neighbor = *model->infected[which];
 

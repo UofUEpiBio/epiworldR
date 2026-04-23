@@ -233,7 +233,7 @@ inline AgentsSample<TSeq>::AgentsSample(
     {
 
         // Sampling a single agent from the set of entities
-        int jth = std::floor(model->runif() * agents_in_entities);
+        int jth = model->runif_index(agents_in_entities);
         for (size_t e = 0u; e < cum_agents_count.size(); ++e)
         {
             
