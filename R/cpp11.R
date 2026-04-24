@@ -488,8 +488,8 @@ draw_mermaid_cpp <- function(model, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
 }
 
-new_model_cpp <- function() {
-  .Call(`_epiworldR_new_model_cpp`)
+Model_cpp <- function() {
+  .Call(`_epiworldR_Model_cpp`)
 }
 
 add_state_cpp <- function(model, state_label, update_fun) {
