@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' # Create a new model
-#' model <- new_model()
+#' model <- Model()
 #'
 #' # Adding recovery rate
 #' add_param(model, "Rec Rate", 0.1)
@@ -70,12 +70,12 @@
 #' summary(model)
 #'
 #' @return
-#' - The function `new_model()` returns a new model object of class
+#' - The function `Model()` returns a new model object of class
 #' [epiworld_model].
 #' @concept model-building-functions
-new_model <- function() {
+Model <- function() {
 
-  new_model_cpp() |>
+  Model_cpp() |>
     structure(class = "epiworld_model")
 }
 

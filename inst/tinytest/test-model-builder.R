@@ -31,7 +31,7 @@ run(seir_ref, ndays = ndays, seed = seed)
 # ---- model_builder SEIR (S-E-I-R with identical compartments) ---------------
 
 # Create a blank model and add parameters matching ModelSEIR
-seir_mb <- new_model()
+seir_mb <- Model()
 add_param(seir_mb, "Transmission rate", trans_rate)
 add_param(seir_mb, "Incubation rate",   1.0 / incub_days)
 add_param(seir_mb, "Recovery rate",     recov_rate)

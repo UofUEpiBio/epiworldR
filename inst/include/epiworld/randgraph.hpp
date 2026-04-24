@@ -98,8 +98,8 @@ inline void rewire_degseq(
 
         // Picking alters (relative location in their lists)
         // In this case, these are uniformly distributed within the list
-        int id01 = std::floor(p0.get_n_neighbors() * model->runif());
-        int id11 = std::floor(p1.get_n_neighbors() * model->runif());
+        int id01 = model->runif_index(p0.get_n_neighbors());
+        int id11 = model->runif_index(p1.get_n_neighbors());
 
         // Get the actual neighbor IDs that will be swapped
         auto neighbors_p0 = p0.get_neighbors(*model);
@@ -274,8 +274,8 @@ inline void rewire_degseq(
 
         // Picking alters (relative location in their lists)
         // In this case, these are uniformly distributed within the list
-        int id01 = std::floor(p0.size() * model->runif());
-        int id11 = std::floor(p1.size() * model->runif());
+        int id01 = model->runif_index(p0.size());
+        int id11 = model->runif_index(p1.size());
 
         // Since it is a map, we need to find the actual ids (positions)
         // are not good enough.

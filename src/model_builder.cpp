@@ -6,7 +6,7 @@
 using namespace epiworld;
 
 [[cpp11::register]]
-SEXP new_model_cpp() {
+SEXP Model_cpp() {
   return cpp11::external_pointer<Model<>>(
     new Model<>()
   );

@@ -288,6 +288,11 @@ public:
      * - Virus id
      * - Source id
      * - Date when the source was infected
+     * 
+     * The seed cases are those with source id != -1 and date when the source
+     * was infected == 0. Cases with source id == -1 is equivalent to the 
+     * Model's reproductive number, this is, the initial number of cases
+     * at the beginning of the simulation.
      */
     ///@{
     MapVec_type<int,int> get_reproductive_number() const;

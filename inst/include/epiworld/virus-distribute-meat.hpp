@@ -108,9 +108,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
         for (int i = 0; i < n_to_sample; ++i)
         {
 
-            int loc = static_cast<epiworld_fast_uint>(
-                floor(model->runif() * (n_available--))
-                );
+            int loc = model->runif_index(n_available--);
 
             // Correcting for possible overflow
             if ((n_available > 0) && (loc >= n_available))
@@ -203,9 +201,7 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
             std::vector< size_t > idx = agents_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
-                size_t loc = static_cast<epiworld_fast_uint>(
-                    floor(model->runif() * n--)
-                    );
+                size_t loc = model->runif_index(n--);
 
                 if ((n > 0) && (loc >= n))
                     loc = n - 1;

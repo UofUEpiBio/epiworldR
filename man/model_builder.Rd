@@ -2,14 +2,14 @@
 % Please edit documentation in R/model_builder.R
 \name{model_builder}
 \alias{model_builder}
-\alias{new_model}
+\alias{Model}
 \alias{add_state}
 \alias{update_fun_susceptible}
 \alias{epiworld_update_fun}
 \alias{update_fun_rate}
 \title{Model building functions}
 \usage{
-new_model()
+Model()
 
 add_state(model, state_name, update_fun = NULL)
 
@@ -37,7 +37,7 @@ agent will transition when the update function is executed.}
 }
 \value{
 \itemize{
-\item The function \code{new_model()} returns a new model object of class
+\item The function \code{Model()} returns a new model object of class
 \link{epiworld_model}.
 }
 
@@ -90,7 +90,7 @@ state each day.
 }
 \examples{
 # Create a new model
-model <- new_model()
+model <- Model()
 
 # Adding recovery rate
 add_param(model, "Rec Rate", 0.1)

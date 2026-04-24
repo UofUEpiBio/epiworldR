@@ -10,7 +10,7 @@
 
 * The mixing models--`ModelSEIRMixing()`, `ModelSIRMixing()`, and `ModelSEIRMixingQuarantine()`--lost the `contact_rate` parameter in favor of a more flexible model: instead of using mixing matrices (row-stochastic), the model now uses a contact matrix, which allows groups to have different contact rates.
 
-* New model builder functions `new_model()`, `add_state()`,`update_fun_susceptible()`, and `update_fun_rate()` expose a new approach to build models in the package. Using these functions, users can create models from zero (to hero!). The package includes a new vignette demonstrating its usage.
+* New model builder functions `Model()`, `add_state()`,`update_fun_susceptible()`, and `update_fun_rate()` expose a new approach to build models in the package. Using these functions, users can create models from zero (to hero!). The package includes a new vignette demonstrating its usage.
 
 * The new function `compute_reproduction_number()` provides a way to estimate either the basic or the effective reproductive number. This is most useful for mixing models.
 
@@ -20,6 +20,8 @@
 * Fixes a bug in how `GlobalEvent`s polymorphism is implemented in the core library.
 
 * Removed the `measles`-related headers (were unused by this package).
+
+* Introduced an optimization for accelerating binomial draws based on Le Cam's inequality. The function defaults to poisson draws (faster) in case of rare events.
 
 
 # epiworldR 0.14.0.0

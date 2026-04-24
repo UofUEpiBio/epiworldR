@@ -38,7 +38,7 @@ slightly richer example.
 #| label: builder-setup
 library(epiworldR)
 
-sir_builder <- new_model()
+sir_builder <- Model()
 
 add_param(sir_builder, "Transmission rate", 0.25)
 add_param(sir_builder, "Recovery rate", 1 / 7)
@@ -135,7 +135,7 @@ state. In this example, they can recover or die.
 
 ```{r}
 #| label: seird-builder-setup
-seird_builder <- new_model() |>
+seird_builder <- Model() |>
   add_param("Transmission rate", 0.25) |>
   add_param("Incubation rate", 1 / 5) |>
   add_param("Recovery rate", 1 / 7) |>

@@ -91,9 +91,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
             auto & population = model->get_agents();
             for (int i = 0u; i < n_to_distribute; ++i)
             {
-                int loc = static_cast<epiworld_fast_uint>(
-                    floor(model->runif() * n--)
-                    );
+                int loc = model->runif_index(n--);
 
                 if ((n > 0) && (loc >= n))
                     loc = n - 1;
@@ -181,9 +179,7 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
             std::vector< size_t > idx = agent_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
-                size_t loc = static_cast<epiworld_fast_uint>(
-                    floor(model->runif() * n--)
-                    );
+                size_t loc = model->runif_index(n--);
 
                 if ((n > 0) && (loc >= n))
                     loc = n - 1;
