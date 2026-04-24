@@ -6,6 +6,12 @@ using namespace epiworld;
 using namespace cpp11;
 
 [[cpp11::register]]
+std::string epiworld_cpp_version_cpp()
+{
+    return epiworld_version();
+}
+
+[[cpp11::register]]
 SEXP print_cpp(SEXP m, bool lite) {
 
   external_pointer<Model<>> ptr(m);

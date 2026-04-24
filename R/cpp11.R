@@ -380,6 +380,10 @@ draw_from_files_cpp <- function(fns_transition, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_from_files_cpp`, fns_transition, fn_output, self))
 }
 
+epiworld_cpp_version_cpp <- function() {
+  .Call(`_epiworldR_epiworld_cpp_version_cpp`)
+}
+
 print_cpp <- function(m, lite) {
   .Call(`_epiworldR_print_cpp`, m, lite)
 }

@@ -1,4 +1,4 @@
-# epiworldR 0.14.99-99 (dev)
+# epiworldR 0.15.0-0
 
 * Updates to epiworld C++ 0.15.0.
 

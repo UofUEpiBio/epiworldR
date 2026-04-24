@@ -674,6 +674,13 @@ extern "C" SEXP _epiworldR_draw_from_files_cpp(SEXP fns_transition, SEXP fn_outp
   END_CPP11
 }
 // model.cpp
+std::string epiworld_cpp_version_cpp();
+extern "C" SEXP _epiworldR_epiworld_cpp_version_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(epiworld_cpp_version_cpp());
+  END_CPP11
+}
+// model.cpp
 SEXP print_cpp(SEXP m, bool lite);
 extern "C" SEXP _epiworldR_print_cpp(SEXP m, SEXP lite) {
   BEGIN_CPP11
@@ -1311,6 +1318,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
     {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},
     {"_epiworldR_entity_get_agents_cpp",                (DL_FUNC) &_epiworldR_entity_get_agents_cpp,                 1},
+    {"_epiworldR_epiworld_cpp_version_cpp",             (DL_FUNC) &_epiworldR_epiworld_cpp_version_cpp,              0},
     {"_epiworldR_get_active_cases_cpp",                 (DL_FUNC) &_epiworldR_get_active_cases_cpp,                  1},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
