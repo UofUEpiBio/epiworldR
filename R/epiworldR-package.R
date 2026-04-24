@@ -16,6 +16,7 @@
 #' epiworld_cpp_version()
 #'
 #' @export
+#' @keywords internal
 epiworld_cpp_version <- function() {
   epiworld_cpp_version_cpp()
 }

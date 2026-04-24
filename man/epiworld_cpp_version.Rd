@@ -17,3 +17,4 @@ is hosted on GitHub at \url{https://github.com/UofUEpiBio/epiworld}.
 epiworld_cpp_version()
 
 }
+\keyword{internal}
