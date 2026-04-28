@@ -626,26 +626,19 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_isolated(
     {
         if (unisolate)
         {
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::RECOVERED
-            );
+            p->rm_virus(*m, RECOVERED);
         }
         else
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
-            );
+            p->rm_virus(*m, ISOLATED_RECOVERED);
     }
     else if (which == 1)
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
-        );
+        m->record_hospitalization(*p);
+        p->change_state(*m, HOSPITALIZED);
     }
     else if ((which == 2) && unisolate)
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::INFECTED
-        );
+        p->change_state(*m, INFECTED);
     }
 
 

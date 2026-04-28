@@ -739,6 +739,21 @@ inline Model<TSeq> & Model<TSeq>::agents_sbm(
 }
 
 template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::agents_bernoulli(
+    epiworld_fast_uint n,
+    epiworld_double p,
+    bool d
+)
+{
+
+    agents_from_adjlist(
+        rgraph_bernoulli(n, p, d, *this)
+    );
+
+    return *this;
+}
+
+template<typename TSeq>
 inline epiworld_double Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())

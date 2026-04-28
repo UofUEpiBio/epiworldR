@@ -486,6 +486,19 @@ public:
     ///@}
 
     /**
+     * @name Initialize agents using a Bernoulli random graph
+     * @param n Number of agents.
+     * @param p Probability of tie formation.
+     * @param d Whether the graph is directed or not.
+     * @return Reference to this Model.
+     */
+    Model<TSeq> & agents_bernoulli(
+        epiworld_fast_uint n,
+        epiworld_double p,
+        bool d = false
+    );
+
+    /**
      * @name Functions to run the model
      *
      * @param seed Seed to be used for Pseudo-RNG.
