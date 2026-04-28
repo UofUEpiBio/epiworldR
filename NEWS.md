@@ -1,3 +1,10 @@
+# epiworldR 0.15.1-0
+
+## Bugs
+
+* The `ModelSEIRMixingQuarantine` model was not officially tracking hospitalizations. This means that using the saver to extract hospitalizations would return zero.
+
+
 # epiworldR 0.15.0-0
 
 * Updates to epiworld C++ 0.15.0.

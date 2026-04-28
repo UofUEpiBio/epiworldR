@@ -333,7 +333,7 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::_sample_agents(
             #endif
 
             #ifdef EPI_DEBUG
-            if (a.get_state() != ModelSEIRMixingQuarantine<TSeq>::INFECTED)
+            if (a.get_state() != INFECTED)
                 throw std::logic_error(
                     "The agent is not infected, but it should be."
                 );
@@ -513,7 +513,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_exposed(
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
 
-        p->change_state(*m, ModelSEIRMixingQuarantine<TSeq>::INFECTED);
+        p->change_state(*m, INFECTED);
 
         auto * model = model_cast<ModelSEIRMixingQuarantine<TSeq>, TSeq>(m);
         model->day_onset[p->get_id()] = m->today();
@@ -544,7 +544,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     if (detected)
     {
         model->agent_quarantine_triggered[p->get_id()] =
-            ModelSEIRMixingQuarantine<TSeq>::QUARANTINE_PROCESS_ACTIVE;
+            QUARANTINE_PROCESS_ACTIVE;
     }
 
     // Checking if the agent is willing to isolate individually
@@ -570,32 +570,25 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     {
         if (isolation_detected)
         {
-            p->change_state(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
-            );
+            p->change_state(*m, ISOLATED_RECOVERED);
         }
         else
         {
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::RECOVERED
-            );
+            p->rm_virus(*m, RECOVERED);
         }
 
         return;
     }
     else if (which == 1) // Hospitalized
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
-        );
+        m->record_hospitalization(*p);
+        p->change_state(*m, HOSPITALIZED);
 
     }
     else if ((which == 2) && isolation_detected) // Nothing, but detected
     {
         // If the agent is detected, it goes to isolation
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::ISOLATED
-        );
+        p->change_state(*m, ISOLATED);
 
     }
 
