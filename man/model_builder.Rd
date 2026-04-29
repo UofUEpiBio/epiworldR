@@ -7,6 +7,7 @@
 \alias{update_fun_susceptible}
 \alias{epiworld_update_fun}
 \alias{update_fun_rate}
+\alias{set_state_function}
 \title{Model building functions}
 \usage{
 Model()
@@ -16,6 +17,8 @@ add_state(model, state_name, update_fun = NULL)
 update_fun_susceptible(exclude = integer(0L))
 
 update_fun_rate(param_names, target_states)
+
+set_state_function(model, state_name, update_fun)
 }
 \arguments{
 \item{model}{An object of class \link{epiworld_model}.}
@@ -57,6 +60,12 @@ susceptible state.
 \item The function \code{update_fun_rate()} returns an object of class
 \code{epiworld_update_fun} that can be used as an update function
 for a state that updates at a constant rate (e.g., recovery, death).
+}
+
+\itemize{
+\item The function \code{set_state_function()} returns the modified model object with
+the specified update function for the given state. The function is called
+for its side effects and returns the modified.
 }
 }
 \description{

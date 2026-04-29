@@ -508,6 +508,10 @@ update_fun_rate_cpp <- function(param_names, target_states) {
   .Call(`_epiworldR_update_fun_rate_cpp`, param_names, target_states)
 }
 
+set_state_function <- function(model, state_label, update_fun) {
+  .Call(`_epiworldR_set_state_function`, model, state_label, update_fun)
+}
+
 agents_smallworld_cpp <- function(m, n, k, d, p) {
   .Call(`_epiworldR_agents_smallworld_cpp`, m, n, k, d, p)
 }

@@ -170,3 +170,17 @@ update_fun_rate <- function(
   ) |>
     structure(class = "epiworld_update_fun")
 }
+
+#' @rdname model_builder
+#' @return
+#' - The function `set_state_function()` returns the modified model object with
+#'  the specified update function for the given state. The function is called
+#' for its side effects and returns the modified.
+#' @export
+set_state_function <- function(model, state_name, update_fun) {
+  stopifnot_model(model)
+  stopifnot_string(state_name)
+  stopifnot_update_fun(update_fun)
+
+  invisible(set_state_function_cpp(model, state_name, update_fun))
+}
