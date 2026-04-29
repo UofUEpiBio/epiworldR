@@ -351,24 +351,19 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_infected(
     }
     else if (which == 1) // Hospitalized
     {
+        m->record_hospitalization(*p);
         if (detected)
         {
-            p->change_state(*m,
-                ModelSEIRNetworkQuarantine<TSeq>::DETECTED_HOSPITALIZED
-            );
+            p->change_state(*m, DETECTED_HOSPITALIZED);
         }
         else
         {
-            p->change_state(*m,
-                ModelSEIRNetworkQuarantine<TSeq>::HOSPITALIZED
-            );
+            p->change_state(*m, HOSPITALIZED);
         }
     }
     else if ((which == 2) && isolation_detected) // Nothing, but detected
     {
-        p->change_state(*m,
-            ModelSEIRNetworkQuarantine<TSeq>::ISOLATED
-        );
+        p->change_state(*m, ISOLATED);
     }
 
     return;
@@ -416,24 +411,19 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_isolated(
     }
     else if (which == 1)
     {
+        m->record_hospitalization(*p);
         if (unisolate)
         {
-            p->change_state(*m,
-                ModelSEIRNetworkQuarantine<TSeq>::HOSPITALIZED
-            );
+            p->change_state(*m, HOSPITALIZED);
         }
         else
         {
-            p->change_state(*m,
-                ModelSEIRNetworkQuarantine<TSeq>::DETECTED_HOSPITALIZED
-            );
+            p->change_state(*m, DETECTED_HOSPITALIZED);
         }
     }
     else if ((which == 2) && unisolate)
     {
-        p->change_state(*m,
-            ModelSEIRNetworkQuarantine<TSeq>::INFECTED
-        );
+        p->change_state(*m, INFECTED);
     }
 
 };

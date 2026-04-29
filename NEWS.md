@@ -1,3 +1,14 @@
+# epiworldR 0.15.1-0
+
+## User-visible changes
+
+* The new functions `get_contact_matrix()` and `set_contact_matrix()` allow the user accessing contact matrices in mixing models.
+
+## Bugs
+
+* The `ModelSEIRMixingQuarantine` model was not officially tracking hospitalizations. This means that using the saver to extract hospitalizations would return zero.
+
+
 # epiworldR 0.15.0-0
 
 * Updates to epiworld C++ 0.15.0.

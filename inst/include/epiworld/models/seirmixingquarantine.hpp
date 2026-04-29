@@ -2,9 +2,7 @@
 #define EPIWORLD_MODELS_SEIRMIXINGQUARANTINE_HPP
 
 #include "../model-bones.hpp"
-
-#define MM(i, j, n) \
-    j * n + i
+#include "../contactmatrix-bones.hpp"
 
 /**
  * @file seirmixingquarantine.hpp
@@ -47,7 +45,9 @@
  * <a href="../impl/sampling-contacts.md">Sampling Contacts</a>
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSEIRMixingQuarantine : public Model<TSeq>
+class ModelSEIRMixingQuarantine :
+    public Model<TSeq>,
+    public ContactMatrix
 {
 private:
 
@@ -67,7 +67,6 @@ private:
         std::vector< size_t > & sampled_agents
         );
     std::vector< double > adjusted_contact_rate;
-    std::vector< double > contact_matrix;
 
     #ifdef EPI_DEBUG
     std::vector< int > sampled_sizes;
@@ -177,24 +176,6 @@ public:
         std::vector< int > queue_ = {}
     ) override;
 
-    /**
-     * @brief Set the contact matrix for population mixing
-     * @param cmat Contact matrix specifying interaction rates between groups
-     */
-    void set_contact_matrix(std::vector< double > cmat)
-    {
-        contact_matrix = cmat;
-        return;
-    };
-
-    /**
-     * @brief Get the current contact matrix
-     * @return Vector representing the contact matrix
-     */
-    std::vector< double > get_contact_matrix() const
-    {
-        return contact_matrix;
-    };
 
     /**
      * @brief Get the quarantine trigger status for all agents
@@ -307,9 +288,8 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::_sample_agents(
         // How many from this entity?
         int nsamples = this->rbinom(
             group_size,
-            adjusted_contact_rate[g] * contact_matrix[
-                MM(agent_group_id, g, ngroups)
-            ]
+            adjusted_contact_rate[g] *
+            get_contact_rate(agent_group_id, g, false)
         );
 
         if (nsamples == 0)
@@ -333,7 +313,7 @@ inline size_t ModelSEIRMixingQuarantine<TSeq>::_sample_agents(
             #endif
 
             #ifdef EPI_DEBUG
-            if (a.get_state() != ModelSEIRMixingQuarantine<TSeq>::INFECTED)
+            if (a.get_state() != INFECTED)
                 throw std::logic_error(
                     "The agent is not infected, but it should be."
                 );
@@ -361,27 +341,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
 
     // Checking contact matrix dimensions
     size_t nentities = this->entities.size();
-    if (this->contact_matrix.size() !=  nentities*nentities)
-        throw std::length_error(
-            std::string("The contact matrix must be a square matrix of size ") +
-            std::string("nentities x nentities. ") +
-            std::to_string(this->contact_matrix.size()) +
-            std::string(" != ") + std::to_string(nentities*nentities) +
-            std::string(".")
-            );
-
-    for (size_t i = 0u; i < this->entities.size(); ++i)
-    {
-        for (size_t j = 0u; j < this->entities.size(); ++j)
-        {
-            if (this->contact_matrix[MM(i, j, nentities)] < 0.0)
-                throw std::range_error(
-                    std::string("The contact matrix must be non-negative. ") +
-                    std::to_string(this->contact_matrix[MM(i, j, nentities)]) +
-                    std::string(" < 0.")
-                    );
-        }
-    }
+    this->validate_contact_matrix(nentities);
 
     // Do it the first time only
     sampled_agents.resize(this->size());
@@ -513,7 +473,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_exposed(
     if (m->runif() < 1.0/(v->get_incubation(m)))
     {
 
-        p->change_state(*m, ModelSEIRMixingQuarantine<TSeq>::INFECTED);
+        p->change_state(*m, INFECTED);
 
         auto * model = model_cast<ModelSEIRMixingQuarantine<TSeq>, TSeq>(m);
         model->day_onset[p->get_id()] = m->today();
@@ -544,7 +504,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     if (detected)
     {
         model->agent_quarantine_triggered[p->get_id()] =
-            ModelSEIRMixingQuarantine<TSeq>::QUARANTINE_PROCESS_ACTIVE;
+            QUARANTINE_PROCESS_ACTIVE;
     }
 
     // Checking if the agent is willing to isolate individually
@@ -570,32 +530,25 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     {
         if (isolation_detected)
         {
-            p->change_state(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
-            );
+            p->change_state(*m, ISOLATED_RECOVERED);
         }
         else
         {
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::RECOVERED
-            );
+            p->rm_virus(*m, RECOVERED);
         }
 
         return;
     }
     else if (which == 1) // Hospitalized
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
-        );
+        m->record_hospitalization(*p);
+        p->change_state(*m, HOSPITALIZED);
 
     }
     else if ((which == 2) && isolation_detected) // Nothing, but detected
     {
         // If the agent is detected, it goes to isolation
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::ISOLATED
-        );
+        p->change_state(*m, ISOLATED);
 
     }
 
@@ -633,26 +586,19 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_isolated(
     {
         if (unisolate)
         {
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::RECOVERED
-            );
+            p->rm_virus(*m, RECOVERED);
         }
         else
-            p->rm_virus(*m, 
-                ModelSEIRMixingQuarantine<TSeq>::ISOLATED_RECOVERED
-            );
+            p->rm_virus(*m, ISOLATED_RECOVERED);
     }
     else if (which == 1)
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::HOSPITALIZED
-        );
+        m->record_hospitalization(*p);
+        p->change_state(*m, HOSPITALIZED);
     }
     else if ((which == 2) && unisolate)
     {
-        p->change_state(*m, 
-            ModelSEIRMixingQuarantine<TSeq>::INFECTED
-        );
+        p->change_state(*m, INFECTED);
     }
 
 
@@ -904,7 +850,7 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
 {
 
     // Setting up the contact matrix
-    this->contact_matrix = contact_matrix;
+    this->set_contact_matrix(contact_matrix);
 
     // Setting up parameters
     this->add_param(transmission_rate, "Prob. Transmission");
@@ -995,5 +941,4 @@ inline void ModelSEIRMixingQuarantine<TSeq>::next() {
 
 }
 
-#undef MM
 #endif

@@ -94,7 +94,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
                 auto which = m->runif_index(m->size());
 
                 // Can't sample itself
-                if (which == static_cast<int>(p->get_id()))
+                if (which == p->get_id())
                     continue;
 
                 // If the neighbor is infected, then proceed

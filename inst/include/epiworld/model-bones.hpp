@@ -486,6 +486,19 @@ public:
     ///@}
 
     /**
+     * @name Initialize agents using a Bernoulli random graph
+     * @param n Number of agents.
+     * @param p Probability of tie formation.
+     * @param d Whether the graph is directed or not.
+     * @return Reference to this Model.
+     */
+    Model<TSeq> & agents_bernoulli(
+        epiworld_fast_uint n,
+        epiworld_double p,
+        bool d = false
+    );
+
+    /**
      * @name Functions to run the model
      *
      * @param seed Seed to be used for Pseudo-RNG.
@@ -617,17 +630,21 @@ public:
      * @details
      *
      * The functions `get_state` return the current values for the
-     * states included in the model.
+     * states included in the model. The function `set_state_function`
+     * replaces the update function associated with an existing state.
      *
      * @param lab `std::string` Name of the state.
      *
      * @return `add_state*` returns the ID (index) of the registered state.
+     * @return `set_state_function` returns a reference to the model.
      * @return `get_state_*` returns a vector of pairs with the
      * states and their labels.
      */
     ///@{
     epiworld_fast_int state_of(std::string_view name);
     epiworld_fast_int add_state(std::string lab, UpdateFun<TSeq> fun = nullptr);
+    Model<TSeq> & set_state_function(epiworld_fast_uint state, UpdateFun<TSeq> fun = nullptr);
+    Model<TSeq> & set_state_function(std::string_view name, UpdateFun<TSeq> fun = nullptr);
     const std::vector< std::string > & get_states() const;
     size_t get_n_states() const;
     const std::vector< UpdateFun<TSeq> > & get_state_fun() const;

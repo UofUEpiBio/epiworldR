@@ -739,6 +739,21 @@ inline Model<TSeq> & Model<TSeq>::agents_sbm(
 }
 
 template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::agents_bernoulli(
+    epiworld_fast_uint n,
+    epiworld_double p,
+    bool d
+)
+{
+
+    agents_from_adjlist(
+        rgraph_bernoulli(n, p, d, *this)
+    );
+
+    return *this;
+}
+
+template<typename TSeq>
 inline epiworld_double Model<TSeq>::operator()(std::string pname) {
 
     if (parameters.find(pname) == parameters.end())
@@ -1940,6 +1955,38 @@ inline epiworld_fast_int Model<TSeq>::add_state(
     return nstates++;
 }
 
+template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::set_state_function(
+    epiworld_fast_uint state,
+    UpdateFun<TSeq> fun
+)
+{
+
+    if (state >= nstates)
+        throw std::range_error(
+            "The state " + std::to_string(state) + " is out of range. " +
+            "The model currently has " + std::to_string(nstates) + " states."
+        );
+
+    state_fun[state] = fun;
+
+    return *this;
+
+}
+
+template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::set_state_function(
+    std::string_view name,
+    UpdateFun<TSeq> fun
+)
+{
+
+    return set_state_function(
+        static_cast<epiworld_fast_uint>(state_of(name)),
+        fun
+    );
+
+}
 
 template<typename TSeq>
 inline const std::vector< std::string > &

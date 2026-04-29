@@ -29,7 +29,7 @@
 /* Versioning */
 #define EPIWORLD_VERSION_MAJOR 0
 #define EPIWORLD_VERSION_MINOR 15
-#define EPIWORLD_VERSION_PATCH 0
+#define EPIWORLD_VERSION_PATCH 1
 
 #define EPIWORLD_VERSION_PRERELEASE ""
 
@@ -89,6 +89,9 @@ namespace epiworld {
 
     #include "contacttracing-bones.hpp"
     #include "contacttracing-meat.hpp"
+
+    #include "contactmatrix-bones.hpp"
+    #include "contactmatrix-meat.hpp"
 
     #include "globalevent-bones.hpp"
     #include "globalevent-meat.hpp"

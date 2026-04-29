@@ -80,3 +80,21 @@ SEXP update_fun_rate_cpp(
   );
 
 }
+
+[[cpp11::register]]
+SEXP set_state_function_cpp(SEXP model, std::string state_label, SEXP update_fun) {
+
+  cpp11::external_pointer<Model<>> ptr(model);
+
+  // Checking if the update function is NULL SEXP
+  if (update_fun == R_NilValue) {
+    ptr->set_state_function(state_label, nullptr);
+    return model;
+  }
+
+  cpp11::external_pointer<UpdateFun<>> funptr(update_fun);
+  ptr->set_state_function(state_label, *(funptr.get()));
+
+  return model;
+
+}
