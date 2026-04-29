@@ -277,7 +277,7 @@ inline ModelSEIRMixing<TSeq>::ModelSEIRMixing(
 {
 
     // Setting up the contact matrix
-    this->set_contact_matrix(contact_matrix);
+    this->set_contact_matrix(contact_matrix, true);
 
     UpdateFun<TSeq> update_susceptible = [](
         Agent<TSeq> * p, Model<TSeq> * m

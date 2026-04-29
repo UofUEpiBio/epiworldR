@@ -345,7 +345,11 @@ std::vector<double> get_contact_matrix_cpp(SEXP model) {
 }
 
 [[cpp11::register]]
-SEXP set_contact_matrix_cpp(SEXP model, std::vector<double> contact_matrix) {
+SEXP set_contact_matrix_cpp(
+  SEXP model,
+  std::vector<double> contact_matrix,
+  bool as_backup
+) {
 
   // The SEXP stores a pointer allocated as a derived type (e.g.
   // ModelSEIRMixing) which inherits from both Model<> and ContactMatrix.
@@ -362,7 +366,7 @@ SEXP set_contact_matrix_cpp(SEXP model, std::vector<double> contact_matrix) {
       );
   }
 
-  cm_ptr->set_contact_matrix(contact_matrix);
+  cm_ptr->set_contact_matrix(contact_matrix, as_backup);
 
   return model;
 

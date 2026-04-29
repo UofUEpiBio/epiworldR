@@ -850,7 +850,7 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
 {
 
     // Setting up the contact matrix
-    this->set_contact_matrix(contact_matrix);
+    this->set_contact_matrix(contact_matrix, true);
 
     // Setting up parameters
     this->add_param(transmission_rate, "Prob. Transmission");

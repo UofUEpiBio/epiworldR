@@ -496,8 +496,8 @@ get_contact_matrix_cpp <- function(model) {
   .Call(`_epiworldR_get_contact_matrix_cpp`, model)
 }
 
-set_contact_matrix_cpp <- function(model, contact_matrix) {
-  .Call(`_epiworldR_set_contact_matrix_cpp`, model, contact_matrix)
+set_contact_matrix_cpp <- function(model, contact_matrix, as_backup) {
+  .Call(`_epiworldR_set_contact_matrix_cpp`, model, contact_matrix, as_backup)
 }
 
 Model_cpp <- function() {

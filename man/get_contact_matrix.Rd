@@ -7,7 +7,7 @@
 \usage{
 get_contact_matrix(model)
 
-set_contact_matrix(model, contact_matrix)
+set_contact_matrix(model, contact_matrix, as_backup = TRUE)
 }
 \arguments{
 \item{model}{An object of class \code{epiworld_model} that supports contact
@@ -16,6 +16,11 @@ matrices.}
 \item{contact_matrix}{A numeric matrix with the contact matrix to be
 set for the model. The matrix should be square and have the same number
 of rows as the number of entities in the model.}
+
+\item{as_backup}{A logical value indicating whether to save the new
+contact matrix as a backup in the model. If \code{TRUE} (default), the new contact
+matrix will be saved as a backup in the model, automatically restoring
+its value if it changes during the simulation.}
 }
 \value{
 \itemize{

@@ -52,14 +52,18 @@ get_contact_matrix <- function(model) {
 
 #' @rdname get_contact_matrix
 #' @export
+#' @param as_backup A logical value indicating whether to save the new
+#' contact matrix as a backup in the model. If `TRUE` (default), the new contact
+#' matrix will be saved as a backup in the model, automatically restoring
+#' its value if it changes during the simulation.
 #' @return
 #' - The `set_contact_matrix()` function sets the contact matrix of the model
 #' to the provided matrix and returns the modified model invisibly. The
 #' function is called for its side effects and returns the modified model
 #' invisibly.
-set_contact_matrix <- function(model, contact_matrix) {
+set_contact_matrix <- function(model, contact_matrix, as_backup = TRUE) {
   stopifnot_model(model)
   stopifany_na(contact_matrix)
-  set_contact_matrix_cpp(model, as.vector(contact_matrix))
+  set_contact_matrix_cpp(model, as.vector(contact_matrix), as_backup)
   invisible(model)
 }
