@@ -63,6 +63,7 @@ find_scale <- function(x) {
 #' # Running and printing
 #' run(sir, ndays = 100, seed = 1912)
 #' plot(sir, main = "SIR Model")
+#' @concept plot-epidemic-curves
 plot.epiworld_model <- function(
   x,
   auto_trunc = FALSE,

@@ -69,6 +69,7 @@ reference:
       - epiworld-gentime
       - get_generation_time
       - plot_generation_time
+      - has_concept("plot-epidemic-curves")
 
   - title: "Network functions"
     desc: >

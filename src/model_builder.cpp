@@ -82,7 +82,7 @@ SEXP update_fun_rate_cpp(
 }
 
 [[cpp11::register]]
-SEXP set_state_function(SEXP model, std::string state_label, SEXP update_fun) {
+SEXP set_state_function_cpp(SEXP model, std::string state_label, SEXP update_fun) {
 
   cpp11::external_pointer<Model<>> ptr(model);
 

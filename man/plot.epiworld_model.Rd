@@ -49,3 +49,4 @@ agents_smallworld(
 run(sir, ndays = 100, seed = 1912)
 plot(sir, main = "SIR Model")
 }
+\concept{plot-epidemic-curves}

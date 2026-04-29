@@ -913,10 +913,10 @@ extern "C" SEXP _epiworldR_update_fun_rate_cpp(SEXP param_names, SEXP target_sta
   END_CPP11
 }
 // model_builder.cpp
-SEXP set_state_function(SEXP model, std::string state_label, SEXP update_fun);
-extern "C" SEXP _epiworldR_set_state_function(SEXP model, SEXP state_label, SEXP update_fun) {
+SEXP set_state_function_cpp(SEXP model, std::string state_label, SEXP update_fun);
+extern "C" SEXP _epiworldR_set_state_function_cpp(SEXP model, SEXP state_label, SEXP update_fun) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_state_function(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(state_label), cpp11::as_cpp<cpp11::decay_t<SEXP>>(update_fun)));
+    return cpp11::as_sexp(set_state_function_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(state_label), cpp11::as_cpp<cpp11::decay_t<SEXP>>(update_fun)));
   END_CPP11
 }
 // network.cpp
@@ -1452,7 +1452,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_recovery_enhancer_fun_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_fun_cpp,         3},
     {"_epiworldR_set_recovery_enhancer_ptr_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_ptr_cpp,         3},
     {"_epiworldR_set_simulation_fun_cpp",               (DL_FUNC) &_epiworldR_set_simulation_fun_cpp,                2},
-    {"_epiworldR_set_state_function",                   (DL_FUNC) &_epiworldR_set_state_function,                    3},
+    {"_epiworldR_set_state_function_cpp",               (DL_FUNC) &_epiworldR_set_state_function_cpp,                3},
     {"_epiworldR_set_stats_names_cpp",                  (DL_FUNC) &_epiworldR_set_stats_names_cpp,                   2},
     {"_epiworldR_set_summary_fun_cpp",                  (DL_FUNC) &_epiworldR_set_summary_fun_cpp,                   2},
     {"_epiworldR_set_susceptibility_reduction_cpp",     (DL_FUNC) &_epiworldR_set_susceptibility_reduction_cpp,      2},
