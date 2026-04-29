@@ -878,10 +878,10 @@ extern "C" SEXP _epiworldR_get_contact_matrix_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
-SEXP set_contact_matrix_cpp(SEXP model, std::vector<double> contact_matrix);
-extern "C" SEXP _epiworldR_set_contact_matrix_cpp(SEXP model, SEXP contact_matrix) {
+SEXP set_contact_matrix_cpp(SEXP model, std::vector<double> contact_matrix, bool as_backup);
+extern "C" SEXP _epiworldR_set_contact_matrix_cpp(SEXP model, SEXP contact_matrix, SEXP as_backup) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_contact_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::vector<double>>>(contact_matrix)));
+    return cpp11::as_sexp(set_contact_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::vector<double>>>(contact_matrix), cpp11::as_cpp<cpp11::decay_t<bool>>(as_backup)));
   END_CPP11
 }
 // model_builder.cpp
@@ -1421,7 +1421,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_lfmcmc_cpp",                       (DL_FUNC) &_epiworldR_run_lfmcmc_cpp,                        5},
     {"_epiworldR_run_multiple_cpp",                     (DL_FUNC) &_epiworldR_run_multiple_cpp,                      8},
     {"_epiworldR_set_agents_data_cpp",                  (DL_FUNC) &_epiworldR_set_agents_data_cpp,                   3},
-    {"_epiworldR_set_contact_matrix_cpp",               (DL_FUNC) &_epiworldR_set_contact_matrix_cpp,                2},
+    {"_epiworldR_set_contact_matrix_cpp",               (DL_FUNC) &_epiworldR_set_contact_matrix_cpp,                3},
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},

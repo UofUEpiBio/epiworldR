@@ -33,8 +33,11 @@ public:
     /**
      * @brief Set the contact matrix for population mixing
      * @param cmat Contact matrix specifying interaction rates between groups
+     * @param as_backup Whether to use the matrix as a backup (default: true)
+     * If set to true, the new contact matrix will be saved as a backup for
+     * resetting the model.
      */
-    void set_contact_matrix(std::vector< double > cmat);
+    void set_contact_matrix(std::vector< double > cmat, bool as_backup = true);
 
     /**
      * @brief Get the current contact matrix
