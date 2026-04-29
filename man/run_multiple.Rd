@@ -95,6 +95,15 @@ If the model does not have, for example, tools, then the corresponding data fram
 will be empty (0 rows). A warning will be issued in this case when trying
 to retrieve or plot the results.
 }
+\section{Parallel computing and Global Events}{
+
+
+If the model contains a \code{GlobalEvent} that was created using
+\code{\link[=globalevent_fun]{globalevent_fun()}} and \code{nthreads > 1}, then the function will
+print a warning on the screen and set \code{nthreads = 1} as calling
+R functions from within C++ is not thread safe.
+}
+
 \section{Data structures}{
 
 
