@@ -34,7 +34,6 @@ find_scale <- function(x) {
 #' @param auto_trunc A logical value indicating whether to automatically
 #' truncate the plot (y-axis) (see details).
 #' @param main The main title for the plot.
-#' @param counts_scale The scale for the counts axis.
 #' @param ... Ignored.
 #' @return
 #' A plot of the epidemic curves for the specified model or history object.

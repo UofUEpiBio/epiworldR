@@ -16,8 +16,6 @@ truncate the plot (y-axis) (see details).}
 \item{main}{The main title for the plot.}
 
 \item{...}{Ignored.}
-
-\item{counts_scale}{The scale for the counts axis.}
 }
 \value{
 A plot of the epidemic curves for the specified model or history object.
