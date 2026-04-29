@@ -8,7 +8,7 @@ inline void ContactMatrix::validate_contact_matrix(size_t expected_size)
 {
 
     if (!contact_matrix_backup.empty())
-        contact_matrix_backup = contact_matrix;
+        contact_matrix = contact_matrix_backup;
 
     if (contact_matrix.size() != expected_size * expected_size)
         throw std::length_error(
