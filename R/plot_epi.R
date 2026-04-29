@@ -28,20 +28,58 @@ find_scale <- function(x) {
   res
 }
 
-#' @noRd
+#' Plot epidemic curves
+#' @param x An object of class `epiworld_model` or `epiworld_hist_virus`
+#' or `epiworld_hist`.
+#' @param auto_trunc A logical value indicating whether to automatically
+#' truncate the plot (y-axis) (see details).
+#' @param main The main title for the plot.
+#' @param counts_scale The scale for the counts axis.
+#' @return
+#' A plot of the epidemic curves for the specified model or history object.
+#' @details
+#' If `auto_trunc` is set to `TRUE`, the function will automatically truncate
+#' the plot based on the maximum date when the counts stop significantly
+#' changing by state. The benchmark value for determining significant change
+#' is set to 0.5% of the range of counts.
 #' @importFrom graphics legend
 #' @export
-plot.epiworld_model <- function(x, main = get_name(x), ...) {
-  plot_epi(x, main = main, ...)
+#' @examples
+#' # Building and Initializing SEIR Model
+#' sir <- ModelSIR(
+#'   name = "COVID-19", prevalence = 0.01,
+#'   transmission_rate = 0.9,
+#'   recovery_rate = 0.1
+#' )
+#'
+#' # Adding a Small world population
+#' agents_smallworld(
+#'   sir,
+#'   n = 1000,
+#'   k = 5,
+#'   d = FALSE,
+#'   p = .01
+#' )
+#' # Running and printing
+#' run(sir, ndays = 100, seed = 1912)
+#' plot(sir, main = "SIR Model")
+plot.epiworld_model <- function(
+  x,
+  auto_trunc = FALSE,
+  main = get_name(x),
+  ...) {
+  plot_epi(x, auto_trunc = auto_trunc, main = main, ...)
 }
 
 #' @noRd
 #' @importFrom graphics legend
-plot_epi <- function(x, main = "", counts_scale, ...) UseMethod("plot_epi")
+plot_epi <- function(x, auto_trunc = FALSE, main = "", counts_scale, ...) UseMethod("plot_epi")
 
 #' @export
 plot_epi.epiworld_model <- function(
-  x, main = "",
+  x,
+  auto_trunc = FALSE,
+  main = "",
   counts_scale,
   ...
 ) {
@@ -51,6 +89,7 @@ plot_epi.epiworld_model <- function(
 
   plot_epi(
     x = get_hist_total(x),
+    auto_trunc = auto_trunc,
     main = main,
     counts_scale = counts_scale,
     ...
@@ -60,7 +99,9 @@ plot_epi.epiworld_model <- function(
 
 #' @export
 plot_epi.epiworld_hist_virus <- function(
-  x, main = "",
+  x,
+  auto_trunc = FALSE,
+  main = "",
   counts_scale,
   ...
 ) {
@@ -68,7 +109,11 @@ plot_epi.epiworld_hist_virus <- function(
   res <- lapply(sort(unique(x$id)), function(i) x[x$id == i, ])
 
   lapply(res, function(r) {
-    plot_epi.epiworld_hist(r, main = paste0("Variant id ", r$id[1]))
+    plot_epi.epiworld_hist(
+      r,
+      auto_trunc = auto_trunc,
+      main = paste0("Variant id ", r$id[1])
+    )
   })
   invisible(x)
 
@@ -76,7 +121,9 @@ plot_epi.epiworld_hist_virus <- function(
 
 #' @export
 plot_epi.epiworld_hist <- function(
-  x, main = "",
+  x,
+  auto_trunc = FALSE,
+  main = "",
   counts_scale,
   ...
 ) {
@@ -91,25 +138,29 @@ plot_epi.epiworld_hist <- function(
   curves$counts <- curves$counts / counts_scale
 
   # Initialize date vector of size length for state names
-  date_candidates <- integer(length = length(state_names))
-  # Identify max date when the counts stop significantly changing by state
+  if (auto_trunc) {
+    date_candidates <- integer(length = length(state_names))
+    # Identify max date when the counts stop significantly changing by state
 
-  benchmark_value <- diff(range(curves$counts)) / 200 # 0.5% of range
+    benchmark_value <- diff(range(curves$counts)) / 200 # 0.5% of range
 
-  for (i in 1L:length(state_names)) {
-    date_candidates[i] <- with(
-      curves[curves$state == state_names[i], ],
-      sum(abs(diff(counts)) > benchmark_value)
+    for (i in 1L:length(state_names)) {
+      date_candidates[i] <- with(
+        curves[curves$state == state_names[i], ],
+        sum(abs(diff(counts)) > benchmark_value)
+      )
+    }
+    # Round the maximum date up to the nearest 10th
+    max_date <- min(
+      diff(range(curves$date)),
+      max(ceiling(max(date_candidates) / 10L) * 10L, 10L)
     )
-  }
-  # Round the maximum date up to the nearest 10th
-  max_date <- min(
-    diff(range(curves$date)),
-    max(ceiling(max(date_candidates) / 10L) * 10L, 10L)
-  )
 
-  # Defining range of x values by max date as the max
-  curves <- curves[curves$date < max_date, ]
+    # Defining range of x values by max date as the max
+    curves <- curves[curves$date < max_date, ]
+  }
+
+
   # Defining range of y values
   counts_range <- range(curves$counts)
 

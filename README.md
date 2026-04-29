@@ -163,8 +163,8 @@ summary(sir)
 #> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
-#> Last run elapsed t  : 217.00ms
-#> Last run speed      : 22.94 million agents x day / second
+#> Last run elapsed t  : 90.00ms
+#> Last run speed      : 55.26 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 1912
 #>
@@ -250,8 +250,8 @@ summary(model_seirconn)
 #> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
-#> Last run elapsed t  : 47.00ms
-#> Last run speed      : 20.97 million agents x day / second
+#> Last run elapsed t  : 18.00ms
+#> Last run speed      : 53.77 million agents x day / second
 #> Rewiring            : off
 #> Last seed used      : 2587
 #>
@@ -272,15 +272,15 @@ summary(model_seirconn)
 #>  - Prob. Transmission   : 0.1000
 #>
 #> Distribution of the population at time 100:
-#>   - (0) Susceptible :  9800 -> 60
+#>   - (0) Susceptible :  9800 -> 58
 #>   - (1) Exposed     :   200 -> 0
-#>   - (2) Infected    :     0 -> 0
+#>   - (2) Infected    :     0 -> 2
 #>   - (3) Recovered   :     0 -> 9940
 #>
 #> Transition Probabilities:
 #>  - Susceptible  0.95  0.05     -     -
 #>  - Exposed         -  0.86  0.14     -
-#>  - Infected        -     -  0.78  0.22
+#>  - Infected        -     -  0.79  0.21
 #>  - Recovered       -     -     -  1.00
 ```
 
@@ -303,13 +303,13 @@ head(plot(repnum))
 style="width:100.0%"
 data-fig-alt="Estimated reproductive number over time for the fully connected SEIR example." />
 
-    #>   virus_id    virus date      avg   n       sd lb     ub
-    #> 1        0 COVID-19    0 4.980000 100 4.442631  0 15.525
-    #> 2        0 COVID-19    2 2.818182  11 2.638870  0  7.500
-    #> 3        0 COVID-19    3 4.285714  21 4.112698  0 13.500
-    #> 4        0 COVID-19    4 4.520000  25 3.809199  0 12.200
-    #> 5        0 COVID-19    5 3.363636  33 2.859394  0  9.000
-    #> 6        0 COVID-19    6 3.961538  52 2.976783  0 10.000
+    #>   virus_id    virus date      avg   n       sd   lb    ub
+    #> 1        0 COVID-19    0 4.720000 100 4.249967 0.00 16.05
+    #> 2        0 COVID-19    2 5.090909  11 4.134115 0.25 12.50
+    #> 3        0 COVID-19    3 4.225806  31 3.148647 0.75 11.25
+    #> 4        0 COVID-19    4 3.756757  37 3.522983 0.00 11.30
+    #> 5        0 COVID-19    5 3.526316  38 3.725274 0.00 14.00
+    #> 6        0 COVID-19    6 3.421053  57 3.087691 0.00 11.60
 
 ``` r
 head(plot_generation_time(model_seirconn))
@@ -320,12 +320,12 @@ style="width:100.0%"
 data-fig-alt="Generation time over time for the fully connected SEIR example." />
 
     #>   date      avg  n       sd ci_lower ci_upper    virus virus_id
-    #> 1    0 7.788889 90 5.042503    2.000   18.550 COVID-19        0
-    #> 2    2 9.333333  9 5.916080    2.400   19.600 COVID-19        0
-    #> 3    3 9.000000 18 8.116794    2.000   27.375 COVID-19        0
-    #> 4    4 6.523810 21 3.776494    2.000   14.500 COVID-19        0
-    #> 5    5 8.666667 27 6.120583    2.000   22.750 COVID-19        0
-    #> 6    6 6.727273 44 4.576805    2.075   17.925 COVID-19        0
+    #> 1    0 8.340909 88 5.858261        2   21.825 COVID-19        0
+    #> 2    2 8.600000 10 6.022181        3   20.425 COVID-19        0
+    #> 3    3 7.033333 30 4.286976        2   16.550 COVID-19        0
+    #> 4    4 7.562500 32 5.028548        2   17.450 COVID-19        0
+    #> 5    5 7.714286 35 5.659825        2   21.800 COVID-19        0
+    #> 6    6 7.489796 49 5.272264        2   21.200 COVID-19        0
 
 ## SIR Logit
 
@@ -395,20 +395,20 @@ rn <- get_reproductive_number(model_logit)
   (1:n %in% rn$source)
 ) |> prop.table())[, 2]
 #>       0       1
-#> 0.20317 0.21753
+#> 0.20521 0.22094
 
 # Looking into the agents
 get_agents(model_logit)
 #> Agents from the model "Susceptible-Infected-Removed (SIR) (logit)":
-#> Agent: 1, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 2, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 3, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 4, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 5, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 1, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 2, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 3, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 4, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 5, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 6, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 7, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 8, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
-#> Agent: 9, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
+#> Agent: 9, state: Recovered (2), Has virus: no, NTools: 0i NNeigh: 8
 #> Agent: 10, state: Susceptible (0), Has virus: no, NTools: 0i NNeigh: 8
 #> ... 99990 more agents ...
 ```
@@ -494,17 +494,17 @@ head(ans$total_hist)
 #> 1       1    0        1 Susceptible    990
 #> 2       1    0        1    Infected     10
 #> 3       1    0        1   Recovered      0
-#> 4       1    1        1 Susceptible    967
-#> 5       1    1        1    Infected     33
-#> 6       1    1        1   Recovered      0
+#> 4       1    1        1 Susceptible    964
+#> 5       1    1        1    Infected     35
+#> 6       1    1        1   Recovered      1
 head(ans$reproductive)
 #>   sim_num virus_id    virus source source_exposure_date rt
-#> 1       1        0 COVID-19    855                   10  0
-#> 2       1        0 COVID-19    427                   10  0
-#> 3       1        0 COVID-19    577                    9  0
-#> 4       1        0 COVID-19    951                    8  1
-#> 5       1        0 COVID-19    783                    8  0
-#> 6       1        0 COVID-19    778                    8  0
+#> 1       1        0 COVID-19    827                   11  0
+#> 2       1        0 COVID-19    790                    8  0
+#> 3       1        0 COVID-19    700                    8  0
+#> 4       1        0 COVID-19    378                    8  0
+#> 5       1        0 COVID-19    339                    8  0
+#> 6       1        0 COVID-19    246                    8  0
 
 plot(ans$reproductive)
 ```
@@ -536,7 +536,7 @@ citation("epiworldR")
 #> And the actual R package:
 #>
 #>   Meyer D, Pulsipher A, Vega Yon G (2025). _epiworldR: Fast Agent-Based
-#>   Epi Models_. R package version 0.14.99-99,
+#>   Epi Models_. R package version 0.15.1-0,
 #>   <https://github.com/UofUEpiBio/epiworldR>.
 #>
 #> To see these entries in BibTeX format, use 'print(<citation>,
