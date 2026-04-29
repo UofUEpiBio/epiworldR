@@ -18,6 +18,7 @@ class ContactMatrix
 private: 
 
     std::vector< double > contact_matrix;
+    std::vector< double > contact_matrix_backup; ///< Used for resetting the model
     int n_groups = -1;
 
 public:

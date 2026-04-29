@@ -125,6 +125,11 @@ SEXP globalevent_fun_cpp(
     int day
     ) {
 
+  // NOTE: This lambda calls the R API. R is NOT thread-safe and must only be
+  // called from the main thread. When used inside run_multiple() with
+  // nthreads > 1, this lambda is invoked from OpenMP worker threads, which
+  // is undefined behavior. Users must set nthreads = 1 when using
+  // globalevent_fun() with run_multiple().
   GlobalFun<int> fun_call = [fun](Model<int> * model) -> void {
 
     cpp11::external_pointer<Model<int>> modelptr(model, false);
