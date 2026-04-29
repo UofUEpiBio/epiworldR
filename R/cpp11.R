@@ -492,6 +492,14 @@ draw_mermaid_cpp <- function(model, fn_output, self) {
   invisible(.Call(`_epiworldR_draw_mermaid_cpp`, model, fn_output, self))
 }
 
+get_contact_matrix_cpp <- function(model) {
+  .Call(`_epiworldR_get_contact_matrix_cpp`, model)
+}
+
+set_contact_matrix_cpp <- function(model, contact_matrix) {
+  .Call(`_epiworldR_set_contact_matrix_cpp`, model, contact_matrix)
+}
+
 Model_cpp <- function() {
   .Call(`_epiworldR_Model_cpp`)
 }

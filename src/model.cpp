@@ -322,3 +322,58 @@ void draw_mermaid_cpp(
   );
 
 }
+
+[[cpp11::register]]
+std::vector<double> get_contact_matrix_cpp(SEXP model) {
+
+  // The SEXP stores a pointer allocated as a derived type (e.g.
+  // ModelSEIRMixing) which inherits from both Model<> and ContactMatrix.
+  // We must recover the correct Model<>* first, then dynamic_cast to
+  // ContactMatrix* so that C++ applies the proper subobject offset.
+  cpp11::external_pointer<epiworld::Model<>> base_ptr(model);
+  auto* cm_ptr = dynamic_cast<epiworld::ContactMatrix*>(base_ptr.get());
+  if (cm_ptr == nullptr)
+  {
+      throw std::logic_error(
+          "The get_contact_matrix function can only be used with models that "
+          "inherit from ContactMatrix. This is because the function relies on "
+          "the contact matrix mechanism to retrieve the contact matrix."
+      );
+  }
+
+  return cm_ptr->get_contact_matrix();
+}
+
+[[cpp11::register]]
+SEXP set_contact_matrix_cpp(SEXP model, std::vector<double> contact_matrix) {
+
+  // The SEXP stores a pointer allocated as a derived type (e.g.
+  // ModelSEIRMixing) which inherits from both Model<> and ContactMatrix.
+  // We must recover the correct Model<>* first, then dynamic_cast to
+  // ContactMatrix* so that C++ applies the proper subobject offset.
+  cpp11::external_pointer<epiworld::Model<>> base_ptr(model);
+  auto* cm_ptr = dynamic_cast<epiworld::ContactMatrix*>(base_ptr.get());
+  if (cm_ptr == nullptr)
+  {
+      throw std::logic_error(
+          "The set_contact_matrix function can only be used with models that "
+          "inherit from ContactMatrix. This is because the function relies on "
+          "the contact matrix mechanism to set the contact matrix."
+      );
+  }
+
+  cm_ptr->set_contact_matrix(contact_matrix);
+
+  return model;
+
+}
+
+// // Set contact matrix for ModelMeaslesMixing
+// [[cpp11::register]]
+// void set_contact_matrix_mixing_cpp(
+//   SEXP model,
+//   std::vector<double> contact_matrix
+// ) {
+//   cpp11::external_pointer<measles::ModelMeaslesMixing<>> ptr(model);
+//   ptr->set_contact_matrix(contact_matrix);
+// }

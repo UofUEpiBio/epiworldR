@@ -118,11 +118,12 @@ reference:
     contents:
       - has_concept("tool-distribution")
 
-  - title: "Entity Functions"
+  - title: "Entity Functions and Mixing Models"
     desc: >
       Functions for working with entities in mixing models.
     contents:
       - has_concept("entity-functions")
+      - has_concept("mixing-models")
 
   - title: "Global Events"
     desc: >
