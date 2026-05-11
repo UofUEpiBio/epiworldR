@@ -7,7 +7,7 @@
 \method{plot}{epiworld_multiple_save}(x, y = NULL, ...)
 }
 \arguments{
-\item{x}{An object of class \code{epiworld_run_multiple}}
+\item{x}{An object of class \code{epiworld_multiple_save}}
 
 \item{y}{Ignored.}
 

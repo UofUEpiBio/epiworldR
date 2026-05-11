@@ -8,7 +8,7 @@
 
 * The `ModelSEIRMixingQuarantine` model was not officially tracking hospitalizations. This means that using the saver to extract hospitalizations would return zero.
 
-* Using `globalevent_fun()` with `run_multiple(..., nthread > 1)` was not compatible due to R not beign thread safe. `run_multiple()` warns the user about this and automatically switches `nthread` to be one.
+* Using `globalevent_fun()` with `run_multiple(..., nthreads > 1)` was not compatible due to R not being thread safe. `run_multiple()` warns the user about this and automatically switches `nthreads` to be one.
 
 
 # epiworldR 0.15.0-0

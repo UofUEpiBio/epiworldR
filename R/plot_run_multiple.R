@@ -1,5 +1,5 @@
 #' Visualize results from `run_multiple()`
-#' @param x An object of class `epiworld_run_multiple`
+#' @param x An object of class `epiworld_multiple_save`
 #' @param y Ignored.
 #' @param ... Further arguments passed to the method.
 #' @details
@@ -14,8 +14,18 @@ plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
 
 }
 
-# Function to compute the 95% CI
-calc_ci_ts <- function(
+#' Compute time-series confidence intervals by group
+#' @param x Numeric vector.
+#' @param group Grouping vector of the same length as `x`.
+#' @param alpha Numeric scalar. Size of the two-sided interval tail.
+#' @return A list with two data frames: `area` (for polygons) and `line`
+#' (for the median time-series).
+#' @examples
+#' x <- c(1, 3, 2, 5, 4, 6)
+#' g <- c(1, 1, 2, 2, 3, 3)
+#' compute_ts_ci(x, g)
+#' @export
+compute_ts_ci <- function(
   x,
   group,
   alpha = .05
@@ -54,22 +64,10 @@ calc_ci_ts <- function(
   )
 }
 
-# ans2 <- calc_ci_ts(x = r$rt, group = r$source_exposure_date)
-# ans3 <- calc_ci_ts(x = r$rt, group = r$source_exposure_date, alpha = .2)
-
-# plot(
-#   NULL,
-#   xlim = range(ans2$area$x),
-#   ylim = range(ans2$area$y)
-# )
-# polygon(ans2$area, col = "lightgrey", border = "darkgray")
-# polygon(ans3$area, col = "darkgray", border = "black")
-# lines(
-#   ans2$line, type = "l",
-#   lwd = 2, lty=2
-#   )
-
-
+#' Plot transition matrices from `run_multiple_get_results()`
+#' @param x A data frame in transition format, usually
+#' `run_multiple_get_results(model)$transition`.
+#' @param ... Further arguments passed to [draw_mermaid_from_matrix()].
 #' @export
 plot_epiworld_multiple_save_transition <- function(x, ...) {
   # Figuring out the states
@@ -92,7 +90,13 @@ plot_epiworld_multiple_save_transition <- function(x, ...) {
     }
   }
 
-  mat <- mat / rowSums(mat)
+  row_totals <- rowSums(mat)
+  rows_with_transitions <- row_totals > 0
+  if (any(rows_with_transitions)) {
+    mat[rows_with_transitions, ] <-
+      mat[rows_with_transitions, , drop = FALSE] /
+      row_totals[rows_with_transitions]
+  }
 
   draw_mermaid_from_matrix(mat, ...) |>
     plot()
@@ -114,22 +118,24 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 
   # If it is not reproductive number, then...
   if (what == "reproductive") {
-    plot_epiworld_multiple_save_reproductive_number(x, ...)
+    plot.epiworld_multiple_save_reproductive_number(x, ...)
   } else if (what == "transition") {
     plot_epiworld_multiple_save_transition(x, ...)
   } else {
 
+    states <- unique(x$state)
+    ncols <- max(1L, ceiling(length(states) / 2))
     oldpar <- graphics::par(
-      mfrow = c(2, floor(length(unique(x$state)) / 2))
+      mfrow = c(2L, ncols)
     )
     on.exit(graphics::par(oldpar))
 
-    for (what in unique(x$state)) {
+    for (state_name in states) {
 
       graphics::boxplot(
         counts ~ date,
-        data = x[x$state == what, , drop = FALSE],
-        main = what,
+        data = x[x$state == state_name, , drop = FALSE],
+        main = state_name,
         xlab = "Date",
         ylab = "Counts",
         border = "black",

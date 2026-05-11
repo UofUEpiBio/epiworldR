@@ -129,8 +129,8 @@ run_multiple.epiworld_model <- function(
 
     warning(
       "The model contains an element (possibly a GlobalEvent) ",
-      "that cannot be executed in parallel. We will set the",
-      "-nthreads- argument to 1.",
+      "that cannot be executed in parallel. Setting ",
+      "`nthreads` to 1.",
       immediate. = TRUE
     )
 

@@ -262,7 +262,7 @@ draw_mermaid <- function(
     message("Diagram written to ", output_file)
 
     diagram <- readChar(output_file, file.info(output_file)$size)
-    return(diagram)
+    return(as_epiworld_diagram(diagram))
   } else {
     diagram <- capture.output(draw_mermaid_cpp(
       model,
