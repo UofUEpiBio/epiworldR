@@ -40,7 +40,7 @@ plot.epiworld_diagram <- function(x, ...) {
 #' using other packages.
 #'
 #' @name epiworld-model-diagram
-#' @concept model-utility-functions
+#' @concept epiworld-model-diagrams
 #' @examples
 #' # Create and run a model
 #' model <- ModelSIRCONN(
@@ -65,6 +65,10 @@ plot.epiworld_diagram <- function(x, ...) {
 #' # If DiagrammeR is installed, we can plot the diagram
 #' plot(diagram)
 #' }
+#'
+#' # Draw a mermaid diagram of the transitions
+#' draw_mermaid(model)
+#'
 #' @param states String vector. List of model states.
 #' @param transition_probs Numeric vector. Transition probability matrix
 #' @param output_file String. Optional path to a file. If provided, the diagram will be written to the file.
@@ -228,4 +232,48 @@ draw_mermaid_from_files <- function(
   }
 
   as_epiworld_diagram(diagram)
+}
+
+#' @rdname epiworld-model-diagram
+#' @export
+#' @param model An object of class [epiworld_model].
+#' @details `draw_mermaid` generates a mermaid diagram of the model. The
+#' diagram is saved in the specified output file (or printed to the standard
+#' output if the filename is empty). See [draw_mermaid_from_data()].
+#' @return
+#' - The `draw_mermaid` returns the mermaid diagram as a string.
+#' @importFrom utils capture.output
+draw_mermaid <- function(
+  model,
+  output_file = "",
+  allow_self_transitions = FALSE
+) {
+  stopifnot_model(model)
+  stopifnot_string(output_file)
+  stopifnot_bool(allow_self_transitions)
+
+  if (output_file != "") {
+    draw_mermaid_cpp(
+      model,
+      output_file,
+      allow_self_transitions
+    )
+
+    message("Diagram written to ", output_file)
+
+    diagram <- readChar(output_file, file.info(output_file)$size)
+    return(as_epiworld_diagram(diagram))
+  } else {
+    diagram <- capture.output(draw_mermaid_cpp(
+      model,
+      output_file,
+      allow_self_transitions
+    ))
+
+    return(
+      as_epiworld_diagram(
+        paste(diagram, collapse = "\n")
+      )
+    )
+  }
 }

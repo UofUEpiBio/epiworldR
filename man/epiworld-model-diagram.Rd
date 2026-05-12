@@ -8,6 +8,7 @@
 \alias{draw_mermaid_from_matrix}
 \alias{draw_mermaid_from_file}
 \alias{draw_mermaid_from_files}
+\alias{draw_mermaid}
 \title{Model Diagram}
 \usage{
 \method{print}{epiworld_diagram}(x, ...)
@@ -38,6 +39,8 @@ draw_mermaid_from_files(
   output_file = "",
   allow_self_transitions = FALSE
 )
+
+draw_mermaid(model, output_file = "", allow_self_transitions = FALSE)
 }
 \arguments{
 \item{x}{An \code{epiworld_diagram} object.}
@@ -57,6 +60,8 @@ draw_mermaid_from_files(
 \item{transitions_file}{String. Path to file containing the transition probabilities matrix.}
 
 \item{transitions_files}{String vector. List of files containing transition probabilities matrices from multiple model runs.}
+
+\item{model}{An object of class \link{epiworld_model}.}
 }
 \value{
 \itemize{
@@ -78,12 +83,21 @@ mermaid diagram as a string.
 \item The \code{draw_mermaid_from_files} function returns the
 mermaid diagram as a string.
 }
+
+\itemize{
+\item The \code{draw_mermaid} returns the mermaid diagram as a string.
+}
 }
 \description{
 Functions described here are helper functions for drawing
 diagrams from model data. These generate mermaid diagrams from
 transition probability matrices which can then be rendered
 using other packages.
+}
+\details{
+\code{draw_mermaid} generates a mermaid diagram of the model. The
+diagram is saved in the specified output file (or printed to the standard
+output if the filename is empty). See \code{\link[=draw_mermaid_from_data]{draw_mermaid_from_data()}}.
 }
 \examples{
 # Create and run a model
@@ -109,5 +123,9 @@ diagram <- draw_mermaid_from_data(
 # If DiagrammeR is installed, we can plot the diagram
 plot(diagram)
 }
+
+# Draw a mermaid diagram of the transitions
+draw_mermaid(model)
+
 }
-\concept{model-utility-functions}
+\concept{epiworld-model-diagrams}

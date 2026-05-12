@@ -42,6 +42,7 @@ docker
 ^.*-conftest\.gcno$
 ^_codeql_detected_source_root$
 .*tar\.gz$
+.quarto
 
 # Ignore revdev folder
 revdep/

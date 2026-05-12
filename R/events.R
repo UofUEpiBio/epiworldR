@@ -184,9 +184,10 @@ globalaction_set_params <- function(...) {
 #' @export
 #' @rdname global-events
 #' @param fun Function. The function to be executed.
-#' @details The function `globalevent_fun` allows to specify a function to be
-#' executed at a given day. The function object must receive an object of class
-#' [epiworld_model] as only argument.
+#' @details The function `globalevent_fun` allows to wrap an R function
+#' to be executed at a given day. When using this type of global events,
+#' [run_multiple()] will default to `nthreads = 1` since calling R
+#' code from within C++ is not thread safe.
 #' @examples
 #' # Example using `globalevent_fun` to record the state of the
 #' # agents at each time step.
@@ -233,7 +234,8 @@ globalevent_fun <- function(
     globalevent_fun_cpp(fun, name, as.integer(day)),
     class = c("epiworld_globalevent_fun", "epiworld_globalevent"),
     fun = fun,
-    call = match.call()
+    call = match.call(),
+    single_threaded = TRUE
   )
 
 }
@@ -295,6 +297,9 @@ add_globalevent <- function(model, event, action = NULL) {
 
   if (length(attr(event, "tool")))
     add_tool(model, attr(event, "tool"))
+
+  if (isTRUE(attr(event, "single_threaded")))
+    attr(model, "single_threaded") <- TRUE
 
   invisible(add_globalevent_cpp(model, event))
 

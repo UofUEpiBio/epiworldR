@@ -102,9 +102,10 @@ The function \code{globalevent_set_param} allows to set a parameter of
 the model. The parameter is specified by its name \code{param} and the value by
 \code{value}.
 
-The function \code{globalevent_fun} allows to specify a function to be
-executed at a given day. The function object must receive an object of class
-\link{epiworld_model} as only argument.
+The function \code{globalevent_fun} allows to wrap an R function
+to be executed at a given day. When using this type of global events,
+\code{\link[=run_multiple]{run_multiple()}} will default to \code{nthreads = 1} since calling R
+code from within C++ is not thread safe.
 
 The function \code{add_globalevent} adds a global action to a model.
 The model checks for actions to be executed at each time step. If the added

@@ -28,7 +28,6 @@
 \alias{get_tool}
 \alias{initial_states}
 \alias{clone_model}
-\alias{draw_mermaid}
 \title{Methods for epiworldR objects}
 \usage{
 queuing_on(x)
@@ -80,8 +79,6 @@ get_tool(model, tool_pos)
 initial_states(model, proportions)
 
 clone_model(model)
-
-draw_mermaid(model, output_file = "", allow_self_transitions = FALSE)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -112,10 +109,6 @@ in the model}
 
 \item{proportions}{Numeric vector. Proportions in which agents will be
 distributed (see details).}
-
-\item{output_file}{String. Optional path to a file. If provided, the diagram will be written to the file.}
-
-\item{allow_self_transitions}{Logical. Whether to allow self-transitions, defaults to FALSE.}
 }
 \value{
 \itemize{
@@ -205,10 +198,6 @@ of \code{epiworld_model}.
 \itemize{
 \item \code{clone_model} returns a copy of the model.
 }
-
-\itemize{
-\item The \code{draw_mermaid} returns the mermaid diagram as a string.
-}
 }
 \description{
 The functions described in this section are methods for objects of class
@@ -223,10 +212,6 @@ progress on screen, respectively. Both functions return the model (\code{x}) inv
 \code{epiworld_model} objects are pointers to an underlying C++ class
 in \code{epiworld}. To generate a copy of a model, use \code{clone_model}, otherwise,
 the assignment operator will only copy the pointer.
-
-\code{draw_mermaid} generates a mermaid diagram of the model. The
-diagram is saved in the specified output file (or printed to the standard
-output if the filename is empty). See \code{\link[=draw_mermaid_from_data]{draw_mermaid_from_data()}}.
 }
 \examples{
 
@@ -311,7 +296,5 @@ get_tool(model_sirconn, 0) # Returns information about the first tool in the
 # model. In this case, there are no tools so an
 # error message will occur.
 
-# Draw a mermaid diagram of the transitions
-draw_mermaid(model_sirconn)
 }
 \concept{model-utility-functions}
