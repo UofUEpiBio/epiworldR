@@ -2,13 +2,19 @@
 
 ## User-visible changes
 
-* The new functions `get_contact_matrix()` and `set_contact_matrix()` allow the user accessing contact matrices in mixing models.
+* The new functions `get_contact_matrix()` and `set_contact_matrix()` allow users to access contact matrices in mixing models.
+
+* Saved `run_multiple()` results now have documented plotting support, including transition-matrix diagrams through `plot_multiple_transition()`.
+
+* The new helper `compute_ts_ci_area()` computes polygon and median-line data for plotting uncertainty intervals in time series.
+
+* `draw_mermaid()` is now documented with the model-diagram helpers and consistently returns an `epiworld_diagram` object.
 
 ## Bugs
 
 * The `ModelSEIRMixingQuarantine` model was not officially tracking hospitalizations. This means that using the saver to extract hospitalizations would return zero.
 
-* Using `globalevent_fun()` with `run_multiple(..., nthreads > 1)` was not compatible due to R not being thread safe. `run_multiple()` warns the user about this and automatically switches `nthreads` to be one.
+* Using `globalevent_fun()` with `run_multiple(..., nthreads > 1)` was not compatible because R is not thread-safe. `run_multiple()` now warns the user and automatically switches to `nthreads = 1`.
 
 
 # epiworldR 0.15.0-0
