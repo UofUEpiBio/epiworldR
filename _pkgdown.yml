@@ -20,7 +20,7 @@ reference:
     desc: >
       Functions for creating and visualizing model state transition diagrams.
     contents:
-      - epiworld-model-diagram
+      - has_concept("epiworld-model-diagrams")
 
   - title: "Agents"
     desc: >
@@ -137,6 +137,12 @@ reference:
       Functions for constructing models from components and running simulations.
     contents:
       - has_concept("model-building-functions")
+
+  - title: "Miscellaneous Functions"
+    desc: >
+      Various utility functions for model manipulation and analysis.
+    contents:
+      - has_concept("misc-functions")
 
   - title: "Deprecated Functions"
     desc: >

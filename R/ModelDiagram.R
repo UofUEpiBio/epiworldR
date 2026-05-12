@@ -40,7 +40,7 @@ plot.epiworld_diagram <- function(x, ...) {
 #' using other packages.
 #'
 #' @name epiworld-model-diagram
-#' @concept model-utility-functions
+#' @concept epiworld-model-diagrams
 #' @examples
 #' # Create and run a model
 #' model <- ModelSIRCONN(

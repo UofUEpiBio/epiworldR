@@ -14,18 +14,36 @@ plot.epiworld_multiple_save <- function(x, y = NULL, ...) {
 
 }
 
-#' Compute time-series confidence intervals by group
+#' Compute time-series confidence intervals area
+#'
+#' This function computes the area for confidence intervals of time-series
+#' data, which can be used for visualizing uncertainty in time-series plots.
+#' It takes a numeric vector `x`, a grouping vector `group` that indicates
+#' which time point each value in `x` corresponds to, and an `alpha` level for
+#' the confidence interval. The function returns a list containing two data
+#' frames: one for the area of the confidence interval (suitable for polygon
+#' plotting) and one for the median line of the time-series.
+#'
 #' @param x Numeric vector.
 #' @param group Grouping vector of the same length as `x`.
 #' @param alpha Numeric scalar. Size of the two-sided interval tail.
 #' @return A list with two data frames: `area` (for polygons) and `line`
 #' (for the median time-series).
 #' @examples
-#' x <- c(1, 3, 2, 5, 4, 6)
-#' g <- c(1, 1, 2, 2, 3, 3)
-#' compute_ts_ci(x, g)
+#' # Simulating random walks
+#' set.seed(123)
+#' dat <- lapply(1:200, \(i) {
+#'   data.frame(
+#'     x = cumsum(rnorm(10)),
+#'     time = 1:10
+#'   )
+#' }) |> do.call(what = "rbind")
+#' ans <- compute_ts_ci_area(dat$x, dat$time)
+#' plot(ans$line, type = "b", ylim = c(-6, 6))
+#' polygon(x = ans$area$x, y = ans$area$y)
 #' @export
-compute_ts_ci <- function(
+#' @concept misc-functions
+compute_ts_ci_area <- function(
   x,
   group,
   alpha = .05
@@ -65,11 +83,23 @@ compute_ts_ci <- function(
 }
 
 #' Plot transition matrices from `run_multiple_get_results()`
+#'
+#' This function takes the transition data frame from
+#' `run_multiple_get_results()`, particularly, the `transition` component,
+#' and visualizes it as a transition matrix using `draw_mermaid_from_matrix()`.
 #' @param x A data frame in transition format, usually
 #' `run_multiple_get_results(model)$transition`.
 #' @param ... Further arguments passed to [draw_mermaid_from_matrix()].
+#' @details
+#' The function is automatically called when plotting an object of class
+#' `epiworld_multiple_save`. It constructs a transition matrix from the
+#' provided data frame, normalizes the rows to represent probabilities, and
+#' then visualizes it using a mermaid diagram. The resulting plot illustrates
+#' the transitions between different states in the model, with the thickness of
+#' the arrows corresponding to the transition.
 #' @export
-plot_epiworld_multiple_save_transition <- function(x, ...) {
+#' @concept epiworld-model-diagrams
+plot_multiple_transition <- function(x, ...) {
   # Figuring out the states
   states <- unique(c(x$from, x$to)) |>
     sort()
@@ -84,9 +114,7 @@ plot_epiworld_multiple_save_transition <- function(x, ...) {
   for (s_i in states) {
     for (s_j in states) {
       # Filtering and aggregating
-      mat[s_i, s_j] <- subset(
-        x, subset = from == s_i & to == s_j
-      )$counts |> sum()
+      mat[s_i, s_j] <- x[x$from == s_i & x$to == s_j, ]$counts |> sum()
     }
   }
 
@@ -95,7 +123,7 @@ plot_epiworld_multiple_save_transition <- function(x, ...) {
   if (any(rows_with_transitions)) {
     mat[rows_with_transitions, ] <-
       mat[rows_with_transitions, , drop = FALSE] /
-      row_totals[rows_with_transitions]
+        row_totals[rows_with_transitions]
   }
 
   draw_mermaid_from_matrix(mat, ...) |>
@@ -120,7 +148,7 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
   if (what == "reproductive") {
     plot.epiworld_multiple_save_reproductive_number(x, ...)
   } else if (what == "transition") {
-    plot_epiworld_multiple_save_transition(x, ...)
+    plot_multiple_transition(x, ...)
   } else {
 
     states <- unique(x$state)

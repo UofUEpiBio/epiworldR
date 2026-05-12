@@ -128,4 +128,4 @@ plot(diagram)
 draw_mermaid(model)
 
 }
-\concept{model-utility-functions}
+\concept{epiworld-model-diagrams}
