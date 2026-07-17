@@ -1,9 +1,9 @@
 #ifndef EPIWORLD_GLOBALEVENTS_BUBBLES_MEAT_HPP
 #define EPIWORLD_GLOBALEVENTS_BUBBLES_MEAT_HPP
 
-#include <algorithm>
-#include <stdexcept>
-#include <utility>
+// Standard library headers are included at global scope by epiworld.hpp (this
+// file is included from within `namespace epiworld`, so system headers must not
+// be re-included here).
 #include "bubbles-bones.hpp"
 
 template<typename TSeq>

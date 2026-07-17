@@ -1,10 +1,10 @@
 #ifndef EPIWORLD_GLOBALEVENTS_BUBBLES_BONES_HPP
 #define EPIWORLD_GLOBALEVENTS_BUBBLES_BONES_HPP
 
-#include <vector>
-#include <memory>
-#include <string>
-#include <unordered_map>
+// Standard library headers (vector, memory, string, unordered_map, utility,
+// algorithm, stdexcept) are included at global scope by epiworld.hpp; this file
+// is only ever included from within `namespace epiworld`, so it must not
+// re-include system headers here.
 #include "../config.hpp"
 
 /**
