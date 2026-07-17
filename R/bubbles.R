@@ -92,6 +92,30 @@ bubbles <- function(
   stopifnot_model(model)
   flavor <- match.arg(flavor)
 
+  # Coerce/validate the scalar arguments once, up front. Each must be a single,
+  # non-missing value; integer-valued arguments must be whole numbers (to avoid
+  # silent truncation by as.integer() at the .Call boundary).
+  as_scalar_num <- function(x, nm) {
+    if (length(x) != 1L || is.na(x) || !is.numeric(x))
+      stop(sprintf("`%s` must be a single, non-missing number.", nm))
+    as.numeric(x)
+  }
+  as_scalar_int <- function(x, nm) {
+    x <- as_scalar_num(x, nm)
+    if (x != round(x))
+      stop(sprintf("`%s` must be a whole number.", nm))
+    as.integer(x)
+  }
+
+  group_size          <- as_scalar_int(group_size, "group_size")
+  start_day           <- as_scalar_int(start_day, "start_day")
+  end_day             <- as_scalar_int(end_day, "end_day")
+  rewire_every        <- as_scalar_int(rewire_every, "rewire_every")
+  transmission_factor <- as_scalar_num(transmission_factor, "transmission_factor")
+
+  if (length(name) != 1L || is.na(name) || !is.character(name))
+    stop("`name` must be a single, non-missing string.")
+
   household_id <- as.integer(household_id)
   if (anyNA(household_id))
     stop("`household_id` must contain only non-missing integer household labels.")
@@ -111,18 +135,18 @@ bubbles <- function(
   if (transmission_factor < 0 || transmission_factor > 1)
     stop("`transmission_factor` must be between 0 and 1.")
 
-  if (identical(flavor, "household") && group_size < 1)
+  if (identical(flavor, "household") && group_size < 1L)
     stop("For the `household` flavor, `group_size` must be >= 1.")
 
   bubbles_cpp(
     model,
     household_id,
     flavor,
-    as.integer(group_size),
-    as.numeric(transmission_factor),
-    as.integer(start_day),
-    as.integer(end_day),
-    as.integer(rewire_every),
+    group_size,
+    transmission_factor,
+    start_day,
+    end_day,
+    rewire_every,
     name
   )
 

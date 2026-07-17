@@ -80,3 +80,10 @@ expect_error(bubbles(model_v, household_id = hh[1:10], flavor = "household",
                      group_size = 2))                                   # wrong length
 expect_error(bubbles(model_v, household_id = hh, flavor = "household",
                      group_size = 2, transmission_factor = 2))          # bad factor
+# Scalar arguments must be length-1, non-missing, whole numbers where integer.
+expect_error(bubbles(model_v, household_id = hh, flavor = "household",
+                     group_size = 2, transmission_factor = c(0.5, 0.6))) # not scalar
+expect_error(bubbles(model_v, household_id = hh, flavor = "household",
+                     group_size = NA))                                   # NA scalar
+expect_error(bubbles(model_v, household_id = hh, flavor = "household",
+                     group_size = 2.5))                                  # non-whole int

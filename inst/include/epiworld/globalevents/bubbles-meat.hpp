@@ -198,19 +198,13 @@ inline void Bubbles<TSeq>::deploy(Model<TSeq> & model)
             std::to_string(model.size()) + ")."
         );
 
-    // Eagerly compute the initial partition so the tool is effective from the
-    // first simulation step (the scheduler runs after agent updates each day).
-    compute_partition(&model);
-    state->last_sim_id = -1;
-    state->last_epoch  = -1;
-
     // ---- The bubble tool: blocks cross-bubble transmission -----------------
     auto st  = state;
     int  sd  = start_day;
     int  ed  = end_day;
     epiworld_double wf = within_factor;
 
-    Tool<TSeq> bubble_tool(name, 1.0, true);
+    Tool<TSeq> bubble_tool(name);
     bubble_tool.set_susceptibility_reduction_fun(
         [st, sd, ed, wf](
             Tool<TSeq> &,
@@ -248,46 +242,61 @@ inline void Bubbles<TSeq>::deploy(Model<TSeq> & model)
         }
     );
 
+    // ---- Distribution: recompute the partition at reset time ---------------
+    // The tool's distribution function runs from Model::reset() -> dist_tools(),
+    // i.e. *before* day 1 and with the run's (per-replicate) RNG already seeded.
+    // Computing the partition here — rather than eagerly in deploy() — keeps the
+    // epoch-0 partition fresh for every replicate of run_multiple() and avoids
+    // any dependence on a stale partition left over from a previous run. It then
+    // distributes the tool to every agent (prevalence 1.0).
+    Bubbles<TSeq> self = *this; // shares `state` via the shared_ptr
+    ToolToAgentFun<TSeq> distribute_all = distribute_tool_randomly<TSeq>(1.0, true);
+    bubble_tool.set_distribution(
+        [self, distribute_all](Tool<TSeq> & tool, Model<TSeq> * m) -> void {
+            self.compute_partition(m);
+            self.state->last_sim_id = static_cast< int >(m->get_sim_id());
+            self.state->last_epoch  = 0;
+            distribute_all(tool, m);
+        }
+    );
+
     model.add_tool(bubble_tool);
 
-    // ---- The scheduler: (re)computes the partition per replicate/epoch -----
-    Bubbles<TSeq> self = *this; // shares `state` via the shared_ptr
-    model.add_globalevent(
-        [self](Model<TSeq> * m) -> void {
+    // ---- The scheduler: re-randomizes the partition at rewiring epochs -----
+    // The epoch-0 partition is installed at reset (above); this event only
+    // handles rewire_every > 0, recomputing when the epoch advances. Because
+    // global events run after update_state(), a rewired partition takes effect
+    // the following simulation step. Deactivation (end_day) needs no event: the
+    // tool gates itself by day.
+    if (rewire_every > 0)
+    {
+        model.add_globalevent(
+            [self](Model<TSeq> * m) -> void {
 
-            int today = static_cast< int >(m->today());
+                int today = static_cast< int >(m->today());
 
-            bool on = (today >= self.start_day) &&
-                ((self.end_day < 0) || (today < self.end_day));
-            if (!on)
-                return;
+                bool on = (today >= self.start_day) &&
+                    ((self.end_day < 0) || (today < self.end_day));
+                if (!on)
+                    return;
 
-            int sim = static_cast< int >(m->get_sim_id());
-            int epoch = (self.rewire_every > 0) ?
-                ((today - self.start_day) / self.rewire_every) : 0;
+                int sim   = static_cast< int >(m->get_sim_id());
+                int epoch = (today - self.start_day) / self.rewire_every;
 
-            // Already up to date for this (replicate, epoch).
-            if ((self.state->last_sim_id == sim) &&
-                (self.state->last_epoch == epoch))
-                return;
+                // Already up to date for this (replicate, epoch).
+                if ((self.state->last_sim_id == sim) &&
+                    (self.state->last_epoch == epoch))
+                    return;
 
-            // First run after deploy already holds the epoch-0 partition; claim
-            // it without recomputing so a fixed policy stays reproducible.
-            if ((self.state->last_sim_id == -1) && (epoch == 0))
-            {
+                self.compute_partition(m);
                 self.state->last_sim_id = sim;
                 self.state->last_epoch  = epoch;
-                return;
-            }
 
-            self.compute_partition(m);
-            self.state->last_sim_id = sim;
-            self.state->last_epoch  = epoch;
-
-        },
-        name + " (scheduler)",
-        -99
-    );
+            },
+            name + " (scheduler)",
+            -99
+        );
+    }
 
 }
 

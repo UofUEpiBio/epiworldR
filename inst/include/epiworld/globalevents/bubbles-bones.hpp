@@ -53,11 +53,13 @@ struct BubbleState {
  *
  * Scheduling is driven by `start_day`, `end_day` (`< 0` = never ends) and
  * `rewire_every` (`> 0` re-randomizes the partition every that-many days, for
- * "changing" bubble policies). The partition is (re)computed by a daily scheduler
- * event and takes effect the following simulation step.
+ * "changing" bubble policies). The initial partition is computed at reset time
+ * (via the tool's distribution function), so it is fresh for every replicate of
+ * `run_multiple` and effective from the first day. Rewiring re-randomizations
+ * are applied by a daily scheduler event and take effect the following step.
  *
  * @note Uses a single shared `BubbleState` per model, so parallel replicates in
- * `run_multiple` must use a single thread.
+ * `run_multiple` must use a single thread (`nthreads = 1`).
  *
  * @tparam TSeq Sequence type (should match `TSeq` across the model).
  */
