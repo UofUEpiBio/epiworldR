@@ -22,6 +22,9 @@ inline ContactTracing::ContactTracing(size_t n_agents, size_t max_contacts)
     contact_matrix.resize(n_agents * max_contacts, 0u);
     contacts_per_agent.resize(n_agents, 0);
     contact_date.resize(n_agents * max_contacts, 0);
+
+    cached_contacts.resize(n_agents);
+    up_to_date.assign(n_agents, false);
 }
 
 inline void ContactTracing::add_contact(size_t agent_a, size_t agent_b, size_t day)
@@ -35,6 +38,9 @@ inline void ContactTracing::add_contact(size_t agent_a, size_t agent_b, size_t d
     contact_date[array_location] = day;
 
     contacts_per_agent[agent_a] += 1;
+
+    // Invalidate the cache for this agent
+    up_to_date[agent_a] = false;
 
 }
 
@@ -71,6 +77,40 @@ inline void ContactTracing::reset(size_t n_agents, size_t max_contacts)
     contact_matrix.assign(n_agents * max_contacts, 0u);
     contacts_per_agent.assign(n_agents, 0u);
     contact_date.assign(n_agents * max_contacts, 0u);
+
+    cached_contacts.assign(n_agents, std::vector<ContactRecord>());
+    up_to_date.assign(n_agents, false);
+}
+
+inline const std::vector<ContactRecord> & ContactTracing::get_contacts(size_t agent)
+{
+    if (!up_to_date[agent])
+    {
+        // Rebuild the cache for this agent by grouping stored contacts by
+        // contact id and collecting all recorded days into a std::set<int>.
+        std::map<size_t, std::set<int>> contact_map;
+
+        size_t actual_n = contacts_per_agent[agent];
+        if (actual_n > max_contacts)
+            actual_n = max_contacts;
+
+        for (size_t i = 0u; i < actual_n; ++i)
+        {
+            size_t array_location = get_location(agent, i);
+            contact_map[contact_matrix[array_location]].insert(
+                static_cast<int>(contact_date[array_location])
+            );
+        }
+
+        cached_contacts[agent].clear();
+        cached_contacts[agent].reserve(contact_map.size());
+        for (const auto & kv : contact_map)
+            cached_contacts[agent].emplace_back(kv.first, kv.second);
+
+        up_to_date[agent] = true;
+    }
+
+    return cached_contacts[agent];
 }
 
 inline void ContactTracing::print(size_t agent)

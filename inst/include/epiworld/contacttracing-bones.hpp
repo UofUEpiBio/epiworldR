@@ -2,8 +2,39 @@
 #define EPIWORLD_CONTACTTRACING_BONES_H
 
 #include <vector>
+#include <set>
+#include <map>
 #include <stdexcept>
 #include "config.hpp"
+
+/**
+ * @brief Represents a single contact relationship for an agent.
+ * @details
+ * Each instance holds the id of the contacted agent and the set of
+ * simulation days on which the contact occurred.  Instances are
+ * returned by `ContactTracing::get_contacts()`.
+ */
+class ContactRecord
+{
+private:
+    size_t m_contact_id;
+    std::set<int> m_times;
+
+public:
+    ContactRecord(size_t contact_id, std::set<int> times)
+        : m_contact_id(contact_id), m_times(std::move(times)) {}
+
+    /**
+     * @brief Return the id of the contacted agent.
+     */
+    size_t get_contact_id() const { return m_contact_id; }
+
+    /**
+     * @brief Return the set of days on which the contact was recorded.
+     * @return A const reference to the set of simulation days.
+     */
+    const std::set<int> & get_times() const { return m_times; }
+};
 
 /** 
  * @brief Class for tracing contacts between agents
@@ -27,6 +58,12 @@ private:
 
     size_t n_agents;
     size_t max_contacts;
+
+    // Cache: for each agent, the list of unique contacts with their dates.
+    // up_to_date[a] is false whenever add_contact(a, ...) is called, and
+    // set to true after get_contacts(a) rebuilds the cache.
+    std::vector< std::vector<ContactRecord> > cached_contacts;
+    std::vector< bool > up_to_date;
 
     size_t get_location(size_t row, size_t col) const;
 
@@ -83,6 +120,25 @@ public:
         size_t n_agents,
         size_t max_contacts
     );
+
+    /**
+     * @brief Get all unique contacts of an agent with the days they occurred.
+     * @details
+     * Returns a vector of `ContactRecord` objects, one per unique contacted
+     * agent.  Each record exposes:
+     *
+     * - `get_contact_id()` – the id of the other agent.
+     * - `get_times()` – the set of simulation days on which the contact was
+     *   recorded in the current (non-reset) window.
+     *
+     * The result is lazily computed on the first call after any new contact is
+     * recorded for this agent and cached until the next `add_contact()` call
+     * for the same agent.
+     *
+     * @param agent Source agent id.
+     * @return Const reference to the cached vector of ContactRecord objects.
+     */
+    const std::vector<ContactRecord> & get_contacts(size_t agent);
 
     /**
      * @brief Print the contacts of an agent 
