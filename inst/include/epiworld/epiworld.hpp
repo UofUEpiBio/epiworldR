@@ -125,6 +125,7 @@ namespace epiworld {
 
     #include "tools/vaccine.hpp"
     #include "globalevents/quarantinetrigger-meat.hpp"
+    #include "globalevents/bubbles-meat.hpp"
     
     #include "models/models.hpp"
 

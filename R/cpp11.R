@@ -40,6 +40,10 @@ change_state_cpp <- function(agent, model, new_state, queue) {
   .Call(`_epiworldR_change_state_cpp`, agent, model, new_state, queue)
 }
 
+bubbles_cpp <- function(model, household_id, flavor, group_size, within_factor, start_day, end_day, rewire_every, name) {
+  .Call(`_epiworldR_bubbles_cpp`, model, household_id, flavor, group_size, within_factor, start_day, end_day, rewire_every, name)
+}
+
 get_hist_total_cpp <- function(model) {
   .Call(`_epiworldR_get_hist_total_cpp`, model)
 }
