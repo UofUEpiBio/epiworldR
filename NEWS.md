@@ -2,6 +2,13 @@
 
 ## User-visible changes
 
+* New vignette, "Using external network data: GeoPops synthetic populations",
+  showing how to bring an externally-generated population and its contact
+  networks into a model with `agents_from_edgelist()`, and how to give
+  transmission a weekday/weekend rhythm with the global events module. It comes
+  with a small extract of a GeoPops synthetic population in
+  `system.file("extdata", "geopops", package = "epiworldR")`.
+
 * The new functions `get_contact_matrix()` and `set_contact_matrix()` allow users to access contact matrices in mixing models.
 
 * Saved `run_multiple()` results now have documented plotting support, including transition-matrix diagrams through `plot_multiple_transition()`.
