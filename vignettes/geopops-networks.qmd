@@ -29,9 +29,11 @@ constructed: a synthetic population, a mobility-derived contact network, a
 survey-based sociocentric network, or a school roster.
 
 This vignette shows the general recipe for that case, using data from the
-[GeoPops](https://github.com/ACCIDDA/GeoPops) project as the running example.
+[GeoPops](https://github.com/GeoPopsHub) project as the running example.[^data]
 Nothing in the recipe is GeoPops-specific; the same four steps apply to any
 population file plus edge list you may have:
+
+[^data]: The GeoPops data used in this tutorial was provided by [Allisa Hamilton](https://github.com/alisahamilton1) and the GeoPops team. The extract is included in the `epiworldR` package for convenience, but the full Spartanburg County, SC population can be downloaded from [the GeoPops GitHub repository](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md).
 
 1. Read the node table and the edge list(s).
 2. Map the external node identifiers onto epiworld's agent identifiers, which
@@ -290,7 +292,7 @@ the same twenty infections.
 #| label: run-baseline
 verbose_off(model)
 run(model, ndays = 120, seed = 331)
-model
+summary(model)
 ```
 
 ```{r}
@@ -394,7 +396,7 @@ add_globalevent(
 
 verbose_off(model_weekend)
 run(model_weekend, ndays = 120, seed = 331)
-model_weekend
+summary(model_weekend)
 ```
 
 # Comparing the two runs
