@@ -46,3 +46,6 @@ docker
 
 # Ignore revdev folder
 revdep/
+
+# Script that builds inst/extdata/geopops from a full GeoPops population
+^data-raw$
