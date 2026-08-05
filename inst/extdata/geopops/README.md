@@ -1,8 +1,9 @@
 # GeoPops extract
 
-A small extract of a synthetic population generated with
-[GeoPops](https://github.com/ACCIDDA/GeoPops), used by the vignette
-"Using external network data: GeoPops synthetic populations".
+A small extract of the synthetic population from the
+[GeoPops Spartanburg measles tutorial](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md),
+used by the vignette "Using external network data: GeoPops synthetic
+populations".
 
 The source population is Spartanburg County, SC (FIPS 45083): 356,923 people
 and 1,223,555 unique ties. This extract keeps the county's largest census

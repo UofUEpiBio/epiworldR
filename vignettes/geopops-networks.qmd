@@ -459,13 +459,15 @@ outbreak overall:
 ```{r}
 #| label: summary-compare
 compare <- function(m, inc, label) {
-  h   <- get_hist_total(m)
-  fin <- h[h$date == max(h$date), ]
+  h        <- get_hist_total(m)
+  fin      <- h[h$date == max(h$date), ]
+  outbreak <- get_outbreak_size(m)
+  outbreak <- outbreak[outbreak$date == max(outbreak$date), ]
   data.frame(
     model          = label,
     peak_incidence = max(inc$counts),
     peak_day       = inc$date[which.max(inc$counts)],
-    ever_infected  = sum(fin$counts[fin$state %in% c("Removed", "Deceased")]),
+    ever_infected  = sum(outbreak$outbreak_size),
     deaths         = fin$counts[fin$state == "Deceased"]
   )
 }
