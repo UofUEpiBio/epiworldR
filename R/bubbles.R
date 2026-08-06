@@ -28,6 +28,12 @@
 #' @param rewire_every Integer scalar. Re-randomize the bubbles every this-many
 #' days, for policies whose contacts change over time; `0` keeps them fixed.
 #' @param name Character scalar. Name given to the intervention's tool and event.
+#' @param max_households Integer scalar, `"peer"` flavor only. The largest number
+#' of households a bubble may contain; a nomination that would exceed it is
+#' declined. This is what stops one household's choices from chaining into the
+#' next (see Details). The default, `2`, represents two households joined by a
+#' close contact. Ignored when `flavor = "household"`, where `group_size` is
+#' already the cap.
 #'
 #' @details
 #' The contact network is **not** modified. Instead, every agent receives a tool
@@ -51,18 +57,53 @@
 #' lockdown however large the bubbles are. It also matches the real policy: a
 #' household picks a bubble partner it already socialises with.
 #'
-#' The two flavors are:
+#' ## The algorithms
 #'
-#' - `"household"`: a bubble grows from one household by repeatedly taking in a
-#'   random household connected to it, up to `group_size` households. This is the
-#'   household-level rule (e.g. Belgium, 10 May 2020).
-#' - `"peer"`: each agent picks up to `group_size` of its existing contacts
-#'   outside its household; every pick merges the two households, so a teenager
-#'   choosing a partner brings both households into one bubble. This is the
-#'   individual-level rule (e.g. Belgium, 19 October 2020, with `group_size = 1`).
+#' Both rules start from the **household contact graph**: one node per
+#' household, with an edge between two households whenever at least one member
+#' of the first is connected to a member of the second in the agents' contact
+#' network. Every random draw uses the model's generator, so a run is
+#' reproducible from its seed.
 #'
-#' A household with no available connected partner ends up in a smaller bubble,
-#' possibly on its own.
+#' `flavor = "household"` grows bubbles from seed households:
+#'
+#' 1. Visit the households in random order.
+#' 2. Skip a household if it already belongs to a bubble. Otherwise open a new
+#'    bubble containing it, and take its unassigned neighbours in the household
+#'    contact graph as the *frontier*.
+#' 3. While the bubble holds fewer than `group_size` households and the frontier
+#'    is not empty, draw a household from the frontier at random, add it, and
+#'    extend the frontier with that household's unassigned neighbours. A
+#'    household tied to several members of the bubble appears in the frontier
+#'    more than once and is more likely to be drawn, so stronger ties are
+#'    favoured.
+#' 4. Stop when no unassigned neighbour is left, even if the bubble is smaller
+#'    than `group_size`.
+#'
+#' Each bubble is therefore a *connected* group of households, though not
+#' necessarily one where every pair is directly tied: with `group_size > 2`, two
+#' households in the same bubble may be linked only through a third. Households
+#' with no available partner stay on their own, so there are always at least
+#' `ceiling(n_households / group_size)` bubbles.
+#'
+#' `flavor = "peer"` has individuals nominate contacts, then merges households:
+#'
+#' 1. Each agent lists its contacts outside its own household and draws up to
+#'    `group_size` distinct ones. Each draw *nominates* a merge of the two
+#'    agents' households (household commitment: choosing a peer brings both
+#'    households into the bubble).
+#' 2. All nominations are shuffled, so whose choice prevails does not depend on
+#'    the order of the agents.
+#' 3. Nominations are then applied in turn. One is accepted when the two
+#'    households are in different bubbles *and* the merged bubble would still
+#'    hold at most `max_households` households; otherwise it is declined.
+#'
+#' The cap in step 3 is essential. Without it the merges percolate: with a few
+#' members per household each nominating someone, the household graph becomes
+#' connected and the entire population ends up in a single bubble, imposing no
+#' restriction at all. Because bubbles fill up and then close, raising
+#' `group_size` mainly gives an agent more chances to find a partner that still
+#' has room; `max_households` is the dial that sets how large bubbles get.
 #'
 #' ## Timing and replicates
 #'
@@ -72,8 +113,15 @@
 #' keeps a single shared state, replicates with [run_multiple] must use one
 #' thread (`nthreads = 1`); `bubbles()` flags the model accordingly.
 #'
+#' ## What this cannot represent
+#'
+#' Both rules produce *exclusive* bubbles, as the modelled policies prescribe. A
+#' rule that instead gives each person a personal budget of contacts that need be
+#' neither mutual nor exclusive -- "up to ten different people a week", say -- is
+#' not a partition of the population and cannot be expressed this way.
+#'
 #' Fixed out-of-bubble "sport partners" and travel between regions are not yet
-#' modelled.
+#' modelled either.
 #'
 #' @returns Invisibly returns `model`, which is modified in place.
 #'
@@ -113,11 +161,14 @@
 #' # Strict household-only lockdown (a common reference scenario):
 #' #   bubbles(model, household_id, "household", group_size = 1)
 #' #
-#' # One close contact per person, fixed:
+#' # One close contact per person, joining the two households:
 #' #   bubbles(model, household_id, "peer", group_size = 1)
 #' #
-#' # Up to ten contacts per person, renewed weekly:
-#' #   bubbles(model, household_id, "peer", group_size = 10, rewire_every = 7)
+#' # As above, but the bubbles are drawn again every week:
+#' #   bubbles(model, household_id, "peer", group_size = 1, rewire_every = 7)
+#' #
+#' # Individually chosen bubbles of up to four households:
+#' #   bubbles(model, household_id, "peer", group_size = 2, max_households = 4)
 bubbles <- function(
   model,
   household_id,
@@ -127,7 +178,8 @@ bubbles <- function(
   start_day           = 0L,
   end_day             = -1L,
   rewire_every        = 0L,
-  name                = "Social bubble"
+  name                = "Social bubble",
+  max_households      = 2L
 ) {
 
   stopifnot_model(model)
@@ -152,6 +204,7 @@ bubbles <- function(
   start_day           <- as_scalar_int(start_day, "start_day")
   end_day             <- as_scalar_int(end_day, "end_day")
   rewire_every        <- as_scalar_int(rewire_every, "rewire_every")
+  max_households      <- as_scalar_int(max_households, "max_households")
   transmission_factor <- as_scalar_num(transmission_factor, "transmission_factor")
 
   if (length(name) != 1L || is.na(name) || !is.character(name))
@@ -179,6 +232,9 @@ bubbles <- function(
   if (identical(flavor, "household") && group_size < 1L)
     stop("For the `household` flavor, `group_size` must be >= 1.")
 
+  if (identical(flavor, "peer") && max_households < 2L)
+    stop("For the `peer` flavor, `max_households` must be >= 2.")
+
   bubbles_cpp(
     model,
     household_id,
@@ -188,7 +244,8 @@ bubbles <- function(
     start_day,
     end_day,
     rewire_every,
-    name
+    name,
+    max_households
   )
 
   # A single shared state backs the intervention, so parallel replicates must

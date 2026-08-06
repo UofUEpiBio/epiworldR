@@ -15,11 +15,13 @@ inline Bubbles<TSeq>::Bubbles(
     int start_day,
     int end_day,
     int rewire_every,
-    std::string name
+    std::string name,
+    size_t max_households
 ) :
     household_id(std::move(household_id)),
     flavor(flavor),
     group_size(group_size),
+    max_households(max_households),
     within_factor(within_factor),
     start_day(start_day),
     end_day(end_day),
@@ -36,6 +38,11 @@ inline Bubbles<TSeq>::Bubbles(
     if ((flavor == BubbleFlavor::Household) && (group_size < 1u))
         throw std::range_error(
             "Bubbles: group_size (households per bubble) must be >= 1."
+        );
+
+    if ((flavor == BubbleFlavor::Peer) && (max_households < 2u))
+        throw std::range_error(
+            "Bubbles: max_households must be >= 2 for the Peer flavor."
         );
 
     if ((this->end_day >= 0) && (this->end_day <= this->start_day))
@@ -185,8 +192,9 @@ inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model) const
 
     size_t nh = hh_labels.size();
 
-    // Disjoint-set (union-find) over households.
-    std::vector< size_t > parent(nh);
+    // Disjoint-set (union-find) over households, tracking the number of
+    // households in each set so bubbles can be capped.
+    std::vector< size_t > parent(nh), set_size(nh, 1u);
     for (size_t i = 0u; i < nh; ++i)
         parent[i] = i;
 
@@ -199,8 +207,11 @@ inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model) const
         return x;
     };
 
-    // Each agent selects up to `group_size` distinct external peers (neighbors
-    // in a different household); each selection merges the two households.
+    // Every agent nominates up to `group_size` distinct peers among its existing
+    // contacts outside its own household. Each nomination proposes merging the
+    // two households (household commitment: choosing a peer brings both
+    // households into the same bubble).
+    std::vector< std::pair< size_t, size_t > > proposals;
     auto & pop = model->get_agents();
     for (size_t a = 0u; a < n; ++a)
     {
@@ -222,12 +233,42 @@ inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model) const
             );
             std::swap(ext[i], ext[j]);
 
-            size_t ra = find(hh_index[household_id[a]]);
-            size_t rb = find(hh_index[household_id[ext[i]]]);
-            if (ra != rb)
-                parent[ra] = rb;
+            proposals.push_back({
+                hh_index[household_id[a]],
+                hh_index[household_id[ext[i]]]
+            });
         }
 
+    }
+
+    // Shuffle the nominations so that acceptance does not depend on agent order.
+    for (size_t i = proposals.size(); i > 1u; --i)
+    {
+        size_t j = static_cast< size_t >(
+            model->runif_index(static_cast<uint32_t>(i))
+        );
+        std::swap(proposals[i - 1u], proposals[j]);
+    }
+
+    // Accept a nomination only while the resulting bubble stays within
+    // `max_households`. Without this cap the merges percolate: with several
+    // members per household each nominating a peer, the household graph becomes
+    // connected and every household ends up in one giant bubble, which would
+    // impose no restriction at all. The cap is what makes the policy's
+    // exclusivity bite -- once a bubble is full it admits no one else.
+    for (auto & pr : proposals)
+    {
+        size_t ra = find(pr.first);
+        size_t rb = find(pr.second);
+
+        if (ra == rb)
+            continue;
+
+        if ((set_size[ra] + set_size[rb]) > max_households)
+            continue;
+
+        parent[ra] = rb;
+        set_size[rb] += set_size[ra];
     }
 
     // Compact the component roots to 0..K-1 and label agents.

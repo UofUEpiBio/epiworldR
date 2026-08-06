@@ -28,11 +28,16 @@ enum class BubbleFlavor {
      */
     Household,
     /**
-     * Individual-level rule: each agent picks up to `group_size` peers among
-     * its existing contacts outside its own household. Every pick merges the
-     * two agents' households, and bubbles are the resulting connected groups
-     * of households -- so a teenager choosing a partner brings both households
-     * into one bubble.
+     * Individual-level rule: each agent nominates up to `group_size` peers
+     * among its existing contacts outside its own household. A nomination
+     * merges the two agents' households -- so a teenager choosing a partner
+     * brings both households into one bubble.
+     *
+     * Nominations are only accepted while the bubble stays within
+     * `max_households` households; this cap is what enforces the policy's
+     * exclusivity. Without it the merges percolate: with several members per
+     * household each nominating someone, the household graph becomes connected
+     * and everyone ends up in a single bubble, imposing no restriction at all.
      *
      * Models e.g. the Belgian rule of 19 October 2020 (`group_size == 1`, "one
      * close contact per person").
@@ -99,11 +104,57 @@ struct BubbleState {
  * Pairing households at random would therefore leave `group_size` inert --
  * behaving like a strict lockdown no matter how large the bubbles are. It also
  * mirrors the real policy: a household chooses a bubble partner it already
- * socialises with. See `BubbleFlavor` for the two rules.
+ * socialises with.
  *
- * A household with no unassigned connected partner simply ends up in a smaller
- * bubble (possibly alone), so the number of bubbles is at least
- * `ceil(n_households / group_size)`.
+ * ## The algorithms
+ *
+ * Both rules start from the **household contact graph**: one node per
+ * household, with an edge between two households whenever at least one member
+ * of the first is connected to a member of the second in the agents' contact
+ * network. All random draws use the model's RNG, so a run is reproducible from
+ * its seed.
+ *
+ * **`BubbleFlavor::Household`** -- grow bubbles from seed households:
+ *
+ * 1. Visit households in random order.
+ * 2. Skip a household if it already belongs to a bubble; otherwise open a new
+ *    bubble containing it, and set the *frontier* to its unassigned neighbours
+ *    in the household contact graph.
+ * 3. While the bubble holds fewer than `group_size` households and the frontier
+ *    is not empty, draw a household from the frontier at random, add it to the
+ *    bubble, and extend the frontier with that household's unassigned
+ *    neighbours. A household that is tied to several members of the bubble
+ *    appears in the frontier more than once and is correspondingly more likely
+ *    to be drawn, so stronger ties are favoured.
+ * 4. Stop when no unassigned neighbour remains, even if the bubble is smaller
+ *    than `group_size`.
+ *
+ * Each bubble is therefore a *connected* subgraph of the household contact
+ * graph -- not necessarily a clique, so with `group_size > 2` two households in
+ * one bubble need not be tied to each other directly. Because a household with
+ * no available partner is left on its own, the number of bubbles is at least
+ * `ceil(n_households / group_size)`. Cost is linear in the number of edges.
+ *
+ * **`BubbleFlavor::Peer`** -- nominate peers, then merge households:
+ *
+ * 1. Each agent lists its contacts outside its own household and draws up to
+ *    `group_size` distinct ones (a partial Fisher-Yates shuffle). Each draw is
+ *    a *nomination* to merge the two agents' households.
+ * 2. Shuffle all nominations, so that whose choice prevails does not depend on
+ *    agent order.
+ * 3. Walk the nominations, keeping households in a disjoint-set (union-find)
+ *    structure that also tracks how many households each bubble holds. A
+ *    nomination is accepted when the two households are in different bubbles
+ *    **and** the combined bubble would still hold at most `max_households`
+ *    households; otherwise it is declined.
+ *
+ * Step 3's cap is what makes the rule work. Without it the merges percolate:
+ * with a few members per household each nominating someone, the household graph
+ * becomes connected and every household lands in one giant bubble -- no
+ * restriction at all. Because bubbles fill up and then close, raising
+ * `group_size` mostly gives an agent more chances to find a partner that still
+ * has room, rather than a proportionally larger bubble; `max_households` is the
+ * dial that controls bubble size.
  *
  * ## Scheduling
  *
@@ -142,6 +193,12 @@ struct BubbleState {
  * @note All copies of a `Bubbles` object share one `BubbleState`, so replicates
  * in `run_multiple()` must run on a single thread (`nthreads = 1`).
  *
+ * @note Both rules produce *exclusive* bubbles, which is what the modelled
+ * policies prescribe. A rule that instead grants each person a personal budget
+ * of contacts that need be neither mutual nor exclusive (e.g. "up to ten
+ * different people a week") is not a partition of the population and cannot be
+ * expressed this way.
+ *
  * @note Not yet modelled: fixed out-of-bubble "sport partners", travel between
  * regions, and caps on the number of individuals (as opposed to households) a
  * bubble may contain.
@@ -155,6 +212,7 @@ private:
     std::vector< size_t > household_id;
     BubbleFlavor flavor;
     size_t group_size;               ///< households per bubble (Household) or max peers (Peer).
+    size_t max_households;           ///< cap on households per bubble (Peer only).
     epiworld_double within_factor;   ///< within-bubble transmission multiplier in [0, 1].
     int start_day;
     int end_day;
@@ -194,10 +252,17 @@ public:
      *        fixed for the whole intervention.
      * @param name Name given to the tool and to the scheduler event; useful to
      *        look them up on the model afterwards.
+     * @param max_households **`Peer` flavor only**: the largest number of
+     *        households a bubble may contain. A nomination that would exceed it
+     *        is declined, which is what stops one household's choices from
+     *        chaining into the next (see `BubbleFlavor::Peer`). The default of
+     *        `2` represents two households joined by a close contact. Ignored by
+     *        the `Household` flavor, where `group_size` already is the cap.
      *
      * @throws std::range_error if `within_factor` is outside `[0, 1]`, if
-     *         `group_size` is zero for the `Household` flavor, or if `end_day`
-     *         is non-negative and not greater than `start_day`.
+     *         `group_size` is zero for the `Household` flavor, if
+     *         `max_households` is less than 2 for the `Peer` flavor, or if
+     *         `end_day` is non-negative and not greater than `start_day`.
      */
     Bubbles(
         std::vector< size_t > household_id,
@@ -207,7 +272,8 @@ public:
         int start_day = 0,
         int end_day = -1,
         int rewire_every = 0,
-        std::string name = "Social bubble"
+        std::string name = "Social bubble",
+        size_t max_households = 2u
     );
 
     /**

@@ -86,6 +86,25 @@ expect_silent(
 expect_silent(run(model_peer, ndays = 60, seed = 5))
 
 ###############################################################################
+# Peer bubbles must not swallow the population: max_households caps how far
+# nominations chain. (Uncapped, the merges percolated into a single bubble that
+# kept every contact, i.e. no restriction at all.)
+###############################################################################
+model_peer2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
+agents_smallworld(model_peer2, n = 600, k = 8, d = FALSE, p = 0.10)
+bubbles(model_peer2, household_id = hh, flavor = "peer", group_size = 2,
+        transmission_factor = 1.0, start_day = 0, max_households = 2)
+run(model_peer2, ndays = 60, seed = 21)
+
+tn_p  <- get_transmissions(model_peer2)
+sec_p <- tn_p[tn_p$source >= 0, , drop = FALSE]
+# Some contact survives (households do pair up)...
+expect_true(sum(hh_of(sec_p$source) != hh_of(sec_p$target)) > 0)
+# ...but the policy still bites: far from every transmission crosses households,
+# as it would if everyone shared one bubble.
+expect_true(sum(hh_of(sec_p$source) == hh_of(sec_p$target)) > 0)
+
+###############################################################################
 # Input validation.
 ###############################################################################
 model_v <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
@@ -101,3 +120,5 @@ expect_error(bubbles(model_v, household_id = hh, flavor = "household",
                      group_size = NA))                                   # NA scalar
 expect_error(bubbles(model_v, household_id = hh, flavor = "household",
                      group_size = 2.5))                                  # non-whole int
+expect_error(bubbles(model_v, household_id = hh, flavor = "peer",
+                     group_size = 1, max_households = 1))                # cap too small

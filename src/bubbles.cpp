@@ -15,7 +15,8 @@ SEXP bubbles_cpp(
     int start_day,
     int end_day,
     int rewire_every,
-    std::string name
+    std::string name,
+    int max_households
 ) {
 
   external_pointer< Model<int> > modelptr(model);
@@ -33,7 +34,8 @@ SEXP bubbles_cpp(
     start_day,
     end_day,
     rewire_every,
-    name
+    name,
+    static_cast< size_t >(max_households)
   );
 
   // deploy() installs the bubble tool and the scheduler event on the model.
