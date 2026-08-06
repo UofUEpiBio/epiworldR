@@ -10,6 +10,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- how-to-cite -->
+::: {.callout-note}
+## How to cite
+
+If you use **epiworldR** in published work, please cite it — run
+`citation("epiworldR")` in R for the full entry.
+:::
+<!-- how-to-cite -->
+
 # Introduction
 
 The following vignette provides detailed information about the implementation of `epiworldR`. The package is a wrapper of the C++ package `epiworld`, a framework for building agent-based models.[^where-cpp]

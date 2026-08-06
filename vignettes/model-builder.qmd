@@ -9,6 +9,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- how-to-cite -->
+::: {.callout-note}
+## How to cite
+
+If you use **epiworldR** in published work, please cite it — run
+`citation("epiworldR")` in R for the full entry.
+:::
+<!-- how-to-cite -->
+
 ## Introduction
 
 The `model_builder` functions in `epiworldR` let you assemble a model one piece

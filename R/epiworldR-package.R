@@ -2,6 +2,9 @@
 #' @useDynLib epiworldR, .registration = TRUE
 #' @importFrom graphics boxplot plot
 #' @keywords internal
+#' @section How to cite:
+#' If you use \pkg{epiworldR} in published work, please cite it. Run
+#' \code{citation("epiworldR")} in R for the full entry.
 "_PACKAGE"
 
 #' Version of the epiworld C++ code

@@ -39,3 +39,7 @@ Other contributors:
 
 }
 \keyword{internal}
+\section{How to cite}{
+  If you use \pkg{epiworldR} in published work, please cite it. Run
+  \code{citation("epiworldR")} in R for the full entry.
+}
