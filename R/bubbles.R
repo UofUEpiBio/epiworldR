@@ -86,24 +86,31 @@
 #' with no available partner stay on their own, so there are always at least
 #' `ceiling(n_households / group_size)` bubbles.
 #'
-#' `flavor = "peer"` has individuals nominate contacts, then merges households:
+#' `flavor = "peer"` has agents choose from the contacts still available:
 #'
-#' 1. Each agent lists its contacts outside its own household and draws up to
-#'    `group_size` distinct ones. Each draw *nominates* a merge of the two
-#'    agents' households (household commitment: choosing a peer brings both
-#'    households into the bubble).
-#' 2. All nominations are shuffled, so whose choice prevails does not depend on
-#'    the order of the agents.
-#' 3. Nominations are then applied in turn. One is accepted when the two
-#'    households are in different bubbles *and* the merged bubble would still
-#'    hold at most `max_households` households; otherwise it is declined.
+#' 1. Visit the agents in random order.
+#' 2. Skip an agent whose household is already in a full bubble: it has left the
+#'    pool and can neither choose nor be chosen.
+#' 3. Otherwise draw one of the agent's contacts outside its own household, at
+#'    random and without replacement, repeating until the agent has made
+#'    `group_size` successful choices or no contact is left that its bubble can
+#'    still take in. A draw is accepted when the two households are in different
+#'    bubbles *and* the merged bubble would hold at most `max_households`
+#'    households; otherwise that contact is unavailable and the agent draws
+#'    again. Accepting merges the two households (household commitment: choosing
+#'    a peer brings both households into the bubble), and the agent stops as soon
+#'    as its bubble is full.
 #'
-#' The cap in step 3 is essential. Without it the merges percolate: with a few
-#' members per household each nominating someone, the household graph becomes
-#' connected and the entire population ends up in a single bubble, imposing no
-#' restriction at all. Because bubbles fill up and then close, raising
-#' `group_size` mainly gives an agent more chances to find a partner that still
-#' has room; `max_households` is the dial that sets how large bubbles get.
+#' The cap is essential. Without it the merges percolate: with a few members per
+#' household each choosing someone, the household graph becomes connected and the
+#' entire population ends up in a single bubble, imposing no restriction at all.
+#'
+#' In practice `max_households` is the dial that sets bubble size, while
+#' `group_size` rarely binds: since a choice by *any* member commits the whole
+#' household, one household's members tend to fill its bubble however many
+#' choices each of them is allowed. With `max_households = 2` a single accepted
+#' choice fills the bubble, so `group_size` has no effect at all. Households whose
+#' every contact was taken first stay on their own.
 #'
 #' ## Timing and replicates
 #'

@@ -207,68 +207,78 @@ inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model) const
         return x;
     };
 
-    // Every agent nominates up to `group_size` distinct peers among its existing
-    // contacts outside its own household. Each nomination proposes merging the
-    // two households (household commitment: choosing a peer brings both
-    // households into the same bubble).
-    std::vector< std::pair< size_t, size_t > > proposals;
-    auto & pop = model->get_agents();
-    for (size_t a = 0u; a < n; ++a)
-    {
+    // Agents choose in random order, each drawing peers from the contacts that
+    // are still available. A household whose bubble is full drops out of the
+    // pool: any choice involving it is declined, and its own members stop
+    // choosing. This cap is what makes the policy's exclusivity bite -- without
+    // it the merges percolate, the household graph becomes connected, and every
+    // household ends up in one giant bubble, imposing no restriction at all.
+    std::vector< size_t > agent_order(n);
+    for (size_t i = 0u; i < n; ++i)
+        agent_order[i] = i;
 
-        std::vector< size_t > ext;
-        for (auto * nb : pop[a].get_neighbors(*model))
-        {
-            size_t nid = static_cast< size_t >(nb->get_id());
-            if (household_id[nid] != household_id[a])
-                ext.push_back(nid);
-        }
-
-        size_t k = std::min(group_size, ext.size());
-        for (size_t i = 0u; i < k; ++i)
-        {
-            // Partial Fisher-Yates: draw the i-th distinct peer.
-            size_t j = i + static_cast< size_t >(
-                model->runif_index(static_cast<uint32_t>(ext.size() - i))
-            );
-            std::swap(ext[i], ext[j]);
-
-            proposals.push_back({
-                hh_index[household_id[a]],
-                hh_index[household_id[ext[i]]]
-            });
-        }
-
-    }
-
-    // Shuffle the nominations so that acceptance does not depend on agent order.
-    for (size_t i = proposals.size(); i > 1u; --i)
+    for (size_t i = n; i > 1u; --i)
     {
         size_t j = static_cast< size_t >(
             model->runif_index(static_cast<uint32_t>(i))
         );
-        std::swap(proposals[i - 1u], proposals[j]);
+        std::swap(agent_order[i - 1u], agent_order[j]);
     }
 
-    // Accept a nomination only while the resulting bubble stays within
-    // `max_households`. Without this cap the merges percolate: with several
-    // members per household each nominating a peer, the household graph becomes
-    // connected and every household ends up in one giant bubble, which would
-    // impose no restriction at all. The cap is what makes the policy's
-    // exclusivity bite -- once a bubble is full it admits no one else.
-    for (auto & pr : proposals)
+    auto & pop = model->get_agents();
+    std::vector< size_t > ext;
+
+    for (size_t oi = 0u; oi < n; ++oi)
     {
-        size_t ra = find(pr.first);
-        size_t rb = find(pr.second);
 
-        if (ra == rb)
+        size_t a  = agent_order[oi];
+        size_t ha = hh_index[household_id[a]];
+
+        // This agent's household is already in a full bubble: it is out of the
+        // pool and cannot take anyone else in.
+        if (set_size[find(ha)] >= max_households)
             continue;
 
-        if ((set_size[ra] + set_size[rb]) > max_households)
-            continue;
+        // Households of this agent's contacts outside its own household.
+        ext.clear();
+        for (auto * nb : pop[a].get_neighbors(*model))
+        {
+            size_t nid = static_cast< size_t >(nb->get_id());
+            if (household_id[nid] != household_id[a])
+                ext.push_back(hh_index[household_id[nid]]);
+        }
 
-        parent[ra] = rb;
-        set_size[rb] += set_size[ra];
+        // Keep drawing until the agent has made `group_size` choices or no
+        // contact is left that its bubble can still take in.
+        size_t chosen = 0u;
+        while ((chosen < group_size) && !ext.empty())
+        {
+
+            size_t idx = static_cast< size_t >(
+                model->runif_index(static_cast<uint32_t>(ext.size()))
+            );
+            size_t hb = ext[idx];
+            ext[idx] = ext.back();
+            ext.pop_back();
+
+            size_t ra = find(ha);
+            size_t rb = find(hb);
+
+            if (ra == rb) // already sharing a bubble
+                continue;
+
+            if ((set_size[ra] + set_size[rb]) > max_households)
+                continue; // that bubble is full: not available
+
+            parent[ra] = rb;
+            set_size[rb] += set_size[ra];
+            ++chosen;
+
+            if (set_size[rb] >= max_households)
+                break; // this bubble is now full
+
+        }
+
     }
 
     // Compact the component roots to 0..K-1 and label agents.

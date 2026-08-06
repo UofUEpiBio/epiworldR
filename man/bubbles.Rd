@@ -118,25 +118,32 @@ households in the same bubble may be linked only through a third. Households
 with no available partner stay on their own, so there are always at least
 \code{ceiling(n_households / group_size)} bubbles.
 
-\code{flavor = "peer"} has individuals nominate contacts, then merges households:
+\code{flavor = "peer"} has agents choose from the contacts still available:
 \enumerate{
-\item Each agent lists its contacts outside its own household and draws up to
-\code{group_size} distinct ones. Each draw \emph{nominates} a merge of the two
-agents' households (household commitment: choosing a peer brings both
-households into the bubble).
-\item All nominations are shuffled, so whose choice prevails does not depend on
-the order of the agents.
-\item Nominations are then applied in turn. One is accepted when the two
-households are in different bubbles \emph{and} the merged bubble would still
-hold at most \code{max_households} households; otherwise it is declined.
+\item Visit the agents in random order.
+\item Skip an agent whose household is already in a full bubble: it has left the
+pool and can neither choose nor be chosen.
+\item Otherwise draw one of the agent's contacts outside its own household, at
+random and without replacement, repeating until the agent has made
+\code{group_size} successful choices or no contact is left that its bubble can
+still take in. A draw is accepted when the two households are in different
+bubbles \emph{and} the merged bubble would hold at most \code{max_households}
+households; otherwise that contact is unavailable and the agent draws
+again. Accepting merges the two households (household commitment: choosing
+a peer brings both households into the bubble), and the agent stops as soon
+as its bubble is full.
 }
 
-The cap in step 3 is essential. Without it the merges percolate: with a few
-members per household each nominating someone, the household graph becomes
-connected and the entire population ends up in a single bubble, imposing no
-restriction at all. Because bubbles fill up and then close, raising
-\code{group_size} mainly gives an agent more chances to find a partner that still
-has room; \code{max_households} is the dial that sets how large bubbles get.
+The cap is essential. Without it the merges percolate: with a few members per
+household each choosing someone, the household graph becomes connected and the
+entire population ends up in a single bubble, imposing no restriction at all.
+
+In practice \code{max_households} is the dial that sets bubble size, while
+\code{group_size} rarely binds: since a choice by \emph{any} member commits the whole
+household, one household's members tend to fill its bubble however many
+choices each of them is allowed. With \code{max_households = 2} a single accepted
+choice fills the bubble, so \code{group_size} has no effect at all. Households whose
+every contact was taken first stay on their own.
 }
 
 \subsection{Timing and replicates}{

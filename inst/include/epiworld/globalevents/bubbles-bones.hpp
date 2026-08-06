@@ -135,26 +135,36 @@ struct BubbleState {
  * no available partner is left on its own, the number of bubbles is at least
  * `ceil(n_households / group_size)`. Cost is linear in the number of edges.
  *
- * **`BubbleFlavor::Peer`** -- nominate peers, then merge households:
+ * **`BubbleFlavor::Peer`** -- agents choose peers from those still available:
  *
- * 1. Each agent lists its contacts outside its own household and draws up to
- *    `group_size` distinct ones (a partial Fisher-Yates shuffle). Each draw is
- *    a *nomination* to merge the two agents' households.
- * 2. Shuffle all nominations, so that whose choice prevails does not depend on
- *    agent order.
- * 3. Walk the nominations, keeping households in a disjoint-set (union-find)
- *    structure that also tracks how many households each bubble holds. A
- *    nomination is accepted when the two households are in different bubbles
- *    **and** the combined bubble would still hold at most `max_households`
- *    households; otherwise it is declined.
+ * Households are kept in a disjoint-set (union-find) structure that also tracks
+ * how many households each bubble holds, so a bubble that is full can be
+ * recognised at once.
  *
- * Step 3's cap is what makes the rule work. Without it the merges percolate:
- * with a few members per household each nominating someone, the household graph
- * becomes connected and every household lands in one giant bubble -- no
- * restriction at all. Because bubbles fill up and then close, raising
- * `group_size` mostly gives an agent more chances to find a partner that still
- * has room, rather than a proportionally larger bubble; `max_households` is the
- * dial that controls bubble size.
+ * 1. Visit the agents in random order.
+ * 2. Skip an agent whose household is already in a full bubble -- it has left
+ *    the pool and can neither choose nor be chosen.
+ * 3. Otherwise, repeatedly draw one of the agent's contacts outside its own
+ *    household, at random and without replacement, until the agent has made
+ *    `group_size` successful choices or has no contact left that its bubble can
+ *    still take in. A draw is accepted when the two households are in different
+ *    bubbles **and** the merged bubble would hold at most `max_households`
+ *    households; otherwise that contact is simply unavailable and the agent
+ *    draws again. Accepting a draw merges the two households (household
+ *    commitment), and the agent stops once its bubble is full.
+ *
+ * The cap is what makes the rule work. Without it the merges percolate: with a
+ * few members per household each choosing someone, the household graph becomes
+ * connected and every household lands in one giant bubble -- no restriction at
+ * all.
+ *
+ * Note that `max_households` is the effective dial on bubble size, while
+ * `group_size` rarely binds: because a choice by *any* member commits the whole
+ * household, the members of one household together tend to fill its bubble
+ * regardless of how many choices each of them is allowed. With
+ * `max_households == 2`, in particular, one accepted choice fills the bubble and
+ * `group_size` has no effect at all. Households whose every contact was taken
+ * first remain on their own.
  *
  * ## Scheduling
  *
