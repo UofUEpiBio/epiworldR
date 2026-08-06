@@ -9,6 +9,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- how-to-cite -->
+::: {.callout-note}
+## How to cite
+
+If you use **epiworldR** in published work, please cite it — run
+`citation("epiworldR")` in R for the full entry.
+:::
+<!-- how-to-cite -->
+
 ## Introduction
 
 This vignette shows how to create a mixing model using the `epiworldR` package. Mixing models feature multiple populations. Each group, called `Entities`, has a subset of the agents. The agents can interact with each other within the same group and with agents from other groups. A contact matrix defines the interaction between agents.

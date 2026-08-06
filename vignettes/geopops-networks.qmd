@@ -1,0 +1,610 @@
+---
+title: "Using external network data: GeoPops synthetic populations"
+author:
+  - George Vega Yon
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Using external network data: GeoPops synthetic populations}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!-- how-to-cite -->
+::: {.callout-note}
+## How to cite
+
+If you use **epiworldR** in published work, please cite it — run
+`citation("epiworldR")` in R for the full entry.
+:::
+<!-- how-to-cite -->
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(
+  fig.width  = 7,
+  fig.height = 4.5,
+  fig.align  = "center"
+)
+```
+
+# Introduction
+
+Most of the examples in epiworldR build their contact structure from a
+random-graph generator---`agents_smallworld()`, `agents_sbm()`, or one of the
+fully-connected `*CONN` models. That is convenient for prototyping, but many
+applied questions start from a population that somebody else has already
+constructed: a synthetic population, a mobility-derived contact network, a
+survey-based sociocentric network, or a school roster.
+
+This vignette shows the general recipe for that case, using data from the
+[GeoPops](https://github.com/GeoPopsHub) project as the running example.[^data]
+Nothing in the recipe is GeoPops-specific; the same four steps apply to any
+population file plus edge list you may have:
+
+[^data]: The GeoPops data used in this tutorial was provided by [Allisa Hamilton](https://github.com/alisahamilton1) and the GeoPops team. The extract is included in the `epiworldR` package for convenience, but the full Spartanburg County, SC population can be downloaded from [the GeoPops GitHub repository](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md).
+
+1. Read the node table and the edge list(s).
+2. Map the external node identifiers onto epiworld's agent identifiers, which
+   are the contiguous integers `0, 1, ..., n - 1`.
+3. Hand the re-indexed edge list to `agents_from_edgelist()`.
+4. Attach a virus, run, and layer interventions on top with global events.
+
+We then use the global events module (`?global-events`) to give the model a
+weekly rhythm: transmission is dialed down on Saturday and Sunday and restored
+on weekdays.
+
+```{r}
+#| label: load-pkg
+library(epiworldR)
+```
+
+# The data
+
+GeoPops generates geographically and demographically realistic synthetic
+populations for U.S. Census geographies. A population comes as one *people*
+table and one edge list per contact *layer*:
+
+| File            | Contents                                                     |
+|-----------------|--------------------------------------------------------------|
+| `people_all.csv`| One row per person. `uid` is the unique person identifier.    |
+| `net_h.csv`     | Household ties.                                              |
+| `net_w.csv`     | Workplace ties.                                              |
+| `net_s.csv`     | School ties.                                                 |
+| `net_g.csv`     | Group-quarters ties.                                         |
+
+Each edge file has columns `p1`, `p2`, and `edge_weight`, where `p1` and `p2`
+are `uid`s from the people table. The full Spartanburg County, SC population
+that this vignette is based on has 356,923 people and about 1.2 million ties.
+That is far too large to ship inside an R package, so epiworldR includes a
+much smaller extract: the largest census tract of the county, plus every
+person directly tied to a resident of that tract, so that workplaces and
+schools are not cut in half.
+
+```{r}
+#| label: data-path
+geopops <- system.file("extdata", "geopops", package = "epiworldR")
+list.files(geopops)
+```
+
+The files keep the GeoPops column layout, so the code below runs unchanged
+against a full GeoPops download; only the file names change (drop the `.gz`).
+`README.md` in that directory records exactly how the extract was cut, and
+`data-raw/geopops-extract.R` in the package sources is the script that cuts it.
+
+```{r}
+#| label: read-people
+people <- read.csv(file.path(geopops, "people_all.csv.gz"))
+
+dim(people)
+head(people[, c("uid", "hh_id", "tract", "age", "female", "working", "sch_grade")])
+```
+
+Two features of this table matter for what follows.
+
+First, `uid` is *not* a row number here. In the full county the `uid`s happen
+to run from 0 to 356,922 with no gaps, but our extract keeps only a subset of
+them, so the identifiers are sparse:
+
+```{r}
+#| label: uid-gaps
+range(people$uid)
+nrow(people)
+```
+
+This is the normal situation with externally-supplied networks, and it is
+exactly what step 2 of the recipe deals with.
+
+Second, a block of people carries no demographic information at all:
+
+```{r}
+#| label: no-demog
+table(demographics = ifelse(is.na(people$age), "missing", "present"))
+```
+
+These are people who work or attend school inside the study area but live
+outside of it. GeoPops includes them so that workplace and school networks are
+complete, but does not model their households. They are perfectly good agents
+--- they just cannot be stratified by age or sex.
+
+## The contact layers
+
+We read the four edge lists and stack them into a single table, keeping track
+of which layer each tie came from.
+
+```{r}
+#| label: read-edges
+layers <- c(
+  household = "net_h",
+  workplace = "net_w",
+  school    = "net_s",
+  group     = "net_g"
+)
+
+edges <- do.call(rbind, lapply(names(layers), function(l) {
+  e <- read.csv(file.path(geopops, paste0(layers[[l]], ".csv.gz")))
+  data.frame(layer = l, p1 = e$p1, p2 = e$p2)
+}))
+
+table(edges$layer)
+```
+
+(For a full-county file, `data.table::fread()` or `vroom::vroom()` will read
+these considerably faster than `read.csv()`.)
+
+# From `uid`s to agent identifiers
+
+epiworld numbers its agents `0, 1, ..., n - 1`, and `agents_from_edgelist()`
+expects the `source` and `target` vectors to be in that numbering. So we build
+a lookup from `uid` to position in the people table, and translate both
+endpoints of every tie:
+
+```{r}
+#| label: remap
+uid2id <- setNames(seq_along(people$uid) - 1L, people$uid)
+
+edges$from <- uid2id[as.character(edges$p1)]
+edges$to   <- uid2id[as.character(edges$p2)]
+
+head(edges)
+```
+
+Because the lookup is keyed by the *row order* of `people`, agent `i` in the
+model is row `i + 1` of `people` for the rest of this vignette. That is what
+lets us go back and forth between simulation output and demographics.
+
+A quick check that no tie points at somebody outside the people table:
+
+```{r}
+#| label: check-remap
+any(is.na(edges$from) | is.na(edges$to))
+```
+
+## Collapsing the layers
+
+For this model we treat the network as a single undirected graph: two people
+are connected if they share a household, a workplace, a school, or a group
+quarters. Since a pair can appear in more than one layer, we drop duplicated
+pairs.
+
+```{r}
+#| label: dedupe
+key <- paste(pmin(edges$from, edges$to), pmax(edges$from, edges$to))
+net <- edges[!duplicated(key), ]
+
+c(stacked = nrow(edges), unique_pairs = nrow(net))
+```
+
+We will need one more quantity later: the share of ties that are *not* work or
+school ties, i.e. the ties that stay active on a weekend.
+
+```{r}
+#| label: home-share
+home_ties  <- unique(key[edges$layer %in% c("household", "group")])
+home_share <- length(home_ties) / nrow(net)
+round(home_share, 3)
+```
+
+Roughly one tie in six survives the weekend; the rest of the network is
+workplaces and schools.
+
+# Loading the network into a model
+
+Now the actual handoff. We create a `ModelSEIRD()` model --- exposed and
+incubating, infectious, recovered, and dead, which is a reasonable skeleton
+for COVID-19 --- and give it the GeoPops network. Note that `size` is the
+number of *agents*, not the number of people with at least one tie: isolated
+agents are legitimate members of the population and epiworld needs to know
+about them.
+
+```{r}
+#| label: build-model
+transmission_weekday <- 0.05
+
+model <- ModelSEIRD(
+  name              = "COVID-19",
+  prevalence        = 0,
+  transmission_rate = transmission_weekday,
+  incubation_days   = 4,
+  recovery_rate     = 1 / 7,
+  death_rate        = 0.005
+)
+
+agents_from_edgelist(
+  model,
+  source   = net$from,
+  target   = net$to,
+  size     = nrow(people),
+  directed = FALSE
+)
+
+model
+```
+
+The network is loaded, and we can read it back out with `get_network()`, which
+returns the edge list as a two-column data frame of `from`/`to` agent ids:
+
+```{r}
+#| label: degree
+loaded <- get_network(model)
+nrow(loaded)
+
+degree <- tabulate(c(loaded$from, loaded$to) + 1L, nbins = nrow(people))
+summary(degree)
+```
+
+```{r}
+#| label: degree-plot
+#| fig-cap: "Degree distribution of the combined GeoPops contact network."
+plot(
+  table(degree),
+  xlab = "Number of contacts",
+  ylab = "Number of agents",
+  main = "GeoPops contact network"
+)
+```
+
+The shape is nothing like the tight, roughly Poisson degree distribution a
+random graph would give at the same mean. Most of the mass sits at one to four
+contacts---agents whose only ties are to their household---and then there is a
+long shoulder stretching out past twenty, made up of people who also go to
+work or to school. A few hundred agents have no ties at all. This kind of
+structure is the whole reason for using an external population in the first
+place.
+
+## Seeding the outbreak from the people table
+
+We set `prevalence = 0` above because we want to choose the index cases
+ourselves rather than let epiworld scatter them at random. Here we start the
+outbreak in twenty working adults, using the demographics to pick them:
+
+```{r}
+#| label: seed
+set.seed(3312)
+workers <- which(!is.na(people$working) & people$working == 1) - 1L
+seeds   <- sample(workers, 20)
+
+set_distribution_virus(
+  get_virus(model, 0),
+  distribute_virus_to_set(seeds)
+)
+```
+
+Recall that `which(...) - 1L` converts R's 1-based row positions into
+epiworld's 0-based agent identifiers. Fixing the seeds also makes the
+comparison later in this vignette a fair one: both models start from exactly
+the same twenty infections.
+
+## A first run
+
+```{r}
+#| label: run-baseline
+verbose_off(model)
+run(model, ndays = 120, seed = 331)
+summary(model)
+```
+
+```{r}
+#| label: plot-baseline
+#| fig-cap: "SEIRD dynamics on the GeoPops network, constant transmission rate."
+plot(model)
+```
+
+# Adding a weekly rhythm with global events
+
+The model above transmits at the same rate seven days a week. In reality, the
+workplace and school layers---five ties out of six in this population---go
+quiet on weekends.
+
+epiworld's network is fixed once loaded, so we cannot delete those ties for
+two days and add them back. What we can do is scale the per-contact
+transmission probability. For small probabilities this is a good
+approximation: the expected number of transmissions per infectious agent per
+day is roughly (degree) x (transmission rate), so multiplying the rate by
+`home_share` gives about the same expected transmissions as keeping only the
+`home_share` fraction of ties at the full rate.
+
+```{r}
+#| label: weekend-rate
+transmission_weekend <- transmission_weekday * home_share
+c(weekday = transmission_weekday, weekend = round(transmission_weekend, 4))
+```
+
+## Timing
+
+Global events run *after* the day's state updates. Concretely, on the step
+where `today(model)` is `t`, transmission for day `t` has already happened
+using whatever the parameter was set to previously; the event then decides
+what day `t + 1` will use. So the event has to look one day ahead.
+
+We take day 1 of the simulation to be a Monday, which makes the day of the
+week `(day - 1) %% 7`, with 5 and 6 being Saturday and Sunday. Day 0 is the
+baseline record that epiworld writes before the first step, so we exclude it:
+
+```{r}
+#| label: is-weekend
+is_weekend <- function(day) (day >= 1L) & ((day - 1L) %% 7L) >= 5L
+
+data.frame(
+  day     = 0:8,
+  weekend = is_weekend(0:8)
+)
+```
+
+## The event
+
+`globalevent_fun()` wraps an ordinary R function that receives the model and
+is called at every step. Ours reads the clock and sets `"Transmission rate"`
+for the following day:
+
+```{r}
+#| label: weekend-event
+weekend_effect <- function(m) {
+  set_param(
+    m,
+    "Transmission rate",
+    if (is_weekend(today(m) + 1L)) transmission_weekend else transmission_weekday
+  )
+}
+```
+
+Day 1 is a weekday and no event has fired yet, so it uses the
+`transmission_rate` we passed to `ModelSEIRD()`---which is why that argument
+was set to the weekday value.
+
+Now we rebuild the model, identically to before, and attach the event:
+
+```{r}
+#| label: build-weekend-model
+model_weekend <- ModelSEIRD(
+  name              = "COVID-19",
+  prevalence        = 0,
+  transmission_rate = transmission_weekday,
+  incubation_days   = 4,
+  recovery_rate     = 1 / 7,
+  death_rate        = 0.005
+)
+
+agents_from_edgelist(
+  model_weekend,
+  source   = net$from,
+  target   = net$to,
+  size     = nrow(people),
+  directed = FALSE
+)
+
+set_distribution_virus(
+  get_virus(model_weekend, 0),
+  distribute_virus_to_set(seeds)
+)
+
+add_globalevent(
+  model_weekend,
+  globalevent_fun(weekend_effect, "Weekend contact reduction")
+)
+
+verbose_off(model_weekend)
+run(model_weekend, ndays = 120, seed = 331)
+summary(model_weekend)
+```
+
+# Comparing the two runs
+
+The clearest place to see the weekend effect is daily incidence---the number
+of susceptible agents who become exposed each day---which we can pull out of
+the transition matrix:
+
+```{r}
+#| label: incidence-fun
+daily_incidence <- function(m) {
+  tm <- get_hist_transition_matrix(m)
+  tm <- tm[tm$state_from == "Susceptible" & tm$state_to == "Exposed", ]
+  tm[order(tm$date), c("date", "counts")]
+}
+
+inc_baseline <- daily_incidence(model)
+inc_weekend  <- daily_incidence(model_weekend)
+```
+
+```{r}
+#| label: plot-incidence
+#| fig-cap: "Daily new exposures. Shaded bands are weekends."
+plot(
+  inc_baseline$date, inc_baseline$counts,
+  type = "l", col = "gray40", lwd = 2,
+  xlab = "Day (day 1 = Monday)", ylab = "New exposures",
+  main = "Daily incidence, with and without a weekend effect"
+)
+
+# Shading the weekends, one rectangle per Saturday-Sunday pair
+saturdays <- with(inc_baseline, date[is_weekend(date) & (date - 1L) %% 7L == 5L])
+for (d in saturdays) {
+  rect(d - .5, -1e4, d + 1.5, 1e5, col = adjustcolor("steelblue", .12), border = NA)
+}
+
+lines(inc_weekend$date, inc_weekend$counts, col = "tomato", lwd = 2)
+legend(
+  "topright", bty = "n", lwd = 2, col = c("gray40", "tomato"),
+  legend = c("Constant rate", "Weekday/weekend rate")
+)
+```
+
+The red curve has a pronounced seven-day sawtooth: incidence collapses every
+Saturday and Sunday and rebounds on Monday. Zooming in on two weeks around the
+peak makes the pattern explicit:
+
+```{r}
+#| label: sawtooth-table
+days <- 29:42
+data.frame(
+  day      = days,
+  weekday  = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")[((days - 1) %% 7) + 1],
+  constant = inc_baseline$counts[match(days, inc_baseline$date)],
+  weekend  = inc_weekend$counts[match(days, inc_weekend$date)]
+)
+```
+
+Beyond the weekly pattern, the intervention also flattens and delays the
+outbreak overall:
+
+```{r}
+#| label: summary-compare
+compare <- function(m, inc, label) {
+  h        <- get_hist_total(m)
+  fin      <- h[h$date == max(h$date), ]
+  outbreak <- get_outbreak_size(m)
+  outbreak <- outbreak[outbreak$date == max(outbreak$date), ]
+  data.frame(
+    model          = label,
+    peak_incidence = max(inc$counts),
+    peak_day       = inc$date[which.max(inc$counts)],
+    ever_infected  = sum(outbreak$outbreak_size),
+    deaths         = fin$counts[fin$state == "Deceased"]
+  )
+}
+
+rbind(
+  compare(model, inc_baseline, "Constant rate"),
+  compare(model_weekend, inc_weekend, "Weekday/weekend rate")
+)
+```
+
+## A thread-safe alternative
+
+`globalevent_fun()` calls back into R, which is not thread safe, so
+`run_multiple()` falls back to
+`nthreads = 1` for any model that uses it. If you need many replicates in
+parallel, you can get the same schedule out of `globalevent_set_params()`,
+which is pure C++. Because the effect lands on the following day, the
+"slow down" events go on Fridays and the "speed up" events on Sundays:
+
+```{r}
+#| label: setparams-alternative
+ndays <- 120
+
+model_weekend2 <- ModelSEIRD(
+  name              = "COVID-19",
+  prevalence        = 0,
+  transmission_rate = transmission_weekday,
+  incubation_days   = 4,
+  recovery_rate     = 1 / 7,
+  death_rate        = 0.005
+)
+
+agents_from_edgelist(
+  model_weekend2,
+  source = net$from, target = net$to,
+  size = nrow(people), directed = FALSE
+)
+
+set_distribution_virus(
+  get_virus(model_weekend2, 0),
+  distribute_virus_to_set(seeds)
+)
+
+for (d in seq_len(ndays)) {
+
+  new_rate <- if (!is_weekend(d) && is_weekend(d + 1L)) {
+    transmission_weekend
+  } else if (is_weekend(d) && !is_weekend(d + 1L)) {
+    transmission_weekday
+  } else {
+    next
+  }
+
+  add_globalevent(
+    model_weekend2,
+    globalevent_set_params("Transmission rate", new_rate, day = d)
+  )
+
+}
+
+verbose_off(model_weekend2)
+run(model_weekend2, ndays = ndays, seed = 331)
+```
+
+The two formulations agree exactly:
+
+```{r}
+#| label: setparams-check
+identical(
+  get_hist_total(model_weekend),
+  get_hist_total(model_weekend2)
+)
+```
+
+# Scaling up to the full population
+
+Everything above runs on the shipped extract, but epiworld is built for the
+full thing. Loading the complete Spartanburg population---356,923 agents and
+1,223,555 unique ties---takes well under a second, and a 100-day run takes
+about the same. The code is identical; only the reading step changes:
+
+```{r}
+#| label: full-county
+#| eval: false
+library(data.table)
+
+people <- fread("people_all.csv")
+
+edges <- rbindlist(lapply(
+  c("net_h", "net_w", "net_s", "net_g"),
+  function(f) fread(paste0(f, ".csv"), select = c("p1", "p2"))
+))
+
+# In the full file the uids already run 0..n-1, so the remap is the identity;
+# doing it anyway costs nothing and keeps the code portable.
+uid2id <- setNames(seq_along(people$uid) - 1L, people$uid)
+edges[, `:=`(from = uid2id[as.character(p1)], to = uid2id[as.character(p2)])]
+
+net <- unique(edges[, .(a = pmin(from, to), b = pmax(from, to))])
+
+model_full <- ModelSEIRD("COVID-19", 0, 0.05, 4, 1 / 7, 0.005)
+agents_from_edgelist(
+  model_full,
+  source = net$a, target = net$b,
+  size = nrow(people), directed = FALSE
+)
+```
+
+# Caveats
+
+A few things worth keeping in mind when you use this pattern on your own data.
+
+- **The graph is static.** epiworld does not rewire the network between steps
+  (other than the built-in degree-sequence rewiring), so layer-specific
+  interventions such as school closures have to be expressed as parameter
+  changes, as we did for the weekend, or by building a separate model per
+  scenario.
+- **Weights are ignored.** GeoPops ships an `edge_weight` column;
+  `agents_from_edgelist()` takes an unweighted edge list. If your weights
+  matter, one option is to encode them through agent- or virus-level
+  functions rather than through the network itself.
+- **Duplicated pairs.** Stacking layers can produce the same pair twice. We
+  dropped duplicates above; leaving them in would have given those pairs two
+  independent chances to transmit each day, which may or may not be what you
+  want.
+- **Boundary effects.** Our extract keeps one tract plus its immediate
+  contacts, so agents on the boundary have artificially truncated
+  neighborhoods. Results from the extract are illustrative, not an estimate
+  for Spartanburg County.

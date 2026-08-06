@@ -16,6 +16,16 @@
 
 <!-- badges: end -->
 
+
+<!-- how-to-cite -->
+> [!NOTE]
+> **How to cite epiworldR.** If you use **epiworldR** in published work, please cite it:
+>
+> Meyer D, Vega Yon GG (2023). epiworldR: Fast Agent-Based Epi Models. *Journal of Open Source Software*, 8(90), 5781. doi:[10.21105/joss.05781](https://doi.org/10.21105/joss.05781)
+>
+> Run `citation("epiworldR")` in R for the BibTeX entry.
+<!-- how-to-cite -->
+
 This R package is a wrapper of the C++ library
 <a href="https://github.com/UofUEpiBio/epiworld"
 target="_blank">epiworld</a>. It provides a general framework for

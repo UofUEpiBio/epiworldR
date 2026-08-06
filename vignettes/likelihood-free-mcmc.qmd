@@ -9,6 +9,15 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- how-to-cite -->
+::: {.callout-note}
+## How to cite
+
+If you use **epiworldR** in published work, please cite it — run
+`citation("epiworldR")` in R for the full entry.
+:::
+<!-- how-to-cite -->
+
 # Introduction
 
 The purpose of the "LFMCMC" class in epiworldR is to perform a Likelihood-Free Markhov Chain Monte Carlo (LFMCMC) simulation. LFMCMC is used to approximate models where the likelihood function is either unavailable or computationally expensive. This example assumes a general understanding of LFMCMC.
