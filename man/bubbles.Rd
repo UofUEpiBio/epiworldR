@@ -2,6 +2,7 @@
 % Please edit documentation in R/bubbles.R
 \name{bubbles}
 \alias{bubbles}
+\alias{sample_household_sizes}
 \title{Social bubbles intervention for network models}
 \usage{
 bubbles(
@@ -16,6 +17,8 @@ bubbles(
   name = "Social bubble",
   max_households = 2L
 )
+
+sample_household_sizes(n_agents, min_size = 2L, max_size = 6L)
 }
 \arguments{
 \item{model}{An object of class \link{epiworld_model} whose agents and contact
@@ -55,9 +58,19 @@ declined. This is what stops one household's choices from chaining into the
 next (see Details). The default, \code{2}, represents two households joined by a
 close contact. Ignored when \code{flavor = "household"}, where \code{group_size} is
 already the cap.}
+
+\item{n_agents}{Integer scalar. The total number of agents to be divided
+into households.}
+
+\item{min_size, max_size}{Integer scalar. The minimum and maximum size of
+each household.}
 }
 \value{
 Invisibly returns \code{model}, which is modified in place.
+
+The function \code{sample_household_sizes()} returns an integer vector of
+household sizes that sum to \code{n_agents}, with each size between \code{min_size}
+and \code{max_size}.
 }
 \description{
 A "social bubble" policy lets people keep seeing a small, fixed set of others
@@ -165,6 +178,11 @@ not a partition of the population and cannot be expressed this way.
 Fixed out-of-bubble "sport partners" and travel between regions are not yet
 modelled either.
 }
+
+The function \code{sample_household_sizes()} draws a vector of household sizes
+that sum to \code{n_agents}, with each size between \code{min_size} and \code{max_size}. It
+ensures that the total number of agents is exactly \code{n_agents} by adjusting
+the last household size if necessary.
 }
 \examples{
 # A network SEIR model on a small-world contact network

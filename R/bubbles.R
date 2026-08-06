@@ -262,3 +262,47 @@ bubbles <- function(
   invisible(model)
 
 }
+
+#' @rdname bubbles
+#' @export
+#' @details
+#' The function `sample_household_sizes()` draws a vector of household sizes
+#' that sum to `n_agents`, with each size between `min_size` and `max_size`. It
+#' ensures that the total number of agents is exactly `n_agents` by adjusting
+#' the last household size if necessary.
+#' @return
+#' The function `sample_household_sizes()` returns an integer vector of
+#' household sizes that sum to `n_agents`, with each size between `min_size`
+#' and `max_size`.
+#' @param n_agents Integer scalar. The total number of agents to be divided
+#' into households.
+#' @param min_size,max_size Integer scalar. The minimum and maximum size of
+#' each household.
+sample_household_sizes <- function(n_agents, min_size = 2L, max_size = 6L) {
+  stopifnot(
+    length(n_agents) == 1L,
+    is.numeric(n_agents),
+    n_agents > 0,
+    n_agents == round(n_agents),
+    length(min_size) == 1L,
+    is.numeric(min_size),
+    min_size > 0,
+    min_size == round(min_size),
+    length(max_size) == 1L,
+    is.numeric(max_size),
+    max_size >= min_size,
+    max_size == round(max_size)
+  )
+
+  sizes <- sample(min_size:max_size, size = n_agents, replace = TRUE)
+  lim <- which.min(abs(cumsum(sizes) - n_agents))
+  sizes <- sizes[seq_len(lim)]
+
+  # Adjusting the sizes vector to match the number of agents exactly
+  if (sum(sizes) < n_agents) {
+    sizes <- c(sizes, n_agents - sum(sizes))
+  } else if (sum(sizes) > n_agents) {
+    sizes <- sizes[seq_len(which(cumsum(sizes) <= n_agents))]
+  }
+  sizes
+}

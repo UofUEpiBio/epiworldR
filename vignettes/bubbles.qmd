@@ -1,0 +1,228 @@
+---
+title: "Social bubbles on a small-world network"
+author:
+  - George Vega Yon
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Social bubbles on a small-world network}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+Social-bubble policies preserve contacts within small, fixed groups while
+blocking transmission between groups. This vignette compares an unmitigated
+outbreak with two household-based policies created by `bubbles()`:
+
+1. one household per bubble, and
+2. up to three households per bubble.
+
+Both policies operate from day 20 through day 59. In `bubbles()`, `end_day` is
+exclusive, so `start_day = 20` and `end_day = 60` give that interval.
+
+::: {.callout-important}
+## Why this example uses SEIR
+
+`ModelSIR()` has no exposed state and therefore cannot represent the requested
+three-day incubation period. We use `ModelSEIR()`, the direct extension of the
+SIR model, so that all the requested disease timings are represented. For a
+strict SIR example, replace `ModelSEIR()` with `ModelSIR()` and omit
+`incubation_days`.
+:::
+
+# Baseline outbreak
+
+We simulate 10,000 agents for 100 days, beginning with 10 cases. The
+small-world network has mean degree 40 and rewires 20% of its edges. With a
+seven-day mean infectious period, the approximation
+
+$$
+R_0 \approx k \times \beta \times D
+$$
+
+gives a per-contact transmission probability of
+$\beta = 2 / (40 \times 7)$. This is only an approximation on a clustered
+network, which is why we describe the target $R_0$ as "close to 2."
+
+```{r}
+#| label: baseline-setup
+library(epiworldR)
+
+n_agents          <- 10000L
+initial_cases      <- 10L
+mean_degree        <- 40L
+rewire_probability <- 0.20
+incubation_days    <- 3
+infectious_days    <- 7
+target_r0          <- 2
+ndays              <- 100L
+nsims              <- 200L
+simulation_seed    <- 2026L
+
+transmission_rate <- target_r0 / (mean_degree * infectious_days)
+
+baseline_model <- ModelSEIR(
+  name              = "Example infection",
+  prevalence        = initial_cases / n_agents,
+  transmission_rate = transmission_rate,
+  incubation_days   = incubation_days,
+  recovery_rate     = 1 / infectious_days
+)
+
+agents_smallworld(
+  baseline_model,
+  n = n_agents,
+  k = mean_degree,
+  d = FALSE,
+  p = rewire_probability
+)
+```
+
+The network and disease parameters will be held fixed across policies. We also
+use the same `simulation_seed` in each call to `run_multiple()`. The outbreak
+size saver records the cumulative number infected, including the 10 initial
+cases.
+
+```{r}
+#| label: helpers
+run_scenario <- function(model, policy) {
+  saver <- make_saver("outbreak_size")
+
+  run_multiple(
+    model,
+    ndays    = ndays,
+    nsims    = nsims,
+    seed     = simulation_seed,
+    saver    = saver,
+    verbose  = FALSE,
+    nthreads = 1L
+  )
+
+  outbreak <- run_multiple_get_results(
+    model,
+    nthreads = 1L
+  )$outbreak_size
+
+  final <- outbreak[outbreak$date == ndays, ]
+  data.frame(
+    policy        = policy,
+    replicate     = final$sim_num,
+    outbreak_size = final$outbreak_size
+  )
+}
+
+summarize_outbreaks <- function(x) {
+  pieces <- split(x$outbreak_size, x$policy)
+
+  rows <- lapply(names(pieces), function(policy) {
+    z <- pieces[[policy]]
+    data.frame(
+      policy        = policy,
+      mean          = round(mean(z), 1),
+      median        = unname(median(z)),
+      lower_95_pct  = unname(quantile(z, 0.025)),
+      upper_95_pct  = unname(quantile(z, 0.975)),
+      mean_percent  = round(100 * mean(z) / n_agents, 1),
+      row.names     = NULL
+    )
+  })
+
+  do.call(rbind, rows)
+}
+```
+
+# One household per bubble
+
+First we generate household sizes from 2 through 6 with equal probability.
+The only exception is at the end of the vector, where a draw that would leave
+one unassigned agent is rejected. Household IDs are then assigned sequentially
+in agent order.
+
+This ordering is useful for a small-world network: before rewiring, nearby node
+IDs are connected on the ring lattice. Sequential household members are
+therefore likely to already share edges, even after 20% rewiring. This matters
+because `bubbles()` restricts existing network ties; it does not create new
+contacts between household members.
+
+```{r}
+#| label: households
+set.seed(2026)
+household_sizes <- sample_household_sizes(n_agents)
+household_id <- rep(
+  seq_along(household_sizes),
+  times = household_sizes
+)
+
+stopifnot(
+  length(household_id) == n_agents,
+  all(household_sizes >= 2L & household_sizes <= 6L)
+)
+
+table(household_sizes)
+```
+
+For the first policy, each household is its own bubble (`group_size = 1`).
+Contacts between households are blocked during the policy window. Within a
+household, transmission is reduced by 80%, meaning that 20% of the original
+per-contact probability remains (`transmission_factor = 0.20`).
+
+```{r}
+#| label: household-only-model
+household_only_model <- clone_model(baseline_model)
+
+bubbles(
+  household_only_model,
+  household_id        = household_id,
+  flavor              = "household",
+  group_size          = 1L,
+  transmission_factor = 0.20,
+  start_day           = 20L,
+  end_day             = 60L
+)
+```
+
+# Up to three households per bubble
+
+The second policy changes only `group_size`. `bubbles()` joins connected
+households into disjoint groups containing at most three households. The same
+80% within-bubble reduction and day 20--60 policy window apply.
+
+```{r}
+#| label: three-household-model
+three_household_model <- clone_model(baseline_model)
+
+bubbles(
+  three_household_model,
+  household_id        = household_id,
+  flavor              = "household",
+  group_size          = 3L,
+  transmission_factor = 0.20,
+  start_day           = 20L,
+  end_day             = 60L
+)
+```
+
+# Compare outbreak sizes
+
+Finally, we run 200 replicates for each scenario and report the final outbreak
+size. Bubble models must use one thread because the intervention maintains
+shared state; `bubbles()` marks them accordingly.
+
+```{r}
+#| label: run-scenarios
+#| message: false
+results <- rbind(
+  run_scenario(baseline_model, "No bubbles"),
+  run_scenario(household_only_model, "One household"),
+  run_scenario(three_household_model, "Up to three households")
+)
+
+summarize_outbreaks(results)
+```
+
+The table reports the mean, median, central 95% simulation interval, and mean
+percentage of the population ever infected. Comparing the two bubble policies
+shows the trade-off directly: allowing households to combine preserves more
+contacts, but it generally produces larger outbreaks than keeping each
+household in its own bubble.
