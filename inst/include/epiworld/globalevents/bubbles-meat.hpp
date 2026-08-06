@@ -64,6 +64,37 @@ inline void Bubbles<TSeq>::partition_household(Model<TSeq> * model) const
 
     size_t nh = hh_labels.size();
 
+    // Build the household contact graph: households h1 and h2 are adjacent when
+    // at least one member of h1 is connected to a member of h2 in the contact
+    // network. Bubbles are grown along these ties.
+    //
+    // Grouping households that share NO tie would be a no-op: the intervention
+    // can only suppress transmission along existing edges, never create new
+    // ones, so bubbling two unconnected households changes nothing. Pairing at
+    // random therefore degenerates to the household-only lockdown. It also
+    // matches the policy being modelled: a household picks a bubble partner it
+    // actually socialises with.
+    std::vector< std::vector< size_t > > hh_adj(nh);
+    auto & pop_all = model->get_agents();
+    for (size_t a = 0u; a < household_id.size(); ++a)
+    {
+        size_t ha = hh_index[household_id[a]];
+        for (auto * nb : pop_all[a].get_neighbors(*model))
+        {
+            size_t b = static_cast< size_t >(nb->get_id());
+            if (household_id[a] == household_id[b])
+                continue;
+            hh_adj[ha].push_back(hh_index[household_id[b]]);
+        }
+    }
+
+    // De-duplicate each adjacency list.
+    for (auto & adj : hh_adj)
+    {
+        std::sort(adj.begin(), adj.end());
+        adj.erase(std::unique(adj.begin(), adj.end()), adj.end());
+    }
+
     // Shuffle household order (Fisher-Yates with the model RNG).
     std::vector< size_t > order(nh);
     for (size_t i = 0u; i < nh; ++i)
@@ -75,10 +106,57 @@ inline void Bubbles<TSeq>::partition_household(Model<TSeq> * model) const
         std::swap(order[i - 1u], order[j]);
     }
 
-    // Chunk consecutive households into bubbles of `group_size`.
+    // Grow each bubble from a seed household by repeatedly absorbing a random
+    // household that is *connected* to the bubble, up to `group_size`
+    // households. A household with no unassigned connected candidates simply
+    // ends up in a smaller bubble (possibly alone) -- you can only bubble with
+    // someone you already have contact with.
     std::vector< int > hh_bubble(nh, -1);
+    std::vector< size_t > candidates;
+    int next_bubble = 0;
+
     for (size_t pos = 0u; pos < nh; ++pos)
-        hh_bubble[order[pos]] = static_cast< int >(pos / group_size);
+    {
+
+        size_t seed = order[pos];
+        if (hh_bubble[seed] != -1)
+            continue;
+
+        int b = next_bubble++;
+        hh_bubble[seed] = b;
+        size_t members = 1u;
+
+        // Frontier of households connected to the bubble. May contain stale
+        // (already assigned) or repeated entries; repeats make a household that
+        // is tied to several members proportionally more likely to be picked.
+        candidates.clear();
+        for (size_t x : hh_adj[seed])
+            if (hh_bubble[x] == -1)
+                candidates.push_back(x);
+
+        while ((members < group_size) && !candidates.empty())
+        {
+
+            size_t idx = static_cast< size_t >(
+                model->runif_index(static_cast<uint32_t>(candidates.size()))
+            );
+            size_t pick = candidates[idx];
+            candidates[idx] = candidates.back();
+            candidates.pop_back();
+
+            if (hh_bubble[pick] != -1) // stale entry
+                continue;
+
+            hh_bubble[pick] = b;
+            ++members;
+
+            for (size_t x : hh_adj[pick])
+                if (hh_bubble[x] == -1)
+                    candidates.push_back(x);
+
+        }
+
+    }
 
     // Assign each agent the bubble of its household.
     for (size_t a = 0u; a < household_id.size(); ++a)

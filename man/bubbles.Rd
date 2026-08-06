@@ -17,63 +17,94 @@ bubbles(
 )
 }
 \arguments{
-\item{model}{An object of class \link{epiworld_model} whose agents/network are
-already built.}
+\item{model}{An object of class \link{epiworld_model} whose agents and contact
+network have already been created.}
 
 \item{household_id}{Integer vector of household labels, one per agent, in
-agent order (its length must equal the number of agents).}
+agent order; its length must equal the number of agents. Labels are arbitrary
+and need not be consecutive. Agents sharing a label form a household and are
+always placed in the same bubble.}
 
-\item{flavor}{Character scalar: \code{"household"} or \code{"peer"} (see details).}
+\item{flavor}{Character scalar. \code{"household"} if whole households choose a
+bubble together, \code{"peer"} if individuals choose contacts (see Details).}
 
-\item{group_size}{Integer scalar. Households per bubble (\code{"household"}) or the
-maximum number of external peers per agent (\code{"peer"}).}
+\item{group_size}{Integer scalar. For \code{"household"}, the maximum number of
+households per bubble (\code{1} gives a strict household-only lockdown). For
+\code{"peer"}, the maximum number of contacts each agent may keep outside its
+household.}
 
-\item{transmission_factor}{Numeric scalar in [0, 1]. Within-bubble
-transmission multiplier (\code{1} = no distancing, \code{0.5} = halved, \code{0} = fully
-blocked). Cross-bubble transmission is always blocked.}
+\item{transmission_factor}{Numeric scalar in [0, 1]. Multiplier applied to
+transmission \emph{within} a bubble: \code{1} leaves it untouched, \code{0.5} halves it
+(physical distancing), \code{0} blocks it entirely. Transmission \emph{between} bubbles
+is always blocked.}
 
-\item{start_day}{Integer scalar. First day the policy is in effect.}
+\item{start_day}{Integer scalar. First day on which the policy applies.}
 
-\item{end_day}{Integer scalar. Day the policy ends (exclusive); negative means
-it never ends.}
+\item{end_day}{Integer scalar. Day on which the policy is lifted (exclusive);
+a negative value means it never lifts. Must be greater than \code{start_day}.}
 
 \item{rewire_every}{Integer scalar. Re-randomize the bubbles every this-many
-days (for "changing" policies); \code{0} keeps fixed bubbles.}
+days, for policies whose contacts change over time; \code{0} keeps them fixed.}
 
-\item{name}{Character scalar. Name used for the intervention's tool and event.}
+\item{name}{Character scalar. Name given to the intervention's tool and event.}
 }
 \value{
-Invisibly returns the (modified in place) \code{model}.
+Invisibly returns \code{model}, which is modified in place.
 }
 \description{
-Restricts agents' \emph{effective} contacts to small, disjoint "bubbles" during an
-outbreak. It is designed for network-based models (e.g. \link{ModelSEIR} and
-\link{ModelSIR} built on an explicit contact network). Rather than editing the
-contact network, \code{bubbles()} attaches a tool to every agent that blocks
-transmission between agents in different bubbles and, optionally, reduces
-transmission within a bubble to represent social distancing. Because contact
-weights are uniform in the network models, this is equivalent to removing
-out-of-bubble contacts.
+A "social bubble" policy lets people keep seeing a small, fixed set of others
+while cutting off the rest of their contacts. \code{bubbles()} implements such a
+policy for models built on an explicit contact network (e.g. \link{ModelSEIR} or
+\link{ModelSIR} after \code{\link[=agents_smallworld]{agents_smallworld()}} or \code{\link[=agents_from_edgelist]{agents_from_edgelist()}}), following
+the household-based rules used during COVID-19.
 }
 \details{
-Households are identified by \code{household_id} (one entry per agent, in agent
-order). Two flavors form the bubbles:
+The contact network is \strong{not} modified. Instead, every agent receives a tool
+that, on each exposure, compares the bubble of the susceptible agent with the
+bubble of the infectious one: if they differ, transmission is blocked; if they
+match, transmission is multiplied by \code{transmission_factor}. Because contact
+weights are uniform in these models, this is equivalent to deleting
+out-of-bubble contacts, while leaving the network available for other purposes
+(such as contact tracing or network summaries).
+\subsection{How bubbles are formed}{
+
+Bubbles are always disjoint (each agent is in exactly one), never split a
+household, and are only ever built between households that are \strong{actually
+connected} in the contact network.
+
+That last property matters: the intervention can only suppress transmission
+along existing edges, never create new ones, so placing two households that
+share no contact in the same bubble would change nothing. Pairing households
+at random would make \code{group_size} inert -- indistinguishable from a strict
+lockdown however large the bubbles are. It also matches the real policy: a
+household picks a bubble partner it already socialises with.
+
+The two flavors are:
 \itemize{
-\item \code{"household"}: households are shuffled and grouped into bubbles of
-\code{group_size} households each. \code{group_size = 1} reproduces a strict,
-household-only lockdown.
-\item \code{"peer"}: each agent selects up to \code{group_size} peers among its existing
-external contacts (a neighbor in a different household); each selection
-merges the two households, and bubbles are the resulting connected groups.
+\item \code{"household"}: a bubble grows from one household by repeatedly taking in a
+random household connected to it, up to \code{group_size} households. This is the
+household-level rule (e.g. Belgium, 10 May 2020).
+\item \code{"peer"}: each agent picks up to \code{group_size} of its existing contacts
+outside its household; every pick merges the two households, so a teenager
+choosing a partner brings both households into one bubble. This is the
+individual-level rule (e.g. Belgium, 19 October 2020, with \code{group_size = 1}).
 }
 
-The bubble partition is (re)computed by a daily scheduler event and takes
-effect the following simulation step. The intervention uses a single shared
-state, so when running replicates with \link{run_multiple} you must use a single
-thread (\code{nthreads = 1}).
+A household with no available connected partner ends up in a smaller bubble,
+possibly on its own.
+}
 
-The travel component and per-agent sport partners described in the modelling
-protocol are not yet implemented.
+\subsection{Timing and replicates}{
+
+The bubbles are drawn afresh at the start of every run, using that run's seed,
+and are already in force on day 1. With \code{rewire_every > 0} they are redrawn
+during the run, taking effect the following day. Because the intervention
+keeps a single shared state, replicates with \link{run_multiple} must use one
+thread (\code{nthreads = 1}); \code{bubbles()} flags the model accordingly.
+
+Fixed out-of-bubble "sport partners" and travel between regions are not yet
+modelled.
+}
 }
 \examples{
 # A network SEIR model on a small-world contact network
@@ -87,10 +118,10 @@ model <- ModelSEIR(
 
 agents_smallworld(model, n = 2000, k = 8, d = FALSE, p = 0.05)
 
-# Households of ~3 agents (in agent order)
-household_id <- rep(seq_len(2000 / 3 + 1), each = 3)[1:2000]
+# Households of three agents (in agent order)
+household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
 
-# Strategy 1 (household bubbles of 2 households), fixed, from day 10
+# Two households per bubble from day 10, halving within-bubble transmission
 bubbles(
   model,
   household_id        = household_id,
@@ -102,8 +133,19 @@ bubbles(
 
 run(model, ndays = 100, seed = 55)
 model
+
+# Other policies:
+#
+# Strict household-only lockdown (a common reference scenario):
+#   bubbles(model, household_id, "household", group_size = 1)
+#
+# One close contact per person, fixed:
+#   bubbles(model, household_id, "peer", group_size = 1)
+#
+# Up to ten contacts per person, renewed weekly:
+#   bubbles(model, household_id, "peer", group_size = 10, rewire_every = 7)
 }
 \seealso{
-\link{global-events}, \link{ModelSEIR}
+\link{global-events}, \link{ModelSEIR}, \code{\link[=agents_smallworld]{agents_smallworld()}}
 }
 \concept{global-events}

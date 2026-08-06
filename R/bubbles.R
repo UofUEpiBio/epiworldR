@@ -1,55 +1,85 @@
 #' Social bubbles intervention for network models
 #'
-#' Restricts agents' *effective* contacts to small, disjoint "bubbles" during an
-#' outbreak. It is designed for network-based models (e.g. [ModelSEIR] and
-#' [ModelSIR] built on an explicit contact network). Rather than editing the
-#' contact network, `bubbles()` attaches a tool to every agent that blocks
-#' transmission between agents in different bubbles and, optionally, reduces
-#' transmission within a bubble to represent social distancing. Because contact
-#' weights are uniform in the network models, this is equivalent to removing
-#' out-of-bubble contacts.
+#' A "social bubble" policy lets people keep seeing a small, fixed set of others
+#' while cutting off the rest of their contacts. `bubbles()` implements such a
+#' policy for models built on an explicit contact network (e.g. [ModelSEIR] or
+#' [ModelSIR] after [agents_smallworld()] or [agents_from_edgelist()]), following
+#' the household-based rules used during COVID-19.
 #'
-#' Households are identified by `household_id` (one entry per agent, in agent
-#' order). Two flavors form the bubbles:
-#'
-#' - `"household"`: households are shuffled and grouped into bubbles of
-#'   `group_size` households each. `group_size = 1` reproduces a strict,
-#'   household-only lockdown.
-#' - `"peer"`: each agent selects up to `group_size` peers among its existing
-#'   external contacts (a neighbor in a different household); each selection
-#'   merges the two households, and bubbles are the resulting connected groups.
-#'
-#' @param model An object of class [epiworld_model] whose agents/network are
-#' already built.
+#' @param model An object of class [epiworld_model] whose agents and contact
+#' network have already been created.
 #' @param household_id Integer vector of household labels, one per agent, in
-#' agent order (its length must equal the number of agents).
-#' @param flavor Character scalar: `"household"` or `"peer"` (see details).
-#' @param group_size Integer scalar. Households per bubble (`"household"`) or the
-#' maximum number of external peers per agent (`"peer"`).
-#' @param transmission_factor Numeric scalar in \[0, 1\]. Within-bubble
-#' transmission multiplier (`1` = no distancing, `0.5` = halved, `0` = fully
-#' blocked). Cross-bubble transmission is always blocked.
-#' @param start_day Integer scalar. First day the policy is in effect.
-#' @param end_day Integer scalar. Day the policy ends (exclusive); negative means
-#' it never ends.
+#' agent order; its length must equal the number of agents. Labels are arbitrary
+#' and need not be consecutive. Agents sharing a label form a household and are
+#' always placed in the same bubble.
+#' @param flavor Character scalar. `"household"` if whole households choose a
+#' bubble together, `"peer"` if individuals choose contacts (see Details).
+#' @param group_size Integer scalar. For `"household"`, the maximum number of
+#' households per bubble (`1` gives a strict household-only lockdown). For
+#' `"peer"`, the maximum number of contacts each agent may keep outside its
+#' household.
+#' @param transmission_factor Numeric scalar in \[0, 1\]. Multiplier applied to
+#' transmission *within* a bubble: `1` leaves it untouched, `0.5` halves it
+#' (physical distancing), `0` blocks it entirely. Transmission *between* bubbles
+#' is always blocked.
+#' @param start_day Integer scalar. First day on which the policy applies.
+#' @param end_day Integer scalar. Day on which the policy is lifted (exclusive);
+#' a negative value means it never lifts. Must be greater than `start_day`.
 #' @param rewire_every Integer scalar. Re-randomize the bubbles every this-many
-#' days (for "changing" policies); `0` keeps fixed bubbles.
-#' @param name Character scalar. Name used for the intervention's tool and event.
+#' days, for policies whose contacts change over time; `0` keeps them fixed.
+#' @param name Character scalar. Name given to the intervention's tool and event.
 #'
 #' @details
-#' The bubble partition is (re)computed by a daily scheduler event and takes
-#' effect the following simulation step. The intervention uses a single shared
-#' state, so when running replicates with [run_multiple] you must use a single
-#' thread (`nthreads = 1`).
+#' The contact network is **not** modified. Instead, every agent receives a tool
+#' that, on each exposure, compares the bubble of the susceptible agent with the
+#' bubble of the infectious one: if they differ, transmission is blocked; if they
+#' match, transmission is multiplied by `transmission_factor`. Because contact
+#' weights are uniform in these models, this is equivalent to deleting
+#' out-of-bubble contacts, while leaving the network available for other purposes
+#' (such as contact tracing or network summaries).
 #'
-#' The travel component and per-agent sport partners described in the modelling
-#' protocol are not yet implemented.
+#' ## How bubbles are formed
 #'
-#' @returns Invisibly returns the (modified in place) `model`.
+#' Bubbles are always disjoint (each agent is in exactly one), never split a
+#' household, and are only ever built between households that are **actually
+#' connected** in the contact network.
+#'
+#' That last property matters: the intervention can only suppress transmission
+#' along existing edges, never create new ones, so placing two households that
+#' share no contact in the same bubble would change nothing. Pairing households
+#' at random would make `group_size` inert -- indistinguishable from a strict
+#' lockdown however large the bubbles are. It also matches the real policy: a
+#' household picks a bubble partner it already socialises with.
+#'
+#' The two flavors are:
+#'
+#' - `"household"`: a bubble grows from one household by repeatedly taking in a
+#'   random household connected to it, up to `group_size` households. This is the
+#'   household-level rule (e.g. Belgium, 10 May 2020).
+#' - `"peer"`: each agent picks up to `group_size` of its existing contacts
+#'   outside its household; every pick merges the two households, so a teenager
+#'   choosing a partner brings both households into one bubble. This is the
+#'   individual-level rule (e.g. Belgium, 19 October 2020, with `group_size = 1`).
+#'
+#' A household with no available connected partner ends up in a smaller bubble,
+#' possibly on its own.
+#'
+#' ## Timing and replicates
+#'
+#' The bubbles are drawn afresh at the start of every run, using that run's seed,
+#' and are already in force on day 1. With `rewire_every > 0` they are redrawn
+#' during the run, taking effect the following day. Because the intervention
+#' keeps a single shared state, replicates with [run_multiple] must use one
+#' thread (`nthreads = 1`); `bubbles()` flags the model accordingly.
+#'
+#' Fixed out-of-bubble "sport partners" and travel between regions are not yet
+#' modelled.
+#'
+#' @returns Invisibly returns `model`, which is modified in place.
 #'
 #' @export
 #' @concept global-events
-#' @seealso [global-events], [ModelSEIR]
+#' @seealso [global-events], [ModelSEIR], [agents_smallworld()]
 #' @examples
 #' # A network SEIR model on a small-world contact network
 #' model <- ModelSEIR(
@@ -62,10 +92,10 @@
 #'
 #' agents_smallworld(model, n = 2000, k = 8, d = FALSE, p = 0.05)
 #'
-#' # Households of ~3 agents (in agent order)
-#' household_id <- rep(seq_len(2000 / 3 + 1), each = 3)[1:2000]
+#' # Households of three agents (in agent order)
+#' household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
 #'
-#' # Strategy 1 (household bubbles of 2 households), fixed, from day 10
+#' # Two households per bubble from day 10, halving within-bubble transmission
 #' bubbles(
 #'   model,
 #'   household_id        = household_id,
@@ -77,6 +107,17 @@
 #'
 #' run(model, ndays = 100, seed = 55)
 #' model
+#'
+#' # Other policies:
+#' #
+#' # Strict household-only lockdown (a common reference scenario):
+#' #   bubbles(model, household_id, "household", group_size = 1)
+#' #
+#' # One close contact per person, fixed:
+#' #   bubbles(model, household_id, "peer", group_size = 1)
+#' #
+#' # Up to ten contacts per person, renewed weekly:
+#' #   bubbles(model, household_id, "peer", group_size = 10, rewire_every = 7)
 bubbles <- function(
   model,
   household_id,

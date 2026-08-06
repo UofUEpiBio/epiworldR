@@ -34,6 +34,20 @@ expect_true(nrow(sec) > 0)                                   # outbreak happened
 expect_equal(sum(hh_of(sec$source) != hh_of(sec$target)), 0) # no cross-household
 
 ###############################################################################
+# Bubbles join households that are actually connected, so group_size = 2 must
+# retain some cross-household transmission. (With tie-blind random pairing it
+# would stay at ~0, making group_size indistinguishable from a lockdown.)
+###############################################################################
+model_g2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
+agents_smallworld(model_g2, n = 600, k = 8, d = FALSE, p = 0.10)
+bubbles(model_g2, household_id = hh, flavor = "household",
+        group_size = 2, transmission_factor = 1.0, start_day = 0)
+run(model_g2, ndays = 80, seed = 99)
+tn_g2  <- get_transmissions(model_g2)
+sec_g2 <- tn_g2[tn_g2$source >= 0, , drop = FALSE]
+expect_true(sum(hh_of(sec_g2$source) != hh_of(sec_g2$target)) > 0)
+
+###############################################################################
 # Control: without bubbles, transmission does cross households.
 ###############################################################################
 model_ctl <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
