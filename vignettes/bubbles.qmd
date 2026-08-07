@@ -22,7 +22,9 @@ outbreak with two household-based policies created by `bubbles()`:
 2. up to three households per bubble.
 
 Both policies operate from day 20 through day 59. In `bubbles()`, `end_day` is
-exclusive, so `start_day = 20` and `end_day = 60` give that interval.
+exclusive, so `start_day = 20` and `end_day = 60` give that interval. The following diagram illustrates three potential bubbles:
+
+![Three different bubbles that can be accomplished using the `bubbles()` function](img/bubble-small-diagram.svg){ width="80%"}
 
 ::: {.callout-important}
 ## Why this example uses SEIR
