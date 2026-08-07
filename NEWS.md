@@ -2,6 +2,14 @@
 
 ## User-visible changes
 
+* The new function `bubbles()` implements social-bubble contact restrictions on
+  network models, with the household- and peer-based rules used during COVID-19
+  (see the "Social bubbles on a small-world network" vignette). How leaky the
+  bubbles are is held in a model parameter (`"Bubble transmission factor"` by
+  default), which scales transmission along out-of-bubble contacts and can be
+  read with `get_param()` and changed with `set_param()` at any point.
+  `sample_household_sizes()` draws household sizes to go with it.
+
 * New vignette, "Using external network data: GeoPops synthetic populations",
   showing how to bring an externally-generated population and its contact
   networks into a model with `agents_from_edgelist()`, and how to give

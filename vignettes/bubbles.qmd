@@ -12,7 +12,10 @@ vignette: >
 # Introduction
 
 Social-bubble policies preserve contacts within small, fixed groups while
-blocking transmission between groups. This vignette compares an unmitigated
+cutting down transmission between groups. How much of the outside contact is
+cut is controlled by `transmission_factor`: `0` is a perfectly observed bubble
+(no contact outside it at all), `1` leaves the population untouched, and values
+in between represent partial compliance. This vignette compares an unmitigated
 outbreak with two household-based policies created by `bubbles()`:
 
 1. one household per bubble, and
@@ -163,9 +166,11 @@ table(household_sizes)
 ```
 
 For the first policy, each household is its own bubble (`group_size = 1`).
-Contacts between households are blocked during the policy window. Within a
-household, transmission is reduced by 80%, meaning that 20% of the original
-per-contact probability remains (`transmission_factor = 0.20`).
+Contacts within a household are untouched -- those are what the policy
+preserves. Contacts outside the household are reduced by 80% during the policy
+window, meaning that 20% of the original per-contact probability remains
+(`transmission_factor = 0.20`), which stands in for imperfect compliance rather
+than a hermetic bubble.
 
 ```{r}
 #| label: household-only-model
@@ -182,11 +187,21 @@ bubbles(
 )
 ```
 
+`bubbles()` does not keep the factor for itself: it stores it as a model
+parameter, which the intervention reads on every exposure. Compliance can
+therefore be inspected or changed -- between runs, or from a global event in the
+middle of one -- without rebuilding the policy.
+
+```{r}
+#| label: transmission-factor-param
+get_param(household_only_model, "Bubble transmission factor")
+```
+
 # Up to three households per bubble
 
 The second policy changes only `group_size`. `bubbles()` joins connected
 households into disjoint groups containing at most three households. The same
-80% within-bubble reduction and day 20--60 policy window apply.
+80% out-of-bubble reduction and day 20--60 policy window apply.
 
 ```{r}
 #| label: three-household-model

@@ -10,12 +10,13 @@ bubbles(
   household_id,
   flavor = c("household", "peer"),
   group_size,
-  transmission_factor = 1,
+  transmission_factor = 0,
   start_day = 0L,
   end_day = -1L,
   rewire_every = 0L,
   name = "Social bubble",
-  max_households = 2L
+  max_households = 2L,
+  param_name = "Bubble transmission factor"
 )
 
 sample_household_sizes(n_agents, min_size = 2L, max_size = 6L)
@@ -38,9 +39,12 @@ households per bubble (\code{1} gives a strict household-only lockdown). For
 household.}
 
 \item{transmission_factor}{Numeric scalar in [0, 1]. Multiplier applied to
-transmission \emph{within} a bubble: \code{1} leaves it untouched, \code{0.5} halves it
-(physical distancing), \code{0} blocks it entirely. Transmission \emph{between} bubbles
-is always blocked.}
+transmission between agents of \emph{different} bubbles, i.e. how leaky the bubble
+is: \code{0} (the default) is a perfectly efficient bubble that cuts out-of-bubble
+contact entirely, \code{0.5} halves it (a soft contact reduction), and \code{1} turns
+the intervention off. Contact \emph{within} a bubble is never altered. This is the
+initial value of the model parameter \code{param_name}; from then on the model, not
+the intervention, holds it (see Details).}
 
 \item{start_day}{Integer scalar. First day on which the policy applies.}
 
@@ -58,6 +62,10 @@ declined. This is what stops one household's choices from chaining into the
 next (see Details). The default, \code{2}, represents two households joined by a
 close contact. Ignored when \code{flavor = "household"}, where \code{group_size} is
 already the cap.}
+
+\item{param_name}{Character scalar. Name of the model parameter in which the
+transmission factor is stored. Give two interventions deployed on the same
+model different names if they are to be dialled independently.}
 
 \item{n_agents}{Integer scalar. The total number of agents to be divided
 into households.}
@@ -82,11 +90,28 @@ the household-based rules used during COVID-19.
 \details{
 The contact network is \strong{not} modified. Instead, every agent receives a tool
 that, on each exposure, compares the bubble of the susceptible agent with the
-bubble of the infectious one: if they differ, transmission is blocked; if they
-match, transmission is multiplied by \code{transmission_factor}. Because contact
-weights are uniform in these models, this is equivalent to deleting
-out-of-bubble contacts, while leaving the network available for other purposes
-(such as contact tracing or network summaries).
+bubble of the infectious one: if they match, transmission is left untouched --
+contacts inside the bubble are exactly what the policy preserves -- and if
+they differ, transmission is multiplied by the transmission factor. With a
+factor of \code{0} this is equivalent to deleting the out-of-bubble contacts
+(contact weights are uniform in these models), while leaving the network
+available for other purposes (such as contact tracing or network summaries).
+\subsection{Dialling the policy through the model}{
+
+The transmission factor is \strong{not} stored in the intervention: \code{bubbles()}
+registers it as a model parameter (\code{param_name}, \code{"Bubble transmission factor"} by default, overwriting any value the parameter already had), and the
+tool reads it from the model on every exposure. It can therefore be inspected
+with \code{\link[=get_param]{get_param()}}, changed at any point -- including between runs, or from a
+\code{\link[=globalevent_fun]{globalevent_fun()}} in the middle of one -- with \code{\link[=set_param]{set_param()}}, and swept over
+in a calibration without rebuilding the intervention:
+
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{bubbles(model, household_id, "household", group_size = 2)
+set_param(model, "Bubble transmission factor", 0.25) # leakier bubbles
+}\if{html}{\out{</div>}}
+
+Values outside [0, 1] are clamped when read.
+}
+
 \subsection{How bubbles are formed}{
 
 Bubbles are always disjoint (each agent is in exactly one), never split a
@@ -199,7 +224,7 @@ agents_smallworld(model, n = 2000, k = 8, d = FALSE, p = 0.05)
 # Households of three agents (in agent order)
 household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
 
-# Two households per bubble from day 10, halving within-bubble transmission
+# Two households per bubble from day 10, halving out-of-bubble transmission
 bubbles(
   model,
   household_id        = household_id,
@@ -208,6 +233,11 @@ bubbles(
   transmission_factor = 0.5,
   start_day           = 10
 )
+
+# The factor is a model parameter, so it can be changed without rebuilding
+# the intervention
+get_param(model, "Bubble transmission factor")
+set_param(model, "Bubble transmission factor", 0.25)
 
 run(model, ndays = 100, seed = 55)
 model

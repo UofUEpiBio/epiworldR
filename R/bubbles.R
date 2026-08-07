@@ -19,9 +19,12 @@
 #' `"peer"`, the maximum number of contacts each agent may keep outside its
 #' household.
 #' @param transmission_factor Numeric scalar in \[0, 1\]. Multiplier applied to
-#' transmission *within* a bubble: `1` leaves it untouched, `0.5` halves it
-#' (physical distancing), `0` blocks it entirely. Transmission *between* bubbles
-#' is always blocked.
+#' transmission between agents of *different* bubbles, i.e. how leaky the bubble
+#' is: `0` (the default) is a perfectly efficient bubble that cuts out-of-bubble
+#' contact entirely, `0.5` halves it (a soft contact reduction), and `1` turns
+#' the intervention off. Contact *within* a bubble is never altered. This is the
+#' initial value of the model parameter `param_name`; from then on the model, not
+#' the intervention, holds it (see Details).
 #' @param start_day Integer scalar. First day on which the policy applies.
 #' @param end_day Integer scalar. Day on which the policy is lifted (exclusive);
 #' a negative value means it never lifts. Must be greater than `start_day`.
@@ -34,15 +37,36 @@
 #' next (see Details). The default, `2`, represents two households joined by a
 #' close contact. Ignored when `flavor = "household"`, where `group_size` is
 #' already the cap.
+#' @param param_name Character scalar. Name of the model parameter in which the
+#' transmission factor is stored. Give two interventions deployed on the same
+#' model different names if they are to be dialled independently.
 #'
 #' @details
 #' The contact network is **not** modified. Instead, every agent receives a tool
 #' that, on each exposure, compares the bubble of the susceptible agent with the
-#' bubble of the infectious one: if they differ, transmission is blocked; if they
-#' match, transmission is multiplied by `transmission_factor`. Because contact
-#' weights are uniform in these models, this is equivalent to deleting
-#' out-of-bubble contacts, while leaving the network available for other purposes
-#' (such as contact tracing or network summaries).
+#' bubble of the infectious one: if they match, transmission is left untouched --
+#' contacts inside the bubble are exactly what the policy preserves -- and if
+#' they differ, transmission is multiplied by the transmission factor. With a
+#' factor of `0` this is equivalent to deleting the out-of-bubble contacts
+#' (contact weights are uniform in these models), while leaving the network
+#' available for other purposes (such as contact tracing or network summaries).
+#'
+#' ## Dialling the policy through the model
+#'
+#' The transmission factor is **not** stored in the intervention: `bubbles()`
+#' registers it as a model parameter (`param_name`, `"Bubble transmission
+#' factor"` by default, overwriting any value the parameter already had), and the
+#' tool reads it from the model on every exposure. It can therefore be inspected
+#' with [get_param()], changed at any point -- including between runs, or from a
+#' [globalevent_fun()] in the middle of one -- with [set_param()], and swept over
+#' in a calibration without rebuilding the intervention:
+#'
+#' ```r
+#' bubbles(model, household_id, "household", group_size = 2)
+#' set_param(model, "Bubble transmission factor", 0.25) # leakier bubbles
+#' ```
+#'
+#' Values outside \[0, 1\] are clamped when read.
 #'
 #' ## How bubbles are formed
 #'
@@ -150,7 +174,7 @@
 #' # Households of three agents (in agent order)
 #' household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
 #'
-#' # Two households per bubble from day 10, halving within-bubble transmission
+#' # Two households per bubble from day 10, halving out-of-bubble transmission
 #' bubbles(
 #'   model,
 #'   household_id        = household_id,
@@ -159,6 +183,11 @@
 #'   transmission_factor = 0.5,
 #'   start_day           = 10
 #' )
+#'
+#' # The factor is a model parameter, so it can be changed without rebuilding
+#' # the intervention
+#' get_param(model, "Bubble transmission factor")
+#' set_param(model, "Bubble transmission factor", 0.25)
 #'
 #' run(model, ndays = 100, seed = 55)
 #' model
@@ -181,12 +210,13 @@ bubbles <- function(
   household_id,
   flavor              = c("household", "peer"),
   group_size,
-  transmission_factor = 1.0,
+  transmission_factor = 0.0,
   start_day           = 0L,
   end_day             = -1L,
   rewire_every        = 0L,
   name                = "Social bubble",
-  max_households      = 2L
+  max_households      = 2L,
+  param_name          = "Bubble transmission factor"
 ) {
 
   stopifnot_model(model)
@@ -216,6 +246,9 @@ bubbles <- function(
 
   if (length(name) != 1L || is.na(name) || !is.character(name))
     stop("`name` must be a single, non-missing string.")
+
+  if (length(param_name) != 1L || is.na(param_name) || !is.character(param_name))
+    stop("`param_name` must be a single, non-missing string.")
 
   household_id <- as.integer(household_id)
   if (anyNA(household_id))
@@ -252,7 +285,8 @@ bubbles <- function(
     end_day,
     rewire_every,
     name,
-    max_households
+    max_households,
+    param_name
   )
 
   # A single shared state backs the intervention, so parallel replicates must

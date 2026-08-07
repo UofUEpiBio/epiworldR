@@ -20,7 +20,7 @@ hh <- make_hh(600)
 expect_silent(
   bubbles(
     model, household_id = hh, flavor = "household",
-    group_size = 1, transmission_factor = 1.0, start_day = 0
+    group_size = 1, transmission_factor = 0.0, start_day = 0
   )
 )
 
@@ -41,7 +41,7 @@ expect_equal(sum(hh_of(sec$source) != hh_of(sec$target)), 0) # no cross-househol
 model_g2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
 agents_smallworld(model_g2, n = 600, k = 8, d = FALSE, p = 0.10)
 bubbles(model_g2, household_id = hh, flavor = "household",
-        group_size = 2, transmission_factor = 1.0, start_day = 0)
+        group_size = 2, transmission_factor = 0.0, start_day = 0)
 run(model_g2, ndays = 80, seed = 99)
 tn_g2  <- get_transmissions(model_g2)
 sec_g2 <- tn_g2[tn_g2$source >= 0, , drop = FALSE]
@@ -58,21 +58,51 @@ sec_ctl <- tn_ctl[tn_ctl$source >= 0, , drop = FALSE]
 expect_true(sum(hh_of(sec_ctl$source) != hh_of(sec_ctl$target)) > 0)
 
 ###############################################################################
-# transmission_factor = 0 with a single all-encompassing bubble blocks
-# everything; transmission_factor = 1 does not.
+# The transmission factor governs contact OUTSIDE the bubble, not inside it: 0
+# cuts it entirely, 1 leaves the population untouched, and values in between are
+# a soft contact reduction. Contact within the bubble is never altered.
+#
+# It also lives in the model, not in the intervention, so setting the parameter
+# after bubbles() is what governs the run.
 ###############################################################################
-n_hh <- length(unique(hh))
-secondary <- function(tf) {
+transmissions_by_bubble <- function(tf, override = NULL) {
   m <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
   agents_smallworld(m, n = 600, k = 8, d = FALSE, p = 0.10)
+
+  # group_size = 1: bubble == household, so cross-household transmission is
+  # exactly the out-of-bubble transmission.
   bubbles(m, household_id = hh, flavor = "household",
-          group_size = n_hh, transmission_factor = tf, start_day = 0)
+          group_size = 1, transmission_factor = tf, start_day = 0)
+
+  # bubbles() registers the factor as a model parameter...
+  expect_equal(get_param(m, "Bubble transmission factor"), tf)
+
+  # ...which the tool reads on every exposure.
+  if (!is.null(override))
+    set_param(m, "Bubble transmission factor", override)
+
   run(m, ndays = 60, seed = 7)
-  tn <- get_transmissions(m)
-  sum(tn$source >= 0)
+  tn  <- get_transmissions(m)
+  sec <- tn[tn$source >= 0, , drop = FALSE]
+  c(
+    within = sum(hh_of(sec$source) == hh_of(sec$target)),
+    outside = sum(hh_of(sec$source) != hh_of(sec$target))
+  )
 }
-expect_equal(secondary(0.0), 0L)
-expect_true(secondary(1.0) > 0)
+
+strict <- transmissions_by_bubble(0.0)
+expect_equal(unname(strict[["outside"]]), 0L) # nothing crosses the bubble...
+expect_true(strict[["within"]] > 0)           # ...but it still spreads inside
+
+off <- transmissions_by_bubble(1.0)           # the policy imposes nothing
+expect_true(off[["outside"]] > 0)
+
+soft <- transmissions_by_bubble(0.25)         # a soft contact reduction
+expect_true(soft[["outside"]] > 0)
+expect_true(soft[["outside"]] < off[["outside"]])
+
+# Changing the model parameter after bubbles() reproduces the tf = 1 run.
+expect_equal(transmissions_by_bubble(0.0, override = 1.0), off)
 
 ###############################################################################
 # Peer flavor and changing (rewiring) bubbles run without error.
@@ -93,7 +123,7 @@ expect_silent(run(model_peer, ndays = 60, seed = 5))
 model_peer2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
 agents_smallworld(model_peer2, n = 600, k = 8, d = FALSE, p = 0.10)
 bubbles(model_peer2, household_id = hh, flavor = "peer", group_size = 2,
-        transmission_factor = 1.0, start_day = 0, max_households = 2)
+        transmission_factor = 0.0, start_day = 0, max_households = 2)
 run(model_peer2, ndays = 60, seed = 21)
 
 tn_p  <- get_transmissions(model_peer2)
@@ -122,3 +152,18 @@ expect_error(bubbles(model_v, household_id = hh, flavor = "household",
                      group_size = 2.5))                                  # non-whole int
 expect_error(bubbles(model_v, household_id = hh, flavor = "peer",
                      group_size = 1, max_households = 1))                # cap too small
+expect_error(bubbles(model_v, household_id = hh, flavor = "household",
+                     group_size = 2, param_name = NA))                   # bad param name
+
+###############################################################################
+# A custom parameter name lets two policies be dialled independently.
+###############################################################################
+model_pn <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
+agents_smallworld(model_pn, n = 600, k = 6, d = FALSE, p = 0.05)
+bubbles(model_pn, household_id = hh, flavor = "household", group_size = 2,
+        transmission_factor = 0.3, name = "Bubble A",
+        param_name = "Bubble A factor")
+expect_equal(get_param(model_pn, "Bubble A factor"), 0.3)
+expect_silent(set_param(model_pn, "Bubble A factor", 0.6))
+expect_equal(get_param(model_pn, "Bubble A factor"), 0.6)
+expect_silent(run(model_pn, ndays = 30, seed = 12))

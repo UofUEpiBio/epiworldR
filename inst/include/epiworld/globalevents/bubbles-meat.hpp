@@ -11,28 +11,30 @@ inline Bubbles<TSeq>::Bubbles(
     std::vector< size_t > household_id,
     BubbleFlavor flavor,
     size_t group_size,
-    epiworld_double within_factor,
+    epiworld_double transmission_factor,
     int start_day,
     int end_day,
     int rewire_every,
     std::string name,
-    size_t max_households
+    size_t max_households,
+    std::string param_name
 ) :
     household_id(std::move(household_id)),
     flavor(flavor),
     group_size(group_size),
     max_households(max_households),
-    within_factor(within_factor),
+    transmission_factor(transmission_factor),
     start_day(start_day),
     end_day(end_day),
     rewire_every(rewire_every),
     name(std::move(name)),
+    param_name(std::move(param_name)),
     state(std::make_shared< BubbleState >())
 {
 
-    if ((this->within_factor < 0.0) || (this->within_factor > 1.0))
+    if ((this->transmission_factor < 0.0) || (this->transmission_factor > 1.0))
         throw std::range_error(
-            "Bubbles: within_factor must be in [0, 1]."
+            "Bubbles: transmission_factor must be in [0, 1]."
         );
 
     if ((flavor == BubbleFlavor::Household) && (group_size < 1u))
@@ -327,15 +329,21 @@ inline void Bubbles<TSeq>::deploy(Model<TSeq> & model)
             std::to_string(model.size()) + ")."
         );
 
-    // ---- The bubble tool: blocks cross-bubble transmission -----------------
+    // ---- The transmission factor lives in the model -------------------------
+    // The tool reads it on every exposure rather than holding a copy, so the
+    // strictness of the policy can be inspected, calibrated, or switched
+    // mid-run through the model's parameters.
+    model.add_param(transmission_factor, param_name, true);
+
+    // ---- The bubble tool: dampens out-of-bubble transmission ---------------
     auto st  = state;
     int  sd  = start_day;
     int  ed  = end_day;
-    epiworld_double wf = within_factor;
+    std::string pname = param_name;
 
     Tool<TSeq> bubble_tool(name);
     bubble_tool.set_susceptibility_reduction_fun(
-        [st, sd, ed, wf](
+        [st, sd, ed, pname](
             Tool<TSeq> &,
             Agent<TSeq> * p,
             VirusPtr<TSeq> & v,
@@ -363,10 +371,21 @@ inline void Bubbles<TSeq>::deploy(Model<TSeq> & model)
             if ((bp < 0) || (bt < 0))
                 return 0.0;
 
-            // Same bubble: within-bubble distancing. Different bubble: block.
-            return (bp == bt) ?
-                (static_cast<epiworld_double>(1.0) - wf) :
-                static_cast<epiworld_double>(1.0);
+            // Contacts inside the bubble are exactly what the policy keeps:
+            // they are left alone.
+            if (bp == bt)
+                return 0.0;
+
+            // Contacts outside the bubble are scaled by the transmission
+            // factor: 0 = perfectly observed bubble (contact cut), 1 = the
+            // bubble imposes nothing.
+            epiworld_double factor = m->par(pname);
+            if (factor <= 0.0)
+                return 1.0;
+            if (factor >= 1.0)
+                return 0.0;
+
+            return static_cast<epiworld_double>(1.0) - factor;
 
         }
     );
@@ -445,6 +464,12 @@ template<typename TSeq>
 inline BubbleFlavor Bubbles<TSeq>::get_flavor() const
 {
     return flavor;
+}
+
+template<typename TSeq>
+inline const std::string & Bubbles<TSeq>::get_param_name() const
+{
+    return param_name;
 }
 
 #endif

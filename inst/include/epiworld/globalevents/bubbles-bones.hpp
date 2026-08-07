@@ -51,7 +51,9 @@ enum class BubbleFlavor {
  * Held via `std::shared_ptr` and captured by both the bubble `Tool`
  * (read-only) and the scheduler `GlobalEvent` (read-write), so the two stay in
  * sync for the lifetime of the model. The bubble partition is a per-agent
- * integer label (`bubble_id`): two agents transmit only when their labels match.
+ * integer label (`bubble_id`): agents whose labels match are in the same bubble
+ * and transmit freely, while transmission between different labels is scaled
+ * down by the intervention's transmission factor.
  */
 struct BubbleState {
     std::vector< int > bubble_id;  ///< Per-agent bubble label (index = agent id); -1 = unassigned.
@@ -77,16 +79,33 @@ struct BubbleState {
  * function identifies the transmitter through the virus (`v->get_agent()`) and
  * compares the two agents' bubble labels:
  *
- * - different bubbles -> reduction `1.0`, transmission is blocked;
- * - same bubble       -> reduction `1 - within_factor`, i.e. transmission is
- *                        scaled by `within_factor` (social distancing);
+ * - same bubble  -> reduction `0.0`: contacts *inside* the bubble are what the
+ *                   policy preserves, so they are left untouched;
+ * - different bubbles -> reduction `1 - f`, i.e. transmission along contacts
+ *                   *outside* the bubble is scaled by the transmission factor
+ *                   `f`;
  * - outside the policy window -> reduction `0.0`, no effect.
  *
- * Since reductions combine as `1 - prod(1 - r_i)`, a reduction of `1.0` zeroes
- * the transmission probability regardless of any other tools the agent carries.
- * Contact weights are uniform in these models, so suppressing transmission on
- * out-of-bubble contacts is equivalent to deleting those contacts, while
- * keeping the network intact for other purposes (contact tracing, output).
+ * The transmission factor `f` is how strictly the bubble is observed:
+ * `f == 0` is a perfectly efficient bubble (out-of-bubble contact is cut
+ * entirely, which is equivalent to deleting those edges), `f == 1` disables the
+ * intervention (out-of-bubble contact is as good as before), and intermediate
+ * values model a soft contact reduction -- people still meet outside their
+ * bubble, just less often or more carefully.
+ *
+ * `f` is **not** stored in the intervention: `deploy()` registers it as a model
+ * parameter (`param_name`, "Bubble transmission factor" by default) and the
+ * tool reads it from the model on every exposure. It can therefore be inspected
+ * with `model.get_param()`, changed mid-run with `model.set_param()`, read from
+ * a parameter file with `model.read_params()`, or swept over in a calibration
+ * without rebuilding the intervention. Values outside `[0, 1]` are clamped.
+ *
+ * Since reductions combine as `1 - prod(1 - r_i)`, a reduction of `1.0`
+ * (`f == 0`) zeroes the transmission probability regardless of any other tools
+ * the agent carries. Contact weights are uniform in these models, so
+ * suppressing transmission on out-of-bubble contacts is equivalent to deleting
+ * those contacts, while keeping the network intact for other purposes (contact
+ * tracing, output).
  *
  * ## Forming bubbles (why ties matter)
  *
@@ -188,14 +207,18 @@ struct BubbleState {
  * for (size_t i = 0u; i < 10000; ++i)
  *     household_id[i] = i / 3;             // households of three
  *
- * // Two households per bubble from day 10, halving within-bubble transmission.
+ * // Two households per bubble from day 10, halving out-of-bubble transmission.
  * Bubbles<> bubbles(
  *     household_id, BubbleFlavor::Household,
  *     2,      // group_size
- *     0.5,    // within_factor
+ *     0.5,    // transmission_factor (initial value of the model parameter)
  *     10      // start_day
  * );
  * bubbles.deploy(model);
+ *
+ * // The factor lives in the model, so it can be changed without touching
+ * // the intervention.
+ * model.set_param("Bubble transmission factor", 0.25);
  *
  * model.run(100, 1231);
  * ```
@@ -223,11 +246,12 @@ private:
     BubbleFlavor flavor;
     size_t group_size;               ///< households per bubble (Household) or max peers (Peer).
     size_t max_households;           ///< cap on households per bubble (Peer only).
-    epiworld_double within_factor;   ///< within-bubble transmission multiplier in [0, 1].
+    epiworld_double transmission_factor; ///< initial value of the model parameter, in [0, 1].
     int start_day;
     int end_day;
     int rewire_every;
     std::string name;
+    std::string param_name;          ///< model parameter holding the transmission factor.
     std::shared_ptr< BubbleState > state;
 
     void compute_partition(Model<TSeq> * model) const;
@@ -248,11 +272,15 @@ public:
      * @param group_size For `Household`, the maximum number of households per
      *        bubble (`1` = strict household-only lockdown). For `Peer`, the
      *        maximum number of external peers each agent may pick.
-     * @param within_factor Multiplier applied to transmission between agents of
-     *        the same bubble, in `[0, 1]`: `1.0` leaves within-bubble
-     *        transmission untouched, `0.5` halves it (physical distancing), and
-     *        `0.0` blocks it entirely. Transmission between bubbles is always
-     *        blocked.
+     * @param transmission_factor Initial value of the model parameter
+     *        `param_name`: the multiplier applied to transmission between
+     *        agents of *different* bubbles, in `[0, 1]`. `0.0` (the default) is
+     *        a perfectly efficient bubble -- contact outside it is cut
+     *        entirely; `0.5` halves out-of-bubble transmission (a soft contact
+     *        reduction); and `1.0` turns the intervention off. Transmission
+     *        within a bubble is never altered. The value is stored in the model
+     *        (see `deploy()`), not here, so it can be changed at any time with
+     *        `model.set_param(param_name, ...)`.
      * @param start_day First day on which the policy applies.
      * @param end_day Day on which the policy is lifted (exclusive). Use a
      *        negative value for a policy that never ends. Must be greater than
@@ -268,8 +296,11 @@ public:
      *        chaining into the next (see `BubbleFlavor::Peer`). The default of
      *        `2` represents two households joined by a close contact. Ignored by
      *        the `Household` flavor, where `group_size` already is the cap.
+     * @param param_name Name of the model parameter that holds the transmission
+     *        factor. Give two interventions deployed on the same model
+     *        different names if they are to be dialled independently.
      *
-     * @throws std::range_error if `within_factor` is outside `[0, 1]`, if
+     * @throws std::range_error if `transmission_factor` is outside `[0, 1]`, if
      *         `group_size` is zero for the `Household` flavor, if
      *         `max_households` is less than 2 for the `Peer` flavor, or if
      *         `end_day` is non-negative and not greater than `start_day`.
@@ -278,20 +309,26 @@ public:
         std::vector< size_t > household_id,
         BubbleFlavor flavor,
         size_t group_size,
-        epiworld_double within_factor = 1.0,
+        epiworld_double transmission_factor = 0.0,
         int start_day = 0,
         int end_day = -1,
         int rewire_every = 0,
         std::string name = "Social bubble",
-        size_t max_households = 2u
+        size_t max_households = 2u,
+        std::string param_name = "Bubble transmission factor"
     );
 
     /**
      * @brief Install the intervention on a model.
      *
-     * Adds the bubble `Tool` (distributed to every agent, which also computes
-     * the bubble partition at each reset) and, when `rewire_every > 0`, the
-     * global event that re-randomises the bubbles.
+     * Registers the model parameter `param_name` (set to the
+     * `transmission_factor` passed to the constructor, overwriting any value it
+     * already had), adds the bubble `Tool` (distributed to every agent, which
+     * also computes the bubble partition at each reset) and, when
+     * `rewire_every > 0`, the global event that re-randomises the bubbles.
+     *
+     * To drive the factor from a parameter file instead, call
+     * `model.read_params()` (or `set_param()`) *after* `deploy()`.
      *
      * Call this **after** the model's agents and contact network exist (e.g.
      * after `agents_smallworld()`), since the household grouping is derived from
@@ -321,6 +358,14 @@ public:
 
     /// @brief The rule used to form bubbles.
     BubbleFlavor get_flavor() const;
+
+    /**
+     * @brief Name of the model parameter holding the transmission factor.
+     *
+     * Use it with `model.get_param()` / `model.set_param()` to read or change
+     * how leaky the bubbles are, including in the middle of a run.
+     */
+    const std::string & get_param_name() const;
 
 };
 
