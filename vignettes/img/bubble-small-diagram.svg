@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 783.51947 443.776"
+   width="783.51947"
+   height="443.776"
+   font-family="'Helvetica Neue', Helvetica, Arial, sans-serif"
+   version="1.1"
+   id="svg65"
+   sodipodi:docname="bubbles-diagram.svg"
+   inkscape:version="1.4 (e7c3feb1, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview65"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.875"
+     inkscape:cx="-827.42857"
+     inkscape:cy="407.42857"
+     inkscape:window-width="1920"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg65">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="783.51947"
+       height="443.776"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
+  <title
+     id="title1">Social bubbles in a network-based agent-based model</title>
+  <desc
+     id="desc1">Five households connected by single bridging ties. Under the bubble
+        intervention, households are grouped into three bubbles; ties that cross
+        a bubble boundary are switched off.</desc>
+  <defs
+     id="defs29">
+    <!-- ============ A single agent (bathroom-sign pictogram) ============ -->
+    <g
+       id="agent">
+      <circle
+         cx="0"
+         cy="-12"
+         r="4.5999999"
+         id="circle1" />
+      <path
+         d="m -6.2,-3.4 c 0,-3 2.9,-4.2 6.2,-4.2 3.3,0 6.2,1.2 6.2,4.2 l -1.7,7 h -9 z"
+         id="path1" />
+      <rect
+         x="-4.3000002"
+         y="3.9000001"
+         width="3.5999999"
+         height="9.3000002"
+         rx="1.4"
+         id="rect1" />
+      <rect
+         x="0.69999999"
+         y="3.9000001"
+         width="3.5999999"
+         height="9.3000002"
+         rx="1.4"
+         id="rect2" />
+    </g>
+    <!-- ============ Household outlines ============ -->
+    <g
+       id="households">
+      <circle
+         cx="260"
+         cy="105"
+         r="44"
+         id="circle2" />
+      <circle
+         cx="402.70001"
+         cy="208.60001"
+         r="38"
+         id="circle3" />
+      <circle
+         cx="348.20001"
+         cy="376.39999"
+         r="44"
+         id="circle4" />
+      <circle
+         cx="171.8"
+         cy="376.39999"
+         r="38"
+         id="circle5" />
+      <circle
+         cx="117.3"
+         cy="208.60001"
+         r="44"
+         id="circle6" />
+    </g>
+    <!-- ============ Ties inside each household (always active) ============ -->
+    <g
+       id="within-ties">
+      <!-- household 1 -->
+      <line
+         x1="243"
+         y1="95"
+         x2="277"
+         y2="95"
+         id="line6" />
+      <line
+         x1="243"
+         y1="95"
+         x2="260"
+         y2="118"
+         id="line7" />
+      <line
+         x1="277"
+         y1="95"
+         x2="260"
+         y2="118"
+         id="line8" />
+      <!-- household 2 -->
+      <line
+         x1="387.70001"
+         y1="208.60001"
+         x2="417.70001"
+         y2="208.60001"
+         id="line9" />
+      <!-- household 3 -->
+      <line
+         x1="331.20001"
+         y1="366.39999"
+         x2="365.20001"
+         y2="366.39999"
+         id="line10" />
+      <line
+         x1="331.20001"
+         y1="366.39999"
+         x2="348.20001"
+         y2="389.39999"
+         id="line11" />
+      <line
+         x1="365.20001"
+         y1="366.39999"
+         x2="348.20001"
+         y2="389.39999"
+         id="line12" />
+      <!-- household 4 -->
+      <line
+         x1="156.8"
+         y1="376.39999"
+         x2="186.8"
+         y2="376.39999"
+         id="line13" />
+      <!-- household 5 -->
+      <line
+         x1="100.3"
+         y1="198.60001"
+         x2="134.3"
+         y2="198.60001"
+         id="line14" />
+      <line
+         x1="100.3"
+         y1="198.60001"
+         x2="117.3"
+         y2="221.60001"
+         id="line15" />
+      <line
+         x1="134.3"
+         y1="198.60001"
+         x2="117.3"
+         y2="221.60001"
+         id="line16" />
+    </g>
+    <!-- ============ The 13 agents ============ -->
+    <g
+       id="agents">
+      <use
+         xlink:href="#agent"
+         x="243"
+         y="95"
+         id="use16" />
+      <use
+         xlink:href="#agent"
+         x="277"
+         y="95"
+         id="use17" />
+      <use
+         xlink:href="#agent"
+         x="260"
+         y="118"
+         id="use18" />
+      <use
+         xlink:href="#agent"
+         x="387.70001"
+         y="208.60001"
+         id="use19" />
+      <use
+         xlink:href="#agent"
+         x="417.70001"
+         y="208.60001"
+         id="use20" />
+      <use
+         xlink:href="#agent"
+         x="331.20001"
+         y="366.39999"
+         id="use21" />
+      <use
+         xlink:href="#agent"
+         x="365.20001"
+         y="366.39999"
+         id="use22" />
+      <use
+         xlink:href="#agent"
+         x="348.20001"
+         y="389.39999"
+         id="use23" />
+      <use
+         xlink:href="#agent"
+         x="156.8"
+         y="376.39999"
+         id="use24" />
+      <use
+         xlink:href="#agent"
+         x="186.8"
+         y="376.39999"
+         id="use25" />
+      <use
+         xlink:href="#agent"
+         x="100.3"
+         y="198.60001"
+         id="use26" />
+      <use
+         xlink:href="#agent"
+         x="134.3"
+         y="198.60001"
+         id="use27" />
+      <use
+         xlink:href="#agent"
+         x="117.3"
+         y="221.60001"
+         id="use28" />
+    </g>
+    <!-- ============ Cross marking a switched-off tie ============ -->
+    <g
+       id="cut-mark">
+      <circle
+         cx="0"
+         cy="0"
+         r="9.5"
+         fill="#ffffff"
+         stroke="#c9c9c9"
+         stroke-width="1.4"
+         id="circle28" />
+      <path
+         d="m -4.2,-4.2 8.4,8.4 m 0,-8.4 -8.4,8.4"
+         fill="none"
+         stroke="#8c8c8c"
+         stroke-width="2"
+         stroke-linecap="round"
+         id="path28" />
+    </g>
+  </defs>
+  <!-- ===================== Titles ===================== -->
+  <!-- ===================== Panel A ===================== -->
+  <!-- ===================== Transition arrow ===================== -->
+  <!-- ===================== Panel B ===================== -->
+  <!-- ===================== Legend ===================== -->
+  <!-- ===================== Notes ===================== -->
+  <g
+     id="g75"
+     transform="translate(1256.9464,-118.0531)">
+    <g
+       fill="#ececec"
+       stroke="#333333"
+       stroke-width="2"
+       stroke-dasharray="9, 6"
+       id="g41-3"
+       transform="translate(-1299.4464,66.113222)">
+      <rect
+         x="191.2"
+         y="104.8"
+         width="280.29999"
+         height="104"
+         rx="52"
+         transform="rotate(36,331.35,156.8)"
+         id="rect40-8" />
+      <rect
+         x="119.85"
+         y="324.39999"
+         width="280.29999"
+         height="104"
+         rx="52"
+         id="rect41-1" />
+      <circle
+         cx="117.3"
+         cy="208.60001"
+         r="52"
+         id="circle41-5" />
+    </g>
+    <use
+       xlink:href="#households"
+       fill="#ffffff"
+       stroke="#c8c8c8"
+       stroke-width="1.6"
+       stroke-dasharray="5, 4"
+       id="use41-3"
+       transform="translate(-1299.4464,66.113222)" />
+    <g
+       stroke="#c9c9c9"
+       stroke-width="2"
+       stroke-dasharray="7, 6"
+       stroke-linecap="round"
+       id="g43-5"
+       transform="translate(-1299.4464,66.113222)">
+      <line
+         x1="417.70001"
+         y1="208.60001"
+         x2="365.20001"
+         y2="366.39999"
+         id="line41-4" />
+      <line
+         x1="156.8"
+         y1="376.39999"
+         x2="117.3"
+         y2="221.60001"
+         id="line42-3" />
+      <line
+         x1="134.3"
+         y1="198.60001"
+         x2="243"
+         y2="95"
+         id="line43-6" />
+    </g>
+    <g
+       stroke="#111111"
+       stroke-width="2.4"
+       stroke-linecap="round"
+       id="g44-5"
+       transform="translate(-1299.4464,66.113222)">
+      <line
+         x1="277"
+         y1="95"
+         x2="387.70001"
+         y2="208.60001"
+         id="line44-9" />
+    </g>
+    <g
+       stroke="#111111"
+       stroke-width="3.4"
+       stroke-linecap="round"
+       id="g45-5"
+       transform="translate(-1299.4464,66.113222)">
+      <line
+         x1="331.20001"
+         y1="366.39999"
+         x2="186.8"
+         y2="376.39999"
+         id="line45-4" />
+    </g>
+    <use
+       xlink:href="#within-ties"
+       stroke="#444444"
+       stroke-width="2"
+       stroke-linecap="round"
+       id="use45-9"
+       transform="translate(-1299.4464,66.113222)" />
+    <use
+       xlink:href="#agents"
+       fill="#111111"
+       id="use46-1"
+       transform="translate(-1299.4464,66.113222)" />
+    <g
+       fill="none"
+       stroke="#111111"
+       stroke-width="1.6"
+       stroke-dasharray="3.5, 3.5"
+       id="g47-7"
+       transform="translate(-1299.4464,66.113222)">
+      <circle
+         cx="331.20001"
+         cy="366.39999"
+         r="18"
+         id="circle46-5" />
+      <circle
+         cx="186.8"
+         cy="376.39999"
+         r="18"
+         id="circle47-5" />
+    </g>
+    <text
+       x="-1040.4463"
+       y="481.11322"
+       text-anchor="middle"
+       font-size="11.5px"
+       font-style="italic"
+       fill="#333333"
+       id="text47-4">one peer choice</text>
+    <use
+       xlink:href="#cut-mark"
+       x="391.45001"
+       y="287.5"
+       id="use47-1"
+       transform="translate(-1299.4464,66.113222)" />
+    <use
+       xlink:href="#cut-mark"
+       x="137.05"
+       y="299"
+       id="use48-8"
+       transform="translate(-1299.4464,66.113222)" />
+    <use
+       xlink:href="#cut-mark"
+       x="188.64999"
+       y="146.8"
+       id="use49-8"
+       transform="translate(-1299.4464,66.113222)" />
+    <g
+       id="g51-3"
+       transform="translate(-1299.4464,66.113222)">
+      <circle
+         cx="452"
+         cy="246"
+         r="13.5"
+         fill="#ffffff"
+         stroke="#333333"
+         stroke-width="2"
+         id="circle49-5" />
+      <text
+         x="452"
+         y="251"
+         text-anchor="middle"
+         font-size="14px"
+         font-weight="700"
+         fill="#111111"
+         id="text49-2">1</text>
+      <circle
+         cx="410"
+         cy="376.39999"
+         r="13.5"
+         fill="#ffffff"
+         stroke="#333333"
+         stroke-width="2"
+         id="circle50-2" />
+      <text
+         x="410"
+         y="381.39999"
+         text-anchor="middle"
+         font-size="14px"
+         font-weight="700"
+         fill="#111111"
+         id="text50-6">2</text>
+      <circle
+         cx="57"
+         cy="208.60001"
+         r="13.5"
+         fill="#ffffff"
+         stroke="#333333"
+         stroke-width="2"
+         id="circle51-6" />
+      <text
+         x="57"
+         y="213.60001"
+         text-anchor="middle"
+         font-size="14px"
+         font-weight="700"
+         fill="#111111"
+         id="text51-7">3</text>
+    </g>
+  </g>
+  <g
+     id="g76"
+     transform="translate(1263.8036,-127.19596)">
+    <g
+       id="g71"
+       transform="translate(72,-188.5475)">
+      <line
+         x1="-1282.1981"
+         y1="730.55695"
+         x2="-1244.1981"
+         y2="730.55695"
+         stroke="#111111"
+         stroke-width="2.4"
+         stroke-linecap="round"
+         id="line54-7"
+         style="font-size:12.5px;fill:#333333" />
+      <text
+         x="-1236.6309"
+         y="734.55695"
+         id="text54-1"
+         style="font-size:12.5px;fill:#333333">Active tie</text>
+    </g>
+    <g
+       id="g70"
+       transform="translate(192.73336,-211.82627)">
+      <line
+         x1="-1280.9982"
+         y1="759.11072"
+         x2="-1242.9982"
+         y2="759.11072"
+         stroke="#c9c9c9"
+         stroke-width="2"
+         stroke-dasharray="7, 6"
+         stroke-linecap="round"
+         id="line55-8"
+         style="font-size:12.5px;fill:#333333" />
+      <use
+         xlink:href="#cut-mark"
+         x="215"
+         y="670"
+         id="use55-7"
+         transform="translate(-1476.9982,89.11071)"
+         style="font-size:12.5px;fill:#333333" />
+      <text
+         x="-1237.9388"
+         y="763.11072"
+         id="text55-8"
+         style="font-size:12.5px;fill:#333333">Tie switched off</text>
+    </g>
+    <g
+       id="g72"
+       transform="translate(354.30506,-246.44253)">
+      <rect
+         x="-1285.9983"
+         y="784.52698"
+         width="42"
+         height="22"
+         rx="11"
+         fill="#ececec"
+         stroke="#333333"
+         stroke-width="2"
+         stroke-dasharray="9, 6"
+         id="rect55-7"
+         style="font-size:12.5px" />
+      <text
+         x="-1235.9861"
+         y="799.52698"
+         id="text56-7"
+         style="font-size:12.5px;fill:#333333">Bubble</text>
+    </g>
+    <g
+       id="g73"
+       transform="translate(448.6198,-284.65878)">
+      <circle
+         cx="-1254.7981"
+         cy="833.37946"
+         r="11"
+         fill="#ffffff"
+         stroke="#c8c8c8"
+         stroke-width="1.6"
+         stroke-dasharray="5, 4"
+         id="circle56-4"
+         style="font-size:12.5px" />
+      <text
+         x="-1236.7843"
+         y="837.37946"
+         id="text57-4"
+         style="font-size:12.5px;fill:#333333">Household</text>
+    </g>
+    <g
+       id="g74"
+       transform="translate(562.28571,-322.28572)">
+      <circle
+         cx="-1254.7981"
+         cy="871.17023"
+         r="11"
+         fill="none"
+         stroke="#111111"
+         stroke-width="1.6"
+         stroke-dasharray="3.5, 3.5"
+         id="circle57-9"
+         style="font-size:12.5px" />
+      <text
+         x="-1133.7544"
+         y="834.77563"
+         id="text58-1"
+         style="font-size:12.5px;white-space:pre;inline-size:155.92;display:inline;fill:#333333"
+         transform="translate(-102.04371,40.39455)"
+         xml:space="preserve"><tspan
+           x="-1133.7544"
+           y="834.77563"
+           id="tspan1">Individual who chose a </tspan><tspan
+           x="-1133.7544"
+           y="850.40063"
+           id="tspan2">peer outside the household</tspan></text>
+    </g>
+  </g>
+  <g
+     id="g81"
+     transform="translate(1255.8036,-130.62453)">
+    <circle
+       cx="-794.88568"
+       cy="210.82857"
+       r="10.5"
+       fill="#ffffff"
+       stroke="#333333"
+       stroke-width="1.8"
+       id="circle58-5"
+       style="font-size:13px" />
+    <text
+       x="-794.88568"
+       y="215.32857"
+       text-anchor="middle"
+       font-size="11.5px"
+       font-weight="700"
+       fill="#111111"
+       id="text59-2">1</text>
+    <text
+       x="-1501.7428"
+       y="656.47144"
+       id="text60-2"
+       style="font-size:13px;white-space:pre;inline-size:312.046;display:inline;fill:#333333"
+       transform="translate(726.85714,-445.71429)"
+       xml:space="preserve"><tspan
+         x="-1501.7428"
+         y="656.47144"
+         id="tspan4"><tspan
+   style="font-weight:600"
+   id="tspan3">Household-based strategy.</tspan> Two whole households </tspan><tspan
+         x="-1501.7428"
+         y="672.72144"
+         id="tspan5">agree to bubble together, so the tie between them </tspan><tspan
+         x="-1501.7428"
+         y="688.97144"
+         id="tspan6">stays active.</tspan></text>
+  </g>
+  <g
+     id="g80"
+     transform="translate(1255.8036,-130.62453)">
+    <circle
+       cx="-796.24432"
+       cy="279.58096"
+       r="10.5"
+       fill="#ffffff"
+       stroke="#333333"
+       stroke-width="1.8"
+       id="circle60-1"
+       style="font-size:13px" />
+    <text
+       x="-796.24432"
+       y="284.08096"
+       text-anchor="middle"
+       font-size="11.5px"
+       font-weight="700"
+       fill="#111111"
+       id="text61-5">2</text>
+    <text
+       x="-1572.6"
+       y="891.90002"
+       id="text62-2"
+       style="font-size:13px;white-space:pre;inline-size:305.319;display:inline;fill:#333333"
+       transform="translate(796.35563,-611.81905)"
+       xml:space="preserve"><tspan
+         x="-1572.6"
+         y="891.90002"
+         id="tspan8"><tspan
+   style="font-weight:600"
+   id="tspan7">Individual-based strategy.</tspan> One person picks a </tspan><tspan
+         x="-1572.6"
+         y="908.15003"
+         id="tspan9">single peer outside their household; because that </tspan><tspan
+         x="-1572.6"
+         y="924.40003"
+         id="tspan10">choice commits the whole household, both </tspan><tspan
+         x="-1572.6"
+         y="940.65003"
+         id="tspan11">households merge. Several members choosing can </tspan><tspan
+         x="-1572.6"
+         y="956.90003"
+         id="tspan12">pull in further households, so these bubbles may </tspan><tspan
+         x="-1572.6"
+         y="973.15003"
+         id="tspan13">grow larger than a pair.</tspan></text>
+  </g>
+  <g
+     id="g79"
+     transform="translate(1255.8036,-130.62453)">
+    <circle
+       cx="-796.24432"
+       cy="405.8848"
+       r="10.5"
+       fill="#ffffff"
+       stroke="#333333"
+       stroke-width="1.8"
+       id="circle63-0"
+       style="font-size:13px" />
+    <text
+       x="-796.24432"
+       y="410.3848"
+       text-anchor="middle"
+       font-size="11.5px"
+       font-weight="700"
+       fill="#111111"
+       id="text64-1">3</text>
+    <text
+       x="-1503.1014"
+       y="804.67053"
+       id="text65-8"
+       style="font-size:13px;white-space:pre;inline-size:317.295;display:inline;fill:#333333"
+       transform="translate(726.85714,-397.71429)"
+       xml:space="preserve"><tspan
+         x="-1503.1014"
+         y="804.67053"
+         id="tspan15"><tspan
+   style="font-weight:600"
+   id="tspan14">No partner left.</tspan> A household whose contacts were </tspan><tspan
+         x="-1503.1014"
+         y="820.92054"
+         id="tspan16">already taken stays on its own — a strict household-</tspan><tspan
+         x="-1503.1014"
+         y="837.17054"
+         id="tspan17">only lockdown.</tspan></text>
+  </g>
+</svg>

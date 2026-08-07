@@ -75,6 +75,13 @@ extern "C" SEXP _epiworldR_change_state_cpp(SEXP agent, SEXP model, SEXP new_sta
     return cpp11::as_sexp(change_state_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(new_state), cpp11::as_cpp<cpp11::decay_t<int>>(queue)));
   END_CPP11
 }
+// bubbles.cpp
+SEXP bubbles_cpp(SEXP model, std::vector< int > household_id, std::string flavor, int group_size, double transmission_factor, int start_day, int end_day, int rewire_every, std::string name, int max_households, std::string param_name);
+extern "C" SEXP _epiworldR_bubbles_cpp(SEXP model, SEXP household_id, SEXP flavor, SEXP group_size, SEXP transmission_factor, SEXP start_day, SEXP end_day, SEXP rewire_every, SEXP name, SEXP max_households, SEXP param_name) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(bubbles_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(household_id), cpp11::as_cpp<cpp11::decay_t<std::string>>(flavor), cpp11::as_cpp<cpp11::decay_t<int>>(group_size), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_factor), cpp11::as_cpp<cpp11::decay_t<int>>(start_day), cpp11::as_cpp<cpp11::decay_t<int>>(end_day), cpp11::as_cpp<cpp11::decay_t<int>>(rewire_every), cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<int>>(max_households), cpp11::as_cpp<cpp11::decay_t<std::string>>(param_name)));
+  END_CPP11
+}
 // db.cpp
 cpp11::data_frame get_hist_total_cpp(SEXP model);
 extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
@@ -1322,6 +1329,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_agents_from_edgelist_cpp",             (DL_FUNC) &_epiworldR_agents_from_edgelist_cpp,              5},
     {"_epiworldR_agents_sbm_cpp",                       (DL_FUNC) &_epiworldR_agents_sbm_cpp,                        4},
     {"_epiworldR_agents_smallworld_cpp",                (DL_FUNC) &_epiworldR_agents_smallworld_cpp,                 5},
+    {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          11},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
     {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},

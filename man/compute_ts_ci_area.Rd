@@ -30,13 +30,13 @@ plotting) and one for the median line of the time-series.
 # Simulating random walks
 set.seed(123)
 dat <- lapply(1:200, \(i) {
- data.frame(
-   x = cumsum(rnorm(10)),
-   time = 1:10
- )
+  data.frame(
+    x = cumsum(rnorm(10)),
+    time = 1:10
+  )
 }) |> do.call(what = "rbind")
 ans <- compute_ts_ci_area(dat$x, dat$time)
-plot(ans$line, type = "b", ylim = c(-6,6))
+plot(ans$line, type = "b", ylim = c(-6, 6))
 polygon(x = ans$area$x, y = ans$area$y)
 }
 \concept{misc-functions}
