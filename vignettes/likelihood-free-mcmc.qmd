@@ -32,7 +32,7 @@ Our SIR model will have the following characteristics:
 * **Virus Name:** COVID-19
 * **Initial Virus Prevalence:** 0.01
 * **Recovery Rate:** 1/7 (0.14)
-* **Transmission Rate:** 0.02
+* **Transmission Rate:** 0.04
 * **Number of Agents:** 2,000
 
 We use the `ModelSIR` and `agents_smallworld` functions to construct the model in epiworldR.
@@ -41,12 +41,12 @@ We use the `ModelSIR` and `agents_smallworld` functions to construct the model i
 #| label: setup-sir
 library(epiworldR)
 
-model_seed <- 122
+model_seed <- 221
 
 model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = .01,
-  transmission_rate = .02,
+  transmission_rate = .04,
   recovery_rate = 1 / 7
 )
 
@@ -72,13 +72,17 @@ run(
 )
 
 summary(model_sir)
+plot_incidence(model_sir)
 ```
 
-Note the "Model parameters" and the "Distribution of the population at time 50" from the above output. Our goal is to recover the model parameters (Recovery and Transmission rates) through LFMCMC. We accomplish this by comparing the population distribution from each simulation run to the "observed" distribution from our model. We get this distribution using the `get_today_total` function in epiworldR.
+Note the "Model parameters" and the "Distribution of the population at time 50" from the above output. Our goal is to recover the model parameters (Recovery and Transmission rates) through LFMCMC. We accomplish this by comparing each simulation run to the "observed" data from our model. In addition to the end-of-run population counts from `get_today_total`, we include the mean number of active cases over time using `get_active_cases`. This extra summary statistic provides additional information about the epidemic trajectory and improves the fit.
 
 ```{r}
 #| label: get-sir-model-data
-model_sir_data <- get_today_total(model_sir)
+model_sir_data <- c(
+  get_today_total(model_sir),
+  mean(get_active_cases(model_sir)$active_cases)
+)
 ```
 
 For practical cases, you would use observed data, instead of a model simulation. We use a simulation in our example to show the accuracy of LFMCMC in recovering the model parameters. Whenever we use the term "observed data" below, we are referring to the model distribution (`model_sir_data`).
@@ -87,7 +91,7 @@ For practical cases, you would use observed data, instead of a model simulation.
 
 In epiworldR, LFMCMC requires four functions:
 
-The **simulation function** runs a model with a given set of parameters and produces output that matches the structure of our observed data. For our example, we set the Recovery and Transmission rate parameters, run an SIR model for 50 days, and return the distribution of the population at the end of the run.
+The **simulation function** runs a model with a given set of parameters and produces output that matches the structure of our observed data. For our example, we set the Recovery and Transmission rate parameters, run an SIR model for 50 days, and return both the end-of-run population distribution and the mean number of active cases.
 
 ```{r}
 #| label: simfun
@@ -101,13 +105,17 @@ simulation_fun <- function(params, lfmcmc_obj) {
     ndays = 50
   )
 
-  get_today_total(model_sir)
+  c(
+    get_today_total(model_sir),
+    mean(get_active_cases(model_sir)$active_cases)
+  )
+
 
 }
 ```
 
 The **summary function** extracts summary statistics from the given data.
-This should produce the same output format for both the observed data and the simulated data from `simulation_fun`. For our example, since the population distribution is already a summary of the data, our summary function simply passes that data through. With more complicated use cases, you might instead compute summary statistics such as the mean or standard deviation.
+This should produce the same output format for both the observed data and the simulated data from `simulation_fun`. For our example, the output already contains summary quantities (state totals plus mean active cases), so our summary function simply passes that data through. With more complicated use cases, you might instead compute summary statistics such as the mean or standard deviation.
 
 ```{r}
 #| label: sumfun
@@ -121,7 +129,7 @@ The **proposal function** returns a new set of parameters, which it is "proposin
 ```{r}
 #| label: propfun
 proposal_fun <- function(old_params, lfmcmc_obj) {
-  res <- plogis(qlogis(old_params) + rnorm(length(old_params), sd = .1))
+  res <- plogis(qlogis(old_params) + rnorm(length(old_params), sd = .25))
   return(res)
 }
 ```
@@ -154,15 +162,16 @@ lfmcmc_model <- LFMCMC(model_sir) |>
 
 # Run LFMCMC Simulation
 
-To run LFMCMC, we need to set the initial model parameters. For our example, we use an initial Recovery rate of 0.3 and an initial Transmission rate of 0.3. We set the kernel epsilon to 1.0 and run the simulation for 2,000 samples (iterations) using the `run_lfmcmc` function.
+To run LFMCMC, we need to set the initial model parameters. For our example, we use an initial Recovery rate of 0.3 and an initial Transmission rate of 0.3. We set the kernel epsilon to 0.25 and run the simulation for 2,000 samples (iterations) using the `run_lfmcmc` function.
 
 ```{r}
 #| label: lfmcmc-run
 initial_params <- c(0.3, 0.3)
-epsilon <- 1.0
+epsilon   <- 0.25
 n_samples <- 2000
 
 # Run the LFMCMC simulation
+set.seed(333)
 run_lfmcmc(
   lfmcmc = lfmcmc_model,
   params_init = initial_params,
@@ -178,7 +187,10 @@ To make the printed results easier to read, we use the `set_params_names` and `s
 ```{r}
 #| label: lfmcmc-print
 set_params_names(lfmcmc_model, c("Recovery rate", "Transmission rate"))
-set_stats_names(lfmcmc_model, get_states(model_sir))
+set_stats_names(
+  lfmcmc_model,
+  c(get_states(model_sir), "Average active cases")
+  )
 
 print(lfmcmc_model, burnin = 1500)
 ```
@@ -211,4 +223,4 @@ legend(
 )
 ```
 
-Recall that the observed data came from a model with a Recovery rate of 0.3 and a Transmission rate of 0.3. As the above output shows, LFMCMC made a close approximation of the parameters, which resulted in a close approximation of the observed population distribution. This example highlights the effectiveness of using LFMCMC for highly complex models.
+Recall that the observed data came from a model with a Recovery rate of 1/7 and a Transmission rate of 0.04. As the above output shows, LFMCMC makes a close approximation of the parameters, which results in a close match to both the observed population distribution and the average number of active cases. This example highlights how adding informative summary statistics can improve likelihood-free inference in complex models.
