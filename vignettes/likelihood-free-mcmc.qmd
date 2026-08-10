@@ -190,7 +190,7 @@ set_params_names(lfmcmc_model, c("Recovery rate", "Transmission rate"))
 set_stats_names(
   lfmcmc_model,
   c(get_states(model_sir), "Average active cases")
-  )
+)
 
 print(lfmcmc_model, burnin = 1500)
 ```
