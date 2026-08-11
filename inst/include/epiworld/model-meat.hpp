@@ -2231,11 +2231,20 @@ GlobalEvent<TSeq> & Model<TSeq>::get_globalevent(
 {
 
     for (auto & a : globalevents)
-        if (a.name == name)
-            return a;
+        if (a->get_name() == name)
+            return *a;
 
     throw std::logic_error("The global action " + name + " was not found.");
 
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_globalevent(std::string_view name) const
+{
+    for (const auto & a : globalevents)
+        if (a->get_name() == name)
+            return true;
+    return false;
 }
 
 template<typename TSeq>
@@ -2605,7 +2614,20 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         "Model:: current_date don't match"
     )
 
-    VECT_MATCH(globalevents, other.globalevents, "global action don't match");
+    // Global events are held by pointer and deep-copied when a model is copied,
+    // so they must be compared through the pointer (as viruses and tools are).
+    EPI_DEBUG_FAIL_AT_TRUE(
+        globalevents.size() != other.globalevents.size(),
+        "Model:: globalevents.size() don't match"
+    )
+
+    for (size_t i = 0u; i < globalevents.size(); ++i)
+    {
+        EPI_DEBUG_FAIL_AT_TRUE(
+            *globalevents[i] != *other.globalevents[i],
+            "Model:: *globalevents[i] don't match"
+        )
+    }
 
     EPI_DEBUG_FAIL_AT_TRUE(
         queue != other.queue,
