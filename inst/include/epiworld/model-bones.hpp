@@ -704,6 +704,7 @@ public:
     );
     Model<TSeq> & read_params(std::string fn, bool overwrite = false);
     epiworld_double get_param(std::string pname);
+    bool has_param(std::string_view pname) const;
     void set_param(std::string pname, epiworld_double val);
     epiworld_double par(std::string pname) const;
     ///@}
@@ -751,6 +752,7 @@ public:
 
     GlobalEvent<TSeq> & get_globalevent(std::string name); ///< Retrieve a global action by name
     GlobalEvent<TSeq> & get_globalevent(size_t i); ///< Retrieve a global action by index
+    bool has_globalevent(std::string_view name) const; ///< Whether a global action by that name exists
 
     void rm_globalevent(std::string name); ///< Remove a global action by name
     void rm_globalevent(size_t i); ///< Remove a global action by index

@@ -1915,6 +1915,16 @@ inline void Model<TSeq>::reset() {
     // Distributing initial state, if specified
     initial_states_fun(this);
 
+    // Global events set themselves up for the run. This happens last, with the
+    // RNG seeded and the population in its initial state, so that an event that
+    // needs to act on the model it is running in (e.g. one that hands a tool to
+    // every agent) is in force from day 1 -- global events themselves only run
+    // *after* each day's transitions.
+    for (auto & event : globalevents)
+        event->reset(this);
+
+    events_run();
+
     // Recording day 0 and advancing to day 1 is handled by Model::run().
     // Keeping reset() side-effect free from virtual next() prevents
     // derived-model update code from running before derived reset state
@@ -2081,6 +2091,12 @@ inline epiworld_double Model<TSeq>::get_param(std::string pname)
 }
 
 template<typename TSeq>
+inline bool Model<TSeq>::has_param(std::string_view pname) const
+{
+    return parameters.find(std::string(pname)) != parameters.end();
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::set_param(std::string pname, epiworld_double value)
 {
     if (parameters.find(pname) == parameters.end())
@@ -2231,11 +2247,20 @@ GlobalEvent<TSeq> & Model<TSeq>::get_globalevent(
 {
 
     for (auto & a : globalevents)
-        if (a.name == name)
-            return a;
+        if (a->get_name() == name)
+            return *a;
 
     throw std::logic_error("The global action " + name + " was not found.");
 
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_globalevent(std::string_view name) const
+{
+    for (const auto & a : globalevents)
+        if (a->get_name() == name)
+            return true;
+    return false;
 }
 
 template<typename TSeq>
@@ -2605,7 +2630,20 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         "Model:: current_date don't match"
     )
 
-    VECT_MATCH(globalevents, other.globalevents, "global action don't match");
+    // Global events are held by pointer and deep-copied when a model is copied,
+    // so they must be compared through the pointer (as viruses and tools are).
+    EPI_DEBUG_FAIL_AT_TRUE(
+        globalevents.size() != other.globalevents.size(),
+        "Model:: globalevents.size() don't match"
+    )
+
+    for (size_t i = 0u; i < globalevents.size(); ++i)
+    {
+        EPI_DEBUG_FAIL_AT_TRUE(
+            *globalevents[i] != *other.globalevents[i],
+            "Model:: *globalevents[i] don't match"
+        )
+    }
 
     EPI_DEBUG_FAIL_AT_TRUE(
         queue != other.queue,

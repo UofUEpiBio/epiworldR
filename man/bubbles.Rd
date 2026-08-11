@@ -188,9 +188,11 @@ every contact was taken first stay on their own.
 
 The bubbles are drawn afresh at the start of every run, using that run's seed,
 and are already in force on day 1. With \code{rewire_every > 0} they are redrawn
-during the run, taking effect the following day. Because the intervention
-keeps a single shared state, replicates with \link{run_multiple} must use one
-thread (\code{nthreads = 1}); \code{bubbles()} flags the model accordingly.
+during the run, taking effect the following day.
+
+The partition belongs to the model rather than to the intervention, so each
+of the per-thread copies of the model that \code{\link[=run_multiple]{run_multiple()}} makes draws and
+keeps its own. Replicates may run on as many threads as you like.
 }
 
 \subsection{What this cannot represent}{
