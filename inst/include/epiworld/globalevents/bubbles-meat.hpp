@@ -408,91 +408,96 @@ inline epiworld_double Bubbles<TSeq>::susceptibility_reduction(
 }
 
 template<typename TSeq>
+inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
+{
+
+    if (household_id.size() != model->size())
+        throw std::length_error(
+            "Bubbles: household_id length (" +
+            std::to_string(household_id.size()) +
+            ") must equal the number of agents (" +
+            std::to_string(model->size()) + ")."
+        );
+
+    // ---- The transmission factor lives in the model -------------------------
+    // The tool reads it on every exposure rather than holding a copy, so the
+    // strictness of the policy can be inspected, calibrated, or switched
+    // mid-run through the model's parameters. The value passed to the
+    // constructor is only a default: a value already in the model (set by the
+    // user, or read from a parameter file) is what governs the run.
+    if (!model->has_param(param_name))
+        model->add_param(transmission_factor, param_name);
+
+    // ---- The partition ------------------------------------------------------
+    // Drawn with the model's RNG, which the run has already seeded, so each
+    // replicate of run_multiple() gets its own partition from its own seed and
+    // never inherits one from a previous run.
+    compute_partition(model);
+    last_epoch = 0;
+
+    // ---- The tool: dampens out-of-bubble transmission -----------------------
+    // It carries no state of its own: it finds the model's intervention by name
+    // the first time it is used. It is registered without a distribution
+    // function on purpose -- handing it out here, on every run, keeps the first
+    // run and the ones after it (where the tool is already registered)
+    // identical.
+    if (!model->has_tool(this->get_name()))
+    {
+        BubbleTool<TSeq> bubble_tool(this->get_name(), this->get_name());
+        model->add_tool(bubble_tool);
+    }
+
+    auto & bubble_tool = model->get_tool(this->get_name());
+    for (size_t i = 0u; i < model->size(); ++i)
+        model->get_agent(i).add_tool(*model, bubble_tool);
+
+}
+
+template<typename TSeq>
+inline void Bubbles<TSeq>::reset(Model<TSeq> * model)
+{
+
+    // Model::reset() runs this once per run -- and once per replicate of
+    // run_multiple(), on that replicate's own copy of the model -- just before
+    // day 1, which is why the user has nothing to call: adding the intervention
+    // to the model is the whole installation.
+    this->model_id = static_cast< int >(model->get_sim_id());
+    this->_setup(model);
+
+}
+
+template<typename TSeq>
 inline void Bubbles<TSeq>::operator()(Model<TSeq> * model, int day)
 {
 
-    // Only rewiring needs a daily event; the tool gates itself by day, and the
-    // epoch-0 partition is computed at reset (see deploy()). Because global
-    // events run after update_state(), a rewired partition takes effect the
-    // following simulation step.
+    // Under Model::run() this never fires: reset() has already set us up for
+    // this run. It is here for a model whose day loop is driven by hand, where
+    // installing the policy a day late still beats running without it. The
+    // simulation id is what tells one run from the next, so a copy of the model
+    // (another replicate, another thread) sets itself up on its own.
+    if (static_cast< int >(model->get_sim_id()) != this->model_id)
+    {
+        this->model_id = static_cast< int >(model->get_sim_id());
+        this->_setup(model);
+    }
+
+    // Past setup, the only thing left for the daily event is rewiring; the tool
+    // gates itself by day. Because global events run after update_state(), a
+    // rewired partition takes effect the following simulation step.
     if (rewire_every <= 0)
         return;
 
     if (!is_active(day))
         return;
 
-    int sim   = static_cast< int >(model->get_sim_id());
     int epoch = (day - start_day) / rewire_every;
 
-    // Already up to date for this (replicate, epoch).
-    if ((last_sim_id == sim) && (last_epoch == epoch))
+    // Already up to date for this epoch.
+    if (last_epoch == epoch)
         return;
 
     compute_partition(model);
-    last_sim_id = sim;
-    last_epoch  = epoch;
-
-}
-
-template<typename TSeq>
-inline void Bubbles<TSeq>::deploy(Model<TSeq> & model)
-{
-
-    if (household_id.size() != model.size())
-        throw std::length_error(
-            "Bubbles: household_id length (" +
-            std::to_string(household_id.size()) +
-            ") must equal the number of agents (" +
-            std::to_string(model.size()) + ")."
-        );
-
-    // ---- The transmission factor lives in the model -------------------------
-    // The tool reads it on every exposure rather than holding a copy, so the
-    // strictness of the policy can be inspected, calibrated, or switched
-    // mid-run through the model's parameters.
-    model.add_param(transmission_factor, param_name, true);
-
-    // ---- The intervention itself -------------------------------------------
-    // add_globalevent() clones this object, so the model owns the partition and
-    // the rewiring schedule. Copies of the model (e.g. the per-thread copies
-    // made by run_multiple) clone it again and are fully independent.
-    model.add_globalevent(*this);
-
-    // ---- The tool: dampens out-of-bubble transmission -----------------------
-    // It carries no state of its own: it finds the model's intervention by name
-    // the first time it is used.
-    BubbleTool<TSeq> bubble_tool(this->get_name(), this->get_name());
-
-    // ---- Distribution: recompute the partition at reset time ----------------
-    // The tool's distribution function runs from Model::reset() -> dist_tools(),
-    // i.e. *before* day 1 and with the run's (per-replicate) RNG already seeded.
-    // Computing the partition here — rather than eagerly in deploy() — keeps the
-    // epoch-0 partition fresh for every replicate of run_multiple() and avoids
-    // any dependence on a stale partition left over from a previous run. It then
-    // distributes the tool to every agent (prevalence 1.0).
-    std::string ename = this->get_name();
-    ToolToAgentFun<TSeq> distribute_all = distribute_tool_randomly<TSeq>(1.0, true);
-    bubble_tool.set_distribution(
-        [ename, distribute_all](Tool<TSeq> & tool, Model<TSeq> * m) -> void {
-
-            Bubbles<TSeq> * self = Bubbles<TSeq>::get_from(*m, ename);
-
-            if (self == nullptr)
-                throw std::logic_error(
-                    "Bubbles: the intervention '" + ename +
-                    "' is not installed on this model."
-                );
-
-            self->compute_partition(m);
-            self->last_sim_id = static_cast< int >(m->get_sim_id());
-            self->last_epoch  = 0;
-
-            distribute_all(tool, m);
-
-        }
-    );
-
-    model.add_tool(bubble_tool);
+    last_epoch = epoch;
 
 }
 

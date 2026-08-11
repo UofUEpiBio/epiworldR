@@ -1915,6 +1915,16 @@ inline void Model<TSeq>::reset() {
     // Distributing initial state, if specified
     initial_states_fun(this);
 
+    // Global events set themselves up for the run. This happens last, with the
+    // RNG seeded and the population in its initial state, so that an event that
+    // needs to act on the model it is running in (e.g. one that hands a tool to
+    // every agent) is in force from day 1 -- global events themselves only run
+    // *after* each day's transitions.
+    for (auto & event : globalevents)
+        event->reset(this);
+
+    events_run();
+
     // Recording day 0 and advancing to day 1 is handled by Model::run().
     // Keeping reset() side-effect free from virtual next() prevents
     // derived-model update code from running before derived reset state
@@ -2078,6 +2088,12 @@ inline epiworld_double Model<TSeq>::get_param(std::string pname)
         throw std::logic_error("The parameter " + pname + " does not exists.");
 
     return parameters[pname];
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_param(std::string_view pname) const
+{
+    return parameters.find(std::string(pname)) != parameters.end();
 }
 
 template<typename TSeq>
