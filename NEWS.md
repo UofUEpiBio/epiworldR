@@ -1,3 +1,11 @@
+# epiworldR 0.15.1-1
+
+## User-visible changes
+
+* Updated LFMCMC vignette example parameters for improved reliability. Users
+  should be aware that LFMCMC results are sensitive to parameter choices, and
+  incorporating informative priors is strongly recommended for real analyses.
+
 # epiworldR 0.15.1-0
 
 ## User-visible changes
