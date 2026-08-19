@@ -1,4 +1,4 @@
-FROM ghcr.io/rocker-org/devcontainer/r-ver:4.5
+FROM ghcr.io/rocker-org/devcontainer/r-ver:4.6
 
 # Architecture-specific variable (built in Docker BuildKit)
 ARG TARGETARCH
