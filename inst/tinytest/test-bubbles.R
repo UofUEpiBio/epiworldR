@@ -135,6 +135,37 @@ expect_true(sum(hh_of(sec_p$source) != hh_of(sec_p$target)) > 0)
 expect_true(sum(hh_of(sec_p$source) == hh_of(sec_p$target)) > 0)
 
 ###############################################################################
+# Replicates are independent: the partition belongs to the model, so the
+# per-thread copies run_multiple() makes each keep their own. Running on two
+# threads must give exactly the same replicates as running on one, and must not
+# make the model single-threaded.
+###############################################################################
+model_mt <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
+agents_smallworld(model_mt, n = 600, k = 8, d = FALSE, p = 0.10)
+bubbles(model_mt, household_id = hh, flavor = "household", group_size = 2,
+        transmission_factor = 0.0, start_day = 0)
+
+expect_null(attr(model_mt, "single_threaded"))
+
+outbreak_sizes <- function(m, nthreads) {
+  saver <- make_saver("total_hist")
+  # No warning about parallel execution: nothing is shared between copies.
+  expect_silent(
+    run_multiple(m, ndays = 40, nsims = 4, seed = 3311, saver = saver,
+                 verbose = FALSE, nthreads = nthreads)
+  )
+  res <- run_multiple_get_results(m, nthreads = nthreads)$total_hist
+  res <- res[res$date == 40 & res$state == "Recovered", ]
+  res$counts[order(res$sim_num)]
+}
+
+serial_sizes   <- outbreak_sizes(model_mt, 1L)
+parallel_sizes <- outbreak_sizes(model_mt, 2L)
+
+expect_true(all(serial_sizes > 0))
+expect_equal(parallel_sizes, serial_sizes)
+
+###############################################################################
 # Input validation.
 ###############################################################################
 model_v <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)

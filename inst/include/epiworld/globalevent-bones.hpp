@@ -34,6 +34,19 @@ public:
 
     virtual void operator()(Model<TSeq> * m, int day);
 
+    /**
+     * @brief Prepare the event for a run.
+     *
+     * @details Called by `Model::reset()` at the end of every reset, i.e. once
+     * per run and once per replicate of `Model::run_multiple()`, with the run's
+     * RNG already seeded and the agents, tools, and viruses distributed. Events
+     * that need to set themselves up on the model they are running in -- the
+     * moment before day 1 -- do it here; the default does nothing.
+     *
+     * @param m The model the event belongs to.
+     */
+    virtual void reset(Model<TSeq> * m);
+
     void set_name(std::string name);
     std::string get_name() const;
 

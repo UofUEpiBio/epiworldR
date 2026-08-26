@@ -45,20 +45,52 @@ enum class BubbleFlavor {
     Peer
 };
 
+template<typename TSeq>
+class Bubbles;
+
 /**
- * @brief Shared, mutable state of a Bubbles intervention.
+ * @brief Tool carried by every agent under a Bubbles policy.
+ * @ingroup globalevents
  *
- * Held via `std::shared_ptr` and captured by both the bubble `Tool`
- * (read-only) and the scheduler `GlobalEvent` (read-write), so the two stay in
- * sync for the lifetime of the model. The bubble partition is a per-agent
- * integer label (`bubble_id`): agents whose labels match are in the same bubble
- * and transmit freely, while transmission between different labels is scaled
- * down by the intervention's transmission factor.
+ * @details The tool does not hold the bubble partition -- it holds a pointer to
+ * the `Bubbles` intervention that owns it, resolved by name from the model the
+ * first time the tool is used. `clone_ptr()` clears that pointer, exactly as
+ * `ToolVaccine` clears its per-agent immunity, so a copy of the tool always
+ * re-resolves against the model it ends up in. Copies of a model therefore
+ * never reach into the model they were copied from, which is what lets bubble
+ * models run in parallel replicates.
+ *
+ * Users do not instantiate this directly; the intervention hands it to every
+ * agent when it sets itself up, at the start of each run.
+ *
+ * @tparam TSeq Sequence type (should match `TSeq` across the model).
  */
-struct BubbleState {
-    std::vector< int > bubble_id;  ///< Per-agent bubble label (index = agent id); -1 = unassigned.
-    int last_sim_id = -1;          ///< Sim id the current partition was computed for.
-    int last_epoch  = -1;          ///< Rewiring epoch the current partition was computed for.
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class BubbleTool : public Tool<TSeq> {
+private:
+
+    std::string _event_name;                  ///< Name of the owning intervention.
+    Bubbles<TSeq> * _policy = nullptr;        ///< Resolved lazily, per model.
+
+public:
+
+    BubbleTool(std::string name, std::string event_name);
+
+    /**
+     * @brief Reduction applied to an exposure of this tool's agent.
+     *
+     * `0.0` when the transmitter shares the agent's bubble (contacts inside the
+     * bubble are what the policy preserves), and `1 - f` otherwise, where `f`
+     * is the intervention's transmission factor. Outside the policy window, or
+     * before a partition exists, the reduction is `0.0`.
+     */
+    epiworld_double get_susceptibility_reduction(
+        VirusPtr<TSeq> & v,
+        Model<TSeq> * model
+    ) override;
+
+    std::unique_ptr<Tool<TSeq>> clone_ptr() const override;
+
 };
 
 /**
@@ -73,11 +105,24 @@ struct BubbleState {
  *
  * ## How it works
  *
- * The contact network is **not modified**. Instead, `deploy()` attaches a
- * `Tool` ("Social bubble") to every agent. When a susceptible agent `p` is
- * exposed to an infectious neighbor, the tool's susceptibility-reduction
- * function identifies the transmitter through the virus (`v->get_agent()`) and
- * compares the two agents' bubble labels:
+ * The intervention is a global event, so installing it is a one-liner:
+ *
+ * ```cpp
+ * model.add_globalevent(bubbles);
+ * ```
+ *
+ * Everything else happens by itself. At the start of every run -- from
+ * `Model::reset()`, so the policy is in force on day 1 -- the intervention sets
+ * itself up on the model it is running in: it registers the
+ * transmission-factor parameter, draws the bubble partition with that run's
+ * RNG, and hands a `BubbleTool` ("Social bubble") to every agent. Each
+ * replicate of `run_multiple()` -- each of which runs on its own copy of the
+ * model, possibly on its own thread -- repeats this with its own seed.
+ *
+ * The contact network is **not modified**. When a susceptible agent `p` is
+ * exposed to an infectious neighbor, the tool identifies the transmitter
+ * through the virus (`v->get_agent()`) and compares the two agents' bubble
+ * labels:
  *
  * - same bubble  -> reduction `0.0`: contacts *inside* the bubble are what the
  *                   policy preserves, so they are left untouched;
@@ -93,12 +138,15 @@ struct BubbleState {
  * values model a soft contact reduction -- people still meet outside their
  * bubble, just less often or more carefully.
  *
- * `f` is **not** stored in the intervention: `deploy()` registers it as a model
+ * `f` is **not** stored in the intervention: setup registers it as a model
  * parameter (`param_name`, "Bubble transmission factor" by default) and the
  * tool reads it from the model on every exposure. It can therefore be inspected
- * with `model.get_param()`, changed mid-run with `model.set_param()`, read from
- * a parameter file with `model.read_params()`, or swept over in a calibration
- * without rebuilding the intervention. Values outside `[0, 1]` are clamped.
+ * with `model.get_param()`, changed mid-run with `model.set_param()`, or swept
+ * over in a calibration without rebuilding the intervention. The value given to
+ * the constructor is only a default: if the model already carries that
+ * parameter -- because it was set with `model.add_param()` or read from a
+ * parameter file with `model.read_params()` before the run -- the model's value
+ * is kept. Values outside `[0, 1]` are clamped.
  *
  * Since reductions combine as `1 - prod(1 - r_i)`, a reduction of `1.0`
  * (`f == 0`) zeroes the transmission probability regardless of any other tools
@@ -106,6 +154,24 @@ struct BubbleState {
  * suppressing transmission on out-of-bubble contacts is equivalent to deleting
  * those contacts, while keeping the network intact for other purposes (contact
  * tracing, output).
+ *
+ * ## Where the state lives
+ *
+ * `Bubbles` *is* the model's global event: `add_globalevent()` hands the model a
+ * clone of it, and the bubble partition (`get_bubble_id()`) is a member of that
+ * clone. Since `Model`'s copy constructor deep-copies global events and tools,
+ * every copy of a model -- including the per-thread copies `run_multiple()`
+ * makes -- owns its partition outright, and the tool resolves to the
+ * intervention of whichever model it belongs to. Nothing is shared between
+ * models, so replicates may run on as many threads as you like.
+ *
+ * The object you construct is a template: once added to a model it is no longer
+ * connected to it, and its own `get_bubble_id()` stays empty. To look at the
+ * partition of a model that has run, ask the model for its copy:
+ *
+ * ```cpp
+ * const auto & bubble_id = Bubbles<>::get_from(model)->get_bubble_id();
+ * ```
  *
  * ## Forming bubbles (why ties matter)
  *
@@ -192,10 +258,11 @@ struct BubbleState {
  * re-randomised every that-many days, modelling policies whose bubbles change
  * over time (e.g. contacts renewed weekly); `0` keeps a fixed bubble.
  *
- * The initial partition is computed at reset time via the tool's distribution
- * function, so it is recomputed for each replicate of `run_multiple()` using
- * that replicate's seed and is already in force on day 1. Re-randomisations are
- * applied by a daily global event and take effect the following step.
+ * The initial partition is drawn when the intervention sets itself up, at reset
+ * time, so it is redrawn for each replicate of `run_multiple()` using that
+ * replicate's seed and is already in force on day 1. Re-randomisations are
+ * applied by the intervention itself (a daily global event) and, since global
+ * events run after each day's transitions, take effect the following step.
  *
  * ## Example
  *
@@ -211,20 +278,20 @@ struct BubbleState {
  * Bubbles<> bubbles(
  *     household_id, BubbleFlavor::Household,
  *     2,      // group_size
- *     0.5,    // transmission_factor (initial value of the model parameter)
+ *     0.5,    // transmission_factor (default of the model parameter)
  *     10      // start_day
  * );
- * bubbles.deploy(model);
+ * model.add_globalevent(bubbles);
  *
- * // The factor lives in the model, so it can be changed without touching
- * // the intervention.
- * model.set_param("Bubble transmission factor", 0.25);
+ * // The factor lives in the model, so it can be changed without touching the
+ * // intervention. Setting it before the run overrides the default above.
+ * model.add_param(0.25, "Bubble transmission factor", true);
  *
  * model.run(100, 1231);
- * ```
  *
- * @note All copies of a `Bubbles` object share one `BubbleState`, so replicates
- * in `run_multiple()` must run on a single thread (`nthreads = 1`).
+ * // The partition belongs to the model, not to `bubbles`.
+ * const auto & bubble_id = Bubbles<>::get_from(model)->get_bubble_id();
+ * ```
  *
  * @note Both rules produce *exclusive* bubbles, which is what the modelled
  * policies prescribe. A rule that instead grants each person a personal budget
@@ -239,7 +306,7 @@ struct BubbleState {
  * @tparam TSeq Sequence type (should match `TSeq` across the model).
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Bubbles {
+class Bubbles final : public GlobalEvent<TSeq> {
 private:
 
     std::vector< size_t > household_id;
@@ -250,13 +317,30 @@ private:
     int start_day;
     int end_day;
     int rewire_every;
-    std::string name;
     std::string param_name;          ///< model parameter holding the transmission factor.
-    std::shared_ptr< BubbleState > state;
 
-    void compute_partition(Model<TSeq> * model) const;
-    void partition_household(Model<TSeq> * model) const;
-    void partition_peer(Model<TSeq> * model) const;
+    // Per-model state. Copied with the intervention, so each model (including
+    // each per-thread copy made by run_multiple) owns its own partition.
+    std::vector< int > bubble_id;    ///< Per-agent bubble label; -1 = unassigned.
+    int model_id   = -1;             ///< Sim id this intervention was set up for.
+    int last_epoch = -1;             ///< Rewiring epoch the current partition was computed for.
+
+    void partition_household(Model<TSeq> * model);
+    void partition_peer(Model<TSeq> * model);
+
+    /**
+     * @brief Install the intervention on the model it is running in.
+     *
+     * @details Called from `reset()`, i.e. once per run and once per replicate
+     * of `run_multiple()`. It registers the transmission-factor parameter
+     * (keeping any value the model already has), draws the epoch-0 partition
+     * with the run's RNG, and gives the bubble tool to every agent.
+     *
+     * @param model Model the intervention belongs to.
+     * @throws std::length_error if `household_id` does not have exactly one
+     *         entry per agent.
+     */
+    void _setup(Model<TSeq> * model);
 
 public:
 
@@ -288,8 +372,9 @@ public:
      * @param rewire_every Re-randomise the bubbles every this-many days, for
      *        policies whose contacts change over time. `0` keeps the bubbles
      *        fixed for the whole intervention.
-     * @param name Name given to the tool and to the scheduler event; useful to
-     *        look them up on the model afterwards.
+     * @param name Name given to the tool and to the intervention's global
+     *        event; the tool finds its policy by this name, and `get_from()`
+     *        looks it up on a model with it.
      * @param max_households **`Peer` flavor only**: the largest number of
      *        households a bubble may contain. A nomination that would exceed it
      *        is declined, which is what stops one household's choices from
@@ -319,40 +404,33 @@ public:
     );
 
     /**
-     * @brief Install the intervention on a model.
+     * @brief The model's copy of the intervention.
      *
-     * Registers the model parameter `param_name` (set to the
-     * `transmission_factor` passed to the constructor, overwriting any value it
-     * already had), adds the bubble `Tool` (distributed to every agent, which
-     * also computes the bubble partition at each reset) and, when
-     * `rewire_every > 0`, the global event that re-randomises the bubbles.
-     *
-     * To drive the factor from a parameter file instead, call
-     * `model.read_params()` (or `set_param()`) *after* `deploy()`.
-     *
-     * Call this **after** the model's agents and contact network exist (e.g.
-     * after `agents_smallworld()`), since the household grouping is derived from
-     * the network, and before `run()`.
-     *
-     * @param model Model to install the intervention on.
-     * @throws std::length_error if `household_id` does not have exactly one
-     *         entry per agent.
+     * @param model Model the intervention was added to.
+     * @param name Name it was added under.
+     * @return Pointer to the model's own intervention, or `nullptr` if the
+     *         model has no global event by that name, or it is not a `Bubbles`.
      */
-    void deploy(Model<TSeq> & model);
+    static Bubbles<TSeq> * get_from(
+        Model<TSeq> & model,
+        const std::string & name = "Social bubble"
+    );
 
     /**
-     * @brief Shared state of the intervention (bubble labels and bookkeeping).
+     * @brief Recompute the partition using the model's RNG.
      *
-     * The state is shared by every copy of this object and by the model's tool
-     * and event, and is refreshed on each run.
+     * Called when the intervention sets itself up (at reset) and at each
+     * rewiring epoch. Rarely needed directly.
      */
-    std::shared_ptr< BubbleState > get_state() const;
+    void compute_partition(Model<TSeq> * model);
 
     /**
      * @brief Current bubble label of every agent, indexed by agent id.
      *
-     * Two agents may transmit only when their labels are equal. Populated on the
-     * first reset (i.e. once the model has been run); empty before then.
+     * Two agents in the same bubble transmit as they would without the policy;
+     * transmission between labels is scaled by the transmission factor.
+     * Populated at the start of each run, and only on the model's own copy of
+     * the intervention -- see `get_from()`.
      */
     const std::vector< int > & get_bubble_id() const;
 
@@ -366,6 +444,41 @@ public:
      * how leaky the bubbles are, including in the middle of a run.
      */
     const std::string & get_param_name() const;
+
+    /// @brief True when the policy applies on the given day.
+    bool is_active(int today) const;
+
+    /**
+     * @brief Rewiring epoch the current partition was computed for.
+     *
+     * `0` for the partition drawn at setup, incrementing every `rewire_every`
+     * days while the policy is active. `-1` before the first partition.
+     */
+    int get_last_epoch() const;
+
+    /**
+     * @brief Reduction applied to an exposure between two agents.
+     *
+     * The tool's side of the intervention; see `BubbleTool`.
+     */
+    epiworld_double susceptibility_reduction(
+        const Agent<TSeq> * p,
+        const Agent<TSeq> * transmitter,
+        Model<TSeq> * model
+    ) const;
+
+    /**
+     * @brief Installs the intervention on the model, once per run.
+     *
+     * Called by `Model::reset()`; see `_setup()`. This is what makes adding the
+     * intervention to a model the only step there is.
+     */
+    void reset(Model<TSeq> * model) override;
+
+    /// @brief Re-randomises the partition at rewiring epochs.
+    void operator()(Model<TSeq> * model, int day) override;
+
+    std::unique_ptr< GlobalEvent<TSeq> > clone_ptr() const override;
 
 };
 

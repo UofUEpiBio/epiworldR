@@ -32,6 +32,12 @@ inline void GlobalEvent<TSeq>::operator()(Model<TSeq> * m, int day)
 }
 
 template<typename TSeq>
+inline void GlobalEvent<TSeq>::reset(Model<TSeq> *)
+{
+    return;
+}
+
+template<typename TSeq>
 inline void GlobalEvent<TSeq>::set_name(std::string name)
 {
     this->name = name;

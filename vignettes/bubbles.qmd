@@ -101,12 +101,12 @@ run_scenario <- function(model, policy) {
     seed     = simulation_seed,
     saver    = saver,
     verbose  = FALSE,
-    nthreads = 1L
+    nthreads = 2L
   )
 
   outbreak <- run_multiple_get_results(
     model,
-    nthreads = 1L
+    nthreads = 2L
   )$outbreak_size
 
   final <- outbreak[outbreak$date == ndays, ]
@@ -223,8 +223,9 @@ bubbles(
 # Compare outbreak sizes
 
 Finally, we run 200 replicates for each scenario and report the final outbreak
-size. Bubble models must use one thread because the intervention maintains
-shared state; `bubbles()` marks them accordingly.
+size. Each replicate draws its own bubbles from its own seed, and the partition
+belongs to the model rather than to the intervention, so the replicates can be
+spread across threads.
 
 ```{r}
 #| label: run-scenarios

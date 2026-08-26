@@ -40,12 +40,21 @@ SEXP bubbles_cpp(
     param_name
   );
 
-  // deploy() installs the bubble tool and the scheduler event on the model, and
-  // registers `param_name` as a model parameter holding the transmission factor
-  // (the tool reads it from the model on every exposure).
-  // The intervention's shared state is kept alive by the closures captured in
-  // those objects, so the local `bubbles` can safely go out of scope.
-  bubbles.deploy(*modelptr);
+  // Registering the transmission factor as a model parameter here, rather than
+  // leaving it to the intervention (which does it at the start of each run), is
+  // what lets get_param()/set_param() reach it as soon as bubbles() returns.
+  // The intervention keeps whatever value the model already holds, so a
+  // set_param() before run() governs the run.
+  modelptr->add_param(
+    static_cast< epiworld_double >(transmission_factor), param_name, true
+  );
+
+  // The model is handed a clone of the intervention, which then installs
+  // itself -- the bubble tool, the partition, and the rewiring schedule -- on
+  // the model at the start of every run, including each replicate of
+  // run_multiple(). The local `bubbles` is only a template, so it can safely go
+  // out of scope.
+  modelptr->add_globalevent(bubbles);
 
   return model;
 

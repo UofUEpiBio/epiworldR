@@ -140,9 +140,11 @@
 #'
 #' The bubbles are drawn afresh at the start of every run, using that run's seed,
 #' and are already in force on day 1. With `rewire_every > 0` they are redrawn
-#' during the run, taking effect the following day. Because the intervention
-#' keeps a single shared state, replicates with [run_multiple] must use one
-#' thread (`nthreads = 1`); `bubbles()` flags the model accordingly.
+#' during the run, taking effect the following day.
+#'
+#' The partition belongs to the model rather than to the intervention, so each
+#' of the per-thread copies of the model that [run_multiple()] makes draws and
+#' keeps its own. Replicates may run on as many threads as you like.
 #'
 #' ## What this cannot represent
 #'
@@ -288,10 +290,6 @@ bubbles <- function(
     max_households,
     param_name
   )
-
-  # A single shared state backs the intervention, so parallel replicates must
-  # run single-threaded.
-  attr(model, "single_threaded") <- TRUE
 
   invisible(model)
 
