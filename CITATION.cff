@@ -1,0 +1,74 @@
+cff-version: 1.2.0
+message: 'To cite package "epiworldR" in publications use:'
+type: software
+license: MIT
+title: 'epiworldR: Fast Agent-Based Epi Models'
+version: 0.15.1-1
+doi: 10.32614/CRAN.package.epiworldR
+abstract: A flexible framework for Agent-Based Models (ABM), the 'epiworldR' package
+  provides methods for prototyping disease outbreaks and transmission models using
+  a 'C++' backend, making it very fast. It supports multiple epidemiological models,
+  including the Susceptible-Infected-Susceptible (SIS), Susceptible-Infected-Removed
+  (SIR), Susceptible-Exposed-Infected-Removed (SEIR), and others, involving arbitrary
+  mitigation policies and multiple-disease models. Users can specify infectiousness/susceptibility
+  rates as a function of agents' features, providing great complexity for the model
+  dynamics. Furthermore, 'epiworldR' is ideal for simulation studies featuring large
+  populations.
+authors:
+- family-names: Vega Yon
+  given-names: George
+  email: g.vegayon@gmail.com
+  orcid: https://orcid.org/0000-0002-3171-0844
+- family-names: Meyer
+  given-names: Derek
+  email: derekmeyer37@gmail.com
+  orcid: https://orcid.org/0009-0005-1350-6988
+- family-names: Pulsipher
+  given-names: Andrew
+  email: pulsipher.a@gmail.com
+  orcid: https://orcid.org/0000-0002-0773-3210
+preferred-citation:
+  type: article
+  title: 'epiworldR: Fast Agent-Based Epi Models'
+  authors:
+  - family-names: Meyer
+    given-names: Derek
+    orcid: https://orcid.org/0009-0005-1350-6988
+    email: derekmeyer37@gmail.com
+  - family-names: Vega Yon
+    given-names: George
+    orcid: https://orcid.org/0000-0002-3171-0844
+    email: g.vegayon@gmail.com
+  journal: Journal of Open Source Software
+  year: '2023'
+  month: '10'
+  volume: '8'
+  issue: '90'
+  doi: 10.21105/joss.05781
+  url: https://doi.org/10.21105/joss.05781
+  start: '5781'
+repository: https://CRAN.R-project.org/package=epiworldR
+repository-code: https://github.com/UofUEpiBio/epiworldR
+url: https://uofuepibio.github.io/epiworldR/
+contact:
+- family-names: Vega Yon
+  given-names: George
+  email: g.vegayon@gmail.com
+  orcid: https://orcid.org/0000-0002-3171-0844
+references:
+- type: manual
+  title: 'epiworldR: Fast Agent-Based Epi Models'
+  authors:
+  - family-names: Vega Yon
+    given-names: George
+    orcid: https://orcid.org/0000-0002-3171-0844
+  - family-names: Meyer
+    given-names: Derek
+    orcid: https://orcid.org/0009-0005-1350-6988
+  - family-names: Pulsipher
+    given-names: Andrew
+    orcid: https://orcid.org/0000-0002-0773-3210
+  year: '2026'
+  notes: R package version 0.15.1-1
+  url: https://github.com/UofUEpiBio/epiworldR
+  doi: 10.32614/CRAN.package.epiworldR

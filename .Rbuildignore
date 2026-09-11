@@ -49,3 +49,4 @@ revdep/
 
 # Script that builds inst/extdata/geopops from a full GeoPops population
 ^data-raw$
+^CITATION\.cff$
