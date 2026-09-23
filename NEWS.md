@@ -1,3 +1,16 @@
+# epiworldR 0.15.1-2
+
+## Bug fixes
+
+* `distribute_tool_to_set()` and `distribute_virus_to_set()` no longer take
+  time quadratic in the number of agents: the set of IDs was copied every
+  time an agent received the tool or virus. Protecting 24,000 of 100,000
+  agents went from about 0.75 seconds to a few milliseconds.
+
+* `distribute_tool_randomly()` with `agents_ids` now picks agents from that
+  set. It used to pick among the first `length(agents_ids)` agents of the
+  model instead.
+
 # epiworldR 0.15.1-1
 
 ## User-visible changes

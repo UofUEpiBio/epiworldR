@@ -21,12 +21,19 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_set(
     std::vector< size_t > agents_ids
 ) {
 
-    return [agents_ids](
+    // Captured through a shared_ptr: the lambda is stored in Tool::dist and
+    // every agent receiving the tool gets a clone of it (Tool::clone_ptr),
+    // so capturing the vector by value would make distribution O(k^2).
+    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(
+        std::move(agents_ids)
+    );
+
+    return [agents_ids_ptr](
         Tool<TSeq> & tool, Model<TSeq> * model
     ) -> void 
     { 
         // Adding action
-        for (auto i: agents_ids)
+        for (auto i: *agents_ids_ptr)
         {
             model->get_agent(i).add_tool(
                 *model, tool
@@ -53,7 +60,9 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
     std::vector< size_t > agents_ids = {}
 ) {
 
-    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(agents_ids);
+    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(
+        std::move(agents_ids)
+    );
 
     return [prevalence,as_proportion,agents_ids_ptr](
         Tool<TSeq> & tool, Model<TSeq> * model
@@ -86,8 +95,16 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
                 throw std::range_error("There are only " + std::to_string(n) + 
                 " individuals in the population. Cannot add the tool to " + std::to_string(n_to_distribute));
             
-            std::vector< int > idx(n);
-            std::iota(idx.begin(), idx.end(), 0);
+            // Sampling space: either the agents in the set or everyone
+            std::vector< size_t > idx;
+            if (use_set)
+                idx = *agents_ids_ptr;
+            else
+            {
+                idx.resize(n);
+                std::iota(idx.begin(), idx.end(), 0u);
+            }
+
             auto & population = model->get_agents();
             for (int i = 0u; i < n_to_distribute; ++i)
             {
@@ -146,10 +163,16 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
         }
     }
 
-    return [prevalence, as_proportion](
+    auto prevalence_ptr = std::make_shared< std::vector< double > >(
+        std::move(prevalence)
+    );
+
+    return [prevalence_ptr, as_proportion](
         Tool<TSeq> & tool, Model<TSeq> * model
     ) -> void 
     { 
+
+        const auto & prevalence = *prevalence_ptr;
 
         // Checking the number of entities
         if (prevalence.size() != model->get_entities().size())
