@@ -18,12 +18,20 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_set(
     std::vector< size_t > agents_ids
 ) {
 
-    return [agents_ids](
+    // Captured through a shared_ptr: the lambda is stored in Virus::dist and
+    // every agent receiving the virus (including through transmission) gets
+    // a clone of it (Virus::clone_ptr), so capturing the vector by value
+    // would make distribution O(k^2).
+    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(
+        std::move(agents_ids)
+    );
+
+    return [agents_ids_ptr](
         Virus<TSeq> & virus, Model<TSeq> * model
     ) -> void 
     { 
         // Adding action
-        for (auto i: agents_ids)
+        for (auto i: *agents_ids_ptr)
         {
             model->get_agent(i).set_virus(
                 *model, virus
@@ -50,7 +58,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
     std::vector< size_t > agents_ids = {}
 ) {
 
-    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(agents_ids);
+    auto agents_ids_ptr = std::make_shared< std::vector< size_t > >(
+        std::move(agents_ids)
+    );
 
     return [prevalence,prevalence_as_proportion,agents_ids_ptr](
         Virus<TSeq> & virus, Model<TSeq> * model
@@ -108,11 +118,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
         for (int i = 0; i < n_to_sample; ++i)
         {
 
+            // runif_index(n) is in [0, n); the decrement leaves n_available
+            // at the last slot, which is swapped out below
             int loc = model->runif_index(n_available--);
-
-            // Correcting for possible overflow
-            if ((n_available > 0) && (loc >= n_available))
-                loc = n_available - 1;
 
             Agent<TSeq> & agent = population[idx[loc]];
             
@@ -168,10 +176,16 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
         }
     }
 
-    return [prevalence, as_proportion](
+    auto prevalence_ptr = std::make_shared< std::vector< double > >(
+        std::move(prevalence)
+    );
+
+    return [prevalence_ptr, as_proportion](
         Virus<TSeq> & virus, Model<TSeq> * model
     ) -> void 
     { 
+
+        const auto & prevalence = *prevalence_ptr;
 
         // Checking the number of entities
         if (prevalence.size() != model->get_entities().size())
@@ -201,11 +215,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
             std::vector< size_t > idx = agents_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
+                // runif_index(n) is in [0, n); n-- leaves n at the last slot
                 size_t loc = model->runif_index(n--);
 
-                if ((n > 0) && (loc >= n))
-                    loc = n - 1;
-                
                 population[idx[loc]].set_virus(
                     *model, virus
                     );

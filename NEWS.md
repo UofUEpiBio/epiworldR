@@ -1,3 +1,41 @@
+# epiworldR 0.16.1-0
+
+Syncs the C++ core with epiworld 0.16.1.
+
+## User-visible changes
+
+* Network models (`ModelSIR()`, `ModelSIS()`, `ModelSISD()`, `ModelSIRD()`,
+  `ModelSEIR()`, `ModelSEIRD()`, and models built with
+  `update_fun_susceptible()`) now simulate transmission faster.
+  At each step, the model either has infected agents push infection to
+  their neighbors or has susceptible agents pull it from theirs, whichever
+  is cheaper. Both give the same distribution of outcomes.
+
+* **Results for a given seed change** in those models, and wherever the
+  random distribution functions below are used. Only the random draws
+  change; the model's behaviour does not.
+
+## Bug fixes
+
+* `distribute_tool_to_set()` and `distribute_virus_to_set()` no longer take
+  time quadratic in the number of agents: the set of IDs was copied every
+  time an agent received the tool or virus. Protecting 24,000 of 100,000
+  agents went from about 0.75 seconds to a few milliseconds.
+
+* `distribute_tool_randomly()` with `agents_ids` now picks agents from that
+  set. It used to pick among the first `length(agents_ids)` agents of the
+  model instead.
+
+* `distribute_tool_randomly()`, `distribute_virus_randomly()`,
+  `distribute_tool_to_entities()` and `distribute_virus_to_entities()` now
+  pick every candidate with the same probability. The last candidate was
+  never picked for the first recipient, and the one before it was picked
+  twice as often.
+
+* A transition or contact with probability exactly 1 now always happens.
+  Before, the last option was chosen instead, so a death probability of 1
+  could end in recovery.
+
 # epiworldR 0.15.1-1
 
 ## User-visible changes

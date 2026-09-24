@@ -81,7 +81,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         // For each one of the possible innovations, we have to compute
         // the adoption probability, which is a function of exposure
         auto & m_ref = *m;
-        for (auto & neighbor: agent.get_neighbors(*m))
+        for (auto * neighbor: agent.neighbors_view(*m))
         {
 
             if (neighbor->get_state() == ModelDiffNet<TSeq>::ADOPTER)

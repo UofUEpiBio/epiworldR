@@ -46,6 +46,27 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
 // class ToolPtr;
 
 /**
+ * @brief Read-only view of a contiguous run of agent ids.
+ *
+ * @details Returned by `Model::get_agents_in_state()`. It points into the
+ * model's index, so it is invalidated by the next step (or anything else that
+ * moves agents between states).
+ */
+class AgentIdsView {
+private:
+    const size_t * first = nullptr;
+    size_t n = 0u;
+public:
+    AgentIdsView() = default;
+    AgentIdsView(const size_t * first_, size_t n_) : first(first_), n(n_) {}
+    const size_t * begin() const { return first; }
+    const size_t * end() const { return first + n; }
+    size_t size() const { return n; }
+    bool empty() const { return n == 0u; }
+    size_t operator[](size_t i) const { return first[i]; }
+};
+
+/**
  * @brief Core class of epiworld.
  *
  * The model class provides the wrapper that puts together `Agent`, `Virus`, and
@@ -68,6 +89,9 @@ protected:
     DataBase<TSeq> db = DataBase<TSeq>(*this);
 
     std::vector< Agent<TSeq> > population = {};
+
+    /// @brief Validates the arguments of `add_edge()` / `rm_edge()`.
+    void check_edge_endpoints(size_t i, size_t j) const;
 
     bool using_backup = true;
     std::vector< Agent<TSeq> > population_backup = {};
@@ -175,6 +199,76 @@ protected:
     std::unique_ptr<ContactTracing> contact_tracing;
     bool use_contact_tracing = false;
     size_t contact_tracing_max_contacts = EPI_MAX_TRACKING;
+
+    /**
+     * @name Agents by state
+     *
+     * @details All agent ids live in one array, `state_order`, grouped by
+     * state: the agents in state `s` are `state_order[state_start[s]]` up to
+     * (not including) `state_order[state_start[s + 1]]`, in no particular
+     * order, and `state_member_pos[i]` is where agent `i` sits. One contiguous
+     * block of N ids, whatever the number of states. Moving an agent from
+     * state `a` to state `b` walks it across the blocks in between, one swap
+     * per block boundary: O(|a - b|).
+     *
+     * Per state, the index also keeps the sum of the members' degrees, how
+     * many of them carry a virus, and the sum of those carriers' degrees.
+     *
+     * Built in `reset()` and kept current in `events_run()` -- the only place
+     * where an agent's state or virus changes during a run -- and in
+     * `add_edge()`/`rm_edge()`. The degree sums let the transmission step
+     * compare the cost of pushing and pulling in O(number of states).
+     */
+    ///@{
+    std::vector< size_t > state_order;       ///< [N] Agent ids, grouped by state
+    std::vector< size_t > state_start;       ///< [nstates + 1] Where each state's block starts
+    std::vector< size_t > state_member_pos;  ///< [agent] Position in state_order
+    std::vector< unsigned int > agent_state;    ///< [agent] Copy of Agent::state, compact for scans
+    std::vector< size_t > state_degree;
+    std::vector< size_t > state_carriers;
+    std::vector< size_t > state_carrier_degree;
+    bool state_index_ready = false;
+
+    void state_index_build();
+    void state_index_update(Agent<TSeq> * p, unsigned int state_old, bool had_virus);
+    void state_index_move(size_t id, unsigned int state_old, unsigned int state_new);
+    AgentIdsView state_index_members(size_t state) const;
+    void state_index_degree(Agent<TSeq> & p, size_t n_neighbors_before);
+    ///@}
+
+    /**
+     * @name Network transmission
+     *
+     * @details See `set_transmission_mode()` and
+     * `model-meat-transmission.hpp`. The push scratch space is per model and
+     * is not copied: a copy sizes its own the first time it pushes.
+     */
+    ///@{
+    TransmissionMode transmission_mode = TransmissionMode::automatic;
+    TransmissionMode transmission_mode_last = TransmissionMode::pull;
+    double transmission_kappa = EPI_DEFAULT_TRANSMISSION_KAPPA;
+
+    struct PushTarget {
+        size_t id;
+        double odds;                // Sum of p / (1 - p) over the contacts
+        unsigned int n_certain;     // Contacts with p >= 1
+        Virus<TSeq> * candidate;    // Infector's virus drawn so far
+    };
+
+    std::vector< char > push_pushable;       ///< [state] Uses the default susceptible sampler
+    std::vector< char > push_default;        ///< [state] ...and it is default_update_susceptible
+    std::vector< char > push_excluded;       ///< [target state * nstates + source state]
+    std::vector< char > push_source_ok;      ///< [state] Some pushable state accepts it as source
+    std::vector< int >  push_slot;           ///< [agent] Index in push_targets, or -1
+    std::vector< PushTarget > push_targets;
+    std::vector< uint64_t > push_visit;      ///< [agent bit] To update after a push
+    std::vector< uint64_t > push_sources;    ///< [agent bit] Carriers that push this step
+
+    bool transmission_prepare();
+    bool transmission_choose_push() const;
+    void transmission_push();
+    void transmission_update_others();
+    ///@}
 
     /**
      * @brief Variables used to keep track of the events
@@ -465,6 +559,40 @@ public:
     void agents_empty_graph(epiworld_fast_uint n = 1000);
 
     /**
+     * @name Change the contact network of a model that already has one
+     *
+     * @details Unlike `agents_from_edgelist()` and friends, which build the
+     * network up front, these edit it in place and may be called at any point,
+     * including in the middle of a run from a global event -- a policy that
+     * temporarily merges households, for instance. They keep the queueing system
+     * in step as they go (see `Queue::notify_edge_added`), which is what makes
+     * mid-run edits safe: the queue counts each agent's active neighbors, and a
+     * tie appearing or disappearing underneath it would otherwise corrupt that
+     * count and silently drop agents out of `update_state()`.
+     *
+     * Ties are undirected and are always changed at both ends. Existing
+     * neighbors keep their relative order, so an edit never changes which
+     * transmitter is sampled among the ties it left alone.
+     *
+     * @param i,j Ids of the two agents.
+     * @throws std::range_error if an id is out of range.
+     * @throws std::logic_error if `i == j`, or if the model is directed (these
+     *         operate on both ends of a tie, which is meaningless there).
+     */
+    ///@{
+    /**
+     * @return `true` if the tie was created, `false` if the two were already
+     *         tied. An intervention that has to withdraw its own ties later
+     *         should record only the ones this returned `true` for, so it never
+     *         removes a tie the model already had.
+     */
+    bool add_edge(size_t i, size_t j);
+
+    bool rm_edge(size_t i, size_t j);  ///< @return `true` if a tie was removed.
+    bool has_edge(size_t i, size_t j) const; ///< Whether `i` and `j` are tied.
+    ///@}
+
+    /**
      * @brief Initialize agents using a Stochastic Block Model (SBM).
      *
      * Creates agents and connects them according to an SBM defined by
@@ -649,6 +777,68 @@ public:
     size_t get_n_states() const;
     const std::vector< UpdateFun<TSeq> > & get_state_fun() const;
     void print_state_codes() const;
+    ///@}
+
+    /**
+     * @brief Ids of the agents currently in a state.
+     *
+     * @details The list is kept up to date as the model runs, so looking up
+     * who is in a state costs nothing (no scan of the population). The ids are
+     * in no particular order. The index is built when a run starts, so this is
+     * available once `run()` (or `run_multiple()`) has been called, and it
+     * reflects the model at its current step.
+     *
+     * @param state The state code.
+     * @return A view of the ids (iterable, with `size()` and `[]`); it is
+     * invalidated by the next step.
+     * @throws std::logic_error if the model has not been run yet (or its
+     * population changed since).
+     * @throws std::range_error if `state` is not a state of the model.
+     */
+    AgentIdsView get_agents_in_state(epiworld_fast_uint state) const;
+
+    /**
+     * @name Network transmission mode
+     *
+     * @details States whose update function is `default_update_susceptible`
+     * or `sampler::make_update_susceptible()` can be updated by pulling (each
+     * susceptible agent scans its neighbors) or by pushing (each agent with a
+     * virus adds its infection odds to its susceptible neighbors). Both give
+     * the same distribution of who gets infected, and by whom; only the random
+     * number stream differs. See `TransmissionMode`.
+     *
+     * With `"auto"` (the default) the model pushes whenever the carriers'
+     * ties are no more than `kappa` times the susceptibles' ties, and pulls
+     * otherwise; `kappa` only matters in this mode. The choice depends only on the model's state, never on the
+     * queueing system, so turning queuing on or off leaves results unchanged.
+     * Because the queue already spares a pull the susceptibles with no
+     * infectious neighbor -- which the rule does not see -- the default
+     * `kappa` is 0.25 rather than 1 (tuned with
+     * `examples/20-transmission-benchmark`).
+     *
+     * Directed networks, and states with other update functions, always pull.
+     * Set `"pull"` to reproduce the random streams of epiworld <= 0.15.
+     *
+     * @param mode `"auto"`, `"push"`, or `"pull"` (or the enum).
+     * @param kappa Relative cost threshold used by `"auto"`: a finite,
+     * non-negative number (default `EPI_DEFAULT_TRANSMISSION_KAPPA`, 0.25).
+     * @throws std::invalid_argument for an unknown mode.
+     * @throws std::range_error for a negative or infinite `kappa`.
+     */
+    ///@{
+    Model<TSeq> & set_transmission_mode(
+        TransmissionMode mode,
+        double kappa = EPI_DEFAULT_TRANSMISSION_KAPPA
+    );
+    Model<TSeq> & set_transmission_mode(
+        std::string_view mode,
+        double kappa = EPI_DEFAULT_TRANSMISSION_KAPPA
+    );
+    TransmissionMode get_transmission_mode() const;
+    /// The mode used in the most recent step (`push` or `pull`).
+    TransmissionMode get_last_transmission_mode() const;
+    /// The threshold used by `"auto"`.
+    double get_transmission_kappa() const;
     ///@}
 
     /**

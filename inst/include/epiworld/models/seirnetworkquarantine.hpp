@@ -221,7 +221,7 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
 ) {
 
     size_t nviruses_tmp = 0u;
-    for (auto & neighbor : p->get_neighbors(*m))
+    for (auto * neighbor : p->neighbors_view(*m))
     {
         auto & v = neighbor->get_virus();
         if (v == nullptr)

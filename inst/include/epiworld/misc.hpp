@@ -140,7 +140,10 @@ inline int roulette(
     {
         p_none *= (1.0 - probs[p]);
 
-        if (probs[p] > (1 - 1e-100))
+        // A probability of 1 is a certain event. (This used to test
+        // `> 1 - 1e-100`, which is `> 1` in floating point, so p == 1 fell
+        // through to 0/0 below and the last entry won regardless.)
+        if (probs[p] >= 1.0)
             certain_infection.push_back(p);
 
     }
@@ -222,7 +225,8 @@ inline int roulette(
     {
         p_none *= (1.0 - m->array_double_tmp[p]);
 
-        if (m->array_double_tmp[p] > (1 - 1e-100))
+        // A probability of 1 is a certain event (see the vector version).
+        if (m->array_double_tmp[p] >= 1.0)
             m->array_double_tmp[nelements + ncertain++] = p;
             // certain_infection.push_back(p);
 
@@ -348,6 +352,34 @@ inline std::map< std::string, T > read_yaml(std::string fn)
         #define EPI_ASSUME(cond) ((void)0)
     #endif
 #endif
+
+/**
+ * @brief Index of the lowest set bit of a non-zero 64-bit word.
+ *
+ * @details Used to walk bitsets of agents (the queue's queued agents, the
+ * carriers that push, the agents to update after a push) in ascending id
+ * order: take the lowest set bit, visit that agent, clear the bit, repeat. It
+ * costs one instruction per agent visited, and a whole word of 64 absent
+ * agents is skipped at once.
+ *
+ * C++17 has no `std::countr_zero` (that is C++20). GCC and Clang get the
+ * builtin; other compilers use a de Bruijn multiply, which needs no platform
+ * header. `x` must not be zero.
+ */
+inline unsigned int epi_ctz64(uint64_t x)
+{
+#if defined(__GNUC__) || defined(__clang__)
+    return static_cast< unsigned int >(__builtin_ctzll(x));
+#else
+    static const unsigned int table[64] = {
+         0,  1, 48,  2, 57, 49, 28,  3, 61, 58, 50, 42, 38, 29, 17,  4,
+        62, 55, 59, 36, 53, 51, 43, 22, 45, 39, 33, 30, 24, 18, 12,  5,
+        63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11,
+        46, 26, 40, 15, 34, 20, 31, 10, 25, 14, 19,  9, 13,  8,  7,  6
+    };
+    return table[((x & (~x + 1u)) * 0x03f79d71b4cb0a89ull) >> 58];
+#endif
+}
 
 template<class To, class TSeq>
 inline To* model_cast(Model<TSeq>* m) {

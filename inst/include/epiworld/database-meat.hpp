@@ -156,6 +156,58 @@ inline void DataBase<TSeq>::record()
         "Sums of __today_total_cp in database-meat.hpp"
         )
 
+    // EPI_DEBUG only: the model's agents-by-state index (see
+    // Model::get_agents_in_state()) is maintained incrementally, event by
+    // event, so check it against the population once per step, next to the
+    // same check for today_total above. Each state's block must hold exactly
+    // the agents in that state, each agent's recorded position must be right,
+    // and the degree and carrier sums used by the transmission step must match
+    // a recount. A drift here would silently bias which agents push, or which
+    // mode "auto" picks.
+    if (model->state_index_ready)
+    {
+
+        std::vector< size_t > _deg(model->nstates, 0u);
+        std::vector< size_t > _carriers(model->nstates, 0u);
+        std::vector< size_t > _carrier_deg(model->nstates, 0u);
+        for (auto & p : model->population)
+        {
+            _deg[p.get_state()] += p.get_n_neighbors();
+            if (p.get_virus() != nullptr)
+            {
+                _carriers[p.get_state()]++;
+                _carrier_deg[p.get_state()] += p.get_n_neighbors();
+            }
+        }
+
+        for (size_t s = 0u; s < model->nstates; ++s)
+        {
+
+            const auto members = model->state_index_members(s);
+            if (static_cast< int >(members.size()) != today_total[s])
+                throw std::logic_error("[epi-debug] DataBase::record state index size doesn't match today_total.");
+
+            for (size_t k = 0u; k < members.size(); ++k)
+            {
+                if (model->population[members[k]].get_state() != s)
+                    throw std::logic_error("[epi-debug] DataBase::record state index lists an agent in another state.");
+                if (model->agent_state[members[k]] != s)
+                    throw std::logic_error("[epi-debug] DataBase::record agent_state is out of step.");
+                if (model->state_member_pos[members[k]] != model->state_start[s] + k)
+                    throw std::logic_error("[epi-debug] DataBase::record state_member_pos is out of step.");
+            }
+
+            if (
+                (_deg[s] != model->state_degree[s]) ||
+                (_carriers[s] != model->state_carriers[s]) ||
+                (_carrier_deg[s] != model->state_carrier_degree[s])
+            )
+                throw std::logic_error("[epi-debug] DataBase::record state degree/carrier sums are out of step.");
+
+        }
+
+    }
+
     if (model->today() == 0)
     {
         if (hist_total_date.size() != 0)

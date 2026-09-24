@@ -65,11 +65,9 @@ inline EntityToAgentFun<TSeq> distribute_entity_randomly(
         int n_left = n;
         for (int i = 0; i < n_to_sample; ++i)
         {
+            // runif_index(n) is in [0, n); the decrement leaves n_left at
+            // the last slot, which is swapped out below
             int loc = m->runif_index(n_left--);
-
-            // Correcting for possible overflow
-            if ((n_left > 0) && (loc > n_left))
-                loc = n_left - 1;
 
             m->get_agent(idx[loc]).add_entity(*m, e);
 

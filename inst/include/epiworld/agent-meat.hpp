@@ -10,8 +10,8 @@
 
 template<typename TSeq>
 inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
-    neighbors(std::move(p.neighbors)),
-    neighbors_locations(std::move(p.neighbors_locations)),
+    neighbors(p.neighbors),
+    neighbor_pos(p.neighbor_pos),
     n_neighbors(p.n_neighbors),
     entities(std::move(p.entities)),
     state(p.state),
@@ -20,6 +20,13 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     id(p.id),
     tools(std::move(p.tools)) /// Needs to be adjusted
 {
+
+    // The neighbor arrays are owned raw pointers, so moving them means taking
+    // them: leaving the source pointing at the same memory would have both
+    // destructors free it.
+    p.neighbors    = nullptr;
+    p.neighbor_pos = nullptr;
+    p.n_neighbors  = 0u;
 
     state = p.state;
     id     = p.id;
@@ -48,7 +55,7 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
 template<typename TSeq>
 inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     neighbors(nullptr),
-    neighbors_locations(nullptr),
+    neighbor_pos(nullptr),
     n_neighbors(p.n_neighbors),
     entities(p.entities)
 {
@@ -56,11 +63,16 @@ inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
     if (n_neighbors > 0u)
     {
         neighbors = new std::vector< size_t >(*p.neighbors);
-        neighbors_locations = new std::vector< size_t >(*p.neighbors_locations);
+
+        if (p.neighbor_pos != nullptr)
+            neighbor_pos =
+                new std::unordered_map< size_t, size_t >(*p.neighbor_pos);
     }
 
-    state = p.state;
-    id     = p.id;
+    state              = p.state;
+    state_prev         = p.state_prev;
+    state_last_changed = p.state_last_changed;
+    id                 = p.id;
     
     // Dealing with the virus
     if (p.virus != nullptr)
@@ -89,20 +101,21 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
 
     n_neighbors = other_agent.n_neighbors;
     if (neighbors != nullptr)
-    {
         delete neighbors;
-        delete neighbors_locations;
-    }
+
+    if (neighbor_pos != nullptr)
+        delete neighbor_pos;
+
+    neighbors    = nullptr;
+    neighbor_pos = nullptr;
 
     if (other_agent.n_neighbors > 0u)
     {
         neighbors = new std::vector< size_t >(*other_agent.neighbors);
-        neighbors_locations = new std::vector< size_t >(*other_agent.neighbors_locations);
-    }
-    else 
-    {
-        neighbors = nullptr;
-        neighbors_locations = nullptr;
+
+        if (other_agent.neighbor_pos != nullptr)
+            neighbor_pos =
+                new std::unordered_map< size_t, size_t >(*other_agent.neighbor_pos);
     }
     
     entities = other_agent.entities;
@@ -137,10 +150,10 @@ inline Agent<TSeq>::~Agent()
 {
 
     if (neighbors != nullptr)
-    {
         delete neighbors;
-        delete neighbors_locations;
-    }
+
+    if (neighbor_pos != nullptr)
+        delete neighbor_pos;
 
 }
 
@@ -436,74 +449,137 @@ inline void Agent<TSeq>::mutate_virus()
 }
 
 template<typename TSeq>
-inline void Agent<TSeq>::add_neighbor(
+inline void Agent<TSeq>::build_neighbor_index()
+{
+
+    if (neighbor_pos == nullptr)
+        neighbor_pos = new std::unordered_map< size_t, size_t >();
+    else
+        neighbor_pos->clear();
+
+    neighbor_pos->reserve(n_neighbors);
+    for (size_t i = 0u; i < n_neighbors; ++i)
+        neighbor_pos->operator[]((*neighbors)[i]) = i;
+
+}
+
+template<typename TSeq>
+inline size_t Agent<TSeq>::find_neighbor(size_t neighbor_id) const
+{
+
+    if (neighbors == nullptr)
+        return n_neighbors;
+
+    if (neighbor_pos != nullptr)
+    {
+        auto it = neighbor_pos->find(neighbor_id);
+        return (it == neighbor_pos->end()) ? n_neighbors : it->second;
+    }
+
+    for (size_t i = 0u; i < n_neighbors; ++i)
+        if ((*neighbors)[i] == neighbor_id)
+            return i;
+
+    return n_neighbors;
+
+}
+
+template<typename TSeq>
+inline void Agent<TSeq>::erase_neighbor_at(size_t pos)
+{
+
+    neighbors->erase(neighbors->begin() + static_cast< std::ptrdiff_t >(pos));
+    n_neighbors--;
+
+    // Everything after `pos` shifted down by one, so the index has to follow.
+    // The alternative -- moving the last neighbor into the hole -- would be O(1)
+    // but would permute the survivors, and their order decides which transmitter
+    // roulette() picks.
+    if (neighbor_pos != nullptr)
+        build_neighbor_index();
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::has_neighbor(size_t neighbor_id) const
+{
+    return find_neighbor(neighbor_id) != n_neighbors;
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::add_neighbor(
     Agent<TSeq> & p,
     bool check_source,
     bool check_target
 ) {
-    // Can we find the neighbor?
-    bool found = false;
+
+    bool added = false;
 
     if (neighbors == nullptr)
-    {
         neighbors = new std::vector< size_t >();
-        neighbors_locations = new std::vector< size_t >();
-    }
 
-    if (check_source && neighbors)
-    {
+    // Can we find the neighbor?
+    bool found = check_source &&
+        has_neighbor(static_cast< size_t >(p.get_id()));
 
-        for (auto & n: *neighbors)    
-            if (static_cast<int>(n) == p.get_id())
-            {
-                found = true;
-                break;
-            }
-
-    }
-
-    // Three things going on here:
-    // - Where in the neighbor will this be
-    // - What is the neighbor's id
-    // - Increasing the number of neighbors
     if (!found)
     {
 
-        neighbors_locations->push_back(p.get_n_neighbors());
-        neighbors->push_back(p.get_id());
+        neighbors->push_back(static_cast< size_t >(p.get_id()));
         n_neighbors++;
 
+        if (neighbor_pos != nullptr)
+            neighbor_pos->operator[](static_cast< size_t >(p.get_id())) =
+                n_neighbors - 1u;
+        else if (n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
+            build_neighbor_index();
+
+        added = true;
+
     }
 
+    if (p.neighbors == nullptr)
+        p.neighbors = new std::vector< size_t >();
 
-    found = false;
-    if (check_target && p.neighbors)
-    {
-       
-        for (auto & n: *p.neighbors)
-            if (static_cast<int>(n) == id)
-            {
-                found = true;
-                break;
-            }
-    
-    }
+    found = check_target && p.has_neighbor(static_cast< size_t >(id));
 
     if (!found)
     {
 
-        if (p.neighbors == nullptr)
-        {
-            p.neighbors = new std::vector< size_t >();
-            p.neighbors_locations = new std::vector< size_t >();
-        }
-
-        p.neighbors_locations->push_back(n_neighbors - 1);
-        p.neighbors->push_back(id);
+        p.neighbors->push_back(static_cast< size_t >(id));
         p.n_neighbors++;
-        
+
+        if (p.neighbor_pos != nullptr)
+            p.neighbor_pos->operator[](static_cast< size_t >(id)) =
+                p.n_neighbors - 1u;
+        else if (p.n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
+            p.build_neighbor_index();
+
+        added = true;
+
     }
-    
+
+    return added;
+
+}
+
+template<typename TSeq>
+inline bool Agent<TSeq>::rm_neighbor(Agent<TSeq> & p)
+{
+
+    size_t here  = find_neighbor(static_cast< size_t >(p.get_id()));
+    size_t there = p.find_neighbor(static_cast< size_t >(id));
+
+    if ((here == n_neighbors) && (there == p.n_neighbors))
+        return false;
+
+    if (here != n_neighbors)
+        erase_neighbor_at(here);
+
+    if (there != p.n_neighbors)
+        p.erase_neighbor_at(there);
+
+    return true;
 
 }
 
@@ -532,27 +608,54 @@ inline void Agent<TSeq>::swap_neighbors(
     auto & neigh_this  = pop[(*neighbors)[n_this]];
     auto & neigh_other = pop[(*other.neighbors)[n_other]];
 
-    // Getting the locations in the neighbors
-    size_t loc_this_in_neigh = (*neighbors_locations)[n_this];
-    size_t loc_other_in_neigh = (*other.neighbors_locations)[n_other];
-
     // Changing ids
     std::swap((*neighbors)[n_this], (*other.neighbors)[n_other]);
 
     if (!model.directed)
     {
-        std::swap(
-            (*neigh_this.neighbors)[loc_this_in_neigh],
-            (*neigh_other.neighbors)[loc_other_in_neigh]
-            );
 
-        // Changing the locations
-        std::swap((*neighbors_locations)[n_this], (*other.neighbors_locations)[n_other]);
-        
-        std::swap(
-            (*neigh_this.neighbors_locations)[loc_this_in_neigh],
-            (*neigh_other.neighbors_locations)[loc_other_in_neigh]
-            );
+        // The two agents that were swapped away have to be told about it: the
+        // one that pointed back at `this` now points at `other`, and vice versa.
+        // Their positions are looked up rather than cached, which is what lets
+        // the neighbor arrays be edited (see Agent::rm_neighbor) without a
+        // back-pointer table going stale.
+        size_t back_this  = neigh_this.find_neighbor(static_cast< size_t >(id));
+        size_t back_other =
+            neigh_other.find_neighbor(static_cast< size_t >(other.id));
+
+        #ifdef EPI_DEBUG
+        if (back_this >= neigh_this.n_neighbors)
+            throw std::logic_error(
+                "[epi-debug] swap_neighbors: the tie is not reciprocated.");
+        if (back_other >= neigh_other.n_neighbors)
+            throw std::logic_error(
+                "[epi-debug] swap_neighbors: the tie is not reciprocated.");
+        #endif
+
+        (*neigh_this.neighbors)[back_this]   = static_cast< size_t >(other.id);
+        (*neigh_other.neighbors)[back_other] = static_cast< size_t >(id);
+
+        // Four lists may have changed. Rebuilding is O(degree), the same order
+        // as the swap itself, and sidesteps the aliasing cases (an agent
+        // appearing on both sides of the swap) that piecemeal updates get wrong.
+        if (neighbor_pos != nullptr)
+            build_neighbor_index();
+        if (other.neighbor_pos != nullptr)
+            other.build_neighbor_index();
+        if (neigh_this.neighbor_pos != nullptr)
+            neigh_this.build_neighbor_index();
+        if (neigh_other.neighbor_pos != nullptr)
+            neigh_other.build_neighbor_index();
+
+    }
+    else
+    {
+
+        if (neighbor_pos != nullptr)
+            build_neighbor_index();
+        if (other.neighbor_pos != nullptr)
+            other.build_neighbor_index();
+
     }
 
 }
@@ -564,6 +667,19 @@ inline std::vector< Agent<TSeq> *> Agent<TSeq>::get_neighbors(Model<TSeq> & mode
     for (size_t i = 0u; i < n_neighbors; ++i)
         res[i] = &model.population[(*neighbors)[i]];
     return res;
+}
+
+template<typename TSeq>
+inline NeighborsView<TSeq> Agent<TSeq>::neighbors_view(Model<TSeq> & model)
+{
+
+    if ((neighbors == nullptr) || (n_neighbors == 0u))
+        return NeighborsView<TSeq>(nullptr, 0u, &model.population);
+
+    return NeighborsView<TSeq>(
+        neighbors->data(), n_neighbors, &model.population
+    );
+
 }
 
 template<typename TSeq>
