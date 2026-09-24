@@ -48,6 +48,18 @@
     #define EPI_MAX_TRACKING 200
 #endif
 
+// Degree at which an agent starts keeping a hash index of its neighbors.
+//
+// Below the threshold, membership tests and tie removal scan the (contiguous,
+// insertion-ordered) neighbor vector, which for the degrees these models run at
+// -- smallworld networks of degree 5-8, households of 3-5 -- fits in a cache
+// line and beats a hash lookup. Past it, the linear scan starts to dominate
+// graph construction and tie surgery, so the agent builds the index once and
+// maintains it from then on. See `Model::add_edge` / `Model::rm_edge`.
+#ifndef EPI_NEIGHBOR_INDEX_THRESHOLD
+    #define EPI_NEIGHBOR_INDEX_THRESHOLD 32u
+#endif
+
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Model;
 
@@ -123,6 +135,42 @@ enum class EventAction : uint8_t {
     RemoveEntity,
     ChangeState
 };
+
+/**
+ * @brief How network transmission is sampled each step.
+ *
+ * @details Susceptible agents whose update function is
+ * `default_update_susceptible` or `sampler::make_update_susceptible()` can
+ * acquire a virus in two ways that give the same distribution of outcomes:
+ *
+ * - `pull`: each susceptible agent scans its neighbors and draws its infector
+ *   with `roulette()` (the approach of epiworld <= 0.15).
+ * - `push`: each agent carrying a virus adds its infection odds to its
+ *   susceptible neighbors, and each of those then makes one draw. Its cost
+ *   scales with the carriers' ties rather than with the susceptibles'.
+ * - `automatic` (the default): picks whichever of the two is cheaper at each
+ *   step.
+ *
+ * Only the stream of random numbers differs between the modes; `pull`
+ * reproduces the streams of earlier versions. See
+ * `Model::set_transmission_mode()`.
+ */
+enum class TransmissionMode : uint8_t {
+    automatic,
+    push,
+    pull
+};
+
+/// Defined when `TransmissionMode` and `Model::set_transmission_mode()` exist.
+#define EPIWORLD_HAS_TRANSMISSION_MODE
+
+/**
+ * @brief Default threshold of the `"auto"` transmission mode.
+ * @details See `Model::set_transmission_mode()`.
+ */
+#ifndef EPI_DEFAULT_TRANSMISSION_KAPPA
+    #define EPI_DEFAULT_TRANSMISSION_KAPPA 0.25
+#endif
 
 /**
  * @brief Decides how to distribute viruses at initialization

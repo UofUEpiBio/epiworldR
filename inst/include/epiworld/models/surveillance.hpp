@@ -126,7 +126,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         // This computes the prob of getting any neighbor variant
         epiworld_fast_uint nviruses_tmp = 0u;
         auto & m_ref = *m;
-        for (auto & neighbor: p->get_neighbors(*m)) 
+        for (auto * neighbor: p->neighbors_view(*m)) 
         {
                     
             auto & v = neighbor->get_virus();
