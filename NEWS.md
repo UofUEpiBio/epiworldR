@@ -36,6 +36,11 @@ Syncs the C++ core with epiworld 0.16.1.
   Before, the last option was chosen instead, so a death probability of 1
   could end in recovery.
 
+* `get_hist_tool()` now labels the `tool` column with the model's tool names.
+  It previously used the virus names instead, and could read past the end of
+  the name list (undefined behaviour) when a model had more tools than
+  viruses.
+
 # epiworldR 0.15.1-1
 
 ## User-visible changes

@@ -89,7 +89,7 @@ cpp11::data_frame get_hist_tool_cpp(
 
   // Same as before, but with tools
   std::vector< std::string > tools;
-  for (auto i : ptr->get_viruses())
+  for (auto i : ptr->get_tools())
     tools.push_back(i->get_name());
 
   std::vector< std::string > tnames(id.size());
