@@ -108,11 +108,9 @@ inline ToolToAgentFun<TSeq> distribute_tool_randomly(
             auto & population = model->get_agents();
             for (int i = 0u; i < n_to_distribute; ++i)
             {
+                // runif_index(n) is in [0, n); n-- leaves n at the last slot
                 int loc = model->runif_index(n--);
 
-                if ((n > 0) && (loc >= n))
-                    loc = n - 1;
-                
                 population[idx[loc]].add_tool(
                     *model, tool
                     );
@@ -202,11 +200,9 @@ inline ToolToAgentFun<TSeq> distribute_tool_to_entities(
             std::vector< size_t > idx = agent_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
+                // runif_index(n) is in [0, n); n-- leaves n at the last slot
                 size_t loc = model->runif_index(n--);
 
-                if ((n > 0) && (loc >= n))
-                    loc = n - 1;
-                
                 population[idx[loc]].add_tool(
                     *model, tool
                     );

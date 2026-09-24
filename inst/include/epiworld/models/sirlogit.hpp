@@ -179,7 +179,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
                 baseline += p->operator()(k, *m) * _m->coefs_infect[k + 1u];
 
             auto & m_ref = *m;
-            for (auto & neighbor: p->get_neighbors(*m)) 
+            for (auto * neighbor: p->neighbors_view(*m)) 
             {
                 
                 if (neighbor->get_virus() == nullptr)

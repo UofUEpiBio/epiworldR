@@ -179,6 +179,202 @@ inline void Model<TSeq>::_add_event(
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::state_index_build()
+{
+
+    const size_t ns = static_cast< size_t >(nstates);
+    const size_t n  = population.size();
+
+    // Counting sort of the agents by state
+    state_start.assign(ns + 1u, 0u);
+    for (auto & p : population)
+        state_start[p.state + 1u]++;
+
+    for (size_t s = 0u; s < ns; ++s)
+        state_start[s + 1u] += state_start[s];
+
+    state_order.resize(n);
+    state_member_pos.resize(n);
+    agent_state.resize(n);
+    state_degree.assign(ns, 0u);
+    state_carriers.assign(ns, 0u);
+    state_carrier_degree.assign(ns, 0u);
+
+    std::vector< size_t > next(state_start.begin(), state_start.end() - 1);
+    for (auto & p : population)
+    {
+
+        const size_t id = static_cast< size_t >(p.id);
+        const size_t pos = next[p.state]++;
+        state_order[pos] = id;
+        state_member_pos[id] = pos;
+        agent_state[id] = p.state;
+
+        state_degree[p.state] += p.n_neighbors;
+        if (p.virus != nullptr)
+        {
+            state_carriers[p.state]++;
+            state_carrier_degree[p.state] += p.n_neighbors;
+        }
+
+    }
+
+    state_index_ready = true;
+
+    // The push scratch space is sized (and cleared) on first use; a step that
+    // was interrupted by an exception must not leave marks for the next run.
+    push_slot.clear();
+    push_visit.clear();
+    push_sources.clear();
+    push_targets.clear();
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::state_index_move(
+    size_t id,
+    unsigned int state_old,
+    unsigned int state_new
+)
+{
+
+    // Swaps the entries at positions `a` and `b` of state_order
+    auto swap_pos = [this](size_t a, size_t b) -> void {
+        size_t ida = state_order[a];
+        size_t idb = state_order[b];
+        state_order[a] = idb;
+        state_order[b] = ida;
+        state_member_pos[idb] = a;
+        state_member_pos[ida] = b;
+    };
+
+    size_t pos = state_member_pos[id];
+
+    if (state_old < state_new)
+    {
+
+        // Move to the end of each block and shift that block's end down, so
+        // the agent becomes the first of the next block.
+        for (unsigned int s = state_old; s < state_new; ++s)
+        {
+            size_t last = state_start[s + 1u] - 1u;
+            swap_pos(pos, last);
+            state_start[s + 1u]--;
+            pos = last;
+        }
+
+    }
+    else
+    {
+
+        // Mirror: move to the front of the block and shift its start up, so
+        // the agent becomes the last of the previous block.
+        for (unsigned int s = state_old; s > state_new; --s)
+        {
+            size_t first = state_start[s];
+            swap_pos(pos, first);
+            state_start[s]++;
+            pos = first;
+        }
+
+    }
+
+    agent_state[id] = state_new;
+
+}
+
+template<typename TSeq>
+inline AgentIdsView Model<TSeq>::state_index_members(size_t state) const
+{
+    const size_t from = state_start[state];
+    return AgentIdsView(
+        state_order.data() + from, state_start[state + 1u] - from
+    );
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::state_index_update(
+    Agent<TSeq> * p,
+    unsigned int state_old,
+    bool had_virus
+)
+{
+
+    const unsigned int state_new = p->state;
+    const bool has_virus = (p->virus != nullptr);
+
+    if ((state_new == state_old) && (has_virus == had_virus))
+        return;
+
+    const size_t id  = static_cast< size_t >(p->id);
+    const size_t deg = p->n_neighbors;
+
+    if (state_new != state_old)
+    {
+
+        state_index_move(id, state_old, state_new);
+
+        state_degree[state_old] -= deg;
+        state_degree[state_new] += deg;
+
+    }
+
+    if (had_virus)
+    {
+        state_carriers[state_old]--;
+        state_carrier_degree[state_old] -= deg;
+    }
+
+    if (has_virus)
+    {
+        state_carriers[state_new]++;
+        state_carrier_degree[state_new] += deg;
+    }
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::state_index_degree(
+    Agent<TSeq> & p,
+    size_t n_neighbors_before
+)
+{
+
+    if (!state_index_ready || (p.n_neighbors == n_neighbors_before))
+        return;
+
+    // Unsigned arithmetic wraps, so adding the (possibly "negative")
+    // difference is exact.
+    const size_t delta = p.n_neighbors - n_neighbors_before;
+    state_degree[p.state] += delta;
+    if (p.virus != nullptr)
+        state_carrier_degree[p.state] += delta;
+
+}
+
+template<typename TSeq>
+inline AgentIdsView Model<TSeq>::get_agents_in_state(
+    epiworld_fast_uint state
+) const
+{
+
+    if (!state_index_ready)
+        throw std::logic_error(
+            "The agents-by-state index is built when the model runs. Call "
+            "run() (or run_multiple()) before get_agents_in_state()."
+        );
+
+    if (state >= nstates)
+        throw std::range_error(
+            "The state " + std::to_string(state) + " is out of range. " +
+            "The model currently has " + std::to_string(nstates) + " states."
+        );
+
+    return state_index_members(state);
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::events_run()
 {
     // Making the call
@@ -187,29 +383,38 @@ inline void Model<TSeq>::events_run()
     {
 
         Event<TSeq> & a = events[nevents_tmp++];
-        Agent<TSeq> * p  = a.agent;
+
+        // Everything read from the event after the handler runs is copied
+        // first: a handler can schedule more events (e.g., a virus's
+        // post-recovery hook adding a tool), which may grow `events` and leave
+        // `a` dangling.
+        Agent<TSeq> * p = a.agent;
+        const epiworld_fast_int new_state = a.new_state;
+        const epiworld_fast_int queue_change = a.queue;
+        const unsigned int state_old = p->state;
+        const bool had_virus = (p->virus != nullptr);
 
         #ifdef EPI_DEBUG
-        if (a.new_state >= static_cast<epiworld_fast_int>(nstates))
+        if (new_state >= static_cast<epiworld_fast_int>(nstates))
         {
             throw std::range_error(
-                "The proposed state " + std::to_string(a.new_state) + " is out of range. " +
+                "The proposed state " + std::to_string(new_state) + " is out of range. " +
                 "The model currently has " + std::to_string(nstates - 1) + " states.");
 
         }
-        else if ((a.new_state != -99) && (a.new_state < 0))
+        else if ((new_state != -99) && (new_state < 0))
         {
             throw std::range_error(
-                "The proposed state " + std::to_string(a.new_state) + " is out of range. " +
+                "The proposed state " + std::to_string(new_state) + " is out of range. " +
                 "The state cannot be negative.");
         }
         #endif
 
         // Undoing the change in the transition matrix
         if (
-            (a.new_state != -99) &&
+            (new_state != -99) &&
             (p->state_last_changed == today()) &&
-            (static_cast<int>(p->state) != a.new_state)
+            (static_cast<int>(p->state) != new_state)
         )
         {
             // Undoing state change in the transition matrix
@@ -246,11 +451,14 @@ inline void Model<TSeq>::events_run()
             throw std::logic_error("The requested event action is not supported.");
         }
 
-        if (a.new_state != -99)
-            p->state = a.new_state;
+        if (new_state != -99)
+            p->state = new_state;
 
         // Registering that the last change was today
         p->state_last_changed = today();
+
+        if (state_index_ready)
+            state_index_update(p, state_old, had_virus);
 
 
         #ifdef EPI_DEBUG
@@ -261,18 +469,18 @@ inline void Model<TSeq>::events_run()
         #endif
 
         // Updating queue
-        if (use_queuing && a.queue != -99)
+        if (use_queuing && queue_change != -99)
         {
 
-            if (a.queue == Queue<TSeq>::Everyone)
+            if (queue_change == Queue<TSeq>::Everyone)
                 queue += p;
-            else if (a.queue == -Queue<TSeq>::Everyone)
+            else if (queue_change == -Queue<TSeq>::Everyone)
                 queue -= p;
-            else if (a.queue == Queue<TSeq>::OnlySelf)
-                queue[p->get_id()]++;
-            else if (a.queue == -Queue<TSeq>::OnlySelf)
-                queue[p->get_id()]--;
-            else if (a.queue != Queue<TSeq>::NoOne)
+            else if (queue_change == Queue<TSeq>::OnlySelf)
+                queue.shift(static_cast< size_t >(p->get_id()), 1);
+            else if (queue_change == -Queue<TSeq>::OnlySelf)
+                queue.shift(static_cast< size_t >(p->get_id()), -1);
+            else if (queue_change != Queue<TSeq>::NoOne)
                 throw std::logic_error(
                     "The proposed queue change is not valid. Queue values can be {-2, -1, 0, 1, 2}."
                     );
@@ -409,7 +617,18 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
             : nullptr
     ),
     use_contact_tracing(model.use_contact_tracing),
-    contact_tracing_max_contacts(model.contact_tracing_max_contacts)
+    contact_tracing_max_contacts(model.contact_tracing_max_contacts),
+    state_order(model.state_order),
+    state_start(model.state_start),
+    state_member_pos(model.state_member_pos),
+    agent_state(model.agent_state),
+    state_degree(model.state_degree),
+    state_carriers(model.state_carriers),
+    state_carrier_degree(model.state_carrier_degree),
+    state_index_ready(model.state_index_ready),
+    transmission_mode(model.transmission_mode),
+    transmission_mode_last(model.transmission_mode_last),
+    transmission_kappa(model.transmission_kappa)
 {
 
     // Pointing to the right place. This needs
@@ -493,7 +712,18 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     sim_id(model.sim_id),
     contact_tracing(std::move(model.contact_tracing)),
     use_contact_tracing(model.use_contact_tracing),
-    contact_tracing_max_contacts(model.contact_tracing_max_contacts)
+    contact_tracing_max_contacts(model.contact_tracing_max_contacts),
+    state_order(std::move(model.state_order)),
+    state_start(std::move(model.state_start)),
+    state_member_pos(std::move(model.state_member_pos)),
+    agent_state(std::move(model.agent_state)),
+    state_degree(std::move(model.state_degree)),
+    state_carriers(std::move(model.state_carriers)),
+    state_carrier_degree(std::move(model.state_carrier_degree)),
+    state_index_ready(model.state_index_ready),
+    transmission_mode(model.transmission_mode),
+    transmission_mode_last(model.transmission_mode_last),
+    transmission_kappa(model.transmission_kappa)
 {
 
     db.model = this;
@@ -562,6 +792,19 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
         : nullptr;
     use_contact_tracing = m.use_contact_tracing;
     contact_tracing_max_contacts = m.contact_tracing_max_contacts;
+
+    state_order = m.state_order;
+    state_start = m.state_start;
+    state_member_pos = m.state_member_pos;
+    agent_state = m.agent_state;
+    state_degree = m.state_degree;
+    state_carriers = m.state_carriers;
+    state_carrier_degree = m.state_carrier_degree;
+    state_index_ready = m.state_index_ready;
+
+    transmission_mode = m.transmission_mode;
+    transmission_mode_last = m.transmission_mode_last;
+    transmission_kappa = m.transmission_kappa;
 
     agents_data = m.agents_data;
     agents_data_ncols = m.agents_data_ncols;
@@ -712,6 +955,7 @@ inline void Model<TSeq>::agents_empty_graph(
     // Resizing the people
     population.clear();
     population.resize(n);
+    state_index_ready = false;
 
     // Filling the model and ids
     size_t i = 0u;
@@ -1180,6 +1424,91 @@ inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::check_edge_endpoints(size_t i, size_t j) const
+{
+
+    if ((i >= population.size()) || (j >= population.size()))
+        throw std::range_error(
+            "Agent ids must be below " + std::to_string(population.size()) +
+            "; got " + std::to_string(i) + " and " + std::to_string(j) + "."
+        );
+
+    if (i == j)
+        throw std::logic_error(
+            "An agent cannot be tied to itself (agent " + std::to_string(i) + ")."
+        );
+
+    if (directed)
+        throw std::logic_error(
+            "add_edge/rm_edge change both ends of a tie, which is not meaningful "
+            "in a directed model."
+        );
+
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::add_edge(size_t i, size_t j)
+{
+
+    check_edge_endpoints(i, j);
+
+    size_t deg_i = population[i].n_neighbors;
+    size_t deg_j = population[j].n_neighbors;
+
+    if (!population[i].add_neighbor(population[j], true, true))
+        return false;
+
+    state_index_degree(population[i], deg_i);
+    state_index_degree(population[j], deg_j);
+
+    if (use_queuing)
+        queue.notify_edge_added(&population[i], &population[j]);
+
+    return true;
+
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::rm_edge(size_t i, size_t j)
+{
+
+    check_edge_endpoints(i, j);
+
+    // Nothing to unwind if the two were never tied -- shifting the counts for a
+    // tie that is not there is exactly the drift these calls exist to prevent.
+    if (!population[i].has_neighbor(j) && !population[j].has_neighbor(i))
+        return false;
+
+    if (use_queuing)
+        queue.notify_edge_removed(&population[i], &population[j]);
+
+    size_t deg_i = population[i].n_neighbors;
+    size_t deg_j = population[j].n_neighbors;
+
+    bool removed = population[i].rm_neighbor(population[j]);
+
+    state_index_degree(population[i], deg_i);
+    state_index_degree(population[j], deg_j);
+
+    return removed;
+
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_edge(size_t i, size_t j) const
+{
+
+    if ((i >= population.size()) || (j >= population.size()))
+        throw std::range_error(
+            "Agent ids must be below " + std::to_string(population.size()) +
+            "; got " + std::to_string(i) + " and " + std::to_string(j) + "."
+        );
+
+    return population[i].has_neighbor(j);
+
+}
+
+template<typename TSeq>
 inline bool Model<TSeq>::is_directed() const
 {
     if (population.size() == 0u)
@@ -1569,16 +1898,41 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
 template<typename TSeq>
 inline void Model<TSeq>::update_state() {
 
-    // Next state
-    if (use_queuing)
+    // Susceptible states using the default sampler can be updated by pushing
+    // infection odds from the carriers (see model-meat-transmission.hpp) --
+    // same distribution, and cheaper while few agents carry a virus. Directed
+    // networks always pull: a tie there need not be visible from both ends.
+    const bool push =
+        transmission_prepare() && !directed && transmission_choose_push();
+
+    transmission_mode_last = push ?
+        TransmissionMode::push : TransmissionMode::pull;
+
+    if (push)
     {
-        int i = -1;
-        for (auto & p: population)
-            if (queue[++i] > 0)
-            {
-                if (state_fun[p.state])
-                    state_fun[p.state](&p, this);
-            }
+
+        // Susceptibles were handled by the push; only the agents in the other
+        // states with an update function are left (see
+        // transmission_update_others()).
+        transmission_push();
+        transmission_update_others();
+
+    }
+    else if (use_queuing)
+    {
+
+        // Only queued agents, in ascending id order (the order fixes the
+        // random number stream).
+        queue.for_each_nonzero([this](size_t i) -> void {
+
+            if (queue[i] <= 0)
+                return;
+
+            auto & p = population[i];
+            if (state_fun[p.state])
+                state_fun[p.state](&p, this);
+
+        });
 
     }
     else
@@ -1586,7 +1940,7 @@ inline void Model<TSeq>::update_state() {
 
         for (auto & p: population)
             if (state_fun[p.state])
-                    state_fun[p.state](&p, this);
+                state_fun[p.state](&p, this);
 
     }
 
@@ -1609,17 +1963,13 @@ inline void Model<TSeq>::mutate_virus() {
     if (use_queuing)
     {
 
-        int i = -1;
-        for (auto & p: population)
-        {
+        queue.for_each_nonzero([this](size_t i) -> void {
 
-            if (queue[++i] == 0)
-                continue;
-
+            auto & p = population[i];
             if (p.virus != nullptr)
                 p.virus->mutate(this);
 
-        }
+        });
 
     }
     else
@@ -1881,6 +2231,10 @@ inline void Model<TSeq>::reset() {
     for (auto & p : population)
         p.reset();
 
+    // Everyone is now in the baseline state with no virus; from here on
+    // events_run() keeps the index current.
+    state_index_build();
+
     #ifdef EPI_DEBUG
     for (auto & a: population)
     {
@@ -1961,6 +2315,9 @@ inline epiworld_fast_int Model<TSeq>::add_state(
 
     states_labels.push_back(lab);
     state_fun.push_back(fun);
+
+    // The index has one slot per state; it is rebuilt when the next run starts.
+    state_index_ready = false;
 
     return nstates++;
 }
@@ -2654,6 +3011,16 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     EPI_DEBUG_FAIL_AT_TRUE(
         use_queuing != other.use_queuing,
         "Model:: use_queuing don't match"
+    )
+
+    EPI_DEBUG_FAIL_AT_TRUE(
+        transmission_mode != other.transmission_mode,
+        "Model:: transmission_mode don't match"
+    )
+
+    EPI_DEBUG_FAIL_AT_TRUE(
+        transmission_kappa != other.transmission_kappa,
+        "Model:: transmission_kappa don't match"
     )
 
     return true;

@@ -118,11 +118,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_randomly(
         for (int i = 0; i < n_to_sample; ++i)
         {
 
+            // runif_index(n) is in [0, n); the decrement leaves n_available
+            // at the last slot, which is swapped out below
             int loc = model->runif_index(n_available--);
-
-            // Correcting for possible overflow
-            if ((n_available > 0) && (loc >= n_available))
-                loc = n_available - 1;
 
             Agent<TSeq> & agent = population[idx[loc]];
             
@@ -217,11 +215,9 @@ inline VirusToAgentFun<TSeq> distribute_virus_to_entities(
             std::vector< size_t > idx = agents_ids;
             for (size_t i = 0u; i < n_to_distribute; ++i)
             {
+                // runif_index(n) is in [0, n); n-- leaves n at the last slot
                 size_t loc = model->runif_index(n--);
 
-                if ((n > 0) && (loc >= n))
-                    loc = n - 1;
-                
                 population[idx[loc]].set_virus(
                     *model, virus
                     );

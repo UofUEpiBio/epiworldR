@@ -28,7 +28,7 @@ inline void rewire_degseq(
     #ifdef EPI_DEBUG
     std::vector< int > _degree0(agents->size(), 0);
     for (size_t i = 0u; i < _degree0.size(); ++i)
-        _degree0[i] = model->get_agents()[i].get_neighbors(*model).size();
+        _degree0[i] = model->get_agents()[i].get_n_neighbors();
     #endif
 
     // Identifying individuals with degree > 0
@@ -38,11 +38,11 @@ inline void rewire_degseq(
 
     for (epiworld_fast_uint i = 0u; i < agents->size(); ++i)
     {
-        if (agents->operator[](i).get_neighbors(*model).size() > 0u)
+        if (agents->operator[](i).get_n_neighbors() > 0u)
         {
             non_isolates.push_back(i);
             epiworld_double wtemp = static_cast<epiworld_double>(
-                agents->operator[](i).get_neighbors(*model).size()
+                agents->operator[](i).get_n_neighbors()
                 );
             weights.push_back(wtemp);
             nedges += wtemp;
