@@ -27,6 +27,9 @@ authors:
   given-names: Andrew
   email: pulsipher.a@gmail.com
   orcid: https://orcid.org/0000-0002-0773-3210
+- family-names: Speybroeck
+  given-names: Niko
+  orcid: https://orcid.org/0000-0003-3322-3502
 preferred-citation:
   type: article
   title: 'epiworldR: Fast Agent-Based Epi Models'
@@ -68,6 +71,9 @@ references:
   - family-names: Pulsipher
     given-names: Andrew
     orcid: https://orcid.org/0000-0002-0773-3210
+  - family-names: Speybroeck
+    given-names: Niko
+    orcid: https://orcid.org/0000-0003-3322-3502
   year: '2026'
   notes: R package version 0.15.1-1
   url: https://github.com/UofUEpiBio/epiworldR

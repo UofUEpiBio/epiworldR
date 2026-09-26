@@ -39,7 +39,8 @@ bibentry(
   author  = c(
     person("George", "Vega Yon", comment = c(ORCID = "0000-0002-3171-0844")),
     person("Derek", "Meyer", comment = c(ORCID = "0009-0005-1350-6988")),
-    person("Andrew", "Pulsipher", comment = c(ORCID = "0000-0002-0773-3210"))
+    person("Andrew", "Pulsipher", comment = c(ORCID = "0000-0002-0773-3210")),
+    person("Niko", "Speybroeck", comment = c(ORCID = "0000-0003-3322-3502"))
   ),
   year    = year,
   note    = note,

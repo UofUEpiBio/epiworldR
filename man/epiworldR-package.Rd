@@ -34,6 +34,7 @@ Authors:
   \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
   \item Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
   \item Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
+  \item Niko Speybroeck (\href{https://orcid.org/0000-0003-3322-3502}{ORCID}) (what: Design of the social bubbles intervention)
 }
 
 Other contributors:
