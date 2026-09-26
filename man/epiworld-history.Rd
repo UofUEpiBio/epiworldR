@@ -29,7 +29,7 @@ get_hist_tool(x)
 \item{y}{Ignored.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 }
 \value{
 \itemize{

@@ -957,6 +957,12 @@ inline void Model<TSeq>::agents_empty_graph(
     population.resize(n);
     state_index_ready = false;
 
+    // A new network: undirected until agents_from_adjlist() says otherwise, and
+    // without the backup of the old agents (see set_backup()), which reset()
+    // would restore at the next run -- old ties, stored for the old direction.
+    directed = false;
+    population_backup.clear();
+
     // Filling the model and ids
     size_t i = 0u;
     for (auto & p : population)
@@ -1393,6 +1399,9 @@ inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
     // Resizing the people
     agents_empty_graph(al.vcount());
 
+    // AdjList::is_directed() throws on a list with no vertices.
+    directed = (al.vcount() > 0u) && al.is_directed();
+
     const auto & tmpdat = al.get_dat();
 
     for (size_t i = 0u; i < tmpdat.size(); ++i)
@@ -1403,10 +1412,17 @@ inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
         for (const auto & link: tmpdat[i])
         {
 
-            population[i].add_neighbor(
-                population[link.first],
-                true, true
-                );
+            // A directed tie i -> j is kept by its source only: j is one of
+            // i's neighbors, but i is not one of j's (see is_directed()).
+            if (directed)
+                population[i].append_neighbor(
+                    static_cast< size_t >(link.first), true
+                    );
+            else
+                population[i].add_neighbor(
+                    population[link.first],
+                    true, true
+                    );
 
         }
 
@@ -1627,6 +1643,14 @@ inline Model<TSeq> & Model<TSeq>::run(
         check_init_states(_end);
 
     }
+
+    // From here on get_ndays() is the run's horizon (see is_running()). The
+    // guard clears the flag however the run ends, exceptions included.
+    struct RunningGuard {
+        bool & flag;
+        explicit RunningGuard(bool & f) : flag(f) { flag = true; }
+        ~RunningGuard() { flag = false; }
+    } running_guard(running);
 
     // Starting first infection and tools
     reset();
@@ -1901,7 +1925,8 @@ inline void Model<TSeq>::update_state() {
     // Susceptible states using the default sampler can be updated by pushing
     // infection odds from the carriers (see model-meat-transmission.hpp) --
     // same distribution, and cheaper while few agents carry a virus. Directed
-    // networks always pull: a tie there need not be visible from both ends.
+    // networks always pull: a tie there is kept by its source only (see
+    // is_directed()), so it is not visible from both ends.
     const bool push =
         transmission_prepare() && !directed && transmission_choose_push();
 
@@ -1918,11 +1943,16 @@ inline void Model<TSeq>::update_state() {
         transmission_update_others();
 
     }
-    else if (use_queuing)
+    else if (use_queuing && !directed)
     {
 
         // Only queued agents, in ascending id order (the order fixes the
         // random number stream).
+        //
+        // Directed networks visit everyone instead. Registering an agent
+        // queues the agents on its own list, which in a directed network are
+        // the ones it is exposed to. The ones that can catch something from it
+        // are the ones that list *it*, and the queue never sees those.
         queue.for_each_nonzero([this](size_t i) -> void {
 
             if (queue[i] <= 0)
@@ -1960,7 +1990,10 @@ inline void Model<TSeq>::mutate_virus() {
     if (nmutates == 0u)
         return;
 
-    if (use_queuing)
+    // Directed networks do not use the queue (see update_state()), and must not
+    // start depending on it here: a carrier registered without `Everyone`, or
+    // a count left stale by rewiring, would then mutate only with queuing off.
+    if (use_queuing && !directed)
     {
 
         queue.for_each_nonzero([this](size_t i) -> void {
@@ -2001,6 +2034,11 @@ inline size_t Model<TSeq>::get_n_tools() const {
 template<typename TSeq>
 inline epiworld_fast_uint Model<TSeq>::get_ndays() const {
     return ndays;
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::is_running() const {
+    return running;
 }
 
 template<typename TSeq>
@@ -2071,6 +2109,11 @@ inline void Model<TSeq>::set_rewire_prop(epiworld_double prop)
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::get_rewire_prop() const {
     return rewire_prop;
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_rewire_fun() const {
+    return static_cast< bool >(rewire_fun);
 }
 
 template<typename TSeq>
@@ -2665,6 +2708,12 @@ inline void Model<TSeq>::rm_globalevent(
 
     globalevents.erase(globalevents.begin() + index);
 
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_n_globalevents() const
+{
+    return globalevents.size();
 }
 
 template<typename TSeq>

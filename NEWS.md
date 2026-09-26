@@ -1,3 +1,39 @@
+# epiworldR 0.17.0-0
+
+Syncs the C++ core with epiworld 0.17.0.
+
+## New features
+
+* `bubbles()` gains a `ties` argument that controls what being in a bubble
+  together does to the contact network. `"existing"`, the default, keeps the
+  previous behaviour: the bubble is only a transmission rule. `"complete"`
+  also ties every pair of agents sharing a bubble while the policy is in
+  force, so households become complete and merged households meet in full.
+  The ties are withdrawn when the bubbles are redrawn, when the policy lifts,
+  and on the last day of the run, so a run always leaves the network as it
+  found it. `"complete"` requires an undirected network. See the updated
+  "Social bubbles" vignette for an example.
+
+## User-visible changes
+
+* **Directed networks are now directed.** Networks built with
+  `agents_from_edgelist(..., directed = TRUE)` or
+  `agents_smallworld(..., d = TRUE)` were silently made undirected. A tie
+  `source -> target` is now kept by the source only: `target` is one of
+  `source`'s neighbors, and since agents are exposed to their own neighbors,
+  `target` can infect `source` but not the reverse. `get_network()` now
+  returns the ties as given. **Results change for directed networks**;
+  undirected networks give the same results as before.
+
+* Directed networks no longer use the queuing system, so large directed
+  networks may run slower.
+
+## Bug fixes
+
+* Rebuilding a model's network (e.g., calling `agents_smallworld()` again)
+  after `run_multiple()` now takes effect. Before, the next run restored the
+  network backed up by `run_multiple()`, population size included.
+
 # epiworldR 0.16.1-0
 
 Syncs the C++ core with epiworld 0.16.1.

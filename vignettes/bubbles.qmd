@@ -16,12 +16,14 @@ cutting down transmission between groups. How much of the outside contact is
 cut is controlled by `transmission_factor`: `0` is a perfectly observed bubble
 (no contact outside it at all), `1` leaves the population untouched, and values
 in between represent partial compliance. This vignette compares an unmitigated
-outbreak with two household-based policies created by `bubbles()`:
+outbreak with three household-based policies created by `bubbles()`:
 
-1. one household per bubble, and
-2. up to three households per bubble.
+1. one household per bubble,
+2. up to three households per bubble, and
+3. up to three households per bubble, whose members all meet while the policy
+   is in force (`ties = "complete"`).
 
-Both policies operate from day 20 through day 59. In `bubbles()`, `end_day` is
+All three policies operate from day 20 through day 59. In `bubbles()`, `end_day` is
 exclusive, so `start_day = 20` and `end_day = 60` give that interval. The following diagram illustrates three potential bubbles:
 
 ![Three different bubbles that can be accomplished using the `bubbles()` function](img/bubble-small-diagram.svg){ width="80%"}
@@ -147,8 +149,9 @@ in agent order.
 This ordering is useful for a small-world network: before rewiring, nearby node
 IDs are connected on the ring lattice. Sequential household members are
 therefore likely to already share edges, even after 20% rewiring. This matters
-because `bubbles()` restricts existing network ties; it does not create new
-contacts between household members.
+because, by default, `bubbles()` restricts existing network ties; it does not
+create new contacts between household members (we relax this in the last
+policy).
 
 ```{r}
 #| label: households
@@ -220,6 +223,44 @@ bubbles(
 )
 ```
 
+# Completing the bubbles
+
+The two policies above realize a bubble only as a transmission rule: contacts
+inside the bubble are left alone and everything else is damped. That
+under-states what a bubble is. If two households were merged because one member
+of each happened to be tied, that single contact is the only one preserved
+between them -- the rest of the two households never meet, although the policy
+says they have bubbled. The same gap exists inside a household, whose members
+need not all be tied to each other.
+
+With `ties = "complete"`, `bubbles()` completes every bubble to a clique while
+the policy is in force: each pair of agents sharing a bubble is tied, so
+households become complete and merged households meet in full. Grouping is
+unchanged -- the same seed draws the same bubbles -- and the ties are withdrawn
+when the policy lifts (and at the end of each run), so the network is left as it
+was found. Contacts outside the bubble are still damped by the same 80%.
+
+```{r}
+#| label: complete-ties-model
+complete_ties_model <- clone_model(baseline_model)
+
+bubbles(
+  complete_ties_model,
+  household_id        = household_id,
+  flavor              = "household",
+  group_size          = 3L,
+  transmission_factor = 0.20,
+  start_day           = 20L,
+  end_day             = 60L,
+  ties                = "complete"
+)
+```
+
+Every tie is an independent daily exposure, so completing a bubble raises the
+force of infection inside it. Here a bubble holds up to three households of two
+to six members, so an agent may be tied to as many as 17 bubble-mates, all of
+them transmitting at the full, undamped rate while the policy lasts.
+
 # Compare outbreak sizes
 
 Finally, we run 200 replicates for each scenario and report the final outbreak
@@ -233,14 +274,19 @@ spread across threads.
 results <- rbind(
   run_scenario(baseline_model, "No bubbles"),
   run_scenario(household_only_model, "One household"),
-  run_scenario(three_household_model, "Up to three households")
+  run_scenario(three_household_model, "Up to three households"),
+  run_scenario(complete_ties_model, "Up to three households, complete")
 )
 
 summarize_outbreaks(results)
 ```
 
 The table reports the mean, median, central 95% simulation interval, and mean
-percentage of the population ever infected. Comparing the two bubble policies
-shows the trade-off directly: allowing households to combine preserves more
-contacts, but it generally produces larger outbreaks than keeping each
-household in its own bubble.
+percentage of the population ever infected. Comparing the first two bubble
+policies shows the trade-off directly: allowing households to combine preserves
+more contacts, but it generally produces larger outbreaks than keeping each
+household in its own bubble. Completing the bubbles adds the contacts that the
+policy allows but the network lacked, and the outbreak grows accordingly. The
+two settings bracket the policy: `ties = "existing"` assumes bubbled households
+only meet through the contacts they already had, while `ties = "complete"`
+assumes everyone in a bubble meets everyone else in it every day.

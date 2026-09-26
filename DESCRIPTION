@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.16.1-0
+Version: 0.17.0-0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
@@ -10,6 +10,9 @@ Authors@R: c(
   email="derekmeyer37@gmail.com", comment = c(ORCID = "0009-0005-1350-6988")),
   person(given="Andrew", family="Pulsipher", role=c("aut"),
   email="pulsipher.a@gmail.com", comment = c(ORCID = "0000-0002-0773-3210")),
+  person(given="Niko", family="Speybroeck", role=c("aut"),
+  comment = c(ORCID = "0000-0003-3322-3502",
+  what = "Design of the social bubbles intervention")),
   person(given="Susan", family="Holmes", role = "rev", comment =
          c(what = "JOSS reviewer", ORCID="0000-0002-2208-8168")),
   person(given="Abinash", family="Satapathy", role = "rev", comment =
@@ -23,7 +26,6 @@ URL: https://github.com/UofUEpiBio/epiworldR,
     https://uofuepibio.github.io/epiworldR-workshop/
 BugReports: https://github.com/UofUEpiBio/epiworldR/issues
 License: MIT + file LICENSE
-RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
@@ -41,3 +43,4 @@ Imports:
 SystemRequirements: C++17
 VignetteBuilder:
     quarto
+Config/roxygen2/version: 8.1.0

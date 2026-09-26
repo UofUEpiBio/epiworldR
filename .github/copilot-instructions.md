@@ -1,1 +1,2 @@
 - This repository hosts an R package that uses cpp11. Most the work lies on porting C++ code from the epiworld library and expose it
+- Follow `AGENTS.md` at the repository root. In particular, compile, test, run roxygen2, and render vignettes inside the devcontainer (`.devcontainer/`), not with the host's R.

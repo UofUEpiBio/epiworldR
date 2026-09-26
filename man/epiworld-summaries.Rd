@@ -65,7 +65,7 @@ head(get_outbreak_size(seirconn))
 
 }
 \seealso{
-Other Summaries: 
+Other Summaries:
 \code{\link{epiworld-hospitalizations}}
 }
 \concept{Summaries}

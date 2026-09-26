@@ -123,14 +123,14 @@ inline void rewire_degseq(
         // After swap: p0 will be connected to neighbor_id_11, p1 to neighbor_id_01
         bool would_create_duplicate = false;
         for (auto* n : neighbors_p0) {
-            if (n->get_id() == neighbor_id_11 && n != neighbors_p0[id01]) {
+            if (static_cast<size_t>(n->get_id()) == neighbor_id_11 && n != neighbors_p0[id01]) {
                 would_create_duplicate = true;
                 break;
             }
         }
         if (!would_create_duplicate) {
             for (auto* n : neighbors_p1) {
-                if (n->get_id() == neighbor_id_01 && n != neighbors_p1[id11]) {
+                if (static_cast<size_t>(n->get_id()) == neighbor_id_01 && n != neighbors_p1[id11]) {
                     would_create_duplicate = true;
                     break;
                 }

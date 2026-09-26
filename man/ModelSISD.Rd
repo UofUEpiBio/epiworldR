@@ -61,22 +61,22 @@ plot(model_sisd, main = "SISD Model")
 \seealso{
 epiworld-methods
 
-Other Models: 
-\code{\link{ModelDiffNet}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRCONN}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRDCONN}()},
-\code{\link{ModelSEIRMixing}()},
-\code{\link{ModelSEIRMixingQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRCONN}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRDCONN}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIRMixing}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSURV}()}
+Other Models:
+\code{\link[=ModelDiffNet]{ModelDiffNet()}},
+\code{\link[=ModelSEIR]{ModelSEIR()}},
+\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
+\code{\link[=ModelSEIRD]{ModelSEIRD()}},
+\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
+\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
+\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
+\code{\link[=ModelSIR]{ModelSIR()}},
+\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
+\code{\link[=ModelSIRD]{ModelSIRD()}},
+\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
+\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
+\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
+\code{\link[=ModelSIS]{ModelSIS()}},
+\code{\link[=ModelSURV]{ModelSURV()}}
 }
 \concept{Models}
 \concept{general-models}

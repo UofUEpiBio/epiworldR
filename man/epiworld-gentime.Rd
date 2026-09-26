@@ -26,13 +26,13 @@ plot_generation_time(x, ...)
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model), or an object of class \link{epiworld_generation_time}.}
 
-\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 desired statistic.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 }
 \value{
 \itemize{
@@ -68,7 +68,7 @@ gent <- plot_generation_time(seirconn)
 
 }
 \seealso{
-Other Epidemiological metrics: 
+Other Epidemiological metrics:
 \code{\link{epiworld-repnum}}
 }
 \concept{Epidemiological metrics}

@@ -29,7 +29,7 @@ Weighted hospitalization tracking when agents have multiple tools.
 # See model documentation for examples with hospitalization tracking
 }
 \seealso{
-Other Summaries: 
+Other Summaries:
 \code{\link{epiworld-summaries}}
 }
 \concept{Summaries}

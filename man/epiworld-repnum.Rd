@@ -29,13 +29,13 @@ plot_reproductive_number(x, ...)
 
 \item{y}{Ignored.}
 
-\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 desired statistic.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 }
 \value{
 \itemize{
@@ -76,7 +76,7 @@ plot(rp) # Also equivalent to plot_reproductive_number(seirconn)
 
 }
 \seealso{
-Other Epidemiological metrics: 
+Other Epidemiological metrics:
 \code{\link{epiworld-gentime}}
 }
 \concept{Epidemiological metrics}

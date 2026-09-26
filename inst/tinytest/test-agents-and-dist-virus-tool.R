@@ -259,3 +259,17 @@ ans <- run_multiple_get_results(abm, nthreads = 2)$total_hist |>
 
 ans <- ans[date == 50 & state == "Susceptible"]
 expect_true(ans[, all(counts %in% c(1, 2, 199))])
+
+# Rebuilding the network after run_multiple() takes effect ---------------------
+# run_multiple() backs up the population. The next run used to restore that
+# backup, so the network rebuilt in between (here, a larger one) was lost.
+abm <- ModelSIR("x", prevalence = 0.01, transmission_rate = 0.1,
+                recovery_rate = 0.3)
+agents_smallworld(abm, n = 500, k = 4, d = FALSE, p = 0.1)
+verbose_off(abm)
+run_multiple(abm, ndays = 5, nsims = 3, seed = 1, verbose = FALSE)
+
+agents_smallworld(abm, n = 800, k = 4, d = FALSE, p = 0.1)
+run(abm, ndays = 5, seed = 1)
+expect_equal(size(abm), 800)
+expect_equal(nrow(get_network(abm)), 800L * 4L / 2L)

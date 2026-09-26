@@ -33,9 +33,9 @@ plot_incidence(x, ...)
 entries in the transition matrix.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 
-\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 desired statistic.}

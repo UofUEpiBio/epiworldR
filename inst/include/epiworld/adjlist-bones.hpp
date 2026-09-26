@@ -9,7 +9,7 @@ class AdjList {
 private:
 
     std::vector<std::map<int, int>> dat;
-    bool directed;
+    bool directed = false;
     epiworld_fast_uint N = 0;
     epiworld_fast_uint E = 0;
 

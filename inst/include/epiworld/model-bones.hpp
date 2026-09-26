@@ -174,6 +174,10 @@ protected:
     bool verbose     = true;
     int current_date = 0;
 
+    // True while run() is driving the day loop, so get_ndays() is the run's
+    // actual horizon. Not copied: a copy of the model is not in a run.
+    bool running = false;
+
     void dist_tools();
     void dist_virus();
     void dist_entities();
@@ -360,6 +364,8 @@ public:
      * @details `backup` can be used to restore the entire object
      * after a run. This can be useful if the user wishes to have
      * individuals start with the same network from the beginning.
+     * Building a new network (`agents_from_edgelist()` and friends, or
+     * `agents_empty_graph()`) drops the backup.
      *
      */
     ///@{
@@ -510,11 +516,28 @@ public:
     /**
      * @name Accessing population of the model
      *
+     * @details In a directed network (`directed = true`), a tie
+     * `source -> target` is kept by its source only: `target` is one of
+     * `source`'s neighbors, but not the other way around. An undirected tie is
+     * kept at both ends. Update functions look at an agent's own neighbors (a
+     * susceptible agent catches a virus from them), so the tie exposes the
+     * source to the target. The target can infect the source, but not the
+     * reverse. To have `i` infect `j`, give the tie as `j -> i`.
+     *
+     * A directed network always pulls (see `set_transmission_mode()`), and each
+     * step updates (and offers mutations to) every agent, as with
+     * `queuing_off()`. The queue flags the
+     * neighbors of an agent that becomes infectious, and along a directed tie
+     * those are not the agents it can infect. `write_edgelist()` returns the
+     * ties as given, and `add_edge()`/`rm_edge()` refuse to edit a directed
+     * network.
+     *
      * @param fn std::string Filename of the edgelist file.
      * @param skip int Number of lines to skip in `fn`.
      * @param directed bool Whether the graph is directed or not.
      * @param size Size of the network.
-     * @param al AdjList to read into the model.
+     * @param al AdjList to read into the model. The network is directed if
+     * `al` is.
      */
     ///@{
     void agents_from_adjlist(
@@ -533,7 +556,7 @@ public:
 
     void agents_from_adjlist(AdjList al);
 
-    bool is_directed() const;
+    bool is_directed() const; ///< Whether the network was built directed.
 
     std::vector< Agent<TSeq> > & get_agents(); ///< Returns a reference to the vector of agents.
 
@@ -556,6 +579,7 @@ public:
         bool d = false,
         epiworld_double p = .01
         );
+    /// Replaces the network with `n` agents and no ties (undirected).
     void agents_empty_graph(epiworld_fast_uint n = 1000);
 
     /**
@@ -589,7 +613,8 @@ public:
     bool add_edge(size_t i, size_t j);
 
     bool rm_edge(size_t i, size_t j);  ///< @return `true` if a tie was removed.
-    bool has_edge(size_t i, size_t j) const; ///< Whether `i` and `j` are tied.
+    /// Whether `i` and `j` are tied. In a directed network, whether `i -> j` is.
+    bool has_edge(size_t i, size_t j) const;
     ///@}
 
     /**
@@ -657,6 +682,17 @@ public:
     size_t get_n_viruses() const; ///< Number of viruses in the model
     size_t get_n_tools() const; ///< Number of tools in the model
     epiworld_fast_uint get_ndays() const;
+
+    /**
+     * @brief True while `run()` is driving the day loop.
+     *
+     * @details It is set from just before `reset()` until the last day is
+     * done, so global events (including their `reset()`) can rely on
+     * `get_ndays()` being the run's horizon -- even when it is zero. It is
+     * false when the day loop is driven by hand (`reset()`, then the steps
+     * called directly), where `get_ndays()` means nothing.
+     */
+    bool is_running() const;
     epiworld_fast_uint get_n_replicates() const;
     size_t get_sim_id() const;
     size_t get_n_entities() const;
@@ -669,9 +705,15 @@ public:
     /**
      * @name Rewire the network preserving the degree sequence.
      *
-     * @details This implementation assumes an undirected network,
-     * thus if {(i,j), (k,l)} -> {(i,l), (k,j)}, the reciprocal
-     * is also true, i.e., {(j,i), (l,k)} -> {(j,k), (l,i)}.
+     * @details In an undirected network, if {(i,j), (k,l)} -> {(i,l), (k,j)},
+     * the reciprocal is also true, i.e., {(j,i), (l,k)} -> {(j,k), (l,i)}. In a
+     * directed network only the sources' ties move, which keeps every agent's
+     * in- and out-degree.
+     *
+     * The rewiring function runs on every step of a run, so it should change
+     * ties only through `Agent::swap_neighbors()` (what `rewire_degseq()`
+     * uses), `add_edge()`, or `rm_edge()`: these keep the queueing system in
+     * step with the network.
      *
      * @param proportion Proportion of ties to be rewired.
      *
@@ -681,6 +723,9 @@ public:
     void set_rewire_fun(std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> fun);
     void set_rewire_prop(epiworld_double prop);
     epiworld_double get_rewire_prop() const;
+    /// @brief Whether a rewiring function is set. `rewire()` calls it on every
+    /// step, whatever the proportion.
+    bool has_rewire_fun() const;
     void rewire();
     ///@}
 
@@ -943,6 +988,7 @@ public:
     GlobalEvent<TSeq> & get_globalevent(std::string name); ///< Retrieve a global action by name
     GlobalEvent<TSeq> & get_globalevent(size_t i); ///< Retrieve a global action by index
     bool has_globalevent(std::string_view name) const; ///< Whether a global action by that name exists
+    size_t get_n_globalevents() const; ///< Number of global actions registered
 
     void rm_globalevent(std::string name); ///< Remove a global action by name
     void rm_globalevent(size_t i); ///< Remove a global action by index
