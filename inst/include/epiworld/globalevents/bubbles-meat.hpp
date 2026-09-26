@@ -464,10 +464,12 @@ inline bool Bubbles<TSeq>::wants_ties(Model<TSeq> * model) const
     // on the last day is what keeps the intervention from outliving its run:
     // Model::run() takes no population backup, so ties left in the network
     // would still be there when the model is run again, or would be captured by
-    // the backup run_multiple() takes. `ndays == 0` means the day loop is being
-    // driven by hand and there is no known end, so the question does not apply.
-    size_t ndays = static_cast< size_t >(model->get_ndays());
-    if ((ndays > 0u) && (next > static_cast< int >(ndays)))
+    // the backup run_multiple() takes. That includes `run(0)`, whose only step
+    // is the setup: nothing would ever withdraw ties built there. Outside
+    // Model::run() the day loop is being driven by hand and there is no known
+    // end, so the question does not apply.
+    if (model->is_running() &&
+        (next > static_cast< int >(model->get_ndays())))
         return false;
 
     return is_active(next);

@@ -1644,6 +1644,14 @@ inline Model<TSeq> & Model<TSeq>::run(
 
     }
 
+    // From here on get_ndays() is the run's horizon (see is_running()). The
+    // guard clears the flag however the run ends, exceptions included.
+    struct RunningGuard {
+        bool & flag;
+        explicit RunningGuard(bool & f) : flag(f) { flag = true; }
+        ~RunningGuard() { flag = false; }
+    } running_guard(running);
+
     // Starting first infection and tools
     reset();
 
@@ -2026,6 +2034,11 @@ inline size_t Model<TSeq>::get_n_tools() const {
 template<typename TSeq>
 inline epiworld_fast_uint Model<TSeq>::get_ndays() const {
     return ndays;
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::is_running() const {
+    return running;
 }
 
 template<typename TSeq>
