@@ -174,6 +174,10 @@ protected:
     bool verbose     = true;
     int current_date = 0;
 
+    // True while run() is driving the day loop, so get_ndays() is the run's
+    // actual horizon. Not copied: a copy of the model is not in a run.
+    bool running = false;
+
     void dist_tools();
     void dist_virus();
     void dist_entities();
@@ -678,6 +682,17 @@ public:
     size_t get_n_viruses() const; ///< Number of viruses in the model
     size_t get_n_tools() const; ///< Number of tools in the model
     epiworld_fast_uint get_ndays() const;
+
+    /**
+     * @brief True while `run()` is driving the day loop.
+     *
+     * @details It is set from just before `reset()` until the last day is
+     * done, so global events (including their `reset()`) can rely on
+     * `get_ndays()` being the run's horizon -- even when it is zero. It is
+     * false when the day loop is driven by hand (`reset()`, then the steps
+     * called directly), where `get_ndays()` means nothing.
+     */
+    bool is_running() const;
     epiworld_fast_uint get_n_replicates() const;
     size_t get_sim_id() const;
     size_t get_n_entities() const;

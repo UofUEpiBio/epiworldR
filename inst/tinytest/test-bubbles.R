@@ -254,3 +254,33 @@ agents_smallworld(model_d, n = 300, k = 4, d = TRUE, p = 0.1)
 bubbles(model_d, household_id = make_hh(300), flavor = "household",
         group_size = 1, ties = "complete")
 expect_error(run(model_d, ndays = 10, seed = 1), "undirected")
+
+###############################################################################
+# ties = "complete" and run(ndays = 0): the setup of a zero-day run used to
+# build the clique with nothing left to withdraw it. run_multiple() then backed
+# it up, and every replicate after the first kept it for the whole run
+# (UofUEpiBio/epiworld#271).
+###############################################################################
+model_z <- ModelSIR("x", prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+agents_from_edgelist(
+  model_z, source = 0:4, target = 1:5, size = 6L, directed = FALSE
+)
+bubbles(
+  model_z, household_id = rep(1:2, each = 3), flavor = "household",
+  group_size = 2, start_day = 0, end_day = 3, ties = "complete"
+)
+
+n_edges_z <- integer(0)
+add_globalevent(model_z, globalevent_fun(function(model) {
+  n_edges_z <<- c(n_edges_z, nrow(get_network(model)))
+  invisible()
+}, name = "Count edges"))
+verbose_off(model_z)
+
+run(model_z, ndays = 0, seed = 1)
+expect_equal(nrow(get_network(model_z)), 5L)
+
+run_multiple(model_z, ndays = 6, nsims = 2, seed = 1, verbose = FALSE,
+             nthreads = 1)
+expect_equal(n_edges_z, rep(c(15L, 5L, 5L, 5L, 5L, 5L), 2))
+expect_equal(nrow(get_network(model_z)), 5L)
