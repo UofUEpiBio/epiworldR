@@ -143,9 +143,24 @@ protected:
     void erase_neighbor_at(size_t pos);
 
     /**
+     * @brief Appends `neighbor_id` to this agent's neighbors, and only there.
+     *
+     * @details One end of a tie -- all that a directed tie has, since it is
+     * kept by its source (see `Model::is_directed()`). Not public, for the same
+     * reason as `add_neighbor()`.
+     *
+     * @param check Whether to skip `neighbor_id` if it is already a neighbor.
+     * @return `true` if it was appended.
+     */
+    bool append_neighbor(size_t neighbor_id, bool check);
+
+    /**
      * @name Change this agent's ties
      *
-     * @details These are deliberately not public. They edit the network and
+     * @details These edit both ends of the tie (`p` among this agent's
+     * neighbors, and this agent among `p`'s), i.e., an undirected tie.
+     *
+     * They are deliberately not public. They edit the network and
      * nothing else, so calling one while a model is running would leave the
      * queueing system counting neighbors that no longer exist (or missing ones
      * that now do), and agents would drop out of `Model::update_state()`
@@ -294,10 +309,19 @@ public:
 
     /**
      * @brief Swaps neighbors between the current agent and agent `other`
-     * 
-     * @param other 
-     * @param n_this 
-     * @param n_other 
+     *
+     * @details `j`, this agent's neighbor at position `n_this`, and `l`,
+     * `other`'s neighbor at position `n_other`, trade places: (this-j),
+     * (other-l) become (this-l), (other-j). In an undirected model, `j` and
+     * `l` are updated to match. No degree changes. `rewire_degseq()` calls
+     * this on every step of a run that uses it as the rewiring function, so,
+     * like `Model::add_edge()`, it keeps the queueing system in step (see
+     * `Queue::notify_edges_swapped()`) and is safe at any point of a run.
+     *
+     * @param other The agent to swap a neighbor with.
+     * @param n_this,n_other Positions of the two neighbors in this agent's and
+     * in `other`'s list.
+     * @param model The model both agents belong to.
      */
     void swap_neighbors(
         Agent<TSeq> & other,

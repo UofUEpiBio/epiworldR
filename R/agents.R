@@ -11,7 +11,11 @@
 #' in the edgelist.
 #' @param n,size Number of individuals in the population.
 #' @param k Number of ties in the small world network.
-#' @param d,directed Logical scalar. Whether the graph is directed or not.
+#' @param d,directed Logical scalar. Whether the graph is directed or not. In a
+#' directed graph, a tie `source -> target` is kept by the source only: `target`
+#' is one of `source`'s neighbors, but not the reverse. Since agents are exposed
+#' to their own neighbors, `target` can infect `source`, not the other way
+#' around. To model "`i` infects `j`", give the tie as `j -> i`.
 #' @param p Probability of rewiring.
 #' @export
 #' @concept model-utility-functions

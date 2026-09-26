@@ -31,14 +31,15 @@ Useful links:
 
 Authors:
 \itemize{
+  \item George Vega Yon \email{g.vegayon@gmail.com} (\href{https://orcid.org/0000-0002-3171-0844}{ORCID})
   \item Derek Meyer \email{derekmeyer37@gmail.com} (\href{https://orcid.org/0009-0005-1350-6988}{ORCID})
   \item Andrew Pulsipher \email{pulsipher.a@gmail.com} (\href{https://orcid.org/0000-0002-0773-3210}{ORCID})
 }
 
 Other contributors:
 \itemize{
-  \item Susan Holmes (\href{https://orcid.org/0000-0002-2208-8168}{ORCID}) (JOSS reviewer) [reviewer]
-  \item Abinash Satapathy (\href{https://orcid.org/0000-0002-2955-2744}{ORCID}) (JOSS reviewer) [reviewer]
+  \item Susan Holmes (\href{https://orcid.org/0000-0002-2208-8168}{ORCID}) (what: JOSS reviewer) [reviewer]
+  \item Abinash Satapathy (\href{https://orcid.org/0000-0002-2955-2744}{ORCID}) (what: JOSS reviewer) [reviewer]
   \item Carinogurjao [reviewer]
   \item Centers for Disease Control and Prevention (Award number 1U01CK000585; 75D30121F00003) [funder]
 }

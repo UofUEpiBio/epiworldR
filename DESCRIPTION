@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.16.1-0
+Version: 0.17.0-0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
@@ -23,7 +23,6 @@ URL: https://github.com/UofUEpiBio/epiworldR,
     https://uofuepibio.github.io/epiworldR-workshop/
 BugReports: https://github.com/UofUEpiBio/epiworldR/issues
 License: MIT + file LICENSE
-RoxygenNote: 7.3.3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
@@ -41,3 +40,4 @@ Imports:
 SystemRequirements: C++17
 VignetteBuilder:
     quarto
+Config/roxygen2/version: 8.1.0

@@ -40,9 +40,15 @@
 #' @param param_name Character scalar. Name of the model parameter in which the
 #' transmission factor is stored. Give two interventions deployed on the same
 #' model different names if they are to be dialled independently.
+#' @param ties Character scalar. What being in a bubble together does to the
+#' contact network. `"existing"` (the default) leaves the network untouched: the
+#' bubble is only a transmission rule. `"complete"` also ties every pair of
+#' agents sharing a bubble while the policy is in force, so households become
+#' complete and merged households meet in full (see Details).
 #'
 #' @details
-#' The contact network is **not** modified. Instead, every agent receives a tool
+#' With `ties = "existing"` (the default) the contact network is **not**
+#' modified. Instead, every agent receives a tool
 #' that, on each exposure, compares the bubble of the susceptible agent with the
 #' bubble of the infectious one: if they match, transmission is left untouched --
 #' contacts inside the bubble are exactly what the policy preserves -- and if
@@ -50,6 +56,39 @@
 #' factor of `0` this is equivalent to deleting the out-of-bubble contacts
 #' (contact weights are uniform in these models), while leaving the network
 #' available for other purposes (such as contact tracing or network summaries).
+#'
+#' ## Completing the bubbles (`ties = "complete"`)
+#'
+#' Under `ties = "existing"` a bubble is only a transmission rule, which
+#' under-states the policy: if two households were merged because one member of
+#' each happened to be tied, that single contact is the only one preserved
+#' between them, and the rest of the two households never meet. The same gap
+#' exists inside a household, whose members need not all be tied to each other.
+#'
+#' With `ties = "complete"` every bubble is completed to a clique: each pair of
+#' agents sharing a bubble is tied for as long as the bubble lasts. Ties the
+#' network already had are left alone; the intervention only records the ones it
+#' created and withdraws exactly those when the bubble is redrawn (see
+#' `rewire_every`), when the policy lifts at `end_day`, and on the last day of
+#' the run, so a run never leaves the network changed. Contacts *outside* the
+#' bubble stay in the network and are damped by the transmission factor, as
+#' under `"existing"`. How households are grouped does not depend on `ties`: the
+#' same seed draws the same bubbles.
+#'
+#' A few consequences to keep in mind:
+#'
+#' - Completing a bubble **raises the force of infection inside it**: every tie
+#'   is an independent daily exposure, so a bubble of `k` agents gives each
+#'   member `k - 1` chances a day to be infected by a bubble-mate.
+#' - The ties only exist while the policy is in force. For the same reason,
+#'   `"complete"` is not neutral at `transmission_factor = 1`: it adds contacts
+#'   inside the bubble and damps nothing outside it.
+#' - While they are up, the ties are real network ties (they show up, for
+#'   instance, in the edgelist and in the number of neighbours).
+#' - `"complete"` requires an undirected network (e.g., `d = FALSE` in
+#'   [agents_smallworld()] or `directed = FALSE` in [agents_from_edgelist()]);
+#'   otherwise the run stops with an error. A bubble whose clique would give an
+#'   agent more than 1,024 contacts is also refused.
 #'
 #' ## Dialling the policy through the model
 #'
@@ -74,12 +113,13 @@
 #' household, and are only ever built between households that are **actually
 #' connected** in the contact network.
 #'
-#' That last property matters: the intervention can only suppress transmission
-#' along existing edges, never create new ones, so placing two households that
-#' share no contact in the same bubble would change nothing. Pairing households
-#' at random would make `group_size` inert -- indistinguishable from a strict
-#' lockdown however large the bubbles are. It also matches the real policy: a
-#' household picks a bubble partner it already socialises with.
+#' That last property matters: with `ties = "existing"` the intervention can only
+#' suppress transmission along existing edges, never create new ones, so placing
+#' two households that share no contact in the same bubble would change nothing.
+#' Pairing households at random would make `group_size` inert --
+#' indistinguishable from a strict lockdown however large the bubbles are. It
+#' also matches the real policy: a household picks a bubble partner it already
+#' socialises with, which is why the same rule is used with `ties = "complete"`.
 #'
 #' ## The algorithms
 #'
@@ -207,6 +247,10 @@
 #' #
 #' # Individually chosen bubbles of up to four households:
 #' #   bubbles(model, household_id, "peer", group_size = 2, max_households = 4)
+#' #
+#' # Two households per bubble, whose members all meet while the policy lasts:
+#' #   bubbles(model, household_id, "household", group_size = 2,
+#' #           ties = "complete")
 bubbles <- function(
   model,
   household_id,
@@ -218,11 +262,13 @@ bubbles <- function(
   rewire_every        = 0L,
   name                = "Social bubble",
   max_households      = 2L,
-  param_name          = "Bubble transmission factor"
+  param_name          = "Bubble transmission factor",
+  ties                = c("existing", "complete")
 ) {
 
   stopifnot_model(model)
   flavor <- match.arg(flavor)
+  ties   <- match.arg(ties)
 
   # Coerce/validate the scalar arguments once, up front. Each must be a single,
   # non-missing value; integer-valued arguments must be whole numbers (to avoid
@@ -288,7 +334,8 @@ bubbles <- function(
     rewire_every,
     name,
     max_households,
-    param_name
+    param_name,
+    ties
   )
 
   invisible(model)

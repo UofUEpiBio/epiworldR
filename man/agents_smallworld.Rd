@@ -41,7 +41,11 @@ get_agents_tools(model)
 
 \item{k}{Number of ties in the small world network.}
 
-\item{d, directed}{Logical scalar. Whether the graph is directed or not.}
+\item{d, directed}{Logical scalar. Whether the graph is directed or not. In a
+directed graph, a tie \code{source -> target} is kept by the source only: \code{target}
+is one of \code{source}'s neighbors, but not the reverse. Since agents are exposed
+to their own neighbors, \code{target} can infect \code{source}, not the other way
+around. To model "\code{i} infects \code{j}", give the tie as \code{j -> i}.}
 
 \item{p}{Probability of rewiring.}
 

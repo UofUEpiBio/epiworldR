@@ -198,3 +198,59 @@ expect_equal(get_param(model_pn, "Bubble A factor"), 0.3)
 expect_silent(set_param(model_pn, "Bubble A factor", 0.6))
 expect_equal(get_param(model_pn, "Bubble A factor"), 0.6)
 expect_silent(run(model_pn, ndays = 30, seed = 12))
+
+###############################################################################
+# ties = "complete": every pair sharing a bubble is tied while the policy is in
+# force, and the ties are withdrawn when it lifts. Two households of 3 on a path
+# 0-1-2-3-4-5 form one bubble of 6, i.e., a clique of 15 ties. The policy's
+# global event runs before the counting one, and sets up the network the next
+# step uses: ties go up on day 1 (for day 2) and come down on day 4 (end_day).
+###############################################################################
+model_c <- ModelSIR("x", prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+agents_from_edgelist(
+  model_c, source = 0:4, target = 1:5, size = 6L, directed = FALSE
+)
+bubbles(
+  model_c, household_id = rep(1:2, each = 3), flavor = "household",
+  group_size = 2, start_day = 2, end_day = 5, ties = "complete"
+)
+
+n_edges <- integer(0)
+add_globalevent(model_c, globalevent_fun(function(model) {
+  n_edges[today(model)] <<- nrow(get_network(model))
+  invisible()
+}, name = "Count edges"))
+
+expect_silent(run(model_c, ndays = 8, seed = 1))
+expect_equal(n_edges, c(15L, 15L, 15L, 5L, 5L, 5L, 5L, 5L))
+expect_equal(nrow(get_network(model_c)), 5L) # the network is left as found
+
+###############################################################################
+# ties = "complete" draws the same bubbles but adds contact inside them, so it
+# lets through more transmission than "existing". It needs an undirected
+# network.
+###############################################################################
+set.seed(771)
+hh_s <- sample(make_hh(1200)) # scattered, so households are not near-cliques
+total_removed <- function(ties) {
+  sum(sapply(1:5, function(s) {
+    m <- ModelSEIR("Flu", 0.01, 0.03, 3, 1 / 7)
+    agents_smallworld(m, n = 1200, k = 8, d = FALSE, p = 0.1)
+    bubbles(m, household_id = hh_s, flavor = "household", group_size = 2,
+            transmission_factor = 0.2, start_day = 5, ties = ties)
+    verbose_off(m)
+    run(m, ndays = 60, seed = s)
+    expect_equal(nrow(get_network(m)), 1200L * 8L / 2L)
+    sum(get_agents_states(m) == "Removed")
+  }))
+}
+expect_true(total_removed("complete") > total_removed("existing"))
+
+expect_error(bubbles(model_v, household_id = hh, flavor = "household",
+                     group_size = 2, ties = "all"))                    # bad ties
+
+model_d <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
+agents_smallworld(model_d, n = 300, k = 4, d = TRUE, p = 0.1)
+bubbles(model_d, household_id = make_hh(300), flavor = "household",
+        group_size = 1, ties = "complete")
+expect_error(run(model_d, ndays = 10, seed = 1), "undirected")

@@ -16,7 +16,8 @@ bubbles(
   rewire_every = 0L,
   name = "Social bubble",
   max_households = 2L,
-  param_name = "Bubble transmission factor"
+  param_name = "Bubble transmission factor",
+  ties = c("existing", "complete")
 )
 
 sample_household_sizes(n_agents, min_size = 2L, max_size = 6L)
@@ -67,6 +68,12 @@ already the cap.}
 transmission factor is stored. Give two interventions deployed on the same
 model different names if they are to be dialled independently.}
 
+\item{ties}{Character scalar. What being in a bubble together does to the
+contact network. \code{"existing"} (the default) leaves the network untouched: the
+bubble is only a transmission rule. \code{"complete"} also ties every pair of
+agents sharing a bubble while the policy is in force, so households become
+complete and merged households meet in full (see Details).}
+
 \item{n_agents}{Integer scalar. The total number of agents to be divided
 into households.}
 
@@ -88,7 +95,8 @@ policy for models built on an explicit contact network (e.g. \link{ModelSEIR} or
 the household-based rules used during COVID-19.
 }
 \details{
-The contact network is \strong{not} modified. Instead, every agent receives a tool
+With \code{ties = "existing"} (the default) the contact network is \strong{not}
+modified. Instead, every agent receives a tool
 that, on each exposure, compares the bubble of the susceptible agent with the
 bubble of the infectious one: if they match, transmission is left untouched --
 contacts inside the bubble are exactly what the policy preserves -- and if
@@ -96,6 +104,41 @@ they differ, transmission is multiplied by the transmission factor. With a
 factor of \code{0} this is equivalent to deleting the out-of-bubble contacts
 (contact weights are uniform in these models), while leaving the network
 available for other purposes (such as contact tracing or network summaries).
+\subsection{Completing the bubbles (\code{ties = "complete"})}{
+
+Under \code{ties = "existing"} a bubble is only a transmission rule, which
+under-states the policy: if two households were merged because one member of
+each happened to be tied, that single contact is the only one preserved
+between them, and the rest of the two households never meet. The same gap
+exists inside a household, whose members need not all be tied to each other.
+
+With \code{ties = "complete"} every bubble is completed to a clique: each pair of
+agents sharing a bubble is tied for as long as the bubble lasts. Ties the
+network already had are left alone; the intervention only records the ones it
+created and withdraws exactly those when the bubble is redrawn (see
+\code{rewire_every}), when the policy lifts at \code{end_day}, and on the last day of
+the run, so a run never leaves the network changed. Contacts \emph{outside} the
+bubble stay in the network and are damped by the transmission factor, as
+under \code{"existing"}. How households are grouped does not depend on \code{ties}: the
+same seed draws the same bubbles.
+
+A few consequences to keep in mind:
+\itemize{
+\item Completing a bubble \strong{raises the force of infection inside it}: every tie
+is an independent daily exposure, so a bubble of \code{k} agents gives each
+member \code{k - 1} chances a day to be infected by a bubble-mate.
+\item The ties only exist while the policy is in force. For the same reason,
+\code{"complete"} is not neutral at \code{transmission_factor = 1}: it adds contacts
+inside the bubble and damps nothing outside it.
+\item While they are up, the ties are real network ties (they show up, for
+instance, in the edgelist and in the number of neighbours).
+\item \code{"complete"} requires an undirected network (e.g., \code{d = FALSE} in
+\code{\link[=agents_smallworld]{agents_smallworld()}} or \code{directed = FALSE} in \code{\link[=agents_from_edgelist]{agents_from_edgelist()}});
+otherwise the run stops with an error. A bubble whose clique would give an
+agent more than 1,024 contacts is also refused.
+}
+}
+
 \subsection{Dialling the policy through the model}{
 
 The transmission factor is \strong{not} stored in the intervention: \code{bubbles()}
@@ -118,12 +161,13 @@ Bubbles are always disjoint (each agent is in exactly one), never split a
 household, and are only ever built between households that are \strong{actually
 connected} in the contact network.
 
-That last property matters: the intervention can only suppress transmission
-along existing edges, never create new ones, so placing two households that
-share no contact in the same bubble would change nothing. Pairing households
-at random would make \code{group_size} inert -- indistinguishable from a strict
-lockdown however large the bubbles are. It also matches the real policy: a
-household picks a bubble partner it already socialises with.
+That last property matters: with \code{ties = "existing"} the intervention can only
+suppress transmission along existing edges, never create new ones, so placing
+two households that share no contact in the same bubble would change nothing.
+Pairing households at random would make \code{group_size} inert --
+indistinguishable from a strict lockdown however large the bubbles are. It
+also matches the real policy: a household picks a bubble partner it already
+socialises with, which is why the same rule is used with \code{ties = "complete"}.
 }
 
 \subsection{The algorithms}{
@@ -257,6 +301,10 @@ model
 #
 # Individually chosen bubbles of up to four households:
 #   bubbles(model, household_id, "peer", group_size = 2, max_households = 4)
+#
+# Two households per bubble, whose members all meet while the policy lasts:
+#   bubbles(model, household_id, "household", group_size = 2,
+#           ties = "complete")
 }
 \seealso{
 \link{global-events}, \link{ModelSEIR}, \code{\link[=agents_smallworld]{agents_smallworld()}}

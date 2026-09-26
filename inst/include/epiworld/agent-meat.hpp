@@ -507,59 +507,41 @@ inline bool Agent<TSeq>::has_neighbor(size_t neighbor_id) const
 }
 
 template<typename TSeq>
+inline bool Agent<TSeq>::append_neighbor(size_t neighbor_id, bool check)
+{
+
+    if (neighbors == nullptr)
+        neighbors = new std::vector< size_t >();
+
+    // Can we find the neighbor?
+    if (check && has_neighbor(neighbor_id))
+        return false;
+
+    neighbors->push_back(neighbor_id);
+    n_neighbors++;
+
+    if (neighbor_pos != nullptr)
+        neighbor_pos->operator[](neighbor_id) = n_neighbors - 1u;
+    else if (n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
+        build_neighbor_index();
+
+    return true;
+
+}
+
+template<typename TSeq>
 inline bool Agent<TSeq>::add_neighbor(
     Agent<TSeq> & p,
     bool check_source,
     bool check_target
 ) {
 
-    bool added = false;
+    // Two statements, so that the second end is visited even when the first
+    // already had the tie.
+    bool here  = append_neighbor(static_cast< size_t >(p.get_id()), check_source);
+    bool there = p.append_neighbor(static_cast< size_t >(id), check_target);
 
-    if (neighbors == nullptr)
-        neighbors = new std::vector< size_t >();
-
-    // Can we find the neighbor?
-    bool found = check_source &&
-        has_neighbor(static_cast< size_t >(p.get_id()));
-
-    if (!found)
-    {
-
-        neighbors->push_back(static_cast< size_t >(p.get_id()));
-        n_neighbors++;
-
-        if (neighbor_pos != nullptr)
-            neighbor_pos->operator[](static_cast< size_t >(p.get_id())) =
-                n_neighbors - 1u;
-        else if (n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
-            build_neighbor_index();
-
-        added = true;
-
-    }
-
-    if (p.neighbors == nullptr)
-        p.neighbors = new std::vector< size_t >();
-
-    found = check_target && p.has_neighbor(static_cast< size_t >(id));
-
-    if (!found)
-    {
-
-        p.neighbors->push_back(static_cast< size_t >(id));
-        p.n_neighbors++;
-
-        if (p.neighbor_pos != nullptr)
-            p.neighbor_pos->operator[](static_cast< size_t >(id)) =
-                p.n_neighbors - 1u;
-        else if (p.n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
-            p.build_neighbor_index();
-
-        added = true;
-
-    }
-
-    return added;
+    return here || there;
 
 }
 
@@ -657,6 +639,15 @@ inline void Agent<TSeq>::swap_neighbors(
             other.build_neighbor_index();
 
     }
+
+    // Rewiring functions call this in the middle of a run, so the queue's
+    // counts have to follow the ties (a no-op until a run has sized the
+    // queue). Nobody's degree changed, so the agents-by-state degree sums
+    // need nothing.
+    if (model.use_queuing)
+        model.queue.notify_edges_swapped(
+            this, &neigh_this, &other, &neigh_other, model.directed
+        );
 
 }
 

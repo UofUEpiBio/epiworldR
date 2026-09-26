@@ -17,7 +17,8 @@ SEXP bubbles_cpp(
     int rewire_every,
     std::string name,
     int max_households,
-    std::string param_name
+    std::string param_name,
+    std::string ties
 ) {
 
   external_pointer< Model<int> > modelptr(model);
@@ -26,6 +27,9 @@ SEXP bubbles_cpp(
 
   BubbleFlavor fl = (flavor == "peer") ?
     BubbleFlavor::Peer : BubbleFlavor::Household;
+
+  BubbleTies tt = (ties == "complete") ?
+    BubbleTies::Complete : BubbleTies::Existing;
 
   Bubbles<int> bubbles(
     hh,
@@ -37,7 +41,8 @@ SEXP bubbles_cpp(
     rewire_every,
     name,
     static_cast< size_t >(max_households),
-    param_name
+    param_name,
+    tt
   );
 
   // Registering the transmission factor as a model parameter here, rather than
