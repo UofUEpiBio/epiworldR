@@ -69,6 +69,10 @@ public:
         return dat;
     };
 
+    const std::vector<std::map<int,int>> & get_dat() const {
+        return dat;
+    };
+
     bool is_directed() const; ///< `true` if the network is directed.
 
 };

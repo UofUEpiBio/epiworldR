@@ -241,6 +241,19 @@ protected:
     ///@}
 
     /**
+     * @brief Sets every agent's neighbors from rows of a flat array.
+     *
+     * @details Row `i` is `ids[start[i]]` to `ids[start[i + 1] - 1]`, in any
+     * order and with repeats. Each row is sorted and deduplicated in place and
+     * copied into agent `i`'s neighbors, allocated once at its final size. The
+     * agents must have no ties yet (see `agents_empty_graph()`).
+     */
+    void agents_set_neighbors(
+        const std::vector< size_t > & start,
+        std::vector< size_t > & ids
+    );
+
+    /**
      * @name Network transmission
      *
      * @details See `set_transmission_mode()` and
@@ -554,7 +567,7 @@ public:
         bool directed
     );
 
-    void agents_from_adjlist(AdjList al);
+    void agents_from_adjlist(const AdjList & al);
 
     bool is_directed() const; ///< Whether the network was built directed.
 

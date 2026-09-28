@@ -28,6 +28,11 @@ Syncs the C++ core with epiworld 0.17.0.
 * Directed networks no longer use the queuing system, so large directed
   networks may run slower.
 
+* `agents_from_edgelist()` builds the network about 10 times faster (under
+  20 ms instead of about 150 ms for 100,000 agents with 10 ties each).
+  `agents_smallworld()` and `agents_sbm()` are somewhat faster too. The
+  networks, and so the results for a given seed, are unchanged.
+
 ## Bug fixes
 
 * Rebuilding a model's network (e.g., calling `agents_smallworld()` again)
