@@ -2,6 +2,9 @@
 #define EPIWORLD_MODEL_MEAT_HPP
 
 #include <vector>
+#include <algorithm>
+#include <numeric>
+#include <stdexcept>
 #include <functional>
 #include <memory>
 #include <random>
@@ -1386,56 +1389,143 @@ inline void Model<TSeq>::agents_from_edgelist(
     bool directed
 ) {
 
+    // Validate everything before touching the model, so a bad edge list
+    // leaves the current network as it was.
+    if (size < 0)
+        throw std::length_error(
+            "The size of the network cannot be negative (" +
+            std::to_string(size) + ")."
+            );
 
-    AdjList al(source, target, size, directed);
-    agents_from_adjlist(al);
+    if (source.size() != target.size())
+        throw std::length_error(
+            "source and target must have the same length (" +
+            std::to_string(source.size()) + " vs " +
+            std::to_string(target.size()) + ")."
+            );
+
+    int max_id = size - 1;
+    for (size_t m = 0u; m < source.size(); ++m)
+    {
+
+        if ((source[m] < 0) || (source[m] > max_id))
+            throw std::range_error(
+                "The source["+std::to_string(m)+"] = " +
+                std::to_string(source[m]) +
+                " is above the max_id " + std::to_string(max_id)
+                );
+
+        if ((target[m] < 0) || (target[m] > max_id))
+            throw std::range_error(
+                "The target["+std::to_string(m)+"] = " +
+                std::to_string(target[m]) +
+                " is above the max_id " + std::to_string(max_id)
+                );
+
+    }
+
+    size_t n = static_cast< size_t >(size);
+    agents_empty_graph(n);
+    this->directed = (n > 0u) && directed;
+
+    // Counting sort of the edge ends by agent: row i of `ids` (from start[i]
+    // to start[i + 1]) holds i's neighbors. An undirected tie lands in both
+    // rows, a directed one in its source's only (see is_directed()).
+    std::vector< size_t > start(n + 1u, 0u);
+    for (size_t m = 0u; m < source.size(); ++m)
+    {
+        start[static_cast< size_t >(source[m]) + 1u]++;
+        if (!this->directed)
+            start[static_cast< size_t >(target[m]) + 1u]++;
+    }
+
+    std::partial_sum(start.begin(), start.end(), start.begin());
+
+    std::vector< size_t > ids(start[n]);
+    std::vector< size_t > next(start.begin(), start.end() - 1);
+    for (size_t m = 0u; m < source.size(); ++m)
+    {
+        size_t i = static_cast< size_t >(source[m]);
+        size_t j = static_cast< size_t >(target[m]);
+
+        ids[next[i]++] = j;
+        if (!this->directed)
+            ids[next[j]++] = i;
+    }
+
+    agents_set_neighbors(start, ids);
 
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::agents_from_adjlist(AdjList al) {
-
+inline void Model<TSeq>::agents_from_adjlist(const AdjList & al) {
 
     // Resizing the people
-    agents_empty_graph(al.vcount());
+    size_t n = al.vcount();
+    agents_empty_graph(n);
 
     // AdjList::is_directed() throws on a list with no vertices.
-    directed = (al.vcount() > 0u) && al.is_directed();
+    directed = (n > 0u) && al.is_directed();
 
     const auto & tmpdat = al.get_dat();
 
-    for (size_t i = 0u; i < tmpdat.size(); ++i)
+    // Same rows as agents_from_edgelist(). An undirected tie i - j is written
+    // to both rows, so the result does not depend on the list being symmetric.
+    std::vector< size_t > start(n + 1u, 0u);
+    for (size_t i = 0u; i < n; ++i)
     {
+        start[i + 1u] += tmpdat[i].size();
+        if (!directed)
+            for (const auto & link : tmpdat[i])
+                start[static_cast< size_t >(link.first) + 1u]++;
+    }
 
-        // population[i].id    = i;
+    std::partial_sum(start.begin(), start.end(), start.begin());
 
-        for (const auto & link: tmpdat[i])
+    std::vector< size_t > ids(start[n]);
+    std::vector< size_t > next(start.begin(), start.end() - 1);
+    for (size_t i = 0u; i < n; ++i)
+        for (const auto & link : tmpdat[i])
         {
-
-            // A directed tie i -> j is kept by its source only: j is one of
-            // i's neighbors, but i is not one of j's (see is_directed()).
-            if (directed)
-                population[i].append_neighbor(
-                    static_cast< size_t >(link.first), true
-                    );
-            else
-                population[i].add_neighbor(
-                    population[link.first],
-                    true, true
-                    );
-
+            size_t j = static_cast< size_t >(link.first);
+            ids[next[i]++] = j;
+            if (!directed)
+                ids[next[j]++] = i;
         }
 
-    }
+    agents_set_neighbors(start, ids);
 
-    #ifdef EPI_DEBUG
-    for (auto & p: population)
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::agents_set_neighbors(
+    const std::vector< size_t > & start,
+    std::vector< size_t > & ids
+) {
+
+    // Each row becomes its agent's neighbors: sorted, without repeats, and
+    // allocated once at its final size. Ascending order is what adding the
+    // ties one by one used to produce, and roulette() depends on that order.
+    for (size_t i = 0u; i < population.size(); ++i)
     {
-        if (p.id >= static_cast<int>(al.vcount()))
-            throw std::logic_error(
-                "Agent's id cannot be negative above or equal to the number of agents!");
+
+        auto first = ids.begin() + static_cast< std::ptrdiff_t >(start[i]);
+        auto last  = ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u]);
+
+        if (first == last)
+            continue;
+
+        std::sort(first, last);
+        last = std::unique(first, last);
+
+        auto & p = population[i];
+        p.neighbors   = new std::vector< size_t >(first, last);
+        p.n_neighbors = p.neighbors->size();
+
+        if (p.n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
+            p.build_neighbor_index();
+
     }
-    #endif
 
 }
 
