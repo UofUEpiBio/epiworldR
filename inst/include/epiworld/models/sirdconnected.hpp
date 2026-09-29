@@ -76,7 +76,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
             m->set_rand_binom(
                 m->size(),
                 static_cast<double>(
-                    m->par("Contact rate"))/
+                    EPI_PAR(m, "Contact rate"))/
                     static_cast<double>(m->size())
             );
 

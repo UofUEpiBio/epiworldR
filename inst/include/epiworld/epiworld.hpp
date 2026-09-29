@@ -20,9 +20,7 @@
 #include <set>
 #include <type_traits>
 #include <cassert>
-#ifdef EPI_DEBUG_VIRUS
 #include <atomic>
-#endif
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
@@ -58,6 +56,7 @@ namespace epiworld {
 
     #include "config.hpp"
     #include "epiworld-macros.hpp"
+    #include "param-ref.hpp"
 
     #include "epiassert-bones.hpp"
 

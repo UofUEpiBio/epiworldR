@@ -179,13 +179,13 @@ inline ModelSURV<TSeq>::ModelSURV(
         if (dat[p->get_id()] < 0)
         {
             epiworld_double latent_days = m->rgamma(
-                m->par("Latent period"), 1.0
+                EPI_PAR(m, "Latent period"), 1.0
             );
 
             dat[p->get_id() * 2u] = latent_days;
 
             dat[p->get_id() * 2u + 1u] = 
-                m->rgamma(m->par("Infect period"), 1.0) +
+                m->rgamma(EPI_PAR(m, "Infect period"), 1.0) +
                 latent_days;
         }
         
@@ -205,7 +205,7 @@ inline ModelSURV<TSeq>::ModelSURV(
         {
 
             // Will be symptomatic?
-            if (EPI_RUNIF() < m->par("Prob of symptoms"))
+            if (EPI_RUNIF() < EPI_PAR(m, "Prob of symptoms"))
                 p->change_state(*m, ModelSURV<TSeq>::SYMPTOMATIC);
             else
                 p->change_state(*m, ModelSURV<TSeq>::ASYMPTOMATIC);
@@ -240,7 +240,7 @@ inline ModelSURV<TSeq>::ModelSURV(
     {
 
         // How many will we find
-        std::binomial_distribution<> bdist(m->size(), m->par("Surveilance prob."));
+        std::binomial_distribution<> bdist(m->size(), EPI_PAR(m, "Surveilance prob."));
         int nsampled = bdist(*m->get_rand_endgine());
 
         int to_go = nsampled + 1;
@@ -339,7 +339,7 @@ inline ModelSURV<TSeq>::ModelSURV(
             return static_cast<epiworld_double>(0.0);
 
         // Otherwise
-        return m->par("Prob of transmission");
+        return EPI_PAR(m, "Prob of transmission");
     };
 
     covid.set_prob_infecting_fun(ptransmitfun);

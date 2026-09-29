@@ -82,7 +82,7 @@ inline void ModelSEIRCONN<TSeq>::update_infected()
 
     Model<TSeq>::set_rand_binom(
         this->get_n_infected(),
-        static_cast<double>(Model<TSeq>::par("Contact rate"))/
+        static_cast<double>(EPI_PAR(this, "Contact rate"))/
             static_cast<double>(this->size())
     );
 
@@ -359,7 +359,7 @@ inline std::vector< double > ModelSEIRCONN<TSeq>::generation_time_expected(
     }
 
     // Computing the expected number of days in exposed
-    double days_exposed = this_const->par("Avg. Incubation days");
+    double days_exposed = EPI_PAR(this_const, "Avg. Incubation days");
 
     // The generation time in the SEIR model starts from 2, as agents 
     // spend at least one day in the exposed state, and 1 day in the 
@@ -368,9 +368,9 @@ inline std::vector< double > ModelSEIRCONN<TSeq>::generation_time_expected(
         this_const->get_ndays(), 1.0 + days_exposed
         );
         
-    double p_c = this_const->par("Contact rate")/this_const->size();
-    double p_i = this_const->par("Prob. Transmission");
-    double p_r = this_const->par("Prob. Recovery");
+    double p_c = EPI_PAR(this_const, "Contact rate")/this_const->size();
+    double p_i = EPI_PAR(this_const, "Prob. Transmission");
+    double p_r = EPI_PAR(this_const, "Prob. Recovery");
 
     for (size_t i = 0u; i < this_const->get_ndays(); ++i)
     {

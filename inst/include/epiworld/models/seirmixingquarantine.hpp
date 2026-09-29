@@ -372,9 +372,9 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
     for (size_t idx = 0; idx < quarantine_willingness.size(); ++idx)
     {
         quarantine_willingness[idx] =
-            this->runif() < this->par("Quarantine willingness");
+            this->runif() < EPI_PAR(this, "Quarantine willingness");
         isolation_willingness[idx] =
-            this->runif() < this->par("Isolation willingness");
+            this->runif() < EPI_PAR(this, "Isolation willingness");
     }
 
     agent_quarantine_triggered.assign(this->size(), 0u);
@@ -494,7 +494,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     // Sampling whether the agent is detected or not.
     // If Days undetected < 0, detection is disabled (never detected).
     // If Days undetected == 0, the agent is always detected.
-    epiworld_double days_undetected = m->par("Days undetected");
+    epiworld_double days_undetected = EPI_PAR(m, "Days undetected");
     bool detected = (days_undetected < 0.0) ?
         false : ((days_undetected == 0.0) ?
             true : (m->runif() < 1.0 / days_undetected));
@@ -509,7 +509,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
 
     // Checking if the agent is willing to isolate individually
     // This is separate from quarantine and can happen even if agent cannot quarantine
-    bool isolation_detected = (m->par("Isolation period") >= 0) &&
+    bool isolation_detected = (EPI_PAR(m, "Isolation period") >= 0) &&
         detected &&
         (model->isolation_willingness[p->get_id()])
     ;
@@ -522,7 +522,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected(
     auto & v = p->get_virus();
     m->array_double_tmp[0] = 1.0 - (1.0 - v->get_prob_recovery(m)) *
         (1.0 - p->get_recovery_enhancer(v, *m));
-    m->array_double_tmp[1] = m->par("Hospitalization rate");
+    m->array_double_tmp[1] = EPI_PAR(m, "Hospitalization rate");
 
     auto which = m->sample_from_probs(2);
 
@@ -568,7 +568,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_isolated(
     int days_since = m->today() - model->day_onset[p->get_id()];
 
     bool unisolate =
-        (m->par("Isolation period") <= days_since) ?
+        (EPI_PAR(m, "Isolation period") <= days_since) ?
         true: false;
 
     // Sampling from the probabilities of recovery
@@ -577,7 +577,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_isolated(
         (1.0 - p->get_recovery_enhancer(p->get_virus(), *m));
 
     // And hospitalization
-    m->array_double_tmp[1] = m->par("Hospitalization rate");
+    m->array_double_tmp[1] = EPI_PAR(m, "Hospitalization rate");
 
     auto which = m->sample_from_probs(2);
 
@@ -616,7 +616,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_quarantine_suscep(
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     bool unquarantine =
-        (m->par("Quarantine period") <= days_since) ?
+        (EPI_PAR(m, "Quarantine period") <= days_since) ?
         true: false;
 
     if (unquarantine)
@@ -640,7 +640,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_quarantine_exposed(
     int days_since = m->today() - model->day_flagged[p->get_id()];
 
     bool unquarantine =
-        (m->par("Quarantine period") <= days_since) ?
+        (EPI_PAR(m, "Quarantine period") <= days_since) ?
         true: false;
 
     if (m->runif() < 1.0/(p->get_virus()->get_incubation(m)))
@@ -685,7 +685,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_isolated_recovered(
     int days_since = m->today() - model->day_onset[p->get_id()];
 
     bool unisolate =
-        (m->par("Isolation period") <= days_since) ?
+        (EPI_PAR(m, "Isolation period") <= days_since) ?
         true: false;
 
     if (unisolate)
@@ -703,7 +703,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_hospitalized(
 ) {
 
     // The agent is removed from the system
-    if (m->runif() < 1.0/m->par("Hospitalization period"))
+    if (m->runif() < 1.0/EPI_PAR(m, "Hospitalization period"))
         p->rm_virus(*m, ModelSEIRMixingQuarantine<TSeq>::RECOVERED);
 
 };
@@ -725,7 +725,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_quarantine_process(Model<TSeq> * m
         )
             continue;
 
-        if (m->par("Quarantine period") < 0)
+        if (EPI_PAR(m, "Quarantine period") < 0)
         {
             model->agent_quarantine_triggered[agent_i] =
             ModelSEIRMixingQuarantine<TSeq>::QUARANTINE_PROCESS_DONE;
@@ -740,8 +740,8 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_quarantine_process(Model<TSeq> * m
         if (n_contacts >= EPI_MAX_TRACKING)
             n_contacts = EPI_MAX_TRACKING;
 
-        auto success_rate = m->par("Contact tracing success rate");
-        auto days_prior = m->par("Contact tracing days prior");
+        auto success_rate = EPI_PAR(m, "Contact tracing success rate");
+        auto days_prior = EPI_PAR(m, "Contact tracing days prior");
         for (size_t contact_i = 0u; contact_i < n_contacts; ++contact_i)
         {
 
