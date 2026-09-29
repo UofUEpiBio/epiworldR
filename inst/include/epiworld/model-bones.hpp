@@ -158,7 +158,13 @@ protected:
     std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> rewire_fun;
     epiworld_double rewire_prop = 0.0;
 
-    std::map<std::string, epiworld_double > parameters;
+    // Parameter values, by position, and each name's position. Parameters are
+    // never removed, so positions (ParamId) stay valid. The comparator is
+    // transparent (std::less<>) so names can be looked up as
+    // std::string_view without building a std::string.
+    std::vector< epiworld_double > param_values;
+    std::map<std::string, size_t, std::less<> > param_index;
+    uint32_t param_layout_id = new_param_layout_id();
     epiworld_fast_uint ndays = 0;
     Progress pb;
 
@@ -388,7 +394,7 @@ public:
 
     DataBase<TSeq> & get_db();
     const DataBase<TSeq> & get_db() const;
-    epiworld_double operator()(std::string pname);
+    epiworld_double operator()(std::string_view pname) const;
 
     size_t size() const;
 
@@ -794,7 +800,11 @@ public:
         ) const;
     ///@}
 
-    std::map<std::string, epiworld_double> & params();
+    /**
+     * @brief Copy of the model parameters, by name.
+     * @details To change a parameter, use `set_param()`.
+     */
+    std::map<std::string, epiworld_double> params() const;
 
     /**
      * @brief Reset the model
@@ -915,13 +925,20 @@ public:
     /**
      * @name Setting and accessing parameters from the model
      *
-     * @details Tools can incorporate parameters included in the model.
-     * Internally, parameters in the tool are stored as pointers to
-     * an std::map<> of parameters in the model. Using the `epiworld_fast_uint`
-     * method directly fetches the parameters in the order these were
-     * added to the tool. Accessing parameters via the `std::string` method
-     * involves searching the parameter directly in the std::map<> member
-     * of the model (so it is not recommended.)
+     * @details Parameters are stored in a vector, in the order they were
+     * added, with a map from each name to its position. Lookups by name take
+     * the name as a `std::string_view` (no allocation) and search the map once.
+     * Unknown names throw.
+     *
+     * Code that reads parameters for many agents every day can skip the
+     * search:
+     *
+     * - `get_param_id()` returns the position (`ParamId`) of a parameter, and
+     *   `par_at()` / `set_param_at()` read and write by position. Positions
+     *   are valid for the model and all its copies.
+     * - `ParamRef` (and the `EPI_PAR(model, "name")` macro) resolves a name
+     *   once per model layout and caches the position, so it is safe to use
+     *   with any model.
      *
      * The `par()` function members are aliases for `get_param()`.
      *
@@ -951,10 +968,15 @@ public:
         epiworld_double initial_val, std::string pname, bool overwrite = false
     );
     Model<TSeq> & read_params(std::string fn, bool overwrite = false);
-    epiworld_double get_param(std::string pname);
+    epiworld_double get_param(std::string_view pname) const;
     bool has_param(std::string_view pname) const;
-    void set_param(std::string pname, epiworld_double val);
-    epiworld_double par(std::string pname) const;
+    void set_param(std::string_view pname, epiworld_double val);
+    epiworld_double par(std::string_view pname) const;
+    ParamId get_param_id(std::string_view pname) const;
+    epiworld_double par_at(ParamId id) const;
+    void set_param_at(ParamId id, epiworld_double val);
+    size_t get_n_params() const { return param_values.size(); };
+    uint32_t get_param_layout_id() const { return param_layout_id; };
     ///@}
 
     void get_elapsed(

@@ -433,11 +433,11 @@ inline void Virus<TSeq>::set_incubation_fun(VirusFun<TSeq> fun)
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_infecting(std::string param)
 {
-    auto parname_ptr = std::make_shared< const std::string >(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     VirusFun<TSeq> tmpfun = 
-        [parname_ptr](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
+        [param_ref](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
     
     probability_of_infecting = tmpfun;
@@ -446,11 +446,11 @@ inline void Virus<TSeq>::set_prob_infecting(std::string param)
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_recovery(std::string param)
 {
-    auto parname_ptr = std::make_shared< const std::string >(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     VirusFun<TSeq> tmpfun = 
-        [parname_ptr](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
+        [param_ref](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
     
     probability_of_recovery = tmpfun;
@@ -459,11 +459,11 @@ inline void Virus<TSeq>::set_prob_recovery(std::string param)
 template<typename TSeq>
 inline void Virus<TSeq>::set_prob_death(std::string param)
 {
-    auto parname_ptr = std::make_shared< const std::string >(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     VirusFun<TSeq> tmpfun = 
-        [parname_ptr](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
+        [param_ref](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
     
     probability_of_death = tmpfun;
@@ -472,11 +472,11 @@ inline void Virus<TSeq>::set_prob_death(std::string param)
 template<typename TSeq>
 inline void Virus<TSeq>::set_incubation(std::string param)
 {
-    auto parname_ptr = std::make_shared< const std::string >(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     VirusFun<TSeq> tmpfun = 
-        [parname_ptr](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
+        [param_ref](Agent<TSeq> *, Virus<TSeq> &, Model<TSeq> * model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
     
     incubation = tmpfun;

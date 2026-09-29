@@ -31,6 +31,21 @@
 #define EPI_PARAMS(i) m->operator()(i)
 
 /**
+ * @brief Value of the parameter named `pname` (a string literal) in `model`
+ * (a pointer to a model).
+ *
+ * @details Same value as `model->par(pname)`, but the name is looked up once
+ * per model layout and cached in a function-local `static ParamRef`, so
+ * repeated calls read the value directly. Use it in update functions and
+ * other code that runs for many agents every day.
+ */
+#define EPI_PAR(model, pname) \
+    ([]() -> const ::epiworld::ParamRef & { \
+        static const ::epiworld::ParamRef epi_param_ref_(pname); \
+        return epi_param_ref_; \
+    }()(*(model)))
+
+/**
  * @brief Helper macro for defining Mutation Functions
  * 
  */

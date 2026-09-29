@@ -250,12 +250,12 @@ template<typename TSeq>
 inline void Tool<TSeq>::set_susceptibility_reduction(std::string param)
 {
 
-    auto parname_ptr = std::make_shared<const std::string>(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
     ToolFun<TSeq> tmpfun =
-        [parname_ptr](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
 
     susceptibility_reduction = tmpfun;
@@ -267,12 +267,12 @@ template<typename TSeq>
 inline void Tool<TSeq>::set_transmission_reduction(std::string param)
 {
 
-    auto parname_ptr = std::make_shared<const std::string>(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     
     ToolFun<TSeq> tmpfun =
-        [parname_ptr](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
 
     transmission_reduction = tmpfun;
@@ -284,12 +284,12 @@ template<typename TSeq>
 inline void Tool<TSeq>::set_recovery_enhancer(std::string param)
 {
 
-    auto parname_ptr = std::make_shared<const std::string>(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
     ToolFun<TSeq> tmpfun =
-        [parname_ptr](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
 
     recovery_enhancer = tmpfun;
@@ -301,12 +301,12 @@ template<typename TSeq>
 inline void Tool<TSeq>::set_death_reduction(std::string param)
 {
 
-    auto parname_ptr = std::make_shared<const std::string>(param);
+    auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
     ToolFun<TSeq> tmpfun =
-        [parname_ptr](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
         {
-            return model->get_param(*parname_ptr);
+            return (*param_ref)(*model);
         };
 
     death_reduction = tmpfun;

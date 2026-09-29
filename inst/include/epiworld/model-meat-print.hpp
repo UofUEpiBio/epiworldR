@@ -231,15 +231,16 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     // Information about the parameters included
     printf_epiworld("\nModel parameters:\n");
     epiworld_fast_uint nchar = 0u;
-    for (auto & p : parameters)
+    for (auto & p : param_index)
         if (p.first.length() > nchar)
             nchar = p.first.length();
 
     std::string fmt = " - %-" + std::to_string(nchar + 1) + "s: ";
-    for (auto & p : parameters)
+    for (auto & p : param_index)
     {
+        const epiworld_double value = param_values[p.second];
         std::string fmt_tmp = fmt;
-        if (std::fabs(p.second) < 0.0001)
+        if (std::fabs(value) < 0.0001)
             fmt_tmp += "%.1e\n";
         else
             fmt_tmp += "%.4f\n";
@@ -247,12 +248,12 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
         printf_epiworld(
             fmt_tmp.c_str(),
             p.first.c_str(),
-            p.second
+            value
         );
         
     }
 
-    if (parameters.size() == 0u)
+    if (param_values.size() == 0u)
     {
         printf_epiworld(" (none)\n");
     }

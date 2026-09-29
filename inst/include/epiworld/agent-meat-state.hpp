@@ -105,18 +105,24 @@ inline UpdateFun<TSeq> new_state_update_transition(
             "At least one transition must be specified."
         );
 
-    return [param_names, target_states](
+    // Resolved to positions once per model layout (see ParamRef)
+    std::vector< ParamRef > params;
+    params.reserve(param_names.size());
+    for (auto & name : param_names)
+        params.emplace_back(std::move(name));
+
+    return [params, target_states](
         Agent<TSeq> * p,
         Model<TSeq> * m
     ) -> void {
 
-        size_t n = param_names.size();
+        size_t n = params.size();
         int which;
 
         if (n <= 1024u)
         {
             for (size_t i = 0u; i < n; ++i)
-                m->array_double_tmp[i] = m->par(param_names[i]);
+                m->array_double_tmp[i] = params[i](*m);
 
             // Roulette sampling: returns -1 if no transition occurs,
             // otherwise the index of the transition that fires.
@@ -126,7 +132,7 @@ inline UpdateFun<TSeq> new_state_update_transition(
         {
             std::vector< epiworld_double > probs(n);
             for (size_t i = 0u; i < n; ++i)
-                probs[i] = m->par(param_names[i]);
+                probs[i] = params[i](*m);
 
             // Fallback for transition tables larger than the temporary buffer.
             which = roulette(probs, m);

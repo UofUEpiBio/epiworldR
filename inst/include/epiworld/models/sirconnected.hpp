@@ -88,7 +88,7 @@ inline void ModelSIRCONN<TSeq>::update_infected()
 
     Model<TSeq>::set_rand_binom(
         this->get_n_infected(),
-        static_cast<double>(Model<TSeq>::par("Contact rate"))/
+        static_cast<double>(EPI_PAR(this, "Contact rate"))/
             static_cast<double>(this->size())
     );
 
@@ -338,9 +338,9 @@ inline std::vector< double > ModelSIRCONN<TSeq>::generation_time_expected(
     // spend at least one day in the infected state before starting
     // transmitting.
     std::vector< double > gen_times(this_const->get_ndays(), 1.0);
-    double p_c = this_const->par("Contact rate")/this_const->size();
-    double p_i = this_const->par("Transmission rate");
-    double p_r = this_const->par("Recovery rate");
+    double p_c = EPI_PAR(this_const, "Contact rate")/this_const->size();
+    double p_i = EPI_PAR(this_const, "Transmission rate");
+    double p_r = EPI_PAR(this_const, "Recovery rate");
     for (size_t i = 0u; i < this_const->get_ndays(); ++i)
     {
         gen_times[i] = gen_int_mean(

@@ -58,7 +58,7 @@ public:
         Model<TSeq> * m
     ) -> void {
         // Does the agent recover?
-        if (m->runif() < (m->par("Recovery rate")))
+        if (m->runif() < EPI_PAR(m, "Recovery rate"))
             p->rm_virus(*m);
 
         return;
