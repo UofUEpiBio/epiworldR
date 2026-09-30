@@ -37,7 +37,7 @@
 #' @examples
 #' model <- ModelSIR(
 #'   name = "A Virus", prevalence = .01, transmission_rate = .5,
-#'   recovery_rate = 1/7
+#'   recovery_rate = 1 / 7
 #' )
 #' agents_smallworld(model, n = 10000, k = 5, d = FALSE, p = .01)
 #' verbose_off(model)
@@ -50,10 +50,10 @@
 #' run(model, ndays = 50, seed = 1912)
 #' get_last_transmission_mode(model)
 set_transmission_mode <- function(
-    model,
-    mode  = c("auto", "push", "pull"),
-    kappa = NULL
-    ) {
+  model,
+  mode  = c("auto", "push", "pull"),
+  kappa = NULL
+) {
 
   stopifnot_model(model)
   mode <- match.arg(mode)
@@ -62,7 +62,7 @@ set_transmission_mode <- function(
     kappa <- default_transmission_kappa_cpp()
 
   if (length(kappa) != 1L || !is.numeric(kappa) || !is.finite(kappa) ||
-      kappa < 0)
+    kappa < 0)
     stop("`kappa` must be a single, finite, non-negative number.")
 
   invisible(set_transmission_mode_cpp(model, mode, as.double(kappa)))
