@@ -1,3 +1,21 @@
+# epiworldR 0.17.0-1
+
+## User-visible changes
+
+* The GeoPops vignette ("Using external network data: GeoPops synthetic
+  populations") is now an article on the package website only, and its
+  GeoPops extract is no longer installed with the package
+  (`system.file("extdata", "geopops", package = "epiworldR")` is gone). The
+  data now lives next to the article in the GitHub repository, under
+  `vignettes/articles/geopops`. This keeps the package within CRAN's size
+  limit.
+
+## Internal changes
+
+* Vignette figures are rendered at standard (1x) instead of retina (2x)
+  resolution, and unused README images were removed from `man/figures`. Both
+  reduce the package size.
+
 # epiworldR 0.17.0-0
 
 Syncs the C++ core with epiworld 0.17.0.

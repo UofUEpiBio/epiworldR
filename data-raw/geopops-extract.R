@@ -1,4 +1,5 @@
-# Builds the GeoPops extract shipped in inst/extdata/geopops.
+# Builds the GeoPops extract in vignettes/articles/geopops, used by the
+# "Using external network data" article on the package website.
 #
 # Input: a GeoPops population directory containing
 #
@@ -17,7 +18,7 @@ library(data.table)
 
 args <- commandArgs(trailingOnly = TRUE)
 src  <- if (length(args)) args[[1L]] else stop("Need the GeoPops directory.")
-out  <- file.path("inst", "extdata", "geopops")
+out  <- file.path("vignettes", "articles", "geopops")
 
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
 

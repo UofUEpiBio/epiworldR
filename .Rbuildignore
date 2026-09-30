@@ -47,7 +47,10 @@ docker
 # Ignore revdev folder
 revdep/
 
-# Script that builds inst/extdata/geopops from a full GeoPops population
+# Website-only articles (and their data), kept out of the tarball for size
+^vignettes/articles$
+
+# Script that builds vignettes/articles/geopops from a full GeoPops population
 ^data-raw$
 ^CITATION\.cff$
 ^AGENTS\.md$

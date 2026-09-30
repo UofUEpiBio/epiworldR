@@ -3,6 +3,8 @@ title: "Likelihood Free Markhov Chain Monte Carlo (LFMCMC)"
 author:
   - Andrew Pulsipher
 date: "`r Sys.Date()`"
+# Standard-resolution (1x) figures keep the package size down
+fig-format: png
 vignette: >
   %\VignetteIndexEntry{Likelihood Free Markhov Chain Monte Carlo (LFMCMC)}
   %\VignetteEngine{quarto::html}

@@ -3,6 +3,8 @@ title: "Building models with the model builder"
 author:
   - George Vega Yon
 date: "`r Sys.Date()`"
+# Standard-resolution (1x) figures keep the package size down
+fig-format: png
 vignette: >
   %\VignetteIndexEntry{Building models with the model builder}
   %\VignetteEngine{quarto::html}
