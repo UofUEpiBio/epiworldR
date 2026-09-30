@@ -3,10 +3,6 @@ title: "Using external network data: GeoPops synthetic populations"
 author:
   - George Vega Yon
 date: "`r Sys.Date()`"
-vignette: >
-  %\VignetteIndexEntry{Using external network data: GeoPops synthetic populations}
-  %\VignetteEngine{quarto::html}
-  %\VignetteEncoding{UTF-8}
 ---
 
 <!-- how-to-cite -->
@@ -37,12 +33,12 @@ applied questions start from a population that somebody else has already
 constructed: a synthetic population, a mobility-derived contact network, a
 survey-based sociocentric network, or a school roster.
 
-This vignette shows the general recipe for that case, using data from the
+This article shows the general recipe for that case, using data from the
 [GeoPops](https://github.com/GeoPopsHub) project as the running example.[^data]
 Nothing in the recipe is GeoPops-specific; the same four steps apply to any
 population file plus edge list you may have:
 
-[^data]: The GeoPops data used in this tutorial was provided by [Allisa Hamilton](https://github.com/alisahamilton1) and the GeoPops team. The extract is included in the `epiworldR` package for convenience, but the full Spartanburg County, SC population can be downloaded from [the GeoPops GitHub repository](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md).
+[^data]: The GeoPops data used in this tutorial was provided by [Allisa Hamilton](https://github.com/alisahamilton1) and the GeoPops team. The extract used here is available in the [epiworldR GitHub repository](https://github.com/UofUEpiBio/epiworldR/tree/main/vignettes/articles/geopops), and the full Spartanburg County, SC population can be downloaded from [the GeoPops GitHub repository](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md).
 
 1. Read the node table and the edge list(s).
 2. Map the external node identifiers onto epiworld's agent identifiers, which
@@ -75,22 +71,26 @@ table and one edge list per contact *layer*:
 
 Each edge file has columns `p1`, `p2`, and `edge_weight`, where `p1` and `p2`
 are `uid`s from the people table. The full Spartanburg County, SC population
-that this vignette is based on has 356,923 people and about 1.2 million ties.
-That is far too large to ship inside an R package, so epiworldR includes a
-much smaller extract: the largest census tract of the county, plus every
-person directly tied to a resident of that tract, so that workplaces and
-schools are not cut in half.
+that this article is based on has 356,923 people and about 1.2 million ties.
+To keep things quick, we use a much smaller extract: the largest census tract
+of the county, plus every person directly tied to a resident of that tract, so
+that workplaces and schools are not cut in half. The extract is not installed
+with the package; download the
+[`geopops` folder](https://github.com/UofUEpiBio/epiworldR/tree/main/vignettes/articles/geopops)
+from the epiworldR GitHub repository to run this article yourself.
 
 ```{r}
 #| label: data-path
-geopops <- system.file("extdata", "geopops", package = "epiworldR")
+# Path to the downloaded geopops folder
+geopops <- "geopops"
 list.files(geopops)
 ```
 
 The files keep the GeoPops column layout, so the code below runs unchanged
 against a full GeoPops download; only the file names change (drop the `.gz`).
-`README.md` in that directory records exactly how the extract was cut, and
-`data-raw/geopops-extract.R` in the package sources is the script that cuts it.
+`README.md` in that folder records exactly how the extract was cut, and
+`data-raw/geopops-extract.R` in the epiworldR repository is the script that
+cuts it.
 
 ```{r}
 #| label: read-people
@@ -170,7 +170,7 @@ head(edges)
 ```
 
 Because the lookup is keyed by the *row order* of `people`, agent `i` in the
-model is row `i + 1` of `people` for the rest of this vignette. That is what
+model is row `i + 1` of `people` for the rest of this article. That is what
 lets us go back and forth between simulation output and demographics.
 
 A quick check that no tie points at somebody outside the people table:
@@ -292,7 +292,7 @@ set_distribution_virus(
 
 Recall that `which(...) - 1L` converts R's 1-based row positions into
 epiworld's 0-based agent identifiers. Fixing the seeds also makes the
-comparison later in this vignette a fair one: both models start from exactly
+comparison later in this article a fair one: both models start from exactly
 the same twenty infections.
 
 ## A first run
@@ -555,7 +555,7 @@ identical(
 
 # Scaling up to the full population
 
-Everything above runs on the shipped extract, but epiworld is built for the
+Everything above runs on the extract, but epiworld is built for the
 full thing. Loading the complete Spartanburg population---356,923 agents and
 1,223,555 unique ties---takes well under a second, and a 100-day run takes
 about the same. The code is identical; only the reading step changes:

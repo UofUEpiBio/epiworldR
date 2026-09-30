@@ -2,8 +2,8 @@
 
 A small extract of the synthetic population from the
 [GeoPops Spartanburg measles tutorial](https://github.com/GeoPopsHub/sc_spartanburg_measles/blob/1c741a362dc021b6df082d689f7f7c509f4c23b4/README.md),
-used by the vignette "Using external network data: GeoPops synthetic
-populations".
+used by the article "Using external network data: GeoPops synthetic
+populations" on the epiworldR website.
 
 The source population is Spartanburg County, SC (FIPS 45083): 356,923 people
 and 1,223,555 unique ties. This extract keeps the county's largest census
@@ -31,4 +31,4 @@ dropped from `people_all.csv.gz` to keep the files small.
 
 `uid`s in this extract are a sparse subset of the county's, and people who
 work or attend school inside the area but live outside it carry no
-demographics -- both are handled in the vignette.
+demographics -- both are handled in the article.

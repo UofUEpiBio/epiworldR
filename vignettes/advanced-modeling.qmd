@@ -3,6 +3,8 @@ title: "Advanced Modeling - Multiple Diseases, Tools, and Events"
 author:
   - Andrew Pulsipher
 date: "`r Sys.Date()`"
+# Standard-resolution (1x) figures keep the package size down
+fig-format: png
 vignette: >
   %\VignetteIndexEntry{Advanced Modeling - Multiple Diseases, Tools, and Events}
   %\VignetteEngine{quarto::html}

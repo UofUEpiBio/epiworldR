@@ -4,6 +4,8 @@ author:
   - Derek Meyer
   - George Vega Yon
 date: "`r Sys.Date()`"
+# Standard-resolution (1x) figures keep the package size down
+fig-format: png
 vignette: >
   %\VignetteIndexEntry{Run Multiple}
   %\VignetteEngine{quarto::html}

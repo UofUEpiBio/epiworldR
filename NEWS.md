@@ -33,11 +33,25 @@ Syncs the C++ core with epiworld 0.17.0.
   `agents_smallworld()` and `agents_sbm()` are somewhat faster too. The
   networks, and so the results for a given seed, are unchanged.
 
+* The GeoPops vignette ("Using external network data: GeoPops synthetic
+  populations") is now an article on the package website only, and its
+  GeoPops extract is no longer installed with the package
+  (`system.file("extdata", "geopops", package = "epiworldR")` is gone). The
+  data now lives next to the article in the GitHub repository, under
+  `vignettes/articles/geopops`. This keeps the package within CRAN's size
+  limit.
+
 ## Bug fixes
 
 * Rebuilding a model's network (e.g., calling `agents_smallworld()` again)
   after `run_multiple()` now takes effect. Before, the next run restored the
   network backed up by `run_multiple()`, population size included.
+
+## Internal changes
+
+* Vignette figures are rendered at standard (1x) instead of retina (2x)
+  resolution, and unused README images were removed from `man/figures`. Both
+  reduce the package size.
 
 # epiworldR 0.16.1-0
 
