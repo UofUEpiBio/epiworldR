@@ -3,7 +3,7 @@ message: 'To cite package "epiworldR" in publications use:'
 type: software
 license: MIT
 title: 'epiworldR: Fast Agent-Based Epi Models'
-version: 0.15.1-1
+version: 0.17.1-0
 doi: 10.32614/CRAN.package.epiworldR
 abstract: A flexible framework for Agent-Based Models (ABM), the 'epiworldR' package
   provides methods for prototyping disease outbreaks and transmission models using
@@ -75,6 +75,6 @@ references:
     given-names: Niko
     orcid: https://orcid.org/0000-0003-3322-3502
   year: '2026'
-  notes: R package version 0.15.1-1
+  notes: R package version 0.17.1-0
   url: https://github.com/UofUEpiBio/epiworldR
   doi: 10.32614/CRAN.package.epiworldR

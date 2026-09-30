@@ -199,6 +199,7 @@ inline void Model<TSeq>::state_index_build()
     state_order.resize(n);
     state_member_pos.resize(n);
     agent_state.resize(n);
+    agent_carrier.assign(n, 0);
     state_degree.assign(ns, 0u);
     state_carriers.assign(ns, 0u);
     state_carrier_degree.assign(ns, 0u);
@@ -216,6 +217,7 @@ inline void Model<TSeq>::state_index_build()
         state_degree[p.state] += p.n_neighbors;
         if (p.virus != nullptr)
         {
+            agent_carrier[id] = 1;
             state_carriers[p.state]++;
             state_carrier_degree[p.state] += p.n_neighbors;
         }
@@ -321,6 +323,9 @@ inline void Model<TSeq>::state_index_update(
         state_degree[state_new] += deg;
 
     }
+
+    if (has_virus != had_virus)
+        agent_carrier[id] = has_virus ? 1 : 0;
 
     if (had_virus)
     {
@@ -627,6 +632,7 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     state_start(model.state_start),
     state_member_pos(model.state_member_pos),
     agent_state(model.agent_state),
+    agent_carrier(model.agent_carrier),
     state_degree(model.state_degree),
     state_carriers(model.state_carriers),
     state_carrier_degree(model.state_carrier_degree),
@@ -724,6 +730,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     state_start(std::move(model.state_start)),
     state_member_pos(std::move(model.state_member_pos)),
     agent_state(std::move(model.agent_state)),
+    agent_carrier(std::move(model.agent_carrier)),
     state_degree(std::move(model.state_degree)),
     state_carriers(std::move(model.state_carriers)),
     state_carrier_degree(std::move(model.state_carrier_degree)),
@@ -806,6 +813,7 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     state_start = m.state_start;
     state_member_pos = m.state_member_pos;
     agent_state = m.agent_state;
+    agent_carrier = m.agent_carrier;
     state_degree = m.state_degree;
     state_carriers = m.state_carriers;
     state_carrier_degree = m.state_carrier_degree;

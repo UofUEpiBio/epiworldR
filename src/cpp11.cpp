@@ -730,6 +730,41 @@ extern "C" SEXP _epiworldR_queuing_off_cpp(SEXP model) {
   END_CPP11
 }
 // model.cpp
+SEXP set_transmission_mode_cpp(SEXP model, std::string mode, double kappa);
+extern "C" SEXP _epiworldR_set_transmission_mode_cpp(SEXP model, SEXP mode, SEXP kappa) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_transmission_mode_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(mode), cpp11::as_cpp<cpp11::decay_t<double>>(kappa)));
+  END_CPP11
+}
+// model.cpp
+std::string get_transmission_mode_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_transmission_mode_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_transmission_mode_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+std::string get_last_transmission_mode_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_last_transmission_mode_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_last_transmission_mode_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+double get_transmission_kappa_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_transmission_kappa_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_transmission_kappa_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+  END_CPP11
+}
+// model.cpp
+double default_transmission_kappa_cpp();
+extern "C" SEXP _epiworldR_default_transmission_kappa_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(default_transmission_kappa_cpp());
+  END_CPP11
+}
+// model.cpp
 double get_param_cpp(SEXP model, std::string pname);
 extern "C" SEXP _epiworldR_get_param_cpp(SEXP model, SEXP pname) {
   BEGIN_CPP11
@@ -1332,6 +1367,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          12},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
+    {"_epiworldR_default_transmission_kappa_cpp",       (DL_FUNC) &_epiworldR_default_transmission_kappa_cpp,        0},
     {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},
     {"_epiworldR_distribute_entity_to_set_cpp",         (DL_FUNC) &_epiworldR_distribute_entity_to_set_cpp,          1},
     {"_epiworldR_distribute_tool_randomly_cpp",         (DL_FUNC) &_epiworldR_distribute_tool_randomly_cpp,          3},
@@ -1378,6 +1414,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_hist_virus_cpp",                   (DL_FUNC) &_epiworldR_get_hist_virus_cpp,                    1},
     {"_epiworldR_get_hospitalizations_cpp",             (DL_FUNC) &_epiworldR_get_hospitalizations_cpp,              1},
     {"_epiworldR_get_initial_params_cpp",               (DL_FUNC) &_epiworldR_get_initial_params_cpp,                1},
+    {"_epiworldR_get_last_transmission_mode_cpp",       (DL_FUNC) &_epiworldR_get_last_transmission_mode_cpp,        1},
     {"_epiworldR_get_mean_params_cpp",                  (DL_FUNC) &_epiworldR_get_mean_params_cpp,                   1},
     {"_epiworldR_get_mean_stats_cpp",                   (DL_FUNC) &_epiworldR_get_mean_stats_cpp,                    1},
     {"_epiworldR_get_n_params_cpp",                     (DL_FUNC) &_epiworldR_get_n_params_cpp,                      1},
@@ -1400,6 +1437,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
+    {"_epiworldR_get_transmission_kappa_cpp",           (DL_FUNC) &_epiworldR_get_transmission_kappa_cpp,            1},
+    {"_epiworldR_get_transmission_mode_cpp",            (DL_FUNC) &_epiworldR_get_transmission_mode_cpp,             1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
     {"_epiworldR_globalevent_fun_cpp",                  (DL_FUNC) &_epiworldR_globalevent_fun_cpp,                   3},
@@ -1466,6 +1505,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_susceptibility_reduction_cpp",     (DL_FUNC) &_epiworldR_set_susceptibility_reduction_cpp,      2},
     {"_epiworldR_set_susceptibility_reduction_fun_cpp", (DL_FUNC) &_epiworldR_set_susceptibility_reduction_fun_cpp,  3},
     {"_epiworldR_set_susceptibility_reduction_ptr_cpp", (DL_FUNC) &_epiworldR_set_susceptibility_reduction_ptr_cpp,  3},
+    {"_epiworldR_set_transmission_mode_cpp",            (DL_FUNC) &_epiworldR_set_transmission_mode_cpp,             3},
     {"_epiworldR_set_transmission_reduction_cpp",       (DL_FUNC) &_epiworldR_set_transmission_reduction_cpp,        2},
     {"_epiworldR_set_transmission_reduction_fun_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_fun_cpp,    3},
     {"_epiworldR_set_transmission_reduction_ptr_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_ptr_cpp,    3},

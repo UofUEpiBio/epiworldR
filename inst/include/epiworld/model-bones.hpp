@@ -234,6 +234,7 @@ protected:
     std::vector< size_t > state_start;       ///< [nstates + 1] Where each state's block starts
     std::vector< size_t > state_member_pos;  ///< [agent] Position in state_order
     std::vector< unsigned int > agent_state;    ///< [agent] Copy of Agent::state, compact for scans
+    std::vector< char > agent_carrier;          ///< [agent] 1 if Agent::virus is set, compact for scans
     std::vector< size_t > state_degree;
     std::vector< size_t > state_carriers;
     std::vector< size_t > state_carrier_degree;
@@ -866,6 +867,19 @@ public:
     AgentIdsView get_agents_in_state(epiworld_fast_uint state) const;
 
     /**
+     * @brief One flag per agent: 1 if the agent carries a virus.
+     * @details A compact copy of "has a virus", one byte per agent, so a scan
+     * of an agent's neighbors can rule most of them out without loading their
+     * `Agent` (a cache miss each). It is kept current from the moment a run
+     * starts. Returns `nullptr` before that (and after the population
+     * changes): callers then have to look at the agents.
+     */
+    const char * get_agent_carrier() const
+    {
+        return state_index_ready ? agent_carrier.data() : nullptr;
+    }
+
+    /**
      * @name Network transmission mode
      *
      * @details States whose update function is `default_update_susceptible`
@@ -875,21 +889,25 @@ public:
      * the same distribution of who gets infected, and by whom; only the random
      * number stream differs. See `TransmissionMode`.
      *
-     * With `"auto"` (the default) the model pushes whenever the carriers'
-     * ties are no more than `kappa` times the susceptibles' ties, and pulls
-     * otherwise; `kappa` only matters in this mode. The choice depends only on the model's state, never on the
-     * queueing system, so turning queuing on or off leaves results unchanged.
-     * Because the queue already spares a pull the susceptibles with no
-     * infectious neighbor -- which the rule does not see -- the default
-     * `kappa` is 0.25 rather than 1 (tuned with
-     * `examples/20-transmission-benchmark`).
+     * With `"auto"` (the default) the model estimates the cost of each step,
+     * as the ties to scan plus a fixed price per agent visited
+     * (`EPI_TRANSMISSION_AGENT_COST` ties), for the carriers that can transmit
+     * (push) and for the susceptible agents (pull). It pushes whenever the
+     * push cost is no more than `kappa` times the pull cost, and pulls
+     * otherwise; `kappa` only matters in this mode. The choice depends only on
+     * the model's state, never on the queueing system, so turning queuing on or
+     * off leaves results unchanged. A `kappa` below 1 makes pushing harder to
+     * choose (it favors pulling); the default, 0.5, is below 1 because the
+     * queue spares a pull the susceptibles with no infectious neighbor, which
+     * the costs do not see. It was fitted together with the per-agent price
+     * with `examples/20-transmission-benchmark`.
      *
      * Directed networks, and states with other update functions, always pull.
      * Set `"pull"` to reproduce the random streams of epiworld <= 0.15.
      *
      * @param mode `"auto"`, `"push"`, or `"pull"` (or the enum).
      * @param kappa Relative cost threshold used by `"auto"`: a finite,
-     * non-negative number (default `EPI_DEFAULT_TRANSMISSION_KAPPA`, 0.25).
+     * non-negative number (default `EPI_DEFAULT_TRANSMISSION_KAPPA`, 0.5).
      * @throws std::invalid_argument for an unknown mode.
      * @throws std::range_error for a negative or infinite `kappa`.
      */
@@ -907,6 +925,20 @@ public:
     TransmissionMode get_last_transmission_mode() const;
     /// The threshold used by `"auto"`.
     double get_transmission_kappa() const;
+
+    /**
+     * @brief The sums `"auto"` compares to choose between push and pull.
+     * @details Totals over the states that can be sources of infection (the
+     * carriers) and over the states updated by the default susceptible sampler
+     * (the susceptibles), as they stand now. All zero before the model has run.
+     */
+    struct TransmissionSums {
+        size_t carrier_degree;      ///< Sum of the carriers' degrees
+        size_t susceptible_degree;  ///< Sum of the susceptibles' degrees
+        size_t carriers;            ///< Number of carriers that can transmit
+        size_t susceptibles;        ///< Number of susceptible agents
+    };
+    TransmissionSums get_transmission_sums() const;
     ///@}
 
     /**
