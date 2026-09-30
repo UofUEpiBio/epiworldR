@@ -99,6 +99,29 @@ public:
     size_t size() const { return n; }
     bool empty() const { return n == 0u; }
 
+    /// Id of the `k`-th neighbor, without touching the neighbor's `Agent`.
+    /// @throws std::out_of_range if `k >= size()`.
+    size_t id(size_t k) const
+    {
+        if (k >= n)
+            throw std::out_of_range("NeighborsView::id(): index out of range.");
+        return first[k];
+    }
+
+    /// The `k`-th neighbor.
+    /// @throws std::out_of_range if `k >= size()`.
+    Agent<TSeq> * agent(size_t k) const
+    {
+        if (k >= n)
+            throw std::out_of_range("NeighborsView::agent(): index out of range.");
+        return &pop->operator[](first[k]);
+    }
+
+    /// The ids of the `size()` neighbors, in order (like `std::vector::data()`:
+    /// only valid for indices below `size()`; `nullptr` when there are none).
+    /// For scans that must not touch the neighbors' `Agent`s.
+    const size_t * ids() const { return first; }
+
 };
 
 /**

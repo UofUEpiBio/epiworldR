@@ -124,6 +124,51 @@ SEXP queuing_off_cpp(
 }
 
 [[cpp11::register]]
+SEXP set_transmission_mode_cpp(SEXP model, std::string mode, double kappa) {
+
+  external_pointer<Model<>> ptr(model);
+  ptr->set_transmission_mode(mode, kappa);
+  return model;
+
+}
+
+static std::string transmission_mode_str(TransmissionMode mode) {
+
+  switch (mode) {
+    case TransmissionMode::push:
+      return "push";
+    case TransmissionMode::pull:
+      return "pull";
+    default:
+      return "auto";
+  }
+
+}
+
+[[cpp11::register]]
+std::string get_transmission_mode_cpp(SEXP model) {
+  external_pointer<Model<>> ptr(model);
+  return transmission_mode_str(ptr->get_transmission_mode());
+}
+
+[[cpp11::register]]
+std::string get_last_transmission_mode_cpp(SEXP model) {
+  external_pointer<Model<>> ptr(model);
+  return transmission_mode_str(ptr->get_last_transmission_mode());
+}
+
+[[cpp11::register]]
+double get_transmission_kappa_cpp(SEXP model) {
+  external_pointer<Model<>> ptr(model);
+  return ptr->get_transmission_kappa();
+}
+
+[[cpp11::register]]
+double default_transmission_kappa_cpp() {
+  return EPI_DEFAULT_TRANSMISSION_KAPPA;
+}
+
+[[cpp11::register]]
 double get_param_cpp(SEXP model, std::string pname) {
   external_pointer<Model<>> ptr(model);
   return static_cast<double>(ptr->get_param(pname));

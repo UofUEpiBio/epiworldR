@@ -166,10 +166,22 @@ enum class TransmissionMode : uint8_t {
 
 /**
  * @brief Default threshold of the `"auto"` transmission mode.
- * @details See `Model::set_transmission_mode()`.
+ * @details The model pushes when the cost of the push is at most this
+ * fraction of the cost of the pull. See `Model::set_transmission_mode()`.
  */
 #ifndef EPI_DEFAULT_TRANSMISSION_KAPPA
-    #define EPI_DEFAULT_TRANSMISSION_KAPPA 0.25
+    #define EPI_DEFAULT_TRANSMISSION_KAPPA 0.5
+#endif
+
+/**
+ * @brief Cost of visiting an agent, in ties, in the `"auto"` transmission mode.
+ * @details Both a push (per carrier) and a pull (per susceptible) pay a fixed
+ * price for each agent they visit on top of the price of each tie they scan.
+ * This is that price in units of ties. It is a property of how agents are laid
+ * out in memory, not of the network. See `Model::set_transmission_mode()`.
+ */
+#ifndef EPI_TRANSMISSION_AGENT_COST
+    #define EPI_TRANSMISSION_AGENT_COST 4.0
 #endif
 
 /**

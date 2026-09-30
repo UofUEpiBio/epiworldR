@@ -193,6 +193,8 @@ inline void DataBase<TSeq>::record()
                     throw std::logic_error("[epi-debug] DataBase::record state index lists an agent in another state.");
                 if (model->agent_state[members[k]] != s)
                     throw std::logic_error("[epi-debug] DataBase::record agent_state is out of step.");
+                if (model->agent_carrier[members[k]] != (model->population[members[k]].get_virus() != nullptr))
+                    throw std::logic_error("[epi-debug] DataBase::record agent_carrier is out of step.");
                 if (model->state_member_pos[members[k]] != model->state_start[s] + k)
                     throw std::logic_error("[epi-debug] DataBase::record state_member_pos is out of step.");
             }

@@ -412,6 +412,26 @@ queuing_off_cpp <- function(model) {
   .Call(`_epiworldR_queuing_off_cpp`, model)
 }
 
+set_transmission_mode_cpp <- function(model, mode, kappa) {
+  .Call(`_epiworldR_set_transmission_mode_cpp`, model, mode, kappa)
+}
+
+get_transmission_mode_cpp <- function(model) {
+  .Call(`_epiworldR_get_transmission_mode_cpp`, model)
+}
+
+get_last_transmission_mode_cpp <- function(model) {
+  .Call(`_epiworldR_get_last_transmission_mode_cpp`, model)
+}
+
+get_transmission_kappa_cpp <- function(model) {
+  .Call(`_epiworldR_get_transmission_kappa_cpp`, model)
+}
+
+default_transmission_kappa_cpp <- function() {
+  .Call(`_epiworldR_default_transmission_kappa_cpp`)
+}
+
 get_param_cpp <- function(model, pname) {
   .Call(`_epiworldR_get_param_cpp`, model, pname)
 }

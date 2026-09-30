@@ -1,3 +1,29 @@
+# epiworldR 0.17.1-0
+
+Syncs the C++ core with epiworld 0.17.1.
+
+## New features
+
+* New functions `set_transmission_mode()`, `get_transmission_mode()`,
+  `get_last_transmission_mode()` and `get_transmission_kappa()` control how
+  network models compute transmission each day. `"push"` has each infected
+  agent add its infection odds to its susceptible neighbors, `"pull"` has
+  each susceptible agent look at its infected neighbors, and `"auto"` (the
+  default) picks the cheaper one each day. Both give the same distribution of
+  infections but draw different random numbers, so `"pull"` reproduces the
+  runs of epiworldR 0.15 and earlier. See `?"transmission-mode"`.
+
+## User-visible changes
+
+* The `"auto"` transmission mode picks the cheaper step more reliably around
+  the peak of large outbreaks on heterogeneous networks, where it used to
+  pull although pushing was cheaper. Its threshold `kappa` now defaults to
+  0.5 (was 0.25). **Seeded results of network models can change**, since a
+  different day-by-day choice draws different random numbers; the
+  distribution of outcomes is the same.
+
+* Pulling is slightly faster (about 5% on small-world networks).
+
 # epiworldR 0.17.0-1
 
 ## User-visible changes
