@@ -28,6 +28,8 @@ based models [ABM]. Some key features of epiworldR are the ability to construct
 multi-virus models (e.g., models of competing multi-pathogens/multi-rumor,)
 design mutating pathogens, architect population-level interventions, and build
 models with an arbitrary number of compartments/states (beyond SIR/SEIR.)
+See the [performance benchmark](performance.html) for a comparison of the
+currently covered workloads and its limitations.
 
 # Example 1: Simulating an SIR model
 
