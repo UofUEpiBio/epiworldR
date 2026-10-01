@@ -373,15 +373,21 @@ sample_household_sizes <- function(n_agents, min_size = 2L, max_size = 6L) {
     max_size == round(max_size)
   )
 
-  sizes <- sample(min_size:max_size, size = n_agents, replace = TRUE)
-  lim <- which.min(abs(cumsum(sizes) - n_agents))
-  sizes <- sizes[seq_len(lim)]
+  if (n_agents < min_size)
+    stop("`n_agents` must be at least `min_size`.")
 
-  # Adjusting the sizes vector to match the number of agents exactly
-  if (sum(sizes) < n_agents) {
-    sizes <- c(sizes, n_agents - sum(sizes))
-  } else if (sum(sizes) > n_agents) {
-    sizes <- sizes[seq_len(which(cumsum(sizes) <= n_agents))]
+  remaining <- as.integer(n_agents)
+  sizes <- integer()
+
+  while (remaining > 0L) {
+    candidates <- min_size:max_size
+    candidates <- candidates[
+      remaining - candidates == 0L | remaining - candidates >= min_size
+    ]
+    size <- sample(candidates, size = 1L)
+    sizes <- c(sizes, size)
+    remaining <- remaining - size
   }
+
   sizes
 }

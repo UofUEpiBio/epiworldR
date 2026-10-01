@@ -24,6 +24,12 @@ Syncs the C++ core with epiworld 0.17.1.
 
 * Pulling is slightly faster (about 5% on small-world networks).
 
+## Bug fixes
+
+* `sample_household_sizes()` now always returns household sizes that exactly
+  partition the requested population. This lets the Social bubbles vignette
+  use a 5,000-agent population reliably.
+
 # epiworldR 0.17.0-1
 
 ## User-visible changes
