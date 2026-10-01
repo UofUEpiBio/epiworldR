@@ -40,6 +40,16 @@ include:
 - Transmission can be a function of agents’ features.
 - Out-of-the-box parallelization for multiple simulations.
 
+An evolving [cross-framework benchmark](https://github.com/UofUEpiBio/epiworld-benchmark)
+compares epiworldR, epiworld, epiworldpy, and other epidemic ABM engines. In
+the SEIRH network scenarios currently covered, the epiworld family is among the
+fastest, while native epiworld is among the lower-memory implementations.
+These results are a snapshot of the tested versions, workloads, and environment
+rather than a universal ranking; the benchmark welcomes additional scenarios,
+engines, corrections, and implementation improvements through
+[issues](https://github.com/UofUEpiBio/epiworld-benchmark/issues) and
+[pull requests](https://github.com/UofUEpiBio/epiworld-benchmark/pulls).
+
 From the package’s description:
 
 > A flexible framework for Agent-Based Models (ABM), the epiworldR
