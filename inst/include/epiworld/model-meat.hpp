@@ -66,68 +66,30 @@ inline std::function<void(size_t,Model<TSeq>*)> make_save_run(
     if (n_fmt != 1)
         throw std::logic_error("The -fmt- argument must have only one \"%\" symbol.");
 
-    // Listting things to save
-    std::vector< bool > what_to_save = {
-        virus_info,
-        virus_hist,
-        tool_info,
-        tool_hist,
-        total_hist,
-        transmission,
-        transition,
-        reproductive,
-        generation,
-        active_cases,
-        outbreak_size,
-        hospitalizations
+    // Outputs to save, in the order of the arguments (as run_output_names())
+    const std::vector< bool > what_to_save = {
+        virus_info, virus_hist, tool_info, tool_hist, total_hist,
+        transmission, transition, reproductive, generation, active_cases,
+        outbreak_size, hospitalizations
     };
 
-    std::function<void(size_t,Model<TSeq>*)> saver = [fmt,what_to_save](
+    std::vector< std::string > whats;
+    for (size_t i = 0u; i < what_to_save.size(); ++i)
+        if (what_to_save[i])
+            whats.push_back(run_output_names()[i]);
+
+    std::function<void(size_t,Model<TSeq>*)> saver = [fmt,whats](
         size_t niter, Model<TSeq> * m
     ) -> void {
 
-        auto set_saver = [fmt,niter](
-            bool condition,
-            std::string suffix
-        ) -> std::string
+        auto out = m->get_db().get_run_outputs(whats);
+
+        for (const auto & what : whats)
         {
-            if (condition)
-            {
-                std::string var = fmt + suffix;
-                char buff[1024u];
-                snprintf(buff, sizeof(buff), var.c_str(), niter);
-                return std::string(buff);
-            }
-            return std::string("");
-        };
-
-        auto virus_info = set_saver(what_to_save[0u], "_virus_info.csv");
-        auto virus_hist = set_saver(what_to_save[1u], "_virus_hist.csv");
-        auto tool_info = set_saver(what_to_save[2u], "_tool_info.csv");
-        auto tool_hist = set_saver(what_to_save[3u], "_tool_hist.csv");
-        auto total_hist = set_saver(what_to_save[4u], "_total_hist.csv");
-        auto transmission = set_saver(what_to_save[5u], "_transmission.csv");
-        auto transition = set_saver(what_to_save[6u], "_transition.csv");
-        auto reproductive = set_saver(what_to_save[7u], "_reproductive.csv");
-        auto generation = set_saver(what_to_save[8u], "_generation.csv");
-        auto active_cases = set_saver(what_to_save[9u], "_active_cases.csv");
-        auto outbreak_size = set_saver(what_to_save[10u], "_outbreak_size.csv");
-        auto hospitalizations = set_saver(what_to_save[11u], "_hospitalizations.csv");
-
-        m->write_data(
-            virus_info,
-            virus_hist,
-            tool_info,
-            tool_hist,
-            total_hist,
-            transmission,
-            transition,
-            reproductive,
-            generation,
-            active_cases,
-            outbreak_size,
-            hospitalizations
-        );
+            char buff[1024u];
+            snprintf(buff, sizeof(buff), (fmt + "_" + what + ".csv").c_str(), niter);
+            write_table(buff, out.at(what));
+        }
 
     };
 
@@ -621,6 +583,8 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     queue(model.queue),
     use_queuing(model.use_queuing),
     sim_id(model.sim_id),
+    post_sampling_fun(model.post_sampling_fun),
+    post_sampling_on(model.post_sampling_on),
     contact_tracing(
         model.contact_tracing
             ? std::make_unique<ContactTracing>(*model.contact_tracing)
@@ -723,6 +687,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     sim_id(model.sim_id),
+    post_sampling_fun(std::move(model.post_sampling_fun)),
+    post_sampling_on(model.post_sampling_on),
     contact_tracing(std::move(model.contact_tracing)),
     use_contact_tracing(model.use_contact_tracing),
     contact_tracing_max_contacts(model.contact_tracing_max_contacts),
@@ -802,6 +768,10 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     queue = m.queue;
     use_queuing = m.use_queuing;
+
+    post_sampling_fun = m.post_sampling_fun;
+    post_sampling_on = m.post_sampling_on;
+    post_sampling_scratch.reset(0u);
 
     contact_tracing = m.contact_tracing
         ? std::make_unique<ContactTracing>(*m.contact_tracing)
@@ -2034,6 +2004,11 @@ inline void Model<TSeq>::update_state() {
     // same distribution, and cheaper while few agents carry a virus. Directed
     // networks always pull: a tie there is kept by its source only (see
     // is_directed()), so it is not visible from both ends.
+    //
+    // With a post-sampling callback, pull and push report the same contacts.
+    if (post_sampling_on)
+        post_sampling_scratch.clear();
+
     const bool push =
         transmission_prepare() && !directed && transmission_choose_push();
 
@@ -2080,6 +2055,9 @@ inline void Model<TSeq>::update_state() {
                 state_fun[p.state](&p, this);
 
     }
+
+    if (post_sampling_on)
+        post_sampling_dispatch();
 
     events_run();
 
@@ -2407,6 +2385,13 @@ inline void Model<TSeq>::reset() {
     // This also clears the queue
     if (use_queuing)
         queue.reset();
+
+    // The batch of sampled contacts
+    if (post_sampling_on)
+    {
+        post_sampling_scratch.reset(0u);
+        post_sampling_prepare_scratch();
+    }
 
     // Reset contact tracing if active
     if (use_contact_tracing)

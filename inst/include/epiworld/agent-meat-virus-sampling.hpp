@@ -23,8 +23,8 @@ namespace sampler {
  *
  * @return The number of viruses collected.
  */
-template<typename TSeq>
-inline size_t collect_neighbor_viruses(
+template<typename TSeq, bool Record>
+inline size_t collect_neighbor_viruses_impl(
     Agent<TSeq> * p,
     Model<TSeq> * m,
     const std::vector< bool > * exclude
@@ -47,6 +47,10 @@ inline size_t collect_neighbor_viruses(
         if (nviruses_tmp >= m->array_virus_tmp.size())
             throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
         #endif
+
+        // The post-sampling callback sees every eligible contact
+        if constexpr (Record)
+            m->register_sampled_contact(neighbor->get_id(), p->get_id());
 
         /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
@@ -96,6 +100,23 @@ inline size_t collect_neighbor_viruses(
 
     return nviruses_tmp;
 
+}
+
+/**
+ * @brief Collects the neighbors' viruses (see `collect_neighbor_viruses_impl`),
+ * reporting the contacts to the model's post-sampling callback if there is
+ * one. The path is chosen once per call, not per neighbor.
+ */
+template<typename TSeq>
+inline size_t collect_neighbor_viruses(
+    Agent<TSeq> * p,
+    Model<TSeq> * m,
+    const std::vector< bool > * exclude
+)
+{
+    return m->has_post_sampling() ?
+        collect_neighbor_viruses_impl<TSeq, true>(p, m, exclude) :
+        collect_neighbor_viruses_impl<TSeq, false>(p, m, exclude);
 }
 
 /**

@@ -1049,6 +1049,215 @@ inline void DataBase<TSeq>::get_transmissions(
 }
 
 template<typename TSeq>
+inline RunOutputs DataBase<TSeq>::get_run_outputs(
+    const std::vector< std::string > & whats
+) const
+{
+
+    // Names of the viruses, given their ids
+    auto vnames = [this](const std::vector< int > & ids) {
+        std::vector< std::string > names;
+        names.reserve(ids.size());
+        for (auto i : ids)
+            names.push_back(virus_name[i]);
+        return names;
+    };
+
+    // Labels of the states, given their ids
+    auto labels = [this](const std::vector< epiworld_fast_uint > & ids) {
+        std::vector< std::string > names;
+        names.reserve(ids.size());
+        for (auto i : ids)
+            names.push_back(model->states_labels[i]);
+        return names;
+    };
+
+    RunOutputs out;
+
+    for (const auto & what : whats)
+    {
+
+        OutputTable t;
+
+        if (what == "virus_info")
+        {
+            std::vector< int > id, date, parent;
+            std::vector< std::string > name, seq;
+            for (const auto & v : virus_id)
+            {
+                id.push_back(v.second);
+                name.push_back(virus_name[v.second]);
+                seq.push_back(seq_writer(virus_sequence[v.second]));
+                date.push_back(virus_origin_date[v.second]);
+                parent.push_back(virus_parent_id[v.second]);
+            }
+            t.add("virus_id", id);
+            t.add("virus", name);
+            t.add("virus_sequence", seq);
+            t.add("date_recorded", date);
+            t.add("parent", parent);
+        }
+        else if (what == "virus_hist")
+        {
+            t.add("date", hist_virus_date);
+            t.add("virus_id", hist_virus_id);
+            t.add("virus", vnames(hist_virus_id));
+            t.add("state", labels(hist_virus_state));
+            t.add("n", hist_virus_counts);
+        }
+        else if (what == "tool_info")
+        {
+            std::vector< int > id, date;
+            std::vector< std::string > name, seq;
+            for (const auto & v : tool_id)
+            {
+                id.push_back(v.second);
+                name.push_back(tool_name[v.second]);
+                seq.push_back(seq_writer(tool_sequence[v.second]));
+                date.push_back(tool_origin_date[v.second]);
+            }
+            t.add("id", id);
+            t.add("tool_name", name);
+            t.add("tool_sequence", seq);
+            t.add("date_recorded", date);
+        }
+        else if (what == "tool_hist")
+        {
+            t.add("date", hist_tool_date);
+            t.add("id", hist_tool_id);
+            t.add("state", labels(hist_tool_state));
+            t.add("n", hist_tool_counts);
+        }
+        else if (what == "total_hist")
+        {
+            t.add("date", hist_total_date);
+            t.add("nviruses", hist_total_nviruses_active);
+            t.add("state", labels(hist_total_state));
+            t.add("counts", hist_total_counts);
+        }
+        else if (what == "transmission")
+        {
+            t.add("date", transmission_date);
+            t.add("virus_id", transmission_virus);
+            t.add("virus", vnames(transmission_virus));
+            t.add("source_exposure_date", transmission_source_exposure_date);
+            t.add("source", transmission_source);
+            t.add("target", transmission_target);
+        }
+        else if (what == "transition")
+        {
+            std::vector< int > date, counts;
+            std::vector< std::string > from, to;
+            int ns = model->nstates;
+            for (int i = 0; i <= model->today(); ++i)
+                for (int f = 0; f < ns; ++f)
+                    for (int s = 0; s < ns; ++s)
+                    {
+                        int n = hist_transition_matrix[i * (ns * ns) + s * ns + f];
+                        if (n == 0)
+                            continue;
+                        date.push_back(i);
+                        from.push_back(model->states_labels[f]);
+                        to.push_back(model->states_labels[s]);
+                        counts.push_back(n);
+                    }
+            t.add("date", date);
+            t.add("from", from);
+            t.add("to", to);
+            t.add("counts", counts);
+        }
+        else if (what == "reproductive")
+        {
+            std::vector< int > id, source, date, rt;
+            for (const auto & m : get_reproductive_number())
+            {
+                id.push_back(m.first[0u]);
+                source.push_back(m.first[1u]);
+                date.push_back(m.first[2u]);
+                rt.push_back(m.second);
+            }
+            t.add("virus_id", id);
+            t.add("virus", vnames(id));
+            t.add("source", source);
+            t.add("source_exposure_date", date);
+            t.add("rt", rt);
+        }
+        else if (what == "generation")
+        {
+            std::vector< int > agent, virus, time, gentime;
+            get_generation_time(agent, virus, time, gentime);
+            t.add("virus", virus);
+            t.add("source", agent);
+            t.add("source_exposure_date", time);
+            t.add("gentime", gentime);
+        }
+        else if (what == "active_cases" || what == "outbreak_size")
+        {
+            std::vector< int > date, id, n;
+            if (what == "active_cases")
+                get_active_cases(date, id, n);
+            else
+                get_outbreak_size(date, id, n);
+
+            // Skipping the zeros
+            std::vector< int > date_, id_, n_;
+            for (size_t i = 0u; i < n.size(); ++i)
+                if (n[i] > 0)
+                {
+                    date_.push_back(date[i]);
+                    id_.push_back(id[i]);
+                    n_.push_back(n[i]);
+                }
+
+            t.add("date", date_);
+            t.add("virus_id", id_);
+            t.add("virus", vnames(id_));
+            t.add(what, n_);
+        }
+        else if (what == "hospitalizations")
+        {
+            std::vector< int > date, id, tool, count;
+            std::vector< double > weight;
+            get_hospitalizations(date, id, tool, count, weight);
+
+            // Skipping the zeros
+            std::vector< int > date_, id_, tool_, count_;
+            std::vector< double > weight_;
+            for (size_t i = 0u; i < date.size(); ++i)
+                if (count[i] > 0 || weight[i] > 0.0)
+                {
+                    date_.push_back(date[i]);
+                    id_.push_back(id[i]);
+                    tool_.push_back(tool[i]);
+                    count_.push_back(count[i]);
+                    weight_.push_back(weight[i]);
+                }
+
+            t.add("date", date_);
+            t.add("virus_id", id_);
+            t.add("tool_id", tool_);
+            t.add("count", count_);
+            t.add("weight", weight_);
+        }
+        else
+        {
+            std::string valid;
+            for (const auto & n : run_output_names())
+                valid += " \"" + n + "\"";
+            throw std::invalid_argument(
+                "Unknown output \"" + what + "\". Valid outputs are:" + valid + "."
+            );
+        }
+
+        out[what] = std::move(t);
+
+    }
+
+    return out;
+
+}
+
+template<typename TSeq>
 inline void DataBase<TSeq>::write_data(
     std::string fn_virus_info,
     std::string fn_virus_hist,
@@ -1065,376 +1274,24 @@ inline void DataBase<TSeq>::write_data(
 ) const
 {
 
-    if (fn_virus_info != "")
-    {
-        std::ofstream file_virus_info(fn_virus_info, std::ios_base::out);
+    // Same order as run_output_names()
+    const std::vector< std::string > fns = {
+        fn_virus_info, fn_virus_hist, fn_tool_info, fn_tool_hist,
+        fn_total_hist, fn_transmission, fn_transition,
+        fn_reproductive_number, fn_generation_time, fn_active_cases,
+        fn_outbreak_size, fn_hospitalizations
+    };
 
-        // Check if the file exists and throw an error if it doesn't
-        if (!file_virus_info)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_virus_info +
-                "\" for writing.")
-                ;
-        }
+    std::vector< std::string > whats;
+    for (size_t i = 0u; i < fns.size(); ++i)
+        if (fns[i] != "")
+            whats.push_back(run_output_names()[i]);
 
+    auto out = get_run_outputs(whats);
 
-        file_virus_info <<
-        #ifdef EPI_DEBUG
-            "thread " << "virus_id " << "virus " << "virus_sequence " << "date_recorded " << "parent\n";
-        #else
-            "virus_id " << "virus " << "virus_sequence " << "date_recorded " << "parent\n";
-        #endif
-
-        for (const auto & v : virus_id)
-        {
-            int id = v.second;
-            file_virus_info <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                id << " \"" <<
-                virus_name[id] << "\" " <<
-                seq_writer(virus_sequence[id]) << " " <<
-                virus_origin_date[id] << " " <<
-                virus_parent_id[id] << "\n";
-        }
-
-    }
-
-    if (fn_virus_hist != "")
-    {
-        std::ofstream file_virus(fn_virus_hist, std::ios_base::out);
-        
-        // Repeat the same error if the file doesn't exists
-        if (!file_virus)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_virus_hist +
-                "\" for writing.")
-                ;
-        }
-
-        file_virus <<
-            #ifdef EPI_DEBUG
-            "thread "<< "date " << "virus_id " << "virus " << "state " << "n\n";
-            #else
-            "date " << "virus_id " << "virus " << "state " << "n\n";
-            #endif
-
-        for (epiworld_fast_uint i = 0; i < hist_virus_id.size(); ++i)
-            file_virus <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                hist_virus_date[i] << " " <<
-                hist_virus_id[i] << " \"" <<
-                virus_name[hist_virus_id[i]] << "\" \"" <<
-                model->states_labels[hist_virus_state[i]] << "\" " <<
-                hist_virus_counts[i] << "\n";
-    }
-
-    if (fn_tool_info != "")
-    {
-        std::ofstream file_tool_info(fn_tool_info, std::ios_base::out);
-
-        // Repeat the same error if the file doesn't exists
-        if (!file_tool_info)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_tool_info +
-                "\" for writing.")
-                ;
-        }
-
-        file_tool_info <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "id " << "tool_name " << "tool_sequence " << "date_recorded\n";
-
-        for (const auto & t : tool_id)
-        {
-            int id = t.second;
-            file_tool_info <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                id << " \"" <<
-                tool_name[id] << "\" " <<
-                seq_writer(tool_sequence[id]) << " " <<
-                tool_origin_date[id] << "\n";
-        }
-
-    }
-
-    if (fn_tool_hist != "")
-    {
-        std::ofstream file_tool_hist(fn_tool_hist, std::ios_base::out);
-
-        // Repeat the same error if the file doesn't exists
-        if (!file_tool_hist)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_tool_hist +
-                "\" for writing.")
-                ;
-        }
-        
-        file_tool_hist <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "id " << "state " << "n\n";
-
-        for (epiworld_fast_uint i = 0; i < hist_tool_id.size(); ++i)
-            file_tool_hist <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                hist_tool_date[i] << " " <<
-                hist_tool_id[i] << " \"" <<
-                model->states_labels[hist_tool_state[i]] << "\" " <<
-                hist_tool_counts[i] << "\n";
-    }
-
-    if (fn_total_hist != "")
-    {
-        std::ofstream file_total(fn_total_hist, std::ios_base::out);
-
-        // Repeat the same error if the file doesn't exists
-        if (!file_total)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_total_hist +
-                "\" for writing.")
-                ;
-        }
-
-        file_total <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "nviruses " << "state " << "counts\n";
-
-        for (epiworld_fast_uint i = 0; i < hist_total_date.size(); ++i)
-            file_total <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                hist_total_date[i] << " " <<
-                hist_total_nviruses_active[i] << " \"" <<
-                model->states_labels[hist_total_state[i]] << "\" " << 
-                hist_total_counts[i] << "\n";
-    }
-
-    if (fn_transmission != "")
-    {
-        std::ofstream file_transmission(fn_transmission, std::ios_base::out);
-
-        // Repeat the same error if the file doesn't exists
-        if (!file_transmission)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_transmission +
-                "\" for writing.")
-                ;
-        }
-
-        file_transmission <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "virus_id virus " << "source_exposure_date " << "source " << "target\n";
-
-        for (epiworld_fast_uint i = 0; i < transmission_target.size(); ++i)
-            file_transmission <<
-                #ifdef EPI_DEBUG
-                EPI_GET_THREAD_ID() << " " <<
-                #endif
-                transmission_date[i] << " " <<
-                transmission_virus[i] << " \"" <<
-                virus_name[transmission_virus[i]] << "\" " <<
-                transmission_source_exposure_date[i] << " " <<
-                transmission_source[i] << " " <<
-                transmission_target[i] << "\n";
-                
-    }
-
-    if (fn_transition != "")
-    {
-        std::ofstream file_transition(fn_transition, std::ios_base::out);
-
-        // Repeat the same error if the file doesn't exists
-        if (!file_transition)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_transition +
-                "\" for writing.")
-                ;
-        }
-
-        file_transition <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "from " << "to " << "counts\n";
-
-        int ns = model->nstates;
-
-        for (int i = 0; i <= model->today(); ++i)
-        {
-
-            for (int from = 0u; from < ns; ++from)
-            {
-                for (int to = 0u; to < ns; ++to)
-                {
-                    // Skipping the zeros
-                    auto counts = hist_transition_matrix[
-                        i * (ns * ns) + to * ns + from
-                    ];
-
-                    if (counts == 0)
-                        continue;
-
-                    file_transition <<
-                        #ifdef EPI_DEBUG
-                        EPI_GET_THREAD_ID() << " " <<
-                        #endif
-                        i << " \"" <<
-                        model->states_labels[from] << "\" \"" <<
-                        model->states_labels[to] << "\" " <<
-                        counts << "\n";
-                }
-            }
-                
-        }
-                
-    }
-
-    if (fn_reproductive_number != "")
-        get_reproductive_number(fn_reproductive_number);
-
-    if (fn_generation_time != "")
-        get_generation_time(fn_generation_time);
-
-    if (fn_active_cases != "")
-    {
-        std::vector< int > date;
-        std::vector< int > virus_id;
-        std::vector< int > count;
-        get_active_cases(date, virus_id, count);
-
-        std::ofstream file_active_cases(fn_active_cases, std::ios_base::out);
-        // Repeat the same error if the file doesn't exists
-        if (!file_active_cases)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_active_cases +
-                "\" for writing.")
-                ;
-        }
-
-        file_active_cases <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "virus_id virus " << "active_cases\n";
-
-        for (size_t i = 0u; i < date.size(); ++i)
-        {
-            if (count[i] > 0)
-                file_active_cases <<
-                    #ifdef EPI_DEBUG
-                    EPI_GET_THREAD_ID() << " " <<
-                    #endif
-                    date[i] << " " <<
-                    virus_id[i] << " \"" <<
-                    virus_name[virus_id[i]] << "\" " <<
-                    count[i] << "\n";
-        }
-
-    }
-
-    if (fn_outbreak_size != "")
-    {
-        std::vector< int > date;
-        std::vector< int > virus_id;
-        std::vector< int > outbreak_size;
-        get_outbreak_size(date, virus_id, outbreak_size);
-
-        std::ofstream file_outbreak_size(fn_outbreak_size, std::ios_base::out);
-        // Repeat the same error if the file doesn't exists
-        if (!file_outbreak_size)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_outbreak_size +
-                "\" for writing.")
-                ;
-        }
-
-        file_outbreak_size <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "virus_id virus " << "outbreak_size\n";
-
-        for (size_t i = 0u; i < date.size(); ++i)
-        {
-            if (outbreak_size[i] > 0)
-                file_outbreak_size <<
-                    #ifdef EPI_DEBUG
-                    EPI_GET_THREAD_ID() << " " <<
-                    #endif
-                    date[i] << " " <<
-                    virus_id[i] << " \"" <<
-                    virus_name[virus_id[i]] << "\" " <<
-                    outbreak_size[i] << "\n";
-        }
-
-    }
-
-    if (fn_hospitalizations != "")
-    {
-        std::vector< int > date;
-        std::vector< int > virus_id;
-        std::vector< int > tool_id;
-        std::vector< int > count;
-        std::vector< double > weight;
-        get_hospitalizations(date, virus_id, tool_id, count, weight);
-
-        std::ofstream file_hospitalizations(fn_hospitalizations, std::ios_base::out);
-        // Repeat the same error if the file doesn't exists
-        if (!file_hospitalizations)
-        {
-            throw std::runtime_error(
-                "Could not open file \"" + fn_hospitalizations +
-                "\" for writing.")
-                ;
-        }
-
-        file_hospitalizations <<
-            #ifdef EPI_DEBUG
-            "thread " << 
-            #endif
-            "date " << "virus_id " << "tool_id " << "count " << "weight\n";
-
-        for (size_t i = 0u; i < date.size(); ++i)
-        {
-            // Only write non-zero counts or weights
-            if (count[i] > 0 || weight[i] > 0.0)
-                file_hospitalizations <<
-                    #ifdef EPI_DEBUG
-                    EPI_GET_THREAD_ID() << " " <<
-                    #endif
-                    date[i] << " " <<
-                    virus_id[i] << " " <<
-                    tool_id[i] << " " <<
-                    count[i] << " " <<
-                    weight[i] << "\n";
-        }
-
-    }
+    for (size_t i = 0u; i < fns.size(); ++i)
+        if (fns[i] != "")
+            write_table(fns[i], out.at(run_output_names()[i]));
 
 }
 
@@ -1546,39 +1403,7 @@ inline void DataBase<TSeq>::get_reproductive_number(
     std::string fn
 ) const {
 
-
-    auto map = get_reproductive_number();
-
-    std::ofstream fn_file(fn, std::ios_base::out);
-
-    // Repeat the same error if the file doesn't exists
-    if (!fn_file)
-    {
-        throw std::runtime_error(
-            "Could not open file \"" + fn +
-            "\" for writing.")
-            ;
-    }
-
-    fn_file << 
-        #ifdef EPI_DEBUG
-        "thread " <<
-        #endif
-        "virus_id virus source source_exposure_date rt\n";
-
-
-    for (auto & m : map)
-        fn_file <<
-            #ifdef EPI_DEBUG
-            EPI_GET_THREAD_ID() << " " <<
-            #endif
-            m.first[0u] << " \"" <<
-            virus_name[m.first[0u]] << "\" " <<
-            m.first[1u] << " " <<
-            m.first[2u] << " " <<
-            m.second << "\n";
-
-    return;
+    write_table(fn, get_run_outputs({"reproductive"}).at("reproductive"));
 
 }
 
@@ -2185,44 +2010,7 @@ inline void DataBase<TSeq>::get_generation_time(
 ) const
 {
 
-    std::vector< int > agent_id;
-    std::vector< int > virus_id;
-    std::vector< int > time;
-    std::vector< int > gentime;
-
-    get_generation_time(agent_id, virus_id, time, gentime);
-
-    std::ofstream fn_file(fn, std::ios_base::out);
-
-    // Throw an error if the file doesn't exists using throw
-    if (!fn_file)
-    {
-        throw std::runtime_error(
-            "DataBase::get_generation_time: "
-            "Cannot open file " + fn + "."
-        );
-    }
-
-
-
-    fn_file << 
-        #ifdef EPI_DEBUG
-        "thread " <<
-        #endif
-        "virus source source_exposure_date gentime\n";
-
-    size_t n = agent_id.size();
-    for (size_t i = 0u; i < n; ++i)
-        fn_file <<
-            #ifdef EPI_DEBUG
-            EPI_GET_THREAD_ID() << " " <<
-            #endif
-            virus_id[i] << " " <<
-            agent_id[i] << " " <<
-            time[i] << " " <<
-            gentime[i] << "\n";
-
-    return;
+    write_table(fn, get_run_outputs({"generation"}).at("generation"));
 
 }
 

@@ -255,6 +255,15 @@ public:
         std::string fn_hospitalizations
         ) const;
 
+    /**
+     * @brief In-memory tables of this simulation, one per requested output
+     * @param whats Names of the outputs (see `run_output_names()`).
+     * @details Each table has exactly the columns and rows of the CSV that
+     * `write_data()` writes for it. Throws `std::invalid_argument` on an
+     * unknown name.
+     */
+    RunOutputs get_run_outputs(const std::vector< std::string > & whats) const;
+
     /***
      * @brief Record a transmission event
      * @param i,j Integers. Id of the source and target agents.

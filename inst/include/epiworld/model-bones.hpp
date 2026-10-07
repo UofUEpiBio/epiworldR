@@ -16,6 +16,7 @@
 #include "queue-bones.hpp"
 #include "globalevent-bones.hpp"
 #include "contacttracing-bones.hpp"
+#include "postsampling-bones.hpp"
 
 template<typename TSeq>
 class AgentsSample;
@@ -206,6 +207,12 @@ protected:
     size_t sim_id = 0u;
     void set_sim_id(size_t id);
 
+    PostSamplingFun<TSeq> post_sampling_fun = nullptr; ///< See set_post_sampling()
+    bool post_sampling_on = false;                     ///< post_sampling_fun is set
+    PostSamplingScratch post_sampling_scratch;         ///< Never copied
+    void post_sampling_dispatch();
+    void post_sampling_prepare_scratch(); ///< Sizes the scratch for the population
+
     std::unique_ptr<ContactTracing> contact_tracing;
     bool use_contact_tracing = false;
     size_t contact_tracing_max_contacts = EPI_MAX_TRACKING;
@@ -291,6 +298,7 @@ protected:
     bool transmission_prepare();
     bool transmission_choose_push() const;
     void transmission_push();
+    template<bool Record> void transmission_push_impl();
     void transmission_update_others();
     ///@}
 
@@ -1093,6 +1101,35 @@ public:
     Model<TSeq> & contact_tracing_off(); ///< Deactivates contact tracing.
     bool is_contact_tracing_on() const; ///< Query if contact tracing is on.
     ContactTracing & get_contact_tracing(); ///< Retrieve the `ContactTracing` object.
+    ///@}
+
+    /**
+     * @name Post-sampling callback
+     * @details A callback that receives, for each infectious agent, the agents
+     * it was in contact with during the step (see `PostSamplingFun`). The
+     * models whose samplers report contacts (network pull and push, the
+     * mixing models) collect them only while a callback is installed;
+     * otherwise the cost is one check per sampling operation (per step in a
+     * push). Pull and push report the same contacts. The callback is kept by
+     * copies of the model, including the ones `run_multiple()` makes.
+     *
+     * Installing a callback replaces the previous one. The built-in models
+     * with contact tracing install `make_contact_tracing_post_sampling()`;
+     * replacing it stops them from recording contacts.
+     */
+    ///@{
+    Model<TSeq> & set_post_sampling(PostSamplingFun<TSeq> fun); ///< Install a callback (an empty function clears it).
+    Model<TSeq> & clear_post_sampling(); ///< Remove the callback.
+    bool has_post_sampling() const { return post_sampling_on; } ///< Is a callback installed?
+
+    /// Reports that `infectious_id` was in contact with `contacted_id`. Samplers
+    /// call it, only if `has_post_sampling()`.
+    void register_sampled_contact(size_t infectious_id, size_t contacted_id);
+
+    /// Same, for several infectious agents in contact with `contacted_id`.
+    void register_sampled_contacts(
+        const size_t * infectious_ids, size_t n, size_t contacted_id
+    );
     ///@}
 
     const std::vector< VirusPtr<TSeq> > & get_viruses() const;
