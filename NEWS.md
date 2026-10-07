@@ -1,3 +1,13 @@
+# epiworldR 0.18.0-0
+
+Syncs the C++ core with epiworld 0.18.0.
+
+## User-visible changes
+
+* `ModelSIRMixing()`, `ModelSEIRMixing()` and `ModelSEIRMixingQuarantine()`
+  no longer scan the whole population every day to find infected agents, so
+  they are faster on large populations. Seeded results are unchanged.
+
 # epiworldR 0.17.1-0
 
 Syncs the C++ core with epiworld 0.17.1.

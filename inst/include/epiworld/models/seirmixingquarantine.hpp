@@ -51,22 +51,8 @@ class ModelSEIRMixingQuarantine :
 {
 private:
 
-    // Vector of vectors of infected agents
-    std::vector< size_t > infected;
-
-    // Number of infected agents in each group
-    std::vector< size_t > n_infected_per_group;
-
-    // Where the agents start in the `infected` vector
-    std::vector< size_t > entity_indices;
-
-    void _update_infected_list();
-    std::vector< size_t > sampled_agents;
-    size_t _sample_agents(
-        Agent<TSeq> * agent,
-        std::vector< size_t > & sampled_agents
-        );
-    std::vector< double > adjusted_contact_rate;
+    // Samples the infectious contacts (group pools, available counts)
+    sampler::Mixing<TSeq> mixing;
 
     #ifdef EPI_DEBUG
     std::vector< int > sampled_sizes;
@@ -209,131 +195,6 @@ public:
 };
 
 template<typename TSeq>
-inline void ModelSEIRMixingQuarantine<TSeq>::_update_infected_list()
-{
-
-    auto & agents = this->get_agents();
-
-    std::fill(n_infected_per_group.begin(), n_infected_per_group.end(), 0u);
-
-    // Resetting the number of available contacts
-    adjusted_contact_rate.assign(this->entities.size(), 0.0);
-
-    for (const auto & a : agents)
-    {
-
-        if (a.get_state() == INFECTED)
-        {
-            if (a.get_n_entities() > 0u)
-            {
-                const auto & entity = a.get_entity(0u, *this);
-                infected[
-                    // Position of the group in the `infected` vector
-                    entity_indices[entity.get_id()] +
-                    // Position of the agent in the group
-                    n_infected_per_group[entity.get_id()]++
-                ] = a.get_id();
-
-            }
-        }
-
-        // Setting how many agents are available for contact
-        if (
-            ((a.get_state() < ISOLATED) || (a.get_state() == RECOVERED)) &&
-            (a.get_n_entities() > 0u)
-        )
-        {
-            adjusted_contact_rate[
-                a.get_entity(0u, *this).get_id()
-            ] += 1.0;
-        }
-
-    }
-
-    // This simplifies calculations later
-    for (auto & rate: adjusted_contact_rate)
-    {
-        if (rate > 0.0)
-            rate = 1.0 / rate;
-        else
-            rate = 0.0;  // No available contacts in this group
-
-        if (rate > 1.0)
-            rate = 1.0;
-    }
-
-    return;
-
-}
-
-template<typename TSeq>
-inline size_t ModelSEIRMixingQuarantine<TSeq>::_sample_agents(
-    Agent<TSeq> * agent,
-    std::vector< size_t > & sampled_agents
-    )
-{
-
-    size_t agent_group_id = agent->get_entity(0u, *this).get_id();
-    size_t ngroups = this->entities.size();
-
-    int samp_id = 0;
-    for (size_t g = 0; g < ngroups; ++g)
-    {
-
-        size_t group_size = n_infected_per_group[g];
-
-        if (group_size == 0u)
-            continue;
-
-        // How many from this entity?
-        int nsamples = this->rbinom(
-            group_size,
-            adjusted_contact_rate[g] *
-            get_contact_rate(agent_group_id, g, false)
-        );
-
-        if (nsamples == 0)
-            continue;
-
-        // Sampling from the entity
-        for (int s = 0; s < nsamples; ++s)
-        {
-
-            // Randomly selecting an agent
-            int which = this->runif() * group_size;
-
-            // Correcting overflow error
-            if (which >= static_cast<int>(group_size))
-                which = static_cast<int>(group_size) - 1;
-
-            #ifdef EPI_DEBUG
-            auto & a = this->population.at(infected.at(entity_indices[g] + which));
-            #else
-            auto & a = this->get_agent(infected[entity_indices[g] + which]);
-            #endif
-
-            #ifdef EPI_DEBUG
-            if (a.get_state() != INFECTED)
-                throw std::logic_error(
-                    "The agent is not infected, but it should be."
-                );
-            #endif
-
-            // Can't sample itself
-            if (a.get_id() == agent->get_id())
-                continue;
-
-            sampled_agents[samp_id++] = a.get_id();
-
-        }
-
-    }
-
-    return samp_id;
-
-}
-
-template<typename TSeq>
 inline void ModelSEIRMixingQuarantine<TSeq>::reset()
 {
 
@@ -343,28 +204,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
     size_t nentities = this->entities.size();
     this->validate_contact_matrix(nentities);
 
-    // Do it the first time only
-    sampled_agents.resize(this->size());
-
-    // We only do it once
-    n_infected_per_group.assign(this->entities.size(), 0u);
-
-    // We are assuming one agent per entity
-    infected.assign(this->size(), 0u);
-
-    // This will say when do the groups start in the `infected` vector
-    entity_indices.assign(this->entities.size(), 0u);
-    for (size_t i = 1u; i < this->entities.size(); ++i)
-    {
-
-        entity_indices[i] +=
-            this->entities[i - 1].size() +
-            entity_indices[i - 1]
-            ;
-
-    }
-
-    this->_update_infected_list();
+    mixing.reset(*this);
 
     // Setting up the quarantine parameters
     quarantine_willingness.resize(this->size(), false);
@@ -406,7 +246,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_susceptible(
     // class
     auto * m_down = model_cast<ModelSEIRMixingQuarantine<TSeq>, TSeq>(m);
 
-    size_t ndraws = m_down->_sample_agents(p, m_down->sampled_agents);
+    size_t ndraws = m_down->mixing.sample(p, *m, *m_down);
 
     #ifdef EPI_DEBUG
     m_down->sampled_sizes.push_back(static_cast<int>(ndraws));
@@ -421,7 +261,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_susceptible(
     for (size_t n = 0u; n < ndraws; ++n)
     {
 
-        auto & neighbor = m->get_agent(m_down->sampled_agents[n]);
+        auto & neighbor = m->get_agent(m_down->mixing.sampled_ids()[n]);
 
         auto & v = neighbor.get_virus();
 
@@ -431,9 +271,6 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_susceptible(
                 "Trying to add an extra element to a temporal array outside of the range."
             );
         #endif
-
-        // Adding the current agent to the tracked interactions
-        m_down->get_contact_tracing().add_contact(neighbor.get_id(), p->get_id(), m->today());
 
         /* And it is a function of susceptibility_reduction as well */
         m->array_double_tmp[nviruses_tmp] =
@@ -849,6 +686,11 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     )
 {
 
+    mixing = sampler::Mixing<TSeq>(
+        {ModelSEIRMixingQuarantine<TSeq>::INFECTED},
+        {ModelSEIRMixingQuarantine<TSeq>::SUSCEPTIBLE, ModelSEIRMixingQuarantine<TSeq>::EXPOSED, ModelSEIRMixingQuarantine<TSeq>::INFECTED, ModelSEIRMixingQuarantine<TSeq>::RECOVERED}
+    );
+
     // Setting up the contact matrix
     this->set_contact_matrix(contact_matrix, true);
 
@@ -907,6 +749,7 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
 
     // Enable contact tracing for quarantine process
     this->contact_tracing_on(EPI_MAX_TRACKING);
+    this->set_post_sampling(make_contact_tracing_post_sampling<TSeq>());
 
     // Adding the empty population
     this->agents_empty_graph(n);
@@ -936,7 +779,7 @@ inline ModelSEIRMixingQuarantine<TSeq> & ModelSEIRMixingQuarantine<TSeq>::initia
 template<typename TSeq>
 inline void ModelSEIRMixingQuarantine<TSeq>::next() {
 
-    this->_update_infected_list();
+    mixing.update(*this);
     Model<TSeq>::next();
 
 }

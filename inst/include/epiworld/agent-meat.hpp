@@ -441,10 +441,15 @@ inline size_t Agent<TSeq>::get_n_tools() const noexcept
 }
 
 template<typename TSeq>
-inline void Agent<TSeq>::mutate_virus()
+inline void Agent<TSeq>::mutate_virus(Model<TSeq> & model)
 {
 
-    virus->mutate();
+    if (virus == nullptr)
+        throw std::logic_error(
+            "Agent " + std::to_string(id) + " has no virus to mutate."
+        );
+
+    virus->mutate(&model);
 
 }
 

@@ -161,6 +161,19 @@ template<typename TSeq>
 inline void Model<TSeq>::transmission_push()
 {
 
+    // The recording path is chosen once per step, not per contact
+    if (post_sampling_on)
+        transmission_push_impl<true>();
+    else
+        transmission_push_impl<false>();
+
+}
+
+template<typename TSeq>
+template<bool Record>
+inline void Model<TSeq>::transmission_push_impl()
+{
+
     const size_t ns = static_cast< size_t >(nstates);
 
     if (push_slot.size() != population.size())
@@ -231,6 +244,13 @@ inline void Model<TSeq>::transmission_push()
                 // Pulling only updates queued agents.
                 if (use_queuing && (queue[i_id] <= 0))
                     continue;
+
+                // The post-sampling callback sees every eligible contact, also
+                // the ones that cannot transmit, as a pull reports them. The
+                // carriers are visited in ascending id order, so the pairs
+                // come out grouped by infectious agent.
+                if constexpr (Record)
+                    register_sampled_contact(j_id, i_id);
 
                 // Exactly the expression the pull uses, in the same order.
                 epiworld_double p =

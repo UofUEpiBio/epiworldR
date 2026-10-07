@@ -325,7 +325,8 @@ public:
     const std::vector<ToolPtr<TSeq>> get_tools() const;
     size_t get_n_tools() const noexcept;
 
-    void mutate_virus();
+    /// @brief Applies the virus' mutation function (throws if the agent has no virus).
+    void mutate_virus(Model<TSeq> & model);
 
     /// @brief Whether `neighbor_id` is one of this agent's neighbors.
     bool has_neighbor(size_t neighbor_id) const;

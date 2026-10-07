@@ -220,6 +220,7 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
 
+    const bool record = m->has_post_sampling();
     size_t nviruses_tmp = 0u;
     for (auto * neighbor : p->neighbors_view(*m))
     {
@@ -231,12 +232,9 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
         if (neighbor->get_state() != ModelSEIRNetworkQuarantine<TSeq>::INFECTED)
             continue;
 
-        // Record contact for tracing: infected neighbor -> susceptible agent
-        m->get_contact_tracing().add_contact(
-            neighbor->get_id(),
-            p->get_id(),
-            static_cast<size_t>(m->today())
-        );
+        // Report the contact: infected neighbor -> susceptible agent
+        if (record)
+            m->register_sampled_contact(neighbor->get_id(), p->get_id());
 
         #ifdef EPI_DEBUG
         if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
@@ -695,6 +693,7 @@ inline ModelSEIRNetworkQuarantine<TSeq>::ModelSEIRNetworkQuarantine(
 
     // Enable contact tracing for quarantine process
     this->contact_tracing_on(EPI_MAX_TRACKING);
+    this->set_post_sampling(make_contact_tracing_post_sampling<TSeq>());
 
     this->set_name("SEIR with Network and Quarantine");
 
