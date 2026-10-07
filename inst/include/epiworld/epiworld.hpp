@@ -1,3 +1,6 @@
+// Every standard header the library uses must be included here: the other
+// headers are included inside `namespace epiworld`, so a standard header first
+// included there would be declared in `epiworld::std`.
 #include <array>
 #include <vector>
 #include <functional>
@@ -14,6 +17,9 @@
 #include <chrono>
 #include <climits>
 #include <cstdint>
+#include <cstddef>
+#include <limits>
+#include <numeric>
 #include <algorithm>
 #include <regex>
 #include <sstream>
