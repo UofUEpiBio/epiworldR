@@ -351,3 +351,20 @@ SEXP distribute_virus_to_entities_cpp(
 
 
 #undef WrapVirus
+
+[[cpp11::register]]
+SEXP clone_virus_cpp(SEXP virus) {
+
+  // clone_ptr() keeps the virus's type
+  auto cloned = external_pointer<Virus<>>(virus)->clone_ptr();
+
+  // The copy is a new virus (and lineage): the model assigns it a new id
+  // and sequence when it is added, so it is not recorded as the original
+  cloned->set_id(-99);
+  cloned->set_sequence(-1);
+
+  external_pointer<Virus<>> ptr(cloned.release());
+
+  return ptr;
+
+}

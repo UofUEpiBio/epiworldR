@@ -22,6 +22,7 @@ reference:
       Core functions for manipulating models, running simulations, and extracting results.
     contents:
       - epiworld-methods
+      - clone_epi
       - transmission-mode
       - run_multiple
 

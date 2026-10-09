@@ -411,3 +411,20 @@ SEXP distribute_tool_to_entities_cpp(
 
 
 #undef WrapTool
+
+[[cpp11::register]]
+SEXP clone_tool_cpp(SEXP tool) {
+
+  // clone_ptr() keeps the tool's type (e.g., ToolVaccine)
+  auto cloned = external_pointer<Tool<>>(tool)->clone_ptr();
+
+  // The copy is a new tool: the model assigns it a new id and sequence
+  // when it is added, so it is not recorded as the original
+  cloned->set_id(-99);
+  cloned->set_sequence(-1);
+
+  external_pointer<Tool<>> ptr(cloned.release());
+
+  return ptr;
+
+}
