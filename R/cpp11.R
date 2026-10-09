@@ -632,6 +632,22 @@ set_name_tool_cpp <- function(tool, name) {
   .Call(`_epiworldR_set_name_tool_cpp`, tool, name)
 }
 
+add_target_tool_cpp <- function(tool, lineage_id) {
+  .Call(`_epiworldR_add_target_tool_cpp`, tool, lineage_id)
+}
+
+set_targets_tool_cpp <- function(tool, lineage_ids) {
+  .Call(`_epiworldR_set_targets_tool_cpp`, tool, lineage_ids)
+}
+
+clear_targets_tool_cpp <- function(tool) {
+  .Call(`_epiworldR_clear_targets_tool_cpp`, tool)
+}
+
+get_targets_tool_cpp <- function(tool) {
+  .Call(`_epiworldR_get_targets_tool_cpp`, tool)
+}
+
 print_tool_cpp <- function(t) {
   .Call(`_epiworldR_print_tool_cpp`, t)
 }
@@ -734,6 +750,10 @@ set_incubation_fun_cpp <- function(virus, model, vfun) {
 
 get_name_virus_cpp <- function(virus) {
   .Call(`_epiworldR_get_name_virus_cpp`, virus)
+}
+
+get_lineage_virus_cpp <- function(virus) {
+  .Call(`_epiworldR_get_lineage_virus_cpp`, virus)
 }
 
 set_name_virus_cpp <- function(virus, name) {
