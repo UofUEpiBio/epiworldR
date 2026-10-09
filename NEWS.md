@@ -1,4 +1,6 @@
-# epiworldR 0.19.0-1
+# epiworldR 0.19.0-0
+
+Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
 
 ## New features
 
@@ -9,13 +11,9 @@
   gives another all-or-nothing vaccine with a different efficacy or
   distribution, which `tool()` cannot create. Once added to a model, copies of
   tools and viruses are recorded as new tools and viruses (with their own id
-  and, for viruses, lineage). For models, `clone_epi()` calls `clone_model()`.
+  and, for viruses, lineage).
 
-# epiworldR 0.19.0-0
-
-Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
-
-## New features
+* `clone_model()` is deprecated in favor of `clone_epi()`.
 
 * Tools can now target specific viruses. New functions `add_target_tool()`,
   `set_targets_tool()`, `get_targets_tool()` and `clear_targets_tool()`

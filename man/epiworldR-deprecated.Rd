@@ -8,6 +8,7 @@
 \alias{epiworldR-deprecated}
 \alias{add_tool_n}
 \alias{add_virus_n}
+\alias{clone_model}
 \title{Deprecated and removed functions in epiworldR}
 \usage{
 globalaction_tool(...)
@@ -21,6 +22,8 @@ globalaction_fun(...)
 add_tool_n(model, tool, n)
 
 add_virus_n(model, virus, n)
+
+clone_model(model)
 }
 \arguments{
 \item{...}{Arguments to be passed to the new function.}
@@ -41,5 +44,8 @@ Starting version 0.11.0.0, the measles models have been removed from
 \code{epiworldR} and now are part of the \code{measles} R package:
 \url{https://github.com/UofUEpiBio/measles}. The models previously available
 in \code{epiworldR} were: \code{ModelMeaslesSchool} and \code{ModelMeaslesMixing}.
+
+Starting version 0.19.0-0, \code{clone_model()} is deprecated in favor of
+\code{\link[=clone_epi]{clone_epi()}}, which also copies tools and viruses.
 }
 \concept{deprecated-functions}

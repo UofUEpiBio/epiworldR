@@ -179,7 +179,7 @@ than a hermetic bubble.
 
 ```{r}
 #| label: household-only-model
-household_only_model <- clone_model(baseline_model)
+household_only_model <- clone_epi(baseline_model)
 
 bubbles(
   household_only_model,
@@ -210,7 +210,7 @@ households into disjoint groups containing at most three households. The same
 
 ```{r}
 #| label: three-household-model
-three_household_model <- clone_model(baseline_model)
+three_household_model <- clone_epi(baseline_model)
 
 bubbles(
   three_household_model,
@@ -242,7 +242,7 @@ was found. Contacts outside the bubble are still damped by the same 80%.
 
 ```{r}
 #| label: complete-ties-model
-complete_ties_model <- clone_model(baseline_model)
+complete_ties_model <- clone_epi(baseline_model)
 
 bubbles(
   complete_ties_model,

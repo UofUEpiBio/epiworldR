@@ -43,7 +43,7 @@ their own lineage), so the model records them separately from the
 original. Use \code{\link[=set_name_tool]{set_name_tool()}} or \code{\link[=set_name_virus]{set_name_virus()}} to tell them apart
 in the outputs.
 
-For models, \code{clone_epi()} is the same as \code{\link[=clone_model]{clone_model()}}.
+\code{clone_epi()} replaces \code{clone_model()}, which is deprecated.
 }
 \examples{
 model <- ModelSIRCONN(

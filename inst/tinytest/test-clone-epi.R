@@ -105,4 +105,14 @@ expect_equal(get_lineage_virus(get_virus(model, 1)), 1L)
 model  <- make_model()
 model2 <- clone_epi(model)
 expect_inherits(model2, class(model))
+
+# The copy is independent of the original
+name0 <- get_name(model)
+set_name(model2, "Copy")
+expect_equal(get_name(model2), "Copy")
+expect_equal(get_name(model), name0)
+
+# clone_model() is deprecated in favor of clone_epi()
+expect_warning(model3 <- clone_model(model), "clone_epi")
+expect_inherits(model3, class(model))
 expect_error(clone_epi(1), "no method")

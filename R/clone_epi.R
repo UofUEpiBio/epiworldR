@@ -21,7 +21,7 @@
 #' original. Use [set_name_tool()] or [set_name_virus()] to tell them apart
 #' in the outputs.
 #'
-#' For models, `clone_epi()` is the same as [clone_model()].
+#' `clone_epi()` replaces `clone_model()`, which is deprecated.
 #' @returns A copy of `x`, with the same class.
 #' @examples
 #' model <- ModelSIRCONN(
@@ -67,7 +67,10 @@ clone_epi.epiworld_virus <- function(x, ...) {
 #' @export
 #' @rdname clone_epi
 clone_epi.epiworld_model <- function(x, ...) {
-  clone_model(x)
+  structure(
+    clone_model_cpp(x),
+    class = class(x)
+  )
 }
 
 #' @export
