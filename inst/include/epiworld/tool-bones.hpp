@@ -41,6 +41,10 @@ protected:
 
     ToolToAgentFun<TSeq> dist = nullptr;
 
+    /// Bitmask of targeted virus lineages (all ones: every virus).
+    uint64_t target_mask = ~uint64_t(0);
+    static uint64_t target_bit(int lineage_id); ///< Throws for ids out of range.
+
     epiworld_fast_int state_init = -99;
     epiworld_fast_int state_post = -99;
 
@@ -98,6 +102,31 @@ public:
     virtual void set_transmission_reduction(epiworld_double prob);
     virtual void set_recovery_enhancer(epiworld_double prob);
     virtual void set_death_reduction(epiworld_double prob);
+    ///@}
+
+    /**
+     * @name Virus targets
+     * 
+     * @details
+     * By default, a tool acts on every virus. Adding targets restricts the
+     * tool (all four effects: susceptibility and transmission reduction,
+     * recovery enhancer, and death reduction) to the listed virus lineages.
+     * A lineage is a virus added with `Model::add_virus()` together with all
+     * of its mutations, so a tool targeting a virus also acts on its
+     * variants. Lineage ids are the virus ids assigned by
+     * `Model::add_virus()`; only lineages 0 to 62 can be targeted.
+     * 
+     * @param lineage_id Id of the virus lineage (see
+     * `Virus::get_lineage_id()`).
+     * @param v A virus already added to the model.
+     */
+    ///@{
+    void add_target(int lineage_id);
+    void add_target(const Virus<TSeq> & v);
+    void set_targets(const std::vector< int > & lineage_ids);
+    std::vector< int > get_targets() const; ///< Empty if the tool acts on every virus.
+    void clear_targets();
+    bool targets(const Virus<TSeq> & v) const;
     ///@}
 
     void set_name(std::string name);

@@ -1,3 +1,22 @@
+# epiworldR 0.19.0-0
+
+Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
+
+## Bug fixes
+
+* `run_multiple()` now runs every simulation when OpenMP provides fewer
+  threads than `nthreads` asks for (e.g., because of `OMP_THREAD_LIMIT`,
+  `OMP_DYNAMIC`, or a call from inside another parallel region). Previously,
+  the simulations assigned to the missing threads were silently skipped,
+  although they were still counted. Results with the full set of threads are
+  unchanged.
+
+## Internal changes
+
+* The C++ core can now restrict a tool to specific viruses (and their
+  variants). This is not yet exposed in R; tools still act on every virus,
+  so results are unchanged.
+
 # epiworldR 0.18.0-0
 
 Syncs the C++ core with epiworld 0.18.0.

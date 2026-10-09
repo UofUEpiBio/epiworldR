@@ -331,7 +331,7 @@ inline void DataBase<TSeq>::record()
 }
 
 template<typename TSeq>
-inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v)
+inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v, bool founder)
 {
 
     // If no sequence, then need to add one. This is regardless of the case
@@ -350,25 +350,60 @@ inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v)
                 ));        
     }
 
+    std::vector< int > hash;
+    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
+    {
+        hash = seq_hasher(v.get_sequence());
+    }
+    else
+    {
+        hash = seq_hasher(*v.get_sequence());
+    }
+
+    // Lineages 63 and above share the overflow bit, which tools cannot target
+    auto set_lineage = [&v](int lineage_id) {
+        v.lineage_id  = lineage_id;
+        v.lineage_bit = uint64_t(1) << std::min(lineage_id, 63);
+    };
+
+    // A virus added to the model founds a lineage. Its id may come from
+    // another model, so only its sequence identifies it here.
+    if (founder)
+    {
+
+        auto match = virus_id.find(hash);
+        if (match == virus_id.end())
+            v.set_id(-99);
+        else
+        {
+            // Already on record (e.g., added twice): keep its lineage
+            int id = static_cast< int >(match->second);
+            v.set_id(id);
+            v.set_date(virus_origin_date[id]);
+
+            while (virus_parent_id[id] >= 0)
+                id = virus_parent_id[id];
+
+            set_lineage(id);
+            return;
+        }
+
+    }
+
     // Negative id -> virus hasn't been recorded
     if (v.get_id() < 0)
     {
 
         epiworld_fast_uint new_id = virus_id.size();
         virus_name.push_back(v.get_name());
+        virus_id[hash] = new_id;
 
-        // Generating the hash
-        std::vector< int > hash;
         EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
         {
-            hash = seq_hasher(v.get_sequence());
-            virus_id[hash] = new_id;
             virus_sequence.push_back(v.get_sequence());
         }
         else
         {
-            hash = seq_hasher(*v.get_sequence());
-            virus_id[hash] = new_id;
             virus_sequence.push_back(*v.get_sequence());
         }
 
@@ -384,6 +419,9 @@ inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v)
         v.set_id(new_id);
         v.set_date(model->today());
 
+        // A new founder starts a lineage (mutations keep it)
+        set_lineage(static_cast< int >(new_id));
+
         today_total_nviruses_active++;
 
     }
@@ -392,15 +430,6 @@ inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v)
              // The new sequence is new.
 
         // Updating registry
-        std::vector< int > hash;
-        EPI_IF_TSEQ_LESS_EQ_INT(TSeq)
-        {
-            hash = seq_hasher(v.get_sequence());
-        }
-        else
-        {
-            hash = seq_hasher(*v.get_sequence());
-        }
         epiworld_fast_uint old_id = v.get_id();
         epiworld_fast_uint new_id;
 
