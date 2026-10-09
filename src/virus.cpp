@@ -255,6 +255,11 @@ std::string get_name_virus_cpp(SEXP virus) {
 }
 
 [[cpp11::register]]
+int get_lineage_virus_cpp(SEXP virus) {
+  return external_pointer<Virus<>>(virus)->get_lineage_id();
+}
+
+[[cpp11::register]]
 SEXP set_name_virus_cpp(SEXP virus, std::string name) {
   external_pointer<Virus<>>(virus)->set_name(name);
   return virus;

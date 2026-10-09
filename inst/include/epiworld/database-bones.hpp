@@ -128,8 +128,10 @@ public:
      * Since viruses are originated in the agent, the numbers simply move around.
      * From the parent virus to the new virus. And the total number of infected
      * does not change.
+     * @param founder `true` when `Model::add_virus()` registers the virus,
+     * which then starts its own lineage (unless its sequence is on record).
      */
-    void record_virus(Virus<TSeq> & v);
+    void record_virus(Virus<TSeq> & v, bool founder = false);
     void record_tool(Tool<TSeq> & t);
     void set_seq_hasher(std::function<std::vector<int>(TSeq)> fun);
     void reset();

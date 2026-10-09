@@ -182,6 +182,8 @@ inline Virus<TSeq>::Virus(const Virus<TSeq>& other)
       virus_name(other.virus_name),
       date(other.date),
       id(other.id),
+      lineage_id(other.lineage_id),
+      lineage_bit(other.lineage_bit),
       state_init(other.state_init),
       state_post(other.state_post),
       state_removed(other.state_removed),
@@ -200,6 +202,8 @@ inline Virus<TSeq>::Virus(Virus<TSeq>&& other) noexcept
       virus_name(std::move(other.virus_name)),
       date(other.date),
       id(other.id),
+      lineage_id(other.lineage_id),
+      lineage_bit(other.lineage_bit),
       state_init(other.state_init),
       state_post(other.state_post),
       state_removed(other.state_removed),
@@ -221,6 +225,8 @@ inline Virus<TSeq>& Virus<TSeq>::operator=(const Virus<TSeq>& other)
         virus_name = other.virus_name;
         date = other.date;
         id = other.id;
+        lineage_id = other.lineage_id;
+        lineage_bit = other.lineage_bit;
         state_init = other.state_init;
         state_post = other.state_post;
         state_removed = other.state_removed;
@@ -242,6 +248,8 @@ inline Virus<TSeq>& Virus<TSeq>::operator=(Virus<TSeq>&& other) noexcept
         virus_name = std::move(other.virus_name);
         date = other.date;
         id = other.id;
+        lineage_id = other.lineage_id;
+        lineage_bit = other.lineage_bit;
         state_init = other.state_init;
         state_post = other.state_post;
         state_removed = other.state_removed;
@@ -331,6 +339,12 @@ inline int Virus<TSeq>::get_id() const
     
     return id;
 
+}
+
+template<typename TSeq>
+inline int Virus<TSeq>::get_lineage_id() const
+{
+    return lineage_id;
 }
 
 template<typename TSeq>

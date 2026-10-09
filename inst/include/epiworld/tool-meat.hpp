@@ -394,6 +394,92 @@ inline std::string Tool<TSeq>::get_name() const {
 }
 
 template<typename TSeq>
+inline uint64_t Tool<TSeq>::target_bit(int lineage_id)
+{
+
+    if ((lineage_id < 0) || (lineage_id >= 63))
+        throw std::range_error(
+            std::string("The virus lineage id ") +
+            std::to_string(lineage_id) +
+            std::string(" cannot be targeted. Only lineages 0 to 62 can be ") +
+            std::string("targeted by tools.")
+        );
+
+    return uint64_t(1) << lineage_id;
+
+}
+
+template<typename TSeq>
+inline void Tool<TSeq>::add_target(int lineage_id)
+{
+
+    uint64_t bit = target_bit(lineage_id);
+
+    // The first target replaces the default (every virus)
+    if (target_mask == ~uint64_t(0))
+        target_mask = 0u;
+
+    target_mask |= bit;
+
+}
+
+template<typename TSeq>
+inline void Tool<TSeq>::add_target(const Virus<TSeq> & v)
+{
+
+    if (v.get_lineage_id() < 0)
+        throw std::logic_error(
+            std::string("The virus \"") + v.get_name() +
+            std::string("\" has no lineage id. Add it to the model with ") +
+            std::string("Model::add_virus() before targeting it.")
+        );
+
+    add_target(v.get_lineage_id());
+
+}
+
+template<typename TSeq>
+inline void Tool<TSeq>::set_targets(const std::vector< int > & lineage_ids)
+{
+
+    // Validate every id before touching the current targets
+    uint64_t mask = lineage_ids.empty() ? ~uint64_t(0) : 0u;
+    for (auto id : lineage_ids)
+        mask |= target_bit(id);
+
+    target_mask = mask;
+
+}
+
+template<typename TSeq>
+inline std::vector< int > Tool<TSeq>::get_targets() const
+{
+
+    std::vector< int > res;
+    if (target_mask == ~uint64_t(0))
+        return res;
+
+    for (int i = 0; i < 63; ++i)
+        if (target_mask & (uint64_t(1) << i))
+            res.push_back(i);
+
+    return res;
+
+}
+
+template<typename TSeq>
+inline void Tool<TSeq>::clear_targets()
+{
+    target_mask = ~uint64_t(0);
+}
+
+template<typename TSeq>
+inline bool Tool<TSeq>::targets(const Virus<TSeq> & v) const
+{
+    return (target_mask & v.lineage_bit) != 0u;
+}
+
+template<typename TSeq>
 inline Agent<TSeq> * Tool<TSeq>::get_agent()
 {
     return this->agent;
@@ -508,6 +594,9 @@ inline bool Tool<std::vector<int>>::operator==(
     if (queue_post != other.queue_post)
         return false;
 
+    if (target_mask != other.target_mask)
+        return false;
+
 
     return true;
 
@@ -543,6 +632,9 @@ inline bool Tool<TSeq>::operator==(const Tool<TSeq> & other) const
     if (queue_post != other.queue_post)
         return false;
 
+    if (target_mask != other.target_mask)
+        return false;
+
     return true;
 
 }
@@ -558,6 +650,14 @@ inline void Tool<TSeq>::print() const
     printf_epiworld("state_post : %i\n", static_cast<int>(state_post));
     printf_epiworld("queue_init : %i\n", static_cast<int>(queue_init));
     printf_epiworld("queue_post : %i\n", static_cast<int>(queue_post));
+
+    if (target_mask != ~uint64_t(0))
+    {
+        std::string tgts;
+        for (auto i : get_targets())
+            tgts += (tgts.empty() ? "" : ", ") + std::to_string(i);
+        printf_epiworld("targets    : %s\n", tgts.c_str());
+    }
 
 }
 

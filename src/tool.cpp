@@ -242,6 +242,47 @@ SEXP set_name_tool_cpp(SEXP tool, std::string name) {
   return tool;
 }
 
+// Virus targets ---------------------------------------------------------------
+[[cpp11::register]]
+SEXP add_target_tool_cpp(SEXP tool, int lineage_id) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->add_target(lineage_id);
+  return tool;
+
+}
+
+[[cpp11::register]]
+SEXP set_targets_tool_cpp(SEXP tool, integers lineage_ids) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->set_targets(as_cpp<std::vector<int>>(lineage_ids));
+  return tool;
+
+}
+
+[[cpp11::register]]
+SEXP clear_targets_tool_cpp(SEXP tool) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->clear_targets();
+  return tool;
+
+}
+
+[[cpp11::register]]
+cpp11::writable::integers get_targets_tool_cpp(SEXP tool) {
+
+  WrapTool(toolptr)(tool);
+
+  cpp11::writable::integers res;
+  for (const auto & id : toolptr->get_targets())
+    res.push_back(id);
+
+  return res;
+
+}
+
 [[cpp11::register]]
 SEXP print_tool_cpp(SEXP t) {
 

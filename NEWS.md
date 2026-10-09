@@ -1,3 +1,26 @@
+# epiworldR 0.19.0-0
+
+Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
+
+## New features
+
+* Tools can now target specific viruses. New functions `add_target_tool()`,
+  `set_targets_tool()`, `get_targets_tool()` and `clear_targets_tool()`
+  restrict all of a tool's effects to the given viruses (e.g., a vaccine that
+  only protects against measles), and `get_lineage_virus()` returns the id
+  they use. Targets match a virus *lineage*, so a tool targeting a virus also
+  acts on its mutations. By default a tool still acts on every virus, so
+  existing models give the same results. See `?"tool-targets"`.
+
+## Bug fixes
+
+* `run_multiple()` now runs every simulation when OpenMP provides fewer
+  threads than `nthreads` asks for (e.g., because of `OMP_THREAD_LIMIT`,
+  `OMP_DYNAMIC`, or a call from inside another parallel region). Previously,
+  the simulations assigned to the missing threads were silently skipped,
+  although they were still counted. Results with the full set of threads are
+  unchanged.
+
 # epiworldR 0.18.0-0
 
 Syncs the C++ core with epiworld 0.18.0.

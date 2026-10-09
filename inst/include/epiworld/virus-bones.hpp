@@ -10,6 +10,9 @@ class Virus;
 template<typename TSeq>
 class Model;
 
+template<typename TSeq>
+class Tool;
+
 /**
  * @brief Virus
  * 
@@ -25,6 +28,7 @@ class Virus {
     friend class Agent<TSeq>;
     friend class Model<TSeq>;
     friend class DataBase<TSeq>;
+    friend class Tool<TSeq>;
 private:
     
     Agent<TSeq> * agent = nullptr;
@@ -35,6 +39,8 @@ private:
     std::string virus_name = "unknown virus";
     int date = -99;
     int id   = -99;    
+    int lineage_id = -99; ///< Id of the founding virus (kept across mutations).
+    uint64_t lineage_bit = uint64_t(1) << 63; ///< Bit matched against Tool::target_mask.
     epiworld_fast_int state_init    = -99; ///< Change of state when added to agent.
     epiworld_fast_int state_post    = -99; ///< Change of state when removed from agent.
     epiworld_fast_int state_removed = -99; ///< Change of state when agent is removed
@@ -99,6 +105,18 @@ public:
 
     void set_id(int idx);
     int get_id() const;
+
+    /**
+     * @brief Id of the virus lineage
+     * 
+     * The id assigned to the founding virus when it was added to the model
+     * (see `Model::add_virus()`). Mutations change the virus id but keep
+     * the lineage id, so all variants of a virus share it. Tools target
+     * viruses by lineage (see `Tool::add_target()`).
+     * 
+     * @return int The lineage id (-99 if the virus has not been recorded).
+     */
+    int get_lineage_id() const;
 
     /**
      * @name Get and set the tool functions
