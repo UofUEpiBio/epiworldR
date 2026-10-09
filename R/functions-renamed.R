@@ -8,6 +8,9 @@
 #' <https://github.com/UofUEpiBio/measles>. The models previously available
 #' in `epiworldR` were: `ModelMeaslesSchool` and `ModelMeaslesMixing`.
 #'
+#' Starting version 0.19.0-0, `clone_model()` is deprecated in favor of
+#' [clone_epi()], which also copies tools and viruses.
+#'
 #' @param ... Arguments to be passed to the new function.
 #' @param model Model object of class `epiworld_model`.
 #' @param tool Tool object of class `epiworld_tool`.
@@ -50,5 +53,15 @@ add_virus_n <- function(model, virus, n) {
   )
 
   add_virus(model, virus)
+
+}
+
+#' @export
+#' @rdname epiworldR-deprecated
+clone_model <- function(model) {
+
+  .Deprecated(new = "clone_epi")
+
+  clone_epi(model)
 
 }

@@ -4,6 +4,17 @@ Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
 
 ## New features
 
+* The new generic `clone_epi()` creates an independent copy of an
+  `epiworld_tool`, `epiworld_virus`, or `epiworld_model` (the assignment
+  operator only copies the pointer). Copies keep their C++ type and settings,
+  so, e.g., cloning a model's vaccine with `clone_epi(get_tool(model, 0))`
+  gives another all-or-nothing vaccine with a different efficacy or
+  distribution, which `tool()` cannot create. Once added to a model, copies of
+  tools and viruses are recorded as new tools and viruses (with their own id
+  and, for viruses, lineage).
+
+* `clone_model()` is deprecated in favor of `clone_epi()`.
+
 * Tools can now target specific viruses. New functions `add_target_tool()`,
   `set_targets_tool()`, `get_targets_tool()` and `clear_targets_tool()`
   restrict all of a tool's effects to the given viruses (e.g., a vaccine that
