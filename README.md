@@ -13,6 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
 [![status](https://tinyverse.netlify.app/badge/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
+[![used by](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FUofUEpiBio%2FepiworldR%2Fwhouses-data%2Fbadge.json)](https://github.com/UofUEpiBio/epiworldR/blob/whouses-data/REPORT.md)
 
 <!-- badges: end -->
 
