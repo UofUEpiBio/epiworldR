@@ -55,4 +55,4 @@ revdep/
 ^CITATION\.cff$
 ^AGENTS\.md$
 ^CLAUDE\.md$
-^\.whouses\.yml$
+^\.usescout\.yml$

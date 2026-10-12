@@ -13,7 +13,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/UofUEpiBio/epiworldR/blob/master/LICENSE.md)
 [![codecov](https://codecov.io/gh/UofUEpiBio/epiworldR/graph/badge.svg?token=ZB8FVLI7GN)](https://app.codecov.io/gh/UofUEpiBio/epiworldR)
 [![status](https://tinyverse.netlify.app/badge/epiworldR)](https://CRAN.R-project.org/package=epiworldR)
-[![used by](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FUofUEpiBio%2FepiworldR%2Fwhouses-data%2Fbadge.json)](https://github.com/UofUEpiBio/epiworldR/blob/whouses-data/REPORT.md)
+[![used by](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FUofUEpiBio%2FepiworldR%2Fusescout%2Fbadge.json)](https://github.com/UofUEpiBio/epiworldR/blob/usescout/REPORT.md)
 
 <!-- badges: end -->
 
@@ -119,6 +119,10 @@ Or from CRAN
 ``` r
 install.packages("epiworldR")
 ```
+
+## Who uses epiworldR?
+
+[usescout](https://github.com/gvegayon/usescout) tracks where epiworldR is used: GitHub repositories, CRAN packages and papers, including papers that use it without citing it. The current list, with the exact place each one was found, is in the [usage report](https://github.com/UofUEpiBio/epiworldR/blob/usescout/REPORT.md); the data lives in the [`usescout` branch](https://github.com/UofUEpiBio/epiworldR/tree/usescout). If you use epiworldR in published work, please cite it (see the box at the top).
 
 # Examples
 

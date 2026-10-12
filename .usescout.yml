@@ -1,0 +1,11 @@
+# usescout: tracks where epiworldR is used (code hosts, registries, literature). https://github.com/gvegayon/usescout
+profile: r
+name: epiworldR
+repo: UofUEpiBio/epiworldR
+doi: [10.21105/joss.05781]        # the JOSS paper; lets usescout tell which papers cite it
+sources: [github, ecosystems, openalex, europepmc]
+# `main` is protected (PRs required), so data, report and badge live on a dedicated branch
+data_branch: usescout
+overrides:
+  literature:
+    context_terms: [epiworld, agent-based, epidemic, simulation, R]
