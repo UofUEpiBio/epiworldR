@@ -25,6 +25,16 @@ Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
 
 ## Bug fixes
 
+* `add_virus()` now works on `ModelSIRMixing()`, `ModelSEIRMixing()`, and
+  `ModelSEIRMixingQuarantine()`. Adding a virus to these models failed with
+  `The virus "..." has no -init- state`, because only the other canonical
+  models set the states of the virus being added.
+
+* The SEIRD example in the model builder vignette excluded the wrong states
+  from the susceptible update function (`exclude = c(3L, 4L)`, i.e.,
+  Recovered and Deceased, instead of Exposed), so exposed agents transmitted
+  the virus.
+
 * `run_multiple()` now runs every simulation when OpenMP provides fewer
   threads than `nthreads` asks for (e.g., because of `OMP_THREAD_LIMIT`,
   `OMP_DYNAMIC`, or a call from inside another parallel region). Previously,
