@@ -1,6 +1,6 @@
 # epiworldR 0.19.0-0
 
-Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
+Syncs the C++ core with epiworld 0.19.0 (commit c340f87).
 
 ## New features
 
@@ -24,6 +24,30 @@ Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).
   existing models give the same results. See `?"tool-targets"`.
 
 ## Bug fixes
+
+* Exposed agents no longer transmit in `ModelSEIR()` and `ModelSEIRD()`. The
+  susceptible update of these network models took every neighbor carrying the
+  virus as a source, Exposed ones included, unlike the other SEIR models
+  (`ModelSEIRCONN()` and the mixing models) and the model documentation. Epidemics
+  from these two models now start more slowly, and results for a given seed
+  change.
+
+* `load_agents_entities_ties()` ties now apply in every run. Before, they were
+  applied in the first run only, so every replicate after the first in
+  `run_multiple()` (and any second `run()`) ran without them.
+
+* `add_virus()` now works on `ModelSIRMixing()`, `ModelSEIRMixing()`, and
+  `ModelSEIRMixingQuarantine()`. Adding a virus to these models failed with
+  `The virus "..." has no -init- state`, because only the other canonical
+  models set the states of the virus being added.
+
+* The model builder examples now exclude the states whose agents must not
+  infect others from the susceptible update function. The SIR example (vignette
+  and `?model_builder`) excluded none, so recovered agents, who keep the virus,
+  kept transmitting (ever infected by day 30: 3,709 against 1,303 for
+  `ModelSIR()`, in 10,000 agents). The SEIRD example excluded Recovered and
+  Deceased but not Exposed (`exclude = c(3L, 4L)`); it now uses
+  `c(1L, 3L, 4L)`. The model builder test uses `c(1L, 3L)`.
 
 * `run_multiple()` now runs every simulation when OpenMP provides fewer
   threads than `nthreads` asks for (e.g., because of `OMP_THREAD_LIMIT`,

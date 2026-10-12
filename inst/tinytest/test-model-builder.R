@@ -37,12 +37,12 @@ add_param(seir_mb, "Incubation rate",   1.0 / incub_days)
 add_param(seir_mb, "Recovery rate",     recov_rate)
 
 # Update functions:
-#   S (0): susceptible sampler; exclude Removed (3) so that agents who have
-#          already recovered (but still carry the virus pointer) do not infect.
+#   S (0): susceptible sampler; exclude Exposed (1), who are not infectious
+#          yet, and Removed (3), who have recovered but still carry the virus.
 #   E (1): transitions to Infected (2) at the incubation rate
 #   I (2): transitions to Removed (3) at the recovery rate
 #   R (3): no update (absorbing)
-update_s <- update_fun_susceptible(exclude = 3L)
+update_s <- update_fun_susceptible(exclude = c(1L, 3L))
 update_e <- update_fun_rate(param_names = "Incubation rate", target_states = 2L)
 update_i <- update_fun_rate(param_names = "Recovery rate",   target_states = 3L)
 

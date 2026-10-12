@@ -259,6 +259,21 @@ add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
 
 }
 
+#' @export
+add_virus.epiworld_sirmixing <- add_virus.epiworld_sir
+
+#' @export
+add_virus.epiworld_seirmixing <- add_virus.epiworld_seir
+
+#' @export
+add_virus.epiworld_seirmixingquarantine <- function(model, virus, proportion) {
+
+  stopifnot_virus(virus)
+  virus_set_state(virus, init = 1, end = 8, removed = 8)
+  invisible(add_virus_cpp(model, virus))
+
+}
+
 # Virus MISC -------------------------------------------------------------------
 
 #' @export

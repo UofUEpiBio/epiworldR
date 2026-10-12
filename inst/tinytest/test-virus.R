@@ -122,3 +122,31 @@ expect_equal(get_param(model_ptr, "custom_incubation"), 3.0)
 expect_silent(add_virus(model_ptr, virus_ptr))
 expect_silent(verbose_off(model_ptr))
 expect_silent(run(model_ptr, ndays = 5, seed = 789))
+
+# Adding a second virus to the mixing models ------------------------------------
+cmat <- matrix(c(0.9, 0.1, 0.1, 0.9), nrow = 2) * 5
+mixing_models <- list(
+  ModelSIRMixing("A virus", 500, 0.01, 0.2, 1 / 7, cmat),
+  ModelSEIRMixing("A virus", 500, 0.01, 0.2, 3, 1 / 7, cmat)
+)
+for (m in mixing_models) {
+  other <- virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)
+  expect_silent(add_virus(m, other))
+  add_entity(m, entity("Group 1", 250, FALSE))
+  add_entity(m, entity("Group 2", 250, FALSE))
+  verbose_off(m)
+  expect_silent(run(m, ndays = 10, seed = 1))
+}
+
+quarantine_model <- ModelSEIRMixingQuarantine(
+  name = "A virus", n = 500, prevalence = 0.01, transmission_rate = 0.2,
+  recovery_rate = 1 / 7, incubation_days = 3, contact_matrix = cmat,
+  hospitalization_rate = 0.05, hospitalization_period = 7,
+  days_undetected = 3, quarantine_period = 14, quarantine_willingness = 0.8,
+  isolation_willingness = 0.5, isolation_period = 7,
+  contact_tracing_success_rate = 0.7, contact_tracing_days_prior = 3
+)
+expect_silent(add_virus(
+  quarantine_model,
+  virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)
+))
