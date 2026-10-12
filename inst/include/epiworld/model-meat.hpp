@@ -1215,65 +1215,6 @@ inline void Model<TSeq>::rm_tool(size_t tool_pos)
 
 template<typename TSeq>
 inline void Model<TSeq>::load_agents_entities_ties(
-    std::string fn,
-    int skip
-    )
-{
-
-
-    int i,j;
-    std::ifstream filei(fn);
-
-    if (!filei)
-        throw std::logic_error("The file " + fn + " was not found.");
-
-    int linenum = 0;
-    std::vector< std::vector< epiworld_fast_uint > > target_(entities.size());
-
-    target_.reserve(1e5);
-
-    while (!filei.eof())
-    {
-
-        if (linenum++ < skip)
-            continue;
-
-        filei >> i >> j;
-
-        // Looking for exceptions
-        if (filei.bad())
-            throw std::logic_error(
-                "I/O error while reading the file " +
-                fn
-            );
-
-        if (filei.fail())
-            break;
-
-        if (i >= static_cast<int>(this->size()))
-            throw std::range_error(
-                "The agent["+std::to_string(linenum)+"] = " + std::to_string(i) +
-                " is above the max id " + std::to_string(this->size() - 1)
-                );
-
-        if (j >= static_cast<int>(this->entities.size()))
-            throw std::range_error(
-                "The entity["+std::to_string(linenum)+"] = " + std::to_string(j) +
-                " is above the max id " + std::to_string(this->entities.size() - 1)
-                );
-
-        target_[j].push_back(i);
-
-        population[i].add_entity(*this, entities[j]);
-
-    }
-
-    return;
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::load_agents_entities_ties(
     const std::vector< int > & agents_ids,
     const std::vector< int > & entities_ids
 ) {
@@ -1313,6 +1254,7 @@ inline void Model<TSeq>::load_agents_entities_ties(
         return *(entities_ids + i);
         };
 
+    std::vector< std::vector< size_t > > ties(entities.size());
     for (size_t i = 0u; i < n; ++i)
     {
 
@@ -1358,11 +1300,34 @@ inline void Model<TSeq>::load_agents_entities_ties(
                 std::string(").")
                 );
 
-        // Adding the entity to the agent
-        this->population[get_agent(i)].add_entity(
-            *this,
-            this->entities[get_entity(i)]
+        ties[get_entity(i)].push_back(static_cast< size_t >(get_agent(i)));
+
+    }
+
+    // The ties become part of each entity's distribution: reset() clears every
+    // tie before a run, and the distribution adds them back.
+    for (size_t j = 0u; j < ties.size(); ++j)
+    {
+
+        if (ties[j].empty())
+            continue;
+
+        auto agents = std::make_shared< const std::vector< size_t > >(
+            std::move(ties[j])
         );
+
+        auto previous = entities[j].dist_fun;
+        entities[j].dist_fun = [previous, agents](
+            Entity<TSeq> & e, Model<TSeq> * m
+        ) -> void {
+
+            if (previous)
+                previous(e, m);
+
+            for (auto i : *agents)
+                e.add_agent(&m->get_agent(i), *m);
+
+        };
 
     }
 

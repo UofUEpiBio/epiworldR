@@ -516,19 +516,10 @@ public:
     ///@}
 
     /**
-     * @brief Associate agents-entities from a file
-     *
-     * The structure of the file should be two columns separated by
-     * space. The first column indexing between 0 and nagents-1, and the
-     * second column between 0 and nentities - 1.
-     *
-     * @param fn Path to the file.
-     * @param skip How many rows to skip.
-     */
-    void load_agents_entities_ties(std::string fn, int skip);
-
-    /**
      * @brief Associate agents-entities from data
+     *
+     * Agent `agents_ids[i]` joins entity `entities_ids[i]` at the start of
+     * every run, after the entity's own distribution function (if any).
     */
     void load_agents_entities_ties(
         const std::vector<int> & agents_ids,
