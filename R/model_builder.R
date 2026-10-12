@@ -18,8 +18,9 @@
 #' add_param(model, "Rec Rate", 0.1)
 #' add_param(model, "Trans Rate", 0.5)
 #'
-#' # Creating the update function for the susceptible state
-#' update_fun_s <- update_fun_susceptible()
+#' # Creating the update function for the susceptible state. Recovered
+#' # agents (state 2) keep the virus, so we exclude them as sources.
+#' update_fun_s <- update_fun_susceptible(exclude = 2L)
 #'
 #' # Adding the susceptible state to the model
 #' add_state(model, "S", update_fun_s)
