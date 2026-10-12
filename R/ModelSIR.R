@@ -54,7 +54,7 @@ ModelSIR <- function(
   stopifnot_double(recovery_rate)
 
   structure(
-    ModelSIR_cpp(name, prevalence, transmission_rate, recovery_rate),
+    network_model_builder("SIR", name, prevalence, transmission_rate, recovery_rate),
     class = c("epiworld_sir", "epiworld_model")
   )
 

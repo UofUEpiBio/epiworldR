@@ -59,7 +59,7 @@ ModelSEIRD <- function(
   stopifnot_double(death_rate)
 
   structure(
-    ModelSEIRD_cpp(
+    network_model_builder("SEIRD",
       name              = name,
       prevalence        = prevalence,
       transmission_rate = transmission_rate,

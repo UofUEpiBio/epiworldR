@@ -59,7 +59,8 @@ ModelSIRD <- function(
   stopifnot_double(death_rate)
 
   structure(
-    ModelSIRD_cpp(name, prevalence, transmission_rate, recovery_rate, death_rate),
+    network_model_builder("SIRD", name, prevalence, transmission_rate,
+      recovery_rate, death_rate = death_rate),
     class = c("epiworld_sird", "epiworld_model")
   )
 

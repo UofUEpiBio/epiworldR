@@ -1,3 +1,16 @@
+# epiworldR 0.19.0-1
+
+## User-visible changes
+
+* `ModelSIR()`, `ModelSIS()`, `ModelSEIR()`, `ModelSIRD()`, `ModelSISD()`,
+  and `ModelSEIRD()` now assemble models with the R model-building functions.
+  Their simulation updates still run in C++, with the same seeded results,
+  classes, parameters, and initial-state conventions as before. Their dedicated
+  compiled constructors are no longer included in the R library.
+* New model-building helpers `update_fun_infected()`,
+  `update_fun_incubation()`, and `update_fun_recovery()` provide native virus
+  removal, incubation, and parameter-based recovery updates.
+
 # epiworldR 0.19.0-0
 
 Syncs the C++ core with epiworld 0.19.0 (commit 87b2f98).

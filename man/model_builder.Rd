@@ -8,6 +8,9 @@
 \alias{epiworld_update_fun}
 \alias{update_fun_rate}
 \alias{set_state_function}
+\alias{update_fun_infected}
+\alias{update_fun_incubation}
+\alias{update_fun_recovery}
 \title{Model building functions}
 \usage{
 Model()
@@ -19,6 +22,12 @@ update_fun_susceptible(exclude = integer(0L))
 update_fun_rate(param_names, target_states)
 
 set_state_function(model, state_name, update_fun)
+
+update_fun_infected()
+
+update_fun_incubation(target_state)
+
+update_fun_recovery(param_name)
 }
 \arguments{
 \item{model}{An object of class \link{epiworld_model}.}
@@ -37,6 +46,11 @@ used in the update function.}
 
 \item{target_states}{An integer vector with the state index(es) to which the
 agent will transition when the update function is executed.}
+
+\item{target_state}{Integer scalar. State to enter after incubation
+(indexed from zero).}
+
+\item{param_name}{String. Name of the recovery probability parameter.}
 }
 \value{
 \itemize{
@@ -67,6 +81,11 @@ for a state that updates at a constant rate (e.g., recovery, death).
 the specified update function for the given state. The function is called
 for its side effects and returns the modified.
 }
+
+\itemize{
+\item \code{update_fun_infected()}, \code{update_fun_incubation()}, and
+\code{update_fun_recovery()} return an \code{epiworld_update_fun}.
+}
 }
 \description{
 Functions to build models from scratch (or to modify existing models).
@@ -96,6 +115,15 @@ Rates in the \code{update_fun_rate()} are daily probabilities of transitioning
 to the target state(s). For example, if the recovery rate is 0.1, then there
 is a 10\% chance that an infected agent will transition to the "Removed"
 state each day.
+
+\code{update_fun_infected()} samples competing death and recovery events using
+the agent's virus probabilities, including tool effects. It removes the
+virus and uses the virus's death or recovery state, respectively.
+\code{update_fun_incubation()} changes state with daily probability
+\code{1 / incubation}, using the agent's virus incubation period and retaining
+the virus. \code{update_fun_recovery()} removes the virus with the daily
+probability in a named model parameter; it does not apply tool effects.
+All three helpers run entirely in C++ during simulation.
 }
 \examples{
 # Create a new model

@@ -184,3 +184,44 @@ set_state_function <- function(model, state_name, update_fun) {
 
   invisible(set_state_function_cpp(model, state_name, update_fun))
 }
+
+#' @export
+#' @rdname model_builder
+#' @details
+#' `update_fun_infected()` samples competing death and recovery events using
+#' the agent's virus probabilities, including tool effects. It removes the
+#' virus and uses the virus's death or recovery state, respectively.
+#' `update_fun_incubation()` changes state with daily probability
+#' `1 / incubation`, using the agent's virus incubation period and retaining
+#' the virus. `update_fun_recovery()` removes the virus with the daily
+#' probability in a named model parameter; it does not apply tool effects.
+#' All three helpers run entirely in C++ during simulation.
+#' @return
+#' - `update_fun_infected()`, `update_fun_incubation()`, and
+#' `update_fun_recovery()` return an `epiworld_update_fun`.
+update_fun_infected <- function() {
+  structure(update_fun_infected_cpp(), class = "epiworld_update_fun")
+}
+
+#' @export
+#' @rdname model_builder
+#' @param target_state Integer scalar. State to enter after incubation
+#' (indexed from zero).
+update_fun_incubation <- function(target_state) {
+  stopifnot_int(target_state, lb = 0L)
+  stopifnot(length(target_state) == 1L)
+  structure(
+    update_fun_incubation_cpp(as.integer(target_state)),
+    class = "epiworld_update_fun"
+  )
+}
+
+#' @export
+#' @rdname model_builder
+#' @param param_name String. Name of the recovery probability parameter.
+update_fun_recovery <- function(param_name) {
+  stopifnot_string(param_name)
+  stopifany_na(param_name)
+  stopifnot(length(param_name) == 1L)
+  structure(update_fun_recovery_cpp(param_name), class = "epiworld_update_fun")
+}
