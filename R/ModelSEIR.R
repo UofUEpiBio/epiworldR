@@ -54,7 +54,8 @@ ModelSEIR <- function(
   stopifnot_double(recovery_rate)
 
   structure(
-    ModelSEIR_cpp(name, prevalence, transmission_rate, incubation_days, recovery_rate),
+    network_model_builder("SEIR", name, prevalence, transmission_rate,
+      recovery_rate, incubation_days = incubation_days),
     class = c("epiworld_seir", "epiworld_model")
   )
 

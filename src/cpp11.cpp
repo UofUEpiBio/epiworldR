@@ -272,52 +272,10 @@ extern "C" SEXP _epiworldR_ModelSURV_cpp(SEXP name, SEXP prevalence, SEXP effica
   END_CPP11
 }
 // epimodels.cpp
-SEXP ModelSEIR_cpp(std::string name, double prevalence, double transmission_rate, double incubation_days, double recovery_rate);
-extern "C" SEXP _epiworldR_ModelSEIR_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
-  END_CPP11
-}
-// epimodels.cpp
-SEXP ModelSIS_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate);
-extern "C" SEXP _epiworldR_ModelSIS_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIS_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
-  END_CPP11
-}
-// epimodels.cpp
 SEXP ModelSIRCONN_cpp(std::string name, unsigned int n, double prevalence, double contact_rate, double transmission_rate, double recovery_rate);
 extern "C" SEXP _epiworldR_ModelSIRCONN_cpp(SEXP name, SEXP n, SEXP prevalence, SEXP contact_rate, SEXP transmission_rate, SEXP recovery_rate) {
   BEGIN_CPP11
     return cpp11::as_sexp(ModelSIRCONN_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<unsigned int>>(n), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(contact_rate), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
-  END_CPP11
-}
-// epimodels.cpp
-SEXP ModelSIR_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate);
-extern "C" SEXP _epiworldR_ModelSIR_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIR_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate)));
-  END_CPP11
-}
-// epimodels.cpp
-SEXP ModelSIRD_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate, double death_rate);
-extern "C" SEXP _epiworldR_ModelSIRD_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate, SEXP death_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSIRD_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<double>>(death_rate)));
-  END_CPP11
-}
-// epimodels.cpp
-  SEXP ModelSEIRD_cpp(std::string name, double prevalence, double transmission_rate, double incubation_days, double recovery_rate, double death_rate);
-extern "C" SEXP _epiworldR_ModelSEIRD_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP incubation_days, SEXP recovery_rate, SEXP death_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSEIRD_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(incubation_days), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<double>>(death_rate)));
-  END_CPP11
-}
-// epimodels.cpp
-SEXP ModelSISD_cpp(std::string name, double prevalence, double transmission_rate, double recovery_rate, double death_rate);
-extern "C" SEXP _epiworldR_ModelSISD_cpp(SEXP name, SEXP prevalence, SEXP transmission_rate, SEXP recovery_rate, SEXP death_rate) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(ModelSISD_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<double>>(prevalence), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_rate), cpp11::as_cpp<cpp11::decay_t<double>>(recovery_rate), cpp11::as_cpp<cpp11::decay_t<double>>(death_rate)));
   END_CPP11
 }
 // epimodels.cpp
@@ -948,6 +906,34 @@ extern "C" SEXP _epiworldR_update_fun_susceptible_cpp(SEXP exclude) {
   END_CPP11
 }
 // model_builder.cpp
+SEXP update_fun_infected_cpp();
+extern "C" SEXP _epiworldR_update_fun_infected_cpp() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(update_fun_infected_cpp());
+  END_CPP11
+}
+// model_builder.cpp
+SEXP update_fun_incubation_cpp(int target_state);
+extern "C" SEXP _epiworldR_update_fun_incubation_cpp(SEXP target_state) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(update_fun_incubation_cpp(cpp11::as_cpp<cpp11::decay_t<int>>(target_state)));
+  END_CPP11
+}
+// model_builder.cpp
+SEXP update_fun_recovery_cpp(std::string param_name);
+extern "C" SEXP _epiworldR_update_fun_recovery_cpp(SEXP param_name) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(update_fun_recovery_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(param_name)));
+  END_CPP11
+}
+// model_builder.cpp
+SEXP set_initial_states_recipe_cpp(SEXP model, std::string kind);
+extern "C" SEXP _epiworldR_set_initial_states_recipe_cpp(SEXP model, SEXP kind) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_initial_states_recipe_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(kind)));
+  END_CPP11
+}
+// model_builder.cpp
 SEXP update_fun_rate_cpp(cpp11::strings param_names, cpp11::integers target_states);
 extern "C" SEXP _epiworldR_update_fun_rate_cpp(SEXP param_names, SEXP target_states) {
   BEGIN_CPP11
@@ -1388,18 +1374,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_ModelDiffNet_cpp",                     (DL_FUNC) &_epiworldR_ModelDiffNet_cpp,                      8},
     {"_epiworldR_ModelSEIRCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSEIRCONN_cpp,                     7},
     {"_epiworldR_ModelSEIRDCONN_cpp",                   (DL_FUNC) &_epiworldR_ModelSEIRDCONN_cpp,                    8},
-    {"_epiworldR_ModelSEIRD_cpp",                       (DL_FUNC) &_epiworldR_ModelSEIRD_cpp,                        6},
     {"_epiworldR_ModelSEIRMixingQuarantine_cpp",        (DL_FUNC) &_epiworldR_ModelSEIRMixingQuarantine_cpp,        16},
     {"_epiworldR_ModelSEIRMixing_cpp",                  (DL_FUNC) &_epiworldR_ModelSEIRMixing_cpp,                   7},
-    {"_epiworldR_ModelSEIR_cpp",                        (DL_FUNC) &_epiworldR_ModelSEIR_cpp,                         5},
     {"_epiworldR_ModelSIRCONN_cpp",                     (DL_FUNC) &_epiworldR_ModelSIRCONN_cpp,                      6},
     {"_epiworldR_ModelSIRDCONN_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRDCONN_cpp,                     7},
-    {"_epiworldR_ModelSIRD_cpp",                        (DL_FUNC) &_epiworldR_ModelSIRD_cpp,                         5},
     {"_epiworldR_ModelSIRLogit_cpp",                    (DL_FUNC) &_epiworldR_ModelSIRLogit_cpp,                    10},
     {"_epiworldR_ModelSIRMixing_cpp",                   (DL_FUNC) &_epiworldR_ModelSIRMixing_cpp,                    6},
-    {"_epiworldR_ModelSIR_cpp",                         (DL_FUNC) &_epiworldR_ModelSIR_cpp,                          4},
-    {"_epiworldR_ModelSISD_cpp",                        (DL_FUNC) &_epiworldR_ModelSISD_cpp,                         5},
-    {"_epiworldR_ModelSIS_cpp",                         (DL_FUNC) &_epiworldR_ModelSIS_cpp,                          4},
     {"_epiworldR_ModelSURV_cpp",                        (DL_FUNC) &_epiworldR_ModelSURV_cpp,                        13},
     {"_epiworldR_Model_cpp",                            (DL_FUNC) &_epiworldR_Model_cpp,                             0},
     {"_epiworldR_add_entity_cpp",                       (DL_FUNC) &_epiworldR_add_entity_cpp,                        2},
@@ -1533,6 +1513,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
     {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},
     {"_epiworldR_set_incubation_ptr_cpp",               (DL_FUNC) &_epiworldR_set_incubation_ptr_cpp,                3},
+    {"_epiworldR_set_initial_states_recipe_cpp",        (DL_FUNC) &_epiworldR_set_initial_states_recipe_cpp,         2},
     {"_epiworldR_set_kernel_fun_cpp",                   (DL_FUNC) &_epiworldR_set_kernel_fun_cpp,                    2},
     {"_epiworldR_set_name_cpp",                         (DL_FUNC) &_epiworldR_set_name_cpp,                          2},
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
@@ -1569,7 +1550,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              7},
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},
+    {"_epiworldR_update_fun_incubation_cpp",            (DL_FUNC) &_epiworldR_update_fun_incubation_cpp,             1},
+    {"_epiworldR_update_fun_infected_cpp",              (DL_FUNC) &_epiworldR_update_fun_infected_cpp,               0},
     {"_epiworldR_update_fun_rate_cpp",                  (DL_FUNC) &_epiworldR_update_fun_rate_cpp,                   2},
+    {"_epiworldR_update_fun_recovery_cpp",              (DL_FUNC) &_epiworldR_update_fun_recovery_cpp,               1},
     {"_epiworldR_update_fun_susceptible_cpp",           (DL_FUNC) &_epiworldR_update_fun_susceptible_cpp,            1},
     {"_epiworldR_use_kernel_fun_gaussian_cpp",          (DL_FUNC) &_epiworldR_use_kernel_fun_gaussian_cpp,           1},
     {"_epiworldR_use_proposal_norm_reflective_cpp",     (DL_FUNC) &_epiworldR_use_proposal_norm_reflective_cpp,      1},

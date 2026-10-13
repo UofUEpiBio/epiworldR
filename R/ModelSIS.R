@@ -48,7 +48,7 @@ ModelSIS <- function(
   stopifnot_double(recovery_rate)
 
   structure(
-    ModelSIS_cpp(name, prevalence, transmission_rate, recovery_rate),
+    network_model_builder("SIS", name, prevalence, transmission_rate, recovery_rate),
     class = c("epiworld_sis", "epiworld_model")
   )
 

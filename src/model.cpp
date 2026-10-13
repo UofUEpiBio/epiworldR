@@ -1,6 +1,7 @@
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "epiworld-common.h"
+#include "model-builder.h"
 
 using namespace epiworld;
 using namespace cpp11;
@@ -344,11 +345,12 @@ SEXP initial_states_cpp(SEXP model, cpp11::doubles proportions) {
 [[cpp11::register]]
 SEXP clone_model_cpp(const SEXP & model) {
 
-  external_pointer<const Model<>> modelptr(model);
+  external_pointer<Model<>> modelptr(model);
 
-  return external_pointer<Model<>>(
-    new Model<>(*modelptr)
-  );
+  if (auto * builder = dynamic_cast<ModelBuilder *>(modelptr.get()))
+    return external_pointer<Model<>>(new ModelBuilder(*builder));
+
+  return external_pointer<Model<>>(new Model<>(*modelptr));
 
 }
 

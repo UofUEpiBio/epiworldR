@@ -56,7 +56,8 @@ ModelSISD <- function(
   stopifnot_double(death_rate)
 
   structure(
-    ModelSISD_cpp(name, prevalence, transmission_rate, recovery_rate, death_rate),
+    network_model_builder("SISD", name, prevalence, transmission_rate,
+      recovery_rate, death_rate = death_rate),
     class = c("epiworld_sisd", "epiworld_model")
   )
 
