@@ -1,7 +1,11 @@
 # Who uses epiworldR
 
-- Repositories / packages: **8**
+- Repositories / packages: **9**
 - Papers: **8** (1 appear not to cite the package)
+
+## New this run
+
+- [EpiForeSITE/idcup](https://github.com/EpiForeSITE/idcup) (repo, uses)
 
 ## Papers that use it without citing it
 
