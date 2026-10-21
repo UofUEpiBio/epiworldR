@@ -124,12 +124,13 @@ library(epiworldR)
 # Creating a SIR model
 sir <- ModelSIR(
   name              = "COVID-19",
+  n                 = 100000,
   prevalence        = .01,
   transmission_rate = .7,
   recovery          = .3
 ) |>
-  # Adding a Small world population
-  agents_smallworld(n = 100000, k = 10, d = FALSE, p = .01) |>
+  # Adding a small-world network
+  add_layer(layer_network("network", graph_smallworld(k = 10, p = .01))) |>
   # Running the model for 50 days
   run(ndays = 50, seed = 1912)
 
@@ -230,6 +231,7 @@ coef_recover <- rnorm(2)
 # Creating the model
 model_logit <- ModelSIRLogit(
   "covid2",
+  n,
   data = X,
   coefs_infect      = coef_infect,
   coefs_recover     = coef_recover,
@@ -241,7 +243,10 @@ model_logit <- ModelSIRLogit(
 )
 
 # Adding a small-world population
-agents_smallworld(model_logit, n, 8, FALSE, .01)
+add_layer(
+  model_logit,
+  layer_network("network", graph_smallworld(k = 8, p = .01))
+)
 
 # Running the model
 run(model_logit, 50)
@@ -274,12 +279,13 @@ This example shows how we can draw a transmission network from a simulation. The
 # Creating a SIR model
 sir <- ModelSIR(
   name           = "COVID-19",
+  n              = 500,
   prevalence     = .01,
   transmission_rate = .5,
   recovery       = .5
 ) |>
-  # Adding a Small world population
-  agents_smallworld(n = 500, k = 10, d = FALSE, p = .01) |>
+  # Adding a small-world network
+  add_layer(layer_network("network", graph_smallworld(k = 10, p = .01))) |>
   # Running the model for 50 days
   run(ndays = 50, seed = 1912)
 

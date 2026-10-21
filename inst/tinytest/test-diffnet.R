@@ -11,6 +11,7 @@ good_params <- vector("double")
 
 expect_silent(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = nrow(good_data),
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   normalize_exposure = good_normalize_exposure,
@@ -43,24 +44,28 @@ expected_error_msg_numvector <- "must be a numeric vector"
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = bad_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt
 ), expected_error_msg_str)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = bad_prevalence,
   prob_adopt = good_prob_adopt
 ), expected_error_msg_na)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = bad_prob_adopt
 ), expected_error_msg_na)
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   normalize_exposure = "string_bool"
@@ -68,6 +73,7 @@ expect_error(diffnet_0 <- ModelDiffNet(
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   normalize_exposure = bad_normalize_exposure
@@ -75,6 +81,7 @@ expect_error(diffnet_0 <- ModelDiffNet(
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   data = bad_data
@@ -82,6 +89,7 @@ expect_error(diffnet_0 <- ModelDiffNet(
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   data_cols = bad_data_cols
@@ -89,6 +97,7 @@ expect_error(diffnet_0 <- ModelDiffNet(
 
 expect_error(diffnet_0 <- ModelDiffNet(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   prob_adopt = good_prob_adopt,
   params = bad_params

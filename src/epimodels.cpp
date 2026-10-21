@@ -16,6 +16,7 @@ using namespace cpp11;
 [[cpp11::register]]
 SEXP ModelSURV_cpp(
   std::string name,
+  unsigned int n,
   double prevalence,
   double efficacy_vax,
   double latent_period,
@@ -35,6 +36,7 @@ SEXP ModelSURV_cpp(
   WrapSURV(ptr)(
     new epiworld::epimodels::ModelSURV<>(
       name,
+      n,
       prevalence,
       efficacy_vax,
       latent_period,
@@ -61,6 +63,7 @@ SEXP ModelSURV_cpp(
 [[cpp11::register]]
 SEXP ModelSEIR_cpp(
     std::string name,
+    unsigned int n,
     double prevalence,
     double transmission_rate,
     double incubation_days,
@@ -72,6 +75,7 @@ SEXP ModelSEIR_cpp(
   WrapSEIR(ptr)(
       new epiworld::epimodels::ModelSEIR<>(
           name,
+          n,
           prevalence,
           transmission_rate,
           incubation_days,
@@ -90,6 +94,7 @@ SEXP ModelSEIR_cpp(
 [[cpp11::register]]
 SEXP ModelSIS_cpp(
     std::string name,
+    unsigned int n,
     double prevalence,
     double transmission_rate,
     double recovery_rate
@@ -99,6 +104,7 @@ SEXP ModelSIS_cpp(
   WrapSIS(ptr)(
       new epiworld::epimodels::ModelSIS<>(
           name,
+          n,
           prevalence,
           transmission_rate,
           recovery_rate
@@ -150,6 +156,7 @@ SEXP ModelSIRCONN_cpp(
 [[cpp11::register]]
 SEXP ModelSIR_cpp(
     std::string name,
+    unsigned int n,
     double prevalence,
     double transmission_rate,
     double recovery_rate
@@ -159,6 +166,7 @@ SEXP ModelSIR_cpp(
   WrapSIR(ptr)(
       new epiworld::epimodels::ModelSIR<>(
           name,
+          n,
           prevalence,
           transmission_rate,
           recovery_rate
@@ -176,6 +184,7 @@ SEXP ModelSIR_cpp(
 [[cpp11::register]]
 SEXP ModelSIRD_cpp(
     std::string name,
+    unsigned int n,
     double prevalence,
     double transmission_rate,
     double recovery_rate,
@@ -186,6 +195,7 @@ SEXP ModelSIRD_cpp(
   WrapSIRD(ptr)(
       new epiworld::epimodels::ModelSIRD<>(
           name,
+          n,
           prevalence,
           transmission_rate,
           recovery_rate,
@@ -204,6 +214,7 @@ SEXP ModelSIRD_cpp(
 [[cpp11::register]]
   SEXP ModelSEIRD_cpp(
       std::string name,
+      unsigned int n,
       double prevalence,
       double transmission_rate,
       double incubation_days,
@@ -216,6 +227,7 @@ SEXP ModelSIRD_cpp(
     WrapSEIRD(ptr)(
         new epiworld::epimodels::ModelSEIRD<>(
             name,
+            n,
             prevalence,
             transmission_rate,
             incubation_days,
@@ -235,6 +247,7 @@ SEXP ModelSIRD_cpp(
 [[cpp11::register]]
 SEXP ModelSISD_cpp(
     std::string name,
+    unsigned int n,
     double prevalence,
     double transmission_rate,
     double recovery_rate,
@@ -245,6 +258,7 @@ SEXP ModelSISD_cpp(
   WrapSISD(ptr)(
       new epiworld::epimodels::ModelSISD<>(
           name,
+          n,
           prevalence,
           transmission_rate,
           recovery_rate,
@@ -360,6 +374,7 @@ SEXP ModelSEIRCONN_cpp(
 [[cpp11::register]]
 SEXP ModelSIRLogit_cpp(
   std::string vname,
+  unsigned int n,
   SEXP data,
   int ncols,
   std::vector< double > coefs_infect,
@@ -383,6 +398,7 @@ SEXP ModelSIRLogit_cpp(
   cpp11::external_pointer<epiworld::epimodels::ModelSIRLogit<>> ptr(
     new epiworld::epimodels::ModelSIRLogit<>(
         vname,
+        n,
         REAL(data),
         static_cast<size_t>(ncols),
         coefs_infect,
@@ -403,6 +419,7 @@ SEXP ModelSIRLogit_cpp(
 [[cpp11::register]]
 SEXP ModelDiffNet_cpp(
   std::string name,
+  unsigned int n,
   double prevalence,
   double prob_adopt,
   bool normalize_exposure,
@@ -420,6 +437,7 @@ SEXP ModelDiffNet_cpp(
   cpp11::external_pointer<epiworld::epimodels::ModelDiffNet<>> ptr(
     new epiworld::epimodels::ModelDiffNet<>(
       name,
+      n,
       prevalence,
       prob_adopt,
       normalize_exposure,

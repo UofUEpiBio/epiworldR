@@ -1,14 +1,18 @@
-
-#' Get or set the contact matrix of a mixing model
-#' @param model An object of class `epiworld_model` that supports contact
-#' matrices.
+#' Get or set the contact matrix of a mixing layer
+#' @param layer A mixing layer (class `epiworld_layer_mixing`), retrieved with
+#' [get_layer()] (the mixing models name theirs `"mixing"`).
 #' @param contact_matrix A numeric matrix with the contact matrix to be
-#' set for the model. The matrix should be square and have the same number
-#' of rows as the number of entities in the model.
+#' set for the layer. The matrix should be square and have as many rows as the
+#' layer has groups.
+#'
+#' @details
+#' Set between runs, the contact matrix is kept for the following runs; set
+#' during a run (e.g., from a global event), it lasts until the end of that
+#' run.
 #'
 #' @return
 #' - The `get_contact_matrix()` function returns the contact matrix of the
-#' model as a numeric matrix.
+#' layer as a numeric matrix.
 #' @examples
 #' cmatrix <- (c(
 #'   c(0.9, 0.05, 0.05),
@@ -28,20 +32,22 @@
 #'   contact_matrix    = cmatrix
 #' )
 #'
-#' get_contact_matrix(flu_model)
-#' #' # Modifying the contact matrix
+#' mixing <- get_layer(flu_model, "mixing")
+#' get_contact_matrix(mixing)
+#'
+#' # Modifying the contact matrix
 #' new_cmatrix <- (c(
 #'   c(0.8, 0.1, 0.1),
 #'   c(0.1, 0.7, 0.2),
 #'   c(0.1, 0.2, 0.7)
 #' ) * 20) |> matrix(byrow = TRUE, nrow = 3)
-#' set_contact_matrix(flu_model, new_cmatrix)
-#' get_contact_matrix(flu_model)
+#' set_contact_matrix(mixing, new_cmatrix)
+#' get_contact_matrix(mixing)
 #' @export
 #' @concept mixing-models
-get_contact_matrix <- function(model) {
-  stopifnot_model(model)
-  ans <- get_contact_matrix_cpp(model)
+get_contact_matrix <- function(layer) {
+  stopifnot_layer(layer, "mixing")
+  ans <- get_contact_matrix_cpp(layer)
   matrix(
     ans,
     nrow = sqrt(length(ans)),
@@ -52,18 +58,12 @@ get_contact_matrix <- function(model) {
 
 #' @rdname get_contact_matrix
 #' @export
-#' @param as_backup A logical value indicating whether to save the new
-#' contact matrix as a backup in the model. If `TRUE` (default), the new contact
-#' matrix will be saved as a backup in the model, automatically restoring
-#' its value if it changes during the simulation.
 #' @return
-#' - The `set_contact_matrix()` function sets the contact matrix of the model
-#' to the provided matrix and returns the modified model invisibly. The
-#' function is called for its side effects and returns the modified model
-#' invisibly.
-set_contact_matrix <- function(model, contact_matrix, as_backup = TRUE) {
-  stopifnot_model(model)
+#' - The `set_contact_matrix()` function sets the contact matrix of the layer
+#' and returns the layer invisibly.
+set_contact_matrix <- function(layer, contact_matrix) {
+  stopifnot_layer(layer, "mixing")
   stopifany_na(contact_matrix)
-  set_contact_matrix_cpp(model, as.vector(contact_matrix), as_backup)
-  invisible(model)
+  set_contact_matrix_cpp(layer, as.vector(contact_matrix))
+  invisible(layer)
 }

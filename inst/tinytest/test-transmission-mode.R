@@ -2,10 +2,10 @@
 
 make_model <- function() {
   model <- ModelSIR(
-    name = "A Virus", prevalence = .01, transmission_rate = .3,
+    name = "A Virus", n = 5000, prevalence = .01, transmission_rate = .3,
     recovery_rate = 1/7
   )
-  agents_smallworld(model, n = 5000, k = 5, d = FALSE, p = .01)
+  add_layer(model, layer_network("network", graph_smallworld(k = 5, p = .01)))
   verbose_off(model)
   model
 }

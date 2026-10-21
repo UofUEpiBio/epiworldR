@@ -218,18 +218,12 @@ run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 
 # Using the logit function --------------
 sir <- ModelSIR(
-  name = "COVID-19", prevalence = 0.01,
+  name = "COVID-19", 10000, prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1
 )
 
 # Adding a small world population
-agents_smallworld(
-  sir,
-  n = 10000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Creating a tool
 mask_wearing <- tool(

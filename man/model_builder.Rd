@@ -10,7 +10,7 @@
 \alias{set_state_function}
 \title{Model building functions}
 \usage{
-Model()
+Model(n)
 
 add_state(model, state_name, update_fun = NULL)
 
@@ -21,6 +21,8 @@ update_fun_rate(param_names, target_states)
 set_state_function(model, state_name, update_fun)
 }
 \arguments{
+\item{n}{Number of individuals in the population.}
+
 \item{model}{An object of class \link{epiworld_model}.}
 
 \item{state_name}{A string with the name of the state to be added.}
@@ -99,7 +101,7 @@ state each day.
 }
 \examples{
 # Create a new model
-model <- Model()
+model <- Model(1000)
 
 # Adding recovery rate
 add_param(model, "Rec Rate", 0.1)
@@ -149,8 +151,8 @@ set_distribution_virus(
 # Adding the virus to the model
 add_virus(model, flu)
 
-# Creating a SBM network
-agents_smallworld(model, n = 1000, k = 20, d = FALSE, p = .01)
+# Adding a small-world network
+add_layer(model, layer_network("network", graph_smallworld(k = 20, p = .01)))
 
 # Running the model
 run(model, ndays = 100, seed = 1912)

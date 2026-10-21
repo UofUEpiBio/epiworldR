@@ -16,6 +16,7 @@ good_prevalence         <- .01
 
 sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -47,6 +48,7 @@ expected_error_msg_double    <- "must be a double"
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = bad_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -59,6 +61,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = 1000,
   data              = bad_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -71,6 +74,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = bad_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -83,6 +87,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = bad_coef_recover,
@@ -95,6 +100,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -107,6 +113,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -119,6 +126,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -131,6 +139,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,
@@ -143,6 +152,7 @@ expect_error(sirlogit_0 <- ModelSIRLogit(
 
 expect_error(sirlogit_0 <- ModelSIRLogit(
   vname             = good_name,
+  n                 = nrow(good_data),
   data              = good_data,
   coefs_infect      = good_coef_infect,
   coefs_recover     = good_coef_recover,

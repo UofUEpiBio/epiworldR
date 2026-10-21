@@ -1,26 +1,3 @@
-#------------------------------------------------------------------------------
-# BUILDING AND INITIALIZING SEIR MODEL
-# library(epiworldR)
-
-# sir <- ModelSIR(name = "COVID-19", prevalence = 0.01, transmission_rate = 0.9,
-#                 recovery_rate = 0.1)
-
-
-# # Adding a Small world population
-# agents_smallworld(
-#   sir,
-#   n = 1000,
-#   k = 5,
-#   d = FALSE,
-#   p = .01
-#   )
-
-# # Running and printing
-# # queuing_off(sir)
-# run(sir, ndays = 100, seed = 1912)
-# sir
-
-
 find_scale <- function(x) {
   res <- 10^(floor(log10(x)) + 1 - 3)
   if (res < 1000)
@@ -47,19 +24,13 @@ find_scale <- function(x) {
 #' @examples
 #' # Building and Initializing SEIR Model
 #' sir <- ModelSIR(
-#'   name = "COVID-19", prevalence = 0.01,
+#'   name = "COVID-19", n = 1000, prevalence = 0.01,
 #'   transmission_rate = 0.9,
 #'   recovery_rate = 0.1
 #' )
 #'
 #' # Adding a Small world population
-#' agents_smallworld(
-#'   sir,
-#'   n = 1000,
-#'   k = 5,
-#'   d = FALSE,
-#'   p = .01
-#' )
+#' add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 #' # Running and printing
 #' run(sir, ndays = 100, seed = 1912)
 #' plot(sir, main = "SIR Model")

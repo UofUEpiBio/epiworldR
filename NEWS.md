@@ -1,3 +1,38 @@
+# epiworldR 1.0.0-0 (development)
+
+Tracks the epiworld 1.0.0 development branch (`v1-layers`), where contacts
+come from contact layers. This is a breaking release: code written for 0.x
+needs the changes below, and removed functions are defunct (calling them is an
+error that names the replacement; see `?"epiworldR-defunct"`).
+
+## Breaking changes
+
+* The population size is given to the model constructor, and only there:
+  `ModelSIR(name, n, ...)`, and likewise `ModelSEIR()`, `ModelSIS()`,
+  `ModelSISD()`, `ModelSIRD()`, `ModelSEIRD()`, `ModelSURV()`,
+  `ModelSIRLogit()`, `ModelDiffNet()` and `Model(n)`.
+
+* Networks are contact layers. Network models start with no contacts: add a
+  network layer with `add_layer(model, layer_network(name, graph))`, where
+  `graph` is a generator (`graph_smallworld()`, `graph_bernoulli()`,
+  `graph_sbm()`), which draws a new network for every run and replicate, or a
+  fixed network (`graph_edgelist()`). `agents_smallworld()`,
+  `agents_from_edgelist()`, `agents_sbm()` and `get_network()` are defunct.
+
+* A layer object is the model's layer: `get_layer(model, name)` retrieves it,
+  and edits through it (`add_edge()`, `rm_edge()`) change the model. Edits made
+  during a run last for that run; edits between runs are kept. The ties of a
+  network layer are read with `get_edgelist(layer)`; `has_edge()` and
+  `set_rewiring(layer, rewire_degseq(param))` are new.
+
+* `get_contact_matrix()` and `set_contact_matrix()` take the mixing layer
+  (`get_layer(model, "mixing")`) instead of the model. The `as_backup`
+  argument is gone: a matrix set between runs is kept, one set during a run
+  lasts for that run.
+
+* `bubbles()` gains `layer`, the network layer that `ties = "complete"` adds
+  ties to.
+
 # epiworldR 0.19.0-0
 
 Syncs the C++ core with epiworld 0.19.0 (commit c340f87).

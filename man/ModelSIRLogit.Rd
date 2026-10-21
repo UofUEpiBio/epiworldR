@@ -6,6 +6,7 @@
 \usage{
 ModelSIRLogit(
   vname,
+  n,
   data,
   coefs_infect,
   coefs_recover,
@@ -18,6 +19,8 @@ ModelSIRLogit(
 }
 \arguments{
 \item{vname}{Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{data}{A numeric matrix with \code{n} rows.}
 
@@ -68,6 +71,7 @@ coef_recover <- rnorm(2)
 # Feed all above information into the "ModelSIRLogit" function.
 model_logit <- ModelSIRLogit(
   "covid2",
+  n    = n,
   data = X,
   coefs_infect      = coef_infect,
   coefs_recover     = coef_recover,
@@ -78,7 +82,7 @@ model_logit <- ModelSIRLogit(
   prevalence = .01
 )
 
-agents_smallworld(model_logit, n, 8, FALSE, .01)
+add_layer(model_logit, layer_network("network", graph_smallworld(k = 8, p = .01)))
 
 run(model_logit, 50)
 

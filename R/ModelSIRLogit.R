@@ -1,5 +1,6 @@
 #' SIR Logistic model
 #' @param vname Name of the virus.
+#' @param n Number of individuals in the population.
 #' @param data A numeric matrix with `n` rows.
 #' @param coefs_infect Numeric vector. Coefficients associated to infect.
 #' @param coefs_recover Numeric vector. Coefficients associated to recover.
@@ -34,6 +35,7 @@
 #' # Feed all above information into the "ModelSIRLogit" function.
 #' model_logit <- ModelSIRLogit(
 #'   "covid2",
+#'   n    = n,
 #'   data = X,
 #'   coefs_infect      = coef_infect,
 #'   coefs_recover     = coef_recover,
@@ -44,7 +46,7 @@
 #'   prevalence = .01
 #' )
 #'
-#' agents_smallworld(model_logit, n, 8, FALSE, .01)
+#' add_layer(model_logit, layer_network("network", graph_smallworld(k = 8, p = .01)))
 #'
 #' run(model_logit, 50)
 #'
@@ -65,6 +67,7 @@
 #' @family Models
 ModelSIRLogit <- function(
   vname,
+  n,
   data,
   coefs_infect,
   coefs_recover,
@@ -76,6 +79,7 @@ ModelSIRLogit <- function(
 ) {
   # Check input parameters
   stopifnot_string(vname)
+  stopifnot_int(n)
   stopifany_na(data)
   stopifnot_numvector(coefs_infect)
   stopifnot_numvector(coefs_recover)
@@ -88,6 +92,7 @@ ModelSIRLogit <- function(
   structure(
     ModelSIRLogit_cpp(
       vname,
+      n,
       data,
       ncol(data),
       coefs_infect,

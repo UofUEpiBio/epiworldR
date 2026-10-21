@@ -28,7 +28,7 @@ expect_equal(get_name_tool(tool_0), new_tool_name)
 expect_equal(get_name_tool(tool_renamed), new_tool_name)
 
 # Check adding tool to model ---------------------------------------------------
-sir_0 <- ModelSIR(name = "COVID-19", prevalence = .01,
+sir_0 <- ModelSIR(name = "COVID-19", n = 1000, prevalence = .01,
                   transmission_rate = .9, recovery_rate = .3)
 expect_silent(sir_with_tool <- add_tool(sir_0, tool_0))
 expect_inherits(sir_with_tool, "epiworld_model")

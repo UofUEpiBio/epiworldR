@@ -59,10 +59,10 @@ connected models (\code{\link[=ModelSIRCONN]{ModelSIRCONN()}}), always pull, as 
 }
 \examples{
 model <- ModelSIR(
-  name = "A Virus", prevalence = .01, transmission_rate = .5,
-  recovery_rate = 1/7
+  name = "A Virus", 10000, prevalence = .01, transmission_rate = .5,
+  recovery_rate = 1 / 7
 )
-agents_smallworld(model, n = 10000, k = 5, d = FALSE, p = .01)
+add_layer(model, layer_network("network", graph_smallworld(k = 5, p = .01)))
 verbose_off(model)
 
 get_transmission_mode(model)

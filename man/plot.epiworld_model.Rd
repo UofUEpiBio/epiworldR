@@ -32,19 +32,13 @@ is set to 0.5\% of the range of counts.
 \examples{
 # Building and Initializing SEIR Model
 sir <- ModelSIR(
-  name = "COVID-19", prevalence = 0.01,
+  name = "COVID-19", n = 1000, prevalence = 0.01,
   transmission_rate = 0.9,
   recovery_rate = 0.1
 )
 
 # Adding a Small world population
-agents_smallworld(
-  sir,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 # Running and printing
 run(sir, ndays = 100, seed = 1912)
 plot(sir, main = "SIR Model")

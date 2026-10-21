@@ -5,10 +5,12 @@
 \alias{epiworld_sir}
 \title{SIR model}
 \usage{
-ModelSIR(name, prevalence, transmission_rate, recovery_rate)
+ModelSIR(name, n, prevalence, transmission_rate, recovery_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -36,17 +38,11 @@ agents have been removed at the beginning of the simulation.
 }
 
 \examples{
-model_sir <- ModelSIR(name = "COVID-19", prevalence = 0.01,
+model_sir <- ModelSIR(name = "COVID-19", n = 1000, prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
-agents_smallworld(
-  model_sir,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_sir, ndays = 100, seed = 1912)

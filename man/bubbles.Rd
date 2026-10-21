@@ -17,7 +17,8 @@ bubbles(
   name = "Social bubble",
   max_households = 2L,
   param_name = "Bubble transmission factor",
-  ties = c("existing", "complete")
+  ties = c("existing", "complete"),
+  layer = ""
 )
 
 sample_household_sizes(n_agents, min_size = 2L, max_size = 6L)
@@ -74,6 +75,10 @@ bubble is only a transmission rule. \code{"complete"} also ties every pair of
 agents sharing a bubble while the policy is in force, so households become
 complete and merged households meet in full (see Details).}
 
+\item{layer}{Character scalar. With \code{ties = "complete"}, the name of the
+network layer (see \link{contact-layers}) the ties are added to. It must be
+undirected and have no rewiring function.}
+
 \item{n_agents}{Integer scalar. The total number of agents to be divided
 into households.}
 
@@ -91,7 +96,7 @@ and \code{max_size}.
 A "social bubble" policy lets people keep seeing a small, fixed set of others
 while cutting off the rest of their contacts. \code{bubbles()} implements such a
 policy for models built on an explicit contact network (e.g. \link{ModelSEIR} or
-\link{ModelSIR} after \code{\link[=agents_smallworld]{agents_smallworld()}} or \code{\link[=agents_from_edgelist]{agents_from_edgelist()}}), following
+\link{ModelSIR} with a network layer, see \link{contact-layers}), following
 the household-based rules used during COVID-19.
 }
 \details{
@@ -132,8 +137,8 @@ member \code{k - 1} chances a day to be infected by a bubble-mate.
 inside the bubble and damps nothing outside it.
 \item While they are up, the ties are real network ties (they show up, for
 instance, in the edgelist and in the number of neighbours).
-\item \code{"complete"} requires an undirected network (e.g., \code{d = FALSE} in
-\code{\link[=agents_smallworld]{agents_smallworld()}} or \code{directed = FALSE} in \code{\link[=agents_from_edgelist]{agents_from_edgelist()}});
+\item \code{"complete"} requires an undirected network layer, named in \code{layer}
+(e.g., \code{directed = FALSE} in \code{\link[=graph_smallworld]{graph_smallworld()}} or \code{\link[=graph_edgelist]{graph_edgelist()}});
 otherwise the run stops with an error. A bubble whose clique would give an
 agent more than 1,024 contacts is also refused.
 }
@@ -259,13 +264,14 @@ the last household size if necessary.
 # A network SEIR model on a small-world contact network
 model <- ModelSEIR(
   name              = "Flu",
+  n                 = 2000,
   prevalence        = 0.01,
   transmission_rate = 0.1,
   incubation_days   = 4.5,
   recovery_rate     = 1 / 7
 )
 
-agents_smallworld(model, n = 2000, k = 8, d = FALSE, p = 0.05)
+add_layer(model, layer_network("network", graph_smallworld(k = 8, p = 0.05)))
 
 # Households of three agents (in agent order)
 household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
@@ -304,9 +310,9 @@ model
 #
 # Two households per bubble, whose members all meet while the policy lasts:
 #   bubbles(model, household_id, "household", group_size = 2,
-#           ties = "complete")
+#           ties = "complete", layer = "network")
 }
 \seealso{
-\link{global-events}, \link{ModelSEIR}, \code{\link[=agents_smallworld]{agents_smallworld()}}
+\link{global-events}, \link{ModelSEIR}, \link{contact-layers}
 }
 \concept{global-events}

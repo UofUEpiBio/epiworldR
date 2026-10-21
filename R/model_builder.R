@@ -8,11 +8,12 @@
 #' useful for users who want to create custom models that are not included in
 #' the package or to modify existing models.
 #'
+#' @param n Number of individuals in the population.
 #' @name model_builder
 #' @export
 #' @examples
 #' # Create a new model
-#' model <- Model()
+#' model <- Model(1000)
 #'
 #' # Adding recovery rate
 #' add_param(model, "Rec Rate", 0.1)
@@ -62,8 +63,8 @@
 #' # Adding the virus to the model
 #' add_virus(model, flu)
 #'
-#' # Creating a SBM network
-#' agents_smallworld(model, n = 1000, k = 20, d = FALSE, p = .01)
+#' # Adding a small-world network
+#' add_layer(model, layer_network("network", graph_smallworld(k = 20, p = .01)))
 #'
 #' # Running the model
 #' run(model, ndays = 100, seed = 1912)
@@ -74,9 +75,10 @@
 #' - The function `Model()` returns a new model object of class
 #' [epiworld_model].
 #' @concept model-building-functions
-Model <- function() {
+Model <- function(n) {
 
-  Model_cpp() |>
+  stopifnot_int(n)
+  Model_cpp(n) |>
     structure(class = "epiworld_model")
 }
 

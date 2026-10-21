@@ -7,6 +7,7 @@
 \usage{
 ModelSEIRD(
   name,
+  n,
   prevalence,
   transmission_rate,
   incubation_days,
@@ -16,6 +17,8 @@ ModelSEIRD(
 }
 \arguments{
 \item{name}{String. Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -50,18 +53,12 @@ non-ifected agents already deceased.
 }
 
 \examples{
-model_seird <- ModelSEIRD(name = "COVID-19", prevalence = 0.01,
+model_seird <- ModelSEIRD(name = "COVID-19", n = 100000, prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4,
   death_rate = 0.01)
 
 # Adding a small world population
-agents_smallworld(
-  model_seird,
-  n = 100000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_seird, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_seird, ndays = 100, seed = 1912)

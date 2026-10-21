@@ -3,6 +3,7 @@
 # Create small world population SIS Model --------------------------------------
 expect_silent(sis_0 <- ModelSIS(
   name = "SIS",
+  n = 2000,
   prevalence = .1,
   transmission_rate = .3,
   recovery_rate = .3
@@ -12,13 +13,7 @@ expect_silent(sis_0 <- ModelSIS(
 expect_inherits(sis_0, "epiworld_sis")
 expect_inherits(sis_0, "epiworld_model")
 expect_length(class(sis_0), 2)
-expect_silent(agents_smallworld(
-  sis_0,
-  n = 2000,
-  k = 5,
-  d = FALSE,
-  p = .01
-))
+expect_silent(add_layer(sis_0, layer_network("network", graph_smallworld(k = 5, p = .01))))
 
 # Check model run --------------------------------------------------------------
 expect_silent(verbose_off(sis_0))
@@ -48,6 +43,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(sis_0 <- ModelSIS(
   name                = bad_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate
@@ -55,6 +51,7 @@ expect_error(sis_0 <- ModelSIS(
 
 expect_error(sis_0 <- ModelSIS(
   name                = good_name,
+  n                   = 1000,
   prevalence          = bad_numeric_input,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate
@@ -62,6 +59,7 @@ expect_error(sis_0 <- ModelSIS(
 
 expect_error(sis_0 <- ModelSIS(
   name                = good_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = bad_numeric_input,
   recovery_rate       = good_recovery_rate
@@ -69,6 +67,7 @@ expect_error(sis_0 <- ModelSIS(
 
 expect_error(sis_0 <- ModelSIS(
   name                = good_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = bad_numeric_input

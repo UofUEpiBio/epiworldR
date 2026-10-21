@@ -7,6 +7,7 @@
 \usage{
 ModelSURV(
   name,
+  n,
   prevalence,
   efficacy_vax,
   latent_period,
@@ -23,6 +24,8 @@ ModelSURV(
 }
 \arguments{
 \item{name}{String. Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Initial number of individuals with the virus.}
 
@@ -66,6 +69,7 @@ SURV model
 \examples{
 model_surv <- ModelSURV(
   name                  = "COVID-19",
+  n                     = 10000,
   prevalence            = 20,
   efficacy_vax          = 0.6,
   latent_period         = 4,
@@ -81,13 +85,7 @@ model_surv <- ModelSURV(
 )
 
 # Adding a small world population
-agents_smallworld(
-  model_surv,
-  n = 10000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_surv, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_surv, ndays = 100, seed = 1912)

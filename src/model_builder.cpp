@@ -6,9 +6,9 @@
 using namespace epiworld;
 
 [[cpp11::register]]
-SEXP Model_cpp() {
+SEXP Model_cpp(unsigned int n) {
   return cpp11::external_pointer<Model<>>(
-    new Model<>()
+    new Model<>(n)
   );
 }
 

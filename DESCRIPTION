@@ -1,7 +1,7 @@
 Package: epiworldR
 Type: Package
 Title: Fast Agent-Based Epi Models
-Version: 0.19.0-0
+Version: 1.0.0-0
 Depends: R (>= 4.1.0)
 Authors@R: c(
   person(given="George", family="Vega Yon", role=c("aut", "cre"),
@@ -43,4 +43,4 @@ Imports:
 SystemRequirements: C++17
 VignetteBuilder:
     quarto
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

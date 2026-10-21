@@ -3,6 +3,7 @@
 # Create small world population SIR Model --------------------------------------
 expect_silent(sir_0 <- ModelSIR(
   name = "COVID-19",
+  n = 50000,
   prevalence = .01,
   transmission_rate = .9,
   recovery_rate = .3
@@ -12,13 +13,7 @@ expect_silent(sir_0 <- ModelSIR(
 expect_inherits(sir_0, "epiworld_sir")
 expect_inherits(sir_0, "epiworld_model")
 expect_length(class(sir_0), 2)
-expect_silent(agents_smallworld(
-  sir_0,
-  n = 50000,
-  k = 5,
-  d = FALSE,
-  p = .01
-))
+expect_silent(add_layer(sir_0, layer_network("network", graph_smallworld(k = 5, p = .01))))
 
 # Check model run with queuing -------------------------------------------------
 expect_silent(verbose_off(sir_0))
@@ -51,6 +46,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(test_model <- ModelSIR(
   name = bad_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate
@@ -58,6 +54,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate
@@ -65,6 +62,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = bad_numeric_input,
   recovery_rate = good_recovery_rate
@@ -72,6 +70,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = bad_numeric_input
@@ -81,6 +80,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = NA,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate
@@ -88,6 +88,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = NA,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate
@@ -95,6 +96,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = NA,
   recovery_rate = good_recovery_rate
@@ -102,6 +104,7 @@ expect_error(test_model <- ModelSIR(
 
 expect_error(test_model <- ModelSIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = NA
