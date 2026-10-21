@@ -12,6 +12,7 @@
  * 
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
+ * @param n Number of agents.
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
  * @param initial_recovery epiworld_double Initial recovery rate of the immune system
@@ -31,6 +32,7 @@ public:
 
     ModelDiffNet(
         const std::string & innovation_name,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double prob_adopt,
         bool normalize_exposure = true,
@@ -48,6 +50,7 @@ public:
 template<typename TSeq>
 inline ModelDiffNet<TSeq>::ModelDiffNet(
     const std::string & innovation_name,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double prob_adopt,
     bool normalize_exposure,
@@ -57,6 +60,8 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     std::vector< double > params
     )
 {
+
+    this->set_population_size(n);
 
     // Adding additional parameters
     this->normalize_exposure = normalize_exposure;
@@ -81,8 +86,13 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         // For each one of the possible innovations, we have to compute
         // the adoption probability, which is a function of exposure
         auto & m_ref = *m;
-        for (auto * neighbor: agent.neighbors_view(*m))
+        size_t n_neighbors = 0u;
+        // Every network layer, in the order the layers were added
+        for (auto * net : m->get_network_layers())
+        for (auto * neighbor : net->neighbors_view(static_cast< size_t >(agent.get_id())))
         {
+
+            ++n_neighbors;
 
             if (neighbor->get_state() == ModelDiffNet<TSeq>::ADOPTER)
             {
@@ -116,7 +126,7 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
         {
 
             if (diffmodel->normalize_exposure)
-                exposure.at(i) /= agent.get_n_neighbors();
+                exposure.at(i) /= n_neighbors;
 
             for (auto & j: diffmodel->data_cols)
                 exposure.at(i) += agent(j, m_ref) * diffmodel->params.at(j);

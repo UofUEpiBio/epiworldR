@@ -228,7 +228,7 @@ inline ModelSIRDCONN<TSeq>::ModelSIRDCONN(
 
     this->queuing_off(); // No queuing need
 
-    this->agents_empty_graph(n);
+    this->set_population_size(n);
 
     this->set_name("Susceptible-Infected-Removed-Deceased (SIRD) (connected)");
 

@@ -12,6 +12,7 @@
  *
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
+ * @param n Number of agents.
  * @param prevalence epiworld_double Initial prevalence the immune system
  * @param transmission_rate epiworld_double Transmission rate of the virus
  * @param avg_incubation_days epiworld_double Average incubation days of the virus.
@@ -31,6 +32,7 @@ public:
 
     ModelSEIR(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -81,12 +83,15 @@ public:
 template<typename TSeq>
 inline ModelSEIR<TSeq>::ModelSEIR(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
     epiworld_double recovery_rate
     )
 {
+
+    this->set_population_size(n);
 
     // Adding statuses
     // Exposed agents carry the virus but are not infectious yet

@@ -54,8 +54,8 @@
 // insertion-ordered) neighbor vector, which for the degrees these models run at
 // -- smallworld networks of degree 5-8, households of 3-5 -- fits in a cache
 // line and beats a hash lookup. Past it, the linear scan starts to dominate
-// graph construction and tie surgery, so the agent builds the index once and
-// maintains it from then on. See `Model::add_edge` / `Model::rm_edge`.
+// graph construction and tie surgery, so the network layer builds the agent's
+// index once and maintains it from then on. See `layer::Network`.
 #ifndef EPI_NEIGHBOR_INDEX_THRESHOLD
     #define EPI_NEIGHBOR_INDEX_THRESHOLD 32u
 #endif
@@ -86,6 +86,14 @@ class Entity;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class GlobalEvent;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ContactLayer;
+
+namespace layer {
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Network;
+}
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using VirusPtr = std::shared_ptr< Virus< TSeq > >;

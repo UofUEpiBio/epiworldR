@@ -114,11 +114,22 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
     }
     
     
-    if (rewire_fun)
+    printf_epiworld("Contact layers      : %i\n", static_cast<int>(layers.size()));
+    for (const auto & layer : layers)
     {
-        printf_epiworld("Rewiring            : on (%.2f)\n", rewire_prop);
-    } else {
-        printf_epiworld("Rewiring            : off\n");
+        auto * net = layer->as_network();
+        if (net != nullptr)
+        {
+            printf_epiworld(
+                "  - %s (network%s%s)\n", layer->get_name().c_str(),
+                net->is_directed() ? ", directed" : "",
+                net->has_rewiring() ? ", rewired" : ""
+            );
+        }
+        else
+        {
+            printf_epiworld("  - %s\n", layer->get_name().c_str());
+        }
     }
 
     printf_epiworld("Last seed used      : %i\n\n", static_cast<int>(last_seed));

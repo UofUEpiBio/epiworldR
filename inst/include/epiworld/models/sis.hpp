@@ -11,6 +11,7 @@
  * @ingroup basic_compartmental
  * 
  * @param vname std::string Name of the virus
+ * @param n Number of agents.
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
  * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
@@ -28,6 +29,7 @@ public:
 
     ModelSIS(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -38,11 +40,14 @@ public:
 template<typename TSeq>
 inline ModelSIS<TSeq>::ModelSIS(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
     )
 {
+
+    this->set_population_size(n);
 
     this->set_name("Susceptible-Infected-Susceptible (SIS)");
 

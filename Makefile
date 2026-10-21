@@ -44,11 +44,12 @@ README.md: README.qmd
 # update:
 # 	wget https://raw.githubusercontent.com/UofUEpiBio/epiworld/master/epiworld.hpp && \
 # 		mv epiworld.hpp inst/include/epiworld.hpp
-EPIWORLD_BRANCH ?= master
+EPIWORLD_BRANCH ?= v1-layers
 
 update: clean-update
 	git clone --depth=1 -b $(EPIWORLD_BRANCH) https://github.com/UofUEpiBio/epiworld tmp_epiworld && \
 	rsync -avz --delete tmp_epiworld/include/epiworld inst/include/. && \
+	echo "epiworld https://github.com/UofUEpiBio/epiworld $$(git -C tmp_epiworld rev-parse HEAD)" > inst/include/VERSIONS && \
 	rm -f inst/include/epiworld/models/*.mmd && \
 	rsync -avz --delete tmp_epiworld/docs/assets/img/*png man/figures && \
 	rm -f man/figures/measles*.png && \

@@ -16,6 +16,18 @@ inline AdjList::AdjList(
     bool directed
 ) : directed(directed) {
 
+    if (size < 0)
+        throw std::length_error(
+            "The size of the network cannot be negative (" +
+            std::to_string(size) + ")."
+            );
+
+    if (source.size() != target.size())
+        throw std::length_error(
+            "source and target must have the same length (" +
+            std::to_string(source.size()) + " vs " +
+            std::to_string(target.size()) + ")."
+            );
 
     dat.resize(size, std::map<int,int>({}));
     int max_id = size - 1;
@@ -27,13 +39,13 @@ inline AdjList::AdjList(
         i = source[m];
         j = target[m];
 
-        if (i > max_id)
+        if ((i < 0) || (i > max_id))
             throw std::range_error(
                 "The source["+std::to_string(m)+"] = " + std::to_string(i) +
                 " is above the max_id " + std::to_string(max_id)
                 );
 
-        if (j > max_id)
+        if ((j < 0) || (j > max_id))
             throw std::range_error(
                 "The target["+std::to_string(m)+"] = " + std::to_string(j) +
                 " is above the max_id " + std::to_string(max_id)

@@ -3,7 +3,8 @@
 
 /**
  * @file model-meat-transmission.hpp
- * @brief Network transmission by pushing infection odds.
+ * @brief Transmission: from contacts to infections, and network transmission
+ * by pushing infection odds.
  *
  * @details A susceptible agent `i` whose update function is
  * `default_update_susceptible` (or `sampler::make_update_susceptible()`)
@@ -25,6 +26,95 @@
  * The docs page "Push and Pull Transmission" (docs/impl/transmission-sampling.md)
  * has the derivation.
  */
+
+template<typename TSeq>
+inline Virus<TSeq> * Model<TSeq>::sample_virus(
+    Agent<TSeq> * agent,
+    const size_t * contacts,
+    size_t n
+)
+{
+
+    size_t n_exposures = 0u;
+    for (size_t k = 0u; k < n; ++k)
+    {
+
+        auto & contact = population[contacts[k]];
+        auto & v = contact.get_virus();
+        if (v == nullptr)
+            continue;
+
+        #ifdef EPI_DEBUG
+        if (n_exposures >= array_virus_tmp.size())
+            throw std::logic_error(
+                "Trying to add an extra element to a temporal array outside of the range."
+            );
+        #endif
+
+        array_double_tmp[n_exposures] =
+            (1.0 - agent->get_susceptibility_reduction(v, *this)) *
+            v->get_prob_infecting(this) *
+            (1.0 - contact.get_transmission_reduction(v, *this))
+            ;
+
+        array_virus_tmp[n_exposures++] = &(*v);
+
+    }
+
+    if (n_exposures == 0u)
+        return nullptr;
+
+    const int which = roulette(n_exposures, this);
+
+    return (which < 0) ? nullptr : array_virus_tmp[which];
+
+}
+
+template<typename TSeq>
+inline Virus<TSeq> * Model<TSeq>::sample_virus(
+    Agent<TSeq> * agent,
+    const std::vector< bool > * exclude
+)
+{
+
+    if (agent->get_virus() != nullptr)
+        throw std::logic_error(
+            "Sampling a virus for agent " + std::to_string(agent->get_id()) +
+            ", which already has one, makes no sense."
+        );
+
+    const size_t id = static_cast< size_t >(agent->get_id());
+    const size_t degree = network_degree(id);
+    if (degree == 0u)
+        return nullptr;
+
+    if (network_contacts.size() < degree)
+        network_contacts.resize(degree);
+
+    // The recording path is chosen once per call, not per contact
+    size_t n = 0u;
+    for (const auto * net : network_layers)
+        n += post_sampling_on ?
+            net->template sample<true>(id, *this, exclude, network_contacts.data() + n) :
+            net->template sample<false>(id, *this, exclude, network_contacts.data() + n);
+
+    if (n == 0u)
+        return nullptr;
+
+    #ifdef EPI_DEBUG
+    db.n_transmissions_potential++;
+    #endif
+
+    Virus<TSeq> * virus = sample_virus(agent, network_contacts.data(), n);
+
+    #ifdef EPI_DEBUG
+    if (virus != nullptr)
+        db.n_transmissions_today++;
+    #endif
+
+    return virus;
+
+}
 
 template<typename TSeq>
 inline bool Model<TSeq>::transmission_prepare()
@@ -217,14 +307,17 @@ inline void Model<TSeq>::transmission_push_impl()
             word &= (word - 1u);
 
             Agent<TSeq> & j = population[j_id];
-            if ((j.virus == nullptr) || (j.n_neighbors == 0u))
+            if (j.virus == nullptr)
                 continue;
 
             const size_t s = agent_state[j_id];
 
             VirusPtr<TSeq> & v = j.virus;
 
-            for (size_t i_id : *j.neighbors)
+            // Every network, in the order the layers were added, as a pull
+            // reads them
+            for (const auto * net : network_layers)
+            for (size_t i_id : net->ties[j_id])
             {
 
                 // Most neighbors are usually not susceptible; the compact copy

@@ -172,11 +172,12 @@ inline void DataBase<TSeq>::record()
         std::vector< size_t > _carrier_deg(model->nstates, 0u);
         for (auto & p : model->population)
         {
-            _deg[p.get_state()] += p.get_n_neighbors();
+            const size_t _d = model->network_degree(static_cast< size_t >(p.get_id()));
+            _deg[p.get_state()] += _d;
             if (p.get_virus() != nullptr)
             {
                 _carriers[p.get_state()]++;
-                _carrier_deg[p.get_state()] += p.get_n_neighbors();
+                _carrier_deg[p.get_state()] += _d;
             }
         }
 
