@@ -153,7 +153,8 @@ inline void Agent<TSeq>::set_virus(
     VirusPtr<TSeq> virus_ptr = std::shared_ptr<Virus<TSeq>>(virus.clone_ptr());
 
     model._add_event(
-        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus,
+        model.take_sampled_layer()
         );
 
 }

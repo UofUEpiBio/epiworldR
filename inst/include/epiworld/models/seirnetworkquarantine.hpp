@@ -240,12 +240,7 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
         if (record)
             m->register_sampled_contact(neighbor->get_id(), p->get_id());
 
-        #ifdef EPI_DEBUG
-        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-            throw std::logic_error(
-                "Trying to add an extra element to a temporal array outside of the range."
-            );
-        #endif
+        m->reserve_tmp(static_cast< size_t >(nviruses_tmp) + 1u);
 
         m->array_double_tmp[nviruses_tmp] =
             (1.0 - p->get_susceptibility_reduction(v, *m)) *

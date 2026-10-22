@@ -97,7 +97,6 @@ private:
 
     std::vector< uint64_t > marks;   ///< Bitset used to order the pool
     std::vector< size_t > ordered;   ///< Infectious ids (ascending), scratch
-    std::vector< size_t > sampled;   ///< Output buffer of `sample()`
 
     void rebuild_layout();
 
@@ -175,14 +174,17 @@ public:
     }
 
     /**
-     * @brief Samples the infectious contacts of `agent`, which must be in the
-     * layer.
-     * @return Number of valid entries in `sampled_ids()`.
+     * @brief Samples the infectious contacts of `agent` (none if it is not in
+     * the layer), appending them to `out`.
+     * @details `exclude` is ignored: the infectious states of the layer say
+     * who can be contacted. See `ContactLayer::sample()`.
      */
-    size_t sample(Agent<TSeq> * agent, Model<TSeq> & model);
-
-    /// Agent ids drawn by the last `sample()` (first `n` entries are valid).
-    const std::vector< size_t > & sampled_ids() const { return sampled; }
+    size_t sample(
+        size_t agent,
+        Model<TSeq> & model,
+        const std::vector< bool > * exclude,
+        std::vector< size_t > & out
+    ) override;
 
     /// Number of infectious agents in a group.
     size_t get_n_infectious(size_t group) const { return counts[group]; }
@@ -370,7 +372,6 @@ inline void Mixing<TSeq>::reset(Model<TSeq> & model)
         );
 
     pool.assign(n, 0u);
-    sampled.assign(n, 0u);
     ordered.clear();
     ordered.reserve(n);
     marks.assign((n + 63u) / 64u, 0u);
@@ -465,16 +466,20 @@ inline void Mixing<TSeq>::update(Model<TSeq> & model)
 
 template<typename TSeq>
 inline size_t Mixing<TSeq>::sample(
-    Agent<TSeq> * agent,
-    Model<TSeq> & model
+    size_t agent,
+    Model<TSeq> & model,
+    const std::vector< bool > *,
+    std::vector< size_t > & out
 )
 {
 
-    // Column of the agent's group: entry (agent's group, g) is rate[g]
-    const double * rate = contact_matrix.data() +
-        groups[static_cast< size_t >(agent->get_id())];
+    if (!in_layer(agent))
+        return 0u;
 
-    size_t samp_id = 0u;
+    // Column of the agent's group: entry (agent's group, g) is rate[g]
+    const double * rate = contact_matrix.data() + groups[agent];
+
+    const size_t first = out.size();
     for (size_t g = 0u; g < n_groups; ++g)
     {
 
@@ -509,20 +514,23 @@ inline size_t Mixing<TSeq>::sample(
             #endif
 
             // Can't sample itself
-            if (id == static_cast< size_t >(agent->get_id()))
+            if (id == agent)
                 continue;
 
-            sampled[samp_id++] = id;
+            out.push_back(id);
 
         }
 
     }
 
     // Reporting the interactions, only if somebody listens
+    const size_t n_sampled = out.size() - first;
     if (model.has_post_sampling())
-        model.register_sampled_contacts(sampled.data(), samp_id, agent->get_id());
+        model.register_sampled_contacts(
+            out.data() + first, n_sampled, static_cast< int >(agent)
+        );
 
-    return samp_id;
+    return n_sampled;
 
 }
 

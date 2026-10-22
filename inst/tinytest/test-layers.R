@@ -69,6 +69,60 @@ expect_equal(get_contact_matrix(get_layer(seir, "mixing")), cm2)
 expect_error(get_contact_matrix(seir), "get_layer")
 expect_error(get_edgelist(mixing), "network")
 
+# Several layers in one draw: the layer column, weights and targets -----------
+# A mixing model with a contact matrix of zeros only transmits through the
+# network added to it (the mixing layer is layer 0, the network layer 1).
+seir <- ModelSEIRMixing(
+  "flu",
+  n                 = 1000,
+  prevalence        = .05,
+  transmission_rate = .5,
+  incubation_days   = 1,
+  recovery_rate     = .1,
+  contact_matrix    = matrix(0, 1, 1)
+)
+add_entity(seir, entity("everyone", 1000, FALSE))
+verbose_off(seir)
+add_layer(seir, layer_network("household", graph_smallworld(k = 4, p = .1)))
+
+run(seir, ndays = 20, seed = 1)
+tr <- subset(get_transmissions(seir), source >= 0)
+expect_true(nrow(tr) > 0)
+expect_equal(unique(tr$layer), 1L)
+expect_equal(unique(subset(get_transmissions(seir), source < 0)$layer), -1L)
+expect_stdout(print(get_layer(seir, 1)), "household")
+
+# Weight 0 turns the layer off
+add_param(seir, "household weight", 0)
+set_weight(get_layer(seir, "household"), "household weight")
+run(seir, ndays = 20, seed = 1)
+expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
+
+# A layer that targets another virus does not spread this one
+set_param(seir, "household weight", 1)
+run(seir, ndays = 20, seed = 1)
+expect_true(nrow(subset(get_transmissions(seir), source >= 0)) > 0)
+
+other <- virus(
+  "other",
+  prevalence     = 0,
+  as_proportion  = TRUE,
+  prob_infecting = .5,
+  recovery_rate  = .1
+)
+add_virus(seir, other)
+add_virus_target(get_layer(seir, "household"), other)
+run(seir, ndays = 20, seed = 1)
+expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
+
+# The connected models ignore layers
+conn <- ModelSIRCONN("flu", 1000, .05, contact_rate = 0,
+  transmission_rate = 1, recovery_rate = .1)
+verbose_off(conn)
+add_layer(conn, layer_network("contacts", graph_smallworld(k = 4, p = .1)))
+run(conn, ndays = 10, seed = 1)
+expect_equal(nrow(subset(get_transmissions(conn), source >= 0)), 0L)
+
 # Defunct functions say what replaces them -------------------------------------
 expect_error(agents_smallworld(sir, 1000, 5, FALSE, .01), "layer_network")
 expect_error(agents_from_edgelist(sir), "graph_edgelist")

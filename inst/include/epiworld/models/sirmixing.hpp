@@ -115,21 +115,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
         ) -> void
         {
 
-            // Layer 0 is the mixing layer (added by the constructor)
-            auto & mixing = m->template get_layer_as< layer::Mixing<TSeq> >(0u);
-
-            if (!mixing.in_layer(p->get_id()))
-                return;
-
-            size_t ndraws = mixing.sample(p, *m);
-
-            if (ndraws == 0u)
-                return;
-
-
-            Virus<TSeq> * virus = m->sample_virus(
-                p, mixing.sampled_ids().data(), ndraws
-            );
+            Virus<TSeq> * virus = m->sample_virus(p);
             if (virus != nullptr)
                 p->set_virus(*m, *virus, ModelSIRMixing<TSeq>::INFECTED);
 

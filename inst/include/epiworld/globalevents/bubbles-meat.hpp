@@ -503,64 +503,6 @@ inline void Bubbles<TSeq>::build_ties(Model<TSeq> * model)
         if (bubble_id[a] >= 0)
             members[static_cast< size_t >(bubble_id[a])].push_back(a);
 
-    // What the sampler can take is a *degree*, not a bubble size: when pulling,
-    // roulette() uses two slots per candidate in the fixed scratch array, so an
-    // agent may have at most `array_double_tmp.size() / 2` infectious neighbors
-    // before it throws. Pushing has no such ceiling, but the automatic mode may
-    // pull on any day, so the check does not depend on the mode. Completing a
-    // bubble adds ties on top of the ones an agent already has outside it, so
-    // the number that matters is what each member's degree will be afterwards
-    // -- a bubble small enough to look harmless can still push a
-    // well-connected member over.
-    //
-    // The policy answers for the ties it adds, not for the network it was
-    // handed. A member the network already put past the ceiling -- a hub -- is
-    // fine as long as its bubble adds nothing to it; what is refused is a
-    // clique that takes a member past the ceiling, or adds to one already
-    // there.
-    //
-    // Checked for every member before a single tie is created, so a bubble that
-    // is too large fails without leaving the network half-rewritten.
-    size_t max_degree = model->array_double_tmp.size() / 2u;
-
-    for (auto & who : members)
-    {
-
-        if (who.size() < 2u)
-            continue;
-
-        for (size_t x : who)
-        {
-
-            // Ties to bubble-mates the agent already has are not added twice.
-            size_t already = 0u;
-            size_t degree  = 0u;
-            for (auto * net : model->get_network_layers())
-            {
-                degree += net->get_degree(x);
-                for (auto * nb : net->neighbors_view(x))
-                    if (bubble_id[static_cast< size_t >(nb->get_id())] ==
-                        bubble_id[x])
-                        ++already;
-            }
-
-            size_t projected = degree + (who.size() - 1u) - already;
-
-            if ((projected > max_degree) && (projected > degree))
-                throw std::length_error(
-                    "Bubbles: completing a bubble of " +
-                    std::to_string(who.size()) + " would give agent " +
-                    std::to_string(x) + " a degree of " +
-                    std::to_string(projected) + " (up from " +
-                    std::to_string(degree) + "), above the " +
-                    std::to_string(max_degree) + " neighbors the virus sampler "
-                    "can weigh. Reduce group_size or max_households."
-                );
-
-        }
-
-    }
-
     auto & net = tie_layer(model);
 
     for (auto & who : members)

@@ -18,6 +18,15 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   `graph_sbm()`), which draws a new network for every run and replicate, or a
   fixed network (`graph_edgelist()`). `agents_smallworld()`,
   `agents_from_edgelist()`, `agents_sbm()` and `get_network()` are defunct.
+  Agents are exposed through every layer of their model in one draw (a
+  network added to a mixing model transmits too), except in the connected
+  models (`ModelSIRCONN()`, ...), which ignore layers for now.
+
+* `get_transmissions()` gains a `layer` column: the id of the layer the
+  infection came through (`-1` for seeds), which `get_layer(model, id)`
+  retrieves. `set_weight(layer, param)` scales the odds of infection through
+  a layer by a model parameter, and `add_virus_target(layer, virus)`
+  restricts a layer to some viruses.
 
 * A layer object is the model's layer: `get_layer(model, name)` retrieves it,
   and edits through it (`add_edge()`, `rm_edge()`) change the model. Edits made

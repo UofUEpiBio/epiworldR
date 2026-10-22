@@ -64,6 +64,7 @@ inline void DataBase<TSeq>::reset()
     transmission_source.clear();
     transmission_target.clear();
     transmission_source_exposure_date.clear();
+    transmission_layer.clear();
 
     m_hospitalizations.reset();
 
@@ -116,6 +117,7 @@ inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
     transmission_target(db.transmission_target),
     transmission_virus(db.transmission_virus),
     transmission_source_exposure_date(db.transmission_source_exposure_date),
+    transmission_layer(db.transmission_layer),
     transition_matrix(db.transition_matrix),
     user_data(nullptr)
 {}
@@ -1031,7 +1033,8 @@ inline void DataBase<TSeq>::get_transmissions(
     std::vector<int> & source,
     std::vector<int> & target,
     std::vector<int> & virus,
-    std::vector<int> & source_exposure_date
+    std::vector<int> & source_exposure_date,
+    std::vector<int> & layer
 ) const 
 {
 
@@ -1042,13 +1045,15 @@ inline void DataBase<TSeq>::get_transmissions(
     target.resize(nevents);
     virus.resize(nevents);
     source_exposure_date.resize(nevents);
+    layer.resize(nevents);
 
     get_transmissions(
-        &date[0u],
-        &source[0u],
-        &target[0u],
-        &virus[0u],
-        &source_exposure_date[0u]
+        date.data(),
+        source.data(),
+        target.data(),
+        virus.data(),
+        source_exposure_date.data(),
+        layer.data()
     );
 
 }
@@ -1059,7 +1064,8 @@ inline void DataBase<TSeq>::get_transmissions(
     int * source,
     int * target,
     int * virus,
-    int * source_exposure_date
+    int * source_exposure_date,
+    int * layer
 ) const 
 {
 
@@ -1073,6 +1079,7 @@ inline void DataBase<TSeq>::get_transmissions(
         *(target + i) = transmission_target.at(i);
         *(virus + i) = transmission_virus.at(i);
         *(source_exposure_date + i) = transmission_source_exposure_date.at(i);
+        *(layer + i) = transmission_layer.at(i);
 
     }
 
@@ -1090,6 +1097,18 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
         names.reserve(ids.size());
         for (auto i : ids)
             names.push_back(virus_name[i]);
+        return names;
+    };
+
+    // Names of the layers, given their ids ("" for -1: not from a contact)
+    auto lnames = [this](const std::vector< int > & ids) {
+        std::vector< std::string > names;
+        names.reserve(ids.size());
+        for (auto i : ids)
+            names.push_back(
+                i < 0 ? std::string() :
+                model->get_layer(static_cast< size_t >(i)).get_name()
+            );
         return names;
     };
 
@@ -1173,6 +1192,8 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
             t.add("source_exposure_date", transmission_source_exposure_date);
             t.add("source", transmission_source);
             t.add("target", transmission_target);
+            t.add("layer_id", transmission_layer);
+            t.add("layer", lnames(transmission_layer));
         }
         else if (what == "transition")
         {
@@ -1330,7 +1351,8 @@ inline void DataBase<TSeq>::record_transmission(
     int i,
     int j,
     int virus,
-    int i_expo_date
+    int i_expo_date,
+    int layer
 ) {
 
     transmission_date.push_back(model->today());
@@ -1338,6 +1360,7 @@ inline void DataBase<TSeq>::record_transmission(
     transmission_target.push_back(j);
     transmission_virus.push_back(virus);
     transmission_source_exposure_date.push_back(i_expo_date);
+    transmission_layer.push_back(layer);
 
 }
 
@@ -1757,6 +1780,12 @@ inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<in
         "DataBase:: transmission_source_exposure_date[i] don't match"
         )
 
+    VECT_MATCH(
+        transmission_layer,
+        other.transmission_layer,
+        "DataBase:: transmission_layer[i] don't match"
+        )
+
 
     VECT_MATCH(
         transition_matrix,
@@ -1970,6 +1999,12 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
         transmission_source_exposure_date,
         other.transmission_source_exposure_date,
         "DataBase:: transmission_source_exposure_date[i] don't match"
+    )
+
+    VECT_MATCH(
+        transmission_layer,
+        other.transmission_layer,
+        "DataBase:: transmission_layer[i] don't match"
     )
 
     VECT_MATCH(

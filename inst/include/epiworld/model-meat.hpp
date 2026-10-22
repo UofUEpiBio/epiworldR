@@ -105,7 +105,8 @@ inline void Model<TSeq>::_add_event(
     Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
-    EventAction action_
+    EventAction action_,
+    int layer_
 ) {
 
     ++nactions;
@@ -120,7 +121,8 @@ inline void Model<TSeq>::_add_event(
 
         events.emplace_back(
             Event<TSeq>(
-                agent_, virus_, tool_, entity_, new_state_, queue_, action_
+                agent_, virus_, tool_, entity_, new_state_, queue_, action_,
+                layer_
             ));
 
     }
@@ -136,6 +138,7 @@ inline void Model<TSeq>::_add_event(
         A.new_state  = std::move(new_state_);
         A.queue      = std::move(queue_);
         A.action     = std::move(action_);
+        A.layer      = layer_;
 
     }
 
@@ -1677,7 +1680,7 @@ inline void Model<TSeq>::update_state() {
     if (post_sampling_on)
         post_sampling_scratch.clear();
 
-    const bool directed = has_directed_network();
+    const bool directed = has_pull_only_layer();
 
     const bool push =
         transmission_prepare() && !directed && transmission_choose_push();
@@ -1748,7 +1751,7 @@ inline void Model<TSeq>::mutate_virus() {
     // Directed networks do not use the queue (see update_state()), and must not
     // start depending on it here: a carrier registered without `Everyone`, or
     // a count left stale by rewiring, would then mutate only with queuing off.
-    if (use_queuing && !has_directed_network())
+    if (use_queuing && !has_pull_only_layer())
     {
 
         queue.for_each_nonzero([this](size_t i) -> void {
@@ -1897,6 +1900,12 @@ inline void Model<TSeq>::reset() {
     // them.
     for (auto & layer : layers)
         layer->reset(*this);
+
+    // A generator decides the graph's direction at its reset, so the
+    // classification waits until every layer has one.
+    layers_classify();
+
+    sampled_layer = -1;
 
     // Everyone is now in the baseline state with no virus; from here on
     // events_run() keeps the index current.
@@ -2400,6 +2409,9 @@ template<typename TSeq>
 inline void Model<TSeq>::run_globalevents()
 {
 
+    // An infection added by an event is not one drawn from a layer
+    sampled_layer = -1;
+
     for (auto & event: globalevents)
     {
         event->operator()(this, today());
@@ -2514,6 +2526,8 @@ inline void Model<TSeq>::layers_attach()
             network_layers.push_back(net);
     }
 
+    layers_classify();
+
 }
 
 template<typename TSeq>
@@ -2544,14 +2558,15 @@ inline size_t Model<TSeq>::network_degree(size_t id) const
 }
 
 template<typename TSeq>
-inline bool Model<TSeq>::has_directed_network() const
+inline void Model<TSeq>::layers_classify()
 {
 
-    for (const auto * net : network_layers)
-        if (net->is_directed())
-            return true;
-
-    return false;
+    pull_only = false;
+    for (const auto & layer : layers)
+    {
+        const auto * net = layer->as_network();
+        pull_only = pull_only || (net == nullptr) || net->is_directed();
+    }
 
 }
 

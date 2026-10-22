@@ -114,11 +114,17 @@ SEXP add_layer_cpp(SEXP model, SEXP layer) {
 // Borrows the model's layer: the shared pointer does not own it, so the R
 // object must keep the model alive (get_layer() does).
 [[cpp11::register]]
-SEXP get_layer_cpp(SEXP model, std::string name) {
+SEXP get_layer_cpp(SEXP model, SEXP which) {
+
   external_pointer< Model<> > ptr(model);
+  auto & layer = (TYPEOF(which) == STRSXP) ?
+    ptr->get_layer(as_cpp< std::string >(which)) :
+    ptr->get_layer(as_cpp< size_t >(which));
+
   return external_pointer< LayerPtr >(
-    new LayerPtr(&ptr->get_layer(name), [](ContactLayer<> *) {})
+    new LayerPtr(&layer, [](ContactLayer<> *) {})
   );
+
 }
 
 [[cpp11::register]]
@@ -188,5 +194,19 @@ std::vector< double > get_contact_matrix_cpp(SEXP layer) {
 [[cpp11::register]]
 SEXP set_contact_matrix_cpp(SEXP layer, std::vector< double > contact_matrix) {
   mixing_ref(layer).set_contact_matrix(contact_matrix);
+  return layer;
+}
+
+// Every kind of layer -----------------------------------------------------------
+
+[[cpp11::register]]
+SEXP set_weight_cpp(SEXP layer, std::string param) {
+  layer_ptr(layer)->set_weight(param);
+  return layer;
+}
+
+[[cpp11::register]]
+SEXP add_virus_target_cpp(SEXP layer, int lineage_id) {
+  layer_ptr(layer)->add_virus_target(lineage_id);
   return layer;
 }

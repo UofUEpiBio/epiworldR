@@ -272,8 +272,8 @@ add_layer_cpp <- function(model, layer) {
   .Call(`_epiworldR_add_layer_cpp`, model, layer)
 }
 
-get_layer_cpp <- function(model, name) {
-  .Call(`_epiworldR_get_layer_cpp`, model, name)
+get_layer_cpp <- function(model, which) {
+  .Call(`_epiworldR_get_layer_cpp`, model, which)
 }
 
 get_layer_kind_cpp <- function(layer) {
@@ -310,6 +310,14 @@ get_contact_matrix_cpp <- function(layer) {
 
 set_contact_matrix_cpp <- function(layer, contact_matrix) {
   .Call(`_epiworldR_set_contact_matrix_cpp`, layer, contact_matrix)
+}
+
+set_weight_cpp <- function(layer, param) {
+  .Call(`_epiworldR_set_weight_cpp`, layer, param)
+}
+
+add_virus_target_cpp <- function(layer, lineage_id) {
+  .Call(`_epiworldR_add_virus_target_cpp`, layer, lineage_id)
 }
 
 LFMCMC_cpp <- function(model) {

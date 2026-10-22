@@ -194,10 +194,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
                 auto & v = neighbor->get_virus();
 
-                #ifdef EPI_DEBUG
-                if (nviruses_tmp >= m->array_virus_tmp.size())
-                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                #endif
+                m->reserve_tmp(nviruses_tmp + 1u);
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =

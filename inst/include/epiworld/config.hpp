@@ -224,6 +224,7 @@ struct Event {
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
     EventAction action;
+    int layer = -1; ///< Layer of the contact that transmitted the virus, if any
 public:
 /**
      * @brief Construct a new Event object
@@ -238,6 +239,7 @@ public:
      * @param new_state_ Next state
      * @param queue_ Efect on the queue
      * @param action_ The action to execute
+     * @param layer_ Layer of the contact that transmitted the virus, if any
      */
     Event(
         Agent<TSeq> * agent_,
@@ -246,10 +248,11 @@ public:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        EventAction action_
+        EventAction action_,
+        int layer_ = -1
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
         new_state(new_state_),
-        queue(queue_), action(action_) {
+        queue(queue_), action(action_), layer(layer_) {
             return;
         };
 };

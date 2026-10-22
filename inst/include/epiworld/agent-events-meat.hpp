@@ -12,7 +12,8 @@ inline void Model<TSeq>::_event_add_virus(Event<TSeq> & a)
         v->get_agent() ? v->get_agent()->get_id() : -1,
         p->get_id(),
         v->get_id(),
-        v->get_date() 
+        v->get_date(),
+        a.layer
     );
     
     p->virus = std::move(v);

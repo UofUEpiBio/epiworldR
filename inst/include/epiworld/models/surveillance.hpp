@@ -148,6 +148,7 @@ inline ModelSURV<TSeq>::ModelSURV(
                 (1.0 - neighbor->get_transmission_reduction(v, m_ref)) 
                 ; 
         
+            m->reserve_tmp(nviruses_tmp + 1u);
             m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
             m->array_virus_tmp[nviruses_tmp++] = &(*v);
         }

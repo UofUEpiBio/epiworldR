@@ -182,19 +182,42 @@ public:
     void write_edgelist(const std::string & fn) const;
 
     /**
-     * @brief Appends the neighbors of `agent` that carry a virus to `out`.
+     * @brief The neighbors of `agent` that carry a virus, written to `out`
+     * (room for `get_degree(agent)` entries).
      * @details Neighbors in a state flagged in `exclude` (if not null) are
-     * skipped. Each contact is reported to the model's post-sampling callback,
-     * if there is one. This is the network's part of a pull.
-     * @return The number of contacts appended.
+     * skipped. With `Record`, each contact is reported to the model's
+     * post-sampling callback.
+     * @return The number of contacts written.
      */
     template< bool Record >
-    size_t sample(
+    size_t pull(
         size_t agent,
         Model<TSeq> & model,
         const std::vector< bool > * exclude,
         size_t * out
     ) const;
+
+    /// The network's part of a pull (see `ContactLayer::sample()`).
+    size_t sample(
+        size_t agent,
+        Model<TSeq> & model,
+        const std::vector< bool > * exclude,
+        std::vector< size_t > & out
+    ) override
+    {
+
+        const size_t first = out.size();
+        out.resize(first + ties[agent].size());
+
+        // The recording path is chosen once per call, not per contact
+        const size_t n = model.post_sampling_on ?
+            pull<true>(agent, model, exclude, out.data() + first) :
+            pull<false>(agent, model, exclude, out.data() + first);
+
+        out.resize(first + n);
+        return n;
+
+    }
 
     void reset(Model<TSeq> & model) override;
     void update(Model<TSeq> & model) override;
@@ -676,7 +699,7 @@ inline void Network<TSeq>::write_edgelist(const std::string & fn) const
 
 template<typename TSeq>
 template< bool Record >
-inline size_t Network<TSeq>::sample(
+inline size_t Network<TSeq>::pull(
     size_t agent,
     Model<TSeq> & model,
     const std::vector< bool > * exclude,

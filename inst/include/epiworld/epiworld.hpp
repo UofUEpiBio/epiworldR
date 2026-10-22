@@ -29,6 +29,7 @@
 #include <cassert>
 #include <atomic>
 #include <variant>
+#include <optional>
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP

@@ -3,11 +3,25 @@
 #' Who meets whom in a model comes from its contact layers. A network layer
 #' holds ties between agents; a mixing layer (created by the mixing models,
 #' e.g., [ModelSIRMixing()]) samples contacts between groups with a contact
-#' matrix. A model can have several layers, and susceptible agents are exposed
-#' to the infectious agents of every one of them. Network models
-#' (e.g., [ModelSIR()]) start with no layers: add one with `add_layer()`.
+#' matrix. Network models (e.g., [ModelSIR()]) start with no layers: add one
+#' with `add_layer()`. A model can have several layers, and its susceptible
+#' agents are exposed to the infectious agents of every one of them, in one
+#' draw: e.g., a household network added to [ModelSEIRMixing()] transmits
+#' alongside the contact matrix.
 #'
-#' @param name String. Name of the layer (unique within a model).
+#' The connected models (e.g., [ModelSIRCONN()]) are the exception for now:
+#' they draw contacts from the list of infected agents and ignore layers. A
+#' layer added to them is kept, and can be edited and inspected, but transmits
+#' nothing.
+#'
+#' @param name String. Name of the layer (unique within a model). In
+#' `get_layer()`, the layer's id also works (layers are numbered from 0 in the
+#' order they were added, as in the `layer` column of [get_transmissions()]).
+#' @param param String. In `set_weight()`, the name of the model parameter
+#' holding the layer's weight; in `rewire_degseq()`, the name of the model
+#' parameter holding the proportion of ties rewired at the end of each step.
+#' @param virus A virus added to the model, a list of them, or lineage ids:
+#' the lineages that spread through the layer (as in [add_target_tool()]).
 #' @param graph Either a network generator (`graph_smallworld()`,
 #' `graph_bernoulli()`, `graph_sbm()`), which draws a new network at the start
 #' of every run and replicate, or a fixed network (`graph_edgelist()`).
@@ -30,8 +44,6 @@
 #' start at 0).
 #' @param size Integer. Number of agents in the network (must match the
 #' population size of the model it is added to).
-#' @param param String. Name of the model parameter holding the proportion of
-#' ties rewired at the end of each step.
 #' @param rewiring A rewiring function from `rewire_degseq()`.
 #' @param i,j Integer. Ids of the agents at the ends of the tie (starting at 0).
 #'
@@ -39,6 +51,15 @@
 #' A layer object shares its layer with the model it is added to, so editing
 #' it (e.g., with `add_edge()`) edits the model's layer. An edit made while
 #' the model runs lasts for that run only; an edit made between runs is kept.
+#'
+#' Every kind of layer has a weight and virus targets.
+#' - `set_weight()` ties the layer's weight to a model parameter (add it with
+#' [add_param()]). The odds of an infection through the layer's contacts are
+#' multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
+#' layer without a weight has weight 1.
+#' - `add_virus_target()` restricts the layer to some viruses, by lineage, as
+#' [add_target_tool()] does for tools. A layer without targets spreads every
+#' virus.
 #'
 #' @return
 #' - `layer_network()` returns a network layer, of class
@@ -53,6 +74,7 @@
 #' (returned invisibly).
 #' - `add_edge()` and `rm_edge()` return (invisibly) whether the network
 #' changed; `has_edge()` whether the tie exists.
+#' - `set_weight()` and `add_virus_target()` return the layer (invisibly).
 #' - `get_edgelist()` returns a data frame with the ties of a network layer
 #' (columns `from` and `to`).
 #' @examples
@@ -144,7 +166,7 @@ add_layer <- function(model, layer) {
 get_layer <- function(model, name) {
 
   stopifnot_model(model)
-  stopifnot_string(name)
+  if (is.numeric(name)) stopifnot_int(name, lb = 0) else stopifnot_string(name)
 
   # The layer belongs to the model, which the attribute keeps alive
   ptr <- get_layer_cpp(model, name)
@@ -262,4 +284,25 @@ has_edge <- function(layer, i, j) {
 get_edgelist <- function(layer) {
   stopifnot_layer(layer, "network")
   get_edgelist_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+set_weight <- function(layer, param) {
+  stopifnot_layer(layer)
+  stopifnot_string(param)
+  invisible(set_weight_cpp(layer, param))
+}
+
+#' @export
+#' @rdname contact-layers
+add_virus_target <- function(layer, virus) {
+
+  stopifnot_layer(layer)
+
+  for (id in as_lineage_ids(virus))
+    add_virus_target_cpp(layer, id)
+
+  invisible(layer)
+
 }

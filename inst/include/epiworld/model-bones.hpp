@@ -214,12 +214,34 @@ protected:
      */
     ///@{
     std::vector< layer::Network<TSeq> * > network_layers;
-    std::vector< size_t > network_contacts; ///< Scratch of `sample_virus()`
+    std::vector< size_t > layer_contacts; ///< Scratch of `sample_virus()`
+    bool pull_only = false; ///< See `has_pull_only_layer()`
+    int sampled_layer = -1; ///< See `take_sampled_layer()`
+
+    /// Adds the exposures of `contacts` to the arrays; returns their number.
+    size_t add_exposures(
+        Agent<TSeq> * agent,
+        const ContactLayer<TSeq> * layer,
+        const size_t * contacts,
+        size_t n,
+        size_t n_exposures
+    );
+
+    /// One draw over the first `n_exposures` exposures.
+    Virus<TSeq> * draw_exposure(size_t n_exposures);
     void layers_attach(); ///< Points the layers at this model, lists the networks
+    void layers_classify(); ///< Sets `pull_only`
     void layers_detach(); ///< Leaves the layers without a model (they may outlive it)
     void add_layer_ptr(std::shared_ptr< ContactLayer<TSeq> > layer);
     size_t network_degree(size_t id) const; ///< Ties of agent `id`, all networks
-    bool has_directed_network() const;
+
+    /**
+     * Whether some layer's contacts are not seen from both ends or not by the
+     * queue: a directed network (a tie is kept by its source only) or a layer
+     * that is not a network. The model then pulls, and visits every agent
+     * instead of using the queue.
+     */
+    bool has_pull_only_layer() const { return pull_only; }
 
     /// A network layer changed the ties of `i` and `j` by `di` and `dj`.
     void network_tie_changed(size_t i, int di, size_t j, int dj);
@@ -299,6 +321,7 @@ protected:
         double odds;                // Sum of p / (1 - p) over the contacts
         unsigned int n_certain;     // Contacts with p >= 1
         Virus<TSeq> * candidate;    // Infector's virus drawn so far
+        int layer;                  // Layer of the candidate's contact
     };
 
     std::vector< char > push_pushable;       ///< [state] Uses the default susceptible sampler
@@ -342,7 +365,8 @@ protected:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-          EventAction action_
+        EventAction action_,
+        int layer_ = -1
         );
 
     /**
@@ -395,8 +419,25 @@ protected:
 
 public:
 
-    std::array<epiworld_double, 1024u * 2u> array_double_tmp;
-    std::array<Virus<TSeq> *, 1024u * 2u> array_virus_tmp;
+    /**
+     * @name Scratch arrays for sampling exposures
+     * @details Update functions store each exposure's probability in
+     * `array_double_tmp` and its virus in `array_virus_tmp`, then draw with
+     * `roulette()`, which uses two doubles per exposure. An agent can have any
+     * number of exposures across its layers, so call `reserve_tmp()` before
+     * storing them.
+     */
+    ///@{
+    std::vector< epiworld_double > array_double_tmp =
+        std::vector< epiworld_double >(1024u * 2u);
+    std::vector< Virus<TSeq> * > array_virus_tmp =
+        std::vector< Virus<TSeq> * >(1024u);
+    std::vector< int > array_layer_tmp =
+        std::vector< int >(1024u); ///< Layer of each exposure
+
+    /// Makes room for `n` exposures in the scratch arrays.
+    void reserve_tmp(size_t n);
+    ///@}
 
     /// A model with `n` agents.
     explicit Model(size_t n);
@@ -728,26 +769,44 @@ public:
      * (1 - transmission reduction of the contact)`, and one draw
      * (`roulette()`) picks at most one infector. A contact listed twice is
      * two exposures.
+     * With a `layer`, the probabilities follow its weight and the viruses it
+     * admits (see `ContactLayer`), and the layer is recorded as the one of the
+     * transmission.
      * @param agent Agent without a virus.
-     * @param contacts Ids of the contacts (e.g., `layer::Mixing::sampled_ids()`).
+     * @param contacts Ids of the contacts.
      * @param n Number of contacts.
+     * @param layer The layer the contacts came from (none: weight 1, any
+     * virus, no layer recorded).
      * @return The virus transmitted, or `nullptr` if none is.
      */
     Virus<TSeq> * sample_virus(
         Agent<TSeq> * agent,
         const size_t * contacts,
-        size_t n
+        size_t n,
+        const ContactLayer<TSeq> * layer = nullptr
     );
 
     /**
-     * @brief Draws the virus, if any, that `agent` catches from its neighbors
-     * in the model's network layers.
-     * @details The neighbors that carry a virus, layer by layer in the order
-     * the layers were added and each layer in its tie order, are the contacts
-     * of `sample_virus(agent, contacts, n)`. Neighbors in a state flagged in
-     * `exclude` (one entry per state) are not sources. This is what
-     * `default_update_susceptible` and `sampler::make_update_susceptible()`
-     * do; a pushing step gives the same distribution.
+     * @brief The layer of the last transmission drawn by `sample_virus()`
+     * (-1 if none), which the next `Agent::set_virus()` records and clears.
+     */
+    int take_sampled_layer()
+    {
+        const int layer = sampled_layer;
+        sampled_layer = -1;
+        return layer;
+    }
+
+    /**
+     * @brief Draws the virus, if any, that `agent` catches from its contacts
+     * in the model's layers.
+     * @details The contacts that carry a virus, layer by layer in the order
+     * the layers were added and each layer in its own order, are all
+     * exposures of one draw (`sample_virus(agent, contacts, n, layer)` adds
+     * them). Contacts in a state flagged in `exclude` (one entry per state)
+     * are not sources. This is what `default_update_susceptible` and
+     * `sampler::make_update_susceptible()` do; a pushing step (networks only)
+     * gives the same distribution.
      * @throws std::logic_error if `agent` carries a virus.
      */
     Virus<TSeq> * sample_virus(

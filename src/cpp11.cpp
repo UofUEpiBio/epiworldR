@@ -482,10 +482,10 @@ extern "C" SEXP _epiworldR_add_layer_cpp(SEXP model, SEXP layer) {
   END_CPP11
 }
 // layers.cpp
-SEXP get_layer_cpp(SEXP model, std::string name);
-extern "C" SEXP _epiworldR_get_layer_cpp(SEXP model, SEXP name) {
+SEXP get_layer_cpp(SEXP model, SEXP which);
+extern "C" SEXP _epiworldR_get_layer_cpp(SEXP model, SEXP which) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(name)));
+    return cpp11::as_sexp(get_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(which)));
   END_CPP11
 }
 // layers.cpp
@@ -549,6 +549,20 @@ SEXP set_contact_matrix_cpp(SEXP layer, std::vector< double > contact_matrix);
 extern "C" SEXP _epiworldR_set_contact_matrix_cpp(SEXP layer, SEXP contact_matrix) {
   BEGIN_CPP11
     return cpp11::as_sexp(set_contact_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_weight_cpp(SEXP layer, std::string param);
+extern "C" SEXP _epiworldR_set_weight_cpp(SEXP layer, SEXP param) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_weight_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::string>>(param)));
+  END_CPP11
+}
+// layers.cpp
+SEXP add_virus_target_cpp(SEXP layer, int lineage_id);
+extern "C" SEXP _epiworldR_add_virus_target_cpp(SEXP layer, SEXP lineage_id) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_virus_target_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(lineage_id)));
   END_CPP11
 }
 // lfmcmc.cpp
@@ -1497,6 +1511,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          2},
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         2},
+    {"_epiworldR_add_virus_target_cpp",                 (DL_FUNC) &_epiworldR_add_virus_target_cpp,                  2},
     {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          13},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clear_targets_tool_cpp",               (DL_FUNC) &_epiworldR_clear_targets_tool_cpp,                1},
@@ -1661,6 +1676,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_transmission_reduction_cpp",       (DL_FUNC) &_epiworldR_set_transmission_reduction_cpp,        2},
     {"_epiworldR_set_transmission_reduction_fun_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_fun_cpp,    3},
     {"_epiworldR_set_transmission_reduction_ptr_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_ptr_cpp,    3},
+    {"_epiworldR_set_weight_cpp",                       (DL_FUNC) &_epiworldR_set_weight_cpp,                        2},
     {"_epiworldR_size_cpp",                             (DL_FUNC) &_epiworldR_size_cpp,                              1},
     {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              7},

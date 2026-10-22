@@ -305,16 +305,6 @@ public:
  * from under it and never withdrawn. Both are checked when the intervention
  * sets itself up. The grouping rules read the contacts of every network layer.
  *
- * Finally, the clique has to fit the virus sampler, which weighs at most half of
- * `Model::array_double_tmp` in neighbors at once when pulling (`roulette()` uses
- * two slots per candidate). The policy answers for the ties it adds, not for the
- * network it was given: a bubble is refused if completing it would take a
- * member past that ceiling, or add to one already past it, while a member the
- * network itself put past it -- a hub -- is fine as long as its bubble adds
- * nothing to it. What binds is each member's resulting *degree*, not the size of
- * the bubble: the clique is added on top of the ties an agent already has
- * outside it.
- *
  * ## The algorithms
  *
  * Both rules start from the **household contact graph**: one node per

@@ -15,6 +15,8 @@
 \alias{rm_edge}
 \alias{has_edge}
 \alias{get_edgelist}
+\alias{set_weight}
+\alias{add_virus_target}
 \title{Contact layers}
 \usage{
 layer_network(name, graph)
@@ -42,9 +44,15 @@ rm_edge(layer, i, j)
 has_edge(layer, i, j)
 
 get_edgelist(layer)
+
+set_weight(layer, param)
+
+add_virus_target(layer, virus)
 }
 \arguments{
-\item{name}{String. Name of the layer (unique within a model).}
+\item{name}{String. Name of the layer (unique within a model). In
+\code{get_layer()}, the layer's id also works (layers are numbered from 0 in the
+order they were added, as in the \code{layer} column of \code{\link[=get_transmissions]{get_transmissions()}}).}
 
 \item{graph}{Either a network generator (\code{graph_smallworld()},
 \code{graph_bernoulli()}, \code{graph_sbm()}), which draws a new network at the start
@@ -78,12 +86,16 @@ start at 0).}
 \item{size}{Integer. Number of agents in the network (must match the
 population size of the model it is added to).}
 
-\item{param}{String. Name of the model parameter holding the proportion of
-ties rewired at the end of each step.}
+\item{param}{String. In \code{set_weight()}, the name of the model parameter
+holding the layer's weight; in \code{rewire_degseq()}, the name of the model
+parameter holding the proportion of ties rewired at the end of each step.}
 
 \item{rewiring}{A rewiring function from \code{rewire_degseq()}.}
 
 \item{i, j}{Integer. Ids of the agents at the ends of the tie (starting at 0).}
+
+\item{virus}{A virus added to the model, a list of them, or lineage ids:
+the lineages that spread through the layer (as in \code{\link[=add_target_tool]{add_target_tool()}}).}
 }
 \value{
 \itemize{
@@ -99,6 +111,7 @@ ties rewired at the end of each step.}
 (returned invisibly).
 \item \code{add_edge()} and \code{rm_edge()} return (invisibly) whether the network
 changed; \code{has_edge()} whether the tie exists.
+\item \code{set_weight()} and \code{add_virus_target()} return the layer (invisibly).
 \item \code{get_edgelist()} returns a data frame with the ties of a network layer
 (columns \code{from} and \code{to}).
 }
@@ -107,14 +120,32 @@ changed; \code{has_edge()} whether the tie exists.
 Who meets whom in a model comes from its contact layers. A network layer
 holds ties between agents; a mixing layer (created by the mixing models,
 e.g., \code{\link[=ModelSIRMixing]{ModelSIRMixing()}}) samples contacts between groups with a contact
-matrix. A model can have several layers, and susceptible agents are exposed
-to the infectious agents of every one of them. Network models
-(e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one with \code{add_layer()}.
+matrix. Network models (e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one
+with \code{add_layer()}. A model can have several layers, and its susceptible
+agents are exposed to the infectious agents of every one of them, in one
+draw: e.g., a household network added to \code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}} transmits
+alongside the contact matrix.
 }
 \details{
+The connected models (e.g., \code{\link[=ModelSIRCONN]{ModelSIRCONN()}}) are the exception for now:
+they draw contacts from the list of infected agents and ignore layers. A
+layer added to them is kept, and can be edited and inspected, but transmits
+nothing.
+
 A layer object shares its layer with the model it is added to, so editing
 it (e.g., with \code{add_edge()}) edits the model's layer. An edit made while
 the model runs lasts for that run only; an edit made between runs is kept.
+
+Every kind of layer has a weight and virus targets.
+\itemize{
+\item \code{set_weight()} ties the layer's weight to a model parameter (add it with
+\code{\link[=add_param]{add_param()}}). The odds of an infection through the layer's contacts are
+multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
+layer without a weight has weight 1.
+\item \code{add_virus_target()} restricts the layer to some viruses, by lineage, as
+\code{\link[=add_target_tool]{add_target_tool()}} does for tools. A layer without targets spreads every
+virus.
+}
 }
 \examples{
 sir <- ModelSIR(

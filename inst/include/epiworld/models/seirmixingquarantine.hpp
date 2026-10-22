@@ -50,7 +50,6 @@ class ModelSEIRMixingQuarantine :
 private:
 
     #ifdef EPI_DEBUG
-    std::vector< int > sampled_sizes;
     #endif
 
     // Update functions
@@ -226,26 +225,7 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_susceptible(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
 
-    // Layer 0 is the mixing layer (added by the constructor); the downcast is
-    // for the sampling statistics
-    auto * m_down = model_cast<ModelSEIRMixingQuarantine<TSeq>, TSeq>(m);
-    auto & mixing = m->template get_layer_as< layer::Mixing<TSeq> >(0u);
-
-    if (!mixing.in_layer(p->get_id()))
-        return;
-
-    size_t ndraws = mixing.sample(p, *m);
-
-    #ifdef EPI_DEBUG
-    m_down->sampled_sizes.push_back(static_cast<int>(ndraws));
-    #endif
-
-    if (ndraws == 0u)
-        return;
-
-    Virus<TSeq> * virus = m->sample_virus(
-        p, mixing.sampled_ids().data(), ndraws
-    );
+    Virus<TSeq> * virus = m->sample_virus(p);
     if (virus != nullptr)
         p->set_virus(*m, *virus, ModelSEIRMixingQuarantine<TSeq>::EXPOSED);
 
