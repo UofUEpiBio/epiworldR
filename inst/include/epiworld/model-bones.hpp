@@ -82,6 +82,7 @@ class Model {
     friend class AgentsSample<TSeq>;
     friend class DataBase<TSeq>;
     friend class Queue<TSeq>;
+    friend class layer::Network<TSeq>;
 
 protected:
 
@@ -91,11 +92,12 @@ protected:
 
     std::vector< Agent<TSeq> > population = {};
 
-    /// @brief Validates the arguments of `add_edge()` / `rm_edge()`.
-    void check_edge_endpoints(size_t i, size_t j) const;
-
-    bool using_backup = true;
-    std::vector< Agent<TSeq> > population_backup = {};
+    /**
+     * @brief Creates the population: `n` agents, in the baseline state.
+     * @details The models' constructors call it; the population is set once,
+     * when the model is built (a different size is a different model).
+     */
+    void set_population_size(size_t n);
 
     /**
      * @name Auxiliary variables for AgentsSample<TSeq> iterators
@@ -124,8 +126,6 @@ protected:
     double * agents_data = nullptr;
     size_t agents_data_ncols = 0u;
     ///@}
-
-    bool directed = false;
 
     std::vector< VirusPtr<TSeq> > viruses = {};
     std::vector< ToolPtr<TSeq> > tools = {};
@@ -156,9 +156,6 @@ protected:
     std::poisson_distribution<> rpoissd           =
         std::poisson_distribution<>();
 
-    std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> rewire_fun;
-    epiworld_double rewire_prop = 0.0;
-
     // Parameter values, by position, and each name's position. Parameters are
     // never removed, so positions (ParamId) stay valid. The comparator is
     // transparent (std::less<>) so names can be looked up as
@@ -185,6 +182,8 @@ protected:
     // actual horizon. Not copied: a copy of the model is not in a run.
     bool running = false;
 
+    void set_running(bool value); ///< Also tells the layers (see `ContactLayer`)
+
     void dist_tools();
     void dist_virus();
     void dist_entities();
@@ -201,6 +200,57 @@ protected:
     void chrono_end();
 
     std::vector<GlobalEventPtr<TSeq>> globalevents;
+
+    /// Contact layers (see `add_layer()`), deep-copied with the model
+    std::vector< std::shared_ptr< ContactLayer<TSeq> > > layers;
+
+    /**
+     * @name Network layers
+     *
+     * @details The network layers among `layers`, in order. Susceptible agents
+     * pull from all of them, the queue and pushing follow all of their ties,
+     * and the agents-by-state index counts an agent's ties across them (its
+     * degree).
+     */
+    ///@{
+    std::vector< layer::Network<TSeq> * > network_layers;
+    std::vector< size_t > layer_contacts; ///< Scratch of `sample_virus()`
+    bool pull_only = false; ///< See `has_pull_only_layer()`
+    int sampled_layer = -1; ///< See `take_sampled_layer()`
+
+    /// Adds the exposures of `contacts` to the arrays; returns their number.
+    size_t add_exposures(
+        Agent<TSeq> * agent,
+        const ContactLayer<TSeq> * layer,
+        const size_t * contacts,
+        size_t n,
+        size_t n_exposures
+    );
+
+    /// One draw over the first `n_exposures` exposures.
+    Virus<TSeq> * draw_exposure(size_t n_exposures);
+    void layers_attach(); ///< Points the layers at this model, lists the networks
+    void layers_classify(); ///< Sets `pull_only`
+    void layers_detach(); ///< Leaves the layers without a model (they may outlive it)
+    void add_layer_ptr(std::shared_ptr< ContactLayer<TSeq> > layer);
+    size_t network_degree(size_t id) const; ///< Ties of agent `id`, all networks
+
+    /**
+     * Whether some layer's contacts are not seen from both ends or not by the
+     * queue: a directed network (a tie is kept by its source only) or a layer
+     * that is not a network. The model then pulls, and visits every agent
+     * instead of using the queue.
+     */
+    bool has_pull_only_layer() const { return pull_only; }
+
+    /// A network layer changed the ties of `i` and `j` by `di` and `dj`.
+    void network_tie_changed(size_t i, int di, size_t j, int dj);
+
+    /// A network layer swapped two ties (see `layer::Network::swap_ties()`).
+    void network_ties_swapped(
+        size_t i, size_t j, size_t k, size_t l, bool directed
+    );
+    ///@}
 
     Queue<TSeq> queue;
     bool use_queuing   = true;
@@ -232,8 +282,8 @@ protected:
      * many of them carry a virus, and the sum of those carriers' degrees.
      *
      * Built in `reset()` and kept current in `events_run()` -- the only place
-     * where an agent's state or virus changes during a run -- and in
-     * `add_edge()`/`rm_edge()`. The degree sums let the transmission step
+     * where an agent's state or virus changes during a run -- and by the
+     * network layers' edits. The degree sums let the transmission step
      * compare the cost of pushing and pulling in O(number of states).
      */
     ///@{
@@ -251,21 +301,8 @@ protected:
     void state_index_update(Agent<TSeq> * p, unsigned int state_old, bool had_virus);
     void state_index_move(size_t id, unsigned int state_old, unsigned int state_new);
     AgentIdsView state_index_members(size_t state) const;
-    void state_index_degree(Agent<TSeq> & p, size_t n_neighbors_before);
+    void state_index_degree(size_t id, int delta);
     ///@}
-
-    /**
-     * @brief Sets every agent's neighbors from rows of a flat array.
-     *
-     * @details Row `i` is `ids[start[i]]` to `ids[start[i + 1] - 1]`, in any
-     * order and with repeats. Each row is sorted and deduplicated in place and
-     * copied into agent `i`'s neighbors, allocated once at its final size. The
-     * agents must have no ties yet (see `agents_empty_graph()`).
-     */
-    void agents_set_neighbors(
-        const std::vector< size_t > & start,
-        std::vector< size_t > & ids
-    );
 
     /**
      * @name Network transmission
@@ -284,6 +321,7 @@ protected:
         double odds;                // Sum of p / (1 - p) over the contacts
         unsigned int n_certain;     // Contacts with p >= 1
         Virus<TSeq> * candidate;    // Infector's virus drawn so far
+        int layer;                  // Layer of the candidate's contact
     };
 
     std::vector< char > push_pushable;       ///< [state] Uses the default susceptible sampler
@@ -327,7 +365,8 @@ protected:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-          EventAction action_
+        EventAction action_,
+        int layer_ = -1
         );
 
     /**
@@ -375,31 +414,38 @@ protected:
      */
     virtual std::unique_ptr<Model<TSeq>> clone_ptr();
 
+    /// For the models built on this class, which set their population.
+    Model();
+
 public:
 
-    std::array<epiworld_double, 1024u * 2u> array_double_tmp;
-    std::array<Virus<TSeq> *, 1024u * 2u> array_virus_tmp;
+    /**
+     * @name Scratch arrays for sampling exposures
+     * @details Update functions store each exposure's probability in
+     * `array_double_tmp` and its virus in `array_virus_tmp`, then draw with
+     * `roulette()`, which uses two doubles per exposure. An agent can have any
+     * number of exposures across its layers, so call `reserve_tmp()` before
+     * storing them.
+     */
+    ///@{
+    std::vector< epiworld_double > array_double_tmp =
+        std::vector< epiworld_double >(1024u * 2u);
+    std::vector< Virus<TSeq> * > array_virus_tmp =
+        std::vector< Virus<TSeq> * >(1024u);
+    std::vector< int > array_layer_tmp =
+        std::vector< int >(1024u); ///< Layer of each exposure
 
-    Model();
+    /// Makes room for `n` exposures in the scratch arrays.
+    void reserve_tmp(size_t n);
+    ///@}
+
+    /// A model with `n` agents.
+    explicit Model(size_t n);
     Model(const Model<TSeq> & m);
     Model(Model<TSeq> && m);
     Model<TSeq> & operator=(const Model<TSeq> & m);
 
-    virtual ~Model() {};
-
-    /**
-     * @name Set the backup object
-     * @details `backup` can be used to restore the entire object
-     * after a run. This can be useful if the user wishes to have
-     * individuals start with the same network from the beginning.
-     * Building a new network (`agents_from_edgelist()` and friends, or
-     * `agents_empty_graph()`) drops the backup.
-     *
-     */
-    ///@{
-    void set_backup();
-    // void restore_backup();
-    ///@}
+    virtual ~Model() { layers_detach(); };
 
     DataBase<TSeq> & get_db();
     const DataBase<TSeq> & get_db() const;
@@ -534,49 +580,8 @@ public:
 
     /**
      * @name Accessing population of the model
-     *
-     * @details In a directed network (`directed = true`), a tie
-     * `source -> target` is kept by its source only: `target` is one of
-     * `source`'s neighbors, but not the other way around. An undirected tie is
-     * kept at both ends. Update functions look at an agent's own neighbors (a
-     * susceptible agent catches a virus from them), so the tie exposes the
-     * source to the target. The target can infect the source, but not the
-     * reverse. To have `i` infect `j`, give the tie as `j -> i`.
-     *
-     * A directed network always pulls (see `set_transmission_mode()`), and each
-     * step updates (and offers mutations to) every agent, as with
-     * `queuing_off()`. The queue flags the
-     * neighbors of an agent that becomes infectious, and along a directed tie
-     * those are not the agents it can infect. `write_edgelist()` returns the
-     * ties as given, and `add_edge()`/`rm_edge()` refuse to edit a directed
-     * network.
-     *
-     * @param fn std::string Filename of the edgelist file.
-     * @param skip int Number of lines to skip in `fn`.
-     * @param directed bool Whether the graph is directed or not.
-     * @param size Size of the network.
-     * @param al AdjList to read into the model. The network is directed if
-     * `al` is.
      */
     ///@{
-    void agents_from_adjlist(
-        std::string fn,
-        int size,
-        int skip = 0,
-        bool directed = false
-        );
-
-    void agents_from_edgelist(
-        const std::vector< int > & source,
-        const std::vector< int > & target,
-        int size,
-        bool directed
-    );
-
-    void agents_from_adjlist(const AdjList & al);
-
-    bool is_directed() const; ///< Whether the network was built directed.
-
     std::vector< Agent<TSeq> > & get_agents(); ///< Returns a reference to the vector of agents.
 
     Agent<TSeq> & get_agent(size_t i);
@@ -592,83 +597,7 @@ public:
     Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr);
     const Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr) const;
 
-    Model<TSeq> & agents_smallworld(
-        epiworld_fast_uint n = 1000,
-        epiworld_fast_uint k = 5,
-        bool d = false,
-        epiworld_double p = .01
-        );
-    /// Replaces the network with `n` agents and no ties (undirected).
-    void agents_empty_graph(epiworld_fast_uint n = 1000);
 
-    /**
-     * @name Change the contact network of a model that already has one
-     *
-     * @details Unlike `agents_from_edgelist()` and friends, which build the
-     * network up front, these edit it in place and may be called at any point,
-     * including in the middle of a run from a global event -- a policy that
-     * temporarily merges households, for instance. They keep the queueing system
-     * in step as they go (see `Queue::notify_edge_added`), which is what makes
-     * mid-run edits safe: the queue counts each agent's active neighbors, and a
-     * tie appearing or disappearing underneath it would otherwise corrupt that
-     * count and silently drop agents out of `update_state()`.
-     *
-     * Ties are undirected and are always changed at both ends. Existing
-     * neighbors keep their relative order, so an edit never changes which
-     * transmitter is sampled among the ties it left alone.
-     *
-     * @param i,j Ids of the two agents.
-     * @throws std::range_error if an id is out of range.
-     * @throws std::logic_error if `i == j`, or if the model is directed (these
-     *         operate on both ends of a tie, which is meaningless there).
-     */
-    ///@{
-    /**
-     * @return `true` if the tie was created, `false` if the two were already
-     *         tied. An intervention that has to withdraw its own ties later
-     *         should record only the ones this returned `true` for, so it never
-     *         removes a tie the model already had.
-     */
-    bool add_edge(size_t i, size_t j);
-
-    bool rm_edge(size_t i, size_t j);  ///< @return `true` if a tie was removed.
-    /// Whether `i` and `j` are tied. In a directed network, whether `i -> j` is.
-    bool has_edge(size_t i, size_t j) const;
-    ///@}
-
-    /**
-     * @brief Initialize agents using a Stochastic Block Model (SBM).
-     *
-     * Creates agents and connects them according to an SBM defined by
-     * `block_sizes` and `mixing_matrix`.
-     *
-     * @param block_sizes Number of agents per block.
-     * @param mixing_matrix Mixing matrix of size K*K; row sums give average
-     *   expected degree per group.
-     * @param row_major If `true`, matrix is row-major; otherwise column-major.
-     * @return Reference to this Model.
-     *
-     * @see rgraph_sbm
-     */
-    Model<TSeq> & agents_sbm(
-        const std::vector< size_t > & block_sizes,
-        const std::vector< double > & mixing_matrix,
-        bool row_major = true
-        );
-    ///@}
-
-    /**
-     * @name Initialize agents using a Bernoulli random graph
-     * @param n Number of agents.
-     * @param p Probability of tie formation.
-     * @param d Whether the graph is directed or not.
-     * @return Reference to this Model.
-     */
-    Model<TSeq> & agents_bernoulli(
-        epiworld_fast_uint n,
-        epiworld_double p,
-        bool d = false
-    );
 
     /**
      * @name Functions to run the model
@@ -721,32 +650,6 @@ public:
     Model<TSeq> & verbose_on();
     int today() const; ///< The current time of the model
 
-    /**
-     * @name Rewire the network preserving the degree sequence.
-     *
-     * @details In an undirected network, if {(i,j), (k,l)} -> {(i,l), (k,j)},
-     * the reciprocal is also true, i.e., {(j,i), (l,k)} -> {(j,k), (l,i)}. In a
-     * directed network only the sources' ties move, which keeps every agent's
-     * in- and out-degree.
-     *
-     * The rewiring function runs on every step of a run, so it should change
-     * ties only through `Agent::swap_neighbors()` (what `rewire_degseq()`
-     * uses), `add_edge()`, or `rm_edge()`: these keep the queueing system in
-     * step with the network.
-     *
-     * @param proportion Proportion of ties to be rewired.
-     *
-     * @result A rewired version of the network.
-     */
-    ///@{
-    void set_rewire_fun(std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> fun);
-    void set_rewire_prop(epiworld_double prop);
-    epiworld_double get_rewire_prop() const;
-    /// @brief Whether a rewiring function is set. `rewire()` calls it on every
-    /// step, whatever the proportion.
-    bool has_rewire_fun() const;
-    void rewire();
-    ///@}
 
     /**
      * @brief Wrapper of `DataBase::write_data`
@@ -779,26 +682,6 @@ public:
         std::string fn_hospitalizations
         ) const;
 
-    /**
-     * @name Export the network data in edgelist form
-     *
-     * @param fn std::string. File name.
-     * @param source Integer vector
-     * @param target Integer vector
-     *
-     * @details When passing the source and target, the function will
-     * write the edgelist on those.
-     */
-    ///@{
-    void write_edgelist(
-        std::string fn
-        ) const;
-
-    void write_edgelist(
-        std::vector< int > & source,
-        std::vector< int > & target
-        ) const;
-    ///@}
 
     /**
      * @brief Copy of the model parameters, by name.
@@ -811,7 +694,7 @@ public:
      *
      * @details Resetting the model will:
      * - clear the database
-     * - restore the population (if `set_backup()` was called before)
+     * - reset the contact layers (see `ContactLayer`)
      * - re-distribute tools
      * - re-distribute viruses
      * - set the date to 0
@@ -877,6 +760,59 @@ public:
     {
         return state_index_ready ? agent_carrier.data() : nullptr;
     }
+
+    /**
+     * @brief Draws the virus, if any, that infects `agent` from its contacts.
+     * @details This is where contacts become an infection. Every contact that
+     * carries a virus is an exposure with probability
+     * `(1 - susceptibility reduction of agent) * probability of infecting *
+     * (1 - transmission reduction of the contact)`, and one draw
+     * (`roulette()`) picks at most one infector. A contact listed twice is
+     * two exposures.
+     * With a `layer`, the probabilities follow its weight and the viruses it
+     * admits (see `ContactLayer`), and the layer is recorded as the one of the
+     * transmission.
+     * @param agent Agent without a virus.
+     * @param contacts Ids of the contacts.
+     * @param n Number of contacts.
+     * @param layer The layer the contacts came from (none: weight 1, any
+     * virus, no layer recorded).
+     * @return The virus transmitted, or `nullptr` if none is.
+     */
+    Virus<TSeq> * sample_virus(
+        Agent<TSeq> * agent,
+        const size_t * contacts,
+        size_t n,
+        const ContactLayer<TSeq> * layer = nullptr
+    );
+
+    /**
+     * @brief The layer of the last transmission drawn by `sample_virus()`
+     * (-1 if none), which the next `Agent::set_virus()` records and clears.
+     */
+    int take_sampled_layer()
+    {
+        const int layer = sampled_layer;
+        sampled_layer = -1;
+        return layer;
+    }
+
+    /**
+     * @brief Draws the virus, if any, that `agent` catches from its contacts
+     * in the model's layers.
+     * @details The contacts that carry a virus, layer by layer in the order
+     * the layers were added and each layer in its own order, are all
+     * exposures of one draw (`sample_virus(agent, contacts, n, layer)` adds
+     * them). Contacts in a state flagged in `exclude` (one entry per state)
+     * are not sources. This is what `default_update_susceptible` and
+     * `sampler::make_update_susceptible()` do; a pushing step (networks only)
+     * gives the same distribution.
+     * @throws std::logic_error if `agent` carries a virus.
+     */
+    Virus<TSeq> * sample_virus(
+        Agent<TSeq> * agent,
+        const std::vector< bool > * exclude = nullptr
+    );
 
     /**
      * @name Network transmission mode
@@ -1060,6 +996,62 @@ public:
     void rm_globalevent(size_t i); ///< Remove a global action by index
 
     void run_globalevents();
+
+    /**
+     * @name Contact layers
+     * @brief Sources of contacts of the model (see `ContactLayer`).
+     * @{
+     */
+
+    /**
+     * @brief Adds a contact layer to the model.
+     * @details The model shares the layer with the caller (an edit through
+     * `layer` is an edit of the model's layer), resets it at the start of
+     * `reset()`, updates it at the end of every step, and clones it when the
+     * model is copied (see `ContactLayer`). Layers are added between runs only
+     * (a layer that should act only part of the time is added up front and
+     * edited, e.g., by a global event).
+     * @param layer The layer (e.g., from `layer::network()`). Its name must not
+     * be in use by another layer, and it must not belong to another model.
+     * @return A reference to the layer, as its own type.
+     */
+    template<typename TLayer>
+    TLayer & add_layer(std::shared_ptr< TLayer > layer)
+    {
+        TLayer * ptr = layer.get();
+        add_layer_ptr(std::move(layer));
+        return *ptr;
+    }
+
+    size_t get_n_layers() const; ///< Number of contact layers
+    bool has_layer(std::string_view name) const; ///< Whether a layer by that name exists
+    size_t get_layer_id(std::string_view name) const; ///< Id of a layer by name (throws if absent)
+    ContactLayer<TSeq> & get_layer(size_t id); ///< Retrieve a layer by id
+    ContactLayer<TSeq> & get_layer(std::string_view name); ///< Retrieve a layer by name
+
+    /// Retrieve a layer as its own type (unchecked cast; ids are cheaper than names)
+    template<typename TLayer>
+    TLayer & get_layer_as(size_t id)
+    {
+        return static_cast< TLayer & >(get_layer(id));
+    }
+
+    template<typename TLayer>
+    TLayer & get_layer_as(std::string_view name)
+    {
+        return static_cast< TLayer & >(get_layer(name));
+    }
+
+    /// Calls `update()` on every layer (done by `next()` at the end of each step)
+    void update_layers();
+
+    /// The network layers of the model, in the order they were added.
+    const std::vector< layer::Network<TSeq> * > & get_network_layers() const
+    {
+        return network_layers;
+    }
+
+    /** @} */
 
     void clear_state_set();
 

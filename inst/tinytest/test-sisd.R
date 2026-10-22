@@ -9,6 +9,7 @@ good_death_rate         <- 0.01
 
 expect_silent(sisd_0 <- ModelSISD(
   name                  = good_name,
+  n                     = 1000,
   prevalence            = good_prevalence,
   transmission_rate     = good_transmission_rate,
   recovery_rate         = good_recovery_rate,
@@ -29,6 +30,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(sisd_0 <- ModelSISD(
   name                = bad_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate,
@@ -37,6 +39,7 @@ expect_error(sisd_0 <- ModelSISD(
 
 expect_error(sisd_0 <- ModelSISD(
   name                = good_name,
+  n                   = 1000,
   prevalence          = bad_numeric_input,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate,
@@ -45,6 +48,7 @@ expect_error(sisd_0 <- ModelSISD(
 
 expect_error(sisd_0 <- ModelSISD(
   name                = good_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = bad_numeric_input,
   recovery_rate       = good_recovery_rate,
@@ -53,6 +57,7 @@ expect_error(sisd_0 <- ModelSISD(
 
 expect_error(sisd_0 <- ModelSISD(
   name                = good_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = bad_numeric_input,
@@ -61,6 +66,7 @@ expect_error(sisd_0 <- ModelSISD(
 
 expect_error(sisd_0 <- ModelSISD(
   name                = good_name,
+  n                   = 1000,
   prevalence          = good_prevalence,
   transmission_rate   = good_transmission_rate,
   recovery_rate       = good_recovery_rate,

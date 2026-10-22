@@ -46,6 +46,7 @@ public:
 
     /**
       * @param vname Name of the virus.
+ * @param n Number of agents.
       * @param coefs_infect Double ptr. Infection coefficients.
       * @param coefs_recover Double ptr. Recovery coefficients.
       * @param ncoef_infect Unsigned int. Number of infection coefficients.
@@ -55,6 +56,7 @@ public:
     */
     ModelSIRLogit(
         const std::string & vname,
+        epiworld_fast_uint n,
         double * data,
         size_t ncols,
         std::vector< double > coefs_infect,
@@ -132,6 +134,7 @@ inline void ModelSIRLogit<TSeq>::reset()
 template<typename TSeq>
 inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     const std::string & vname,
+    epiworld_fast_uint n,
     double * data,
     size_t ncols,
     std::vector< double > coefs_infect,
@@ -143,6 +146,8 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
     epiworld_double prevalence
     )
 {
+
+    this->set_population_size(n);
 
     if (coef_infect_cols.size() == 0u)
         throw std::logic_error("No columns specified for coef_infect_cols.");
@@ -179,7 +184,9 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
                 baseline += p->operator()(k, *m) * _m->coefs_infect[k + 1u];
 
             auto & m_ref = *m;
-            for (auto * neighbor: p->neighbors_view(*m)) 
+            // Every network layer, in the order the layers were added
+            for (auto * net : m->get_network_layers())
+            for (auto * neighbor : net->neighbors_view(static_cast< size_t >(p->get_id())))
             {
                 
                 if (neighbor->get_virus() == nullptr)
@@ -187,10 +194,7 @@ inline ModelSIRLogit<TSeq>::ModelSIRLogit(
 
                 auto & v = neighbor->get_virus();
 
-                #ifdef EPI_DEBUG
-                if (nviruses_tmp >= m->array_virus_tmp.size())
-                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                #endif
+                m->reserve_tmp(nviruses_tmp + 1u);
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =

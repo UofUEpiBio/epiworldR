@@ -11,6 +11,7 @@ good_death_rate <- 0.01
 
 expect_silent(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -34,6 +35,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(seird_0 <- ModelSEIRD(
   name = bad_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -43,6 +45,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -52,6 +55,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = bad_numeric_input,
   incubation_days = good_incubation_days,
@@ -61,6 +65,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = bad_numeric_input,
@@ -70,6 +75,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -79,6 +85,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -90,6 +97,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = NA,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -99,6 +107,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = NA,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -108,6 +117,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = NA,
   incubation_days = good_incubation_days,
@@ -117,6 +127,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = NA,
@@ -126,6 +137,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -135,6 +147,7 @@ expect_error(seird_0 <- ModelSEIRD(
 
 expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,

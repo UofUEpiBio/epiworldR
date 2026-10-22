@@ -5,10 +5,12 @@
 \alias{epiworld_sis}
 \title{SIS model}
 \usage{
-ModelSIS(name, prevalence, transmission_rate, recovery_rate)
+ModelSIS(name, n, prevalence, transmission_rate, recovery_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -31,17 +33,11 @@ Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/i
 }
 
 \examples{
-model_sis <- ModelSIS(name = "COVID-19", prevalence = 0.01,
+model_sis <- ModelSIS(name = "COVID-19", n = 1000, prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
-agents_smallworld(
-  model_sis,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_sis, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_sis, ndays = 100, seed = 1912)

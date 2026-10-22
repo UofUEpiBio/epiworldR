@@ -105,7 +105,8 @@ inline void Model<TSeq>::_add_event(
     Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
-    EventAction action_
+    EventAction action_,
+    int layer_
 ) {
 
     ++nactions;
@@ -120,7 +121,8 @@ inline void Model<TSeq>::_add_event(
 
         events.emplace_back(
             Event<TSeq>(
-                agent_, virus_, tool_, entity_, new_state_, queue_, action_
+                agent_, virus_, tool_, entity_, new_state_, queue_, action_,
+                layer_
             ));
 
     }
@@ -136,6 +138,7 @@ inline void Model<TSeq>::_add_event(
         A.new_state  = std::move(new_state_);
         A.queue      = std::move(queue_);
         A.action     = std::move(action_);
+        A.layer      = layer_;
 
     }
 
@@ -176,12 +179,13 @@ inline void Model<TSeq>::state_index_build()
         state_member_pos[id] = pos;
         agent_state[id] = p.state;
 
-        state_degree[p.state] += p.n_neighbors;
+        const size_t deg = network_degree(id);
+        state_degree[p.state] += deg;
         if (p.virus != nullptr)
         {
             agent_carrier[id] = 1;
             state_carriers[p.state]++;
-            state_carrier_degree[p.state] += p.n_neighbors;
+            state_carrier_degree[p.state] += deg;
         }
 
     }
@@ -274,7 +278,7 @@ inline void Model<TSeq>::state_index_update(
         return;
 
     const size_t id  = static_cast< size_t >(p->id);
-    const size_t deg = p->n_neighbors;
+    const size_t deg = network_degree(id);
 
     if (state_new != state_old)
     {
@@ -304,21 +308,18 @@ inline void Model<TSeq>::state_index_update(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::state_index_degree(
-    Agent<TSeq> & p,
-    size_t n_neighbors_before
-)
+inline void Model<TSeq>::state_index_degree(size_t id, int delta)
 {
 
-    if (!state_index_ready || (p.n_neighbors == n_neighbors_before))
+    if (!state_index_ready || (delta == 0))
         return;
 
-    // Unsigned arithmetic wraps, so adding the (possibly "negative")
-    // difference is exact.
-    const size_t delta = p.n_neighbors - n_neighbors_before;
-    state_degree[p.state] += delta;
+    // Unsigned arithmetic wraps, so adding a "negative" delta is exact
+    const auto & p = population[id];
+    const size_t d = static_cast< size_t >(static_cast< std::ptrdiff_t >(delta));
+    state_degree[p.state] += d;
     if (p.virus != nullptr)
-        state_carrier_degree[p.state] += delta;
+        state_carrier_degree[p.state] += d;
 
 }
 
@@ -575,17 +576,19 @@ inline Model<TSeq>::Model()
 }
 
 template<typename TSeq>
+inline Model<TSeq>::Model(size_t n) : Model()
+{
+    set_population_size(n);
+}
+
+template<typename TSeq>
 inline Model<TSeq>::Model(const Model<TSeq> & model) :
     name(model.name),
     db(model.db),
     population(model.population),
-    population_backup(model.population_backup),
-    directed(model.directed),
     viruses(),
     tools(),
     entities(model.entities),
-    rewire_fun(model.rewire_fun),
-    rewire_prop(model.rewire_prop),
     param_values(model.param_values),
     param_index(model.param_index),
     param_layout_id(model.param_layout_id),
@@ -654,6 +657,15 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     for (const auto & ge : model.globalevents)
         globalevents.emplace_back(std::shared_ptr<GlobalEvent<TSeq>>(ge->clone_ptr()));
 
+    layers.reserve(model.layers.size());
+    for (const auto & layer : model.layers)
+        layers.emplace_back(layer->clone());
+
+    layers_attach();
+
+    // A copy is not in a run, even if the source is
+    set_running(running);
+
     // Entity-agent relationships now use size_t IDs, so they copy
     // correctly without any rebinding needed.
 
@@ -664,10 +676,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     name(std::move(model.name)),
     db(std::move(model.db)),
     population(std::move(model.population)),
-    population_backup(std::move(model.population_backup)),
     agents_data(std::move(model.agents_data)),
     agents_data_ncols(std::move(model.agents_data_ncols)),
-    directed(std::move(model.directed)),
     // Virus
     viruses(std::move(model.viruses)),
     // Tools
@@ -686,9 +696,6 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     rbinomd_n(model.rbinomd_n),
     rbinomd_fast_lambda(model.rbinomd_fast_lambda),
     rbinomd_use_poisson(model.rbinomd_use_poisson),
-    // Rewiring
-    rewire_fun(std::move(model.rewire_fun)),
-    rewire_prop(std::move(model.rewire_prop)),
     param_values(std::move(model.param_values)),
     param_index(std::move(model.param_index)),
     param_layout_id(model.param_layout_id),
@@ -702,6 +709,7 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     verbose(model.verbose),
     current_date(std::move(model.current_date)),
     globalevents(std::move(model.globalevents)),
+    layers(std::move(model.layers)),
     queue(std::move(model.queue)),
     use_queuing(model.use_queuing),
     sim_id(model.sim_id),
@@ -730,6 +738,8 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     if (use_queuing)
         queue.model = this;
 
+    layers_attach();
+
 }
 
 template<typename TSeq>
@@ -740,14 +750,11 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
 
     name = m.name;
 
-    population        = m.population;
-    population_backup = m.population_backup;
+    population = m.population;
 
     db = m.db;
     db.model = this;
     db.user_data.model = this;
-
-    directed = m.directed;
 
     viruses.clear();
     viruses.reserve(m.viruses.size());
@@ -760,9 +767,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
         tools.emplace_back(std::shared_ptr<Tool<TSeq>>(t->clone_ptr()));
 
     entities        = m.entities;
-
-    rewire_fun  = m.rewire_fun;
-    rewire_prop = m.rewire_prop;
 
     param_values    = m.param_values;
     param_index     = m.param_index;
@@ -783,6 +787,17 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     globalevents.reserve(m.globalevents.size());
     for (const auto & ge : m.globalevents)
         globalevents.emplace_back(std::shared_ptr<GlobalEvent<TSeq>>(ge->clone_ptr()));
+
+    layers_detach();
+    layers.clear();
+    layers.reserve(m.layers.size());
+    for (const auto & layer : m.layers)
+        layers.emplace_back(layer->clone());
+
+    layers_attach();
+
+    // The layers follow this model's run state, not the source's
+    set_running(running);
 
     queue = m.queue;
     use_queuing = m.use_queuing;
@@ -934,79 +949,21 @@ inline const Entity<TSeq> & Model<TSeq>::get_entity(size_t i, int * entity_pos) 
 
 }
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::agents_smallworld(
-    epiworld_fast_uint n,
-    epiworld_fast_uint k,
-    bool d,
-    epiworld_double p
-)
-{
-
-    agents_from_adjlist(
-        rgraph_smallworld(n, k, p, d, *this)
-    );
-
-    return *this;
-}
 
 template<typename TSeq>
-inline void Model<TSeq>::agents_empty_graph(
-    epiworld_fast_uint n
-)
+inline void Model<TSeq>::set_population_size(size_t n)
 {
 
-
-    // Resizing the people
     population.clear();
     population.resize(n);
     state_index_ready = false;
 
-    // A new network: undirected until agents_from_adjlist() says otherwise, and
-    // without the backup of the old agents (see set_backup()), which reset()
-    // would restore at the next run -- old ties, stored for the old direction.
-    directed = false;
-    population_backup.clear();
-
-    // Filling the model and ids
     size_t i = 0u;
     for (auto & p : population)
-    {
-        p.id = i++;
-    }
-
+        p.id = static_cast< int >(i++);
 
 }
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::agents_sbm(
-    const std::vector< size_t > & block_sizes,
-    const std::vector< double > & mixing_matrix,
-    bool row_major
-)
-{
-
-    agents_from_adjlist(
-        rgraph_sbm(block_sizes, mixing_matrix, row_major, *this)
-    );
-
-    return *this;
-}
-
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::agents_bernoulli(
-    epiworld_fast_uint n,
-    epiworld_double p,
-    bool d
-)
-{
-
-    agents_from_adjlist(
-        rgraph_bernoulli(n, p, d, *this)
-    );
-
-    return *this;
-}
 
 template<typename TSeq>
 inline epiworld_double Model<TSeq>::operator()(std::string_view pname) const {
@@ -1085,14 +1042,6 @@ inline void Model<TSeq>::chrono_end() {
     n_replicates++;
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_backup()
-{
-
-    if (population_backup.size() == 0u)
-        population_backup = std::vector< Agent<TSeq> >(population);
-
-}
 
 template<typename TSeq>
 inline void Model<TSeq>::add_virus(
@@ -1337,263 +1286,6 @@ inline void Model<TSeq>::load_agents_entities_ties(
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::agents_from_adjlist(
-    std::string fn,
-    int size,
-    int skip,
-    bool directed
-    ) {
-
-
-    AdjList al;
-    al.read_edgelist(fn, size, skip, directed);
-    this->agents_from_adjlist(al);
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::agents_from_edgelist(
-    const std::vector< int > & source,
-    const std::vector< int > & target,
-    int size,
-    bool directed
-) {
-
-    // Validate everything before touching the model, so a bad edge list
-    // leaves the current network as it was.
-    if (size < 0)
-        throw std::length_error(
-            "The size of the network cannot be negative (" +
-            std::to_string(size) + ")."
-            );
-
-    if (source.size() != target.size())
-        throw std::length_error(
-            "source and target must have the same length (" +
-            std::to_string(source.size()) + " vs " +
-            std::to_string(target.size()) + ")."
-            );
-
-    int max_id = size - 1;
-    for (size_t m = 0u; m < source.size(); ++m)
-    {
-
-        if ((source[m] < 0) || (source[m] > max_id))
-            throw std::range_error(
-                "The source["+std::to_string(m)+"] = " +
-                std::to_string(source[m]) +
-                " is above the max_id " + std::to_string(max_id)
-                );
-
-        if ((target[m] < 0) || (target[m] > max_id))
-            throw std::range_error(
-                "The target["+std::to_string(m)+"] = " +
-                std::to_string(target[m]) +
-                " is above the max_id " + std::to_string(max_id)
-                );
-
-    }
-
-    size_t n = static_cast< size_t >(size);
-    agents_empty_graph(n);
-    this->directed = (n > 0u) && directed;
-
-    // Counting sort of the edge ends by agent: row i of `ids` (from start[i]
-    // to start[i + 1]) holds i's neighbors. An undirected tie lands in both
-    // rows, a directed one in its source's only (see is_directed()).
-    std::vector< size_t > start(n + 1u, 0u);
-    for (size_t m = 0u; m < source.size(); ++m)
-    {
-        start[static_cast< size_t >(source[m]) + 1u]++;
-        if (!this->directed)
-            start[static_cast< size_t >(target[m]) + 1u]++;
-    }
-
-    std::partial_sum(start.begin(), start.end(), start.begin());
-
-    std::vector< size_t > ids(start[n]);
-    std::vector< size_t > next(start.begin(), start.end() - 1);
-    for (size_t m = 0u; m < source.size(); ++m)
-    {
-        size_t i = static_cast< size_t >(source[m]);
-        size_t j = static_cast< size_t >(target[m]);
-
-        ids[next[i]++] = j;
-        if (!this->directed)
-            ids[next[j]++] = i;
-    }
-
-    agents_set_neighbors(start, ids);
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::agents_from_adjlist(const AdjList & al) {
-
-    // Resizing the people
-    size_t n = al.vcount();
-    agents_empty_graph(n);
-
-    // AdjList::is_directed() throws on a list with no vertices.
-    directed = (n > 0u) && al.is_directed();
-
-    const auto & tmpdat = al.get_dat();
-
-    // Same rows as agents_from_edgelist(). An undirected tie i - j is written
-    // to both rows, so the result does not depend on the list being symmetric.
-    std::vector< size_t > start(n + 1u, 0u);
-    for (size_t i = 0u; i < n; ++i)
-    {
-        start[i + 1u] += tmpdat[i].size();
-        if (!directed)
-            for (const auto & link : tmpdat[i])
-                start[static_cast< size_t >(link.first) + 1u]++;
-    }
-
-    std::partial_sum(start.begin(), start.end(), start.begin());
-
-    std::vector< size_t > ids(start[n]);
-    std::vector< size_t > next(start.begin(), start.end() - 1);
-    for (size_t i = 0u; i < n; ++i)
-        for (const auto & link : tmpdat[i])
-        {
-            size_t j = static_cast< size_t >(link.first);
-            ids[next[i]++] = j;
-            if (!directed)
-                ids[next[j]++] = i;
-        }
-
-    agents_set_neighbors(start, ids);
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::agents_set_neighbors(
-    const std::vector< size_t > & start,
-    std::vector< size_t > & ids
-) {
-
-    // Each row becomes its agent's neighbors: sorted, without repeats, and
-    // allocated once at its final size. Ascending order is what adding the
-    // ties one by one used to produce, and roulette() depends on that order.
-    for (size_t i = 0u; i < population.size(); ++i)
-    {
-
-        auto first = ids.begin() + static_cast< std::ptrdiff_t >(start[i]);
-        auto last  = ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u]);
-
-        if (first == last)
-            continue;
-
-        std::sort(first, last);
-        last = std::unique(first, last);
-
-        auto & p = population[i];
-        p.neighbors   = new std::vector< size_t >(first, last);
-        p.n_neighbors = p.neighbors->size();
-
-        if (p.n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
-            p.build_neighbor_index();
-
-    }
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::check_edge_endpoints(size_t i, size_t j) const
-{
-
-    if ((i >= population.size()) || (j >= population.size()))
-        throw std::range_error(
-            "Agent ids must be below " + std::to_string(population.size()) +
-            "; got " + std::to_string(i) + " and " + std::to_string(j) + "."
-        );
-
-    if (i == j)
-        throw std::logic_error(
-            "An agent cannot be tied to itself (agent " + std::to_string(i) + ")."
-        );
-
-    if (directed)
-        throw std::logic_error(
-            "add_edge/rm_edge change both ends of a tie, which is not meaningful "
-            "in a directed model."
-        );
-
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::add_edge(size_t i, size_t j)
-{
-
-    check_edge_endpoints(i, j);
-
-    size_t deg_i = population[i].n_neighbors;
-    size_t deg_j = population[j].n_neighbors;
-
-    if (!population[i].add_neighbor(population[j], true, true))
-        return false;
-
-    state_index_degree(population[i], deg_i);
-    state_index_degree(population[j], deg_j);
-
-    if (use_queuing)
-        queue.notify_edge_added(&population[i], &population[j]);
-
-    return true;
-
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::rm_edge(size_t i, size_t j)
-{
-
-    check_edge_endpoints(i, j);
-
-    // Nothing to unwind if the two were never tied -- shifting the counts for a
-    // tie that is not there is exactly the drift these calls exist to prevent.
-    if (!population[i].has_neighbor(j) && !population[j].has_neighbor(i))
-        return false;
-
-    if (use_queuing)
-        queue.notify_edge_removed(&population[i], &population[j]);
-
-    size_t deg_i = population[i].n_neighbors;
-    size_t deg_j = population[j].n_neighbors;
-
-    bool removed = population[i].rm_neighbor(population[j]);
-
-    state_index_degree(population[i], deg_i);
-    state_index_degree(population[j], deg_j);
-
-    return removed;
-
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::has_edge(size_t i, size_t j) const
-{
-
-    if ((i >= population.size()) || (j >= population.size()))
-        throw std::range_error(
-            "Agent ids must be below " + std::to_string(population.size()) +
-            "; got " + std::to_string(i) + " and " + std::to_string(j) + "."
-        );
-
-    return population[i].has_neighbor(j);
-
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::is_directed() const
-{
-    if (population.size() == 0u)
-        throw std::logic_error("The population hasn't been initialized.");
-
-    return directed;
-}
-
-template<typename TSeq>
 inline int Model<TSeq>::today() const {
 
     if (ndays == 0)
@@ -1632,6 +1324,9 @@ inline void Model<TSeq>::next() {
     }
 
     #endif
+
+    // The layers see what changed during the step before the next one samples
+    update_layers();
 
     db.record();
     ++this->current_date;
@@ -1707,10 +1402,10 @@ inline Model<TSeq> & Model<TSeq>::run(
     // From here on get_ndays() is the run's horizon (see is_running()). The
     // guard clears the flag however the run ends, exceptions included.
     struct RunningGuard {
-        bool & flag;
-        explicit RunningGuard(bool & f) : flag(f) { flag = true; }
-        ~RunningGuard() { flag = false; }
-    } running_guard(running);
+        Model<TSeq> & model;
+        explicit RunningGuard(Model<TSeq> & m) : model(m) { model.set_running(true); }
+        ~RunningGuard() { model.set_running(false); }
+    } running_guard(*this);
 
     // Starting first infection and tools
     reset();
@@ -1742,11 +1437,8 @@ inline Model<TSeq> & Model<TSeq>::run(
         // We start with the Global events
         this->run_globalevents();
 
-        // In this case we are applying degree sequence rewiring
-        // to change the network just a bit.
-        this->rewire();
-
-        // This locks all the changes
+        // This locks all the changes (the layers, including their rewiring,
+        // are updated first)
         this->next();
 
         // Mutation must happen at the very end of all
@@ -1806,10 +1498,6 @@ inline Model<TSeq> & Model<TSeq>::run_multiple(
 
     bool old_verb = this->verbose;
     verbose_off();
-
-    // Setting up backup
-    if (reset)
-        set_backup();
 
     #ifdef _OPENMP
 
@@ -1986,11 +1674,13 @@ inline void Model<TSeq>::update_state() {
     // infection odds from the carriers (see model-meat-transmission.hpp) --
     // same distribution, and cheaper while few agents carry a virus. Directed
     // networks always pull: a tie there is kept by its source only (see
-    // is_directed()), so it is not visible from both ends.
+    // layer::Network::is_directed()), so it is not visible from both ends.
     //
     // With a post-sampling callback, pull and push report the same contacts.
     if (post_sampling_on)
         post_sampling_scratch.clear();
+
+    const bool directed = has_pull_only_layer();
 
     const bool push =
         transmission_prepare() && !directed && transmission_choose_push();
@@ -2061,7 +1751,7 @@ inline void Model<TSeq>::mutate_virus() {
     // Directed networks do not use the queue (see update_state()), and must not
     // start depending on it here: a carrier registered without `Everyone`, or
     // a count left stale by rewiring, would then mutate only with queuing off.
-    if (use_queuing && !directed)
+    if (use_queuing && !has_pull_only_layer())
     {
 
         queue.for_each_nonzero([this](size_t i) -> void {
@@ -2154,42 +1844,6 @@ inline Model<TSeq> & Model<TSeq>::verbose_off() {
     return *this;
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rewire_fun(
-    std::function<void(std::vector<Agent<TSeq>>*,Model<TSeq>*,epiworld_double)> fun
-    ) {
-    rewire_fun = fun;
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_rewire_prop(epiworld_double prop)
-{
-
-    if (prop < 0.0)
-        throw std::range_error("Proportions cannot be negative.");
-
-    if (prop > 1.0)
-        throw std::range_error("Proportions cannot be above 1.0.");
-
-    rewire_prop = prop;
-}
-
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::get_rewire_prop() const {
-    return rewire_prop;
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::has_rewire_fun() const {
-    return static_cast< bool >(rewire_fun);
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::rewire() {
-
-    if (rewire_fun)
-        rewire_fun(&population, this, rewire_prop);
-}
 
 
 template<typename TSeq>
@@ -2220,95 +1874,6 @@ inline void Model<TSeq>::write_data(
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::write_edgelist(
-    std::string fn
-    ) const
-{
-
-    // Figuring out the writing sequence
-    std::vector< const Agent<TSeq> * > wseq(size());
-    for (const auto & p: population)
-        wseq[p.id] = &p;
-
-    std::ofstream efile(fn, std::ios_base::out);
-    efile << "source target\n";
-    if (this->is_directed())
-    {
-
-        for (const auto & p : wseq)
-        {
-
-            if (p->neighbors == nullptr)
-                continue;
-
-            for (auto & n : *p->neighbors)
-                efile << p->id << " " << n << "\n";
-        }
-
-    } else {
-
-        for (const auto & p : wseq)
-        {
-
-            if (p->neighbors == nullptr)
-                continue;
-
-            for (auto & n : *p->neighbors)
-                if (static_cast<int>(p->id) <= static_cast<int>(n))
-                    efile << p->id << " " << n << "\n";
-        }
-
-    }
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::write_edgelist(
-std::vector< int > & source,
-std::vector< int > & target
-) const {
-
-    // Figuring out the writing sequence
-    std::vector< const Agent<TSeq> * > wseq(size());
-    for (const auto & p: population)
-        wseq[p.id] = &p;
-
-    if (this->is_directed())
-    {
-
-        for (const auto & p : wseq)
-        {
-            if (p->neighbors == nullptr)
-                continue;
-
-            for (auto & n : *p->neighbors)
-            {
-                source.push_back(static_cast<int>(p->id));
-                target.push_back(static_cast<int>(n));
-            }
-        }
-
-    } else {
-
-        for (const auto & p : wseq)
-        {
-
-            if (p->neighbors == nullptr)
-                continue;
-
-            for (auto & n : *p->neighbors) {
-                if (static_cast<int>(p->id) <= static_cast<int>(n)) {
-                    source.push_back(static_cast<int>(p->id));
-                    target.push_back(static_cast<int>(n));
-                }
-            }
-        }
-
-    }
-
-
-}
 
 template<typename TSeq>
 inline std::map<std::string, epiworld_double> Model<TSeq>::params() const
@@ -2326,24 +1891,21 @@ inline void Model<TSeq>::reset() {
     // Restablishing people
     pb = Progress(ndays, 80);
 
-    if (population_backup.size())
-    {
-        population = population_backup;
-
-        #ifdef EPI_DEBUG
-        for (size_t i = 0; i < population.size(); ++i)
-        {
-
-            if (population[i] != (population_backup)[i])
-                throw std::logic_error("Model::reset population doesn't match.");
-
-        }
-        #endif
-
-    }
-
     for (auto & p : population)
         p.reset();
+
+    // The layers come first: what is distributed below (entities, viruses,
+    // tools, the global events' set-up) sees the run's contacts -- the queue
+    // follows the ties as agents get a virus, and an intervention may edit
+    // them.
+    for (auto & layer : layers)
+        layer->reset(*this);
+
+    // A generator decides the graph's direction at its reset, so the
+    // classification waits until every layer has one.
+    layers_classify();
+
+    sampled_layer = -1;
 
     // Everyone is now in the baseline state with no virus; from here on
     // events_run() keeps the index current.
@@ -2847,11 +2409,195 @@ template<typename TSeq>
 inline void Model<TSeq>::run_globalevents()
 {
 
+    // An infection added by an event is not one drawn from a layer
+    sampled_layer = -1;
+
     for (auto & event: globalevents)
     {
         event->operator()(this, today());
         events_run();
     }    
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::add_layer_ptr(
+    std::shared_ptr< ContactLayer<TSeq> > layer
+)
+{
+
+    if (!layer)
+        throw std::invalid_argument("Cannot add a null contact layer.");
+
+    if (layer->model != nullptr)
+        throw std::logic_error(
+            "The contact layer '" + layer->get_name() + "' already belongs to "
+            "a model; a layer belongs to one model at most (add a copy)."
+        );
+
+    // Layers are part of the model's setup: a run resets them all before day 0
+    if (running)
+        throw std::logic_error(
+            "Cannot add the contact layer '" + layer->get_name() + "' during a "
+            "run; add layers before calling run()."
+        );
+
+    if (has_layer(layer->get_name()))
+        throw std::logic_error(
+            "There is already a contact layer named '" + layer->get_name() + "'."
+        );
+
+    layers.push_back(std::move(layer));
+    layers_attach();
+
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_n_layers() const
+{
+    return layers.size();
+}
+
+template<typename TSeq>
+inline bool Model<TSeq>::has_layer(std::string_view name) const
+{
+    for (const auto & layer : layers)
+        if (layer->get_name() == name)
+            return true;
+
+    return false;
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::get_layer_id(std::string_view name) const
+{
+    for (const auto & layer : layers)
+        if (layer->get_name() == name)
+            return layer->get_id();
+
+    throw std::out_of_range(
+        "There is no contact layer named '" + std::string(name) + "'."
+    );
+}
+
+template<typename TSeq>
+inline ContactLayer<TSeq> & Model<TSeq>::get_layer(size_t id)
+{
+    if (id >= layers.size())
+        throw std::out_of_range(
+            "Contact layer " + std::to_string(id) + " is out of range (the model has " +
+            std::to_string(layers.size()) + ")."
+        );
+
+    return *layers[id];
+}
+
+template<typename TSeq>
+inline ContactLayer<TSeq> & Model<TSeq>::get_layer(std::string_view name)
+{
+    return *layers[get_layer_id(name)];
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_running(bool value)
+{
+    running = value;
+    for (auto & layer : layers)
+        layer->in_run = value;
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::update_layers()
+{
+    for (auto & layer : layers)
+        layer->update(*this);
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::layers_attach()
+{
+
+    network_layers.clear();
+    for (size_t i = 0u; i < layers.size(); ++i)
+    {
+        layers[i]->id = i;
+        layers[i]->model = this;
+        if (auto * net = layers[i]->as_network())
+            network_layers.push_back(net);
+    }
+
+    layers_classify();
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::layers_detach()
+{
+
+    for (auto & layer : layers)
+    {
+        layer->model = nullptr;
+        layer->in_run = false;
+    }
+
+    network_layers.clear();
+
+}
+
+template<typename TSeq>
+inline size_t Model<TSeq>::network_degree(size_t id) const
+{
+
+    size_t deg = 0u;
+    for (const auto * net : network_layers)
+        if (id < net->ties.size())
+            deg += net->ties[id].size();
+
+    return deg;
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::layers_classify()
+{
+
+    pull_only = false;
+    for (const auto & layer : layers)
+    {
+        const auto * net = layer->as_network();
+        pull_only = pull_only || (net == nullptr) || net->is_directed();
+    }
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::network_tie_changed(
+    size_t i, int di,
+    size_t j, int dj
+)
+{
+
+    state_index_degree(i, di);
+    state_index_degree(j, dj);
+
+    // Each end that gained (lost) the tie now credits (no longer credits) the
+    // other end's registrations
+    if (use_queuing)
+        queue.notify_ties_changed(i, di, j, dj);
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::network_ties_swapped(
+    size_t i, size_t j,
+    size_t k, size_t l,
+    bool directed
+)
+{
+
+    // Nobody's degree changed, so the degree sums need nothing
+    if (use_queuing)
+        queue.notify_edges_swapped(i, j, k, l, directed);
 
 }
 
@@ -3040,31 +2786,6 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     VECT_MATCH(population, other.population, "population doesn't match")
 
     EPI_DEBUG_FAIL_AT_TRUE(
-        using_backup != other.using_backup,
-        "Model:: using_backup don't match"
-        )
-
-    if ((population_backup.size() != 0) & (other.population_backup.size() != 0))
-    {
-
-        // False is population_backup.size() != other.population_backup.size()
-        if (population_backup.size() != other.population_backup.size())
-            return false;
-
-        for (size_t i = 0u; i < population_backup.size(); ++i)
-        {
-            if (population_backup[i] != other.population_backup[i])
-                return false;
-        }
-
-    } else if ((population_backup.size() == 0) & (other.population_backup.size() != 0)) {
-        return false;
-    } else if ((population_backup.size() != 0) & (other.population_backup.size() == 0))
-    {
-        return false;
-    }
-
-    EPI_DEBUG_FAIL_AT_TRUE(
         agents_data != other.agents_data,
         "Model:: agents_data don't match"
     )
@@ -3072,11 +2793,6 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
     EPI_DEBUG_FAIL_AT_TRUE(
         agents_data_ncols != other.agents_data_ncols,
         "Model:: agents_data_ncols don't match"
-    )
-
-    EPI_DEBUG_FAIL_AT_TRUE(
-        directed != other.directed,
-        "Model:: directed don't match"
     )
 
     // Viruses -----------------------------------------------------------------
@@ -3121,11 +2837,6 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         )
 
     }
-
-    EPI_DEBUG_FAIL_AT_TRUE(
-        rewire_prop != other.rewire_prop,
-        "Model:: rewire_prop don't match"
-    )
 
     EPI_DEBUG_FAIL_AT_TRUE(
         param_values.size() != other.param_values.size(),

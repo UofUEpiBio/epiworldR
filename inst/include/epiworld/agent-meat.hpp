@@ -10,9 +10,6 @@
 
 template<typename TSeq>
 inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
-    neighbors(p.neighbors),
-    neighbor_pos(p.neighbor_pos),
-    n_neighbors(p.n_neighbors),
     entities(std::move(p.entities)),
     state(p.state),
     state_prev(p.state_prev), 
@@ -20,13 +17,6 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
     id(p.id),
     tools(std::move(p.tools)) /// Needs to be adjusted
 {
-
-    // The neighbor arrays are owned raw pointers, so moving them means taking
-    // them: leaving the source pointing at the same memory would have both
-    // destructors free it.
-    p.neighbors    = nullptr;
-    p.neighbor_pos = nullptr;
-    p.n_neighbors  = 0u;
 
     state = p.state;
     id     = p.id;
@@ -54,20 +44,8 @@ inline Agent<TSeq>::Agent(Agent<TSeq> && p) :
 // Copy constructor
 template<typename TSeq>
 inline Agent<TSeq>::Agent(const Agent<TSeq> & p) :
-    neighbors(nullptr),
-    neighbor_pos(nullptr),
-    n_neighbors(p.n_neighbors),
     entities(p.entities)
 {
-
-    if (n_neighbors > 0u)
-    {
-        neighbors = new std::vector< size_t >(*p.neighbors);
-
-        if (p.neighbor_pos != nullptr)
-            neighbor_pos =
-                new std::unordered_map< size_t, size_t >(*p.neighbor_pos);
-    }
 
     state              = p.state;
     state_prev         = p.state_prev;
@@ -99,25 +77,6 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
 )
 {
 
-    n_neighbors = other_agent.n_neighbors;
-    if (neighbors != nullptr)
-        delete neighbors;
-
-    if (neighbor_pos != nullptr)
-        delete neighbor_pos;
-
-    neighbors    = nullptr;
-    neighbor_pos = nullptr;
-
-    if (other_agent.n_neighbors > 0u)
-    {
-        neighbors = new std::vector< size_t >(*other_agent.neighbors);
-
-        if (other_agent.neighbor_pos != nullptr)
-            neighbor_pos =
-                new std::unordered_map< size_t, size_t >(*other_agent.neighbor_pos);
-    }
-    
     entities = other_agent.entities;
 
     state              = other_agent.state;
@@ -146,16 +105,7 @@ inline Agent<TSeq> & Agent<TSeq>::operator=(
 }
 
 template<typename TSeq>
-inline Agent<TSeq>::~Agent()
-{
-
-    if (neighbors != nullptr)
-        delete neighbors;
-
-    if (neighbor_pos != nullptr)
-        delete neighbor_pos;
-
-}
+inline Agent<TSeq>::~Agent() = default;
 
 template<typename TSeq>
 inline void Agent<TSeq>::add_tool(
@@ -203,7 +153,8 @@ inline void Agent<TSeq>::set_virus(
     VirusPtr<TSeq> virus_ptr = std::shared_ptr<Virus<TSeq>>(virus.clone_ptr());
 
     model._add_event(
-        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus
+        this, virus_ptr, nullptr, nullptr, state_new, queue, EventAction::AddVirus,
+        model.take_sampled_layer()
         );
 
 }
@@ -454,237 +405,6 @@ inline void Agent<TSeq>::mutate_virus(Model<TSeq> & model)
 }
 
 template<typename TSeq>
-inline void Agent<TSeq>::build_neighbor_index()
-{
-
-    if (neighbor_pos == nullptr)
-        neighbor_pos = new std::unordered_map< size_t, size_t >();
-    else
-        neighbor_pos->clear();
-
-    neighbor_pos->reserve(n_neighbors);
-    for (size_t i = 0u; i < n_neighbors; ++i)
-        neighbor_pos->operator[]((*neighbors)[i]) = i;
-
-}
-
-template<typename TSeq>
-inline size_t Agent<TSeq>::find_neighbor(size_t neighbor_id) const
-{
-
-    if (neighbors == nullptr)
-        return n_neighbors;
-
-    if (neighbor_pos != nullptr)
-    {
-        auto it = neighbor_pos->find(neighbor_id);
-        return (it == neighbor_pos->end()) ? n_neighbors : it->second;
-    }
-
-    for (size_t i = 0u; i < n_neighbors; ++i)
-        if ((*neighbors)[i] == neighbor_id)
-            return i;
-
-    return n_neighbors;
-
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::erase_neighbor_at(size_t pos)
-{
-
-    neighbors->erase(neighbors->begin() + static_cast< std::ptrdiff_t >(pos));
-    n_neighbors--;
-
-    // Everything after `pos` shifted down by one, so the index has to follow.
-    // The alternative -- moving the last neighbor into the hole -- would be O(1)
-    // but would permute the survivors, and their order decides which transmitter
-    // roulette() picks.
-    if (neighbor_pos != nullptr)
-        build_neighbor_index();
-
-}
-
-template<typename TSeq>
-inline bool Agent<TSeq>::has_neighbor(size_t neighbor_id) const
-{
-    return find_neighbor(neighbor_id) != n_neighbors;
-}
-
-template<typename TSeq>
-inline bool Agent<TSeq>::append_neighbor(size_t neighbor_id, bool check)
-{
-
-    if (neighbors == nullptr)
-        neighbors = new std::vector< size_t >();
-
-    // Can we find the neighbor?
-    if (check && has_neighbor(neighbor_id))
-        return false;
-
-    neighbors->push_back(neighbor_id);
-    n_neighbors++;
-
-    if (neighbor_pos != nullptr)
-        neighbor_pos->operator[](neighbor_id) = n_neighbors - 1u;
-    else if (n_neighbors > EPI_NEIGHBOR_INDEX_THRESHOLD)
-        build_neighbor_index();
-
-    return true;
-
-}
-
-template<typename TSeq>
-inline bool Agent<TSeq>::add_neighbor(
-    Agent<TSeq> & p,
-    bool check_source,
-    bool check_target
-) {
-
-    // Two statements, so that the second end is visited even when the first
-    // already had the tie.
-    bool here  = append_neighbor(static_cast< size_t >(p.get_id()), check_source);
-    bool there = p.append_neighbor(static_cast< size_t >(id), check_target);
-
-    return here || there;
-
-}
-
-template<typename TSeq>
-inline bool Agent<TSeq>::rm_neighbor(Agent<TSeq> & p)
-{
-
-    size_t here  = find_neighbor(static_cast< size_t >(p.get_id()));
-    size_t there = p.find_neighbor(static_cast< size_t >(id));
-
-    if ((here == n_neighbors) && (there == p.n_neighbors))
-        return false;
-
-    if (here != n_neighbors)
-        erase_neighbor_at(here);
-
-    if (there != p.n_neighbors)
-        p.erase_neighbor_at(there);
-
-    return true;
-
-}
-
-template<typename TSeq>
-inline void Agent<TSeq>::swap_neighbors(
-    Agent<TSeq> & other,
-    size_t n_this,
-    size_t n_other,
-    Model<TSeq> & model
-)
-{
-
-    if (n_this >= n_neighbors)
-        throw std::range_error(
-            "The neighbor you want to swap is out of range. This Agent only has " +
-            std::to_string(n_neighbors) + " neighbors."
-        );
-    if (n_other >= other.n_neighbors)
-        throw std::range_error(
-            "The neighbor you want to swap is out of range. This Agent only has " +
-            std::to_string(other.n_neighbors) + " neighbors."
-        );
-
-    // Getting the agents
-    auto & pop = model.population;
-    auto & neigh_this  = pop[(*neighbors)[n_this]];
-    auto & neigh_other = pop[(*other.neighbors)[n_other]];
-
-    // Changing ids
-    std::swap((*neighbors)[n_this], (*other.neighbors)[n_other]);
-
-    if (!model.directed)
-    {
-
-        // The two agents that were swapped away have to be told about it: the
-        // one that pointed back at `this` now points at `other`, and vice versa.
-        // Their positions are looked up rather than cached, which is what lets
-        // the neighbor arrays be edited (see Agent::rm_neighbor) without a
-        // back-pointer table going stale.
-        size_t back_this  = neigh_this.find_neighbor(static_cast< size_t >(id));
-        size_t back_other =
-            neigh_other.find_neighbor(static_cast< size_t >(other.id));
-
-        #ifdef EPI_DEBUG
-        if (back_this >= neigh_this.n_neighbors)
-            throw std::logic_error(
-                "[epi-debug] swap_neighbors: the tie is not reciprocated.");
-        if (back_other >= neigh_other.n_neighbors)
-            throw std::logic_error(
-                "[epi-debug] swap_neighbors: the tie is not reciprocated.");
-        #endif
-
-        (*neigh_this.neighbors)[back_this]   = static_cast< size_t >(other.id);
-        (*neigh_other.neighbors)[back_other] = static_cast< size_t >(id);
-
-        // Four lists may have changed. Rebuilding is O(degree), the same order
-        // as the swap itself, and sidesteps the aliasing cases (an agent
-        // appearing on both sides of the swap) that piecemeal updates get wrong.
-        if (neighbor_pos != nullptr)
-            build_neighbor_index();
-        if (other.neighbor_pos != nullptr)
-            other.build_neighbor_index();
-        if (neigh_this.neighbor_pos != nullptr)
-            neigh_this.build_neighbor_index();
-        if (neigh_other.neighbor_pos != nullptr)
-            neigh_other.build_neighbor_index();
-
-    }
-    else
-    {
-
-        if (neighbor_pos != nullptr)
-            build_neighbor_index();
-        if (other.neighbor_pos != nullptr)
-            other.build_neighbor_index();
-
-    }
-
-    // Rewiring functions call this in the middle of a run, so the queue's
-    // counts have to follow the ties (a no-op until a run has sized the
-    // queue). Nobody's degree changed, so the agents-by-state degree sums
-    // need nothing.
-    if (model.use_queuing)
-        model.queue.notify_edges_swapped(
-            this, &neigh_this, &other, &neigh_other, model.directed
-        );
-
-}
-
-template<typename TSeq>
-inline std::vector< Agent<TSeq> *> Agent<TSeq>::get_neighbors(Model<TSeq> & model)
-{
-    std::vector< Agent<TSeq> * > res(n_neighbors, nullptr);
-    for (size_t i = 0u; i < n_neighbors; ++i)
-        res[i] = &model.population[(*neighbors)[i]];
-    return res;
-}
-
-template<typename TSeq>
-inline NeighborsView<TSeq> Agent<TSeq>::neighbors_view(Model<TSeq> & model)
-{
-
-    if ((neighbors == nullptr) || (n_neighbors == 0u))
-        return NeighborsView<TSeq>(nullptr, 0u, &model.population);
-
-    return NeighborsView<TSeq>(
-        neighbors->data(), n_neighbors, &model.population
-    );
-
-}
-
-template<typename TSeq>
-inline size_t Agent<TSeq>::get_n_neighbors() const
-{
-    return n_neighbors;
-}
-
-template<typename TSeq>
 inline void Agent<TSeq>::change_state(
     Model<TSeq> & model,
     epiworld_fast_uint new_state,
@@ -835,7 +555,7 @@ inline void Agent<TSeq>::print(
             static_cast<int>(state),
             virus == nullptr ? std::string("no").c_str() : std::string("yes").c_str(),
             static_cast<int>(tools.size()),
-            static_cast<int>(n_neighbors)
+            static_cast<int>(model.network_degree(static_cast< size_t >(id)))
         );
     }
     else {
@@ -847,7 +567,8 @@ inline void Agent<TSeq>::print(
         printf_epiworld("  Has virus    : %s\n", virus == nullptr ?
             std::string("no").c_str() : std::string("yes").c_str());
         printf_epiworld("  Tool count   : %i\n", static_cast<int>(tools.size()));
-        printf_epiworld("  Neigh. count : %i\n", static_cast<int>(n_neighbors));
+        printf_epiworld("  Neigh. count : %i\n",
+            static_cast<int>(model.network_degree(static_cast< size_t >(id))));
 
         size_t nfeats = model.get_agents_data_ncols();
         if (nfeats > 0)
@@ -959,20 +680,6 @@ inline bool Agent<TSeq>::operator==(const Agent<TSeq> & other) const
     if (this == &other)
         return true;
 
-    EPI_DEBUG_FAIL_AT_TRUE(
-        n_neighbors != other.n_neighbors,
-        "Agent:: n_eighbors don't match"
-        )
-
-    
-    for (size_t i = 0u; i < n_neighbors; ++i)
-    {
-        EPI_DEBUG_FAIL_AT_TRUE(
-            (*neighbors)[i] != (*other.neighbors)[i],
-            "Agent:: neighbor[i] don't match"
-        )
-    }
-    
     EPI_DEBUG_FAIL_AT_TRUE(
         entities.size() != other.entities.size(),
         "Agent:: n_entities don't match"

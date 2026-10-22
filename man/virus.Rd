@@ -225,18 +225,12 @@ delta2 <- virus(
 virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(
-  name = "COVID-19", prevalence = 0.01,
+  name = "COVID-19", 10000, prevalence = 0.01,
   transmission_rate = 0.9, recovery = 0.1
 )
 
 # Adding a small world population
-agents_smallworld(
-  sir,
-  n = 10000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 run(sir, ndays = 50, seed = 11)
 plot(sir)

@@ -3,6 +3,7 @@
 # Create SIRD Model ------------------------------------------------------------
 expect_silent(sird_0 <- ModelSIRD(
   name = "A Virus",
+  n = 10000,
   prevalence = .01,
   transmission_rate = .9,
   recovery_rate = .3,
@@ -13,13 +14,7 @@ expect_silent(sird_0 <- ModelSIRD(
 expect_inherits(sird_0, "epiworld_sird")
 expect_inherits(sird_0, "epiworld_model")
 expect_length(class(sird_0), 2)
-expect_silent(agents_smallworld(
-  sird_0,
-  n = 10000,
-  k = 5,
-  d = FALSE,
-  p = .01
-))
+expect_silent(add_layer(sird_0, layer_network("network", graph_smallworld(k = 5, p = .01))))
 
 # Check model run --------------------------------------------------------------
 expect_silent(verbose_off(sird_0))
@@ -45,6 +40,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(sird_0 <- ModelSIRD(
   name = bad_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate,
@@ -53,6 +49,7 @@ expect_error(sird_0 <- ModelSIRD(
 
 expect_error(sird_0 <- ModelSIRD(
   name = good_name,
+  n          = 1000,
   prevalence = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate,
@@ -61,6 +58,7 @@ expect_error(sird_0 <- ModelSIRD(
 
 expect_error(sird_0 <- ModelSIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = bad_numeric_input,
   recovery_rate = good_recovery_rate,
@@ -69,6 +67,7 @@ expect_error(sird_0 <- ModelSIRD(
 
 expect_error(sird_0 <- ModelSIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = bad_numeric_input,
@@ -77,6 +76,7 @@ expect_error(sird_0 <- ModelSIRD(
 
 expect_error(sird_0 <- ModelSIRD(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   recovery_rate = good_recovery_rate,

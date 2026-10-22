@@ -19,19 +19,20 @@ comparison_tol <- 0.15
 
 seir_ref <- ModelSEIR(
   name              = "COVID-19",
+  n                 = n,
   prevalence        = prevalence,
   transmission_rate = trans_rate,
   incubation_days   = incub_days,
   recovery_rate     = recov_rate
 )
-agents_smallworld(seir_ref, n = n, k = 5L, d = FALSE, p = 0.01)
+add_layer(seir_ref, layer_network("network", graph_smallworld(k = 5L, p = 0.01)))
 verbose_off(seir_ref)
 run(seir_ref, ndays = ndays, seed = seed)
 
 # ---- model_builder SEIR (S-E-I-R with identical compartments) ---------------
 
 # Create a blank model and add parameters matching ModelSEIR
-seir_mb <- Model()
+seir_mb <- Model(n)
 add_param(seir_mb, "Transmission rate", trans_rate)
 add_param(seir_mb, "Incubation rate",   1.0 / incub_days)
 add_param(seir_mb, "Recovery rate",     recov_rate)
@@ -64,7 +65,7 @@ set_prob_infecting_ptr(covid, seir_mb, "Transmission rate")
 set_distribution_virus(covid, distribute_virus_randomly(prevalence, TRUE))
 add_virus(seir_mb, covid)
 
-agents_smallworld(seir_mb, n = n, k = 5L, d = FALSE, p = 0.01)
+add_layer(seir_mb, layer_network("network", graph_smallworld(k = 5L, p = 0.01)))
 verbose_off(seir_mb)
 
 expect_silent(run(seir_mb, ndays = ndays, seed = seed))

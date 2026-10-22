@@ -5,10 +5,12 @@
 \alias{epiworld_sird}
 \title{SIRD model}
 \usage{
-ModelSIRD(name, prevalence, transmission_rate, recovery_rate, death_rate)
+ModelSIRD(name, n, prevalence, transmission_rate, recovery_rate, death_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -41,6 +43,7 @@ non-ifected agents already deceased.
 \examples{
 model_sird <- ModelSIRD(
   name              = "COVID-19",
+  n                 = 1000,
   prevalence        = 0.01,
   transmission_rate = 0.9,
   recovery_rate     = 0.1,
@@ -48,13 +51,7 @@ model_sird <- ModelSIRD(
 )
 
 # Adding a small world population
-agents_smallworld(
-  model_sird,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_sird, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_sird, ndays = 100, seed = 1912)

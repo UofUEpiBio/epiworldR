@@ -4,6 +4,15 @@
 [epiworld](https://github.com/UofUEpiBio/epiworld), whose headers live in
 `inst/include/epiworld`. See `DEVELOPMENT.md` for versioning and release notes.
 
+## The `v1-layers` branch (epiworldR 1.0.0)
+
+`v1-layers` follows epiworld's `v1-layers` (contact layers, epiworld 1.0.0)
+one merged phase at a time. There, epiworld's
+[`contact-layers.md`](https://github.com/UofUEpiBio/epiworld/blob/v1-layers/contact-layers.md)
+is the source of truth: its Section 11 (Runbook) says how to find where
+things stand and what to do next. Bindings mirror the C++ API, and removed
+functions become defunct stubs in `R/epiworldR-defunct.R`.
+
 ## Use the devcontainer for everything that runs R or compiles
 
 Compile, install, test, run roxygen2/cpp11 registration, render vignettes and

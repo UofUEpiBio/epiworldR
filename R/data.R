@@ -642,7 +642,9 @@ NULL
 #' `source` column coded as `-1`.
 #' @return
 #' - The function `get_transmissions` returns a `data.frame` with the following
-#' columns: `date`, `source`, `target`, `virus_id`, `virus`, and `source_exposure_date`.
+#' columns: `date`, `source`, `target`, `virus_id`, `virus`,
+#' `source_exposure_date`, and `layer` (the id of the contact layer the
+#' infection came through, `-1` for seeds and events; see [get_layer()]).
 get_transmissions <- function(x) UseMethod("get_transmissions")
 
 #' @export

@@ -34,6 +34,7 @@ public:
      * isolated, even if asyptomatic.
      * 
      * @param vname String. Name of the virus
+ * @param n Number of agents.
      * @param prevalence Integer. Number of initial cases of the virus.
      * @param efficacy_vax Double. Efficacy of the vaccine (1 - P(acquire the disease)).
      * @param latent_period Double. Shape parameter of a `Gamma(latent_period, 1)`
@@ -72,6 +73,7 @@ public:
 
     ModelSURV(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_fast_uint prevalence         = 50,
         epiworld_double efficacy_vax          = 0.9,
         epiworld_double latent_period         = 3u,
@@ -106,6 +108,7 @@ inline void ModelSURV<TSeq>::reset()
 template<typename TSeq>
 inline ModelSURV<TSeq>::ModelSURV(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_fast_uint prevalence,
     epiworld_double efficacy_vax,
     epiworld_double latent_period,
@@ -121,12 +124,16 @@ inline ModelSURV<TSeq>::ModelSURV(
     )
 {
 
+    this->set_population_size(n);
+
     EPI_NEW_UPDATEFUN_LAMBDA(surveillance_update_susceptible, TSeq) {
 
         // This computes the prob of getting any neighbor variant
         epiworld_fast_uint nviruses_tmp = 0u;
         auto & m_ref = *m;
-        for (auto * neighbor: p->neighbors_view(*m)) 
+        // Every network layer, in the order the layers were added
+        for (auto * net : m->get_network_layers())
+        for (auto * neighbor : net->neighbors_view(static_cast< size_t >(p->get_id())))
         {
                     
             auto & v = neighbor->get_virus();
@@ -141,6 +148,7 @@ inline ModelSURV<TSeq>::ModelSURV(
                 (1.0 - neighbor->get_transmission_reduction(v, m_ref)) 
                 ; 
         
+            m->reserve_tmp(nviruses_tmp + 1u);
             m->array_double_tmp[nviruses_tmp]  = tmp_transmission;
             m->array_virus_tmp[nviruses_tmp++] = &(*v);
         }

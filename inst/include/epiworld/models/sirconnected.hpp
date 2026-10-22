@@ -171,10 +171,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
                 auto & v = neighbor.get_virus();
 
-                #ifdef EPI_DEBUG
-                if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                #endif
+                m->reserve_tmp(static_cast< size_t >(nviruses_tmp) + 1u);
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
@@ -288,7 +285,7 @@ inline ModelSIRCONN<TSeq>::ModelSIRCONN(
 
     this->queuing_off(); // No queuing need
 
-    this->agents_empty_graph(n);
+    this->set_population_size(n);
 
     this->set_name("Susceptible-Infected-Removed (SIR) (connected)");
 

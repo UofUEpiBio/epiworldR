@@ -3,40 +3,38 @@
 \name{get_contact_matrix}
 \alias{get_contact_matrix}
 \alias{set_contact_matrix}
-\title{Get or set the contact matrix of a mixing model}
+\title{Get or set the contact matrix of a mixing layer}
 \usage{
-get_contact_matrix(model)
+get_contact_matrix(layer)
 
-set_contact_matrix(model, contact_matrix, as_backup = TRUE)
+set_contact_matrix(layer, contact_matrix)
 }
 \arguments{
-\item{model}{An object of class \code{epiworld_model} that supports contact
-matrices.}
+\item{layer}{A mixing layer (class \code{epiworld_layer_mixing}), retrieved with
+\code{\link[=get_layer]{get_layer()}} (the mixing models name theirs \code{"mixing"}).}
 
 \item{contact_matrix}{A numeric matrix with the contact matrix to be
-set for the model. The matrix should be square and have the same number
-of rows as the number of entities in the model.}
-
-\item{as_backup}{A logical value indicating whether to save the new
-contact matrix as a backup in the model. If \code{TRUE} (default), the new contact
-matrix will be saved as a backup in the model, automatically restoring
-its value if it changes during the simulation.}
+set for the layer. The matrix should be square and have as many rows as the
+layer has groups.}
 }
 \value{
 \itemize{
 \item The \code{get_contact_matrix()} function returns the contact matrix of the
-model as a numeric matrix.
+layer as a numeric matrix.
 }
 
 \itemize{
-\item The \code{set_contact_matrix()} function sets the contact matrix of the model
-to the provided matrix and returns the modified model invisibly. The
-function is called for its side effects and returns the modified model
-invisibly.
+\item The \code{set_contact_matrix()} function sets the contact matrix of the layer
+and returns the layer invisibly.
 }
 }
 \description{
-Get or set the contact matrix of a mixing model
+Get or set the contact matrix of a mixing layer
+}
+\details{
+Set between runs, the contact matrix is kept for the following runs; set
+during a run (e.g., from a global event), it lasts until the end of that
+run.
 }
 \examples{
 cmatrix <- (c(
@@ -57,14 +55,16 @@ flu_model <- ModelSIRMixing(
   contact_matrix    = cmatrix
 )
 
-get_contact_matrix(flu_model)
-#' # Modifying the contact matrix
+mixing <- get_layer(flu_model, "mixing")
+get_contact_matrix(mixing)
+
+# Modifying the contact matrix
 new_cmatrix <- (c(
   c(0.8, 0.1, 0.1),
   c(0.1, 0.7, 0.2),
   c(0.1, 0.2, 0.7)
 ) * 20) |> matrix(byrow = TRUE, nrow = 3)
-set_contact_matrix(flu_model, new_cmatrix)
-get_contact_matrix(flu_model)
+set_contact_matrix(mixing, new_cmatrix)
+get_contact_matrix(mixing)
 }
 \concept{mixing-models}

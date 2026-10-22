@@ -29,6 +29,7 @@ class Virus {
     friend class Model<TSeq>;
     friend class DataBase<TSeq>;
     friend class Tool<TSeq>;
+    friend class ContactLayer<TSeq>;
 private:
     
     Agent<TSeq> * agent = nullptr;

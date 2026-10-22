@@ -5,10 +5,19 @@
 \alias{epiworld_seir}
 \title{Susceptible Exposed Infected Recovered model (SEIR)}
 \usage{
-ModelSEIR(name, prevalence, transmission_rate, incubation_days, recovery_rate)
+ModelSEIR(
+  name,
+  n,
+  prevalence,
+  transmission_rate,
+  incubation_days,
+  recovery_rate
+)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -40,17 +49,11 @@ Proportion of exposed agents to be set as infected.
 }
 
 \examples{
-model_seir <- ModelSEIR(name = "COVID-19", prevalence = 0.01,
+model_seir <- ModelSEIR(name = "COVID-19", n = 1000, prevalence = 0.01,
   transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4)
 
 # Adding a small world population
-agents_smallworld(
-  model_seir,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_seir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_seir, ndays = 100, seed = 1912)

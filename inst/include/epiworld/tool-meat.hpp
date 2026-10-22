@@ -402,7 +402,7 @@ inline uint64_t Tool<TSeq>::target_bit(int lineage_id)
             std::string("The virus lineage id ") +
             std::to_string(lineage_id) +
             std::string(" cannot be targeted. Only lineages 0 to 62 can be ") +
-            std::string("targeted by tools.")
+            std::string("targeted.")
         );
 
     return uint64_t(1) << lineage_id;

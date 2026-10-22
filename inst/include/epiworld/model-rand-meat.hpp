@@ -281,6 +281,20 @@ inline size_t Model<TSeq>::sample_from_probs(size_t n) {
 }
 
 template<typename TSeq>
+inline void Model<TSeq>::reserve_tmp(size_t n) {
+
+    if (n <= array_virus_tmp.size())
+        return;
+
+    // Doubling keeps the growth amortized
+    n = std::max(n, 2u * array_virus_tmp.size());
+    array_virus_tmp.resize(n);
+    array_layer_tmp.resize(n);
+    array_double_tmp.resize(2u * n);
+
+}
+
+template<typename TSeq>
 inline void Model<TSeq>::seed(size_t s) {
     this->engine->seed(s);
 }

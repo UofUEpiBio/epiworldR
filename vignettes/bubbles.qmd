@@ -71,19 +71,14 @@ transmission_rate <- target_r0 / (mean_degree * infectious_days)
 
 baseline_model <- ModelSEIR(
   name              = "Example infection",
+  n                 = n_agents,
   prevalence        = initial_cases / n_agents,
   transmission_rate = transmission_rate,
   incubation_days   = incubation_days,
   recovery_rate     = 1 / infectious_days
 )
 
-agents_smallworld(
-  baseline_model,
-  n = n_agents,
-  k = mean_degree,
-  d = FALSE,
-  p = rewire_probability
-)
+add_layer(baseline_model, layer_network("network", graph_smallworld(k = mean_degree, p = rewire_probability)))
 ```
 
 The network and disease parameters will be held fixed across policies. We also
@@ -252,7 +247,8 @@ bubbles(
   transmission_factor = 0.20,
   start_day           = 20L,
   end_day             = 60L,
-  ties                = "complete"
+  ties                = "complete",
+  layer               = "network"
 )
 ```
 

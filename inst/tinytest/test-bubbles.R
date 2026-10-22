@@ -11,10 +11,10 @@ make_hh <- function(n, hh_size = 3L)
 # transmission must stay within a household.
 ###############################################################################
 model <- ModelSEIR(
-  name = "Flu", prevalence = 0.05, transmission_rate = 0.3,
+  name = "Flu", n = 600, prevalence = 0.05, transmission_rate = 0.3,
   incubation_days = 4.5, recovery_rate = 1 / 7
 )
-agents_smallworld(model, n = 600, k = 8, d = FALSE, p = 0.10)
+add_layer(model, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 hh <- make_hh(600)
 
 expect_silent(
@@ -38,8 +38,8 @@ expect_equal(sum(hh_of(sec$source) != hh_of(sec$target)), 0) # no cross-househol
 # retain some cross-household transmission. (With tie-blind random pairing it
 # would stay at ~0, making group_size indistinguishable from a lockdown.)
 ###############################################################################
-model_g2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
-agents_smallworld(model_g2, n = 600, k = 8, d = FALSE, p = 0.10)
+model_g2 <- ModelSEIR("Flu", 600, 0.05, 0.3, 4.5, 1 / 7)
+add_layer(model_g2, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 bubbles(model_g2, household_id = hh, flavor = "household",
         group_size = 2, transmission_factor = 0.0, start_day = 0)
 run(model_g2, ndays = 80, seed = 99)
@@ -50,8 +50,8 @@ expect_true(sum(hh_of(sec_g2$source) != hh_of(sec_g2$target)) > 0)
 ###############################################################################
 # Control: without bubbles, transmission does cross households.
 ###############################################################################
-model_ctl <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
-agents_smallworld(model_ctl, n = 600, k = 8, d = FALSE, p = 0.10)
+model_ctl <- ModelSEIR("Flu", 600, 0.05, 0.3, 4.5, 1 / 7)
+add_layer(model_ctl, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 run(model_ctl, ndays = 80, seed = 99)
 tn_ctl  <- get_transmissions(model_ctl)
 sec_ctl <- tn_ctl[tn_ctl$source >= 0, , drop = FALSE]
@@ -66,8 +66,8 @@ expect_true(sum(hh_of(sec_ctl$source) != hh_of(sec_ctl$target)) > 0)
 # after bubbles() is what governs the run.
 ###############################################################################
 transmissions_by_bubble <- function(tf, override = NULL) {
-  m <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
-  agents_smallworld(m, n = 600, k = 8, d = FALSE, p = 0.10)
+  m <- ModelSEIR("Flu", 600, 0.05, 0.3, 4.5, 1 / 7)
+  add_layer(m, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 
   # group_size = 1: bubble == household, so cross-household transmission is
   # exactly the out-of-bubble transmission.
@@ -107,8 +107,8 @@ expect_equal(transmissions_by_bubble(0.0, override = 1.0), off)
 ###############################################################################
 # Peer flavor and changing (rewiring) bubbles run without error.
 ###############################################################################
-model_peer <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
-agents_smallworld(model_peer, n = 600, k = 6, d = FALSE, p = 0.05)
+model_peer <- ModelSEIR("Flu", 600, 0.05, 0.2, 4.5, 1 / 7)
+add_layer(model_peer, layer_network("network", graph_smallworld(k = 6, p = 0.05)))
 expect_silent(
   bubbles(model_peer, household_id = hh, flavor = "peer", group_size = 1,
           transmission_factor = 0.5, start_day = 10, rewire_every = 7)
@@ -120,8 +120,8 @@ expect_silent(run(model_peer, ndays = 60, seed = 5))
 # nominations chain. (Uncapped, the merges percolated into a single bubble that
 # kept every contact, i.e. no restriction at all.)
 ###############################################################################
-model_peer2 <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
-agents_smallworld(model_peer2, n = 600, k = 8, d = FALSE, p = 0.10)
+model_peer2 <- ModelSEIR("Flu", 600, 0.05, 0.3, 4.5, 1 / 7)
+add_layer(model_peer2, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 bubbles(model_peer2, household_id = hh, flavor = "peer", group_size = 2,
         transmission_factor = 0.0, start_day = 0, max_households = 2)
 run(model_peer2, ndays = 60, seed = 21)
@@ -140,8 +140,8 @@ expect_true(sum(hh_of(sec_p$source) == hh_of(sec_p$target)) > 0)
 # threads must give exactly the same replicates as running on one, and must not
 # make the model single-threaded.
 ###############################################################################
-model_mt <- ModelSEIR("Flu", 0.05, 0.3, 4.5, 1 / 7)
-agents_smallworld(model_mt, n = 600, k = 8, d = FALSE, p = 0.10)
+model_mt <- ModelSEIR("Flu", 600, 0.05, 0.3, 4.5, 1 / 7)
+add_layer(model_mt, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 bubbles(model_mt, household_id = hh, flavor = "household", group_size = 2,
         transmission_factor = 0.0, start_day = 0)
 
@@ -168,8 +168,8 @@ expect_equal(parallel_sizes, serial_sizes)
 ###############################################################################
 # Input validation.
 ###############################################################################
-model_v <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
-agents_smallworld(model_v, n = 600, k = 6, d = FALSE, p = 0.05)
+model_v <- ModelSEIR("Flu", 600, 0.05, 0.2, 4.5, 1 / 7)
+add_layer(model_v, layer_network("network", graph_smallworld(k = 6, p = 0.05)))
 expect_error(bubbles(model_v, household_id = hh[1:10], flavor = "household",
                      group_size = 2))                                   # wrong length
 expect_error(bubbles(model_v, household_id = hh, flavor = "household",
@@ -189,8 +189,8 @@ expect_error(bubbles(model_v, household_id = hh, flavor = "household",
 ###############################################################################
 # A custom parameter name lets two policies be dialled independently.
 ###############################################################################
-model_pn <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
-agents_smallworld(model_pn, n = 600, k = 6, d = FALSE, p = 0.05)
+model_pn <- ModelSEIR("Flu", 600, 0.05, 0.2, 4.5, 1 / 7)
+add_layer(model_pn, layer_network("network", graph_smallworld(k = 6, p = 0.05)))
 bubbles(model_pn, household_id = hh, flavor = "household", group_size = 2,
         transmission_factor = 0.3, name = "Bubble A",
         param_name = "Bubble A factor")
@@ -206,24 +206,23 @@ expect_silent(run(model_pn, ndays = 30, seed = 12))
 # global event runs before the counting one, and sets up the network the next
 # step uses: ties go up on day 1 (for day 2) and come down on day 4 (end_day).
 ###############################################################################
-model_c <- ModelSIR("x", prevalence = 0, transmission_rate = 0, recovery_rate = 0)
-agents_from_edgelist(
-  model_c, source = 0:4, target = 1:5, size = 6L, directed = FALSE
-)
+model_c <- ModelSIR("x", 6L, prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+add_layer(model_c, layer_network("network", graph_edgelist(0:4, 1:5, 6L, FALSE)))
 bubbles(
   model_c, household_id = rep(1:2, each = 3), flavor = "household",
-  group_size = 2, start_day = 2, end_day = 5, ties = "complete"
+  group_size = 2, start_day = 2, end_day = 5, ties = "complete",
+  layer = "network"
 )
 
 n_edges <- integer(0)
 add_globalevent(model_c, globalevent_fun(function(model) {
-  n_edges[today(model)] <<- nrow(get_network(model))
+  n_edges[today(model)] <<- nrow(get_edgelist(get_layer(model, "network")))
   invisible()
 }, name = "Count edges"))
 
 expect_silent(run(model_c, ndays = 8, seed = 1))
 expect_equal(n_edges, c(15L, 15L, 15L, 5L, 5L, 5L, 5L, 5L))
-expect_equal(nrow(get_network(model_c)), 5L) # the network is left as found
+expect_equal(nrow(get_edgelist(get_layer(model_c, "network"))), 5L) # the network is left as found
 
 ###############################################################################
 # ties = "complete" draws the same bubbles but adds contact inside them, so it
@@ -234,13 +233,14 @@ set.seed(771)
 hh_s <- sample(make_hh(1200)) # scattered, so households are not near-cliques
 total_removed <- function(ties) {
   sum(sapply(1:5, function(s) {
-    m <- ModelSEIR("Flu", 0.01, 0.03, 3, 1 / 7)
-    agents_smallworld(m, n = 1200, k = 8, d = FALSE, p = 0.1)
+    m <- ModelSEIR("Flu", 1200, 0.01, 0.03, 3, 1 / 7)
+    add_layer(m, layer_network("network", graph_smallworld(k = 8, p = 0.1)))
     bubbles(m, household_id = hh_s, flavor = "household", group_size = 2,
-            transmission_factor = 0.2, start_day = 5, ties = ties)
+            transmission_factor = 0.2, start_day = 5, ties = ties,
+            layer = "network")
     verbose_off(m)
     run(m, ndays = 60, seed = s)
-    expect_equal(nrow(get_network(m)), 1200L * 8L / 2L)
+    expect_equal(nrow(get_edgelist(get_layer(m, "network"))), 1200L * 8L / 2L)
     sum(get_agents_states(m) == "Removed")
   }))
 }
@@ -249,10 +249,10 @@ expect_true(total_removed("complete") > total_removed("existing"))
 expect_error(bubbles(model_v, household_id = hh, flavor = "household",
                      group_size = 2, ties = "all"))                    # bad ties
 
-model_d <- ModelSEIR("Flu", 0.05, 0.2, 4.5, 1 / 7)
-agents_smallworld(model_d, n = 300, k = 4, d = TRUE, p = 0.1)
+model_d <- ModelSEIR("Flu", 300, 0.05, 0.2, 4.5, 1 / 7)
+add_layer(model_d, layer_network("network", graph_smallworld(k = 4, p = 0.1, directed = TRUE)))
 bubbles(model_d, household_id = make_hh(300), flavor = "household",
-        group_size = 1, ties = "complete")
+        group_size = 1, ties = "complete", layer = "network")
 expect_error(run(model_d, ndays = 10, seed = 1), "undirected")
 
 ###############################################################################
@@ -261,26 +261,25 @@ expect_error(run(model_d, ndays = 10, seed = 1), "undirected")
 # it up, and every replicate after the first kept it for the whole run
 # (UofUEpiBio/epiworld#271).
 ###############################################################################
-model_z <- ModelSIR("x", prevalence = 0, transmission_rate = 0, recovery_rate = 0)
-agents_from_edgelist(
-  model_z, source = 0:4, target = 1:5, size = 6L, directed = FALSE
-)
+model_z <- ModelSIR("x", 6L, prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+add_layer(model_z, layer_network("network", graph_edgelist(0:4, 1:5, 6L, FALSE)))
 bubbles(
   model_z, household_id = rep(1:2, each = 3), flavor = "household",
-  group_size = 2, start_day = 0, end_day = 3, ties = "complete"
+  group_size = 2, start_day = 0, end_day = 3, ties = "complete",
+  layer = "network"
 )
 
 n_edges_z <- integer(0)
 add_globalevent(model_z, globalevent_fun(function(model) {
-  n_edges_z <<- c(n_edges_z, nrow(get_network(model)))
+  n_edges_z <<- c(n_edges_z, nrow(get_edgelist(get_layer(model, "network"))))
   invisible()
 }, name = "Count edges"))
 verbose_off(model_z)
 
 run(model_z, ndays = 0, seed = 1)
-expect_equal(nrow(get_network(model_z)), 5L)
+expect_equal(nrow(get_edgelist(get_layer(model_z, "network"))), 5L)
 
 run_multiple(model_z, ndays = 6, nsims = 2, seed = 1, verbose = FALSE,
              nthreads = 1)
 expect_equal(n_edges_z, rep(c(15L, 5L, 5L, 5L, 5L, 5L), 2))
-expect_equal(nrow(get_network(model_z)), 5L)
+expect_equal(nrow(get_edgelist(get_layer(model_z, "network"))), 5L)

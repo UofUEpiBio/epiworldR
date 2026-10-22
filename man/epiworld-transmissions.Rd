@@ -14,7 +14,9 @@ get_transmissions(x)
 \value{
 \itemize{
 \item The function \code{get_transmissions} returns a \code{data.frame} with the following
-columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{virus}, and \code{source_exposure_date}.
+columns: \code{date}, \code{source}, \code{target}, \code{virus_id}, \code{virus},
+\code{source_exposure_date}, and \code{layer} (the id of the contact layer the
+infection came through, \code{-1} for seeds and events; see \code{\link[=get_layer]{get_layer()}}).
 }
 }
 \description{

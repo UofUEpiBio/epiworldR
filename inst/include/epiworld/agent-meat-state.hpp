@@ -23,14 +23,10 @@ inline void default_update_susceptible(
     )
 {
 
-    Virus<TSeq> * virus = sampler::sample_virus_single<TSeq>(p, m);
-    
-    if (virus == nullptr)
-        return;
+    Virus<TSeq> * virus = m->sample_virus(p);
 
-    p->set_virus(*m, *virus);
-
-    return;
+    if (virus != nullptr)
+        p->set_virus(*m, *virus);
 
 }
 

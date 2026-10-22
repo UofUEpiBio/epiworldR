@@ -29,13 +29,14 @@
 #include <cassert>
 #include <atomic>
 #include <variant>
+#include <optional>
 
 #ifndef EPIWORLD_HPP
 #define EPIWORLD_HPP
 
 /* Versioning */
-#define EPIWORLD_VERSION_MAJOR 0
-#define EPIWORLD_VERSION_MINOR 19
+#define EPIWORLD_VERSION_MAJOR 1
+#define EPIWORLD_VERSION_MINOR 0
 #define EPIWORLD_VERSION_PATCH 0
 
 #define EPIWORLD_VERSION_PRERELEASE ""
@@ -99,8 +100,7 @@ namespace epiworld {
     #include "contacttracing-bones.hpp"
     #include "contacttracing-meat.hpp"
 
-    #include "contactmatrix-bones.hpp"
-    #include "contactmatrix-meat.hpp"
+    #include "contactlayer-bones.hpp"
 
     #include "globalevent-bones.hpp"
     #include "globalevent-meat.hpp"
@@ -131,7 +131,8 @@ namespace epiworld {
     #include "agent-bones.hpp"
     #include "agent-meat.hpp"
     #include "model-meat-transmission.hpp"
-    #include "sampler-mixing.hpp"
+    #include "layer-mixing.hpp"
+    #include "layer-network.hpp"
 
     #include "agentssample-bones.hpp"
 

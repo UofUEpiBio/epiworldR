@@ -27,7 +27,7 @@ knitr::opts_chunk$set(
 # Introduction
 
 Most of the examples in epiworldR build their contact structure from a
-random-graph generator---`agents_smallworld()`, `agents_sbm()`, or one of the
+random-graph generator---`graph_smallworld()`, `graph_sbm()`, or one of the
 fully-connected `*CONN` models. That is convenient for prototyping, but many
 applied questions start from a population that somebody else has already
 constructed: a synthetic population, a mobility-derived contact network, a
@@ -43,7 +43,8 @@ population file plus edge list you may have:
 1. Read the node table and the edge list(s).
 2. Map the external node identifiers onto epiworld's agent identifiers, which
    are the contiguous integers `0, 1, ..., n - 1`.
-3. Hand the re-indexed edge list to `agents_from_edgelist()`.
+3. Hand the re-indexed edge list to `graph_edgelist()` and add it to the model
+   as a network layer.
 4. Attach a virus, run, and layer interventions on top with global events.
 
 We then use the global events module (`?global-events`) to give the model a
@@ -154,7 +155,7 @@ these considerably faster than `read.csv()`.)
 
 # From `uid`s to agent identifiers
 
-epiworld numbers its agents `0, 1, ..., n - 1`, and `agents_from_edgelist()`
+epiworld numbers its agents `0, 1, ..., n - 1`, and `graph_edgelist()`
 expects the `source` and `target` vectors to be in that numbering. So we build
 a lookup from `uid` to position in the people table, and translate both
 endpoints of every tie:
@@ -223,6 +224,7 @@ transmission_weekday <- 0.05
 
 model <- ModelSEIRD(
   name              = "COVID-19",
+  n                 = nrow(people),
   prevalence        = 0,
   transmission_rate = transmission_weekday,
   incubation_days   = 4,
@@ -230,23 +232,17 @@ model <- ModelSEIRD(
   death_rate        = 0.005
 )
 
-agents_from_edgelist(
-  model,
-  source   = net$from,
-  target   = net$to,
-  size     = nrow(people),
-  directed = FALSE
-)
+add_layer(model, layer_network("network", graph_edgelist(net$from, net$to, nrow(people), FALSE)))
 
 model
 ```
 
-The network is loaded, and we can read it back out with `get_network()`, which
+The network is loaded, and we can read it back out with `get_edgelist()`, which
 returns the edge list as a two-column data frame of `from`/`to` agent ids:
 
 ```{r}
 #| label: degree
-loaded <- get_network(model)
+loaded <- get_edgelist(get_layer(model, "network"))
 nrow(loaded)
 
 degree <- tabulate(c(loaded$from, loaded$to) + 1L, nbins = nrow(people))
@@ -378,6 +374,7 @@ Now we rebuild the model, identically to before, and attach the event:
 #| label: build-weekend-model
 model_weekend <- ModelSEIRD(
   name              = "COVID-19",
+  n                 = nrow(people),
   prevalence        = 0,
   transmission_rate = transmission_weekday,
   incubation_days   = 4,
@@ -385,13 +382,7 @@ model_weekend <- ModelSEIRD(
   death_rate        = 0.005
 )
 
-agents_from_edgelist(
-  model_weekend,
-  source   = net$from,
-  target   = net$to,
-  size     = nrow(people),
-  directed = FALSE
-)
+add_layer(model_weekend, layer_network("network", graph_edgelist(net$from, net$to, nrow(people), FALSE)))
 
 set_distribution_virus(
   get_virus(model_weekend, 0),
@@ -504,6 +495,7 @@ ndays <- 120
 
 model_weekend2 <- ModelSEIRD(
   name              = "COVID-19",
+  n                 = nrow(people),
   prevalence        = 0,
   transmission_rate = transmission_weekday,
   incubation_days   = 4,
@@ -511,11 +503,7 @@ model_weekend2 <- ModelSEIRD(
   death_rate        = 0.005
 )
 
-agents_from_edgelist(
-  model_weekend2,
-  source = net$from, target = net$to,
-  size = nrow(people), directed = FALSE
-)
+add_layer(model_weekend2, layer_network("network", graph_edgelist(net$from, net$to, nrow(people), FALSE)))
 
 set_distribution_virus(
   get_virus(model_weekend2, 0),
@@ -579,12 +567,8 @@ edges[, `:=`(from = uid2id[as.character(p1)], to = uid2id[as.character(p2)])]
 
 net <- unique(edges[, .(a = pmin(from, to), b = pmax(from, to))])
 
-model_full <- ModelSEIRD("COVID-19", 0, 0.05, 4, 1 / 7, 0.005)
-agents_from_edgelist(
-  model_full,
-  source = net$a, target = net$b,
-  size = nrow(people), directed = FALSE
-)
+model_full <- ModelSEIRD("COVID-19", nrow(people), 0, 0.05, 4, 1 / 7, 0.005)
+add_layer(model_full, layer_network("network", graph_edgelist(net$a, net$b, nrow(people), FALSE)))
 ```
 
 # Caveats
@@ -597,7 +581,7 @@ A few things worth keeping in mind when you use this pattern on your own data.
   changes, as we did for the weekend, or by building a separate model per
   scenario.
 - **Weights are ignored.** GeoPops ships an `edge_weight` column;
-  `agents_from_edgelist()` takes an unweighted edge list. If your weights
+  `graph_edgelist()` takes an unweighted edge list. If your weights
   matter, one option is to encode them through agent- or virus-level
   functions rather than through the network itself.
 - **Duplicated pairs.** Stacking layers can produce the same pair twice. We

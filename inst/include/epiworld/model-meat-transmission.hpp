@@ -3,7 +3,8 @@
 
 /**
  * @file model-meat-transmission.hpp
- * @brief Network transmission by pushing infection odds.
+ * @brief Transmission: from contacts to infections, and network transmission
+ * by pushing infection odds.
  *
  * @details A susceptible agent `i` whose update function is
  * `default_update_susceptible` (or `sampler::make_update_susceptible()`)
@@ -25,6 +26,142 @@
  * The docs page "Push and Pull Transmission" (docs/impl/transmission-sampling.md)
  * has the derivation.
  */
+
+template<typename TSeq>
+inline size_t Model<TSeq>::add_exposures(
+    Agent<TSeq> * agent,
+    const ContactLayer<TSeq> * layer,
+    const size_t * contacts,
+    size_t n,
+    size_t n_exposures
+)
+{
+
+    const bool weighted = (layer != nullptr) && layer->has_weight();
+    const epiworld_double weight = weighted ? layer->get_weight(*this) : 1.0;
+    const int layer_id = (layer == nullptr) ? -1 : static_cast< int >(layer->get_id());
+
+    // A layer of weight 0 transmits nothing
+    if (weighted && (weight <= 0.0))
+        return n_exposures;
+
+    reserve_tmp(n_exposures + n);
+
+    for (size_t k = 0u; k < n; ++k)
+    {
+
+        auto & contact = population[contacts[k]];
+        auto & v = contact.get_virus();
+        if (v == nullptr)
+            continue;
+
+        if ((layer != nullptr) && !layer->admits(*v))
+            continue;
+
+        epiworld_double p =
+            (1.0 - agent->get_susceptibility_reduction(v, *this)) *
+            v->get_prob_infecting(this) *
+            (1.0 - contact.get_transmission_reduction(v, *this))
+            ;
+
+        // The weight scales the odds p / (1 - p); a certain exposure stays so
+        if (weighted && (p < 1.0))
+            p = weight * p / (1.0 - p + weight * p);
+
+        array_double_tmp[n_exposures] = p;
+        array_virus_tmp[n_exposures] = &(*v);
+        array_layer_tmp[n_exposures++] = layer_id;
+
+    }
+
+    return n_exposures;
+
+}
+
+template<typename TSeq>
+inline Virus<TSeq> * Model<TSeq>::draw_exposure(size_t n_exposures)
+{
+
+    sampled_layer = -1;
+
+    if (n_exposures == 0u)
+        return nullptr;
+
+    const int which = roulette(n_exposures, this);
+
+    if (which < 0)
+        return nullptr;
+
+    sampled_layer = array_layer_tmp[which];
+    return array_virus_tmp[which];
+
+}
+
+template<typename TSeq>
+inline Virus<TSeq> * Model<TSeq>::sample_virus(
+    Agent<TSeq> * agent,
+    const size_t * contacts,
+    size_t n,
+    const ContactLayer<TSeq> * layer
+)
+{
+
+    return draw_exposure(add_exposures(agent, layer, contacts, n, 0u));
+
+}
+
+template<typename TSeq>
+inline Virus<TSeq> * Model<TSeq>::sample_virus(
+    Agent<TSeq> * agent,
+    const std::vector< bool > * exclude
+)
+{
+
+    if (agent->get_virus() != nullptr)
+        throw std::logic_error(
+            "Sampling a virus for agent " + std::to_string(agent->get_id()) +
+            ", which already has one, makes no sense."
+        );
+
+    const size_t id = static_cast< size_t >(agent->get_id());
+
+    size_t n_contacts = 0u;
+    size_t n_exposures = 0u;
+    for (const auto & layer : layers)
+    {
+
+        layer_contacts.clear();
+        const size_t n = layer->sample(id, *this, exclude, layer_contacts);
+        if (n == 0u)
+            continue;
+
+        n_contacts += n;
+        n_exposures = add_exposures(
+            agent, layer.get(), layer_contacts.data(), n, n_exposures
+        );
+
+    }
+
+    if (n_contacts == 0u)
+    {
+        sampled_layer = -1;
+        return nullptr;
+    }
+
+    #ifdef EPI_DEBUG
+    db.n_transmissions_potential++;
+    #endif
+
+    Virus<TSeq> * virus = draw_exposure(n_exposures);
+
+    #ifdef EPI_DEBUG
+    if (virus != nullptr)
+        db.n_transmissions_today++;
+    #endif
+
+    return virus;
+
+}
 
 template<typename TSeq>
 inline bool Model<TSeq>::transmission_prepare()
@@ -217,97 +354,126 @@ inline void Model<TSeq>::transmission_push_impl()
             word &= (word - 1u);
 
             Agent<TSeq> & j = population[j_id];
-            if ((j.virus == nullptr) || (j.n_neighbors == 0u))
+            if (j.virus == nullptr)
                 continue;
 
             const size_t s = agent_state[j_id];
 
             VirusPtr<TSeq> & v = j.virus;
 
-            for (size_t i_id : *j.neighbors)
+            // Every network, in the order the layers were added, as a pull
+            // reads them
+            for (const auto * net : network_layers)
             {
 
-                // Most neighbors are usually not susceptible; the compact copy
-                // of the states rules them out without loading the agent.
-                const size_t t = agent_state[i_id];
+                // Layer rules, as add_exposures() applies them in a pull
+                const bool weighted = net->has_weight();
+                const epiworld_double weight = weighted ?
+                    net->get_weight(*this) : 1.0;
+                const bool admitted = net->admits(*v);
+                const int layer_id = static_cast< int >(net->get_id());
 
-                if (!push_pushable[t] || push_excluded[t * ns + s])
-                    continue;
-
-                Agent<TSeq> & i = population[i_id];
-
-                // An agent with a virus is not susceptible (pulling would
-                // refuse it; update_state() reports it).
-                if (i.virus != nullptr)
-                    continue;
-
-                // Pulling only updates queued agents.
-                if (use_queuing && (queue[i_id] <= 0))
-                    continue;
-
-                // The post-sampling callback sees every eligible contact, also
-                // the ones that cannot transmit, as a pull reports them. The
-                // carriers are visited in ascending id order, so the pairs
-                // come out grouped by infectious agent.
-                if constexpr (Record)
-                    register_sampled_contact(j_id, i_id);
-
-                // Exactly the expression the pull uses, in the same order.
-                epiworld_double p =
-                    (1.0 - i.get_susceptibility_reduction(v, *this)) *
-                    v->get_prob_infecting(this) *
-                    (1.0 - j.get_transmission_reduction(v, *this))
-                    ;
-
-                // No chance of transmission (also catches NaN)
-                if (!(p > 0.0))
-                    continue;
-
-                int & slot = push_slot[i_id];
-                if (slot < 0)
+                for (size_t i_id : net->ties[j_id])
                 {
 
-                    slot = static_cast< int >(push_targets.size());
-                    push_targets.push_back({i_id, 0.0, 0u, nullptr});
+                    // Most neighbors are usually not susceptible; the compact copy
+                    // of the states rules them out without loading the agent.
+                    const size_t t = agent_state[i_id];
 
-                    #ifdef EPI_DEBUG
-                    if (push_default[t])
-                        db.n_transmissions_potential++;
-                    #endif
+                    if (!push_pushable[t] || push_excluded[t * ns + s])
+                        continue;
 
-                }
+                    Agent<TSeq> & i = population[i_id];
 
-                PushTarget & target = push_targets[static_cast< size_t >(slot)];
+                    // An agent with a virus is not susceptible (pulling would
+                    // refuse it; update_state() reports it).
+                    if (i.virus != nullptr)
+                        continue;
 
-                // Certain transmission: uniform reservoir among these
-                if (p >= 1.0)
-                {
+                    // Pulling only updates queued agents.
+                    if (use_queuing && (queue[i_id] <= 0))
+                        continue;
+
+                    // The post-sampling callback sees every eligible contact, also
+                    // the ones that cannot transmit, as a pull reports them. The
+                    // carriers are visited in ascending id order, so the pairs
+                    // come out grouped by infectious agent.
+                    if constexpr (Record)
+                        register_sampled_contact(j_id, i_id);
+
+                    // A layer of weight 0, or closed to this virus, transmits
+                    // nothing (its contacts were still reported above)
+                    if (!admitted || (weighted && (weight <= 0.0)))
+                        continue;
+
+                    // Exactly the expression the pull uses, in the same order.
+                    epiworld_double p =
+                        (1.0 - i.get_susceptibility_reduction(v, *this)) *
+                        v->get_prob_infecting(this) *
+                        (1.0 - j.get_transmission_reduction(v, *this))
+                        ;
+
+                    // The weight scales the odds; a certain exposure stays so
+                    if (weighted && (p < 1.0))
+                        p = weight * p / (1.0 - p + weight * p);
+
+                    // No chance of transmission (also catches NaN)
+                    if (!(p > 0.0))
+                        continue;
+
+                    int & slot = push_slot[i_id];
+                    if (slot < 0)
+                    {
+
+                        slot = static_cast< int >(push_targets.size());
+                        push_targets.push_back({i_id, 0.0, 0u, nullptr, -1});
+
+                        #ifdef EPI_DEBUG
+                        if (push_default[t])
+                            db.n_transmissions_potential++;
+                        #endif
+
+                    }
+
+                    PushTarget & target = push_targets[static_cast< size_t >(slot)];
+
+                    // Certain transmission: uniform reservoir among these
+                    if (p >= 1.0)
+                    {
+
+                        if (
+                            (++target.n_certain == 1u) ||
+                            (runif() * static_cast< double >(target.n_certain) < 1.0)
+                        )
+                        {
+                            target.candidate = &(*v);
+                            target.layer = layer_id;
+                        }
+
+                        continue;
+
+                    }
+
+                    // A certain transmission wins outright
+                    if (target.n_certain > 0u)
+                        continue;
+
+                    // Weighted reservoir: keep this infector with probability
+                    // r / (sum of odds so far).
+                    const double odds = static_cast< double >(p) /
+                        (1.0 - static_cast< double >(p));
+                    target.odds += odds;
 
                     if (
-                        (++target.n_certain == 1u) ||
-                        (runif() * static_cast< double >(target.n_certain) < 1.0)
+                        (target.candidate == nullptr) ||
+                        (runif() * target.odds < odds)
                     )
+                    {
                         target.candidate = &(*v);
-
-                    continue;
+                        target.layer = layer_id;
+                    }
 
                 }
-
-                // A certain transmission wins outright
-                if (target.n_certain > 0u)
-                    continue;
-
-                // Weighted reservoir: keep this infector with probability
-                // r / (sum of odds so far).
-                const double odds = static_cast< double >(p) /
-                    (1.0 - static_cast< double >(p));
-                target.odds += odds;
-
-                if (
-                    (target.candidate == nullptr) ||
-                    (runif() * target.odds < odds)
-                )
-                    target.candidate = &(*v);
 
             }
 
@@ -337,6 +503,7 @@ inline void Model<TSeq>::transmission_push_impl()
             db.n_transmissions_today++;
         #endif
 
+        sampled_layer = target.layer;
         i.set_virus(*this, *target.candidate);
 
     }

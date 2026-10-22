@@ -19,7 +19,7 @@
  *
  * Features:
  *
- * - Network-based contacts (via adjacency list, e.g., from agents_sbm())
+ * - Network-based contacts (the model's network layers, see `layer::Network`)
  * - Quarantine measures for exposed contacts
  * - Isolation policies for detected infected individuals
  * - Contact tracing with configurable success rates
@@ -94,6 +94,7 @@ public:
      * @brief Constructs a ModelSEIRNetworkQuarantine object.
      *
      * @param vname The name of the virus.
+ * @param n Number of agents.
      * @param n The number of agents in the model.
      * @param prevalence The initial prevalence of the disease.
      * @param transmission_rate The transmission rate of the disease.
@@ -111,6 +112,7 @@ public:
      */
     ModelSEIRNetworkQuarantine(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double avg_incubation_days,
@@ -222,7 +224,9 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
 
     const bool record = m->has_post_sampling();
     size_t nviruses_tmp = 0u;
-    for (auto * neighbor : p->neighbors_view(*m))
+    // Every network layer, in the order the layers were added
+    for (auto * net : m->get_network_layers())
+    for (auto * neighbor : net->neighbors_view(static_cast< size_t >(p->get_id())))
     {
         auto & v = neighbor->get_virus();
         if (v == nullptr)
@@ -236,12 +240,7 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
         if (record)
             m->register_sampled_contact(neighbor->get_id(), p->get_id());
 
-        #ifdef EPI_DEBUG
-        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-            throw std::logic_error(
-                "Trying to add an extra element to a temporal array outside of the range."
-            );
-        #endif
+        m->reserve_tmp(static_cast< size_t >(nviruses_tmp) + 1u);
 
         m->array_double_tmp[nviruses_tmp] =
             (1.0 - p->get_susceptibility_reduction(v, *m)) *
@@ -627,6 +626,7 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_quarantine_process(
 template<typename TSeq>
 inline ModelSEIRNetworkQuarantine<TSeq>::ModelSEIRNetworkQuarantine(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double avg_incubation_days,
@@ -643,6 +643,8 @@ inline ModelSEIRNetworkQuarantine<TSeq>::ModelSEIRNetworkQuarantine(
     epiworld_fast_uint contact_tracing_days_prior
     )
 {
+
+    this->set_population_size(n);
 
     // Setting up parameters
     this->add_param(transmission_rate, "Prob. Transmission");

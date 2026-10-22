@@ -63,7 +63,8 @@ inline Bubbles<TSeq>::Bubbles(
     std::string name,
     size_t max_households,
     std::string param_name,
-    BubbleTies ties
+    BubbleTies ties,
+    std::string layer
 ) :
     household_id(std::move(household_id)),
     flavor(flavor),
@@ -74,7 +75,8 @@ inline Bubbles<TSeq>::Bubbles(
     end_day(end_day),
     rewire_every(rewire_every),
     param_name(std::move(param_name)),
-    ties(ties)
+    ties(ties),
+    layer(std::move(layer))
 {
 
     this->set_name(name);
@@ -223,7 +225,8 @@ inline void Bubbles<TSeq>::partition_household(
     {
         size_t ha = hh_index[household_id[a]];
         held.focus(a);
-        for (auto * nb : pop_all[a].get_neighbors(*model))
+        for (auto * net : model->get_network_layers())
+        for (auto * nb : net->neighbors_view(a))
         {
             size_t b = static_cast< size_t >(nb->get_id());
             if (household_id[a] == household_id[b])
@@ -386,7 +389,8 @@ inline void Bubbles<TSeq>::partition_peer(
         // compute_partition()).
         ext.clear();
         held.focus(a);
-        for (auto * nb : pop[a].get_neighbors(*model))
+        for (auto * net : model->get_network_layers())
+        for (auto * nb : net->neighbors_view(a))
         {
             size_t nid = static_cast< size_t >(nb->get_id());
             if ((household_id[nid] != household_id[a]) && !held.contains(nid))
@@ -499,59 +503,7 @@ inline void Bubbles<TSeq>::build_ties(Model<TSeq> * model)
         if (bubble_id[a] >= 0)
             members[static_cast< size_t >(bubble_id[a])].push_back(a);
 
-    // What the sampler can take is a *degree*, not a bubble size: when pulling,
-    // roulette() uses two slots per candidate in the fixed scratch array, so an
-    // agent may have at most `array_double_tmp.size() / 2` infectious neighbors
-    // before it throws. Pushing has no such ceiling, but the automatic mode may
-    // pull on any day, so the check does not depend on the mode. Completing a
-    // bubble adds ties on top of the ones an agent already has outside it, so
-    // the number that matters is what each member's degree will be afterwards
-    // -- a bubble small enough to look harmless can still push a
-    // well-connected member over.
-    //
-    // The policy answers for the ties it adds, not for the network it was
-    // handed. A member the network already put past the ceiling -- a hub -- is
-    // fine as long as its bubble adds nothing to it; what is refused is a
-    // clique that takes a member past the ceiling, or adds to one already
-    // there.
-    //
-    // Checked for every member before a single tie is created, so a bubble that
-    // is too large fails without leaving the network half-rewritten.
-    size_t max_degree = model->array_double_tmp.size() / 2u;
-
-    for (auto & who : members)
-    {
-
-        if (who.size() < 2u)
-            continue;
-
-        for (size_t x : who)
-        {
-
-            // Ties to bubble-mates the agent already has are not added twice.
-            size_t already = 0u;
-            for (auto * nb : model->get_agent(x).neighbors_view(*model))
-                if (bubble_id[static_cast< size_t >(nb->get_id())] ==
-                    bubble_id[x])
-                    ++already;
-
-            size_t degree    = model->get_agent(x).get_n_neighbors();
-            size_t projected = degree + (who.size() - 1u) - already;
-
-            if ((projected > max_degree) && (projected > degree))
-                throw std::length_error(
-                    "Bubbles: completing a bubble of " +
-                    std::to_string(who.size()) + " would give agent " +
-                    std::to_string(x) + " a degree of " +
-                    std::to_string(projected) + " (up from " +
-                    std::to_string(degree) + "), above the " +
-                    std::to_string(max_degree) + " neighbors the virus sampler "
-                    "can weigh. Reduce group_size or max_households."
-                );
-
-        }
-
-    }
+    auto & net = tie_layer(model);
 
     for (auto & who : members)
     {
@@ -563,7 +515,7 @@ inline void Bubbles<TSeq>::build_ties(Model<TSeq> * model)
 
                 // Only ties this actually created are recorded: the ones the
                 // network already had are not the intervention's to withdraw.
-                if (model->add_edge(who[i], who[j]))
+                if (net.add_edge(who[i], who[j]))
                     created_ties.emplace_back(who[i], who[j]);
 
             }
@@ -646,7 +598,7 @@ inline void Bubbles<TSeq>::withdraw_ties(
 
         // A tie that is not there -- taken away, and never put back -- is
         // simply skipped: rm_edge() does nothing, and it leaves the books.
-        model->rm_edge(tie.first, tie.second);
+        tie_layer(model).rm_edge(tie.first, tie.second);
 
     }
 
@@ -781,20 +733,19 @@ inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
 
         // Completing a bubble means editing ties at both ends, which is not a
         // meaningful thing to do to a directed network.
-        if (model->is_directed())
+        if (tie_layer(model).is_directed())
             throw std::logic_error(
-                "Bubbles: BubbleTies::Complete needs an undirected model."
+                "Bubbles: BubbleTies::Complete needs an undirected network layer."
             );
 
         // Rewiring moves ties *between* agents, so a tie this created could be
         // moved out from under it and would never be withdrawn. The two cannot
-        // be combined. It is the function that matters, not the proportion:
-        // Model::rewire() calls it on every step, and nothing obliges a
-        // rewiring function to honour a proportion of zero.
-        if (model->has_rewire_fun())
+        // be combined. It is the function that matters, not its rate: the layer
+        // calls it on every step.
+        if (tie_layer(model).has_rewiring())
             throw std::logic_error(
                 "Bubbles: BubbleTies::Complete cannot be combined with network "
-                "rewiring; remove it with set_rewire_fun(nullptr)."
+                "rewiring of the same layer; remove it with set_rewiring(nullptr)."
             );
 
     }
@@ -906,8 +857,8 @@ inline void Bubbles<TSeq>::operator()(Model<TSeq> * model, int day)
     // Cheap and immediate unless the policy is realized as ties: builds the
     // clique on the day the policy starts, redraws it when the partition moves
     // to a new epoch, and withdraws it when the policy lifts or the run ends.
-    // Model::add_edge()/rm_edge() keep the queueing system in step, so this is
-    // safe in the middle of a run.
+    // layer::Network::add_edge()/rm_edge() keep the queueing system in step,
+    // so this is safe in the middle of a run.
     sync_ties(model);
 
 }
@@ -951,9 +902,25 @@ inline BubbleTies Bubbles<TSeq>::get_ties() const
 }
 
 template<typename TSeq>
-inline void Bubbles<TSeq>::set_ties(BubbleTies ties)
+inline void Bubbles<TSeq>::set_ties(BubbleTies ties, std::string layer)
 {
     this->ties = ties;
+    this->layer = std::move(layer);
+}
+
+template<typename TSeq>
+inline layer::Network<TSeq> & Bubbles<TSeq>::tie_layer(Model<TSeq> * model) const
+{
+
+    if (layer.empty() || !model->has_layer(layer) ||
+        (model->get_layer(layer).as_network() == nullptr))
+        throw std::logic_error(
+            "Bubbles: BubbleTies::Complete needs the name of a network layer of "
+            "the model to add the ties to (got '" + layer + "')."
+        );
+
+    return *model->get_layer(layer).as_network();
+
 }
 
 template<typename TSeq>

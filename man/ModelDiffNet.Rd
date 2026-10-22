@@ -7,6 +7,7 @@
 \usage{
 ModelDiffNet(
   name,
+  n,
   prevalence,
   prob_adopt,
   normalize_exposure = TRUE,
@@ -17,6 +18,8 @@ ModelDiffNet(
 }
 \arguments{
 \item{name}{Name of the model.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Prevalence of the disease.}
 
@@ -64,6 +67,7 @@ X <- cbind(
 
 adopt_chatgpt <- ModelDiffNet(
   "ChatGPT",
+  n          = n,
   prevalence = .01,
   prob_adopt = .1,
   data       = X,
@@ -71,7 +75,7 @@ adopt_chatgpt <- ModelDiffNet(
 )
 
 # Simulating a population from smallworld
-agents_smallworld(adopt_chatgpt, n, 8, FALSE, .01)
+add_layer(adopt_chatgpt, layer_network("network", graph_smallworld(k = 8, p = .01)))
 
 # Running the model for 50 steps
 run(adopt_chatgpt, 50)

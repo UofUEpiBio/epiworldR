@@ -54,8 +54,8 @@
 // insertion-ordered) neighbor vector, which for the degrees these models run at
 // -- smallworld networks of degree 5-8, households of 3-5 -- fits in a cache
 // line and beats a hash lookup. Past it, the linear scan starts to dominate
-// graph construction and tie surgery, so the agent builds the index once and
-// maintains it from then on. See `Model::add_edge` / `Model::rm_edge`.
+// graph construction and tie surgery, so the network layer builds the agent's
+// index once and maintains it from then on. See `layer::Network`.
 #ifndef EPI_NEIGHBOR_INDEX_THRESHOLD
     #define EPI_NEIGHBOR_INDEX_THRESHOLD 32u
 #endif
@@ -86,6 +86,14 @@ class Entity;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class GlobalEvent;
+
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class ContactLayer;
+
+namespace layer {
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Network;
+}
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using VirusPtr = std::shared_ptr< Virus< TSeq > >;
@@ -216,6 +224,7 @@ struct Event {
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
     EventAction action;
+    int layer = -1; ///< Layer of the contact that transmitted the virus, if any
 public:
 /**
      * @brief Construct a new Event object
@@ -230,6 +239,7 @@ public:
      * @param new_state_ Next state
      * @param queue_ Efect on the queue
      * @param action_ The action to execute
+     * @param layer_ Layer of the contact that transmitted the virus, if any
      */
     Event(
         Agent<TSeq> * agent_,
@@ -238,10 +248,11 @@ public:
         Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
-        EventAction action_
+        EventAction action_,
+        int layer_ = -1
     ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
         new_state(new_state_),
-        queue(queue_), action(action_) {
+        queue(queue_), action(action_), layer(layer_) {
             return;
         };
 };

@@ -131,54 +131,43 @@ inline int roulette(
     )
 {
 
-    // Step 1: Computing the prob on none
-    TDbl p_none = 1.0;
+    // Step 1: a probability of 1 is a certain event; if there are any, one of
+    // them is drawn uniformly. (This used to test `> 1 - 1e-100`, which is
+    // `> 1` in floating point, so p == 1 fell through to 0/0 below and the
+    // last entry won regardless.)
     std::vector< int > certain_infection;
-    certain_infection.reserve(probs.size());
-
     for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
-    {
-        p_none *= (1.0 - probs[p]);
-
-        // A probability of 1 is a certain event. (This used to test
-        // `> 1 - 1e-100`, which is `> 1` in floating point, so p == 1 fell
-        // through to 0/0 below and the last entry won regardless.)
         if (probs[p] >= 1.0)
-            certain_infection.push_back(p);
-
-    }
+            certain_infection.push_back(static_cast<int>(p));
 
     TDbl r = static_cast<TDbl>(m->runif());
-    // If there are one or more probs that go close to 1, sample
-    // uniformly
     if (certain_infection.size() > 0)
         return certain_infection[std::floor(r * certain_infection.size())];
 
-    // Step 2: Calculating the prob of none or single
-    std::vector< TDbl > probs_only_p(probs.size());
-    TDbl p_none_or_single = p_none;
+    // Step 2: the odds r_p = p / (1 - p) and their sum R. Then
+    // P(none) = 1 / (1 + R) and P(p) = r_p / (1 + R), the same as normalizing
+    // by prod(1 - p), which underflows to 0 with many entries (0/0 weights).
+    std::vector< TDbl > odds(probs.size());
+    TDbl odds_total = 0.0;
     for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
     {
-        probs_only_p[p] = probs[p] * (p_none / (1.0 - probs[p]));
-        p_none_or_single += probs_only_p[p];
+        odds[p] = probs[p] / (1.0 - probs[p]);
+        odds_total += odds[p];
     }
 
     // Step 3: Roulette
-    TDbl cumsum = p_none/p_none_or_single;
+    TDbl cumsum = 1.0 / (1.0 + odds_total);
     if (r < cumsum)
-    {
         return -1;
-    }
 
     for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
     {
         // If it yield here, then bingo, the individual will acquire the disease
-        cumsum += probs_only_p[p]/(p_none_or_single);
+        cumsum += odds[p] / (1.0 + odds_total);
         if (r < cumsum)
             return static_cast<int>(p);
 
     }
-
 
     #ifdef EPI_DEBUG
     printf_epiworld("[epi-debug] roulette::cumsum = %.4f\n", cumsum);
@@ -217,46 +206,36 @@ inline int roulette(
             );
     }
 
-    // Step 1: Computing the prob on none
-    epiworld_double p_none = 1.0;
+    auto & tmp = m->array_double_tmp;
+
+    // Step 1: certain events (p >= 1; see the vector version), drawn uniformly
     epiworld_fast_uint ncertain = 0u;
-    // std::vector< int > certain_infection;
     for (epiworld_fast_uint p = 0u; p < nelements; ++p)
-    {
-        p_none *= (1.0 - m->array_double_tmp[p]);
-
-        // A probability of 1 is a certain event (see the vector version).
-        if (m->array_double_tmp[p] >= 1.0)
-            m->array_double_tmp[nelements + ncertain++] = p;
-            // certain_infection.push_back(p);
-
-    }
+        if (tmp[p] >= 1.0)
+            tmp[nelements + ncertain++] = p;
 
     epiworld_double r = m->runif();
-    // If there are one or more probs that go close to 1, sample
-    // uniformly
     if (ncertain > 0u)
-        return m->array_double_tmp[nelements + std::floor(ncertain * r)]; //    certain_infection[std::floor(r * certain_infection.size())];
+        return tmp[nelements + std::floor(ncertain * r)];
 
-    // Step 2: Calculating the prob of none or single
-    // std::vector< epiworld_double > probs_only_p;
-    epiworld_double p_none_or_single = p_none;
+    // Step 2: the odds and their sum, normalized by 1 + sum (see the vector
+    // version; prod(1 - p) underflows with many exposures)
+    epiworld_double odds_total = 0.0;
     for (epiworld_fast_uint p = 0u; p < nelements; ++p)
     {
-        m->array_double_tmp[nelements + p] =
-            m->array_double_tmp[p] * (p_none / (1.0 - m->array_double_tmp[p]));
-        p_none_or_single += m->array_double_tmp[nelements + p];
+        tmp[nelements + p] = tmp[p] / (1.0 - tmp[p]);
+        odds_total += tmp[nelements + p];
     }
 
     // Step 3: Roulette
-    epiworld_double cumsum = p_none/p_none_or_single;
+    epiworld_double cumsum = 1.0 / (1.0 + odds_total);
     if (r < cumsum)
         return -1;
 
     for (epiworld_fast_uint p = 0u; p < nelements; ++p)
     {
         // If it yield here, then bingo, the individual will acquire the disease
-        cumsum += m->array_double_tmp[nelements + p]/(p_none_or_single);
+        cumsum += tmp[nelements + p] / (1.0 + odds_total);
         if (r < cumsum)
             return static_cast<int>(p);
 

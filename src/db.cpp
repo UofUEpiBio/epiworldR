@@ -204,13 +204,15 @@ cpp11::data_frame get_transmissions_cpp(
   std::vector<int> target;
   std::vector<int> virus;
   std::vector<int> source_exposure_date;
+  std::vector<int> layer;
 
   ptr->get_db().get_transmissions(
     date,
     source,
     target,
     virus,
-    source_exposure_date
+    source_exposure_date,
+    layer
   );
 
   // Same idea with the names
@@ -231,6 +233,7 @@ cpp11::data_frame get_transmissions_cpp(
     "virus_id"_nm             = virus,
     "virus"_nm                = vnames,
     "source_exposure_date"_nm = source_exposure_date,
+    "layer"_nm                = layer
   });
 
 }

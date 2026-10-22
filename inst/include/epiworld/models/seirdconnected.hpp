@@ -174,10 +174,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
                 // All neighbors in this set are infected by construction
                 auto & v = neighbor.get_virus();
             
-                #ifdef EPI_DEBUG
-                if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                #endif
+                m->reserve_tmp(static_cast< size_t >(nviruses_tmp) + 1u);
                     
                 /* And it is a function of susceptibility_reduction as well */ 
                 m->array_double_tmp[nviruses_tmp] =
@@ -334,7 +331,7 @@ inline ModelSEIRDCONN<TSeq>::ModelSEIRDCONN(
     this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    this->agents_empty_graph(n);
+    this->set_population_size(n);
 
     this->set_name("Susceptible-Exposed-Infected-Removed-Deceased (SEIRD) (connected)");
 

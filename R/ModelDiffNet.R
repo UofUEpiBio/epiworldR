@@ -7,6 +7,7 @@
 #' @export
 #' @concept general-models
 #' @param name Name of the model.
+#' @param n Number of individuals in the population.
 #' @param prevalence Prevalence of the disease.
 #' @param prob_adopt Probability of adoption.
 #' @param normalize_exposure Normalize exposure.
@@ -41,6 +42,7 @@
 #'
 #' adopt_chatgpt <- ModelDiffNet(
 #'   "ChatGPT",
+#'   n          = n,
 #'   prevalence = .01,
 #'   prob_adopt = .1,
 #'   data       = X,
@@ -48,7 +50,7 @@
 #' )
 #'
 #' # Simulating a population from smallworld
-#' agents_smallworld(adopt_chatgpt, n, 8, FALSE, .01)
+#' add_layer(adopt_chatgpt, layer_network("network", graph_smallworld(k = 8, p = .01)))
 #'
 #' # Running the model for 50 steps
 #' run(adopt_chatgpt, 50)
@@ -58,6 +60,7 @@
 #' @aliases epiworld_diffnet
 ModelDiffNet <- function(
   name,
+  n,
   prevalence,
   prob_adopt,
   normalize_exposure = TRUE,
@@ -67,6 +70,7 @@ ModelDiffNet <- function(
 ) {
   # Check input params
   stopifnot_string(name)
+  stopifnot_int(n)
   stopifnot_double(prevalence)
   stopifnot_double(prob_adopt)
   stopifnot_bool(normalize_exposure)
@@ -82,6 +86,7 @@ ModelDiffNet <- function(
   structure(
     ModelDiffNet_cpp(
       name,
+      n,
       prevalence,
       prob_adopt,
       normalize_exposure,

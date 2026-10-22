@@ -21,6 +21,7 @@ public:
      * @brief Constructs a new SIRD model with the given parameters.
      * 
      * @param vname The name of the vertex associated with this model.
+ * @param n Number of agents.
      * @param prevalence The initial prevalence of the disease in the population.
      * @param transmission_rate The rate at which the disease spreads from infected to susceptible individuals.
      * @param recovery_rate The rate at which infected individuals recover and become immune.
@@ -29,6 +30,7 @@ public:
     ///@{
     ModelSIRD(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate, 
@@ -52,12 +54,15 @@ public:
 template<typename TSeq>
 inline ModelSIRD<TSeq>::ModelSIRD(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate, 
     epiworld_double death_rate
     )
 {
+
+    this->set_population_size(n);
 
     // Adding statuses
     this->add_state("Susceptible", default_update_susceptible<TSeq>);

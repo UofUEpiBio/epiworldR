@@ -30,10 +30,10 @@ private:
      * @brief Outstanding `Everyone` registrations per agent.
      *
      * @details `active[i]` is `everyone[i]` plus the sum of `everyone[j]` over
-     * the agents `j` whose neighbor lists contain `i` (`operator+=` credits
-     * the agents in the registered agent's own list). In an undirected
-     * network those are `i`'s neighbors; in a directed one they are the
-     * agents that list `i`. So this is what a tie is worth to the far end of
+     * the agents `j` whose neighbor lists contain `i`, in every network layer
+     * of the model (`operator+=` credits the agents in the registered agent's
+     * own lists). In an undirected network those are `i`'s neighbors; in a
+     * directed one they are the agents that list `i`. So this is what a tie is worth to the far end of
      * it: adding an edge next to a registered agent is a `+everyone[]`
      * over there, and removing one is the mirror (see `notify_edge_added`).
      *
@@ -61,7 +61,10 @@ private:
     void shift(size_t id, epiworld_fast_int n);
 
     /// @brief Whether the counters have been sized to cover these two agents.
-    bool tracks(Agent<TSeq> * a, Agent<TSeq> * b) const;
+    bool tracks(size_t a, size_t b) const;
+
+    /// @brief Adds `n` to the counts of `id`'s neighbors in every network.
+    void shift_neighbors(size_t id, epiworld_fast_int n);
 
     // Auxiliary variable that checks how many steps
     // left are there
@@ -106,19 +109,18 @@ public:
      * whose count drifted to zero is silently skipped by
      * `Model::update_state()`.
      *
-     * These keep the counts exact as the change happens, in constant time: a new
-     * tie hands each end whatever the other end contributes, and a removed tie
-     * takes it back.
+     * This keeps the counts exact as the change happens, in constant time: an
+     * agent that gains a tie to another hands it whatever it contributes, and
+     * one that loses the tie takes it back.
      *
      * @param a,b The two ends of the tie that was just added or removed.
+     * @param da,db How `a`'s list changed (`+1` gained `b`, `-1` lost it, `0`
+     * unchanged), and `b`'s.
      */
-    ///@{
-    void notify_edge_added(Agent<TSeq> * a, Agent<TSeq> * b);
-    void notify_edge_removed(Agent<TSeq> * a, Agent<TSeq> * b);
-    ///@}
+    void notify_ties_changed(size_t a, int da, size_t b, int db);
 
     /**
-     * @brief Keep the queue in step with `Agent::swap_neighbors()`.
+     * @brief Keep the queue in step with `layer::Network::swap_ties()`.
      *
      * @details `a`'s tie to `b` and `c`'s tie to `d` traded ends: (a-b), (c-d)
      * became (a-d), (c-b). Nobody's degree changed, only whose registrations
@@ -136,10 +138,10 @@ public:
      * @param directed Whether only `a`'s and `c`'s lists changed.
      */
     void notify_edges_swapped(
-        Agent<TSeq> * a,
-        Agent<TSeq> * b,
-        Agent<TSeq> * c,
-        Agent<TSeq> * d,
+        size_t a,
+        size_t b,
+        size_t c,
+        size_t d,
         bool directed
     );
 
@@ -185,18 +187,23 @@ inline void Queue<TSeq>::shift(size_t id, epiworld_fast_int n)
 }
 
 template<typename TSeq>
+inline void Queue<TSeq>::shift_neighbors(size_t id, epiworld_fast_int n)
+{
+
+    for (const auto * net : model->network_layers)
+        for (size_t j : net->ties[id])
+            shift(j, n);
+
+}
+
+template<typename TSeq>
 inline void Queue<TSeq>::operator+=(Agent<TSeq> * p)
 {
 
-    everyone[p->id]++;
-
-    shift(static_cast< size_t >(p->id), 1);
-
-    if (p->get_n_neighbors() == 0u)
-        return; // No neighbors, no need to add them
-
-    for (auto n : (*p->neighbors))
-        shift(n, 1);
+    const size_t id = static_cast< size_t >(p->id);
+    everyone[id]++;
+    shift(id, 1);
+    shift_neighbors(id, 1);
 
 }
 
@@ -204,61 +211,43 @@ template<typename TSeq>
 inline void Queue<TSeq>::operator-=(Agent<TSeq> * p)
 {
 
-    everyone[p->id]--;
-
-    shift(static_cast< size_t >(p->id), -1);
-
-    if (p->get_n_neighbors() == 0u)
-        return; // No neighbors, no need to add them
-
-    for (auto n : (*p->neighbors))
-        shift(n, -1);
+    const size_t id = static_cast< size_t >(p->id);
+    everyone[id]--;
+    shift(id, -1);
+    shift_neighbors(id, -1);
 
 }
 
 template<typename TSeq>
-inline bool Queue<TSeq>::tracks(Agent<TSeq> * a, Agent<TSeq> * b) const
+inline bool Queue<TSeq>::tracks(size_t a, size_t b) const
 {
 
     // The counters are sized by reset(), i.e. when a run starts. Editing the
     // network before that -- while the model is still being set up -- has no
     // queue to keep in step, and the counts are built from the finished network
     // anyway.
-    size_t hi = static_cast< size_t >(a->id > b->id ? a->id : b->id);
-    return everyone.size() > hi;
+    return everyone.size() > (a > b ? a : b);
 
 }
 
 template<typename TSeq>
-inline void Queue<TSeq>::notify_edge_added(Agent<TSeq> * a, Agent<TSeq> * b)
+inline void Queue<TSeq>::notify_ties_changed(size_t a, int da, size_t b, int db)
 {
 
     if (!tracks(a, b))
         return;
 
-    shift(static_cast< size_t >(b->id), everyone[a->id]);
-    shift(static_cast< size_t >(a->id), everyone[b->id]);
-
-}
-
-template<typename TSeq>
-inline void Queue<TSeq>::notify_edge_removed(Agent<TSeq> * a, Agent<TSeq> * b)
-{
-
-    if (!tracks(a, b))
-        return;
-
-    shift(static_cast< size_t >(b->id), -everyone[a->id]);
-    shift(static_cast< size_t >(a->id), -everyone[b->id]);
+    shift(b, da * everyone[a]);
+    shift(a, db * everyone[b]);
 
 }
 
 template<typename TSeq>
 inline void Queue<TSeq>::notify_edges_swapped(
-    Agent<TSeq> * a,
-    Agent<TSeq> * b,
-    Agent<TSeq> * c,
-    Agent<TSeq> * d,
+    size_t a,
+    size_t b,
+    size_t c,
+    size_t d,
     bool directed
 )
 {
@@ -267,17 +256,17 @@ inline void Queue<TSeq>::notify_edges_swapped(
         return;
 
     // `a`'s entry for `b` now names `d`, and `c`'s entry for `d` now names `b`.
-    epiworld_fast_int delta = everyone[c->id] - everyone[a->id];
-    shift(static_cast< size_t >(b->id), delta);
-    shift(static_cast< size_t >(d->id), -delta);
+    epiworld_fast_int delta = everyone[c] - everyone[a];
+    shift(b, delta);
+    shift(d, -delta);
 
     if (directed)
         return;
 
     // `b`'s entry for `a` now names `c`, and `d`'s entry for `c` now names `a`.
-    delta = everyone[d->id] - everyone[b->id];
-    shift(static_cast< size_t >(a->id), delta);
-    shift(static_cast< size_t >(c->id), -delta);
+    delta = everyone[d] - everyone[b];
+    shift(a, delta);
+    shift(c, -delta);
 
 }
 

@@ -5,10 +5,12 @@
 \alias{epiworld_sisd}
 \title{SISD model}
 \usage{
-ModelSISD(name, prevalence, transmission_rate, recovery_rate, death_rate)
+ModelSISD(name, n, prevalence, transmission_rate, recovery_rate, death_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
+
+\item{n}{Number of individuals in the population.}
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
@@ -35,6 +37,7 @@ Susceptible-Infected-Susceptible-Deceased model (SISD) (\href{https://en.wikiped
 \examples{
 model_sisd <- ModelSISD(
   name = "COVID-19",
+  n          = 1000,
   prevalence = 0.01,
   transmission_rate = 0.9,
   recovery_rate = 0.1,
@@ -42,13 +45,7 @@ model_sisd <- ModelSISD(
 )
 
 # Adding a small world population
-agents_smallworld(
-  model_sisd,
-  n = 1000,
-  k = 5,
-  d = FALSE,
-  p = .01
-)
+add_layer(model_sisd, layer_network("network", graph_smallworld(k = 5, p = .01)))
 
 # Running and printing
 run(model_sisd, ndays = 100, seed = 1912)

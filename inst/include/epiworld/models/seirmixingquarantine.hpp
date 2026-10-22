@@ -2,7 +2,6 @@
 #define EPIWORLD_MODELS_SEIRMIXINGQUARANTINE_HPP
 
 #include "../model-bones.hpp"
-#include "../contactmatrix-bones.hpp"
 
 /**
  * @file seirmixingquarantine.hpp
@@ -46,16 +45,11 @@
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSEIRMixingQuarantine :
-    public Model<TSeq>,
-    public ContactMatrix
+    public Model<TSeq>
 {
 private:
 
-    // Samples the infectious contacts (group pools, available counts)
-    sampler::Mixing<TSeq> mixing;
-
     #ifdef EPI_DEBUG
-    std::vector< int > sampled_sizes;
     #endif
 
     // Update functions
@@ -190,8 +184,6 @@ public:
         return isolation_willingness;
     };
 
-    void next() override;
-
 };
 
 template<typename TSeq>
@@ -199,12 +191,6 @@ inline void ModelSEIRMixingQuarantine<TSeq>::reset()
 {
 
     Model<TSeq>::reset();
-
-    // Checking contact matrix dimensions
-    size_t nentities = this->entities.size();
-    this->validate_contact_matrix(nentities);
-
-    mixing.reset(*this);
 
     // Setting up the quarantine parameters
     quarantine_willingness.resize(this->size(), false);
@@ -239,60 +225,9 @@ inline void ModelSEIRMixingQuarantine<TSeq>::_update_susceptible(
     Agent<TSeq> * p, Model<TSeq> * m
 ) {
 
-    if (p->get_n_entities() == 0)
-        return;
-
-    // Downcasting to retrieve the sampler attached to the
-    // class
-    auto * m_down = model_cast<ModelSEIRMixingQuarantine<TSeq>, TSeq>(m);
-
-    size_t ndraws = m_down->mixing.sample(p, *m, *m_down);
-
-    #ifdef EPI_DEBUG
-    m_down->sampled_sizes.push_back(static_cast<int>(ndraws));
-    #endif
-
-    if (ndraws == 0u)
-        return;
-
-    // Drawing from the set
-    int nviruses_tmp = 0;
-    auto & m_ref = *m;
-    for (size_t n = 0u; n < ndraws; ++n)
-    {
-
-        auto & neighbor = m->get_agent(m_down->mixing.sampled_ids()[n]);
-
-        auto & v = neighbor.get_virus();
-
-        #ifdef EPI_DEBUG
-        if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-            throw std::logic_error(
-                "Trying to add an extra element to a temporal array outside of the range."
-            );
-        #endif
-
-        /* And it is a function of susceptibility_reduction as well */
-        m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
-            v->get_prob_infecting(m) *
-            (1.0 - neighbor.get_transmission_reduction(v, m_ref))
-            ;
-
-        m->array_virus_tmp[nviruses_tmp++] = &(*v);
-
-    }
-
-    // Running the roulette
-    int which = roulette(nviruses_tmp, m);
-
-    if (which < 0)
-        return;
-
-    p->set_virus(*m, 
-        *m->array_virus_tmp[which],
-        ModelSEIRMixingQuarantine<TSeq>::EXPOSED
-        );
+    Virus<TSeq> * virus = m->sample_virus(p);
+    if (virus != nullptr)
+        p->set_virus(*m, *virus, ModelSEIRMixingQuarantine<TSeq>::EXPOSED);
 
     return;
 
@@ -686,13 +621,14 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     )
 {
 
-    mixing = sampler::Mixing<TSeq>(
-        {ModelSEIRMixingQuarantine<TSeq>::INFECTED},
-        {ModelSEIRMixingQuarantine<TSeq>::SUSCEPTIBLE, ModelSEIRMixingQuarantine<TSeq>::EXPOSED, ModelSEIRMixingQuarantine<TSeq>::INFECTED, ModelSEIRMixingQuarantine<TSeq>::RECOVERED}
+    // The contacts come from one mixing layer, grouped by entity
+    auto mixing = layer::mixing<TSeq>(
+        "mixing",
+        std::vector< int >({ModelSEIRMixingQuarantine<TSeq>::INFECTED}),
+        std::vector< int >({ModelSEIRMixingQuarantine<TSeq>::SUSCEPTIBLE, ModelSEIRMixingQuarantine<TSeq>::EXPOSED, ModelSEIRMixingQuarantine<TSeq>::INFECTED, ModelSEIRMixingQuarantine<TSeq>::RECOVERED})
     );
-
-    // Setting up the contact matrix
-    this->set_contact_matrix(contact_matrix, true);
+    mixing->set_contact_matrix(contact_matrix);
+    this->add_layer(std::move(mixing));
 
     // Setting up parameters
     this->add_param(transmission_rate, "Prob. Transmission");
@@ -752,7 +688,7 @@ inline ModelSEIRMixingQuarantine<TSeq>::ModelSEIRMixingQuarantine(
     this->set_post_sampling(make_contact_tracing_post_sampling<TSeq>());
 
     // Adding the empty population
-    this->agents_empty_graph(n);
+    this->set_population_size(n);
 
     this->set_name("SEIR with Mixing and Quarantine");
 
@@ -772,15 +708,6 @@ inline ModelSEIRMixingQuarantine<TSeq> & ModelSEIRMixingQuarantine<TSeq>::initia
         ;
 
     return *this;
-
-}
-
-
-template<typename TSeq>
-inline void ModelSEIRMixingQuarantine<TSeq>::next() {
-
-    mixing.update(*this);
-    Model<TSeq>::next();
 
 }
 

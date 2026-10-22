@@ -37,7 +37,7 @@ Our SIR model will have the following characteristics:
 * **Transmission Rate:** 0.04
 * **Number of Agents:** 2,000
 
-We use the `ModelSIR` and `agents_smallworld` functions to construct the model in epiworldR.
+We use the `ModelSIR` and `add_layer` functions to construct the model in epiworldR.
 
 ```{r}
 #| label: setup-sir
@@ -47,18 +47,13 @@ model_seed <- 221
 
 model_sir <- ModelSIR(
   name = "COVID-19",
+  n          = 2000,
   prevalence = .01,
   transmission_rate = .04,
   recovery_rate = 1 / 7
 )
 
-agents_smallworld(
-  model_sir,
-  n = 2000,
-  k = 10,
-  d = FALSE,
-  p = 0.01
-)
+add_layer(model_sir, layer_network("network", graph_smallworld(k = 10, p = 0.01)))
 ```
 
 Then we run the model for 50 days and print the results.

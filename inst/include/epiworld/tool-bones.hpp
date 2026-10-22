@@ -43,7 +43,6 @@ protected:
 
     /// Bitmask of targeted virus lineages (all ones: every virus).
     uint64_t target_mask = ~uint64_t(0);
-    static uint64_t target_bit(int lineage_id); ///< Throws for ids out of range.
 
     epiworld_fast_int state_init = -99;
     epiworld_fast_int state_post = -99;
@@ -54,6 +53,10 @@ protected:
     void set_agent(Agent<TSeq> * p, size_t idx);
 
 public:
+
+    /// Bit of a virus lineage in a target mask (contact layers use it too).
+    static uint64_t target_bit(int lineage_id); ///< Throws for ids out of range.
+
     Tool();
     Tool(std::string name = "unknown tool");
     Tool(

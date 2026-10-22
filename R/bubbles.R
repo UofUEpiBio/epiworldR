@@ -3,7 +3,7 @@
 #' A "social bubble" policy lets people keep seeing a small, fixed set of others
 #' while cutting off the rest of their contacts. `bubbles()` implements such a
 #' policy for models built on an explicit contact network (e.g. [ModelSEIR] or
-#' [ModelSIR] after [agents_smallworld()] or [agents_from_edgelist()]), following
+#' [ModelSIR] with a network layer, see [contact-layers]), following
 #' the household-based rules used during COVID-19.
 #'
 #' @param model An object of class [epiworld_model] whose agents and contact
@@ -45,6 +45,9 @@
 #' bubble is only a transmission rule. `"complete"` also ties every pair of
 #' agents sharing a bubble while the policy is in force, so households become
 #' complete and merged households meet in full (see Details).
+#' @param layer Character scalar. With `ties = "complete"`, the name of the
+#' network layer (see [contact-layers]) the ties are added to. It must be
+#' undirected and have no rewiring function.
 #'
 #' @details
 #' With `ties = "existing"` (the default) the contact network is **not**
@@ -85,8 +88,8 @@
 #'   inside the bubble and damps nothing outside it.
 #' - While they are up, the ties are real network ties (they show up, for
 #'   instance, in the edgelist and in the number of neighbours).
-#' - `"complete"` requires an undirected network (e.g., `d = FALSE` in
-#'   [agents_smallworld()] or `directed = FALSE` in [agents_from_edgelist()]);
+#' - `"complete"` requires an undirected network layer, named in `layer`
+#'   (e.g., `directed = FALSE` in [graph_smallworld()] or [graph_edgelist()]);
 #'   otherwise the run stops with an error. A bubble whose clique would give an
 #'   agent more than 1,024 contacts is also refused.
 #'
@@ -200,18 +203,19 @@
 #'
 #' @export
 #' @concept global-events
-#' @seealso [global-events], [ModelSEIR], [agents_smallworld()]
+#' @seealso [global-events], [ModelSEIR], [contact-layers]
 #' @examples
 #' # A network SEIR model on a small-world contact network
 #' model <- ModelSEIR(
 #'   name              = "Flu",
+#'   n                 = 2000,
 #'   prevalence        = 0.01,
 #'   transmission_rate = 0.1,
 #'   incubation_days   = 4.5,
 #'   recovery_rate     = 1 / 7
 #' )
 #'
-#' agents_smallworld(model, n = 2000, k = 8, d = FALSE, p = 0.05)
+#' add_layer(model, layer_network("network", graph_smallworld(k = 8, p = 0.05)))
 #'
 #' # Households of three agents (in agent order)
 #' household_id <- rep(seq_len(ceiling(2000 / 3)), each = 3)[1:2000]
@@ -250,7 +254,7 @@
 #' #
 #' # Two households per bubble, whose members all meet while the policy lasts:
 #' #   bubbles(model, household_id, "household", group_size = 2,
-#' #           ties = "complete")
+#' #           ties = "complete", layer = "network")
 bubbles <- function(
   model,
   household_id,
@@ -263,7 +267,8 @@ bubbles <- function(
   name                = "Social bubble",
   max_households      = 2L,
   param_name          = "Bubble transmission factor",
-  ties                = c("existing", "complete")
+  ties                = c("existing", "complete"),
+  layer               = ""
 ) {
 
   stopifnot_model(model)
@@ -294,6 +299,8 @@ bubbles <- function(
 
   if (length(name) != 1L || is.na(name) || !is.character(name))
     stop("`name` must be a single, non-missing string.")
+
+  stopifnot_string(layer)
 
   if (length(param_name) != 1L || is.na(param_name) || !is.character(param_name))
     stop("`param_name` must be a single, non-missing string.")
@@ -335,7 +342,8 @@ bubbles <- function(
     name,
     max_households,
     param_name,
-    ties
+    ties,
+    layer
   )
 
   invisible(model)

@@ -3,6 +3,7 @@
 # Create small world population SEIR Model -------------------------------------
 expect_silent(seir_0 <- ModelSEIR(
   name = "A Virus",
+  n = 10000,
   prevalence = .01,
   transmission_rate = .5,
   incubation_days = 7.0,
@@ -13,13 +14,7 @@ expect_silent(seir_0 <- ModelSEIR(
 expect_inherits(seir_0, "epiworld_seir")
 expect_inherits(seir_0, "epiworld_model")
 expect_length(class(seir_0), 2)
-expect_silent(agents_smallworld(
-  seir_0,
-  n = 10000,
-  k = 5,
-  d = FALSE,
-  p = .01
-))
+expect_silent(add_layer(seir_0, layer_network("network", graph_smallworld(k = 5, p = .01))))
 
 
 # Check model run without queuing ----------------------------------------------
@@ -53,6 +48,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(seir_0 <- ModelSEIR(
   name = bad_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -61,6 +57,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = bad_numeric_input,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -69,6 +66,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = bad_numeric_input,
   incubation_days = good_incubation_days,
@@ -77,6 +75,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = bad_numeric_input,
@@ -85,6 +84,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -94,6 +94,7 @@ expect_error(seir_0 <- ModelSEIR(
 # Check NA
 expect_error(seir_0 <- ModelSEIR(
   name = NA,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -102,6 +103,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = NA,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,
@@ -110,6 +112,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = NA,
   incubation_days = good_incubation_days,
@@ -118,6 +121,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = NA,
@@ -126,6 +130,7 @@ expect_error(seir_0 <- ModelSEIR(
 
 expect_error(seir_0 <- ModelSEIR(
   name = good_name,
+  n          = 1000,
   prevalence = good_prevalence,
   transmission_rate = good_transmission_rate,
   incubation_days = good_incubation_days,

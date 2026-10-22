@@ -143,8 +143,8 @@ public:
  *
  * @details A "social bubble" policy lets people keep seeing a small, fixed set
  * of others while cutting off the rest of their contacts. `Bubbles` implements
- * this for models built on an explicit contact network (e.g. `ModelSEIR`,
- * `ModelSIR` after `agents_smallworld()` / `agents_from_edgelist()`), and is
+ * this for models with network layers (e.g. `ModelSEIR` or `ModelSIR` with a
+ * `layer::Network`; it reads the contacts of every network layer), and is
  * designed for the household-based rules used during COVID-19.
  *
  * ## How it works
@@ -264,7 +264,7 @@ public:
  * infection inside it**: every tie is an independent daily exposure, so a bubble
  * of `k` agents gives each member `k - 1` chances a day rather than whatever
  * degree they had. And the ties are **real while they are up** -- they show up
- * in `write_edgelist()`, in `get_n_neighbors()`, and in contact tracing.
+ * in the layer's edge list and degrees, and in contact tracing.
  *
  * Contacts *outside* the bubble are untouched by either setting: they stay in
  * the network and are damped by `f`, which is what makes the bubble imperfect.
@@ -298,22 +298,12 @@ public:
  * though, and is completed afresh; an event that means to keep agents apart
  * across a redraw has to say so again.
  *
- * `BubbleTies::Complete` needs an undirected model and cannot be combined with
- * `Model::set_rewire_fun()` -- a rewiring function moves ties between agents,
- * so a tie the intervention created could be moved out from under it and never
- * withdrawn. Both are checked when the intervention sets itself up. The
- * rewiring check is on the function, not on the proportion: `Model::rewire()`
- * calls the function on every step.
- *
- * Finally, the clique has to fit the virus sampler, which weighs at most half of
- * `Model::array_double_tmp` in neighbors at once when pulling (`roulette()` uses
- * two slots per candidate). The policy answers for the ties it adds, not for the
- * network it was given: a bubble is refused if completing it would take a
- * member past that ceiling, or add to one already past it, while a member the
- * network itself put past it -- a hub -- is fine as long as its bubble adds
- * nothing to it. What binds is each member's resulting *degree*, not the size of
- * the bubble: the clique is added on top of the ties an agent already has
- * outside it.
+ * `BubbleTies::Complete` adds the ties to a network layer named when the
+ * policy is created (or in `set_ties()`). That layer must be undirected and
+ * cannot have a rewiring function (`layer::Network::set_rewiring()`) -- it moves
+ * ties between agents, so a tie the intervention created could be moved out
+ * from under it and never withdrawn. Both are checked when the intervention
+ * sets itself up. The grouping rules read the contacts of every network layer.
  *
  * ## The algorithms
  *
@@ -391,8 +381,10 @@ public:
  * ## Example
  *
  * ```cpp
- * epimodels::ModelSEIR<> model("flu", 0.01, 0.1, 4.5, 1.0/7.0);
- * model.agents_smallworld(10000, 8, false, 0.05);
+ * epimodels::ModelSEIR<> model("flu", 10000, 0.01, 0.1, 4.5, 1.0/7.0);
+ * model.add_layer(layer::network(
+ *     "contacts", graph::smallworld(8, 0.05)
+ * ));
  *
  * std::vector< size_t > household_id(10000);
  * for (size_t i = 0u; i < 10000; ++i)
@@ -422,7 +414,7 @@ public:
  * the bubble to be realized as ties:
  *
  * ```cpp
- * bubbles.set_ties(BubbleTies::Complete);
+ * bubbles.set_ties(BubbleTies::Complete, "contacts");
  * model.add_globalevent(bubbles);
  * ```
  *
@@ -466,6 +458,10 @@ private:
     int rewire_every;
     std::string param_name;          ///< model parameter holding the transmission factor.
     BubbleTies ties;                 ///< whether the bubble is completed to a clique.
+    std::string layer;               ///< network layer the clique is added to.
+
+    /// The network layer of `BubbleTies::Complete` (throws if there is none).
+    layer::Network<TSeq> & tie_layer(Model<TSeq> * model) const;
 
     // Per-model state. Copied with the intervention, so each model (including
     // each per-thread copy made by run_multiple) owns its own partition.
@@ -475,7 +471,7 @@ private:
      * @brief The ties this intervention created, and only those.
      *
      * @details Completing a bubble mostly re-uses ties the network already had;
-     * `Model::add_edge()` reports which ones were genuinely new, and only those
+     * `layer::Network::add_edge()` reports which ones were genuinely new, and only those
      * are recorded here. Withdrawing a bubble then removes exactly what it
      * added, leaving anything the model itself did to the network alone -- which
      * is why this is a list of ties rather than, say, a remembered degree.
@@ -612,6 +608,8 @@ public:
      * @param ties Whether the bubble is only a transmission rule
      *        (`BubbleTies::Existing`, the default) or is completed to a clique
      *        of temporary ties (`BubbleTies::Complete`). See `BubbleTies`.
+     * @param layer Name of the network layer the ties of
+     *        `BubbleTies::Complete` are added to (required then).
      *
      * @throws std::range_error if `transmission_factor` is outside `[0, 1]`, if
      *         `group_size` is zero for the `Household` flavor, if
@@ -629,7 +627,8 @@ public:
         std::string name = "Social bubble",
         size_t max_households = 2u,
         std::string param_name = "Bubble transmission factor",
-        BubbleTies ties = BubbleTies::Existing
+        BubbleTies ties = BubbleTies::Existing,
+        std::string layer = ""
     );
 
     /**
@@ -676,8 +675,11 @@ public:
      * Remember that the model owns its own copy once the intervention has been
      * added, so set this on the object you are about to add, or on the model's
      * copy via `get_from()`.
+     *
+     * @param layer Name of the network layer the ties of
+     *        `BubbleTies::Complete` are added to (required then).
      */
-    void set_ties(BubbleTies ties);
+    void set_ties(BubbleTies ties, std::string layer = "");
 
     /**
      * @brief Ties this intervention is currently keeping up, if any.

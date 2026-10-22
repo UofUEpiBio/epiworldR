@@ -8,119 +8,8 @@
 namespace sampler {
 
 /**
- * @brief Collects the contact probabilities of the neighbors carrying a virus.
- *
- * @details Fills `m->array_double_tmp` and `m->array_virus_tmp` with, for each
- * neighbor of `p` that carries a virus (in the neighbor order), the probability
- * that neighbor's virus is transmitted to `p`, and the virus. Neighbors in a
- * state flagged in `exclude` (if any) are skipped. This is the scan of a pull.
- *
- * During a run, most neighbors do not carry a virus. The model's compact
- * per-agent flag rules them out reading one byte each instead of loading the
- * neighbor's `Agent`; the rest of the loop, including the order in which the
- * arrays are filled, is the same, so the outcome (and the random stream) do not
- * depend on which path runs.
- *
- * @return The number of viruses collected.
- */
-template<typename TSeq, bool Record>
-inline size_t collect_neighbor_viruses_impl(
-    Agent<TSeq> * p,
-    Model<TSeq> * m,
-    const std::vector< bool > * exclude
-)
-{
-
-    size_t nviruses_tmp = 0u;
-
-    auto add = [&](Agent<TSeq> * neighbor) -> void {
-
-        // If the state is in the list, exclude it
-        if ((exclude != nullptr) && (*exclude)[neighbor->get_state()])
-            return;
-
-        auto & v = neighbor->get_virus();
-        if (v == nullptr)
-            return;
-
-        #ifdef EPI_DEBUG
-        if (nviruses_tmp >= m->array_virus_tmp.size())
-            throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-        #endif
-
-        // The post-sampling callback sees every eligible contact
-        if constexpr (Record)
-            m->register_sampled_contact(neighbor->get_id(), p->get_id());
-
-        /* And it is a function of susceptibility_reduction as well */
-        m->array_double_tmp[nviruses_tmp] =
-            (1.0 - p->get_susceptibility_reduction(v, *m)) *
-            v->get_prob_infecting(m) *
-            (1.0 - neighbor->get_transmission_reduction(v, *m))
-            ;
-
-        m->array_virus_tmp[nviruses_tmp++] = &(*v);
-
-        #ifdef EPI_DEBUG
-        if (
-            (m->array_double_tmp[nviruses_tmp - 1] < 0.0) |
-            (m->array_double_tmp[nviruses_tmp - 1] > 1.0)
-            )
-        {
-            printf_epiworld(
-                "[epi-debug] Agent %i's virus has transmission prob outside of [0, 1]: %.4f!\n",
-                static_cast<int>(neighbor->get_id()),
-                m->array_double_tmp[nviruses_tmp - 1]
-                );
-        }
-        #endif
-
-    };
-
-    auto neighbors = p->neighbors_view(*m);
-    const char * carrier = m->get_agent_carrier();
-
-    if (carrier != nullptr)
-    {
-
-        const size_t * ids = neighbors.ids();
-        const size_t n = neighbors.size();
-        for (size_t k = 0u; k < n; ++k)
-            if (carrier[ids[k]] != 0)
-                add(neighbors.agent(k));
-
-    }
-    else
-    {
-
-        for (auto * neighbor: neighbors)
-            add(neighbor);
-
-    }
-
-    return nviruses_tmp;
-
-}
-
-/**
- * @brief Collects the neighbors' viruses (see `collect_neighbor_viruses_impl`),
- * reporting the contacts to the model's post-sampling callback if there is
- * one. The path is chosen once per call, not per neighbor.
- */
-template<typename TSeq>
-inline size_t collect_neighbor_viruses(
-    Agent<TSeq> * p,
-    Model<TSeq> * m,
-    const std::vector< bool > * exclude
-)
-{
-    return m->has_post_sampling() ?
-        collect_neighbor_viruses_impl<TSeq, true>(p, m, exclude) :
-        collect_neighbor_viruses_impl<TSeq, false>(p, m, exclude);
-}
-
-/**
- * @brief Update function for susceptible agents that samples from neighbors.
+ * @brief Update function for susceptible agents that samples from their
+ * neighbors in every network layer (see `Model::sample_virus()`).
  *
  * @details This is what `make_update_susceptible()` returns. It is a named type
  * (rather than a lambda) so that a `Model` can recognize it among its state
@@ -182,31 +71,12 @@ inline void UpdateSusceptible<TSeq>::operator()(
 
     }
 
-    if (p->get_virus() != nullptr)
-        throw std::logic_error(
-            std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
-            std::string("Agent id ") + std::to_string(p->get_id()) +
-            std::string(" has a virus.")
-            );
-
-    // This computes the prob of getting any neighbor variant
-    const size_t nviruses_tmp = collect_neighbor_viruses(
-        p, m, exclude.size() == 0u ? nullptr : &exclude_agent_bool
+    Virus<TSeq> * virus = m->sample_virus(
+        p, exclude.size() == 0u ? nullptr : &exclude_agent_bool
     );
 
-    // No virus to compute
-    if (nviruses_tmp == 0u)
-        return;
-
-    // Running the roulette
-    int which = roulette(nviruses_tmp, m);
-
-    if (which < 0)
-        return;
-
-    p->set_virus(*m, *m->array_virus_tmp[which]);
-
-    return;
+    if (virus != nullptr)
+        p->set_virus(*m, *virus);
 
 }
 
@@ -234,58 +104,6 @@ inline std::function<void(Agent<TSeq>*,Model<TSeq>*)> make_update_susceptible(
 
     return UpdateSusceptible<TSeq>(std::move(exclude));
 
-}
-
-/**
- * @brief Sample from neighbors pool of viruses (at most one)
- * 
- * This function samples at most one virus from the pool of
- * viruses from its neighbors. If no virus is selected, the function
- * returns a `nullptr`, otherwise it returns a pointer to the
- * selected virus.
- * 
- * This can be used to build a new update function (EPI_NEW_UPDATEFUN.)
- * 
- * @tparam TSeq 
- * @param p Pointer to person 
- * @param m Pointer to the model
- * @return Virus<TSeq>* of the selected virus. If none selected (or none
- * available,) returns a nullptr;
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline Virus<TSeq> * sample_virus_single(Agent<TSeq> * p, Model<TSeq> * m)
-{
-
-    if (p->get_virus() != nullptr)
-        throw std::logic_error(
-            std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense!") +
-            std::string("Agent id ") + std::to_string(p->get_id()) +
-            std::string(" has a virus.")
-            );
-
-    // This computes the prob of getting any neighbor variant
-    const size_t nviruses_tmp = collect_neighbor_viruses<TSeq>(p, m, nullptr);
-
-    // No virus to compute
-    if (nviruses_tmp == 0u)
-        return nullptr;
-
-    #ifdef EPI_DEBUG
-    m->get_db().n_transmissions_potential++;
-    #endif
-
-    // Running the roulette
-    int which = roulette(nviruses_tmp, m);
-
-    if (which < 0)
-        return nullptr;
-
-    #ifdef EPI_DEBUG
-    m->get_db().n_transmissions_today++;
-    #endif
-
-    return m->array_virus_tmp[which]; 
-    
 }
 
 }

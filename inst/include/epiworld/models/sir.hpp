@@ -12,6 +12,7 @@
  * 
  * @param model A Model<TSeq> object where to set up the SIR.
  * @param vname std::string Name of the virus
+ * @param n Number of agents.
  * @param initial_prevalence epiworld_double Initial prevalence
  * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
  * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
@@ -25,6 +26,7 @@ public:
 
     ModelSIR(
         const std::string & vname,
+        epiworld_fast_uint n,
         epiworld_double prevalence,
         epiworld_double transmission_rate,
         epiworld_double recovery_rate
@@ -45,11 +47,14 @@ public:
 template<typename TSeq>
 inline ModelSIR<TSeq>::ModelSIR(
     const std::string & vname,
+    epiworld_fast_uint n,
     epiworld_double prevalence,
     epiworld_double transmission_rate,
     epiworld_double recovery_rate
     )
 {
+
+    this->set_population_size(n);
 
     // Adding statuses
     this->add_state("Susceptible", default_update_susceptible<TSeq>);

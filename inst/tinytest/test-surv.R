@@ -17,6 +17,7 @@ good_prob_noreinfect        <- 0.5
 
 expect_silent(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -45,6 +46,7 @@ expected_error_msg_double <- "must be a double"
 
 expect_error(test_model <- ModelSURV(
     name                    = bad_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -61,6 +63,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = bad_numeric_input,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -77,6 +80,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = bad_numeric_input,
     latent_period           = good_latent_period,
@@ -93,6 +97,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = bad_numeric_input,
@@ -109,6 +114,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -125,6 +131,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -141,6 +148,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -157,6 +165,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -173,6 +182,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -189,6 +199,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -205,6 +216,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -221,6 +233,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,
@@ -237,6 +250,7 @@ expect_error(test_model <- ModelSURV(
 
 expect_error(test_model <- ModelSURV(
     name                    = good_name,
+    n                       = 1000,
     prevalence              = good_prevalence,
     efficacy_vax            = good_efficacy_vax,
     latent_period           = good_latent_period,

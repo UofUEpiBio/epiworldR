@@ -2,6 +2,7 @@
 #'
 #'
 #' @param name String. Name of the virus.
+#' @param n Number of individuals in the population.
 #' @param prevalence Initial number of individuals with the virus.
 #' @param efficacy_vax Double. Efficacy of the vaccine.
 #' (1 - P(acquire the disease)).
@@ -30,6 +31,7 @@
 #' @examples
 #' model_surv <- ModelSURV(
 #'   name                  = "COVID-19",
+#'   n                     = 10000,
 #'   prevalence            = 20,
 #'   efficacy_vax          = 0.6,
 #'   latent_period         = 4,
@@ -45,13 +47,7 @@
 #' )
 #'
 #' # Adding a small world population
-#' agents_smallworld(
-#'   model_surv,
-#'   n = 10000,
-#'   k = 5,
-#'   d = FALSE,
-#'   p = .01
-#' )
+#' add_layer(model_surv, layer_network("network", graph_smallworld(k = 5, p = .01)))
 #'
 #' # Running and printing
 #' run(model_surv, ndays = 100, seed = 1912)
@@ -63,6 +59,7 @@
 #' @seealso epiworld-methods
 ModelSURV <- function(
   name,
+  n,
   prevalence,
   efficacy_vax,
   latent_period,
@@ -78,6 +75,7 @@ ModelSURV <- function(
 ) {
   # Check input parameters
   stopifnot_string(name)
+  stopifnot_int(n)
   stopifnot_double(prevalence)
   stopifnot_double(efficacy_vax)
   stopifnot_double(latent_period)
@@ -92,7 +90,7 @@ ModelSURV <- function(
   stopifnot_double(prob_noreinfect)
 
   structure(
-    ModelSURV_cpp(name, prevalence, efficacy_vax, latent_period, infect_period,
+    ModelSURV_cpp(name, n, prevalence, efficacy_vax, latent_period, infect_period,
       prob_symptoms, prop_vaccinated, prop_vax_redux_transm,
       prop_vax_redux_infect, surveillance_prob, transmission_rate,
       prob_death, prob_noreinfect),

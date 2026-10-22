@@ -18,7 +18,8 @@ SEXP bubbles_cpp(
     std::string name,
     int max_households,
     std::string param_name,
-    std::string ties
+    std::string ties,
+    std::string layer
 ) {
 
   external_pointer< Model<int> > modelptr(model);
@@ -42,7 +43,8 @@ SEXP bubbles_cpp(
     name,
     static_cast< size_t >(max_households),
     param_name,
-    tt
+    tt,
+    layer
   );
 
   // Registering the transmission factor as a model parameter here, rather than

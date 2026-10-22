@@ -4,9 +4,9 @@
 model_seed <- 122
 
 # Create and run SIR Model for LFMCMC simulation -------------------------------
-model_sir <- ModelSIR(name = "COVID-19", prevalence = .1, 
+model_sir <- ModelSIR(name = "COVID-19", n = 1000, prevalence = .1, 
                       transmission_rate = .3, recovery_rate = .3)
-agents_smallworld(model_sir, n = 1000, k = 5, d = FALSE, p = 0.01)
+add_layer(model_sir, layer_network("network", graph_smallworld(k = 5, p = 0.01)))
 verbose_off(model_sir)
 run(model_sir, ndays = 50, seed = model_seed)
 

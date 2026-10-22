@@ -17,13 +17,9 @@
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ModelSIRMixing :
-    public Model<TSeq>,
-    public ContactMatrix
+    public Model<TSeq>
 {
 private:
-
-    // Samples the infectious contacts (group pools, available counts)
-    sampler::Mixing<TSeq> mixing;
 
     size_t index(size_t i, size_t j, size_t n) {
         return j * n + i;
@@ -59,8 +55,6 @@ public:
         std::vector< double > contact_matrix
     );
 
-    void reset() override;
-
     std::unique_ptr< Model<TSeq> > clone_ptr() override;
 
     /**
@@ -73,27 +67,7 @@ public:
         std::vector< int > queue_ = {}
     ) override;
 
-    size_t get_n_infected(size_t group) const
-    {
-        return mixing.get_n_infectious(group);
-    }
-
 };
-
-template<typename TSeq>
-inline void ModelSIRMixing<TSeq>::reset()
-{
-
-    Model<TSeq>::reset();
-
-    // Checking contact matrix dimensions
-    size_t nentities = this->entities.size();
-    this->validate_contact_matrix(nentities);
-
-    mixing.reset(*this);
-
-    return;
-}
 
 template<typename TSeq>
 inline std::unique_ptr<Model<TSeq>> ModelSIRMixing<TSeq>::clone_ptr()
@@ -127,68 +101,23 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     )
 {
 
-    mixing = sampler::Mixing<TSeq>(
-        {ModelSIRMixing<TSeq>::INFECTED},
-        {ModelSIRMixing<TSeq>::SUSCEPTIBLE, ModelSIRMixing<TSeq>::INFECTED, ModelSIRMixing<TSeq>::RECOVERED}
+    // The contacts come from one mixing layer, grouped by entity
+    auto mixing = layer::mixing<TSeq>(
+        "mixing",
+        std::vector< int >({ModelSIRMixing<TSeq>::INFECTED}),
+        std::vector< int >({ModelSIRMixing<TSeq>::SUSCEPTIBLE, ModelSIRMixing<TSeq>::INFECTED, ModelSIRMixing<TSeq>::RECOVERED})
     );
-
-    // Setting up the contact matrix
-    this->set_contact_matrix(contact_matrix, true);
+    mixing->set_contact_matrix(contact_matrix);
+    this->add_layer(std::move(mixing));
 
     UpdateFun<TSeq> update_susceptible = [](
         Agent<TSeq> * p, Model<TSeq> * m
         ) -> void
         {
 
-            if (p->get_n_entities() == 0)
-                return;
-
-            // Downcasting to retrieve the sampler attached to the
-            // class
-            auto * m_down = model_cast<ModelSIRMixing<TSeq>, TSeq>(m);
-
-            size_t ndraws = m_down->mixing.sample(p, *m, *m_down);
-
-            if (ndraws == 0u)
-                return;
-
-
-            // Drawing from the set
-            int nviruses_tmp = 0;
-            auto & m_ref = *m;
-            for (size_t n = 0u; n < ndraws; ++n)
-            {
-
-                auto & neighbor = m->get_agent(m_down->mixing.sampled_ids()[n]);
-
-                auto & v = neighbor.get_virus();
-
-                #ifdef EPI_DEBUG
-                if (nviruses_tmp >= static_cast<int>(m->array_virus_tmp.size()))
-                    throw std::logic_error("Trying to add an extra element to a temporal array outside of the range.");
-                #endif
-
-                /* And it is a function of susceptibility_reduction as well */
-                m->array_double_tmp[nviruses_tmp] =
-                    (1.0 - p->get_susceptibility_reduction(v, m_ref)) *
-                    v->get_prob_infecting(m) *
-                    (1.0 - neighbor.get_transmission_reduction(v, m_ref))
-                    ;
-
-                m->array_virus_tmp[nviruses_tmp++] = &(*v);
-
-            }
-
-            // Running the roulette
-            int which = roulette(nviruses_tmp, m);
-
-            if (which < 0)
-                return;
-
-            p->set_virus(*m, 
-                *m->array_virus_tmp[which],
-                ModelSIRMixing<TSeq>::INFECTED
-                );
+            Virus<TSeq> * virus = m->sample_virus(p);
+            if (virus != nullptr)
+                p->set_virus(*m, *virus, ModelSIRMixing<TSeq>::INFECTED);
 
             return;
 
@@ -254,20 +183,6 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     this->add_state("Infected", update_infected);
     this->add_state("Recovered");
 
-    // Global function
-    GlobalFun<TSeq> update = [](Model<TSeq> * m) -> void
-    {
-
-        auto * m_down = model_cast<ModelSIRMixing<TSeq>, TSeq>(m);
-
-        m_down->mixing.update(*m);
-
-        return;
-
-    };
-
-    this->add_globalevent(update, "Update infected individuals");
-
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
@@ -281,7 +196,7 @@ inline ModelSIRMixing<TSeq>::ModelSIRMixing(
     this->queuing_off(); // No queuing need
 
     // Adding the empty population
-    this->agents_empty_graph(n);
+    this->set_population_size(n);
 
     this->set_name("Susceptible-Infected-Removed (SIR) with Mixing");
 

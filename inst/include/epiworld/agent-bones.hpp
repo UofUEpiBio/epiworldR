@@ -33,23 +33,20 @@ template<typename TSeq>
 class AgentsSample;
 
 /**
- * @brief Non-allocating range over an agent's neighbors.
+ * @brief Non-allocating range over an agent's neighbors in a network layer.
  *
- * @details `Agent::get_neighbors()` builds and returns a `std::vector` of
- * pointers, which costs a heap allocation on every call -- and it is called once
- * per susceptible agent per day, in the innermost loop of every state-update
- * function. This view iterates the agent's neighbor ids in place and resolves
- * each one against the model's population as it goes, so the same loop runs
- * without allocating:
+ * @details It iterates the agent's neighbor ids in place and resolves each one
+ * against the model's population as it goes, so a loop over the neighbors does
+ * not allocate:
  *
  * ```cpp
- * for (auto * neighbor : p->neighbors_view(*m))
+ * for (auto * neighbor : net.neighbors_view(p->get_id()))
  *     ...
  * ```
  *
- * The order is the agent's neighbor order, identical to `get_neighbors()`. The
- * view borrows from the agent and the model, so it must not outlive either, and
- * it is invalidated by anything that changes the agent's ties.
+ * The order is the layer's tie order (see `layer::Network`). The view borrows
+ * from the layer and the model, so it must not outlive either, and it is
+ * invalidated by anything that changes the agent's ties.
  *
  * @tparam TSeq Sequence type (should match `TSeq` across the model)
  */
@@ -137,77 +134,6 @@ class Agent {
     friend class Queue<TSeq>;
     friend class AgentsSample<TSeq>;
 protected:
-
-    /**
-     * @brief The agent's ties.
-     *
-     * @details `neighbors` holds the ids of the agent's neighbors in the order
-     * they were added, and that order is load-bearing: `roulette()` walks the
-     * per-neighbor probabilities in this order and consumes a single uniform, so
-     * whichever transmitter sits at a given index is what gets recorded. Adding
-     * or removing a tie must therefore never permute the survivors.
-     *
-     * `neighbor_pos` maps neighbor id -> index in `neighbors`. It is built
-     * lazily: it stays null until the agent's degree passes
-     * `EPI_NEIGHBOR_INDEX_THRESHOLD`, below which a linear scan of the
-     * contiguous id vector is both smaller and faster.
-     */
-    std::vector< size_t > * neighbors = nullptr;
-    std::unordered_map< size_t, size_t > * neighbor_pos = nullptr;
-    size_t n_neighbors = 0u;
-
-    /// @brief Builds `neighbor_pos` from `neighbors` (no-op if it exists).
-    void build_neighbor_index();
-
-    /// @brief Index of `neighbor_id` in `neighbors`, or `n_neighbors` if absent.
-    size_t find_neighbor(size_t neighbor_id) const;
-
-    /// @brief Drops the neighbor at `pos`, keeping the survivors in order.
-    void erase_neighbor_at(size_t pos);
-
-    /**
-     * @brief Appends `neighbor_id` to this agent's neighbors, and only there.
-     *
-     * @details One end of a tie -- all that a directed tie has, since it is
-     * kept by its source (see `Model::is_directed()`). Not public, for the same
-     * reason as `add_neighbor()`.
-     *
-     * @param check Whether to skip `neighbor_id` if it is already a neighbor.
-     * @return `true` if it was appended.
-     */
-    bool append_neighbor(size_t neighbor_id, bool check);
-
-    /**
-     * @name Change this agent's ties
-     *
-     * @details These edit both ends of the tie (`p` among this agent's
-     * neighbors, and this agent among `p`'s), i.e., an undirected tie.
-     *
-     * They are deliberately not public. They edit the network and
-     * nothing else, so calling one while a model is running would leave the
-     * queueing system counting neighbors that no longer exist (or missing ones
-     * that now do), and agents would drop out of `Model::update_state()`
-     * unnoticed. `Model::add_edge()` / `Model::rm_edge()` are the supported
-     * way in: they do this *and* keep the queue in step, and are safe at any
-     * point of a run. `Model` reaches these directly for graph construction,
-     * where there is no queue yet.
-     *
-     * @param p The agent at the other end of the tie.
-     * @param check_source Whether to check that `p` is not already a neighbor of
-     *        this agent before adding it.
-     * @param check_target Whether to check that this agent is not already a
-     *        neighbor of `p`.
-     */
-    ///@{
-    bool add_neighbor( ///< @return `true` if a new tie was created.
-        Agent<TSeq> & p,
-        bool check_source = true,
-        bool check_target = true
-        );
-
-    /// @return `true` if a tie was removed. Survivors keep their relative order.
-    bool rm_neighbor(Agent<TSeq> & p);
-    ///@}
 
     std::vector< size_t > entities; ///< Entity IDs (indices into Model::entities)
 
@@ -328,44 +254,6 @@ public:
     /// @brief Applies the virus' mutation function (throws if the agent has no virus).
     void mutate_virus(Model<TSeq> & model);
 
-    /// @brief Whether `neighbor_id` is one of this agent's neighbors.
-    bool has_neighbor(size_t neighbor_id) const;
-
-    /**
-     * @brief Swaps neighbors between the current agent and agent `other`
-     *
-     * @details `j`, this agent's neighbor at position `n_this`, and `l`,
-     * `other`'s neighbor at position `n_other`, trade places: (this-j),
-     * (other-l) become (this-l), (other-j). In an undirected model, `j` and
-     * `l` are updated to match. No degree changes. `rewire_degseq()` calls
-     * this on every step of a run that uses it as the rewiring function, so,
-     * like `Model::add_edge()`, it keeps the queueing system in step (see
-     * `Queue::notify_edges_swapped()`) and is safe at any point of a run.
-     *
-     * @param other The agent to swap a neighbor with.
-     * @param n_this,n_other Positions of the two neighbors in this agent's and
-     * in `other`'s list.
-     * @param model The model both agents belong to.
-     */
-    void swap_neighbors(
-        Agent<TSeq> & other,
-        size_t n_this,
-        size_t n_other,
-        Model<TSeq> & model
-    );
-
-    std::vector< Agent<TSeq> * > get_neighbors(Model<TSeq> & model);
-
-    /**
-     * @brief The agent's neighbors, without allocating.
-     *
-     * Same agents, same order as `get_neighbors()`, but as a borrowed range
-     * rather than a freshly built vector -- see `NeighborsView`. Prefer it in
-     * per-step loops.
-     */
-    NeighborsView<TSeq> neighbors_view(Model<TSeq> & model);
-
-    size_t get_n_neighbors() const;
 
     void change_state(
         Model<TSeq> & model,
