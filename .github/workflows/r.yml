@@ -85,7 +85,10 @@ jobs:
           path: epiworldR_*.tar.gz
           retention-days: 7
 
+  # On v1-layers (epiworldR 1.0.0), epiworldRShiny's main uses the 0.x API;
+  # it is ported after the 1.0.0 release.
   epiworldShiny:
+    if: ${{ !(github.base_ref == 'v1-layers' || github.ref_name == 'v1-layers') }}
     runs-on: ubuntu-latest
     container: rocker/tidyverse:4.4.0
 
@@ -128,15 +131,18 @@ jobs:
         run: |
           R CMD check --no-manual epiworldRShiny_*tar.gz
 
+  # On v1-layers, the measles package's own v1-layers branch, which ports each
+  # phase after epiworldR does: non-blocking, since it lags by one port.
   measles:
     runs-on: ubuntu-latest
     container: rocker/tidyverse:4.4.0
+    continue-on-error: ${{ (github.base_ref == 'v1-layers' || github.ref_name == 'v1-layers') }}
 
     steps:
       - uses: actions/checkout@v6
         with:
           repository: 'UofUEpiBio/measles'
-          ref: 'main'
+          ref: ${{ (github.base_ref == 'v1-layers' || github.ref_name == 'v1-layers') && 'v1-layers' || 'main' }}
           fetch-depth: 1
 
       - name: Setup js

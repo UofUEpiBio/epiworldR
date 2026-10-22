@@ -405,4 +405,3 @@ initial_states <- function(model, proportions) {
   invisible(initial_states_cpp(model, proportions))
 
 }
-
