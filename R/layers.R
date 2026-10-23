@@ -1,9 +1,9 @@
 #' Contact layers
 #'
 #' Who meets whom in a model comes from its contact layers. A network layer
-#' holds ties between agents; a mixing layer (created by the mixing models,
-#' e.g., [ModelSIRMixing()]) samples contacts between groups with a contact
-#' matrix. Network models (e.g., [ModelSIR()]) start with no layers: add one
+#' holds ties between agents; a mixing layer ([layer_mixing()], also created
+#' by the mixing models, e.g., [ModelSIRMixing()]) draws contacts by group,
+#' with a contact matrix or a contact probability within groups. Network models (e.g., [ModelSIR()]) start with no layers: add one
 #' with `add_layer()`. A model can have several layers, and its susceptible
 #' agents are exposed to the infectious agents of every one of them, in one
 #' draw: e.g., a household network added to [ModelSEIRMixing()] transmits
@@ -157,6 +157,14 @@ layer_network <- function(name, graph) {
 add_layer <- function(model, layer) {
   stopifnot_model(model)
   stopifnot_layer(layer)
+
+  n <- attr(layer, "size")
+  if (!is.null(n) && n != size(model))
+    stop(
+      "The layer has ", n, " agents, but the model has ", size(model), ".",
+      call. = FALSE
+    )
+
   add_layer_cpp(model, layer)
   invisible(model)
 }

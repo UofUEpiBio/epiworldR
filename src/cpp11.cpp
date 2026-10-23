@@ -475,6 +475,13 @@ extern "C" SEXP _epiworldR_layer_network_graph_cpp(SEXP name, SEXP graph) {
   END_CPP11
 }
 // layers.cpp
+SEXP layer_mixing_cpp(std::string name, const std::vector< int > & groups, int n_groups, std::vector< int > infectious, std::vector< int > available);
+extern "C" SEXP _epiworldR_layer_mixing_cpp(SEXP name, SEXP groups, SEXP n_groups, SEXP infectious, SEXP available) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(layer_mixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<const std::vector< int > &>>(groups), cpp11::as_cpp<cpp11::decay_t<int>>(n_groups), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(infectious), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(available)));
+  END_CPP11
+}
+// layers.cpp
 SEXP add_layer_cpp(SEXP model, SEXP layer);
 extern "C" SEXP _epiworldR_add_layer_cpp(SEXP model, SEXP layer) {
   BEGIN_CPP11
@@ -549,6 +556,48 @@ SEXP set_contact_matrix_cpp(SEXP layer, std::vector< double > contact_matrix);
 extern "C" SEXP _epiworldR_set_contact_matrix_cpp(SEXP layer, SEXP contact_matrix) {
   BEGIN_CPP11
     return cpp11::as_sexp(set_contact_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_matrix)));
+  END_CPP11
+}
+// layers.cpp
+std::vector< double > get_contact_prob_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_contact_prob_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_contact_prob_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_contact_prob_cpp(SEXP layer, std::vector< double > contact_prob);
+extern "C" SEXP _epiworldR_set_contact_prob_cpp(SEXP layer, SEXP contact_prob) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_contact_prob_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(contact_prob)));
+  END_CPP11
+}
+// layers.cpp
+int get_n_groups_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_n_groups_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_n_groups_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+int get_group_cpp(SEXP layer, int agent);
+extern "C" SEXP _epiworldR_get_group_cpp(SEXP layer, SEXP agent) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_group_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(agent)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_group_cpp(SEXP layer, int agent, int group);
+extern "C" SEXP _epiworldR_set_group_cpp(SEXP layer, SEXP agent, SEXP group) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_group_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(agent), cpp11::as_cpp<cpp11::decay_t<int>>(group)));
+  END_CPP11
+}
+// layers.cpp
+std::vector< int > members_of_cpp(SEXP layer, int group);
+extern "C" SEXP _epiworldR_members_of_cpp(SEXP layer, SEXP group) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(members_of_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(group)));
   END_CPP11
 }
 // layers.cpp
@@ -1550,6 +1599,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_all_sample_params_cpp",            (DL_FUNC) &_epiworldR_get_all_sample_params_cpp,             1},
     {"_epiworldR_get_all_sample_stats_cpp",             (DL_FUNC) &_epiworldR_get_all_sample_stats_cpp,              1},
     {"_epiworldR_get_contact_matrix_cpp",               (DL_FUNC) &_epiworldR_get_contact_matrix_cpp,                1},
+    {"_epiworldR_get_contact_prob_cpp",                 (DL_FUNC) &_epiworldR_get_contact_prob_cpp,                  1},
     {"_epiworldR_get_current_accepted_params_cpp",      (DL_FUNC) &_epiworldR_get_current_accepted_params_cpp,       1},
     {"_epiworldR_get_current_accepted_stats_cpp",       (DL_FUNC) &_epiworldR_get_current_accepted_stats_cpp,        1},
     {"_epiworldR_get_current_proposed_params_cpp",      (DL_FUNC) &_epiworldR_get_current_proposed_params_cpp,       1},
@@ -1560,6 +1610,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_entity_name_cpp",                  (DL_FUNC) &_epiworldR_get_entity_name_cpp,                   1},
     {"_epiworldR_get_entity_size_cpp",                  (DL_FUNC) &_epiworldR_get_entity_size_cpp,                   1},
     {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               1},
+    {"_epiworldR_get_group_cpp",                        (DL_FUNC) &_epiworldR_get_group_cpp,                         2},
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
     {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    1},
     {"_epiworldR_get_hist_transition_matrix_cpp",       (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,        2},
@@ -1573,6 +1624,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_lineage_virus_cpp",                (DL_FUNC) &_epiworldR_get_lineage_virus_cpp,                 1},
     {"_epiworldR_get_mean_params_cpp",                  (DL_FUNC) &_epiworldR_get_mean_params_cpp,                   1},
     {"_epiworldR_get_mean_stats_cpp",                   (DL_FUNC) &_epiworldR_get_mean_stats_cpp,                    1},
+    {"_epiworldR_get_n_groups_cpp",                     (DL_FUNC) &_epiworldR_get_n_groups_cpp,                      1},
     {"_epiworldR_get_n_params_cpp",                     (DL_FUNC) &_epiworldR_get_n_params_cpp,                      1},
     {"_epiworldR_get_n_replicates_cpp",                 (DL_FUNC) &_epiworldR_get_n_replicates_cpp,                  1},
     {"_epiworldR_get_n_samples_cpp",                    (DL_FUNC) &_epiworldR_get_n_samples_cpp,                     1},
@@ -1609,10 +1661,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
+    {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      5},
     {"_epiworldR_layer_network_generator_cpp",          (DL_FUNC) &_epiworldR_layer_network_generator_cpp,           2},
     {"_epiworldR_layer_network_graph_cpp",              (DL_FUNC) &_epiworldR_layer_network_graph_cpp,               2},
     {"_epiworldR_load_agents_entities_ties_cpp",        (DL_FUNC) &_epiworldR_load_agents_entities_ties_cpp,         3},
     {"_epiworldR_make_saver_cpp",                       (DL_FUNC) &_epiworldR_make_saver_cpp,                       13},
+    {"_epiworldR_members_of_cpp",                       (DL_FUNC) &_epiworldR_members_of_cpp,                        2},
     {"_epiworldR_print_agent_cpp",                      (DL_FUNC) &_epiworldR_print_agent_cpp,                       3},
     {"_epiworldR_print_agent_tools_cpp",                (DL_FUNC) &_epiworldR_print_agent_tools_cpp,                 1},
     {"_epiworldR_print_cpp",                            (DL_FUNC) &_epiworldR_print_cpp,                             2},
@@ -1634,12 +1688,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_run_multiple_cpp",                     (DL_FUNC) &_epiworldR_run_multiple_cpp,                      8},
     {"_epiworldR_set_agents_data_cpp",                  (DL_FUNC) &_epiworldR_set_agents_data_cpp,                   3},
     {"_epiworldR_set_contact_matrix_cpp",               (DL_FUNC) &_epiworldR_set_contact_matrix_cpp,                2},
+    {"_epiworldR_set_contact_prob_cpp",                 (DL_FUNC) &_epiworldR_set_contact_prob_cpp,                  2},
     {"_epiworldR_set_death_reduction_cpp",              (DL_FUNC) &_epiworldR_set_death_reduction_cpp,               2},
     {"_epiworldR_set_death_reduction_fun_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_fun_cpp,           3},
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},
     {"_epiworldR_set_distribution_entity_cpp",          (DL_FUNC) &_epiworldR_set_distribution_entity_cpp,           2},
     {"_epiworldR_set_distribution_tool_cpp",            (DL_FUNC) &_epiworldR_set_distribution_tool_cpp,             2},
     {"_epiworldR_set_distribution_virus_cpp",           (DL_FUNC) &_epiworldR_set_distribution_virus_cpp,            2},
+    {"_epiworldR_set_group_cpp",                        (DL_FUNC) &_epiworldR_set_group_cpp,                         3},
     {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
     {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},
     {"_epiworldR_set_incubation_ptr_cpp",               (DL_FUNC) &_epiworldR_set_incubation_ptr_cpp,                3},

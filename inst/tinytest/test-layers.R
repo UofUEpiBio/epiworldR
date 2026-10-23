@@ -1,5 +1,6 @@
 # Contact layers: network layers from generators and edgelists, the layer
-# objects shared with the model, mixing layers, and the defunct functions.
+# objects shared with the model, mixing layers (across and within groups), and
+# the defunct functions.
 
 # A model without layers has no contacts ---------------------------------------
 sir <- ModelSIR("flu", n = 1000, prevalence = .05, transmission_rate = 1,
@@ -122,6 +123,83 @@ verbose_off(conn)
 add_layer(conn, layer_network("contacts", graph_smallworld(k = 4, p = .1)))
 run(conn, ndays = 10, seed = 1)
 expect_equal(nrow(subset(get_transmissions(conn), source >= 0)), 0L)
+
+# Mixing within groups: a contact probability per pair -------------------------
+# 100 households of 10. With probability 1 the households are cliques: one
+# carrier, transmitting for sure, infects its 9 housemates in a day, and nobody
+# else.
+sir <- ModelSIR("flu", n = 1000, prevalence = 0, transmission_rate = 1,
+  recovery_rate = 0)
+verbose_off(sir)
+set_distribution_virus(get_virus(sir, 0), distribute_virus_to_set(0L))
+
+hh <- layer_mixing(
+  "households",
+  groups            = (0:999) %/% 10,
+  infectious_states = 1,
+  available_states  = 0:2,
+  contact_prob      = 1
+)
+expect_inherits(hh, "epiworld_layer_mixing")
+add_layer(sir, hh)
+
+infected <- function(m) which(get_agents_states(m) == "Infected") - 1L
+
+run(sir, ndays = 1, seed = 1)
+expect_equal(infected(sir), 0:9)
+expect_equal(sort(members_of(hh, 1)), 10:19)
+expect_equal(get_contact_prob(hh), rep(1, 100))
+
+# Moves between runs are kept: the carrier joins household 1, then leaves
+set_group(hh, 0, 1)
+run(sir, ndays = 1, seed = 1)
+expect_equal(infected(sir), c(0L, 10:19))
+expect_equal(get_group(hh, 0), 1L)
+
+set_group(hh, 0, NA)
+run(sir, ndays = 1, seed = 1)
+expect_equal(infected(sir), 0L)
+expect_true(is.na(get_group(hh, 0)))
+
+# A probability set from a global event (at the end of each day) lasts for
+# that run only
+set_group(hh, 0, 0)
+add_globalevent(
+  sir,
+  globalevent_fun(
+    function(m) set_contact_prob(get_layer(m, "households"), 0),
+    "lockdown"
+  )
+)
+run(sir, ndays = 1, seed = 1)
+expect_equal(get_contact_prob(hh), rep(0, 100))
+rm_globalevent(sir, "lockdown")
+run(sir, ndays = 1, seed = 1)
+expect_equal(get_contact_prob(hh), rep(1, 100))
+expect_equal(infected(sir), 0:9)
+
+# Probability .5 per housemate is the same run as 4.5 contacts a day with the
+# 9 housemates, from a diagonal contact matrix
+same_run <- function(...) {
+  m <- ModelSIR("flu", n = 1000, prevalence = .02, transmission_rate = .3,
+    recovery_rate = .1)
+  verbose_off(m)
+  add_layer(m, layer_mixing("households", (0:999) %/% 10, 1, 0:2, ...))
+  run(m, ndays = 30, seed = 2026)
+  get_agents_states(m)
+}
+expect_equal(
+  same_run(contact_prob = .5),
+  same_run(contact_matrix = diag(4.5, 100))
+)
+
+expect_error(layer_mixing("x", 0:9, 1, 0:2), "exactly one")
+expect_error(layer_mixing("x", 0:3, 1.5, 0:2, contact_prob = 1), "integer")
+expect_error(layer_mixing("x", c(0, .5), 1, 0:2, contact_prob = 1), "groups")
+expect_error(layer_mixing("x", c(0, -1), 1, 0:2, contact_prob = 1), "groups")
+expect_error(add_layer(sir, layer_mixing("y", 0:9, 1, 0:2, contact_prob = 1)),
+  "agents")
+expect_error(set_contact_prob(hh, 1.5))
 
 # Defunct functions say what replaces them -------------------------------------
 expect_error(agents_smallworld(sir, 1000, 5, FALSE, .01), "layer_network")

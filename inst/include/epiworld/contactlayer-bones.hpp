@@ -159,6 +159,18 @@ public:
     /// The layer as a network layer, or `nullptr` if it is of another kind.
     virtual layer::Network<TSeq> * as_network() { return nullptr; }
 
+    /// The layer as a mixing layer, or `nullptr` if it is of another kind.
+    virtual layer::Mixing<TSeq> * as_mixing() { return nullptr; }
+
+    /**
+     * @brief Whether the model's queue sees this layer's contacts.
+     * @details True when a carrier can reach only agents the layer can list
+     * from the carrier's side: its ties in an undirected network, its group in
+     * a within-group mixing layer. A model with any other layer visits every
+     * agent instead of using the queue.
+     */
+    virtual bool supports_queue() const { return false; }
+
 };
 
 template<typename TSeq>

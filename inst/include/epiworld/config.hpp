@@ -93,6 +93,8 @@ class ContactLayer;
 namespace layer {
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Network;
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+class Mixing;
 }
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>

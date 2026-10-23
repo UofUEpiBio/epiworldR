@@ -28,7 +28,7 @@ stopifnot_string <- function(x) {
 stopifnot_int <- function(x, lb = NULL, ub = NULL) {
   stopifany_na(x)
 
-  if (!is.numeric(x) || !all.equal(x, as.integer(x))) {
+  if (!is.numeric(x) || !isTRUE(all.equal(x, as.integer(x)))) {
     stop(
       paste(match.call()$x, "must be an integer, but is of class(es): "),
       paste(class(x), collapse = ", ")

@@ -268,6 +268,10 @@ layer_network_graph_cpp <- function(name, graph) {
   .Call(`_epiworldR_layer_network_graph_cpp`, name, graph)
 }
 
+layer_mixing_cpp <- function(name, groups, n_groups, infectious, available) {
+  .Call(`_epiworldR_layer_mixing_cpp`, name, groups, n_groups, infectious, available)
+}
+
 add_layer_cpp <- function(model, layer) {
   .Call(`_epiworldR_add_layer_cpp`, model, layer)
 }
@@ -310,6 +314,30 @@ get_contact_matrix_cpp <- function(layer) {
 
 set_contact_matrix_cpp <- function(layer, contact_matrix) {
   .Call(`_epiworldR_set_contact_matrix_cpp`, layer, contact_matrix)
+}
+
+get_contact_prob_cpp <- function(layer) {
+  .Call(`_epiworldR_get_contact_prob_cpp`, layer)
+}
+
+set_contact_prob_cpp <- function(layer, contact_prob) {
+  .Call(`_epiworldR_set_contact_prob_cpp`, layer, contact_prob)
+}
+
+get_n_groups_cpp <- function(layer) {
+  .Call(`_epiworldR_get_n_groups_cpp`, layer)
+}
+
+get_group_cpp <- function(layer, agent) {
+  .Call(`_epiworldR_get_group_cpp`, layer, agent)
+}
+
+set_group_cpp <- function(layer, agent, group) {
+  .Call(`_epiworldR_set_group_cpp`, layer, agent, group)
+}
+
+members_of_cpp <- function(layer, group) {
+  .Call(`_epiworldR_members_of_cpp`, layer, group)
 }
 
 set_weight_cpp <- function(layer, param) {

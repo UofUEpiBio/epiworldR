@@ -1,6 +1,7 @@
 #' Get or set the contact matrix of a mixing layer
-#' @param layer A mixing layer (class `epiworld_layer_mixing`), retrieved with
-#' [get_layer()] (the mixing models name theirs `"mixing"`).
+#' @param layer A mixing layer (class `epiworld_layer_mixing`), from
+#' [layer_mixing()] or [get_layer()] (the mixing models name theirs
+#' `"mixing"`).
 #' @param contact_matrix A numeric matrix with the contact matrix to be
 #' set for the layer. The matrix should be square and have as many rows as the
 #' layer has groups.

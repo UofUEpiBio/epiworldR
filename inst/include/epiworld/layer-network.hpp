@@ -224,6 +224,9 @@ public:
 
     layer::Network<TSeq> * as_network() override { return this; }
 
+    /// An undirected network: a carrier's ties are its contacts' ties too.
+    bool supports_queue() const override { return !directed; }
+
     std::shared_ptr< ContactLayer<TSeq> > clone() const override
     {
         return std::make_shared< Network<TSeq> >(*this);
