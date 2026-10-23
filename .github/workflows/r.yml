@@ -157,6 +157,8 @@ jobs:
         run: |
           installGithub.r UofUEpiBio/epiworldR@${{ github.sha }}
           install2.r --error quarto tinytest data.table
+          # Suggested by measles; only on the r-universe
+          install2.r --error -r https://uofuepibio.r-universe.dev -r https://cloud.r-project.org multigroup.vaccine
 
       - name: Check the package
         run: |
