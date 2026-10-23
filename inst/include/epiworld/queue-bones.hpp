@@ -63,7 +63,8 @@ private:
     /// @brief Whether the counters have been sized to cover these two agents.
     bool tracks(size_t a, size_t b) const;
 
-    /// @brief Adds `n` to the counts of `id`'s neighbors in every network.
+    /// @brief Adds `n` to the counts of `id`'s neighbors in every network
+    /// and of its group-mates in every within-group mixing layer.
     void shift_neighbors(size_t id, epiworld_fast_int n);
 
     // Auxiliary variable that checks how many steps
@@ -145,6 +146,23 @@ public:
         bool directed
     );
 
+    /**
+     * @brief Keep the queue in step with an agent changing groups in a
+     * within-group mixing layer.
+     *
+     * @details A group works like a clique of ties for the queue: `a` leaving
+     * `from` is a tie lost to each of its members, and joining `to` a tie
+     * gained to each (`from` still lists `a`, `to` does not yet).
+     *
+     * @param a The agent that moved.
+     * @param from,to Members of its old and new groups (`nullptr`: none).
+     */
+    void notify_group_changed(
+        size_t a,
+        const std::vector< size_t > * from,
+        const std::vector< size_t > * to
+    );
+
     // void initialize(Model<TSeq> * m, Agent<TSeq> * p);
     void reset();
 
@@ -194,6 +212,17 @@ inline void Queue<TSeq>::shift_neighbors(size_t id, epiworld_fast_int n)
         for (size_t j : net->ties[id])
             shift(j, n);
 
+    for (const auto * mix : model->group_layers)
+    {
+        const size_t g = mix->get_group(id);
+        if (g == layer::Mixing<TSeq>::NO_GROUP)
+            continue;
+
+        for (size_t j : mix->members_of(g))
+            if (j != id)
+                shift(j, n);
+    }
+
 }
 
 template<typename TSeq>
@@ -239,6 +268,29 @@ inline void Queue<TSeq>::notify_ties_changed(size_t a, int da, size_t b, int db)
 
     shift(b, da * everyone[a]);
     shift(a, db * everyone[b]);
+
+}
+
+template<typename TSeq>
+inline void Queue<TSeq>::notify_group_changed(
+    size_t a,
+    const std::vector< size_t > * from,
+    const std::vector< size_t > * to
+)
+{
+
+    if (!tracks(a, a))
+        return;
+
+    if (from != nullptr)
+        for (size_t j : *from)
+            if (j != a)
+                notify_ties_changed(a, -1, j, -1);
+
+    if (to != nullptr)
+        for (size_t j : *to)
+            if (j != a)
+                notify_ties_changed(a, 1, j, 1);
 
 }
 

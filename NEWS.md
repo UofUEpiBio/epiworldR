@@ -42,6 +42,19 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 * `bubbles()` gains `layer`, the network layer that `ties = "complete"` adds
   ties to.
 
+* Mixing layers are created with `layer_mixing(name, groups,
+  infectious_states, available_states, contact_matrix, contact_prob)` and
+  added to any model. A contact matrix gives the contacts per day across
+  groups; `contact_prob` gives contacts within groups only, as the probability
+  that two members of a group meet on a given day (`1` makes every group a
+  clique, e.g., households, with no ties stored). `set_contact_prob()`,
+  `get_contact_prob()`, `get_group()`, `set_group()` and `members_of()` are
+  new.
+
+* The mixing models draw distinct contacts: each agent meets each infectious
+  member of a group at most once a day. Results for a given seed change (the
+  expected number of contacts does not).
+
 # epiworldR 0.19.0-0
 
 Syncs the C++ core with epiworld 0.19.0 (commit c340f87).

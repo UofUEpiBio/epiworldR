@@ -296,7 +296,21 @@ inline void Model<TSeq>::reserve_tmp(size_t n) {
 
 template<typename TSeq>
 inline void Model<TSeq>::seed(size_t s) {
+
     this->engine->seed(s);
+
+    // Some distributions keep state between calls (e.g., the normal draws
+    // made in pairs, also inside the binomial); without a reset, a run would
+    // depend on the runs before it, not only on its seed
+    rnormd.reset();
+    rgammad.reset();
+    rlognormald.reset();
+    rexpd.reset();
+    rbinomd.reset();
+    rnbinomd.reset();
+    rgeomd.reset();
+    rpoissd.reset();
+
 }
 
 #endif

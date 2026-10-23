@@ -10,8 +10,9 @@ get_contact_matrix(layer)
 set_contact_matrix(layer, contact_matrix)
 }
 \arguments{
-\item{layer}{A mixing layer (class \code{epiworld_layer_mixing}), retrieved with
-\code{\link[=get_layer]{get_layer()}} (the mixing models name theirs \code{"mixing"}).}
+\item{layer}{A mixing layer (class \code{epiworld_layer_mixing}), from
+\code{\link[=layer_mixing]{layer_mixing()}} or \code{\link[=get_layer]{get_layer()}} (the mixing models name theirs
+\code{"mixing"}).}
 
 \item{contact_matrix}{A numeric matrix with the contact matrix to be
 set for the layer. The matrix should be square and have as many rows as the

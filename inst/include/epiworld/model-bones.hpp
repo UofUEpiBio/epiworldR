@@ -83,6 +83,7 @@ class Model {
     friend class DataBase<TSeq>;
     friend class Queue<TSeq>;
     friend class layer::Network<TSeq>;
+    friend class layer::Mixing<TSeq>;
 
 protected:
 
@@ -214,8 +215,10 @@ protected:
      */
     ///@{
     std::vector< layer::Network<TSeq> * > network_layers;
+    std::vector< layer::Mixing<TSeq> * > group_layers; ///< Within-group mixing layers (the queue follows them)
     std::vector< size_t > layer_contacts; ///< Scratch of `sample_virus()`
     bool pull_only = false; ///< See `has_pull_only_layer()`
+    bool queue_blind = false; ///< See `has_queue_blind_layer()`
     int sampled_layer = -1; ///< See `take_sampled_layer()`
 
     /// Adds the exposures of `contacts` to the arrays; returns their number.
@@ -230,7 +233,7 @@ protected:
     /// One draw over the first `n_exposures` exposures.
     Virus<TSeq> * draw_exposure(size_t n_exposures);
     void layers_attach(); ///< Points the layers at this model, lists the networks
-    void layers_classify(); ///< Sets `pull_only`
+    void layers_classify(); ///< Sets `pull_only`, `queue_blind` and `group_layers`
     void layers_detach(); ///< Leaves the layers without a model (they may outlive it)
     void add_layer_ptr(std::shared_ptr< ContactLayer<TSeq> > layer);
     size_t network_degree(size_t id) const; ///< Ties of agent `id`, all networks
@@ -242,6 +245,20 @@ protected:
      * instead of using the queue.
      */
     bool has_pull_only_layer() const { return pull_only; }
+
+    /**
+     * Whether some layer's contacts are not seen by the queue (see
+     * `ContactLayer::supports_queue()`): a directed network, or a mixing layer
+     * with a contact matrix. The model then visits every agent.
+     */
+    bool has_queue_blind_layer() const { return queue_blind; }
+
+    /// Agent `i` moved from `from` to `to` in a within-group mixing layer.
+    void group_member_moved(
+        size_t i,
+        const std::vector< size_t > * from,
+        const std::vector< size_t > * to
+    );
 
     /// A network layer changed the ties of `i` and `j` by `di` and `dj`.
     void network_tie_changed(size_t i, int di, size_t j, int dj);

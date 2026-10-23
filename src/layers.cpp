@@ -104,6 +104,28 @@ SEXP layer_network_graph_cpp(std::string name, SEXP graph) {
   );
 }
 
+// Groups from R: 0-based, NA for none (NO_GROUP)
+[[cpp11::register]]
+SEXP layer_mixing_cpp(
+    std::string name,
+    const std::vector< int > & groups,
+    int n_groups,
+    std::vector< int > infectious,
+    std::vector< int > available
+) {
+
+  std::vector< size_t > g(groups.size());
+  for (size_t i = 0u; i < groups.size(); ++i)
+    g[i] = (groups[i] == NA_INTEGER) ?
+      layer::Mixing<>::NO_GROUP : static_cast< size_t >(groups[i]);
+
+  auto mix = layer::mixing<>(name, std::move(infectious), std::move(available));
+  mix->set_groups(std::move(g), n_groups);
+
+  return external_pointer< LayerPtr >(new LayerPtr(mix));
+
+}
+
 [[cpp11::register]]
 SEXP add_layer_cpp(SEXP model, SEXP layer) {
   external_pointer< Model<> > ptr(model);
@@ -195,6 +217,44 @@ std::vector< double > get_contact_matrix_cpp(SEXP layer) {
 SEXP set_contact_matrix_cpp(SEXP layer, std::vector< double > contact_matrix) {
   mixing_ref(layer).set_contact_matrix(contact_matrix);
   return layer;
+}
+
+[[cpp11::register]]
+std::vector< double > get_contact_prob_cpp(SEXP layer) {
+  return mixing_ref(layer).get_contact_prob();
+}
+
+[[cpp11::register]]
+SEXP set_contact_prob_cpp(SEXP layer, std::vector< double > contact_prob) {
+  mixing_ref(layer).set_contact_prob(contact_prob);
+  return layer;
+}
+
+[[cpp11::register]]
+int get_n_groups_cpp(SEXP layer) {
+  return static_cast< int >(mixing_ref(layer).get_n_groups());
+}
+
+[[cpp11::register]]
+int get_group_cpp(SEXP layer, int agent) {
+  size_t g = mixing_ref(layer).get_group(agent);
+  return (g == layer::Mixing<>::NO_GROUP) ? NA_INTEGER : static_cast< int >(g);
+}
+
+[[cpp11::register]]
+SEXP set_group_cpp(SEXP layer, int agent, int group) {
+  mixing_ref(layer).set_group(
+    agent,
+    (group == NA_INTEGER) ?
+      layer::Mixing<>::NO_GROUP : static_cast< size_t >(group)
+  );
+  return layer;
+}
+
+[[cpp11::register]]
+std::vector< int > members_of_cpp(SEXP layer, int group) {
+  const auto & m = mixing_ref(layer).members_of(group);
+  return std::vector< int >(m.begin(), m.end());
 }
 
 // Every kind of layer -----------------------------------------------------------

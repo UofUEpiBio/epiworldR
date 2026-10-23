@@ -118,9 +118,9 @@ changed; \code{has_edge()} whether the tie exists.
 }
 \description{
 Who meets whom in a model comes from its contact layers. A network layer
-holds ties between agents; a mixing layer (created by the mixing models,
-e.g., \code{\link[=ModelSIRMixing]{ModelSIRMixing()}}) samples contacts between groups with a contact
-matrix. Network models (e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one
+holds ties between agents; a mixing layer (\code{\link[=layer_mixing]{layer_mixing()}}, also created
+by the mixing models, e.g., \code{\link[=ModelSIRMixing]{ModelSIRMixing()}}) draws contacts by group,
+with a contact matrix or a contact probability within groups. Network models (e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one
 with \code{add_layer()}. A model can have several layers, and its susceptible
 agents are exposed to the infectious agents of every one of them, in one
 draw: e.g., a household network added to \code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}} transmits

@@ -1362,7 +1362,7 @@ inline Model<TSeq> & Model<TSeq>::run(
     this->ndays = ndays;
 
     if (seed >= 0)
-        engine->seed(seed);
+        this->seed(static_cast< size_t >(seed));
 
     last_seed = seed;
 
@@ -1698,16 +1698,17 @@ inline void Model<TSeq>::update_state() {
         transmission_update_others();
 
     }
-    else if (use_queuing && !directed)
+    else if (use_queuing && !has_queue_blind_layer())
     {
 
         // Only queued agents, in ascending id order (the order fixes the
         // random number stream).
         //
-        // Directed networks visit everyone instead. Registering an agent
-        // queues the agents on its own list, which in a directed network are
-        // the ones it is exposed to. The ones that can catch something from it
-        // are the ones that list *it*, and the queue never sees those.
+        // Directed networks (and mixing across groups) visit everyone instead.
+        // Registering an agent queues the agents on its own list, which in a
+        // directed network are the ones it is exposed to. The ones that can
+        // catch something from it are the ones that list *it*, and the queue
+        // never sees those.
         queue.for_each_nonzero([this](size_t i) -> void {
 
             if (queue[i] <= 0)
@@ -1748,10 +1749,10 @@ inline void Model<TSeq>::mutate_virus() {
     if (nmutates == 0u)
         return;
 
-    // Directed networks do not use the queue (see update_state()), and must not
-    // start depending on it here: a carrier registered without `Everyone`, or
-    // a count left stale by rewiring, would then mutate only with queuing off.
-    if (use_queuing && !has_pull_only_layer())
+    // Layers the queue does not see (see update_state()) must not start
+    // depending on it here: a carrier registered without `Everyone`, or a count
+    // left stale by rewiring, would then mutate only with queuing off.
+    if (use_queuing && !has_queue_blind_layer())
     {
 
         queue.for_each_nonzero([this](size_t i) -> void {
@@ -2541,6 +2542,7 @@ inline void Model<TSeq>::layers_detach()
     }
 
     network_layers.clear();
+    group_layers.clear();
 
 }
 
@@ -2562,10 +2564,17 @@ inline void Model<TSeq>::layers_classify()
 {
 
     pull_only = false;
+    queue_blind = false;
+    group_layers.clear();
     for (const auto & layer : layers)
     {
         const auto * net = layer->as_network();
         pull_only = pull_only || (net == nullptr) || net->is_directed();
+        queue_blind = queue_blind || !layer->supports_queue();
+
+        auto * mix = layer->as_mixing();
+        if ((mix != nullptr) && mix->supports_queue())
+            group_layers.push_back(mix);
     }
 
 }
@@ -2598,6 +2607,19 @@ inline void Model<TSeq>::network_ties_swapped(
     // Nobody's degree changed, so the degree sums need nothing
     if (use_queuing)
         queue.notify_edges_swapped(i, j, k, l, directed);
+
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::group_member_moved(
+    size_t i,
+    const std::vector< size_t > * from,
+    const std::vector< size_t > * to
+)
+{
+
+    if (use_queuing)
+        queue.notify_group_changed(i, from, to);
 
 }
 
