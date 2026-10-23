@@ -194,6 +194,9 @@ expect_equal(
 )
 
 expect_error(layer_mixing("x", 0:9, 1, 0:2), "exactly one")
+expect_error(layer_mixing("x", 0:3, 1.5, 0:2, contact_prob = 1), "integer")
+expect_error(layer_mixing("x", c(0, .5), 1, 0:2, contact_prob = 1), "groups")
+expect_error(layer_mixing("x", c(0, -1), 1, 0:2, contact_prob = 1), "groups")
 expect_error(add_layer(sir, layer_mixing("y", 0:9, 1, 0:2, contact_prob = 1)),
   "agents")
 expect_error(set_contact_prob(hh, 1.5))

@@ -105,10 +105,15 @@ layer_mixing <- function(
 ) {
 
   stopifnot_string(name)
-  stopifnot_numvector(infectious_states)
-  stopifnot_numvector(available_states)
-  if (!is.numeric(groups) && !all(is.na(groups)))
-    stop("-groups- must be an integer vector (NA for no group).")
+  stopifnot_int(infectious_states, lb = 0)
+  stopifnot_int(available_states, lb = 0)
+
+  # A fraction would be truncated, and a negative id would be NO_GROUP in C++
+  if (
+    !(is.numeric(groups) || all(is.na(groups))) ||
+      any(groups < 0 | groups != round(groups), na.rm = TRUE)
+  )
+    stop("-groups- must be non-negative integers (NA for no group).")
 
   if (is.null(contact_matrix) == is.null(contact_prob))
     stop("Give exactly one of -contact_matrix- and -contact_prob-.")
