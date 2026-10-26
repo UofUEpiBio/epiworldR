@@ -7,6 +7,15 @@ make_hh <- function(n, hh_size = 3L)
   rep(seq_len(ceiling(n / hh_size)), each = hh_size)[seq_len(n)]
 
 ###############################################################################
+# Household-size samples always partition the population, including the
+# 5,000-agent example used by the social-bubbles vignette.
+###############################################################################
+set.seed(2026)
+sampled_sizes <- sample_household_sizes(5000L)
+expect_equal(sum(sampled_sizes), 5000L)
+expect_true(all(sampled_sizes >= 2L & sampled_sizes <= 6L))
+
+###############################################################################
 # Household flavor, group_size = 1: each household is its own bubble, so every
 # transmission must stay within a household.
 ###############################################################################
