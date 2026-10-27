@@ -57,8 +57,8 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 * Any layer can log the contacts it samples: `enable_tracing(layer,
   max_contacts)`, `disable_tracing(layer)`, `is_tracing(layer)`, and
-  `get_tracing(layer)`, which returns the log of the last run as a data frame (`source`, `contact`,
-  `day`).
+  `get_tracing(layer)`, which returns the log of the last run as a data frame
+  (`source`, `contact`, `day`).
 
 * A mixing layer whose groups do not cover the model's agents is an error
   when the model runs (before, `add_layer()` checked it).
