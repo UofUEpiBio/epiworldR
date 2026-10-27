@@ -132,6 +132,8 @@ private:
     void rebuild_layout();
     void rebuild_members();
     void move(size_t agent_id, size_t group, bool notify_queue);
+    void check_agent(size_t agent_id) const;
+    void check_group(size_t group) const;
 
     /// Meets each infectious agent of group `g` with probability `p`.
     void draw(size_t g, double p, size_t agent, Model<TSeq> & model,
@@ -153,6 +155,9 @@ protected:
         std::string, std::vector< int >, std::vector< int >
     );
 
+    // Reads the groups unchecked (as the ties of a network layer)
+    friend class Queue<TSeq>;
+
 public:
 
     /**
@@ -165,7 +170,11 @@ public:
     void set_groups(std::vector< size_t > group_of_agent, size_t n_groups_);
 
     /// Group of an agent (`NO_GROUP` if it is not in the layer).
-    size_t get_group(size_t agent_id) const { return groups[agent_id]; }
+    size_t get_group(size_t agent_id) const
+    {
+        check_agent(agent_id);
+        return groups[agent_id];
+    }
 
     /// Whether the agent takes part in the layer (valid after `reset()`).
     bool in_layer(size_t agent_id) const { return groups[agent_id] != NO_GROUP; }
@@ -219,6 +228,7 @@ public:
     /// The agents of group `g`, in no particular order (valid after `reset()`).
     const std::vector< size_t > & members_of(size_t g) const
     {
+        check_group(g);
         return members[g];
     }
 
@@ -305,22 +315,34 @@ inline void Mixing<TSeq>::set_groups(
 }
 
 template<typename TSeq>
-inline void Mixing<TSeq>::set_group(size_t agent_id, size_t group)
+inline void Mixing<TSeq>::check_agent(size_t agent_id) const
 {
-
     if (agent_id >= groups.size())
         throw std::range_error(
             "Mixing layer '" + this->get_name() + "': agent " +
             std::to_string(agent_id) + " is out of range (the layer has " +
             std::to_string(groups.size()) + " agents; was it reset?)."
         );
+}
 
-    if ((group != NO_GROUP) && (group >= n_groups))
+template<typename TSeq>
+inline void Mixing<TSeq>::check_group(size_t group) const
+{
+    if (group >= n_groups)
         throw std::range_error(
             "Mixing layer '" + this->get_name() + "': group " +
             std::to_string(group) + " is out of range (" +
             std::to_string(n_groups) + " groups)."
         );
+}
+
+template<typename TSeq>
+inline void Mixing<TSeq>::set_group(size_t agent_id, size_t group)
+{
+
+    check_agent(agent_id);
+    if (group != NO_GROUP)
+        check_group(group);
 
     // During a run, the move waits for the end of the step (see update())
     if (!this->edits_baseline())
@@ -786,6 +808,7 @@ inline size_t Mixing<TSeq>::sample(
 
     // Reporting the interactions, only if somebody listens
     const size_t n_sampled = out.size() - first;
+    this->trace(out.data() + first, n_sampled, agent);
     if (model.has_post_sampling())
         model.register_sampled_contacts(
             out.data() + first, n_sampled, static_cast< int >(agent)

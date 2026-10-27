@@ -46,6 +46,8 @@
 #' population size of the model it is added to).
 #' @param rewiring A rewiring function from `rewire_degseq()`.
 #' @param i,j Integer. Ids of the agents at the ends of the tie (starting at 0).
+#' @param max_contacts Integer. Number of contacts the log keeps per agent
+#' (the most recent ones).
 #'
 #' @details
 #' A layer object shares its layer with the model it is added to, so editing
@@ -60,6 +62,11 @@
 #' - `add_virus_target()` restricts the layer to some viruses, by lineage, as
 #' [add_target_tool()] does for tools. A layer without targets spreads every
 #' virus.
+#' - `enable_tracing()` makes the layer log the contacts it samples: each
+#' contact of an infectious agent (the source) with another agent, with the
+#' day. The log starts empty at every run and keeps the last `max_contacts`
+#' contacts of each source. Tracing is off by default; once turned on (or off
+#' with `disable_tracing()`) it lasts across runs.
 #'
 #' @return
 #' - `layer_network()` returns a network layer, of class
@@ -74,7 +81,12 @@
 #' (returned invisibly).
 #' - `add_edge()` and `rm_edge()` return (invisibly) whether the network
 #' changed; `has_edge()` whether the tie exists.
-#' - `set_weight()` and `add_virus_target()` return the layer (invisibly).
+#' - `set_weight()`, `add_virus_target()`, `enable_tracing()` and
+#' `disable_tracing()` return the layer (invisibly).
+#' - `is_tracing()` returns whether the layer keeps a log.
+#' - `get_tracing()` returns the log of the last run as a data frame (columns
+#' `source`, `contact` and `day`; agent ids start at 0). It is an error to
+#' call it on a layer that is not traced.
 #' - `get_edgelist()` returns a data frame with the ties of a network layer
 #' (columns `from` and `to`).
 #' @examples
@@ -87,8 +99,12 @@
 #' contacts <- layer_network("contacts", graph_smallworld(k = 5, p = .01))
 #' add_layer(sir, contacts)
 #'
+#' # Log the contacts sampled through the layer
+#' enable_tracing(contacts, max_contacts = 50)
+#'
 #' run(sir, ndays = 100, seed = 1912)
 #' head(get_edgelist(contacts))
+#' head(get_tracing(contacts))
 #'
 #' # A fixed network, from an edgelist
 #' set.seed(333)
@@ -157,14 +173,6 @@ layer_network <- function(name, graph) {
 add_layer <- function(model, layer) {
   stopifnot_model(model)
   stopifnot_layer(layer)
-
-  n <- attr(layer, "size")
-  if (!is.null(n) && n != size(model))
-    stop(
-      "The layer has ", n, " agents, but the model has ", size(model), ".",
-      call. = FALSE
-    )
-
   add_layer_cpp(model, layer)
   invisible(model)
 }
@@ -313,4 +321,33 @@ add_virus_target <- function(layer, virus) {
 
   invisible(layer)
 
+}
+
+#' @export
+#' @rdname contact-layers
+enable_tracing <- function(layer, max_contacts = 200L) {
+  stopifnot_layer(layer)
+  stopifnot_int(max_contacts, lb = 1)
+  invisible(enable_tracing_cpp(layer, max_contacts))
+}
+
+#' @export
+#' @rdname contact-layers
+disable_tracing <- function(layer) {
+  stopifnot_layer(layer)
+  invisible(disable_tracing_cpp(layer))
+}
+
+#' @export
+#' @rdname contact-layers
+is_tracing <- function(layer) {
+  stopifnot_layer(layer)
+  is_tracing_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+get_tracing <- function(layer) {
+  stopifnot_layer(layer)
+  get_tracing_cpp(layer)
 }

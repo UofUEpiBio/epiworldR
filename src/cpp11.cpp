@@ -573,13 +573,6 @@ extern "C" SEXP _epiworldR_set_contact_prob_cpp(SEXP layer, SEXP contact_prob) {
   END_CPP11
 }
 // layers.cpp
-int get_n_groups_cpp(SEXP layer);
-extern "C" SEXP _epiworldR_get_n_groups_cpp(SEXP layer) {
-  BEGIN_CPP11
-    return cpp11::as_sexp(get_n_groups_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
-  END_CPP11
-}
-// layers.cpp
 int get_group_cpp(SEXP layer, int agent);
 extern "C" SEXP _epiworldR_get_group_cpp(SEXP layer, SEXP agent) {
   BEGIN_CPP11
@@ -612,6 +605,34 @@ SEXP add_virus_target_cpp(SEXP layer, int lineage_id);
 extern "C" SEXP _epiworldR_add_virus_target_cpp(SEXP layer, SEXP lineage_id) {
   BEGIN_CPP11
     return cpp11::as_sexp(add_virus_target_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(lineage_id)));
+  END_CPP11
+}
+// layers.cpp
+SEXP enable_tracing_cpp(SEXP layer, int max_contacts);
+extern "C" SEXP _epiworldR_enable_tracing_cpp(SEXP layer, SEXP max_contacts) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(enable_tracing_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(max_contacts)));
+  END_CPP11
+}
+// layers.cpp
+SEXP disable_tracing_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_disable_tracing_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(disable_tracing_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+bool is_tracing_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_is_tracing_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(is_tracing_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+cpp11::data_frame get_tracing_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_tracing_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_tracing_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
   END_CPP11
 }
 // lfmcmc.cpp
@@ -1568,6 +1589,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_clone_tool_cpp",                       (DL_FUNC) &_epiworldR_clone_tool_cpp,                        1},
     {"_epiworldR_clone_virus_cpp",                      (DL_FUNC) &_epiworldR_clone_virus_cpp,                       1},
     {"_epiworldR_default_transmission_kappa_cpp",       (DL_FUNC) &_epiworldR_default_transmission_kappa_cpp,        0},
+    {"_epiworldR_disable_tracing_cpp",                  (DL_FUNC) &_epiworldR_disable_tracing_cpp,                   1},
     {"_epiworldR_distribute_entity_randomly_cpp",       (DL_FUNC) &_epiworldR_distribute_entity_randomly_cpp,        3},
     {"_epiworldR_distribute_entity_to_set_cpp",         (DL_FUNC) &_epiworldR_distribute_entity_to_set_cpp,          1},
     {"_epiworldR_distribute_tool_randomly_cpp",         (DL_FUNC) &_epiworldR_distribute_tool_randomly_cpp,          3},
@@ -1580,6 +1602,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_draw_from_file_cpp",                   (DL_FUNC) &_epiworldR_draw_from_file_cpp,                    3},
     {"_epiworldR_draw_from_files_cpp",                  (DL_FUNC) &_epiworldR_draw_from_files_cpp,                   3},
     {"_epiworldR_draw_mermaid_cpp",                     (DL_FUNC) &_epiworldR_draw_mermaid_cpp,                      3},
+    {"_epiworldR_enable_tracing_cpp",                   (DL_FUNC) &_epiworldR_enable_tracing_cpp,                    2},
     {"_epiworldR_entity_add_agent_cpp",                 (DL_FUNC) &_epiworldR_entity_add_agent_cpp,                  3},
     {"_epiworldR_entity_cpp",                           (DL_FUNC) &_epiworldR_entity_cpp,                            4},
     {"_epiworldR_entity_get_agents_cpp",                (DL_FUNC) &_epiworldR_entity_get_agents_cpp,                 1},
@@ -1624,7 +1647,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_lineage_virus_cpp",                (DL_FUNC) &_epiworldR_get_lineage_virus_cpp,                 1},
     {"_epiworldR_get_mean_params_cpp",                  (DL_FUNC) &_epiworldR_get_mean_params_cpp,                   1},
     {"_epiworldR_get_mean_stats_cpp",                   (DL_FUNC) &_epiworldR_get_mean_stats_cpp,                    1},
-    {"_epiworldR_get_n_groups_cpp",                     (DL_FUNC) &_epiworldR_get_n_groups_cpp,                      1},
     {"_epiworldR_get_n_params_cpp",                     (DL_FUNC) &_epiworldR_get_n_params_cpp,                      1},
     {"_epiworldR_get_n_replicates_cpp",                 (DL_FUNC) &_epiworldR_get_n_replicates_cpp,                  1},
     {"_epiworldR_get_n_samples_cpp",                    (DL_FUNC) &_epiworldR_get_n_samples_cpp,                     1},
@@ -1644,6 +1666,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_targets_tool_cpp",                 (DL_FUNC) &_epiworldR_get_targets_tool_cpp,                  1},
     {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
+    {"_epiworldR_get_tracing_cpp",                      (DL_FUNC) &_epiworldR_get_tracing_cpp,                       1},
     {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
     {"_epiworldR_get_transmission_kappa_cpp",           (DL_FUNC) &_epiworldR_get_transmission_kappa_cpp,            1},
     {"_epiworldR_get_transmission_mode_cpp",            (DL_FUNC) &_epiworldR_get_transmission_mode_cpp,             1},
@@ -1661,6 +1684,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
+    {"_epiworldR_is_tracing_cpp",                       (DL_FUNC) &_epiworldR_is_tracing_cpp,                        1},
     {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      5},
     {"_epiworldR_layer_network_generator_cpp",          (DL_FUNC) &_epiworldR_layer_network_generator_cpp,           2},
     {"_epiworldR_layer_network_graph_cpp",              (DL_FUNC) &_epiworldR_layer_network_graph_cpp,               2},

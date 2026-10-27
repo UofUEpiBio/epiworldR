@@ -215,6 +215,7 @@ public:
             pull<false>(agent, model, exclude, out.data() + first);
 
         out.resize(first + n);
+        this->trace(out.data() + first, n, agent);
         return n;
 
     }

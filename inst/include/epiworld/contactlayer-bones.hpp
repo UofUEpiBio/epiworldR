@@ -50,6 +50,15 @@
  * dirty layer and clears the flag. An edit made between runs becomes the new
  * baseline.
  *
+ * ### Contact tracing
+ *
+ * `enable_tracing()` makes the layer keep a log of its contacts (a
+ * `ContactTracing`): every contact the layer samples, with a carrier, is
+ * recorded under the carrier, with the day. The log starts empty at every run
+ * and keeps the last `max_contacts` contacts of each agent. Tracing is off by
+ * default, and it is a setting, not an edit: it lasts across runs whenever it
+ * is turned on or off.
+ *
  * @ingroup contact_layers
  */
 template<typename TSeq>
@@ -66,6 +75,15 @@ private:
 
     std::optional< ParamRef > weight_ref; ///< Empty: weight 1
     uint64_t virus_mask = ~uint64_t(0);   ///< Lineages that spread here
+    size_t trace_max = 0u;   ///< Contacts kept per agent; 0: not traced
+    ContactTracing trace_log; ///< This run's contacts, if traced
+
+    /// An empty log for a run of `n` agents (the model calls it at reset).
+    void reset_tracing(size_t n)
+    {
+        if (trace_max > 0u)
+            trace_log.reset(n, trace_max);
+    }
 
 protected:
 
@@ -93,7 +111,8 @@ public:
     /// A copy belongs to no model (see `clone()`).
     ContactLayer(const ContactLayer<TSeq> & other) :
         name(other.name), dirty(other.dirty), weight_ref(other.weight_ref),
-        virus_mask(other.virus_mask) {}
+        virus_mask(other.virus_mask), trace_max(other.trace_max),
+        trace_log(other.trace_log) {}
 
     ContactLayer<TSeq> & operator=(const ContactLayer<TSeq> &) = delete;
 
@@ -123,6 +142,36 @@ public:
     ///@{
     void add_virus_target(int lineage_id);
     void add_virus_target(const Virus<TSeq> & v);
+    ///@}
+
+    /**
+     * @name Contact tracing
+     * @brief Keep a log of the layer's contacts (see the class description).
+     */
+    ///@{
+    /// Turn tracing on, keeping up to `max_contacts` contacts per agent.
+    void enable_tracing(size_t max_contacts = EPI_MAX_TRACKING);
+    void disable_tracing();
+    bool is_tracing() const { return trace_max > 0u; }
+    /// The log of the current run (throws if tracing is off).
+    ContactTracing & get_tracing();
+
+    /// Log that `source` (the carrier) met `contact` today, if traced.
+    void trace(size_t source, size_t contact)
+    {
+        if (trace_max > 0u)
+            trace_log.add_contact(
+                source, contact, static_cast< size_t >(model->today())
+            );
+    }
+
+    /// Log that each of the `n` `sources` met `contact` today, if traced.
+    void trace(const size_t * sources, size_t n, size_t contact)
+    {
+        if (trace_max > 0u)
+            for (size_t k = 0u; k < n; ++k)
+                trace(sources[k], contact);
+    }
     ///@}
 
     /// Whether the virus spreads through the layer.
@@ -172,6 +221,40 @@ public:
     virtual bool supports_queue() const { return false; }
 
 };
+
+template<typename TSeq>
+inline void ContactLayer<TSeq>::enable_tracing(size_t max_contacts)
+{
+    if (max_contacts == 0u)
+        throw std::invalid_argument(
+            "Contact tracing should keep at least one contact per agent."
+        );
+
+    trace_max = max_contacts;
+
+    // Turned on in a model that has agents: logs from now on
+    if (model != nullptr)
+        reset_tracing(model->size());
+}
+
+template<typename TSeq>
+inline void ContactLayer<TSeq>::disable_tracing()
+{
+    trace_max = 0u;
+    trace_log = ContactTracing();
+}
+
+template<typename TSeq>
+inline ContactTracing & ContactLayer<TSeq>::get_tracing()
+{
+    if (trace_max == 0u)
+        throw std::logic_error(
+            "The contact layer '" + name + "' is not traced; call "
+            "enable_tracing() first."
+        );
+
+    return trace_log;
+}
 
 template<typename TSeq>
 inline void ContactLayer<TSeq>::add_virus_target(int lineage_id)
