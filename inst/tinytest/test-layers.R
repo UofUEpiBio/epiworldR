@@ -178,6 +178,20 @@ run(sir, ndays = 1, seed = 1)
 expect_equal(get_contact_prob(hh), rep(1, 100))
 expect_equal(infected(sir), 0:9)
 
+# A traced layer logs its contacts: every transmission is in the log
+expect_false(is_tracing(hh))
+expect_error(get_tracing(hh), "not traced")
+enable_tracing(hh, max_contacts = 20)
+expect_true(is_tracing(hh))
+run(sir, ndays = 1, seed = 1)
+tr <- get_tracing(hh)
+expect_equal(names(tr), c("source", "contact", "day"))
+tx <- subset(get_transmissions(sir), source >= 0)
+expect_equal(nrow(tx), 9L)
+expect_true(all(paste(tx$source, tx$target) %in% paste(tr$source, tr$contact)))
+disable_tracing(hh)
+expect_false(is_tracing(hh))
+
 # Probability .5 per housemate is the same run as 4.5 contacts a day with the
 # 9 housemates, from a diagonal contact matrix
 same_run <- function(...) {
@@ -197,9 +211,16 @@ expect_error(layer_mixing("x", 0:9, 1, 0:2), "exactly one")
 expect_error(layer_mixing("x", 0:3, 1.5, 0:2, contact_prob = 1), "integer")
 expect_error(layer_mixing("x", c(0, .5), 1, 0:2, contact_prob = 1), "groups")
 expect_error(layer_mixing("x", c(0, -1), 1, 0:2, contact_prob = 1), "groups")
-expect_error(add_layer(sir, layer_mixing("y", 0:9, 1, 0:2, contact_prob = 1)),
-  "agents")
 expect_error(set_contact_prob(hh, 1.5))
+expect_error(get_group(hh, 1000), "out of range")
+expect_error(members_of(hh, 100), "out of range")
+
+# A layer whose groups do not cover the model's agents fails when it runs
+bad <- ModelSIR("flu", n = 1000, prevalence = .01, transmission_rate = 1,
+  recovery_rate = 0)
+verbose_off(bad)
+add_layer(bad, layer_mixing("y", 0:9, 1, 0:2, contact_prob = 1))
+expect_error(run(bad, ndays = 1), "agents")
 
 # Defunct functions say what replaces them -------------------------------------
 expect_error(agents_smallworld(sir, 1000, 5, FALSE, .01), "layer_network")

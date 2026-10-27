@@ -1093,6 +1093,11 @@ public:
      * functions by calling `get_contact_tracing().add_contact(...)`.
      * Contact tracing is off by default.
      *
+     * A contact layer keeps its own log instead (see
+     * `ContactLayer::enable_tracing()`), which the SEIR quarantine models
+     * read. The model's log stays only for the measles models, which do not
+     * sample from layers yet, and goes when they do.
+     *
      * @param max_contacts Maximum number of contacts to track per agent
      * (default: EPI_MAX_TRACKING). Only used when turning tracing on.
      */
@@ -1113,9 +1118,9 @@ public:
      * push). Pull and push report the same contacts. The callback is kept by
      * copies of the model, including the ones `run_multiple()` makes.
      *
-     * Installing a callback replaces the previous one. The built-in models
-     * with contact tracing install `make_contact_tracing_post_sampling()`;
-     * replacing it stops them from recording contacts.
+     * Installing a callback replaces the previous one. The measles models
+     * install `make_contact_tracing_post_sampling()` to fill the model's
+     * contact log; replacing it stops them from recording contacts.
      */
     ///@{
     Model<TSeq> & set_post_sampling(PostSamplingFun<TSeq> fun); ///< Install a callback (an empty function clears it).

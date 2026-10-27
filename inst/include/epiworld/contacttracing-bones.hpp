@@ -97,6 +97,9 @@ public:
     size_t get_n_contacts(size_t agent); 
 
     size_t get_max_contacts() const;
+
+    /// Number of agents the log covers (agent ids run from 0 to this - 1).
+    size_t get_n_agents() const;
     
     /**
      * @brief Get the contact object

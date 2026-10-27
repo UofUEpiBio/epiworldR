@@ -1900,7 +1900,10 @@ inline void Model<TSeq>::reset() {
     // follows the ties as agents get a virus, and an intervention may edit
     // them.
     for (auto & layer : layers)
+    {
         layer->reset(*this);
+        layer->reset_tracing(population.size());
+    }
 
     // A generator decides the graph's direction at its reset, so the
     // classification waits until every layer has one.

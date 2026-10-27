@@ -22,7 +22,9 @@
  * - Network-based contacts (the model's network layers, see `layer::Network`)
  * - Quarantine measures for exposed contacts
  * - Isolation policies for detected infected individuals
- * - Contact tracing with configurable success rates
+ * - Contact tracing with configurable success rates, from the contact logs
+ *   of its network layers (the model turns tracing on for each of them at
+ *   reset; see `ContactLayer::enable_tracing()`)
  * - Hospitalization of severe cases
  * - Individual willingness to comply with public health measures
  * - Queueing system support for computational efficiency
@@ -187,6 +189,12 @@ public:
 template<typename TSeq>
 inline void ModelSEIRNetworkQuarantine<TSeq>::reset()
 {
+
+    // The quarantine process reads the contacts of every network layer
+    for (auto * net : this->get_network_layers())
+        if (!net->is_tracing())
+            net->enable_tracing();
+
     Model<TSeq>::reset();
 
     // Setting up the quarantine parameters
@@ -239,6 +247,8 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_update_susceptible(
         // Report the contact: infected neighbor -> susceptible agent
         if (record)
             m->register_sampled_contact(neighbor->get_id(), p->get_id());
+
+        net->trace(neighbor->get_id(), p->get_id());
 
         m->reserve_tmp(static_cast< size_t >(nviruses_tmp) + 1u);
 
@@ -556,61 +566,74 @@ inline void ModelSEIRNetworkQuarantine<TSeq>::_quarantine_process(
             continue;
         }
 
-        size_t n_contacts = m->get_contact_tracing().get_n_contacts(agent_i);
-        if (n_contacts >= EPI_MAX_TRACKING)
-            n_contacts = EPI_MAX_TRACKING;
-
         auto success_rate = EPI_PAR(m, "Contact tracing success rate");
         auto days_prior = EPI_PAR(m, "Contact tracing days prior");
-        for (size_t contact_i = 0u; contact_i < n_contacts; ++contact_i)
+
+        // The contacts in the log of every traced layer, in the order the
+        // layers were added (a log keeps each agent's last contacts only)
+        for (size_t layer_i = 0u; layer_i < m->get_n_layers(); ++layer_i)
         {
-            // Checking if we will detect the contact
-            if (m->runif() > success_rate)
+
+            auto & layer = m->get_layer(layer_i);
+            if (!layer.is_tracing())
                 continue;
 
-            auto [contact_id, contact_date] = m->get_contact_tracing().get_contact(
-                agent_i, contact_i
+            auto & ct = layer.get_tracing();
+            const size_t n_contacts = std::min(
+                ct.get_n_contacts(agent_i), ct.get_max_contacts()
             );
 
-            // Skip contacts outside the tracing window
-            if ((static_cast<double>(m->today()) -
-                static_cast<double>(contact_date)) > days_prior)
-                continue;
-
-            auto & agent = m->get_agent(contact_id);
-
-            if (agent.get_state() > INFECTED)
-                continue;
-
-            // Agents with some tool won't be quarantined
-            if (agent.get_n_tools() != 0u)
-                continue;
-
-            if (model->quarantine_willingness[contact_id])
+            for (size_t contact_i = 0u; contact_i < n_contacts; ++contact_i)
             {
-                switch (agent.get_state())
+                // Checking if we will detect the contact
+                if (m->runif() > success_rate)
+                    continue;
+
+                auto [contact_id, contact_date] = ct.get_contact(
+                    agent_i, contact_i
+                );
+
+                // Skip contacts outside the tracing window
+                if ((static_cast<double>(m->today()) -
+                    static_cast<double>(contact_date)) > days_prior)
+                    continue;
+
+                auto & agent = m->get_agent(contact_id);
+
+                if (agent.get_state() > INFECTED)
+                    continue;
+
+                // Agents with some tool won't be quarantined
+                if (agent.get_n_tools() != 0u)
+                    continue;
+
+                if (model->quarantine_willingness[contact_id])
                 {
-                    case SUSCEPTIBLE:
-                        agent.change_state(*m, QUARANTINED_SUSCEPTIBLE);
-                        model->day_flagged[contact_id] = m->today();
-                        break;
-                    case EXPOSED:
-                        agent.change_state(*m, QUARANTINED_EXPOSED);
-                        model->day_flagged[contact_id] = m->today();
-                        break;
-                    case INFECTED:
-                        if (model->isolation_willingness[contact_id])
-                        {
-                            agent.change_state(*m, ISOLATED);
+                    switch (agent.get_state())
+                    {
+                        case SUSCEPTIBLE:
+                            agent.change_state(*m, QUARANTINED_SUSCEPTIBLE);
                             model->day_flagged[contact_id] = m->today();
-                        }
-                        break;
-                    default:
-                        throw std::logic_error(
-                            "The agent is not in a state that can be quarantined."
-                        );
+                            break;
+                        case EXPOSED:
+                            agent.change_state(*m, QUARANTINED_EXPOSED);
+                            model->day_flagged[contact_id] = m->today();
+                            break;
+                        case INFECTED:
+                            if (model->isolation_willingness[contact_id])
+                            {
+                                agent.change_state(*m, ISOLATED);
+                                model->day_flagged[contact_id] = m->today();
+                            }
+                            break;
+                        default:
+                            throw std::logic_error(
+                                "The agent is not in a state that can be quarantined."
+                            );
+                    }
                 }
             }
+
         }
 
         // Setting the quarantine process off
@@ -692,10 +715,6 @@ inline ModelSEIRNetworkQuarantine<TSeq>::ModelSEIRNetworkQuarantine(
     virus.set_incubation("Avg. Incubation days");
 
     this->add_virus(virus);
-
-    // Enable contact tracing for quarantine process
-    this->contact_tracing_on(EPI_MAX_TRACKING);
-    this->set_post_sampling(make_contact_tracing_post_sampling<TSeq>());
 
     this->set_name("SEIR with Network and Quarantine");
 

@@ -324,10 +324,6 @@ set_contact_prob_cpp <- function(layer, contact_prob) {
   .Call(`_epiworldR_set_contact_prob_cpp`, layer, contact_prob)
 }
 
-get_n_groups_cpp <- function(layer) {
-  .Call(`_epiworldR_get_n_groups_cpp`, layer)
-}
-
 get_group_cpp <- function(layer, agent) {
   .Call(`_epiworldR_get_group_cpp`, layer, agent)
 }
@@ -346,6 +342,22 @@ set_weight_cpp <- function(layer, param) {
 
 add_virus_target_cpp <- function(layer, lineage_id) {
   .Call(`_epiworldR_add_virus_target_cpp`, layer, lineage_id)
+}
+
+enable_tracing_cpp <- function(layer, max_contacts) {
+  .Call(`_epiworldR_enable_tracing_cpp`, layer, max_contacts)
+}
+
+disable_tracing_cpp <- function(layer) {
+  .Call(`_epiworldR_disable_tracing_cpp`, layer)
+}
+
+is_tracing_cpp <- function(layer) {
+  .Call(`_epiworldR_is_tracing_cpp`, layer)
+}
+
+get_tracing_cpp <- function(layer) {
+  .Call(`_epiworldR_get_tracing_cpp`, layer)
 }
 
 LFMCMC_cpp <- function(model) {

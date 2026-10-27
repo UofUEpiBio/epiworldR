@@ -231,11 +231,6 @@ SEXP set_contact_prob_cpp(SEXP layer, std::vector< double > contact_prob) {
 }
 
 [[cpp11::register]]
-int get_n_groups_cpp(SEXP layer) {
-  return static_cast< int >(mixing_ref(layer).get_n_groups());
-}
-
-[[cpp11::register]]
 int get_group_cpp(SEXP layer, int agent) {
   size_t g = mixing_ref(layer).get_group(agent);
   return (g == layer::Mixing<>::NO_GROUP) ? NA_INTEGER : static_cast< int >(g);
@@ -269,4 +264,47 @@ SEXP set_weight_cpp(SEXP layer, std::string param) {
 SEXP add_virus_target_cpp(SEXP layer, int lineage_id) {
   layer_ptr(layer)->add_virus_target(lineage_id);
   return layer;
+}
+
+[[cpp11::register]]
+SEXP enable_tracing_cpp(SEXP layer, int max_contacts) {
+  layer_ptr(layer)->enable_tracing(static_cast< size_t >(max_contacts));
+  return layer;
+}
+
+[[cpp11::register]]
+SEXP disable_tracing_cpp(SEXP layer) {
+  layer_ptr(layer)->disable_tracing();
+  return layer;
+}
+
+[[cpp11::register]]
+bool is_tracing_cpp(SEXP layer) {
+  return layer_ptr(layer)->is_tracing();
+}
+
+[[cpp11::register]]
+cpp11::data_frame get_tracing_cpp(SEXP layer) {
+
+  ContactTracing & log = layer_ptr(layer)->get_tracing();
+
+  std::vector< int > source, contact, day;
+  for (size_t a = 0u; a < log.get_n_agents(); ++a)
+  {
+    const size_t n = std::min(log.get_n_contacts(a), log.get_max_contacts());
+    for (size_t k = 0u; k < n; ++k)
+    {
+      auto [c, d] = log.get_contact(a, k);
+      source.push_back(static_cast< int >(a));
+      contact.push_back(static_cast< int >(c));
+      day.push_back(d);
+    }
+  }
+
+  return cpp11::writable::data_frame({
+    "source"_nm  = source,
+    "contact"_nm = contact,
+    "day"_nm     = day
+  });
+
 }

@@ -55,6 +55,18 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   member of a group at most once a day. Results for a given seed change (the
   expected number of contacts does not).
 
+* Any layer can log the contacts it samples: `enable_tracing(layer,
+  max_contacts)`, `disable_tracing(layer)`, `is_tracing(layer)`, and
+  `get_tracing(layer)`, which returns the log of the last run as a data frame
+  (`source`, `contact`, `day`).
+
+* A mixing layer whose groups do not cover the model's agents is an error
+  when the model runs (before, `add_layer()` checked it).
+
+* In `ModelSEIR()`, infected agents recover through the virus, so tools that
+  enhance recovery now work, as in the other models. Results for a given seed
+  change.
+
 # epiworldR 0.19.0-0
 
 Syncs the C++ core with epiworld 0.19.0 (commit c340f87).

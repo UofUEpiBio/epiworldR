@@ -142,8 +142,6 @@ layer_mixing <- function(
     set_contact_prob_cpp(ptr, as.double(contact_prob))
   }
 
-  # The number of agents, which get_group() checks against
-  attr(ptr, "size") <- length(groups)
   new_layer(ptr, "mixing")
 
 }
@@ -168,16 +166,7 @@ set_contact_prob <- function(layer, contact_prob) {
 get_group <- function(layer, agent) {
 
   stopifnot_layer(layer, "mixing")
-
-  # A layer of a mixing model gets its groups when the model runs
-  n <- attr(layer, "size")
-  if (is.null(n)) {
-    if (get_n_groups_cpp(layer) == 0L)
-      stop("The layer has no groups yet: they are set when the model runs.")
-    n <- size(attr(layer, "model"))
-  }
-
-  stopifnot_int(agent, lb = 0, ub = n - 1)
+  stopifnot_int(agent, lb = 0)
   get_group_cpp(layer, agent)
 
 }
@@ -199,6 +188,6 @@ set_group <- function(layer, agent, group) {
 #' @rdname mixing-layers
 members_of <- function(layer, group) {
   stopifnot_layer(layer, "mixing")
-  stopifnot_int(group, lb = 0, ub = get_n_groups_cpp(layer) - 1)
+  stopifnot_int(group, lb = 0)
   members_of_cpp(layer, group)
 }

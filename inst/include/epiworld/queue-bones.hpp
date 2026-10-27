@@ -214,11 +214,11 @@ inline void Queue<TSeq>::shift_neighbors(size_t id, epiworld_fast_int n)
 
     for (const auto * mix : model->group_layers)
     {
-        const size_t g = mix->get_group(id);
+        const size_t g = mix->groups[id];
         if (g == layer::Mixing<TSeq>::NO_GROUP)
             continue;
 
-        for (size_t j : mix->members_of(g))
+        for (size_t j : mix->members[g])
             if (j != id)
                 shift(j, n);
     }

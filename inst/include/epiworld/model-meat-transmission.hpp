@@ -299,7 +299,11 @@ inline void Model<TSeq>::transmission_push()
 {
 
     // The recording path is chosen once per step, not per contact
-    if (post_sampling_on)
+    bool record = post_sampling_on;
+    for (const auto * net : network_layers)
+        record = record || net->is_tracing();
+
+    if (record)
         transmission_push_impl<true>();
     else
         transmission_push_impl<false>();
@@ -363,7 +367,7 @@ inline void Model<TSeq>::transmission_push_impl()
 
             // Every network, in the order the layers were added, as a pull
             // reads them
-            for (const auto * net : network_layers)
+            for (auto * net : network_layers)
             {
 
                 // Layer rules, as add_exposures() applies them in a pull
@@ -394,12 +398,16 @@ inline void Model<TSeq>::transmission_push_impl()
                     if (use_queuing && (queue[i_id] <= 0))
                         continue;
 
-                    // The post-sampling callback sees every eligible contact, also
-                    // the ones that cannot transmit, as a pull reports them. The
-                    // carriers are visited in ascending id order, so the pairs
-                    // come out grouped by infectious agent.
+                    // The post-sampling callback and the layer's log see every
+                    // eligible contact, also the ones that cannot transmit, as a
+                    // pull reports them. The carriers are visited in ascending id
+                    // order, so the pairs come out grouped by infectious agent.
                     if constexpr (Record)
-                        register_sampled_contact(j_id, i_id);
+                    {
+                        if (post_sampling_on)
+                            register_sampled_contact(j_id, i_id);
+                        net->trace(j_id, i_id);
+                    }
 
                     // A layer of weight 0, or closed to this virus, transmits
                     // nothing (its contacts were still reported above)

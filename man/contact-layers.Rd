@@ -17,6 +17,10 @@
 \alias{get_edgelist}
 \alias{set_weight}
 \alias{add_virus_target}
+\alias{enable_tracing}
+\alias{disable_tracing}
+\alias{is_tracing}
+\alias{get_tracing}
 \title{Contact layers}
 \usage{
 layer_network(name, graph)
@@ -48,6 +52,14 @@ get_edgelist(layer)
 set_weight(layer, param)
 
 add_virus_target(layer, virus)
+
+enable_tracing(layer, max_contacts = 200L)
+
+disable_tracing(layer)
+
+is_tracing(layer)
+
+get_tracing(layer)
 }
 \arguments{
 \item{name}{String. Name of the layer (unique within a model). In
@@ -96,6 +108,9 @@ parameter holding the proportion of ties rewired at the end of each step.}
 
 \item{virus}{A virus added to the model, a list of them, or lineage ids:
 the lineages that spread through the layer (as in \code{\link[=add_target_tool]{add_target_tool()}}).}
+
+\item{max_contacts}{Integer. Number of contacts the log keeps per agent
+(the most recent ones).}
 }
 \value{
 \itemize{
@@ -111,7 +126,12 @@ the lineages that spread through the layer (as in \code{\link[=add_target_tool]{
 (returned invisibly).
 \item \code{add_edge()} and \code{rm_edge()} return (invisibly) whether the network
 changed; \code{has_edge()} whether the tie exists.
-\item \code{set_weight()} and \code{add_virus_target()} return the layer (invisibly).
+\item \code{set_weight()}, \code{add_virus_target()}, \code{enable_tracing()} and
+\code{disable_tracing()} return the layer (invisibly).
+\item \code{is_tracing()} returns whether the layer keeps a log.
+\item \code{get_tracing()} returns the log of the last run as a data frame (columns
+\code{source}, \code{contact} and \code{day}; agent ids start at 0). It is an error to
+call it on a layer that is not traced.
 \item \code{get_edgelist()} returns a data frame with the ties of a network layer
 (columns \code{from} and \code{to}).
 }
@@ -145,6 +165,11 @@ layer without a weight has weight 1.
 \item \code{add_virus_target()} restricts the layer to some viruses, by lineage, as
 \code{\link[=add_target_tool]{add_target_tool()}} does for tools. A layer without targets spreads every
 virus.
+\item \code{enable_tracing()} makes the layer log the contacts it samples: each
+contact of an infectious agent (the source) with another agent, with the
+day. The log starts empty at every run and keeps the last \code{max_contacts}
+contacts of each source. Tracing is off by default; once turned on (or off
+with \code{disable_tracing()}) it lasts across runs.
 }
 }
 \examples{
@@ -157,8 +182,12 @@ sir <- ModelSIR(
 contacts <- layer_network("contacts", graph_smallworld(k = 5, p = .01))
 add_layer(sir, contacts)
 
+# Log the contacts sampled through the layer
+enable_tracing(contacts, max_contacts = 50)
+
 run(sir, ndays = 100, seed = 1912)
 head(get_edgelist(contacts))
+head(get_tracing(contacts))
 
 # A fixed network, from an edgelist
 set.seed(333)
