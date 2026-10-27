@@ -54,18 +54,6 @@ public:
         return;
     };
 
-
-    UpdateFun<TSeq> update_infected_seir = [](
-        Agent<TSeq> * p,
-        Model<TSeq> * m
-    ) -> void {
-        // Does the agent recover?
-        if (m->runif() < EPI_PAR(m, "Recovery rate"))
-            p->rm_virus(*m);
-
-        return;
-    };
-
     /**
      * @brief Set up the initial states of the model.
      * @param proportions_ Double vector with the following values:
@@ -100,7 +88,7 @@ inline ModelSEIR<TSeq>::ModelSEIR(
         sampler::make_update_susceptible<TSeq>({ModelSEIR<TSeq>::EXPOSED})
     );
     this->add_state("Exposed", this->update_exposed_seir);
-    this->add_state("Infected", this->update_infected_seir);
+    this->add_state("Infected", default_update_exposed<TSeq>);
     this->add_state("Removed");
 
     // Setting up parameters
