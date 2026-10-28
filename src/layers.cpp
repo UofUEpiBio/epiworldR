@@ -256,6 +256,28 @@ std::vector< int > members_of_cpp(SEXP layer, int group) {
   return std::vector< int >(m.begin(), m.end());
 }
 
+[[cpp11::register]]
+cpp11::data_frame groupmates_of_cpp(SEXP layer, int agent, int from, int to) {
+
+  std::vector< layer::Mixing<>::Groupmate > mates;
+  mixing_ref(layer).groupmates_of(agent, from, to, mates);
+
+  std::vector< int > id, last_day, n_days;
+  for (const auto & m : mates)
+  {
+    id.push_back(static_cast< int >(m.agent));
+    last_day.push_back(m.last_day);
+    n_days.push_back(m.n_days);
+  }
+
+  return cpp11::writable::data_frame({
+    "agent"_nm    = id,
+    "last_day"_nm = last_day,
+    "n_days"_nm   = n_days
+  });
+
+}
+
 // Every kind of layer -----------------------------------------------------------
 
 [[cpp11::register]]

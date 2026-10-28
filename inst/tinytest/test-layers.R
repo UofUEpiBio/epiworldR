@@ -193,6 +193,60 @@ expect_equal(names(tr), c("source", "contact", "day"))
 tx <- subset(get_transmissions(sir), source >= 0)
 expect_equal(nrow(tx), 9L)
 expect_true(all(paste(tx$source, tx$target) %in% paste(tr$source, tr$contact)))
+
+# ...and keeps who shared a group: agent 0's nine housemates on day 1
+gm <- groupmates_of(hh, 0)
+expect_equal(names(gm), c("agent", "last_day", "n_days"))
+expect_equal(gm$agent, 1:9)
+expect_true(all(gm$last_day == 1L & gm$n_days == 1L))
+
+# The history covers whole runs: a move between runs drops it
+set_group(hh, 1, 1)
+expect_error(groupmates_of(hh, 0), "no history")
+set_group(hh, 1, 0)
+
+# Moves during a run count from the next day. Two households of three: agent
+# 2 moves to the second on day 3 and back on day 6; agent 4 leaves the layer
+# on day 5 and returns on day 7.
+trio <- ModelSIR("flu", n = 6, prevalence = 0, transmission_prob = .5,
+  recovery_rate = .1)
+verbose_off(trio)
+homes <- layer_mixing("homes", groups = c(0, 0, 0, 1, 1, 1), contact_prob = 1)
+enable_tracing(homes)
+add_layer(trio, homes)
+moves <- list(c(3, 2, 1), c(5, 4, NA), c(6, 2, 0), c(7, 4, 1))
+for (mv in moves)
+  add_globalevent(
+    trio,
+    globalevent_fun(
+      local({
+        mv <- mv
+        function(m) set_group(get_layer(m, "homes"), mv[2], mv[3])
+      }),
+      name = paste("move", mv[2], "on day", mv[1]),
+      day  = mv[1]
+    )
+  )
+run(trio, ndays = 8, seed = 1)
+
+# Agent 2: home on days 1-3 and 7-8, in the second household on days 4-6,
+# where agent 4 was on days 4-5 (gone on 6-7, back on 8)
+expect_equal(
+  groupmates_of(homes, 2),
+  data.frame(
+    agent    = c(0L, 1L, 3L, 4L, 5L),
+    last_day = c(8L, 8L, 6L, 5L, 6L),
+    n_days   = c(5L, 5L, 3L, 2L, 3L)
+  )
+)
+expect_equal(
+  groupmates_of(homes, 4, from = 5, to = 8),
+  data.frame(
+    agent    = c(2L, 3L, 5L),
+    last_day = c(5L, 8L, 8L),
+    n_days   = c(1L, 2L, 2L)
+  )
+)
 disable_tracing(hh)
 expect_false(is_tracing(hh))
 

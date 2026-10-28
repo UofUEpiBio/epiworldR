@@ -6,10 +6,11 @@
  * @brief Collection of predefined epidemiological models for disease simulation
  * 
  * This module provides a comprehensive collection of epidemiological models commonly
- * used in disease simulation and modeling. A model is a disease (its states,
- * parameters and update rules); where contacts come from is up to its layers
- * (networks, mixing by group, or both; see `Model::add_layer()`). The models
- * range from basic compartmental models to quarantine measures and
+ * used in disease simulation and modeling. A model's states, parameters and
+ * update rules describe the course of infection; its layers describe who meets
+ * whom (networks, mixing by group, or both; see `Model::add_layer()`). A model
+ * can carry several viruses (`Model::add_virus()`), which share its states. The
+ * models range from basic compartmental models to quarantine measures and
  * disease-specific implementations.
  * 
  * **Implementation details:**

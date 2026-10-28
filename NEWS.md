@@ -90,6 +90,11 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   `get_tracing(layer)`, which returns the log of the last run as a data frame
   (`source`, `contact`, `day`).
 
+* A traced mixing layer with contact probabilities also keeps the run's
+  history of moves and absences: `groupmates_of(layer, agent, from, to)`
+  returns who shared a group with the agent, both present, with the last day
+  and the number of days they did (contact tracing by membership).
+
 * A mixing layer whose groups do not cover the model's agents is an error
   when the model runs (before, `add_layer()` checked it).
 

@@ -9,6 +9,7 @@
 \alias{get_group}
 \alias{set_group}
 \alias{members_of}
+\alias{groupmates_of}
 \title{Mixing layers}
 \usage{
 layer_mixing(name, groups, contact_matrix = NULL, contact_prob = NULL)
@@ -24,6 +25,8 @@ get_group(layer, agent)
 set_group(layer, agent, group)
 
 members_of(layer, group)
+
+groupmates_of(layer, agent, from = 1L, to = .Machine$integer.max)
 }
 \arguments{
 \item{name}{String. Name of the layer (unique within a model).}
@@ -48,6 +51,9 @@ parameter the contact matrix is multiplied by (add it with \code{\link[=add_para
 
 \item{group}{Integer. Id of a group (starting at 0); in \code{set_group()}, \code{NA}
 takes the agent out of the layer.}
+
+\item{from, to}{Integers. In \code{groupmates_of()}, the first and last day of
+the window (days after the last one simulated are left out).}
 }
 \value{
 \itemize{
@@ -60,6 +66,9 @@ layer invisibly.
 \item \code{get_group()} returns the group of the agent (\code{NA} if none).
 \item \code{members_of()} returns the ids of the agents in the group, in no
 particular order.
+\item \code{groupmates_of()} returns a data frame with one row per groupmate, in
+ascending id order: \code{agent}, \code{last_day} (the last day they shared a group,
+both present), and \code{n_days} (how many days they did).
 }
 }
 \description{
@@ -98,6 +107,16 @@ event) lasts for that run only, and one made between runs is kept. A move
 made with \code{set_group()} during a day takes effect at the end of the day.
 A layer with a contact matrix and one with contact probabilities cannot be
 swapped during a run.
+
+A layer with contact probabilities that is traced (\code{\link[=enable_tracing]{enable_tracing()}},
+before the run) also keeps the run's history of who was in which group and
+who was absent (in a state the model takes out of the layers, e.g., isolated
+in \code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}}). \code{groupmates_of()} reads it: who shared a group
+with \code{agent}, both present, between days \code{from} and \code{to}. With
+\code{contact_prob = 1} that is exactly who the agent met; below 1, who it could
+have met ("notify the household"). The history covers whole runs: tracing
+turned on during a run, or a grouping edited after it, gives none (an
+error) until the next run.
 }
 \examples{
 # 1,000 agents in households of 4: everyone meets their housemates daily
@@ -127,9 +146,13 @@ add_layer(
   )
 )
 
+enable_tracing(households)
 run(sir, ndays = 50, seed = 1)
 members_of(households, 0)
 get_contact_prob(households)
+
+# Who shared a household with agent 0 in the last week
+groupmates_of(households, 0, from = 44, to = 50)
 
 # Random mixing: everyone meets "Contact rate" others a day
 seir <- ModelSEIR(
