@@ -19,6 +19,8 @@ The following models are included:
 
 5. `models::ModelSURV` Surveillance
 
-Contacts come from the model's layers (networks, mixing by group, or both), so
-there is one model per disease, whatever the contacts.
+A model's states describe the course of infection; its layers (networks,
+mixing by group, or both) describe who meets whom. So there is one model per
+compartmental structure, whatever the contacts, and a model can carry several
+viruses (`add_virus()`), which share its states.
 

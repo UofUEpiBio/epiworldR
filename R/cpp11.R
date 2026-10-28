@@ -316,6 +316,10 @@ members_of_cpp <- function(layer, group) {
   .Call(`_epiworldR_members_of_cpp`, layer, group)
 }
 
+groupmates_of_cpp <- function(layer, agent, from, to) {
+  .Call(`_epiworldR_groupmates_of_cpp`, layer, agent, from, to)
+}
+
 set_weight_cpp <- function(layer, param) {
   .Call(`_epiworldR_set_weight_cpp`, layer, param)
 }

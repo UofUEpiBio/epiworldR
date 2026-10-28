@@ -193,6 +193,17 @@ expect_equal(names(tr), c("source", "contact", "day"))
 tx <- subset(get_transmissions(sir), source >= 0)
 expect_equal(nrow(tx), 9L)
 expect_true(all(paste(tx$source, tx$target) %in% paste(tr$source, tr$contact)))
+
+# ...and keeps who shared a group: agent 0's nine housemates on day 1
+gm <- groupmates_of(hh, 0)
+expect_equal(names(gm), c("agent", "last_day", "n_days"))
+expect_equal(gm$agent, 1:9)
+expect_true(all(gm$last_day == 1L & gm$n_days == 1L))
+
+# The history covers whole runs: a move between runs drops it
+set_group(hh, 1, 1)
+expect_error(groupmates_of(hh, 0), "no history")
+set_group(hh, 1, 0)
 disable_tracing(hh)
 expect_false(is_tracing(hh))
 

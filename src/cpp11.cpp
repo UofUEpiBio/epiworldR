@@ -559,6 +559,13 @@ extern "C" SEXP _epiworldR_members_of_cpp(SEXP layer, SEXP group) {
   END_CPP11
 }
 // layers.cpp
+cpp11::data_frame groupmates_of_cpp(SEXP layer, int agent, int from, int to);
+extern "C" SEXP _epiworldR_groupmates_of_cpp(SEXP layer, SEXP agent, SEXP from, SEXP to) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(groupmates_of_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(agent), cpp11::as_cpp<cpp11::decay_t<int>>(from), cpp11::as_cpp<cpp11::decay_t<int>>(to)));
+  END_CPP11
+}
+// layers.cpp
 SEXP set_weight_cpp(SEXP layer, std::string param);
 extern "C" SEXP _epiworldR_set_weight_cpp(SEXP layer, SEXP param) {
   BEGIN_CPP11
@@ -1654,6 +1661,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_graph_edgelist_cpp",                   (DL_FUNC) &_epiworldR_graph_edgelist_cpp,                    4},
     {"_epiworldR_graph_sbm_cpp",                        (DL_FUNC) &_epiworldR_graph_sbm_cpp,                         3},
     {"_epiworldR_graph_smallworld_cpp",                 (DL_FUNC) &_epiworldR_graph_smallworld_cpp,                  3},
+    {"_epiworldR_groupmates_of_cpp",                    (DL_FUNC) &_epiworldR_groupmates_of_cpp,                     4},
     {"_epiworldR_has_edge_cpp",                         (DL_FUNC) &_epiworldR_has_edge_cpp,                          3},
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},

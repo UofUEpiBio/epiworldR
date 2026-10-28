@@ -38,6 +38,8 @@
 #' takes the agent out of the layer.
 #' @param param String. In `set_contact_rate()`, the name of the model
 #' parameter the contact matrix is multiplied by (add it with [add_param()]).
+#' @param from,to Integers. In `groupmates_of()`, the first and last day of
+#' the window (days after the last one simulated are left out).
 #'
 #' @details
 #' Give exactly one of `contact_matrix` and `contact_prob`. The number of
@@ -50,6 +52,16 @@
 #' A layer with a contact matrix and one with contact probabilities cannot be
 #' swapped during a run.
 #'
+#' A layer with contact probabilities that is traced ([enable_tracing()],
+#' before the run) also keeps the run's history of who was in which group and
+#' who was absent (in a state the model takes out of the layers, e.g., isolated
+#' in [ModelSEIRQuarantine()]). `groupmates_of()` reads it: who shared a group
+#' with `agent`, both present, between days `from` and `to`. With
+#' `contact_prob = 1` that is exactly who the agent met; below 1, who it could
+#' have met ("notify the household"). The history covers whole runs: tracing
+#' turned on during a run, or a grouping edited after it, gives none (an
+#' error) until the next run.
+#'
 #' @return
 #' - `layer_mixing()` returns a mixing layer, of class
 #' `epiworld_layer_mixing`.
@@ -60,6 +72,9 @@
 #' - `get_group()` returns the group of the agent (`NA` if none).
 #' - `members_of()` returns the ids of the agents in the group, in no
 #' particular order.
+#' - `groupmates_of()` returns a data frame with one row per groupmate, in
+#' ascending id order: `agent`, `last_day` (the last day they shared a group,
+#' both present), and `n_days` (how many days they did).
 #' @examples
 #' # 1,000 agents in households of 4: everyone meets their housemates daily
 #' sir <- ModelSIR(
@@ -88,9 +103,13 @@
 #'   )
 #' )
 #'
+#' enable_tracing(households)
 #' run(sir, ndays = 50, seed = 1)
 #' members_of(households, 0)
 #' get_contact_prob(households)
+#'
+#' # Who shared a household with agent 0 in the last week
+#' groupmates_of(households, 0, from = 44, to = 50)
 #'
 #' # Random mixing: everyone meets "Contact rate" others a day
 #' seir <- ModelSEIR(
@@ -207,4 +226,21 @@ members_of <- function(layer, group) {
   stopifnot_layer(layer, "mixing")
   stopifnot_int(group, lb = 0)
   members_of_cpp(layer, group)
+}
+
+#' @export
+#' @rdname mixing-layers
+groupmates_of <- function(
+  layer,
+  agent,
+  from = 1L,
+  to   = .Machine$integer.max
+) {
+
+  stopifnot_layer(layer, "mixing")
+  stopifnot_int(agent, lb = 0)
+  stopifnot_int(from)
+  stopifnot_int(to)
+  groupmates_of_cpp(layer, agent, from, to)
+
 }
