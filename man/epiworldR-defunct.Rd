@@ -43,8 +43,9 @@ ModelSEIRMixingQuarantine(...)
 \description{
 These functions were removed in epiworldR 1.0.0, when the population and
 the contacts of a model moved to its constructor and its contact layers
-(see \link{contact-layers}). A model is now a disease, whatever its contacts, so
-the models that differed only in where contacts came from are gone too.
+(see \link{contact-layers}). A model's states describe the course of infection and
+its layers describe who meets whom, so the models that differed only in
+where contacts came from are gone too.
 Calling them is an error that says what to use instead:
 }
 \details{

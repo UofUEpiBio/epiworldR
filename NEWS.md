@@ -7,8 +7,9 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 ## Breaking changes
 
-* A model is a disease; where its contacts come from is up to its layers. The
-  models that differed only in that are defunct: `ModelSIRMixing()` and
+* A model's states describe the course of infection; its layers describe who
+  meets whom (a model can still carry several viruses). The models that
+  differed only in where contacts come from are defunct: `ModelSIRMixing()` and
   `ModelSEIRMixing()` are `ModelSIR()` and `ModelSEIR()` with
   `add_layer(model, layer_mixing(name, groups, contact_matrix = ...))` (the
   same runs); `ModelSIRCONN()`, `ModelSEIRCONN()`, `ModelSIRDCONN()` and
