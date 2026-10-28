@@ -15,13 +15,18 @@ daily_event_days <- NULL
 specific_event_days <- NULL
 
 # Create a simple SIR model
-model <- ModelSIRCONN(
+model <- ModelSIR(
   name              = "virus",
   n                 = 1000,
   prevalence        = 0.01,
-  contact_rate      = 5,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate     = 0.3
+)
+add_param(model, "Contact rate", 5)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model)
@@ -98,20 +103,25 @@ intervention_day <- 20
 nexperiments <- 10
 
 # Create a single SIR model
-model2 <- ModelSIRCONN(
+model2 <- ModelSIR(
   name              = "virus",
   n                 = 1000,
   prevalence        = 0.05,
-  contact_rate      = 8,
-  transmission_rate = 0.7,
+  transmission_prob = 0.7,
   recovery_rate     = 0.15
+)
+add_param(model2, "Contact rate", 8)
+add_layer(
+  model2,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model2)
 
 # Add a global event that sets transmission rate to 0 on the intervention day
 stop_transmission <- globalevent_set_params(
-  "Transmission rate",
+  "Transmission probability",
   0,
   day = intervention_day
 )
@@ -184,13 +194,18 @@ expect_equal(
 # =============================================================================
 
 # Create a new model
-model3 <- ModelSIRCONN(
+model3 <- ModelSIR(
   name              = "COVID-19",
   n                 = 10000,
   prevalence        = 0.01,
-  contact_rate      = 5,
-  transmission_rate = 0.4,
+  transmission_prob = 0.4,
   recovery_rate     = 0.95
+)
+add_param(model3, "Contact rate", 5)
+add_layer(
+  model3,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model3)
@@ -227,13 +242,18 @@ expect_true(
 # This test verifies that custom functions can be executed as global events
 # =============================================================================
 
-model4 <- ModelSIRCONN(
+model4 <- ModelSIR(
   name              = "SIR with Global Saver",
   n                 = 1000,
   prevalence        = 0.01,
-  contact_rate      = 5,
-  transmission_rate = 0.4,
+  transmission_prob = 0.4,
   recovery_rate     = 0.3
+)
+add_param(model4, "Contact rate", 5)
+add_layer(
+  model4,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model4)
@@ -274,13 +294,18 @@ expect_true(
 # This test verifies that global events can be removed from a model
 # =============================================================================
 
-model5 <- ModelSIRCONN(
+model5 <- ModelSIR(
   name              = "Test removal",
   n                 = 1000,
   prevalence        = 0.01,
-  contact_rate      = 5,
-  transmission_rate = 0.4,
+  transmission_prob = 0.4,
   recovery_rate     = 0.3
+)
+add_param(model5, "Contact rate", 5)
+add_layer(
+  model5,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model5)
@@ -361,13 +386,18 @@ expect_error(globalaction_fun(), "defunct")
 # Test 8: add_globalevent with deprecated action parameter
 # =============================================================================
 
-model8 <- ModelSIRCONN(
+model8 <- ModelSIR(
   name              = "Test deprecated",
   n                 = 100,
   prevalence        = 0.1,
-  contact_rate      = 2,
-  transmission_rate = 0.3,
+  transmission_prob = 0.3,
   recovery_rate     = 0.2
+)
+add_param(model8, "Contact rate", 2)
+add_layer(
+  model8,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model8)

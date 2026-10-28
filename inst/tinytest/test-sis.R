@@ -5,7 +5,7 @@ expect_silent(sis_0 <- ModelSIS(
   name = "SIS",
   n = 2000,
   prevalence = .1,
-  transmission_rate = .3,
+  transmission_prob = .3,
   recovery_rate = .3
 ))
 
@@ -45,7 +45,7 @@ expect_error(sis_0 <- ModelSIS(
   name                = bad_name,
   n                   = 1000,
   prevalence          = good_prevalence,
-  transmission_rate   = good_transmission_rate,
+  transmission_prob   = good_transmission_rate,
   recovery_rate       = good_recovery_rate
 ), expected_error_msg_str)
 
@@ -53,7 +53,7 @@ expect_error(sis_0 <- ModelSIS(
   name                = good_name,
   n                   = 1000,
   prevalence          = bad_numeric_input,
-  transmission_rate   = good_transmission_rate,
+  transmission_prob   = good_transmission_rate,
   recovery_rate       = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -61,7 +61,7 @@ expect_error(sis_0 <- ModelSIS(
   name                = good_name,
   n                   = 1000,
   prevalence          = good_prevalence,
-  transmission_rate   = bad_numeric_input,
+  transmission_prob   = bad_numeric_input,
   recovery_rate       = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -69,6 +69,6 @@ expect_error(sis_0 <- ModelSIS(
   name                = good_name,
   n                   = 1000,
   prevalence          = good_prevalence,
-  transmission_rate   = good_transmission_rate,
+  transmission_prob   = good_transmission_rate,
   recovery_rate       = bad_numeric_input
 ), expected_error_msg_double)

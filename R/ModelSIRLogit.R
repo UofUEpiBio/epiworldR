@@ -28,7 +28,7 @@
 #'   Female    = sample.int(2, n, replace = TRUE) - 1
 #' )
 #'
-#' # Declare coefficients for each sex regarding transmission_rate and recovery.
+#' # Declare coefficients for each sex regarding transmission_prob and recovery.
 #' coef_infect  <- c(.1, -2, 2)
 #' coef_recover <- rnorm(2)
 #'

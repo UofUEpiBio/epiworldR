@@ -96,14 +96,12 @@ $$
 Therefore, for example, a vaccinated agent wearing a mask would have a factor of $1 - (1 - 0.30) \times (1 - 0.5) = 0.65$.
 The adjusted probabilities principle also applies to recovery rates in the SIR and SEIR models.
 
-## Transmission in connected models[^models]
+## Transmission with random mixing
 
-[^models]: The following section applies to the `ModelSIRCONN` and `ModelSEIRCONN` models. The `ModelSIR` and `ModelSEIR` models are similar but do not use a connected network.
+A mixing layer with everyone in one group and a contact matrix of 1, scaled by the "Contact rate" parameter (see `?layer_mixing`), makes every agent able to meet any other, similar to typical compartmental models. For each susceptible agent, the transmission process is simulated as follows:
 
-The "connected" models provide a version where agents live in a fully connected network. This means that each agent can infect any other agent, making this version similar to typical compartmental models. In these models, the transmission probability depends on the contact rate. For each susceptible agent, the transmission process is simulated as follows:
+1. The number of contacts $c$ is drawn from a binomial distribution with parameters $m$ and $p$, where $m$ is the number of infectious agents and $p =$ `Contact rate` $/ (n - 1)$, with $n$ the number of agents: each other agent is met with probability $p$.
 
-1. The number of contacts $c$ is drawn from a binomial distribution with parameters $n$ and $p$, where $n$ is the number of agents and $p =$`contact_rate`$/ n$.
-
-2. Then, $c$ agents are randomly selected from the population. Transmission can then occur from any of these agents to the susceptible agent.
+2. Then, $c$ distinct infectious agents are selected at random. Transmission can then occur from any of these agents to the susceptible agent.
 
 3. The probability of transmission from each of the $c$ agents is calculated as described in the previous section.

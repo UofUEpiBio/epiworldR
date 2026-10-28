@@ -22,7 +22,7 @@ If you use **epiworldR** in published work, please cite it — run
 
 ## Introduction
 
-This vignette shows how to create a mixing model using the `epiworldR` package. Mixing models feature multiple populations. Each group, called `Entities`, has a subset of the agents. The agents can interact with each other within the same group and with agents from other groups. A contact matrix defines the interaction between agents.
+This vignette shows how to make a model mix by group using the `epiworldR` package. The population is split into groups; agents interact with each other within the same group and with agents from other groups, as a contact matrix says. Any model can mix this way: the groups and the contact matrix are a mixing layer (see `?layer_mixing`) added to it.
 
 ## An SEIR model with mixing
 
@@ -40,15 +40,14 @@ $$
 
 This matrix represents the mean number of interactions per day between an agent from population $i$ and an agent from population $j$. The rowsums of the matrix show the mean number of interactions per day for an agent from each population.
 
-We will build this model using the `entity` class in epiworld. The following code chunk instantiates three entities and the contact matrix.
+The following code chunk defines the group of each agent (three populations of 3,000) and the contact matrix.
 
 ```{r}
 #| label: entity-matrix-setup
 library(epiworldR)
 
-e1 <- entity("Population 1", 3e3, as_proportion = FALSE)
-e2 <- entity("Population 2", 3e3, as_proportion = FALSE)
-e3 <- entity("Population 3", 3e3, as_proportion = FALSE)
+N <- 9e3
+groups <- rep(0:2, each = 3e3)
 
 # Row-sums equal to the expected number of interactions
 # per day for each agent from each population
@@ -59,30 +58,26 @@ cmatrix <- c(
 ) |> matrix(byrow = TRUE, nrow = 3)
 ```
 
-With these in hand, we can proceed to create a mixing model. The following code chunk creates a model, an SEIR with mixing, and adds the entities to the model:
+With these in hand, we can create the model, an SEIR, and add the mixing layer to it:
 
 ```{r}
 #| label: model-build
-N <- 9e3
-
-flu_model <- ModelSEIRMixing(
+flu_model <- ModelSEIR(
   name              = "Flu",
   n                 = N,
   prevalence        = 1 / N,
-  transmission_rate = 0.1,
-  recovery_rate     = 1 / 7,
-  incubation_days   = 7,
-  contact_matrix    = cmatrix
+  transmission_prob = 0.1,
+  latent_period     = 7,
+  recovery_rate     = 1 / 7
 )
 
-# Adding the entities
-flu_model |>
-  add_entity(e1) |>
-  add_entity(e2) |>
-  add_entity(e3)
+add_layer(
+  flu_model,
+  layer_mixing("community", groups = groups, contact_matrix = cmatrix)
+)
 ```
 
-The function `add_entity` adds the corresponding entity. The default behavior randomly assigns agents to the entities at the beginning of the simulation. Agents may be assigned to more than one entity. The following code-chunk simulates the model for 100 days, summarizes the results, and plots the incidence curve:
+Only Infected agents transmit (Exposed agents carry the virus but are not infectious yet), and every agent of a group can be met. The following code-chunk simulates the model for 100 days, summarizes the results, and plots the incidence curve:
 
 ```{r}
 #| label: model-simulate
@@ -94,21 +89,18 @@ plot_incidence(flu_model)
 
 ## Investigating the history
 
-After running the simulation, a possible question is: how many agents from each entity were infected each day? The following code chunk retrieves the agents from each entity and the transmissions that occurred during the simulation:
+After running the simulation, a possible question is: how many agents from each group were infected each day? The group of each agent is the `groups` vector (agent ids start at 0):
 
 ```{r}
 #| label: investigate
 #| eval: true
 library(data.table)
 
-agents_entities <- lapply(get_entities(flu_model), \(e) {
-  entity_get_agents(e)
-}) |> rbindlist()
-
-head(agents_entities)
+agents_groups <- data.table(agent = seq_len(N) - 1L, group = groups)
+head(agents_groups)
 ```
 
-We can retrieve the daily incidence for each entity by merging the transmissions with the agents' entities. The following code chunk accomplishes this:
+We can retrieve the daily incidence for each group by merging the transmissions with the agents' groups. The following code chunk accomplishes this:
 
 ```{r}
 #| label: transmissions
@@ -122,31 +114,31 @@ transmissions <- subset(
   select = c("date", "source")
 )
 
-# Attaching the entity to the source
+# Attaching the group to the source
 transmissions <- merge(
   transmissions,
-  agents_entities,
+  agents_groups,
   by.x = "source", by.y = "agent"
 )
 
-# Aggregating by date x entity (counts)
-transmissions <- transmissions[, .N, by = .(date, entity)]
+# Aggregating by date x group (counts)
+transmissions <- transmissions[, .N, by = .(date, group)]
 
 # Taking a look at the data
 head(transmissions)
 ```
 
-With this information, we can now visualize the daily incidence for each entity. The following code chunk plots the daily incidence for each entity:
+With this information, we can now visualize the daily incidence for each group. The following code chunk plots the daily incidence for each group:
 
 ```{r}
 #| label: transmissions-plot
-setorder(transmissions, date, entity)
+setorder(transmissions, date, group)
 
 ran <- range(transmissions$N)
-transmissions[entity == 0, plot(
+transmissions[group == 0, plot(
   x = date, y = N, type = "l", col = "black", ylim = ran)]
-transmissions[entity == 1, lines(x = date, y = N, col = "red")]
-transmissions[entity == 2, lines(x = date, y = N, col = "blue")]
+transmissions[group == 1, lines(x = date, y = N, col = "red")]
+transmissions[group == 2, lines(x = date, y = N, col = "blue")]
 
 legend(
   "topright",

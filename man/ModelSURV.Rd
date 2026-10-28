@@ -17,7 +17,7 @@ ModelSURV(
   prop_vax_redux_transm,
   prop_vax_redux_infect,
   surveillance_prob,
-  transmission_rate,
+  transmission_prob,
   prob_death,
   prob_noreinfect
 )
@@ -51,7 +51,7 @@ the chances of becoming infected.}
 
 \item{surveillance_prob}{Double. Probability of testing an agent.}
 
-\item{transmission_rate}{Double. Raw transmission probability.}
+\item{transmission_prob}{Double. Raw transmission probability.}
 
 \item{prob_death}{Double. Raw probability of death for symptomatic
 individuals.}
@@ -79,7 +79,7 @@ model_surv <- ModelSURV(
   prop_vax_redux_transm = 0.8,
   prop_vax_redux_infect = 0.95,
   surveillance_prob     = 0.1,
-  transmission_rate     = 0.2,
+  transmission_prob     = 0.2,
   prob_death            = 0.001,
   prob_noreinfect       = 0.5
 )
@@ -98,22 +98,16 @@ plot(model_surv, main = "SURV Model")
 \seealso{
 epiworld-methods
 
-Other Models:
-\code{\link[=ModelDiffNet]{ModelDiffNet()}},
-\code{\link[=ModelSEIR]{ModelSEIR()}},
-\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
-\code{\link[=ModelSEIRD]{ModelSEIRD()}},
-\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
-\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
-\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
-\code{\link[=ModelSIR]{ModelSIR()}},
-\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
-\code{\link[=ModelSIRD]{ModelSIRD()}},
-\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
-\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
-\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
-\code{\link[=ModelSIS]{ModelSIS()}},
-\code{\link[=ModelSISD]{ModelSISD()}}
+Other Models: 
+\code{\link{ModelDiffNet}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSEIRD}()},
+\code{\link{ModelSEIRQuarantine}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIRLogit}()},
+\code{\link{ModelSIS}()},
+\code{\link{ModelSISD}()}
 }
 \concept{Models}
 \concept{general-models}

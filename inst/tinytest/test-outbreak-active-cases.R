@@ -5,14 +5,19 @@
 # 1. get_active_cases() returns the number of infected individuals
 # 2. get_outbreak_size() returns the number of infected + recovered individuals
 
-# Create a SIRCONN model -------------------------------------------------------
-model <- ModelSIRCONN(
+# Create an SIR model with random mixing ---------------------------------------
+model <- ModelSIR(
   name = "test virus",
   n = 100,
   prevalence = 0.1,
-  contact_rate = 2,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate = 0.3
+)
+add_param(model, "Contact rate", 2)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model)

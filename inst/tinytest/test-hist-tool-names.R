@@ -3,9 +3,15 @@
 # get_hist_tool() should label rows with the tool names, not the virus names.
 
 # One virus, one tool ----------------------------------------------------------
-abm <- ModelSIRCONN(
-  "myvirus", n = 10, prevalence = 0, contact_rate = 0,
-  transmission_rate = 0, recovery_rate = 0
+abm <- ModelSIR(
+  "myvirus", n = 10, prevalence = 0,
+  transmission_prob = 0, recovery_rate = 0
+)
+add_param(abm, "Contact rate", 0)
+add_layer(
+  abm,
+  layer_mixing("everyone", groups = rep(0, 10), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 t1 <- tool("mytool", 0, FALSE, 1, 0, 0, 0)
@@ -19,9 +25,15 @@ expect_equal(unique(hist$tool), "mytool")
 expect_equal(unique(hist$tool_id), 0L)
 
 # One virus, two tools ---------------------------------------------------------
-abm2 <- ModelSIRCONN(
-  "myvirus", n = 10, prevalence = 0, contact_rate = 0,
-  transmission_rate = 0, recovery_rate = 0
+abm2 <- ModelSIR(
+  "myvirus", n = 10, prevalence = 0,
+  transmission_prob = 0, recovery_rate = 0
+)
+add_param(abm2, "Contact rate", 0)
+add_layer(
+  abm2,
+  layer_mixing("everyone", groups = rep(0, 10), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 t_a <- tool("tool_a", 0, FALSE, 1, 0, 0, 0)

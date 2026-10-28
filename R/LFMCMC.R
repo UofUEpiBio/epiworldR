@@ -23,7 +23,7 @@
 #' ## Setup an SIR model to use in the simulation
 #' model_seed <- 122
 #' model_sir <- ModelSIR(name = "COVID-19", n = 1000, prevalence = .1,
-#'   transmission_rate = .9, recovery_rate = .3)
+#'   transmission_prob = .9, recovery_rate = .3)
 #' add_layer(model_sir, layer_network("network", graph_smallworld(k = 5, p = 0.01)))
 #' verbose_off(model_sir)
 #' run(model_sir, ndays = 50, seed = model_seed)
@@ -35,7 +35,7 @@
 #' # Define the simulation function
 #' simfun <- function(params, lfmcmc_obj) {
 #'   set_param(model_sir, "Recovery rate", params[1])
-#'   set_param(model_sir, "Transmission rate", params[2])
+#'   set_param(model_sir, "Transmission probability", params[2])
 #'   run(model_sir, ndays = 50)
 #'   res <- get_today_total(model_sir)
 #'   return(res)

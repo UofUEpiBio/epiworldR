@@ -5,7 +5,7 @@
 \alias{epiworld_sis}
 \title{SIS model}
 \usage{
-ModelSIS(name, n, prevalence, transmission_rate, recovery_rate)
+ModelSIS(name, n, prevalence, transmission_prob, recovery_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -14,7 +14,7 @@ ModelSIS(name, n, prevalence, transmission_rate, recovery_rate)
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{transmission_rate}{Numeric scalar between 0 and 1. Virus's rate of
+\item{transmission_prob}{Numeric scalar between 0 and 1. Virus's rate of
 infection.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
@@ -34,7 +34,7 @@ Susceptible-Infected-Susceptible model (SIS) (\href{https://en.wikipedia.org/w/i
 
 \examples{
 model_sis <- ModelSIS(name = "COVID-19", n = 1000, prevalence = 0.01,
-  transmission_rate = 0.9, recovery_rate = 0.1)
+  transmission_prob = 0.9, recovery_rate = 0.1)
 
 # Adding a small world population
 add_layer(model_sis, layer_network("network", graph_smallworld(k = 5, p = .01)))
@@ -50,22 +50,16 @@ plot(model_sis, main = "SIS Model")
 \seealso{
 epiworld-methods
 
-Other Models:
-\code{\link[=ModelDiffNet]{ModelDiffNet()}},
-\code{\link[=ModelSEIR]{ModelSEIR()}},
-\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
-\code{\link[=ModelSEIRD]{ModelSEIRD()}},
-\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
-\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
-\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
-\code{\link[=ModelSIR]{ModelSIR()}},
-\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
-\code{\link[=ModelSIRD]{ModelSIRD()}},
-\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
-\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
-\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
-\code{\link[=ModelSISD]{ModelSISD()}},
-\code{\link[=ModelSURV]{ModelSURV()}}
+Other Models: 
+\code{\link{ModelDiffNet}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSEIRD}()},
+\code{\link{ModelSEIRQuarantine}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIRLogit}()},
+\code{\link{ModelSISD}()},
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}

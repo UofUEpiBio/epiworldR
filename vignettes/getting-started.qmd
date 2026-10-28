@@ -35,24 +35,30 @@ currently covered workloads and its limitations.
 
 ## Setup and running the model
 
-This example implements a social network with parameters listed within the
-`ModelSIRCONN` function. The virus name is specified (COVID-19), 50000 agents
-are initialized, the virus prevalence of 0.001 is declared, each agent will
-contact two others (contact_rate), the transmission rate for
-any given agent is 0.3, and the recovery rate is set to $\frac{1}{3}$.
-To create this model on epiworldR, simply use the `ModelSIRCONN` function.
+This example implements an SIR model in a population that mixes at random.
+The virus name is specified (COVID-19), 50000 agents are initialized, the
+virus prevalence of 0.0001 is declared, the transmission probability per
+contact is 0.5, and the recovery rate is set to $\frac{1}{3}$. Contacts come
+from a mixing layer: everyone is in one group, and each agent meets
+"Contact rate" (two) others a day, at random. The contact rate is a model
+parameter, so it can be changed between runs or by a global event.
 From here, the example will take you through the basic features of epiworldR.
 
 ```{r}
 #| label: sirconn-setup
 library(epiworldR)
-model_sir <- ModelSIRCONN(
+model_sir <- ModelSIR(
   name              = "COVID-19",
   n                 = 50000,
   prevalence        = 0.0001,
-  contact_rate      = 2,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate     = 1 / 3
+)
+add_param(model_sir, "Contact rate", 2)
+add_layer(
+  model_sir,
+  layer_mixing("everyone", groups = rep(0, 50000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 # Printing the model

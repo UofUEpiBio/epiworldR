@@ -41,14 +41,19 @@ expect_equal(get_name_virus(virus_1), "Modified Virus")
 
 # Scenario (a): High infectiousness, no recovery ------------------------------
 # With perfect transmission and no recovery, epidemic should spread widely
-expect_silent(model_a <- ModelSIRCONN(
+model_a <- ModelSIR(
   name = "Virus Test (a)",
   n = 100,
   prevalence = 0.01,
-  contact_rate = 10,
-  transmission_rate = 1.0,
+  transmission_prob = 1.0,
   recovery_rate = 0.0
-))
+)
+add_param(model_a, "Contact rate", 10)
+add_layer(
+  model_a,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 expect_silent(verbose_off(model_a))
 expect_silent(run(model_a, ndays = 10, seed = 123))
@@ -63,14 +68,19 @@ expect_equal(final_recovered_a, 0, info = "No one should recover with 0 recovery
 
 # Scenario (b): No infectiousness, immediate recovery -------------------------
 # Only the initially infected person should recover immediately
-expect_silent(model_b <- ModelSIRCONN(
+model_b <- ModelSIR(
   name = "Virus Test (b)",
   n = 100,
   prevalence = 0.01,
-  contact_rate = 10,
-  transmission_rate = 0.0,
+  transmission_prob = 0.0,
   recovery_rate = 1.0
-))
+)
+add_param(model_b, "Contact rate", 10)
+add_layer(
+  model_b,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 expect_silent(verbose_off(model_b))
 expect_silent(run(model_b, ndays = 1, seed = 123))
@@ -86,14 +96,19 @@ expect_equal(final_removed_b, 1, info = "Only the initially infected should reco
 expect_equal(final_susceptible_b, 99, info = "Rest should remain susceptible")
 
 # Test virus with pointer-based parameters -------------------------------------
-expect_silent(model_ptr <- ModelSIRCONN(
+model_ptr <- ModelSIR(
   name = "Virus Ptr Test",
   n = 50,
   prevalence = 0.1,
-  contact_rate = 5,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate = 0.3
-))
+)
+add_param(model_ptr, "Contact rate", 5)
+add_layer(
+  model_ptr,
+  layer_mixing("everyone", groups = rep(0, 50), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 # Add custom parameters to the model
 expect_silent(add_param(model_ptr, "custom_trans", 0.9))
@@ -123,29 +138,30 @@ expect_silent(add_virus(model_ptr, virus_ptr))
 expect_silent(verbose_off(model_ptr))
 expect_silent(run(model_ptr, ndays = 5, seed = 789))
 
-# Adding a second virus to the mixing models ------------------------------------
+# Adding a second virus to models on a mixing layer ----------------------------
 cmat <- matrix(c(0.9, 0.1, 0.1, 0.9), nrow = 2) * 5
+groups <- rep(0:1, each = 250)
 mixing_models <- list(
-  ModelSIRMixing("A virus", 500, 0.01, 0.2, 1 / 7, cmat),
-  ModelSEIRMixing("A virus", 500, 0.01, 0.2, 3, 1 / 7, cmat)
+  ModelSIR("A virus", 500, 0.01, 0.2, 1 / 7),
+  ModelSEIR("A virus", 500, 0.01, 0.2, 3, 1 / 7)
 )
 for (m in mixing_models) {
+  add_layer(m, layer_mixing("mixing", groups, contact_matrix = cmat))
   other <- virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)
   expect_silent(add_virus(m, other))
-  add_entity(m, entity("Group 1", 250, FALSE))
-  add_entity(m, entity("Group 2", 250, FALSE))
   verbose_off(m)
   expect_silent(run(m, ndays = 10, seed = 1))
 }
 
-quarantine_model <- ModelSEIRMixingQuarantine(
-  name = "A virus", n = 500, prevalence = 0.01, transmission_rate = 0.2,
-  recovery_rate = 1 / 7, incubation_days = 3, contact_matrix = cmat,
+quarantine_model <- ModelSEIRQuarantine(
+  name = "A virus", n = 500, prevalence = 0.01, transmission_prob = 0.2,
+  recovery_rate = 1 / 7, latent_period = 3,
   hospitalization_rate = 0.05, hospitalization_period = 7,
-  days_undetected = 3, quarantine_period = 14, quarantine_willingness = 0.8,
+  detection_delay = 3, quarantine_period = 14, quarantine_willingness = 0.8,
   isolation_willingness = 0.5, isolation_period = 7,
-  contact_tracing_success_rate = 0.7, contact_tracing_days_prior = 3
+  contact_tracing_prob = 0.7, contact_tracing_window = 3
 )
+add_layer(quarantine_model, layer_mixing("mixing", groups, contact_matrix = cmat))
 expect_silent(add_virus(
   quarantine_model,
   virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)

@@ -7,9 +7,9 @@
  * by pushing infection odds.
  *
  * @details A susceptible agent `i` whose update function is
- * `default_update_susceptible` (or `sampler::make_update_susceptible()`)
- * *pulls*: it scans its neighbors, collects the per-contact probabilities
- * `p_ij` of those carrying a virus, and `roulette()` draws "no infection" or a
+ * `default_update_susceptible` *pulls*: it scans its neighbors, collects the
+ * per-contact probabilities `p_ij` of those carrying a virus (in the model's
+ * infectious states), and `roulette()` draws "no infection" or a
  * single infector. That draw depends only on the odds `r_ij = p_ij / (1 - p_ij)`:
  *
  *     P(no infection) = 1 / (1 + R_i),   P(infected by j) = r_ij / (1 + R_i),
@@ -26,6 +26,66 @@
  * The docs page "Push and Pull Transmission" (docs/impl/transmission-sampling.md)
  * has the derivation.
  */
+
+template<typename TSeq>
+inline Model<TSeq> & Model<TSeq>::set_infectious_states(std::vector< int > states)
+{
+    infectious_states = std::move(states);
+
+    // After a reset (e.g., from a global event), from the next step on
+    if (state_index_ready)
+        state_masks_build();
+
+    return *this;
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::set_excluded_states(std::vector< int > states)
+{
+    excluded_states = std::move(states);
+
+    if (state_index_ready)
+        state_masks_build();
+}
+
+template<typename TSeq>
+inline void Model<TSeq>::state_masks_build()
+{
+
+    const size_t ns = static_cast< size_t >(nstates);
+
+    auto check = [ns](int s, const char * what) {
+        if ((s < 0) || (static_cast< size_t >(s) >= ns))
+            throw std::range_error(
+                std::string("The ") + what + " state " + std::to_string(s) +
+                " is out of range (the model has " + std::to_string(ns) +
+                " states)."
+            );
+    };
+
+    state_excluded.assign(ns, 0);
+    for (int s : excluded_states)
+    {
+        check(s, "excluded");
+        state_excluded[s] = 1;
+    }
+
+    // An excluded agent does not transmit either
+    state_not_infectious.clear();
+    if (infectious_states.empty() && excluded_states.empty())
+        return;
+
+    state_not_infectious.assign(ns, !infectious_states.empty());
+    for (int s : infectious_states)
+    {
+        check(s, "infectious");
+        state_not_infectious[s] = false;
+    }
+
+    for (int s : excluded_states)
+        state_not_infectious[s] = true;
+
+}
 
 template<typename TSeq>
 inline size_t Model<TSeq>::add_exposures(
@@ -111,10 +171,7 @@ inline Virus<TSeq> * Model<TSeq>::sample_virus(
 }
 
 template<typename TSeq>
-inline Virus<TSeq> * Model<TSeq>::sample_virus(
-    Agent<TSeq> * agent,
-    const std::vector< bool > * exclude
-)
+inline Virus<TSeq> * Model<TSeq>::sample_virus(Agent<TSeq> * agent)
 {
 
     if (agent->get_virus() != nullptr)
@@ -124,6 +181,8 @@ inline Virus<TSeq> * Model<TSeq>::sample_virus(
         );
 
     const size_t id = static_cast< size_t >(agent->get_id());
+    const std::vector< bool > * exclude =
+        state_not_infectious.empty() ? nullptr : &state_not_infectious;
 
     size_t n_contacts = 0u;
     size_t n_exposures = 0u;
@@ -170,8 +229,6 @@ inline bool Model<TSeq>::transmission_prepare()
     const size_t ns = static_cast< size_t >(nstates);
 
     push_pushable.assign(ns, 0);
-    push_default.assign(ns, 0);
-    push_excluded.assign(ns * ns, 0);
     push_source_ok.assign(ns, 0);
 
     bool any = false;
@@ -192,40 +249,17 @@ inline bool Model<TSeq>::transmission_prepare()
         if ((fp != nullptr) && (*fp == &default_update_susceptible<TSeq>))
         {
             push_pushable[t] = 1;
-            push_default[t] = 1;
             any = true;
-        }
-        else if (
-            const auto * us = fun.template target< sampler::UpdateSusceptible<TSeq> >()
-        )
-        {
-
-            push_pushable[t] = 1;
-            any = true;
-
-            for (auto s : us->exclude)
-            {
-                if (s >= ns)
-                    throw std::logic_error(
-                        std::string("You are trying to exclude a state that is out of range: ") +
-                        std::to_string(s) + std::string(". There are only ") +
-                        std::to_string(ns) + std::string(" states in the model.")
-                        );
-
-                push_excluded[t * ns + s] = 1;
-            }
-
         }
 
     }
     #endif
 
-    // A state can be a source if some pushable state takes infections from it
-    for (size_t t = 0u; t < ns; ++t)
-        if (push_pushable[t])
-            for (size_t s = 0u; s < ns; ++s)
-                if (!push_excluded[t * ns + s])
-                    push_source_ok[s] = 1;
+    // The infectious states are the sources, if anyone is pushed to
+    if (any)
+        for (size_t s = 0u; s < ns; ++s)
+            push_source_ok[s] =
+                state_not_infectious.empty() || !state_not_infectious[s];
 
     return any;
 
@@ -361,8 +395,6 @@ inline void Model<TSeq>::transmission_push_impl()
             if (j.virus == nullptr)
                 continue;
 
-            const size_t s = agent_state[j_id];
-
             VirusPtr<TSeq> & v = j.virus;
 
             // Every network, in the order the layers were added, as a pull
@@ -384,7 +416,7 @@ inline void Model<TSeq>::transmission_push_impl()
                     // of the states rules them out without loading the agent.
                     const size_t t = agent_state[i_id];
 
-                    if (!push_pushable[t] || push_excluded[t * ns + s])
+                    if (!push_pushable[t])
                         continue;
 
                     Agent<TSeq> & i = population[i_id];
@@ -437,8 +469,7 @@ inline void Model<TSeq>::transmission_push_impl()
                         push_targets.push_back({i_id, 0.0, 0u, nullptr, -1});
 
                         #ifdef EPI_DEBUG
-                        if (push_default[t])
-                            db.n_transmissions_potential++;
+                        db.n_transmissions_potential++;
                         #endif
 
                     }
@@ -507,8 +538,7 @@ inline void Model<TSeq>::transmission_push_impl()
         Agent<TSeq> & i = population[target.id];
 
         #ifdef EPI_DEBUG
-        if (push_default[i.state])
-            db.n_transmissions_today++;
+        db.n_transmissions_today++;
         #endif
 
         sampled_layer = target.layer;

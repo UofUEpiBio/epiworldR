@@ -35,7 +35,7 @@ exclusive, so `start_day = 20` and `end_day = 60` give that interval. The follow
 three-day incubation period. We use `ModelSEIR()`, the direct extension of the
 SIR model, so that all the requested disease timings are represented. For a
 strict SIR example, replace `ModelSEIR()` with `ModelSIR()` and omit
-`incubation_days`.
+`latent_period`.
 :::
 
 # Baseline outbreak
@@ -60,21 +60,21 @@ n_agents          <- 10000L
 initial_cases      <- 10L
 mean_degree        <- 40L
 rewire_probability <- 0.20
-incubation_days    <- 3
+latent_period    <- 3
 infectious_days    <- 7
 target_r0          <- 2
 ndays              <- 100L
 nsims              <- 200L
 simulation_seed    <- 2026L
 
-transmission_rate <- target_r0 / (mean_degree * infectious_days)
+transmission_prob <- target_r0 / (mean_degree * infectious_days)
 
 baseline_model <- ModelSEIR(
   name              = "Example infection",
   n                 = n_agents,
   prevalence        = initial_cases / n_agents,
-  transmission_rate = transmission_rate,
-  incubation_days   = incubation_days,
+  transmission_prob = transmission_prob,
+  latent_period   = latent_period,
   recovery_rate     = 1 / infectious_days
 )
 

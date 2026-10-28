@@ -5,7 +5,7 @@
 \alias{epiworld_sisd}
 \title{SISD model}
 \usage{
-ModelSISD(name, n, prevalence, transmission_rate, recovery_rate, death_rate)
+ModelSISD(name, n, prevalence, transmission_prob, recovery_rate, death_rate)
 }
 \arguments{
 \item{name}{String. Name of the virus.}
@@ -14,7 +14,7 @@ ModelSISD(name, n, prevalence, transmission_rate, recovery_rate, death_rate)
 
 \item{prevalence}{Double. Initial proportion of individuals with the virus.}
 
-\item{transmission_rate}{Numeric scalar between 0 and 1. Virus's rate of
+\item{transmission_prob}{Numeric scalar between 0 and 1. Virus's rate of
 infection.}
 
 \item{recovery_rate}{Numeric scalar between 0 and 1. Rate of recovery from virus.}
@@ -39,7 +39,7 @@ model_sisd <- ModelSISD(
   name = "COVID-19",
   n          = 1000,
   prevalence = 0.01,
-  transmission_rate = 0.9,
+  transmission_prob = 0.9,
   recovery_rate = 0.1,
   death_rate = 0.01
 )
@@ -58,22 +58,16 @@ plot(model_sisd, main = "SISD Model")
 \seealso{
 epiworld-methods
 
-Other Models:
-\code{\link[=ModelDiffNet]{ModelDiffNet()}},
-\code{\link[=ModelSEIR]{ModelSEIR()}},
-\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
-\code{\link[=ModelSEIRD]{ModelSEIRD()}},
-\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
-\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
-\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
-\code{\link[=ModelSIR]{ModelSIR()}},
-\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
-\code{\link[=ModelSIRD]{ModelSIRD()}},
-\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
-\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
-\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
-\code{\link[=ModelSIS]{ModelSIS()}},
-\code{\link[=ModelSURV]{ModelSURV()}}
+Other Models: 
+\code{\link{ModelDiffNet}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSEIRD}()},
+\code{\link{ModelSEIRQuarantine}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIRLogit}()},
+\code{\link{ModelSIS}()},
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}

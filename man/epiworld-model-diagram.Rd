@@ -101,13 +101,18 @@ output if the filename is empty). See \code{\link[=draw_mermaid_from_data]{draw_
 }
 \examples{
 # Create and run a model
-model <- ModelSIRCONN(
+model <- ModelSIR(
   name = "A Virus",
   n = 10000,
   prevalence = .01,
-  contact_rate = 4.0,
-  transmission_rate = .5,
+  transmission_prob = .5,
   recovery_rate = 1.0 / 7.0
+)
+add_param(model, "Contact rate", 4.0)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model)

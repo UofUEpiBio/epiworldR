@@ -4,21 +4,29 @@
 #' @param model Model object of class `epiworld_model`.
 #'
 #' @details
-#' Epiworld entities are especially useful for mixing models, particularly
-#' [ModelSIRMixing] and [ModelSEIRMixing].
+#' Entities group agents, e.g., to distribute viruses and tools to them (see
+#' [distribute_virus_to_set()]). Mixing by group is a mixing layer (see
+#' [layer_mixing()]).
 #'
 #' @name entities
 #' @concept entity-functions
 #' @export
 #' @examples
-#' # Creating a mixing model
-#' mymodel <- ModelSIRMixing(
+#' # Creating a model mixing by group
+#' mymodel <- ModelSIR(
 #'   name = "My model",
 #'   n = 10000,
 #'   prevalence = .001,
-#'   transmission_rate = .1,
-#'   recovery_rate = 1 / 7,
-#'   contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2) * 10
+#'   transmission_prob = .1,
+#'   recovery_rate = 1 / 7
+#' )
+#' add_layer(
+#'   mymodel,
+#'   layer_mixing(
+#'     "mixing",
+#'     groups         = rep(0:1, each = 5000),
+#'     contact_matrix = matrix(c(.9, .1, .1, .9), 2, 2) * 10
+#'   )
 #' )
 #'
 #' ent1 <- entity("First", 5000, FALSE)

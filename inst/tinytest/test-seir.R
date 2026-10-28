@@ -5,8 +5,8 @@ expect_silent(seir_0 <- ModelSEIR(
   name = "A Virus",
   n = 10000,
   prevalence = .01,
-  transmission_rate = .5,
-  incubation_days = 7.0,
+  transmission_prob = .5,
+  latent_period = 7.0,
   recovery_rate = .1
 ))
 
@@ -50,8 +50,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = bad_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_str)
 
@@ -59,8 +59,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = bad_numeric_input,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -68,8 +68,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = bad_numeric_input,
-  incubation_days = good_incubation_days,
+  transmission_prob = bad_numeric_input,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -77,8 +77,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = bad_numeric_input,
+  transmission_prob = good_transmission_rate,
+  latent_period = bad_numeric_input,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_double)
 
@@ -86,8 +86,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = bad_numeric_input
 ), expected_error_msg_double)
 
@@ -96,8 +96,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = NA,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_str)
 
@@ -105,8 +105,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = NA,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_na)
 
@@ -114,8 +114,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = NA,
-  incubation_days = good_incubation_days,
+  transmission_prob = NA,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_na)
 
@@ -123,8 +123,8 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = NA,
+  transmission_prob = good_transmission_rate,
+  latent_period = NA,
   recovery_rate = good_recovery_rate
 ), expected_error_msg_na)
 
@@ -132,7 +132,7 @@ expect_error(seir_0 <- ModelSEIR(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = NA
 ), expected_error_msg_na)

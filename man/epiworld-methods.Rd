@@ -204,13 +204,18 @@ progress on screen, respectively. Both functions return the model (\code{x}) inv
 }
 \examples{
 
-model_sirconn <- ModelSIRCONN(
+model_sirconn <- ModelSIR(
   name                = "COVID-19",
   n                   = 10000,
   prevalence          = 0.01,
-  contact_rate        = 5,
-  transmission_rate   = 0.4,
+  transmission_prob   = 0.4,
   recovery_rate       = 0.95
+)
+add_param(model_sirconn, "Contact rate", 5)
+add_layer(
+  model_sirconn,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 # Queuing - If you wish to implement the queuing function, declare whether

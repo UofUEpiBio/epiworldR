@@ -144,12 +144,17 @@ that matches the initial number of infected agents at the start of the model.
 }
 
 \examples{
-model_sir <- ModelSIRCONN(
+model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = 0.01,
   n = 1000,
-  contact_rate = 2,
-  transmission_rate = 0.9, recovery_rate = 0.1
+  transmission_prob = 0.9, recovery_rate = 0.1
+)
+add_param(model_sir, "Contact rate", 2)
+add_layer(
+  model_sir,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 # Generating a saver

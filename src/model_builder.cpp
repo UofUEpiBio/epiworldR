@@ -32,24 +32,11 @@ SEXP add_state_cpp(SEXP model, std::string state_label, SEXP update_fun) {
 
 
 [[cpp11::register]]
-SEXP update_fun_susceptible_cpp(cpp11::integers exclude) {
+SEXP update_fun_susceptible_cpp() {
 
-  std::vector< epiworld_fast_uint > exclude_vec;
-  for (auto i : exclude) {
-    if (i < 0)
-      throw std::logic_error(
-        "Trying to exclude a negative state: " + std::to_string(i) + "."
-      );
-
-    exclude_vec.push_back(static_cast<epiworld_fast_uint>(i));
-  }
-
+  // The function pointer, so the model can update these agents by pushing
   return cpp11::external_pointer<UpdateFun<>>(
-    new UpdateFun<>(
-      std::move(
-        sampler::make_update_susceptible<>(exclude_vec)
-      )
-    )
+    new UpdateFun<>(default_update_susceptible<>)
   );
 
 }

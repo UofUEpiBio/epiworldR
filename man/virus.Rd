@@ -185,14 +185,19 @@ the virus. The implication of using pointers is that the values will be
 read directly from the \code{model} object, so changes will be reflected.
 }
 \examples{
-mseirconn <- ModelSEIRCONN(
+mseirconn <- ModelSEIR(
   name                = "COVID-19",
   prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 4,
-  incubation_days     = 7,
-  transmission_rate   = 0.5,
+  latent_period     = 7,
+  transmission_prob   = 0.5,
   recovery_rate       = 0.99
+)
+add_param(mseirconn, "Contact rate", 4)
+add_layer(
+  mseirconn,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 delta <- virus(
@@ -226,7 +231,7 @@ virus_set_state(delta2, 1, 2, 3)
 # Using the logit function --------------
 sir <- ModelSIR(
   name = "COVID-19", 10000, prevalence = 0.01,
-  transmission_rate = 0.9, recovery = 0.1
+  transmission_prob = 0.9, recovery = 0.1
 )
 
 # Adding a small world population

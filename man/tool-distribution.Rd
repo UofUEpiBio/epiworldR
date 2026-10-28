@@ -65,13 +65,18 @@ the tool to a number of agents based on entity-level prevalence. This is
 only useful for the mixing models.
 }
 \examples{
-model <- ModelSIRCONN(
+model <- ModelSIR(
   name              = "COVID-19",
   n                 = 10000,
   prevalence        = 0.01,
-  contact_rate      = 5,
-  transmission_rate = 0.4,
+  transmission_prob = 0.4,
   recovery_rate     = 0.95
+)
+add_param(model, "Contact rate", 5)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 vaccine <- tool(

@@ -138,20 +138,15 @@ call it on a layer that is not traced.
 }
 \description{
 Who meets whom in a model comes from its contact layers. A network layer
-holds ties between agents; a mixing layer (\code{\link[=layer_mixing]{layer_mixing()}}, also created
-by the mixing models, e.g., \code{\link[=ModelSIRMixing]{ModelSIRMixing()}}) draws contacts by group,
-with a contact matrix or a contact probability within groups. Network models (e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one
-with \code{add_layer()}. A model can have several layers, and its susceptible
-agents are exposed to the infectious agents of every one of them, in one
-draw: e.g., a household network added to \code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}} transmits
-alongside the contact matrix.
+holds ties between agents; a mixing layer (\code{\link[=layer_mixing]{layer_mixing()}}) draws
+contacts by group, with a contact matrix or a contact probability within
+groups. Models (e.g., \code{\link[=ModelSIR]{ModelSIR()}}) start with no layers: add one with
+\code{add_layer()}. A model can have several layers, and its susceptible agents
+are exposed to the infectious agents of every one of them, in one draw:
+e.g., a household layer added to a model with a community contact matrix
+transmits alongside it.
 }
 \details{
-The connected models (e.g., \code{\link[=ModelSIRCONN]{ModelSIRCONN()}}) are the exception for now:
-they draw contacts from the list of infected agents and ignore layers. A
-layer added to them is kept, and can be edited and inspected, but transmits
-nothing.
-
 A layer object shares its layer with the model it is added to, so editing
 it (e.g., with \code{add_edge()}) edits the model's layer. An edit made while
 the model runs lasts for that run only; an edit made between runs is kept.
@@ -175,7 +170,7 @@ with \code{disable_tracing()}) it lasts across runs.
 \examples{
 sir <- ModelSIR(
   name = "COVID-19", n = 1000, prevalence = 0.01,
-  transmission_rate = 0.9, recovery_rate = 0.1
+  transmission_prob = 0.9, recovery_rate = 0.1
 )
 
 # A small-world network, drawn again at every run

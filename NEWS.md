@@ -7,6 +7,36 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 ## Breaking changes
 
+* A model's states describe the course of infection; its layers describe who
+  meets whom (a model can still carry several viruses). The models that
+  differed only in where contacts come from are defunct: `ModelSIRMixing()` and
+  `ModelSEIRMixing()` are `ModelSIR()` and `ModelSEIR()` with
+  `add_layer(model, layer_mixing(name, groups, contact_matrix = ...))` (the
+  same runs); `ModelSIRCONN()`, `ModelSEIRCONN()`, `ModelSIRDCONN()` and
+  `ModelSEIRDCONN()` are the base model with a random-mixing layer (everyone in
+  one group, a contact matrix of 1, and `set_contact_rate(layer, "Contact
+  rate")`; contacts are now distinct, not drawn with replacement); and
+  `ModelSEIRMixingQuarantine()` is the new `ModelSEIRQuarantine()`, which runs
+  on any layers and traces each of them.
+
+* Parameters and arguments are named for what the code does:
+  `transmission_rate` is `transmission_prob` ("Transmission probability", a
+  probability per contact), `incubation_days` is `latent_period` ("Latent
+  period", the mean days in Exposed), and in the quarantine model
+  `days_undetected`, `contact_tracing_success_rate` and
+  `contact_tracing_days_prior` are `detection_delay`, `contact_tracing_prob`
+  and `contact_tracing_window`.
+
+* `layer_mixing()` no longer takes `infectious_states` and
+  `available_states`: every agent of a group can be met, and the model says
+  once which states transmit, for every layer, with the new
+  `set_infectious_states()` (e.g., Infected, not Exposed, in `ModelSEIR()`).
+  `update_fun_susceptible()` loses `exclude` for the same reason.
+
+* `set_contact_rate(layer, param)` makes a mixing layer's contacts a model
+  parameter times its contact matrix, read every day, so global events and
+  calibration can change them.
+
 * The population size is given to the model constructor, and only there:
   `ModelSIR(name, n, ...)`, and likewise `ModelSEIR()`, `ModelSIS()`,
   `ModelSISD()`, `ModelSIRD()`, `ModelSEIRD()`, `ModelSURV()`,

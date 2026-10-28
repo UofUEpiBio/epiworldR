@@ -3,9 +3,9 @@
 #' @param name String. Name of the virus.
 #' @param n Number of individuals in the population.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of
+#' @param transmission_prob Numeric scalar between 0 and 1. Virus's rate of
 #' infection.
-#' @param incubation_days Numeric scalar greater than 0. Average number of
+#' @param latent_period Numeric scalar greater than 0. Average number of
 #' incubation days.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery_rate from virus.
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
@@ -25,7 +25,7 @@
 #' - The `ModelSEIRD`function returns a model of class [epiworld_model].
 #' @examples
 #' model_seird <- ModelSEIRD(name = "COVID-19", n = 100000, prevalence = 0.01,
-#'   transmission_rate = 0.9, recovery_rate = 0.1, incubation_days = 4,
+#'   transmission_prob = 0.9, recovery_rate = 0.1, latent_period = 4,
 #'   death_rate = 0.01)
 #'
 #' # Adding a small world population
@@ -41,8 +41,8 @@ ModelSEIRD <- function(
   name,
   n,
   prevalence,
-  transmission_rate,
-  incubation_days,
+  transmission_prob,
+  latent_period,
   recovery_rate,
   death_rate
 ) {
@@ -50,8 +50,8 @@ ModelSEIRD <- function(
   stopifnot_string(name)
   stopifnot_int(n)
   stopifnot_double(prevalence)
-  stopifnot_double(transmission_rate)
-  stopifnot_double(incubation_days)
+  stopifnot_double(transmission_prob)
+  stopifnot_double(latent_period)
   stopifnot_double(recovery_rate)
   stopifnot_double(death_rate)
 
@@ -60,8 +60,8 @@ ModelSEIRD <- function(
       name              = name,
       n                 = n,
       prevalence        = prevalence,
-      transmission_rate = transmission_rate,
-      incubation_days   = incubation_days,
+      transmission_prob = transmission_prob,
+      latent_period   = latent_period,
       recovery_rate     = recovery_rate,
       death_rate        = death_rate
     ),

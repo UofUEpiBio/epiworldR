@@ -4,14 +4,19 @@
 # This test file validates all data access functions for epiworld models.
 
 # Setup: Create a SEIRCONN model for testing -----------------------------------
-model <- ModelSEIRCONN(
+model <- ModelSEIR(
   name              = "Test Disease",
   n                 = 1000,
   prevalence        = 0.1,
-  contact_rate      = 2.0,
-  transmission_rate = 0.8,
-  incubation_days   = 7.0,
+  transmission_prob = 0.8,
+  latent_period   = 7.0,
   recovery_rate     = 0.3
+)
+add_param(model, "Contact rate", 2.0)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model)
@@ -151,13 +156,18 @@ expect_silent(hospitalizations <- get_hospitalizations(model))
 expect_true(sum(hospitalizations$count) == 0) # No hospitalizations in this model
 
 # Test with unrun model (should return empty results) --------------------------
-model_unrun <- ModelSIRCONN(
+model_unrun <- ModelSIR(
   name = "Unrun Model",
   n = 100,
   prevalence = 0.01,
-  contact_rate = 2,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate = 0.3
+)
+add_param(model_unrun, "Contact rate", 2)
+add_layer(
+  model_unrun,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model_unrun)

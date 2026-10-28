@@ -2,7 +2,7 @@
 
 make_model <- function() {
   model <- ModelSIR(
-    name = "A Virus", n = 5000, prevalence = .01, transmission_rate = .3,
+    name = "A Virus", n = 5000, prevalence = .01, transmission_prob = .3,
     recovery_rate = 1/7
   )
   add_layer(model, layer_network("network", graph_smallworld(k = 5, p = .01)))
@@ -53,12 +53,12 @@ expect_equal(get_last_transmission_mode(model), "pull")
 set_transmission_mode(model, "auto")
 expect_equal(get_transmission_kappa(model), 0.5)
 
-# Models without the default network sampler always pull ----------------------
-mixing <- ModelSIRMixing(
-  name = "Flu", n = 1000, prevalence = .01, transmission_rate = .1,
-  recovery_rate = 1/7, contact_matrix = matrix(5, 1, 1)
+# Models with a mixing layer always pull ---------------------------------------
+mixing <- ModelSIR(
+  name = "Flu", n = 1000, prevalence = .01, transmission_prob = .1,
+  recovery_rate = 1/7
 )
-mixing |> add_entity(entity("All", 1000, as_proportion = FALSE))
+add_layer(mixing, layer_mixing("mixing", rep(0, 1000), contact_matrix = 5))
 verbose_off(mixing)
 set_transmission_mode(mixing, "push")
 run(mixing, ndays = 5, seed = 1)

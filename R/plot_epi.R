@@ -25,7 +25,7 @@ find_scale <- function(x) {
 #' # Building and Initializing SEIR Model
 #' sir <- ModelSIR(
 #'   name = "COVID-19", n = 1000, prevalence = 0.01,
-#'   transmission_rate = 0.9,
+#'   transmission_prob = 0.9,
 #'   recovery_rate = 0.1
 #' )
 #'

@@ -1,18 +1,13 @@
 #' Contact layers
 #'
 #' Who meets whom in a model comes from its contact layers. A network layer
-#' holds ties between agents; a mixing layer ([layer_mixing()], also created
-#' by the mixing models, e.g., [ModelSIRMixing()]) draws contacts by group,
-#' with a contact matrix or a contact probability within groups. Network models (e.g., [ModelSIR()]) start with no layers: add one
-#' with `add_layer()`. A model can have several layers, and its susceptible
-#' agents are exposed to the infectious agents of every one of them, in one
-#' draw: e.g., a household network added to [ModelSEIRMixing()] transmits
-#' alongside the contact matrix.
-#'
-#' The connected models (e.g., [ModelSIRCONN()]) are the exception for now:
-#' they draw contacts from the list of infected agents and ignore layers. A
-#' layer added to them is kept, and can be edited and inspected, but transmits
-#' nothing.
+#' holds ties between agents; a mixing layer ([layer_mixing()]) draws
+#' contacts by group, with a contact matrix or a contact probability within
+#' groups. Models (e.g., [ModelSIR()]) start with no layers: add one with
+#' `add_layer()`. A model can have several layers, and its susceptible agents
+#' are exposed to the infectious agents of every one of them, in one draw:
+#' e.g., a household layer added to a model with a community contact matrix
+#' transmits alongside it.
 #'
 #' @param name String. Name of the layer (unique within a model). In
 #' `get_layer()`, the layer's id also works (layers are numbered from 0 in the
@@ -92,7 +87,7 @@
 #' @examples
 #' sir <- ModelSIR(
 #'   name = "COVID-19", n = 1000, prevalence = 0.01,
-#'   transmission_rate = 0.9, recovery_rate = 0.1
+#'   transmission_prob = 0.9, recovery_rate = 0.1
 #' )
 #'
 #' # A small-world network, drawn again at every run

@@ -622,6 +622,10 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     state_carriers(model.state_carriers),
     state_carrier_degree(model.state_carrier_degree),
     state_index_ready(model.state_index_ready),
+    infectious_states(model.infectious_states),
+    excluded_states(model.excluded_states),
+    state_not_infectious(model.state_not_infectious),
+    state_excluded(model.state_excluded),
     transmission_mode(model.transmission_mode),
     transmission_mode_last(model.transmission_mode_last),
     transmission_kappa(model.transmission_kappa)
@@ -727,6 +731,10 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     state_carriers(std::move(model.state_carriers)),
     state_carrier_degree(std::move(model.state_carrier_degree)),
     state_index_ready(model.state_index_ready),
+    infectious_states(std::move(model.infectious_states)),
+    excluded_states(std::move(model.excluded_states)),
+    state_not_infectious(std::move(model.state_not_infectious)),
+    state_excluded(std::move(model.state_excluded)),
     transmission_mode(model.transmission_mode),
     transmission_mode_last(model.transmission_mode_last),
     transmission_kappa(model.transmission_kappa)
@@ -821,6 +829,11 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     state_carriers = m.state_carriers;
     state_carrier_degree = m.state_carrier_degree;
     state_index_ready = m.state_index_ready;
+
+    infectious_states = m.infectious_states;
+    excluded_states = m.excluded_states;
+    state_not_infectious = m.state_not_infectious;
+    state_excluded = m.state_excluded;
 
     transmission_mode = m.transmission_mode;
     transmission_mode_last = m.transmission_mode_last;
@@ -1894,6 +1907,9 @@ inline void Model<TSeq>::reset() {
 
     for (auto & p : population)
         p.reset();
+
+    // Who transmits and who is excluded, which the layers read
+    state_masks_build();
 
     // The layers come first: what is distributed below (entities, viruses,
     // tools, the global events' set-up) sees the run's contacts -- the queue

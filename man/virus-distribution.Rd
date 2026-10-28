@@ -70,14 +70,19 @@ assigns the virus to a number of agents based on entity-level prevalence.
 This is only useful for the mixing models.
 }
 \examples{
-model <- ModelSEIRCONN(
+model <- ModelSEIR(
   name              = "COVID-19",
   prevalence        = 0.01,
   n                 = 10000,
-  contact_rate      = 4,
-  incubation_days   = 7,
-  transmission_rate = 0.5,
+  latent_period   = 7,
+  transmission_prob = 0.5,
   recovery_rate     = 0.99
+)
+add_param(model, "Contact rate", 4)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 delta <- virus(

@@ -21,20 +21,12 @@
 #'   size = rep(3e3, 3)
 #' )
 #'
-#' # Contact matrix with 20 expected contacts per day
-#' cmatrix <- (c(
-#'   c(0.9, 0.05, 0.05),
-#'   c(0.1, 0.8, 0.1),
-#'   c(0.1, 0.2, 0.7)
-#' ) * 20) |> matrix(byrow = TRUE, nrow = 3)
-#'
-#' flu_model <- ModelSIRMixing(
+#' flu_model <- ModelSIR(
 #'   name              = "Flu",
 #'   n                 = 9e3,
 #'   prevalence        = 1 / 9e3,
-#'   transmission_rate = 0.1,
-#'   recovery_rate     = 1 / 7,
-#'   contact_matrix    = cmatrix
+#'   transmission_prob = 0.1,
+#'   recovery_rate     = 1 / 7
 #' ) |>
 #'   add_entities_from_dataframe(
 #'     entities = entities,

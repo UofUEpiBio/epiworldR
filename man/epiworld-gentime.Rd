@@ -26,13 +26,13 @@ plot_generation_time(x, ...)
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model), or an object of class \link{epiworld_generation_time}.}
 
-\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 desired statistic.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot]{graphics::plot}.}
+\link[graphics:plot.default]{graphics::plot}.}
 }
 \value{
 \itemize{
@@ -50,14 +50,19 @@ Extraction and plotting of generation time by virus over time.
 }
 \examples{
 # SEIR Connected model
-seirconn <- ModelSEIRCONN(
+seirconn <- ModelSEIR(
   name              = "Disease",
   n                 = 10000,
   prevalence        = 0.1,
-  contact_rate      = 2.0,
-  transmission_rate = 0.8,
-  incubation_days   = 7.0,
+  transmission_prob = 0.8,
+  latent_period   = 7.0,
   recovery_rate     = 0.3
+)
+add_param(seirconn, "Contact rate", 2.0)
+add_layer(
+  seirconn,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 set.seed(937)
@@ -68,7 +73,7 @@ gent <- plot_generation_time(seirconn)
 
 }
 \seealso{
-Other Epidemiological metrics:
+Other Epidemiological metrics: 
 \code{\link{epiworld-repnum}}
 }
 \concept{Epidemiological metrics}

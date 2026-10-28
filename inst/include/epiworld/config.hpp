@@ -150,8 +150,7 @@ enum class EventAction : uint8_t {
  * @brief How network transmission is sampled each step.
  *
  * @details Susceptible agents whose update function is
- * `default_update_susceptible` or `sampler::make_update_susceptible()` can
- * acquire a virus in two ways that give the same distribution of outcomes:
+ * `default_update_susceptible` can acquire a virus in two ways that give the same distribution of outcomes:
  *
  * - `pull`: each susceptible agent scans its neighbors and draws its infector
  *   with `roulette()` (the approach of epiworld <= 0.15).

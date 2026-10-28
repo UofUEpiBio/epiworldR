@@ -13,9 +13,12 @@ The following models are included:
 
 2. `models::ModelSIR` SIR
 
-3. `models::ModelSIRCONN` SIR connected graph
+3. `models::ModelSEIR` SEIR
 
-4. `models::ModelSEIRCONN` SEIR connected graph
+4. `models::ModelSEIRQuarantine` SEIR with quarantine, isolation and contact tracing
 
 5. `models::ModelSURV` Surveillance
+
+Contacts come from the model's layers (networks, mixing by group, or both), so
+there is one model per disease, whatever the contacts.
 

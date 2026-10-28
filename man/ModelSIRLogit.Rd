@@ -64,7 +64,7 @@ X <- cbind(
   Female    = sample.int(2, n, replace = TRUE) - 1
 )
 
-# Declare coefficients for each sex regarding transmission_rate and recovery.
+# Declare coefficients for each sex regarding transmission_prob and recovery.
 coef_infect  <- c(.1, -2, 2)
 coef_recover <- rnorm(2)
 
@@ -101,22 +101,16 @@ rn <- get_reproductive_number(model_logit)
 get_agents(model_logit)
 }
 \seealso{
-Other Models:
-\code{\link[=ModelDiffNet]{ModelDiffNet()}},
-\code{\link[=ModelSEIR]{ModelSEIR()}},
-\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
-\code{\link[=ModelSEIRD]{ModelSEIRD()}},
-\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
-\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
-\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
-\code{\link[=ModelSIR]{ModelSIR()}},
-\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
-\code{\link[=ModelSIRD]{ModelSIRD()}},
-\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
-\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
-\code{\link[=ModelSIS]{ModelSIS()}},
-\code{\link[=ModelSISD]{ModelSISD()}},
-\code{\link[=ModelSURV]{ModelSURV()}}
+Other Models: 
+\code{\link{ModelDiffNet}()},
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSEIRD}()},
+\code{\link{ModelSEIRQuarantine}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIS}()},
+\code{\link{ModelSISD}()},
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}

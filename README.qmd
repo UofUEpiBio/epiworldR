@@ -126,7 +126,7 @@ sir <- ModelSIR(
   name              = "COVID-19",
   n                 = 100000,
   prevalence        = .01,
-  transmission_rate = .7,
+  transmission_prob = .7,
   recovery          = .3
 ) |>
   # Adding a small-world network
@@ -153,19 +153,24 @@ plot(sir)
 plot_incidence(sir)
 ```
 
-## SEIR model with a fully connected graph
+## SEIR model with random mixing
 
-The SEIR model is similar to the SIR model but includes an exposed state. Here, we simulate a population of 10,000 agents with a 0.01 prevalence, a 0.6 transmission rate, a 0.5 recovery rate, and 7 days-incubation period. The population is fully connected, meaning agents can transmit the disease to any other agent:
+The SEIR model is similar to the SIR model but includes an exposed state. Here, we simulate a population of 10,000 agents with a 0.01 prevalence, a 0.1 transmission probability per contact, a 1/7 recovery rate, and a 7-day latent period. The population mixes at random: each agent meets "Contact rate" (10) others a day, any of whom can transmit the disease:
 
 ```{r seir-conn}
-model_seirconn <- ModelSEIRCONN(
+model_seirconn <- ModelSEIR(
   name                = "COVID-19",
   prevalence          = 0.01,
   n                   = 10000,
-  contact_rate        = 10,
-  incubation_days     = 7,
-  transmission_rate   = 0.1,
+  latent_period     = 7,
+  transmission_prob   = 0.1,
   recovery_rate       = 1 / 7
+)
+add_param(model_seirconn, "Contact rate", 10)
+add_layer(
+  model_seirconn,
+  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 ) |> add_virus(
   virus(
     name = "COVID-19 (delta)",
@@ -281,7 +286,7 @@ sir <- ModelSIR(
   name           = "COVID-19",
   n              = 500,
   prevalence     = .01,
-  transmission_rate = .5,
+  transmission_prob = .5,
   recovery       = .5
 ) |>
   # Adding a small-world network
@@ -305,16 +310,21 @@ nplot(x, edge.curvature = 0, edge.color = "gray", skip.vertex = TRUE)
 
 ## Multiple simulations
 
-`epiworldR` supports running multiple simulations using the `run_multiple` function. The following code simulates 50 SIR models with 1000 agents each. Each agent is connected to ten other agents. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a `data.frame`:
+`epiworldR` supports running multiple simulations using the `run_multiple` function. The following code simulates 50 SIR models with 1000 agents each. Each agent meets two others a day, at random. One percent of the population has the virus, with a 90% chance of transmission. Infected individuals recover at a 0.1 rate. The results are saved in a `data.frame`:
 
 ```{r multiple-example}
 #| fig-alt: "Plot of reproductive-number results from multiple SIR simulations."
-model_sir <- ModelSIRCONN(
+model_sir <- ModelSIR(
   name = "COVID-19",
   prevalence = 0.01,
   n = 1000,
-  contact_rate = 2,
-  transmission_rate = 0.9, recovery_rate = 0.1
+  transmission_prob = 0.9, recovery_rate = 0.1
+)
+add_param(model_sir, "Contact rate", 2)
+add_layer(
+  model_sir,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 # Generating a saver

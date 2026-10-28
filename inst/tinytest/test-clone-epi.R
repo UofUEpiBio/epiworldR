@@ -1,13 +1,18 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-clone-epi.R")
 
 make_model <- function() {
-  model <- ModelSIRCONN(
+  model <- ModelSIR(
     name              = "A",
     n                 = 1000,
     prevalence        = 0.05,
-    contact_rate      = 4,
-    transmission_rate = 0.5,
+    transmission_prob = 0.5,
     recovery_rate     = 0.2
+  )
+  add_param(model, "Contact rate", 4)
+  add_layer(
+    model,
+    layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+      set_contact_rate("Contact rate")
   )
   verbose_off(model)
   model

@@ -4,13 +4,18 @@
 # is added afterwards (lineage 1).
 make_model <- function() {
 
-  model <- ModelSIRCONN(
+  model <- ModelSIR(
     name              = "A",
     n                 = 1000,
     prevalence        = 0.02,
-    contact_rate      = 4,
-    transmission_rate = 0.5,
+    transmission_prob = 0.5,
     recovery_rate     = 0.2
+  )
+  add_param(model, "Contact rate", 4)
+  add_layer(
+    model,
+    layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+      set_contact_rate("Contact rate")
   )
 
   verbose_off(model)

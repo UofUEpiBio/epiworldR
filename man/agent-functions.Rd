@@ -73,7 +73,7 @@ provided, the agent will be updated with the default values of the virus/tool.
 }
 \examples{
 sir <- ModelSIR(name = "COVID-19", n = 1000, prevalence = 0.01,
-  transmission_rate = 0.9, recovery_rate = 0.1)
+  transmission_prob = 0.9, recovery_rate = 0.1)
 add_layer(sir, layer_network("contacts", graph_smallworld(k = 5, p = .01)))
 run(sir, ndays = 100, seed = 1912)
 table(get_agents_states(sir))

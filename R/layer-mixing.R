@@ -11,19 +11,22 @@
 #' `contact_prob = 1` makes every group a clique (everyone meets everyone,
 #' every day), with no ties stored.
 #'
-#' The mixing models (e.g., [ModelSEIRMixing()]) create their own mixing layer,
-#' named `"mixing"`; `layer_mixing()` creates one to add to any model with
-#' [add_layer()].
+#' `layer_mixing()` creates one to add to any model with [add_layer()]. Every
+#' agent of a group takes part in the mixing (the contacts are spread over all
+#' of them), and the agents in the model's infectious states transmit (see
+#' [set_infectious_states()]; e.g., Infected, not Exposed, in [ModelSEIR()]).
+#'
+#' With `set_contact_rate()`, the contacts of a layer with a contact matrix are
+#' a model parameter times the matrix. The parameter is read at the end of
+#' every day, so a global event or a calibration that changes it changes the
+#' next day's contacts. With everyone in one group and a 1 x 1 matrix of 1,
+#' every agent meets "Contact rate" others a day, at random (what the former
+#' connected models, e.g. `ModelSIRCONN()`, did; see the example).
 #'
 #' @param name String. Name of the layer (unique within a model).
 #' @param groups Integer vector with the group of each agent (starting at 0),
 #' or `NA` to leave the agent out of the layer. Its length is the population
 #' size of the model the layer is added to.
-#' @param infectious_states Integer vector. States (starting at 0) whose agents
-#' can be met and transmit.
-#' @param available_states Integer vector. States (starting at 0) whose agents
-#' take part in the mixing (e.g., not hospitalized). With a contact matrix,
-#' the contacts per day are spread over the available agents.
 #' @param contact_matrix Numeric square matrix with one row per group.
 #' @param contact_prob Numeric vector with the probability that two members of
 #' a group meet on a given day: one per group, or one for all groups. Each in
@@ -33,6 +36,8 @@
 #' @param agent Integer. Id of an agent (starting at 0).
 #' @param group Integer. Id of a group (starting at 0); in `set_group()`, `NA`
 #' takes the agent out of the layer.
+#' @param param String. In `set_contact_rate()`, the name of the model
+#' parameter the contact matrix is multiplied by (add it with [add_param()]).
 #'
 #' @details
 #' Give exactly one of `contact_matrix` and `contact_prob`. The number of
@@ -50,7 +55,8 @@
 #' `epiworld_layer_mixing`.
 #' - `get_contact_prob()` returns the contact probabilities (one per group once
 #' the model has run; empty for a layer with a contact matrix).
-#' - `set_contact_prob()` and `set_group()` return the layer invisibly.
+#' - `set_contact_prob()`, `set_contact_rate()` and `set_group()` return the
+#' layer invisibly.
 #' - `get_group()` returns the group of the agent (`NA` if none).
 #' - `members_of()` returns the ids of the agents in the group, in no
 #' particular order.
@@ -60,16 +66,14 @@
 #'   name              = "flu",
 #'   n                 = 1000,
 #'   prevalence        = .01,
-#'   transmission_rate = .2,
+#'   transmission_prob = .2,
 #'   recovery_rate     = .1
 #' )
 #'
 #' households <- layer_mixing(
 #'   "households",
-#'   groups            = (0:999) %/% 4,
-#'   infectious_states = 1,
-#'   available_states  = 0:2,
-#'   contact_prob      = 1
+#'   groups       = (0:999) %/% 4,
+#'   contact_prob = 1
 #' )
 #' add_layer(sir, households)
 #'
@@ -79,16 +83,31 @@
 #'   sir,
 #'   layer_mixing(
 #'     "community",
-#'     groups            = rep(0:1, c(200, 800)),
-#'     infectious_states = 1,
-#'     available_states  = 0:2,
-#'     contact_matrix    = cm
+#'     groups         = rep(0:1, c(200, 800)),
+#'     contact_matrix = cm
 #'   )
 #' )
 #'
 #' run(sir, ndays = 50, seed = 1)
 #' members_of(households, 0)
 #' get_contact_prob(households)
+#'
+#' # Random mixing: everyone meets "Contact rate" others a day
+#' seir <- ModelSEIR(
+#'   name              = "flu",
+#'   n                 = 1000,
+#'   prevalence        = .01,
+#'   transmission_prob = .1,
+#'   latent_period     = 3,
+#'   recovery_rate     = 1 / 7
+#' )
+#' add_param(seir, "Contact rate", 4)
+#'
+#' everyone <- layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1)
+#' set_contact_rate(everyone, "Contact rate")
+#' add_layer(seir, everyone)
+#'
+#' run(seir, ndays = 50, seed = 1)
 #' @name mixing-layers
 #' @concept contact-layers
 NULL
@@ -98,15 +117,11 @@ NULL
 layer_mixing <- function(
   name,
   groups,
-  infectious_states,
-  available_states,
   contact_matrix = NULL,
   contact_prob   = NULL
 ) {
 
   stopifnot_string(name)
-  stopifnot_int(infectious_states, lb = 0)
-  stopifnot_int(available_states, lb = 0)
 
   # A fraction would be truncated, and a negative id would be NO_GROUP in C++
   if (
@@ -126,13 +141,7 @@ layer_mixing <- function(
     max(groups, -1L, na.rm = TRUE) + 1L
   }
 
-  ptr <- layer_mixing_cpp(
-    name,
-    as.integer(groups),
-    as.integer(n_groups),
-    as.integer(infectious_states),
-    as.integer(available_states)
-  )
+  ptr <- layer_mixing_cpp(name, as.integer(groups), as.integer(n_groups))
 
   if (!is.null(contact_matrix)) {
     stopifany_na(contact_matrix)
@@ -144,6 +153,14 @@ layer_mixing <- function(
 
   new_layer(ptr, "mixing")
 
+}
+
+#' @export
+#' @rdname mixing-layers
+set_contact_rate <- function(layer, param) {
+  stopifnot_layer(layer, "mixing")
+  stopifnot_string(param)
+  invisible(set_contact_rate_cpp(layer, param))
 }
 
 #' @export

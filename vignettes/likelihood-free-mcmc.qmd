@@ -49,7 +49,7 @@ model_sir <- ModelSIR(
   name = "COVID-19",
   n          = 2000,
   prevalence = .01,
-  transmission_rate = .04,
+  transmission_prob = .04,
   recovery_rate = 1 / 7
 )
 
@@ -95,7 +95,7 @@ The **simulation function** runs a model with a given set of parameters and prod
 simulation_fun <- function(params, lfmcmc_obj) {
 
   set_param(model_sir, "Recovery rate", params[1])
-  set_param(model_sir, "Transmission rate", params[2])
+  set_param(model_sir, "Transmission probability", params[2])
 
   run(
     model_sir,
@@ -183,7 +183,7 @@ To make the printed results easier to read, we use the `set_params_names` and `s
 
 ```{r}
 #| label: lfmcmc-print
-set_params_names(lfmcmc_model, c("Recovery rate", "Transmission rate"))
+set_params_names(lfmcmc_model, c("Recovery rate", "Transmission probability"))
 set_stats_names(
   lfmcmc_model,
   c(get_states(model_sir), "Average active cases")
@@ -214,7 +214,7 @@ lines(accepted[, 2], type = "l", lwd = 2, col = "steelblue")
 legend(
   "topright",
   bty = "n",
-  legend = c("Recovery rate", "Transmission rate"),
+  legend = c("Recovery rate", "Transmission probability"),
   pch    = 20,
   col    = c("tomato", "steelblue")
 )

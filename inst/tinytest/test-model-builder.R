@@ -21,8 +21,8 @@ seir_ref <- ModelSEIR(
   name              = "COVID-19",
   n                 = n,
   prevalence        = prevalence,
-  transmission_rate = trans_rate,
-  incubation_days   = incub_days,
+  transmission_prob = trans_rate,
+  latent_period   = incub_days,
   recovery_rate     = recov_rate
 )
 add_layer(seir_ref, layer_network("network", graph_smallworld(k = 5L, p = 0.01)))
@@ -33,17 +33,17 @@ run(seir_ref, ndays = ndays, seed = seed)
 
 # Create a blank model and add parameters matching ModelSEIR
 seir_mb <- Model(n)
-add_param(seir_mb, "Transmission rate", trans_rate)
+add_param(seir_mb, "Transmission probability", trans_rate)
 add_param(seir_mb, "Incubation rate",   1.0 / incub_days)
 add_param(seir_mb, "Recovery rate",     recov_rate)
 
 # Update functions:
-#   S (0): susceptible sampler; exclude Exposed (1), who are not infectious
-#          yet, and Removed (3), who have recovered but still carry the virus.
+#   S (0): susceptible sampler; only Infected (2) transmit (Exposed are not
+#          infectious yet, and Removed still carry the virus).
 #   E (1): transitions to Infected (2) at the incubation rate
 #   I (2): transitions to Removed (3) at the recovery rate
 #   R (3): no update (absorbing)
-update_s <- update_fun_susceptible(exclude = c(1L, 3L))
+update_s <- update_fun_susceptible()
 update_e <- update_fun_rate(param_names = "Incubation rate", target_states = 2L)
 update_i <- update_fun_rate(param_names = "Recovery rate",   target_states = 3L)
 
@@ -51,6 +51,7 @@ add_state(seir_mb, "Susceptible", update_s)
 add_state(seir_mb, "Exposed",     update_e)
 add_state(seir_mb, "Infected",    update_i)
 add_state(seir_mb, "Removed",     NULL)
+set_infectious_states(seir_mb, 2L)
 
 # Virus: agents start in Exposed (1) when first infected; end/removed → Removed (3)
 covid <- virus(
@@ -61,7 +62,7 @@ covid <- virus(
   recovery_rate  = recov_rate
 )
 virus_set_state(covid, init = 1L, end = 3L, removed = 3L)
-set_prob_infecting_ptr(covid, seir_mb, "Transmission rate")
+set_prob_infecting_ptr(covid, seir_mb, "Transmission probability")
 set_distribution_virus(covid, distribute_virus_randomly(prevalence, TRUE))
 add_virus(seir_mb, covid)
 

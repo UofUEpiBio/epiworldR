@@ -25,14 +25,19 @@
 #' computes those probabilities using a logit function (see examples).
 #'
 #' @examples
-#' mseirconn <- ModelSEIRCONN(
+#' mseirconn <- ModelSEIR(
 #'   name                = "COVID-19",
 #'   prevalence          = 0.01,
 #'   n                   = 10000,
-#'   contact_rate        = 4,
-#'   incubation_days     = 7,
-#'   transmission_rate   = 0.5,
+#'   latent_period     = 7,
+#'   transmission_prob   = 0.5,
 #'   recovery_rate       = 0.99
+#' )
+#' add_param(mseirconn, "Contact rate", 4)
+#' add_layer(
+#'   mseirconn,
+#'   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' delta <- virus(
@@ -208,22 +213,6 @@ add_virus.epiworld_sird <- function(model, virus, proportion) {
 
 }
 
-#' @export
-add_virus.epiworld_sirconn <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  add_virus.epiworld_sir(model, virus)
-
-}
-
-#' @export
-add_virus.epiworld_sirdconn <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  add_virus.epiworld_sird(model, virus)
-
-}
-
 
 #' @export
 add_virus.epiworld_seir <- function(model, virus, proportion) {
@@ -244,32 +233,10 @@ add_virus.epiworld_seird <- function(model, virus, proportion) {
 }
 
 #' @export
-add_virus.epiworld_seirconn <- function(model, virus, proportion) {
+add_virus.epiworld_seirquarantine <- function(model, virus, proportion) {
 
   stopifnot_virus(virus)
-  add_virus.epiworld_seir(model, virus)
-
-}
-
-#' @export
-add_virus.epiworld_seirdconn <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  add_virus.epiworld_seird(model, virus)
-
-}
-
-#' @export
-add_virus.epiworld_sirmixing <- add_virus.epiworld_sir
-
-#' @export
-add_virus.epiworld_seirmixing <- add_virus.epiworld_seir
-
-#' @export
-add_virus.epiworld_seirmixingquarantine <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 8, removed = 8)
+  virus_set_state(virus, init = 1, end = 9, removed = 9)
   invisible(add_virus_cpp(model, virus))
 
 }
@@ -314,7 +281,7 @@ rm_virus <- function(model, virus_pos) {
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", 10000, prevalence = 0.01,
-#'   transmission_rate = 0.9, recovery = 0.1
+#'   transmission_prob = 0.9, recovery = 0.1
 #' )
 #'
 #' # Adding a small world population

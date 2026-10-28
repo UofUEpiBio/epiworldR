@@ -15,7 +15,7 @@
 #' @details
 #' Tools target viruses by *lineage*. A lineage is a virus added to a model
 #' with [add_virus()] (or created by the model itself, as in
-#' [ModelSIRCONN()]) together with all of its mutations. The lineage id is the
+#' [ModelSIR()]) together with all of its mutations. The lineage id is the
 #' virus id assigned when the virus was added to the model, and every variant
 #' of the virus keeps it, so a tool targeting a virus also acts on its
 #' variants. Only lineages 0 to 62 can be targeted.
@@ -39,13 +39,18 @@
 #'
 #' @examples
 #' # A model with two diseases: "Flu" (created by the model) and "Measles"
-#' model <- ModelSIRCONN(
+#' model <- ModelSIR(
 #'   name              = "Flu",
 #'   n                 = 2000,
 #'   prevalence        = 0.01,
-#'   contact_rate      = 4,
-#'   transmission_rate = 0.5,
+#'   transmission_prob = 0.5,
 #'   recovery_rate     = 0.2
+#' )
+#' add_param(model, "Contact rate", 4)
+#' add_layer(
+#'   model,
+#'   layer_mixing("everyone", groups = rep(0, 2000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' measles <- virus(
