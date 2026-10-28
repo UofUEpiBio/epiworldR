@@ -27,8 +27,8 @@ knitr::opts_chunk$set(
 # Introduction
 
 Most of the examples in epiworldR build their contact structure from a
-random-graph generator---`graph_smallworld()`, `graph_sbm()`, or one of the
-fully-connected `*CONN` models. That is convenient for prototyping, but many
+random-graph generator---`graph_smallworld()`, `graph_sbm()`---or from random
+mixing (`layer_mixing()`). That is convenient for prototyping, but many
 applied questions start from a population that somebody else has already
 constructed: a synthetic population, a mobility-derived contact network, a
 survey-based sociocentric network, or a school roster.
@@ -226,8 +226,8 @@ model <- ModelSEIRD(
   name              = "COVID-19",
   n                 = nrow(people),
   prevalence        = 0,
-  transmission_rate = transmission_weekday,
-  incubation_days   = 4,
+  transmission_prob = transmission_weekday,
+  latent_period     = 4,
   recovery_rate     = 1 / 7,
   death_rate        = 0.005
 )
@@ -350,7 +350,7 @@ data.frame(
 ## The event
 
 `globalevent_fun()` wraps an ordinary R function that receives the model and
-is called at every step. Ours reads the clock and sets `"Transmission rate"`
+is called at every step. Ours reads the clock and sets `"Transmission probability"`
 for the following day:
 
 ```{r}
@@ -358,14 +358,14 @@ for the following day:
 weekend_effect <- function(m) {
   set_param(
     m,
-    "Transmission rate",
+    "Transmission probability",
     if (is_weekend(today(m) + 1L)) transmission_weekend else transmission_weekday
   )
 }
 ```
 
 Day 1 is a weekday and no event has fired yet, so it uses the
-`transmission_rate` we passed to `ModelSEIRD()`---which is why that argument
+`transmission_prob` we passed to `ModelSEIRD()`---which is why that argument
 was set to the weekday value.
 
 Now we rebuild the model, identically to before, and attach the event:
@@ -376,8 +376,8 @@ model_weekend <- ModelSEIRD(
   name              = "COVID-19",
   n                 = nrow(people),
   prevalence        = 0,
-  transmission_rate = transmission_weekday,
-  incubation_days   = 4,
+  transmission_prob = transmission_weekday,
+  latent_period     = 4,
   recovery_rate     = 1 / 7,
   death_rate        = 0.005
 )
@@ -497,8 +497,8 @@ model_weekend2 <- ModelSEIRD(
   name              = "COVID-19",
   n                 = nrow(people),
   prevalence        = 0,
-  transmission_rate = transmission_weekday,
-  incubation_days   = 4,
+  transmission_prob = transmission_weekday,
+  latent_period     = 4,
   recovery_rate     = 1 / 7,
   death_rate        = 0.005
 )
@@ -522,7 +522,7 @@ for (d in seq_len(ndays)) {
 
   add_globalevent(
     model_weekend2,
-    globalevent_set_params("Transmission rate", new_rate, day = d)
+    globalevent_set_params("Transmission probability", new_rate, day = d)
   )
 
 }
