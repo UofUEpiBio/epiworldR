@@ -11,6 +11,7 @@ using namespace cpp11;
 typedef std::shared_ptr< ContactLayer<> > LayerPtr;
 typedef layer::Network<>::Generator Generator;
 typedef layer::Network<>::Rewiring Rewiring;
+typedef layer::Mixing<>::Grouping Grouping;
 
 static LayerPtr & layer_ptr(SEXP layer) {
   external_pointer< LayerPtr > ptr(layer);
@@ -80,6 +81,13 @@ SEXP graph_edgelist_cpp(
 }
 
 [[cpp11::register]]
+SEXP grouping_random_cpp(std::vector< double > sizes, bool as_proportion) {
+  return external_pointer< Grouping >(
+    new Grouping(grouping::random<>(std::move(sizes), as_proportion))
+  );
+}
+
+[[cpp11::register]]
 SEXP rewire_degseq_cpp(std::string param) {
   return external_pointer< Rewiring >(
     new Rewiring(graph::rewire_degseq<>(param))
@@ -104,24 +112,30 @@ SEXP layer_network_graph_cpp(std::string name, SEXP graph) {
   );
 }
 
+[[cpp11::register]]
+SEXP layer_mixing_cpp(std::string name) {
+  return external_pointer< LayerPtr >(new LayerPtr(layer::mixing<>(name)));
+}
+
 // Groups from R: 0-based, NA for none (NO_GROUP)
 [[cpp11::register]]
-SEXP layer_mixing_cpp(
-    std::string name,
-    const std::vector< int > & groups,
-    int n_groups
-) {
+SEXP set_groups_cpp(SEXP layer, const std::vector< int > & groups, int n_groups) {
 
   std::vector< size_t > g(groups.size());
   for (size_t i = 0u; i < groups.size(); ++i)
     g[i] = (groups[i] == NA_INTEGER) ?
       layer::Mixing<>::NO_GROUP : static_cast< size_t >(groups[i]);
 
-  auto mix = layer::mixing<>(name);
-  mix->set_groups(std::move(g), n_groups);
+  mixing_ref(layer).set_groups(std::move(g), n_groups);
+  return layer;
 
-  return external_pointer< LayerPtr >(new LayerPtr(mix));
+}
 
+[[cpp11::register]]
+SEXP set_grouping_cpp(SEXP layer, SEXP grouping) {
+  external_pointer< Grouping > gr(grouping);
+  mixing_ref(layer).set_groups(*gr);
+  return layer;
 }
 
 [[cpp11::register]]

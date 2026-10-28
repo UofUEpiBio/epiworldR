@@ -232,6 +232,10 @@ graph_edgelist_cpp <- function(source, target, size, directed) {
   .Call(`_epiworldR_graph_edgelist_cpp`, source, target, size, directed)
 }
 
+grouping_random_cpp <- function(sizes, as_proportion) {
+  .Call(`_epiworldR_grouping_random_cpp`, sizes, as_proportion)
+}
+
 rewire_degseq_cpp <- function(param) {
   .Call(`_epiworldR_rewire_degseq_cpp`, param)
 }
@@ -244,8 +248,16 @@ layer_network_graph_cpp <- function(name, graph) {
   .Call(`_epiworldR_layer_network_graph_cpp`, name, graph)
 }
 
-layer_mixing_cpp <- function(name, groups, n_groups) {
-  .Call(`_epiworldR_layer_mixing_cpp`, name, groups, n_groups)
+layer_mixing_cpp <- function(name) {
+  .Call(`_epiworldR_layer_mixing_cpp`, name)
+}
+
+set_groups_cpp <- function(layer, groups, n_groups) {
+  .Call(`_epiworldR_set_groups_cpp`, layer, groups, n_groups)
+}
+
+set_grouping_cpp <- function(layer, grouping) {
+  .Call(`_epiworldR_set_grouping_cpp`, layer, grouping)
 }
 
 add_layer_cpp <- function(model, layer) {

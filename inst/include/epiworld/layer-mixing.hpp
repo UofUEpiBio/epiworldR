@@ -25,13 +25,13 @@ std::shared_ptr< Mixing<TSeq> > mixing(std::string name);
  *
  * ### Groups
  *
- * The layer owns the grouping: `set_groups()` assigns every agent a group (or
- * `NO_GROUP`, which leaves it out of the layer). If no grouping is set, the
- * layer builds one from the model's entities once they are distributed (at the
- * first `update()` of a run), each agent going to the group of its first entity
- * (and agents without entities to none), which is how the mixing models are
- * built. Either way, from then on the layer works on its own table, not on the
- * entities.
+ * The layer owns the grouping, set with `set_groups()` before the first run:
+ * - from a vector, one group per agent (or `NO_GROUP`, which leaves the agent
+ *   out of the layer): the grouping is *fixed*;
+ * - from a *generator* (a `Grouping`, e.g., `grouping::random()`), which the
+ *   layer calls at every reset: each run (and each replicate of
+ *   `run_multiple()`) then gets its own draw, from its own seed, as a network
+ *   layer from a `graph::` generator does.
  *
  * ### Contacts: a matrix or a probability per pair
  *
@@ -107,16 +107,26 @@ public:
     /// Group of the agents that are not in the layer.
     static constexpr size_t NO_GROUP = std::numeric_limits< size_t >::max();
 
+    /**
+     * @brief A grouping drawn at every reset (see `set_groups()`): the number
+     * of groups, and a function that returns the group of each agent of a
+     * model (or `NO_GROUP`), using the model's random numbers.
+     */
+    struct Grouping {
+        size_t n_groups;
+        std::function< std::vector< size_t >(Model<TSeq> &) > draw;
+    };
+
 private:
 
     std::optional< ParamRef > rate_ref; ///< Empty: rate 1
 
     // Grouping
     std::vector< size_t > groups;          ///< Group of each agent
-    std::vector< size_t > groups_baseline; ///< Set by set_groups()
+    std::vector< size_t > groups_baseline; ///< Fixed, or this run's draw
+    Grouping grouping{0u, nullptr};        ///< Empty draw: fixed groups
     size_t n_groups = 0u;
-    bool explicit_groups = false; ///< Set by set_groups(), else from entities
-    bool groups_pending = false;  ///< Groups to read from the entities
+    bool explicit_groups = false; ///< Set by set_groups()
     bool layout_stale = true;     ///< Group sizes and pool offsets to rebuild
     std::vector< size_t > group_size; ///< Agents in each group
 
@@ -227,6 +237,13 @@ public:
      */
     void set_groups(std::vector< size_t > group_of_agent, size_t n_groups_);
 
+    /**
+     * @brief Sets a grouping drawn at every reset (between runs only), e.g.,
+     * `grouping::random()`.
+     * @details Moves with `set_group()` are then for the current run only.
+     */
+    void set_groups(Grouping generator);
+
     /// Group of an agent (`NO_GROUP` if it is not in the layer).
     size_t get_group(size_t agent_id) const
     {
@@ -312,8 +329,8 @@ public:
      * @brief Who shared a group with `agent`, both present, between days `d1`
      * and `d2` (traced within-group layers; see the class description).
      * @details One entry per groupmate, however many times either moved or
-     * was absent in between. Days after today are not known yet and are left
-     * out. The history is that of the current (or last) run, and covers it
+     * was absent in between. Days before day 1 (when contacts start) and after
+     * today (not known yet) are left out. The history is that of the current (or last) run, and covers it
      * whole: tracing turned on during a run starts it at the next one.
      * @throws std::logic_error Without a history (see the class description).
      * @param out Replaced by the groupmates, in ascending id order (a vector
@@ -396,9 +413,36 @@ inline void Mixing<TSeq>::set_groups(
     groups_baseline = std::move(group_of_agent);
     groups          = groups_baseline;
     n_groups        = n_groups_;
+    grouping        = {0u, nullptr};
     explicit_groups = true;
     layout_stale    = true;
     rebuild_members();
+    clear_history();
+
+}
+
+template<typename TSeq>
+inline void Mixing<TSeq>::set_groups(Grouping generator)
+{
+
+    if (!generator.draw)
+        throw std::invalid_argument(
+            "Mixing layer '" + this->get_name() + "': empty grouping."
+        );
+
+    if (!this->edits_baseline())
+        throw std::logic_error(
+            "Mixing layer '" + this->get_name() + "': set_groups() sets the "
+            "baseline and cannot be called during a run; use set_group()."
+        );
+
+    // Drawn at the next reset
+    grouping        = std::move(generator);
+    n_groups        = grouping.n_groups;
+    explicit_groups = true;
+    groups_baseline.clear();
+    groups.clear();
+    layout_stale    = true;
     clear_history();
 
 }
@@ -440,10 +484,11 @@ inline void Mixing<TSeq>::set_group(size_t agent_id, size_t group)
         return;
     }
 
-    if (!explicit_groups)
+    if (grouping.draw)
         throw std::logic_error(
-            "Mixing layer '" + this->get_name() + "': set_groups() must be "
-            "called before set_group() outside a run."
+            "Mixing layer '" + this->get_name() + "': its grouping is drawn "
+            "at every reset, so a move between runs would be lost; move "
+            "agents during a run, or set fixed groups with set_groups()."
         );
 
     groups_baseline[agent_id] = group;
@@ -611,43 +656,36 @@ inline void Mixing<TSeq>::reset(Model<TSeq> & model)
 
     const size_t n = model.size();
 
-    if (explicit_groups)
+    if (!explicit_groups)
+        throw std::logic_error(
+            "Mixing layer '" + this->get_name() + "': it has no groups; set "
+            "them with set_groups()."
+        );
+
+    // This run's draw, or the fixed groups (edits of the last run dropped)
+    if (grouping.draw)
     {
-
-        // Edits of the last run are dropped
-        groups = groups_baseline;
-
-        if (groups.size() != n)
-            throw std::length_error(
-                "Mixing layer '" + this->get_name() + "': the grouping has " +
-                std::to_string(groups.size()) + " agents, but the model has " +
-                std::to_string(n) + "."
-            );
-
+        groups_baseline = grouping.draw(model);
+        for (size_t g : groups_baseline)
+            if ((g != NO_GROUP) && (g >= n_groups))
+                throw std::range_error(
+                    "Mixing layer '" + this->get_name() + "': the grouping "
+                    "drew group " + std::to_string(g) + ", out of range (" +
+                    std::to_string(n_groups) + " groups)."
+                );
     }
-    else
-    {
 
-        // One group per entity; the agents are placed at the first update,
-        // once the entities are distributed
-        n_groups = model.get_entities().size();
-        groups.assign(n, NO_GROUP);
-        groups_pending = true;
-
-    }
+    groups = groups_baseline;
+    if (groups.size() != n)
+        throw std::length_error(
+            "Mixing layer '" + this->get_name() + "': the grouping has " +
+            std::to_string(groups.size()) + " agents, but the model has " +
+            std::to_string(n) + "."
+        );
 
     // Edits of the last run are dropped
     if (within_groups())
     {
-
-        // The queue registers carriers before the first update, so the
-        // members must be known now, not taken from the entities later
-        if (!explicit_groups)
-            throw std::logic_error(
-                "Mixing layer '" + this->get_name() + "': a layer with contact "
-                "probabilities (within groups) needs its groups from "
-                "set_groups()."
-            );
 
         contact_prob = contact_prob_baseline;
         // A copy: assign() may free the element before reading it
@@ -711,21 +749,6 @@ inline void Mixing<TSeq>::reset(Model<TSeq> & model)
 template<typename TSeq>
 inline void Mixing<TSeq>::update(Model<TSeq> & model)
 {
-
-    // The agent goes to the group of its first entity
-    if (groups_pending)
-    {
-        for (size_t i = 0u; i < groups.size(); ++i)
-        {
-            auto & a = model.get_agent(i);
-            if (a.get_n_entities() != 0u)
-                groups[i] = a.get_entity(0u, model).get_id();
-        }
-
-        groups_pending = false;
-        layout_stale = true;
-        rebuild_members();
-    }
 
     // Moves made during the step; the history keeps each agent's net change
     // (several moves of one agent in a step are one, or none if it is back)
@@ -930,7 +953,8 @@ inline void Mixing<TSeq>::groupmates_of(
             )
         );
 
-    d1 = std::max(d1, 0);
+    // Contacts start on day 1 (day 0 is the initial state)
+    d1 = std::max(d1, 1);
     d2 = std::min(d2, this->model->today());
 
     // One entry per shared span, merged per groupmate below
@@ -1183,6 +1207,93 @@ inline size_t Mixing<TSeq>::sample(
         );
 
     return n_sampled;
+
+}
+
+}
+
+namespace grouping {
+
+/**
+ * @brief Random groups of given sizes, drawn at every reset (see
+ * `layer::Mixing::set_groups()`).
+ *
+ * @details Group by group, in order, the agents are drawn at random from those
+ * not yet in a group; agents left over are in no group. A group of size `s`
+ * takes `s` agents, or, with `as_proportion`, `floor(s x n)` of the `n` agents
+ * still without a group. These are the draws of the random entity
+ * distribution with `to_unassigned` (`distribute_entity_randomly()`), so a
+ * mixing layer grouped this way runs as the same entities did.
+ *
+ * @param sizes One size per group.
+ * @param as_proportion Whether the sizes are proportions of the agents left.
+ */
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+inline typename layer::Mixing<TSeq>::Grouping random(
+    std::vector< epiworld_double > sizes,
+    bool as_proportion = false
+)
+{
+
+    for (epiworld_double s : sizes)
+        if (!std::isfinite(s) || (s < 0.0) || (as_proportion && (s > 1.0)))
+            throw std::range_error(
+                "grouping::random(): sizes must be finite and non-negative "
+                "(proportions at most 1); got " + std::to_string(s) + "."
+            );
+
+    return {
+        sizes.size(),
+        [sizes, as_proportion](Model<TSeq> & model) -> std::vector< size_t > {
+
+            constexpr size_t none = layer::Mixing<TSeq>::NO_GROUP;
+            std::vector< size_t > groups(model.size(), none);
+            std::vector< size_t > idx;
+
+            for (size_t g = 0u; g < sizes.size(); ++g)
+            {
+
+                // The agents without a group, in ascending id order
+                idx.clear();
+                for (size_t i = 0u; i < groups.size(); ++i)
+                    if (groups[i] == none)
+                        idx.push_back(i);
+
+                const size_t n = idx.size();
+                size_t n_draw;
+                if (as_proportion)
+                    n_draw = std::min(
+                        n,
+                        static_cast< size_t >(std::floor(sizes[g] * n))
+                    );
+                else
+                {
+                    // Compared before the cast, which a huge size overflows
+                    if (sizes[g] >= static_cast< epiworld_double >(n + 1u))
+                        throw std::range_error(
+                            "grouping::random(): group " + std::to_string(g) +
+                            " takes " + std::to_string(sizes[g]) + " agents, "
+                            "but only " + std::to_string(n) + " are left."
+                        );
+                    n_draw = static_cast< size_t >(sizes[g]);
+                }
+
+                size_t n_left = n;
+                for (size_t k = 0u; k < n_draw; ++k)
+                {
+                    const size_t loc = model.runif_index(
+                        static_cast< uint32_t >(n_left--)
+                    );
+                    groups[idx[loc]] = g;
+                    std::swap(idx[loc], idx[n_left]);
+                }
+
+            }
+
+            return groups;
+
+        }
+    };
 
 }
 

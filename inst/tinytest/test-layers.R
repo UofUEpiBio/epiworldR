@@ -279,6 +279,40 @@ verbose_off(bad)
 add_layer(bad, layer_mixing("y", 0:9, contact_prob = 1))
 expect_error(run(bad, ndays = 1), "agents")
 
+# Groups drawn at random at every run: the sizes hold (agents left over are in
+# no group), the same seed draws the same groups and another seed others, and
+# a move between runs is an error (the next run would draw them again)
+schools <- layer_mixing(
+  "schools",
+  groups       = grouping_random(c(300, 200)),
+  contact_prob = .05
+)
+drawn <- ModelSIR("flu", n = 1000, prevalence = .01, transmission_prob = .2,
+  recovery_rate = .1)
+verbose_off(drawn)
+add_layer(drawn, schools)
+draw <- function(seed) {
+  run(drawn, ndays = 10, seed = seed)
+  sapply(0:999, get_group, layer = schools)
+}
+first <- draw(1)
+expect_equal(as.vector(table(first, useNA = "always")), c(300L, 200L, 500L))
+expect_identical(draw(1), first)
+expect_false(identical(draw(2), first))
+expect_error(set_group(schools, 0, 1), "drawn at every reset")
+
+# Proportions are of the agents still without a group
+halves <- layer_mixing(
+  "halves",
+  groups       = grouping_random(c(.5, .5), as_proportion = TRUE),
+  contact_prob = .05
+)
+add_layer(drawn, halves)
+run(drawn, ndays = 1, seed = 1)
+expect_equal(lengths(list(members_of(halves, 0), members_of(halves, 1))),
+  c(500L, 250L))
+expect_error(grouping_random(-1), "non-negative")
+
 # A contact rate from a model parameter: a global event on day 10 that sets it
 # to 0 stops new infections from day 11 on
 crate <- ModelSIR("flu", n = 2000, prevalence = .01, transmission_prob = .1,
