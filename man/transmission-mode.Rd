@@ -54,12 +54,12 @@ infected agents that can transmit (\eqn{c}) and the susceptible agents
 (\eqn{s}), and pulls otherwise.
 
 Only susceptible states that use epiworld's default network sampler can be
-pushed. Other models, e.g., mixing models (\code{\link[=ModelSIRMixing]{ModelSIRMixing()}}) and
-connected models (\code{\link[=ModelSIRCONN]{ModelSIRCONN()}}), always pull, as do directed networks.
+pushed. Models with a mixing layer (see \code{\link[=layer_mixing]{layer_mixing()}}) always pull, as do
+directed networks.
 }
 \examples{
 model <- ModelSIR(
-  name = "A Virus", 10000, prevalence = .01, transmission_rate = .5,
+  name = "A Virus", 10000, prevalence = .01, transmission_prob = .5,
   recovery_rate = 1 / 7
 )
 add_layer(model, layer_network("network", graph_smallworld(k = 5, p = .01)))

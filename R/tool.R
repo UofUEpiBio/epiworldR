@@ -18,13 +18,18 @@
 #' of `as_proportion`.
 #' @examples
 #' # Simple model
-#' model_sirconn <- ModelSIRCONN(
+#' model_sirconn <- ModelSIR(
 #'   name                = "COVID-19",
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
-#'   contact_rate        = 5,
-#'   transmission_rate   = 0.4,
+#'   transmission_prob   = 0.4,
 #'   recovery_rate       = 0.95
+#' )
+#' add_param(model_sirconn, "Contact rate", 5)
+#' add_layer(
+#'   model_sirconn,
+#'   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' # Running and printing
@@ -209,7 +214,7 @@ rm_tool <- function(model, tool_pos) {
 #' # Using the logit function --------------
 #' sir <- ModelSIR(
 #'   name = "COVID-19", 10000, prevalence = 0.01,
-#'   transmission_rate = 0.9, recovery_rate = 0.1
+#'   transmission_prob = 0.9, recovery_rate = 0.1
 #' )
 #'
 #' # Adding a small world population

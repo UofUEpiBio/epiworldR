@@ -6,7 +6,6 @@
 
 using namespace cpp11;
 
-
 // Model definitions:
 // https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/models
 
@@ -26,11 +25,10 @@ SEXP ModelSURV_cpp(
   double infect_period,
   double prop_vax_redux_infect,
   double surveillance_prob,
-  double transmission_rate,
+  double transmission_prob,
   double prob_death,
   double prob_noreinfect
 ) {
-
 
   // Creating a pointer to a ModelSIR model
   WrapSURV(ptr)(
@@ -46,7 +44,7 @@ SEXP ModelSURV_cpp(
       prop_vax_redux_transm,
       prop_vax_redux_infect,
       surveillance_prob,
-      transmission_rate,
+      transmission_prob,
       prob_death,
       prob_noreinfect
     )
@@ -65,8 +63,8 @@ SEXP ModelSEIR_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
-    double incubation_days,
+    double transmission_prob,
+    double latent_period,
     double recovery_rate
 
 ) {
@@ -77,8 +75,8 @@ SEXP ModelSEIR_cpp(
           name,
           n,
           prevalence,
-          transmission_rate,
-          incubation_days,
+          transmission_prob,
+          latent_period,
           recovery_rate
       )
   );
@@ -96,7 +94,7 @@ SEXP ModelSIS_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
+    double transmission_prob,
     double recovery_rate
 ) {
 
@@ -106,49 +104,15 @@ SEXP ModelSIS_cpp(
           name,
           n,
           prevalence,
-          transmission_rate,
+          transmission_prob,
           recovery_rate
       )
   );
 
-
   return ptr;
 }
-
 
 #undef WrapSIS
-
-
-#define WrapSIRCONN(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIRCONN<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSIRCONN_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double contact_rate,
-    double transmission_rate,
-    double recovery_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSIRCONN(ptr)(
-      new epiworld::epimodels::ModelSIRCONN<>(
-          name,
-          n,
-          prevalence,
-          contact_rate,
-          transmission_rate,
-          recovery_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSIRCONN
-
 
 #define WrapSIR(a) \
   cpp11::external_pointer<epiworld::epimodels::ModelSIR<>> (a)
@@ -158,7 +122,7 @@ SEXP ModelSIR_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
+    double transmission_prob,
     double recovery_rate
 ) {
 
@@ -168,7 +132,7 @@ SEXP ModelSIR_cpp(
           name,
           n,
           prevalence,
-          transmission_rate,
+          transmission_prob,
           recovery_rate
       )
   );
@@ -186,7 +150,7 @@ SEXP ModelSIRD_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
+    double transmission_prob,
     double recovery_rate,
     double death_rate
 ) {
@@ -197,7 +161,7 @@ SEXP ModelSIRD_cpp(
           name,
           n,
           prevalence,
-          transmission_rate,
+          transmission_prob,
           recovery_rate,
           death_rate
       )
@@ -216,8 +180,8 @@ SEXP ModelSIRD_cpp(
       std::string name,
       unsigned int n,
       double prevalence,
-      double transmission_rate,
-      double incubation_days,
+      double transmission_prob,
+      double latent_period,
       double recovery_rate,
       double death_rate
 
@@ -229,8 +193,8 @@ SEXP ModelSIRD_cpp(
             name,
             n,
             prevalence,
-            transmission_rate,
-            incubation_days,
+            transmission_prob,
+            latent_period,
             recovery_rate,
             death_rate
         )
@@ -249,7 +213,7 @@ SEXP ModelSISD_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
+    double transmission_prob,
     double recovery_rate,
     double death_rate
 ) {
@@ -260,7 +224,7 @@ SEXP ModelSISD_cpp(
           name,
           n,
           prevalence,
-          transmission_rate,
+          transmission_prob,
           recovery_rate,
           death_rate
       )
@@ -270,106 +234,6 @@ SEXP ModelSISD_cpp(
 }
 
 #undef WrapSISD
-
-#define WrapSIRDCONN(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIRDCONN<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSIRDCONN_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double contact_rate,
-    double transmission_rate,
-    double recovery_rate,
-    double death_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSIRDCONN(ptr)(
-      new epiworld::epimodels::ModelSIRDCONN<>(
-          name,
-          n,
-          prevalence,
-          contact_rate,
-          transmission_rate,
-          recovery_rate,
-          death_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSIRDCONN
-
-#define WrapSEIRDCONN(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRDCONN<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSEIRDCONN_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double contact_rate,
-    double transmission_rate,
-    double incubation_days,
-    double recovery_rate,
-    double death_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSEIRDCONN(ptr)(
-      new epiworld::epimodels::ModelSEIRDCONN<>(
-          name,
-          n,
-          prevalence,
-          contact_rate,
-          transmission_rate,
-          incubation_days,
-          recovery_rate,
-          death_rate
-      )
-  );
-
-  return ptr;
-}
-
-
-#undef WrapSEIRDCONN
-
-#define WrapSEIRCONN(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRCONN<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSEIRCONN_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double contact_rate,
-    double transmission_rate,
-    double incubation_days,
-    double recovery_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSEIRCONN(ptr)(
-      new epiworld::epimodels::ModelSEIRCONN<>(
-          name,
-          n,
-          prevalence,
-          contact_rate,
-          transmission_rate,
-          incubation_days,
-          recovery_rate
-      )
-  );
-
-  return ptr;
-}
-
-
-#undef WrapSEIRCONN
 
 [[cpp11::register]]
 SEXP ModelSIRLogit_cpp(
@@ -415,7 +279,6 @@ SEXP ModelSIRLogit_cpp(
 
 }
 
-
 [[cpp11::register]]
 SEXP ModelDiffNet_cpp(
   std::string name,
@@ -453,99 +316,41 @@ SEXP ModelDiffNet_cpp(
 }
 
 [[cpp11::register]]
-SEXP ModelSIRMixing_cpp(
+SEXP ModelSEIRQuarantine_cpp(
     std::string name,
     unsigned int n,
     double prevalence,
-    double transmission_rate,
+    double transmission_prob,
+    double latent_period,
     double recovery_rate,
-    std::vector< double > contact_matrix
-) {
-
-  // Creating a pointer to a ModelSIRMixing model
-  cpp11::external_pointer<epiworld::epimodels::ModelSIRMixing<>> ptr(
-      new epiworld::epimodels::ModelSIRMixing<>(
-          name,
-          n,
-          prevalence,
-          transmission_rate,
-          recovery_rate,
-          contact_matrix
-      )
-  );
-
-  return ptr;
-
-}
-
-[[cpp11::register]]
-SEXP ModelSEIRMixing_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_rate,
-    double incubation_days,
-    double recovery_rate,
-    std::vector< double > contact_matrix
-) {
-
-  // Creating a pointer to a ModelSIRMixing model
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRMixing<>> ptr(
-      new epiworld::epimodels::ModelSEIRMixing<>(
-          name,
-          n,
-          prevalence,
-          transmission_rate,
-          incubation_days,
-          recovery_rate,
-          contact_matrix
-      )
-  );
-
-  return ptr;
-
-}
-
-[[cpp11::register]]
-SEXP ModelSEIRMixingQuarantine_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_rate,
-    double incubation_days,
-    double recovery_rate,
-    std::vector< double > contact_matrix,
     double hospitalization_rate,
     double hospitalization_period,
-    double days_undetected,
+    double detection_delay,
     int quarantine_period,
     double quarantine_willingness,
     double isolation_willingness,
     int isolation_period,
-    double contact_tracing_success_rate,
-    unsigned int contact_tracing_days_prior
+    double contact_tracing_prob,
+    unsigned int contact_tracing_window
 ) {
 
-
-  // Creating a pointer to a ModelSEIRMixingQuarantine model
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRMixingQuarantine<>> ptr(
-      new epiworld::epimodels::ModelSEIRMixingQuarantine<>(
+  cpp11::external_pointer<epiworld::epimodels::ModelSEIRQuarantine<>> ptr(
+      new epiworld::epimodels::ModelSEIRQuarantine<>(
           name,
           n,
           prevalence,
-          transmission_rate,
-          incubation_days,
+          transmission_prob,
+          latent_period,
           recovery_rate,
-          contact_matrix,
           hospitalization_rate,
           hospitalization_period,
-          days_undetected,
+          detection_delay,
           quarantine_period,
           quarantine_willingness,
           isolation_willingness,
           isolation_period,
-          contact_tracing_success_rate,
-          contact_tracing_days_prior
+          contact_tracing_prob,
+          contact_tracing_window
       )
   );
 

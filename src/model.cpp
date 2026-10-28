@@ -124,6 +124,19 @@ SEXP queuing_off_cpp(
 }
 
 [[cpp11::register]]
+SEXP set_infectious_states_cpp(SEXP model, std::vector< int > states) {
+  external_pointer<Model<>> ptr(model);
+  ptr->set_infectious_states(states);
+  return model;
+}
+
+[[cpp11::register]]
+std::vector< int > get_infectious_states_cpp(SEXP model) {
+  external_pointer<Model<>> ptr(model);
+  return ptr->get_infectious_states();
+}
+
+[[cpp11::register]]
 SEXP set_transmission_mode_cpp(SEXP model, std::string mode, double kappa) {
 
   external_pointer<Model<>> ptr(model);

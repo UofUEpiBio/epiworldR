@@ -29,7 +29,7 @@ expect_equal(get_name_tool(tool_renamed), new_tool_name)
 
 # Check adding tool to model ---------------------------------------------------
 sir_0 <- ModelSIR(name = "COVID-19", n = 1000, prevalence = .01,
-                  transmission_rate = .9, recovery_rate = .3)
+                  transmission_prob = .9, recovery_rate = .3)
 expect_silent(sir_with_tool <- add_tool(sir_0, tool_0))
 expect_inherits(sir_with_tool, "epiworld_model")
 
@@ -79,14 +79,19 @@ expect_silent(set_death_reduction(tool_2, 0.6))
 
 # Test tool protection in epidemic simulation ----------------------------------
 # Create model with highly infectious virus and protective tool for half agents
-expect_silent(model_tool <- ModelSIRCONN(
+model_tool <- ModelSIR(
   name = "Tool Protection Test",
   n = 100,
   prevalence = 0.1,
-  contact_rate = 10,
-  transmission_rate = 1.0,
+  transmission_prob = 1.0,
   recovery_rate = 0.0
-))
+)
+add_param(model_tool, "Contact rate", 10)
+add_layer(
+  model_tool,
+  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 # Create a tool that fully protects agents (100% susceptibility reduction)
 expect_silent(protective_tool <- tool(
@@ -117,14 +122,19 @@ expect_true(final_infected_tool >= 40 && final_infected_tool <= 60,
             info = "Around half should be infected")
 
 # Test tool with pointer-based parameters --------------------------------------
-expect_silent(model_ptr <- ModelSIRCONN(
+model_ptr <- ModelSIR(
   name = "Tool Ptr Test",
   n = 50,
   prevalence = 0.1,
-  contact_rate = 5,
-  transmission_rate = 0.8,
+  transmission_prob = 0.8,
   recovery_rate = 0.2
-))
+)
+add_param(model_ptr, "Contact rate", 5)
+add_layer(
+  model_ptr,
+  layer_mixing("everyone", groups = rep(0, 50), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 # Add custom parameters to the model
 expect_silent(add_param(model_ptr, "tool_efficacy", 0.85))
@@ -143,7 +153,7 @@ tool_ptr <- tool(
 
 # Test pointer-based tool parameter setting
 expect_silent(set_susceptibility_reduction_ptr(tool_ptr, model_ptr, "tool_efficacy"))
-expect_silent(set_transmission_reduction_ptr(tool_ptr, model_ptr, "Transmission rate"))
+expect_silent(set_transmission_reduction_ptr(tool_ptr, model_ptr, "Transmission probability"))
 expect_silent(set_recovery_enhancer_ptr(tool_ptr, model_ptr, "recovery_boost"))
 expect_silent(set_death_reduction_ptr(tool_ptr, model_ptr, "death_protection"))
 

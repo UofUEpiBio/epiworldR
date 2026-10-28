@@ -322,6 +322,28 @@ protected:
     ///@}
 
     /**
+     * @name Infectious and excluded states
+     * @details See `set_infectious_states()` and `set_excluded_states()`. The
+     * per-state masks are built at `reset()`.
+     */
+    ///@{
+    std::vector< int > infectious_states;     ///< Empty: every state
+    std::vector< int > excluded_states;
+    std::vector< bool > state_not_infectious; ///< [state] Empty if every state is infectious
+    std::vector< char > state_excluded;       ///< [state]
+    void state_masks_build();
+    ///@}
+
+    /**
+     * @brief Takes the agents in these states out of the mixing layers: they
+     * are not met at all, and their group's contacts go to the others.
+     * @details Interim, for `epimodels::ModelSEIRQuarantine` (isolated,
+     * quarantined and hospitalized agents); participation (contact layers,
+     * Phase 4) replaces it. Agents in an excluded state do not transmit either.
+     */
+    void set_excluded_states(std::vector< int > states);
+
+    /**
      * @name Network transmission
      *
      * @details See `set_transmission_mode()` and
@@ -341,10 +363,8 @@ protected:
         int layer;                  // Layer of the candidate's contact
     };
 
-    std::vector< char > push_pushable;       ///< [state] Uses the default susceptible sampler
-    std::vector< char > push_default;        ///< [state] ...and it is default_update_susceptible
-    std::vector< char > push_excluded;       ///< [target state * nstates + source state]
-    std::vector< char > push_source_ok;      ///< [state] Some pushable state accepts it as source
+    std::vector< char > push_pushable;       ///< [state] Uses default_update_susceptible
+    std::vector< char > push_source_ok;      ///< [state] Infectious, and some state is pushable
     std::vector< int >  push_slot;           ///< [agent] Index in push_targets, or -1
     std::vector< PushTarget > push_targets;
     std::vector< uint64_t > push_visit;      ///< [agent bit] To update after a push
@@ -820,22 +840,39 @@ public:
      * @details The contacts that carry a virus, layer by layer in the order
      * the layers were added and each layer in its own order, are all
      * exposures of one draw (`sample_virus(agent, contacts, n, layer)` adds
-     * them). Contacts in a state flagged in `exclude` (one entry per state)
-     * are not sources. This is what `default_update_susceptible` and
-     * `sampler::make_update_susceptible()` do; a pushing step (networks only)
-     * gives the same distribution.
+     * them). Only contacts in the model's infectious states are sources (see
+     * `set_infectious_states()`). This is what `default_update_susceptible`
+     * does; a pushing step (networks only) gives the same distribution.
      * @throws std::logic_error if `agent` carries a virus.
      */
-    Virus<TSeq> * sample_virus(
-        Agent<TSeq> * agent,
-        const std::vector< bool > * exclude = nullptr
-    );
+    Virus<TSeq> * sample_virus(Agent<TSeq> * agent);
+
+    /**
+     * @brief Sets the states whose agents transmit (by default, every state:
+     * any agent carrying a virus).
+     * @details Said once for the model, every layer follows it. Agents in the
+     * other states may carry a virus (e.g., Exposed in an SEIR model) but infect
+     * nobody, in any layer; they can still be met (in a mixing layer, they take
+     * their share of each agent's contacts).
+     * @param states State ids; an empty list makes every state infectious.
+     * Called during a run (e.g., from a global event), it applies from the
+     * next step.
+     * @throws std::range_error for a state out of range (at `reset()` if
+     * called before the first one).
+     */
+    Model<TSeq> & set_infectious_states(std::vector< int > states);
+
+    /// The states set by `set_infectious_states()` (empty: every state).
+    const std::vector< int > & get_infectious_states() const
+    {
+        return infectious_states;
+    }
 
     /**
      * @name Network transmission mode
      *
      * @details States whose update function is `default_update_susceptible`
-     * or `sampler::make_update_susceptible()` can be updated by pulling (each
+     * can be updated by pulling (each
      * susceptible agent scans its neighbors) or by pushing (each agent with a
      * virus adds its infection odds to its susceptible neighbors). Both give
      * the same distribution of who gets infected, and by whom; only the random

@@ -46,9 +46,15 @@ in the outputs.
 \code{clone_epi()} replaces \code{clone_model()}, which is deprecated.
 }
 \examples{
-model <- ModelSIRCONN(
-  name = "COVID-19", n = 1000, prevalence = 0.01, contact_rate = 5,
-  transmission_rate = 0.4, recovery_rate = 0.95
+model <- ModelSIR(
+  name = "COVID-19", n = 1000, prevalence = 0.01,
+  transmission_prob = 0.4, recovery_rate = 0.95
+)
+add_param(model, "Contact rate", 5)
+add_layer(
+  model,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 vax <- tool(

@@ -2,7 +2,6 @@
 #define EPIWORLD_PERSON_MEAT_STATE_HPP
 
 #include "model-bones.hpp"
-#include "agent-meat-virus-sampling.hpp"
 #include "config.hpp"
 
 /**

@@ -148,48 +148,32 @@ distribute_entity_to_set_cpp <- function(agents_ids) {
   .Call(`_epiworldR_distribute_entity_to_set_cpp`, agents_ids)
 }
 
-ModelSURV_cpp <- function(name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect) {
-  .Call(`_epiworldR_ModelSURV_cpp`, name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_rate, prob_death, prob_noreinfect)
+ModelSURV_cpp <- function(name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_prob, prob_death, prob_noreinfect) {
+  .Call(`_epiworldR_ModelSURV_cpp`, name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_prob, prob_death, prob_noreinfect)
 }
 
-ModelSEIR_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate) {
-  .Call(`_epiworldR_ModelSEIR_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate)
+ModelSEIR_cpp <- function(name, n, prevalence, transmission_prob, latent_period, recovery_rate) {
+  .Call(`_epiworldR_ModelSEIR_cpp`, name, n, prevalence, transmission_prob, latent_period, recovery_rate)
 }
 
-ModelSIS_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate) {
-  .Call(`_epiworldR_ModelSIS_cpp`, name, n, prevalence, transmission_rate, recovery_rate)
+ModelSIS_cpp <- function(name, n, prevalence, transmission_prob, recovery_rate) {
+  .Call(`_epiworldR_ModelSIS_cpp`, name, n, prevalence, transmission_prob, recovery_rate)
 }
 
-ModelSIRCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate) {
-  .Call(`_epiworldR_ModelSIRCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate)
+ModelSIR_cpp <- function(name, n, prevalence, transmission_prob, recovery_rate) {
+  .Call(`_epiworldR_ModelSIR_cpp`, name, n, prevalence, transmission_prob, recovery_rate)
 }
 
-ModelSIR_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate) {
-  .Call(`_epiworldR_ModelSIR_cpp`, name, n, prevalence, transmission_rate, recovery_rate)
+ModelSIRD_cpp <- function(name, n, prevalence, transmission_prob, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSIRD_cpp`, name, n, prevalence, transmission_prob, recovery_rate, death_rate)
 }
 
-ModelSIRD_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate, death_rate) {
-  .Call(`_epiworldR_ModelSIRD_cpp`, name, n, prevalence, transmission_rate, recovery_rate, death_rate)
+ModelSEIRD_cpp <- function(name, n, prevalence, transmission_prob, latent_period, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSEIRD_cpp`, name, n, prevalence, transmission_prob, latent_period, recovery_rate, death_rate)
 }
 
-ModelSEIRD_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, death_rate) {
-  .Call(`_epiworldR_ModelSEIRD_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, death_rate)
-}
-
-ModelSISD_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate, death_rate) {
-  .Call(`_epiworldR_ModelSISD_cpp`, name, n, prevalence, transmission_rate, recovery_rate, death_rate)
-}
-
-ModelSIRDCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, recovery_rate, death_rate) {
-  .Call(`_epiworldR_ModelSIRDCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, recovery_rate, death_rate)
-}
-
-ModelSEIRDCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, death_rate) {
-  .Call(`_epiworldR_ModelSEIRDCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate, death_rate)
-}
-
-ModelSEIRCONN_cpp <- function(name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate) {
-  .Call(`_epiworldR_ModelSEIRCONN_cpp`, name, n, prevalence, contact_rate, transmission_rate, incubation_days, recovery_rate)
+ModelSISD_cpp <- function(name, n, prevalence, transmission_prob, recovery_rate, death_rate) {
+  .Call(`_epiworldR_ModelSISD_cpp`, name, n, prevalence, transmission_prob, recovery_rate, death_rate)
 }
 
 ModelSIRLogit_cpp <- function(vname, n, data, ncols, coefs_infect, coefs_recover, coef_infect_cols, coef_recover_cols, prob_infection, recovery_rate, prevalence) {
@@ -200,16 +184,8 @@ ModelDiffNet_cpp <- function(name, n, prevalence, prob_adopt, normalize_exposure
   .Call(`_epiworldR_ModelDiffNet_cpp`, name, n, prevalence, prob_adopt, normalize_exposure, data, data_ncols, data_cols, params)
 }
 
-ModelSIRMixing_cpp <- function(name, n, prevalence, transmission_rate, recovery_rate, contact_matrix) {
-  .Call(`_epiworldR_ModelSIRMixing_cpp`, name, n, prevalence, transmission_rate, recovery_rate, contact_matrix)
-}
-
-ModelSEIRMixing_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix) {
-  .Call(`_epiworldR_ModelSEIRMixing_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix)
-}
-
-ModelSEIRMixingQuarantine_cpp <- function(name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior) {
-  .Call(`_epiworldR_ModelSEIRMixingQuarantine_cpp`, name, n, prevalence, transmission_rate, incubation_days, recovery_rate, contact_matrix, hospitalization_rate, hospitalization_period, days_undetected, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_success_rate, contact_tracing_days_prior)
+ModelSEIRQuarantine_cpp <- function(name, n, prevalence, transmission_prob, latent_period, recovery_rate, hospitalization_rate, hospitalization_period, detection_delay, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_prob, contact_tracing_window) {
+  .Call(`_epiworldR_ModelSEIRQuarantine_cpp`, name, n, prevalence, transmission_prob, latent_period, recovery_rate, hospitalization_rate, hospitalization_period, detection_delay, quarantine_period, quarantine_willingness, isolation_willingness, isolation_period, contact_tracing_prob, contact_tracing_window)
 }
 
 globalevent_tool_logit_cpp <- function(tool, vars, coefs, name, day) {
@@ -268,8 +244,8 @@ layer_network_graph_cpp <- function(name, graph) {
   .Call(`_epiworldR_layer_network_graph_cpp`, name, graph)
 }
 
-layer_mixing_cpp <- function(name, groups, n_groups, infectious, available) {
-  .Call(`_epiworldR_layer_mixing_cpp`, name, groups, n_groups, infectious, available)
+layer_mixing_cpp <- function(name, groups, n_groups) {
+  .Call(`_epiworldR_layer_mixing_cpp`, name, groups, n_groups)
 }
 
 add_layer_cpp <- function(model, layer) {
@@ -318,6 +294,10 @@ set_contact_matrix_cpp <- function(layer, contact_matrix) {
 
 get_contact_prob_cpp <- function(layer) {
   .Call(`_epiworldR_get_contact_prob_cpp`, layer)
+}
+
+set_contact_rate_cpp <- function(layer, param) {
+  .Call(`_epiworldR_set_contact_rate_cpp`, layer, param)
 }
 
 set_contact_prob_cpp <- function(layer, contact_prob) {
@@ -532,6 +512,14 @@ queuing_off_cpp <- function(model) {
   .Call(`_epiworldR_queuing_off_cpp`, model)
 }
 
+set_infectious_states_cpp <- function(model, states) {
+  .Call(`_epiworldR_set_infectious_states_cpp`, model, states)
+}
+
+get_infectious_states_cpp <- function(model) {
+  .Call(`_epiworldR_get_infectious_states_cpp`, model)
+}
+
 set_transmission_mode_cpp <- function(model, mode, kappa) {
   .Call(`_epiworldR_set_transmission_mode_cpp`, model, mode, kappa)
 }
@@ -644,8 +632,8 @@ add_state_cpp <- function(model, state_label, update_fun) {
   .Call(`_epiworldR_add_state_cpp`, model, state_label, update_fun)
 }
 
-update_fun_susceptible_cpp <- function(exclude) {
-  .Call(`_epiworldR_update_fun_susceptible_cpp`, exclude)
+update_fun_susceptible_cpp <- function() {
+  .Call(`_epiworldR_update_fun_susceptible_cpp`)
 }
 
 update_fun_rate_cpp <- function(param_names, target_states) {

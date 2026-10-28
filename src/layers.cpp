@@ -109,9 +109,7 @@ SEXP layer_network_graph_cpp(std::string name, SEXP graph) {
 SEXP layer_mixing_cpp(
     std::string name,
     const std::vector< int > & groups,
-    int n_groups,
-    std::vector< int > infectious,
-    std::vector< int > available
+    int n_groups
 ) {
 
   std::vector< size_t > g(groups.size());
@@ -119,7 +117,7 @@ SEXP layer_mixing_cpp(
     g[i] = (groups[i] == NA_INTEGER) ?
       layer::Mixing<>::NO_GROUP : static_cast< size_t >(groups[i]);
 
-  auto mix = layer::mixing<>(name, std::move(infectious), std::move(available));
+  auto mix = layer::mixing<>(name);
   mix->set_groups(std::move(g), n_groups);
 
   return external_pointer< LayerPtr >(new LayerPtr(mix));
@@ -222,6 +220,12 @@ SEXP set_contact_matrix_cpp(SEXP layer, std::vector< double > contact_matrix) {
 [[cpp11::register]]
 std::vector< double > get_contact_prob_cpp(SEXP layer) {
   return mixing_ref(layer).get_contact_prob();
+}
+
+[[cpp11::register]]
+SEXP set_contact_rate_cpp(SEXP layer, std::string param) {
+  mixing_ref(layer).set_contact_rate(param);
+  return layer;
 }
 
 [[cpp11::register]]

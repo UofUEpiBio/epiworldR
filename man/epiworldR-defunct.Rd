@@ -6,6 +6,13 @@
 \alias{agents_from_edgelist}
 \alias{agents_sbm}
 \alias{get_network}
+\alias{ModelSIRCONN}
+\alias{ModelSEIRCONN}
+\alias{ModelSIRDCONN}
+\alias{ModelSEIRDCONN}
+\alias{ModelSIRMixing}
+\alias{ModelSEIRMixing}
+\alias{ModelSEIRMixingQuarantine}
 \title{Defunct functions in epiworldR}
 \usage{
 agents_smallworld(...)
@@ -15,6 +22,20 @@ agents_from_edgelist(...)
 agents_sbm(...)
 
 get_network(...)
+
+ModelSIRCONN(...)
+
+ModelSEIRCONN(...)
+
+ModelSIRDCONN(...)
+
+ModelSEIRDCONN(...)
+
+ModelSIRMixing(...)
+
+ModelSEIRMixing(...)
+
+ModelSEIRMixingQuarantine(...)
 }
 \arguments{
 \item{...}{Ignored.}
@@ -22,8 +43,9 @@ get_network(...)
 \description{
 These functions were removed in epiworldR 1.0.0, when the population and
 the contacts of a model moved to its constructor and its contact layers
-(see \link{contact-layers}). Calling them is an error that says what to use
-instead:
+(see \link{contact-layers}). A model is now a disease, whatever its contacts, so
+the models that differed only in where contacts came from are gone too.
+Calling them is an error that says what to use instead:
 }
 \details{
 \itemize{
@@ -31,6 +53,13 @@ instead:
 \item \code{agents_from_edgelist()}: Give the population size to the model constructor and add a fixed network layer: add_layer(model, layer_network("network", graph_edgelist(source, target, size, directed))).
 \item \code{agents_sbm()}: Give the population size to the model constructor and add a network layer: add_layer(model, layer_network("network", graph_sbm(block_sizes, mixing_matrix))).
 \item \code{get_network()}: Use get_edgelist(get_layer(model, name)).
+\item \code{ModelSIRCONN()}: Use ModelSIR() with a random-mixing layer: everyone in one group, a contact matrix of 1, and set_contact_rate(layer, "Contact rate") (see the example in help("mixing-layers")).
+\item \code{ModelSEIRCONN()}: Use ModelSEIR() with a random-mixing layer: everyone in one group, a contact matrix of 1, and set_contact_rate(layer, "Contact rate") (see the example in help("mixing-layers")).
+\item \code{ModelSIRDCONN()}: Use ModelSIRD() with a random-mixing layer: everyone in one group, a contact matrix of 1, and set_contact_rate(layer, "Contact rate") (see the example in help("mixing-layers")).
+\item \code{ModelSEIRDCONN()}: Use ModelSEIRD() with a random-mixing layer: everyone in one group, a contact matrix of 1, and set_contact_rate(layer, "Contact rate") (see the example in help("mixing-layers")).
+\item \code{ModelSIRMixing()}: Use ModelSIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
+\item \code{ModelSEIRMixing()}: Use ModelSEIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
+\item \code{ModelSEIRMixingQuarantine()}: Use ModelSEIRQuarantine() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)); it traces every layer it is given.
 }
 }
 \keyword{internal}

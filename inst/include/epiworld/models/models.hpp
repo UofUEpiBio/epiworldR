@@ -5,10 +5,12 @@
  * @defgroup epi_models Epidemiological Models
  * @brief Collection of predefined epidemiological models for disease simulation
  * 
- * This module provides a comprehensive collection of epidemiological models commonly 
- * used in disease simulation and modeling. The models range from basic compartmental 
- * models to specialized scenarios including connected populations, population mixing, 
- * quarantine measures, and disease-specific implementations.
+ * This module provides a comprehensive collection of epidemiological models commonly
+ * used in disease simulation and modeling. A model is a disease (its states,
+ * parameters and update rules); where contacts come from is up to its layers
+ * (networks, mixing by group, or both; see `Model::add_layer()`). The models
+ * range from basic compartmental models to quarantine measures and
+ * disease-specific implementations.
  * 
  * **Implementation details:**
  * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>,
@@ -18,7 +20,7 @@
 /**
  * @defgroup basic_compartmental Basic Compartmental Models
  * @ingroup epi_models
- * @brief Fundamental compartmental models (SIS, SIR, SEIR)
+ * @brief Fundamental compartmental models (SIS, SIR, SEIR, SEIR with quarantine)
  * 
  * These are the foundational compartmental models in epidemiology that divide 
  * populations into distinct states based on disease status.
@@ -37,31 +39,6 @@
  * 
  * **Implementation details:**
  * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>
- */
-
-/**
- * @defgroup connected_models Connected Population Models
- * @ingroup epi_models
- * @brief Models for connected populations (SIRConnected, SEIRConnected, SIRDConnected, SEIRDConnected)
- * 
- * Models designed for populations with explicit network connections between individuals, 
- * allowing for more realistic contact patterns.
- * 
- * **Implementation details:**
- * <a href="../impl/core-simulation-models.md">Core Simulation Models</a>
- */
-
-/**
- * @defgroup mixing_models Population Mixing Models
- * @ingroup epi_models
- * @brief Models with population mixing (SEIRMixing, SIRMixing)
- * 
- * Models that incorporate heterogeneous mixing patterns between different population 
- * groups or entities, often using contact matrices.
- * 
- * **Implementation details:**
- * <a href="../impl/mixing-and-entity-distribution.md">Mixing and Entity Distribution</a>,
- * <a href="../impl/sampling-contacts.md">Sampling Contacts</a>
  */
 
 /**
@@ -107,7 +84,7 @@
  * This namespace provides a collection of epidemiological models commonly used in
  * disease simulation and modeling. It includes various compartmental models such as
  * SIS, SIR, SEIR, and their variations, as well as specialized models for specific
- * scenarios like connected populations, quarantine measures, and school environments.
+ * scenarios like quarantine measures and school environments.
  * 
  * The namespace also contains initialization functions, global event handlers, and
  * surveillance mechanisms that can be used across different epidemiological models.
@@ -116,10 +93,8 @@
  * 
  *   - Basic compartmental models (SIS, SIR, SEIR)
  *   - Models with death compartments (SIRD, SISD, SEIRD)
- *   - Connected population models (SIRConnected, SEIRConnected, SIRDConnected, SEIRDConnected)
  *   - Logistic regression models (SIRLogit)
- *   - Mixing population models (SEIRMixing, SIRMixing)
- *   - Quarantine models (SEIRMixingQuarantine)
+ *   - Quarantine models (SEIRQuarantine)
  *   - School-specific models (MeaslesSchool)
  *   - Disease-specific models (MeaslesMixing, MeaslesMixingRiskQuarantine)
  *   - Diffusion network models (DiffNet)
@@ -136,19 +111,12 @@ namespace epimodels {
     #include "sir.hpp"
     #include "seir.hpp"
     #include "surveillance.hpp"
-    #include "sirconnected.hpp"
-    #include "seirconnected.hpp"
     #include "sird.hpp"
     #include "sisd.hpp"
     #include "seird.hpp"
-    #include "sirdconnected.hpp"
-    #include "seirdconnected.hpp"
     #include "sirlogit.hpp"
     #include "diffnet.hpp"
-    #include "seirmixing.hpp"
-    #include "sirmixing.hpp"
-    #include "seirmixingquarantine.hpp"
-    #include "seirnetworkquarantine.hpp"
+    #include "seirquarantine.hpp"
 }
 
 #endif

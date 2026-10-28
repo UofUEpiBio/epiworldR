@@ -4,7 +4,7 @@
 # the reverse. Along the path 0 -> 1 -> ... -> 9, a virus seeded at 9 reaches
 # everyone and one seeded at 0 reaches no one.
 n <- 10L
-model <- ModelSIR("a virus", n, prevalence = 0, transmission_rate = 1,
+model <- ModelSIR("a virus", n, prevalence = 0, transmission_prob = 1,
                   recovery_rate = 0)
 add_layer(model, layer_network("network", graph_edgelist(0L:(n - 2L), 1L:(n - 1L), n, TRUE)))
 verbose_off(model)

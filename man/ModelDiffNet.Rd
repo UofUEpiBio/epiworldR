@@ -84,22 +84,16 @@ run(adopt_chatgpt, 50)
 plot(adopt_chatgpt)
 }
 \seealso{
-Other Models:
-\code{\link[=ModelSEIR]{ModelSEIR()}},
-\code{\link[=ModelSEIRCONN]{ModelSEIRCONN()}},
-\code{\link[=ModelSEIRD]{ModelSEIRD()}},
-\code{\link[=ModelSEIRDCONN]{ModelSEIRDCONN()}},
-\code{\link[=ModelSEIRMixing]{ModelSEIRMixing()}},
-\code{\link[=ModelSEIRMixingQuarantine]{ModelSEIRMixingQuarantine()}},
-\code{\link[=ModelSIR]{ModelSIR()}},
-\code{\link[=ModelSIRCONN]{ModelSIRCONN()}},
-\code{\link[=ModelSIRD]{ModelSIRD()}},
-\code{\link[=ModelSIRDCONN]{ModelSIRDCONN()}},
-\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
-\code{\link[=ModelSIRMixing]{ModelSIRMixing()}},
-\code{\link[=ModelSIS]{ModelSIS()}},
-\code{\link[=ModelSISD]{ModelSISD()}},
-\code{\link[=ModelSURV]{ModelSURV()}}
+Other Models: 
+\code{\link{ModelSEIR}()},
+\code{\link{ModelSEIRD}()},
+\code{\link{ModelSEIRQuarantine}()},
+\code{\link{ModelSIR}()},
+\code{\link{ModelSIRD}()},
+\code{\link{ModelSIRLogit}()},
+\code{\link{ModelSIS}()},
+\code{\link{ModelSISD}()},
+\code{\link{ModelSURV}()}
 }
 \concept{Models}
 \concept{general-models}

@@ -44,19 +44,24 @@ We'll go through the process step-by-step. After each step, we'll run the model 
 
 ### Model Setup
 
-We start with a `ModelSIRCONN` model for COVID-19. We'll add the flu virus and our tools and events to this base model.
+We start with an SIR model for COVID-19 in a population that mixes at random (a mixing layer whose contacts are the "Contact rate" parameter). We'll add the flu virus and our tools and events to this base model.
 
 ```{r}
 #| label: create-base-model
 library(epiworldR)
 
-model_sirconn <- ModelSIRCONN(
+model_sirconn <- ModelSIR(
   name              = "COVID-19",
   n                 = 50000,
-  contact_rate      = 4,
   recovery_rate     = 1 / 4,
   prevalence        = 0.001,
-  transmission_rate = 0.5
+  transmission_prob = 0.5
+)
+add_param(model_sirconn, "Contact rate", 4)
+add_layer(
+  model_sirconn,
+  layer_mixing("everyone", groups = rep(0, 50000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 ```
 

@@ -13,13 +13,18 @@
 #' @aliases global-actions
 #' @examples
 #' # Simple model
-#' model_sirconn <- ModelSIRCONN(
+#' model_sirconn <- ModelSIR(
 #'   name                = "COVID-19",
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
-#'   contact_rate        = 5,
-#'   transmission_rate   = 0.4,
+#'   transmission_prob   = 0.4,
 #'   recovery_rate       = 0.95
+#' )
+#' add_param(model_sirconn, "Contact rate", 5)
+#' add_layer(
+#'   model_sirconn,
+#'   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' # Creating a tool
@@ -44,13 +49,18 @@
 #' plot_incidence(model_sirconn)
 #'
 #' # Example 2: Changing the contact rate -------------------------------------
-#' model_sirconn2 <- ModelSIRCONN(
+#' model_sirconn2 <- ModelSIR(
 #'   name                = "COVID-19",
 #'   n                   = 10000,
 #'   prevalence          = 0.01,
-#'   contact_rate        = 5,
-#'   transmission_rate   = 0.4,
+#'   transmission_prob   = 0.4,
 #'   recovery_rate       = 0.95
+#' )
+#' add_param(model_sirconn2, "Contact rate", 5)
+#' add_layer(
+#'   model_sirconn2,
+#'   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' closure_day_10 <- globalevent_set_params("Contact rate", 0, day = 10)
@@ -193,13 +203,18 @@ globalaction_set_params <- function(...) {
 #' # agents at each time step.
 #'
 #' # We start by creating an SIR connected model
-#' model <- ModelSIRCONN(
+#' model <- ModelSIR(
 #'   name              = "SIR with Global Saver",
 #'   n                 = 1000,
 #'   prevalence        = 0.01,
-#'   contact_rate      = 5,
-#'   transmission_rate = 0.4,
+#'   transmission_prob = 0.4,
 #'   recovery_rate     = 0.3
+#' )
+#' add_param(model, "Contact rate", 5)
+#' add_layer(
+#'   model,
+#'   layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+#'     set_contact_rate("Contact rate")
 #' )
 #'
 #' # We create the object where the history of the agents will be stored

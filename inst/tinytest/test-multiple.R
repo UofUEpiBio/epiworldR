@@ -4,15 +4,20 @@ n <- 5e3
 days <- 50
 nsims <- 50
 
-model_seircon=ModelSEIRCONN(
+model_seircon <- ModelSEIR(
   name="covid",
   n = n,
   prevalence = 0.001,
-  contact_rate = 20,
-  transmission_rate = 0.5,
+  transmission_prob = 0.5,
   recovery_rate = 1/7,
-  incubation_days = 3
+  latent_period = 3
   )
+add_param(model_seircon, "Contact rate", 20)
+add_layer(
+  model_seircon,
+  layer_mixing("everyone", groups = rep(0, n), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
+)
 
 run(model_seircon,ndays=days,seed=1912)
 
@@ -38,19 +43,24 @@ res1 <- run_multiple_get_results(model_seircon, nthreads = 2L)
 res1 <- lapply(res1, data.table::as.data.table)
 
 avg_infected <- res1$total_hist[date==50 & state=="Infected"]$counts |> mean()
-avg_recovered <- res1$total_hist[date==50 & state=="Recovered"]$counts |> mean()
+avg_recovered <- res1$total_hist[date==50 & state=="Removed"]$counts |> mean()
 
 expect_true(abs(avg_infected - 13.8) < 50)
 expect_true(abs(avg_recovered - 4986) < 50)
 
 # run_multiple() should enforce single-thread execution when globalevent_fun() is used
-model_single_thread <- ModelSIRCONN(
+model_single_thread <- ModelSIR(
   name = "covid",
   n = 300,
   prevalence = 0.02,
-  contact_rate = 4,
-  transmission_rate = 0.4,
+  transmission_prob = 0.4,
   recovery_rate = 0.2
+)
+add_param(model_single_thread, "Contact rate", 4)
+add_layer(
+  model_single_thread,
+  layer_mixing("everyone", groups = rep(0, 300), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 verbose_off(model_single_thread)

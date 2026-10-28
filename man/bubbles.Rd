@@ -266,8 +266,8 @@ model <- ModelSEIR(
   name              = "Flu",
   n                 = 2000,
   prevalence        = 0.01,
-  transmission_rate = 0.1,
-  incubation_days   = 4.5,
+  transmission_prob = 0.1,
+  latent_period   = 4.5,
   recovery_rate     = 1 / 7
 )
 

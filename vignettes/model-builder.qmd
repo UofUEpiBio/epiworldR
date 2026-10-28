@@ -51,7 +51,7 @@ library(epiworldR)
 
 sir_builder <- Model(5000)
 
-add_param(sir_builder, "Transmission rate", 0.25)
+add_param(sir_builder, "Transmission probability", 0.25)
 add_param(sir_builder, "Recovery rate", 1 / 7)
 ```
 
@@ -60,13 +60,13 @@ update functions. Susceptible agents use `update_fun_susceptible()`, which
 evaluates infection from their contacts. Infected agents use
 `update_fun_rate()`, which moves them to another state according to a daily
 transition probability. A transition only changes an agent's state: recovered
-agents still carry the virus, so we exclude the recovered state (index `2L`)
-from the susceptible update function; otherwise they would keep infecting
-others.
+agents still carry the virus, so once the states are added we say that only
+the infected state transmits (`set_infectious_states()`); otherwise recovered
+agents would keep infecting others.
 
 ```{r}
 #| label: builder-update-functions
-update_s <- update_fun_susceptible(exclude = 2L)
+update_s <- update_fun_susceptible()
 update_i <- update_fun_rate(
   param_names = "Recovery rate",
   target_states = 2L
@@ -81,6 +81,9 @@ sir_builder |>
   add_state("Susceptible", update_s) |>
   add_state("Infected", update_i) |>
   add_state("Recovered", NULL)
+
+# Only infected agents (state 1) transmit
+set_infectious_states(sir_builder, 1L)
 
 data.frame(
   index = 0:(length(get_states(sir_builder)) - 1),
@@ -110,7 +113,7 @@ flu <- virus(
   # Associating the virus with the model states
   virus_set_state(init = 1L, end = 2L, removed = 2L) |>
   # Linking the virus rate to a model parameter
-  set_prob_infecting_ptr(sir_builder, "Transmission rate") |>
+  set_prob_infecting_ptr(sir_builder, "Transmission probability") |>
   # Setting the distribution (random to 1% of the agents)
   set_distribution_virus(distribute_virus_randomly(0.01, TRUE))
 
@@ -150,7 +153,7 @@ state. In this example, they can recover or die.
 ```{r}
 #| label: seird-builder-setup
 seird_builder <- Model(5000) |>
-  add_param("Transmission rate", 0.25) |>
+  add_param("Transmission probability", 0.25) |>
   add_param("Incubation rate", 1 / 5) |>
   add_param("Recovery rate", 1 / 7) |>
   add_param("Death rate", 0.01)
@@ -159,12 +162,11 @@ seird_builder <- Model(5000) |>
 The exposed state has one possible transition, from exposed to infected. The
 infected state has two possible transitions, one to recovery and one to death.
 These are specified by passing a vector of parameter names and a matching vector
-of target states. Since this model has an incubation period (Exposed state), we also need to exclude states from the susceptible update function: exposed agents carry the virus but are not infectious yet, and recovered and deceased agents keep the virus (a transition only changes their state), so none of them should infect others. The exclusion only applies to agents carrying the virus:
+of target states. Since this model has a latent period (Exposed state), only the infected state should transmit: exposed agents carry the virus but are not infectious yet, and recovered and deceased agents keep the virus (a transition only changes their state). We say so with `set_infectious_states()` once the states are added:
 
 ```{r}
 #| label: seird-builder-update-functions
-# We exclude exposed, recovered, and deceased from the sampling
-update_s <- update_fun_susceptible(exclude = c(1L, 3L, 4L))
+update_s <- update_fun_susceptible()
 update_e <- update_fun_rate(
   param_names = "Incubation rate",
   target_states = 2L
@@ -185,6 +187,9 @@ seird_builder |>
   add_state("Infected", update_i) |>
   add_state("Recovered", NULL) |>
   add_state("Deceased", NULL)
+
+# Only infected agents (state 2) transmit
+set_infectious_states(seird_builder, 2L)
 
 data.frame(
   index = 0:(length(get_states(seird_builder)) - 1),
@@ -213,7 +218,7 @@ virus(
   prob_death = 0.01
 ) |>
   virus_set_state(init = 1L, end = 3L, removed = 4L) |>
-  set_prob_infecting_ptr(seird_builder, "Transmission rate") |>
+  set_prob_infecting_ptr(seird_builder, "Transmission probability") |>
   set_distribution_virus(distribute_virus_randomly(0.01, TRUE)) |>
   # Notice we can also use the pipe here!
   add_virus(model = seird_builder)

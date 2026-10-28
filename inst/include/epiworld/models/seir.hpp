@@ -14,8 +14,10 @@
  * @param vname std::string Name of the virus
  * @param n Number of agents.
  * @param prevalence epiworld_double Initial prevalence the immune system
- * @param transmission_rate epiworld_double Transmission rate of the virus
- * @param avg_incubation_days epiworld_double Average incubation days of the virus.
+ * @param transmission_prob epiworld_double Probability that a contact with an
+ * infected agent infects.
+ * @param latent_period epiworld_double Mean days in Exposed (carrying the
+ * virus, not yet infectious).
  * @param recovery_rate epiworld_double Recovery rate of the virus.
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
@@ -34,8 +36,8 @@ public:
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double transmission_rate,
-        epiworld_double avg_incubation_days,
+        epiworld_double transmission_prob,
+        epiworld_double latent_period,
         epiworld_double recovery_rate
     );
 
@@ -73,8 +75,8 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
+    epiworld_double transmission_prob,
+    epiworld_double latent_period,
     epiworld_double recovery_rate
     )
 {
@@ -82,26 +84,25 @@ inline ModelSEIR<TSeq>::ModelSEIR(
     this->set_population_size(n);
 
     // Adding statuses
-    // Exposed agents carry the virus but are not infectious yet
-    this->add_state(
-        "Susceptible",
-        sampler::make_update_susceptible<TSeq>({ModelSEIR<TSeq>::EXPOSED})
-    );
+    this->add_state("Susceptible", default_update_susceptible<TSeq>);
     this->add_state("Exposed", this->update_exposed_seir);
     this->add_state("Infected", default_update_exposed<TSeq>);
     this->add_state("Removed");
 
+    // Exposed agents carry the virus but are not infectious yet
+    this->set_infectious_states({INFECTED});
+
     // Setting up parameters
-    this->add_param(transmission_rate, "Transmission rate");
-    this->add_param(avg_incubation_days, "Incubation days");
+    this->add_param(transmission_prob, "Transmission probability");
+    this->add_param(latent_period, "Latent period");
     this->add_param(recovery_rate, "Recovery rate");
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(EXPOSED, REMOVED, REMOVED);
 
-    virus.set_prob_infecting("Transmission rate");
-    virus.set_incubation("Incubation days");
+    virus.set_prob_infecting("Transmission probability");
+    virus.set_incubation("Latent period");
     virus.set_prob_recovery("Recovery rate");
 
     // Adding the tool and the virus

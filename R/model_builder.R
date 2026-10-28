@@ -19,9 +19,8 @@
 #' add_param(model, "Rec Rate", 0.1)
 #' add_param(model, "Trans Rate", 0.5)
 #'
-#' # Creating the update function for the susceptible state. Recovered
-#' # agents (state 2) keep the virus, so we exclude them as sources.
-#' update_fun_s <- update_fun_susceptible(exclude = 2L)
+#' # Creating the update function for the susceptible state
+#' update_fun_s <- update_fun_susceptible()
 #'
 #' # Adding the susceptible state to the model
 #' add_state(model, "S", update_fun_s)
@@ -37,6 +36,10 @@
 #'
 #' # Adding the recovered state to the model
 #' add_state(model, "R", NULL)
+#'
+#' # Recovered agents (state 2) keep the virus, but only the infected
+#' # (state 1) transmit
+#' set_infectious_states(model, 1L)
 #'
 #' # Creating a virus
 #' flu <- virus(
@@ -111,29 +114,56 @@ add_state <- function(
 
 #' @export
 #' @rdname model_builder
-#' @param exclude An integer vector with the state indices to be
-#' excluded from the infection process (see details).
+#' @param exclude Defunct. Use `set_infectious_states()` instead.
 #' @details
-#' When using `update_fun_susceptible()`, the `exclude` argument can
-#' be used to specify which agents carrying the virus should be excluded
-#' from infecting susceptible agents. This can be useful in cases where
-#' a virus may have a delayed effect on agents (e.g., an incubation period) or
-#' when agents can recover but still carry the virus for some time.
+#' `update_fun_susceptible()` draws a susceptible agent's infection from its
+#' contacts in every layer of the model. Only contacts in the model's
+#' infectious states transmit: by default every state (any agent carrying a
+#' virus), or the states set with `set_infectious_states()`. Use it when a
+#' virus has a delayed effect on agents (e.g., a latent period) or when agents
+#' can recover but still carry the virus for some time. Agents in the other
+#' states can still be met (in a mixing layer, they take their share of each
+#' agent's contacts). Called during a run (e.g., from a global event),
+#' `set_infectious_states()` applies from the next day.
 #' @return
 #' - The function `update_fun_susceptible()` returns an object of class
 #' `epiworld_update_fun` that can be used as an update function for a
 #' susceptible state.
 #' @aliases epiworld_update_fun
-update_fun_susceptible <- function(
-  exclude = integer(0L)
-) {
+update_fun_susceptible <- function(exclude) {
 
-  stopifnot_int(exclude, lb = 0L)
-  update_fun_susceptible_cpp(
-    as.integer(exclude)
-  ) |>
+  if (!missing(exclude))
+    stop(
+      "-exclude- is defunct as of epiworldR 1.0.0: the model says which ",
+      "states transmit, for every layer, with set_infectious_states(model, ",
+      "states).",
+      call. = FALSE
+    )
+
+  update_fun_susceptible_cpp() |>
     structure(class = "epiworld_update_fun")
 
+}
+
+#' @export
+#' @rdname model_builder
+#' @param states An integer vector with the indices (starting at 0) of the
+#' states whose agents transmit; `integer(0)` makes every state infectious.
+#' @return
+#' - `set_infectious_states()` returns the model invisibly, and
+#' `get_infectious_states()` the states set (empty: every state).
+set_infectious_states <- function(model, states) {
+  stopifnot_model(model)
+  if (length(states))
+    stopifnot_int(states, lb = 0L)
+  invisible(set_infectious_states_cpp(model, as.integer(states)))
+}
+
+#' @export
+#' @rdname model_builder
+get_infectious_states <- function(model) {
+  stopifnot_model(model)
+  get_infectious_states_cpp(model)
 }
 
 #' @export

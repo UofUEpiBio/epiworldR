@@ -5,7 +5,7 @@ expect_silent(sird_0 <- ModelSIRD(
   name = "A Virus",
   n = 10000,
   prevalence = .01,
-  transmission_rate = .9,
+  transmission_prob = .9,
   recovery_rate = .3,
   death_rate = .1
 ))
@@ -42,7 +42,7 @@ expect_error(sird_0 <- ModelSIRD(
   name = bad_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
+  transmission_prob = good_transmission_rate,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_str)
@@ -51,7 +51,7 @@ expect_error(sird_0 <- ModelSIRD(
   name = good_name,
   n          = 1000,
   prevalence = bad_numeric_input,
-  transmission_rate = good_transmission_rate,
+  transmission_prob = good_transmission_rate,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -60,7 +60,7 @@ expect_error(sird_0 <- ModelSIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = bad_numeric_input,
+  transmission_prob = bad_numeric_input,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -69,7 +69,7 @@ expect_error(sird_0 <- ModelSIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
+  transmission_prob = good_transmission_rate,
   recovery_rate = bad_numeric_input,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -78,7 +78,7 @@ expect_error(sird_0 <- ModelSIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
+  transmission_prob = good_transmission_rate,
   recovery_rate = good_recovery_rate,
   death_rate = bad_numeric_input
 ), expected_error_msg_double)

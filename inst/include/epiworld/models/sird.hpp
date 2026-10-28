@@ -15,6 +15,11 @@ class ModelSIRD : public Model<TSeq>
 {
 public:
 
+    static const int SUSCEPTIBLE = 0;
+    static const int INFECTED    = 1;
+    static const int RECOVERED   = 2;
+    static const int DECEASED    = 3;
+
     ModelSIRD() = delete;
 
     /**
@@ -23,7 +28,7 @@ public:
      * @param vname The name of the vertex associated with this model.
  * @param n Number of agents.
      * @param prevalence The initial prevalence of the disease in the population.
-     * @param transmission_rate The rate at which the disease spreads from infected to susceptible individuals.
+     * @param transmission_prob Probability that a contact with an infected agent infects.
      * @param recovery_rate The rate at which infected individuals recover and become immune.
      * @param death_rate The rate at which infected individuals die.
      */
@@ -32,7 +37,7 @@ public:
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double transmission_rate,
+        epiworld_double transmission_prob,
         epiworld_double recovery_rate, 
         epiworld_double death_rate
     );
@@ -56,7 +61,7 @@ inline ModelSIRD<TSeq>::ModelSIRD(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double transmission_rate,
+    epiworld_double transmission_prob,
     epiworld_double recovery_rate, 
     epiworld_double death_rate
     )
@@ -72,14 +77,14 @@ inline ModelSIRD<TSeq>::ModelSIRD(
 
     // Setting up parameters
     this->add_param(recovery_rate, "Recovery rate");
-    this->add_param(transmission_rate, "Transmission rate"),
+    this->add_param(transmission_prob, "Transmission probability"),
     this->add_param(death_rate, "Death rate");
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,3);
     virus.set_prob_recovery("Recovery rate");
-    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_infecting("Transmission probability");
     virus.set_prob_death("Death rate");
     
     this->add_virus(virus);

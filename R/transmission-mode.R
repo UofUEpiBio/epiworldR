@@ -16,8 +16,8 @@
 #' (\eqn{s}), and pulls otherwise.
 #'
 #' Only susceptible states that use epiworld's default network sampler can be
-#' pushed. Other models, e.g., mixing models ([ModelSIRMixing()]) and
-#' connected models ([ModelSIRCONN()]), always pull, as do directed networks.
+#' pushed. Models with a mixing layer (see [layer_mixing()]) always pull, as do
+#' directed networks.
 #'
 #' @param model An `epiworld_model` object.
 #' @param mode Character scalar. One of `"auto"`, `"push"`, or `"pull"`.
@@ -36,7 +36,7 @@
 #' @name transmission-mode
 #' @examples
 #' model <- ModelSIR(
-#'   name = "A Virus", 10000, prevalence = .01, transmission_rate = .5,
+#'   name = "A Virus", 10000, prevalence = .01, transmission_prob = .5,
 #'   recovery_rate = 1 / 7
 #' )
 #' add_layer(model, layer_network("network", graph_smallworld(k = 5, p = .01)))

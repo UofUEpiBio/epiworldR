@@ -27,7 +27,7 @@ expect_silent(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ))
@@ -56,7 +56,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_str)
@@ -73,7 +73,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -90,7 +90,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -107,7 +107,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -124,7 +124,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -141,7 +141,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -158,7 +158,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -175,7 +175,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = bad_numeric_input,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -192,7 +192,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = bad_numeric_input,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -209,7 +209,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = bad_numeric_input,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -226,7 +226,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = bad_numeric_input,
+    transmission_prob       = bad_numeric_input,
     prob_death              = good_prob_death,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -243,7 +243,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = bad_numeric_input,
     prob_noreinfect         = good_prob_noreinfect
 ), expected_error_msg_double)
@@ -260,7 +260,7 @@ expect_error(test_model <- ModelSURV(
     prop_vax_redux_transm   = good_prop_vax_redux_transm,
     prop_vax_redux_infect   = good_prop_vax_redux_infect,
     surveillance_prob       = good_surveillance_prob,
-    transmission_rate       = good_transmission_rate,
+    transmission_prob       = good_transmission_rate,
     prob_death              = good_prob_death,
     prob_noreinfect         = bad_numeric_input
 ), expected_error_msg_double)

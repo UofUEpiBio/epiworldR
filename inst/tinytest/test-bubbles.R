@@ -11,8 +11,8 @@ make_hh <- function(n, hh_size = 3L)
 # transmission must stay within a household.
 ###############################################################################
 model <- ModelSEIR(
-  name = "Flu", n = 600, prevalence = 0.05, transmission_rate = 0.3,
-  incubation_days = 4.5, recovery_rate = 1 / 7
+  name = "Flu", n = 600, prevalence = 0.05, transmission_prob = 0.3,
+  latent_period = 4.5, recovery_rate = 1 / 7
 )
 add_layer(model, layer_network("network", graph_smallworld(k = 8, p = 0.10)))
 hh <- make_hh(600)
@@ -206,7 +206,7 @@ expect_silent(run(model_pn, ndays = 30, seed = 12))
 # global event runs before the counting one, and sets up the network the next
 # step uses: ties go up on day 1 (for day 2) and come down on day 4 (end_day).
 ###############################################################################
-model_c <- ModelSIR("x", 6L, prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+model_c <- ModelSIR("x", 6L, prevalence = 0, transmission_prob = 0, recovery_rate = 0)
 add_layer(model_c, layer_network("network", graph_edgelist(0:4, 1:5, 6L, FALSE)))
 bubbles(
   model_c, household_id = rep(1:2, each = 3), flavor = "household",
@@ -261,7 +261,7 @@ expect_error(run(model_d, ndays = 10, seed = 1), "undirected")
 # it up, and every replicate after the first kept it for the whole run
 # (UofUEpiBio/epiworld#271).
 ###############################################################################
-model_z <- ModelSIR("x", 6L, prevalence = 0, transmission_rate = 0, recovery_rate = 0)
+model_z <- ModelSIR("x", 6L, prevalence = 0, transmission_prob = 0, recovery_rate = 0)
 add_layer(model_z, layer_network("network", graph_edgelist(0:4, 1:5, 6L, FALSE)))
 bubbles(
   model_z, household_id = rep(1:2, each = 3), flavor = "household",

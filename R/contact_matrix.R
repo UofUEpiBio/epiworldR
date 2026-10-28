@@ -1,7 +1,6 @@
 #' Get or set the contact matrix of a mixing layer
 #' @param layer A mixing layer (class `epiworld_layer_mixing`), from
-#' [layer_mixing()] or [get_layer()] (the mixing models name theirs
-#' `"mixing"`).
+#' [layer_mixing()] or [get_layer()].
 #' @param contact_matrix A numeric matrix with the contact matrix to be
 #' set for the layer. The matrix should be square and have as many rows as the
 #' layer has groups.
@@ -24,16 +23,20 @@
 #'
 #' N <- 9e3
 #'
-#' flu_model <- ModelSIRMixing(
+#' flu_model <- ModelSIR(
 #'   name              = "Flu",
 #'   n                 = N,
 #'   prevalence        = 1 / N,
-#'   transmission_rate = 0.1,
-#'   recovery_rate     = 1 / 7,
-#'   contact_matrix    = cmatrix
+#'   transmission_prob = 0.1,
+#'   recovery_rate     = 1 / 7
 #' )
 #'
-#' mixing <- get_layer(flu_model, "mixing")
+#' mixing <- layer_mixing(
+#'   "mixing",
+#'   groups         = rep(0:2, each = N / 3),
+#'   contact_matrix = cmatrix
+#' )
+#' add_layer(flu_model, mixing)
 #' get_contact_matrix(mixing)
 #'
 #' # Modifying the contact matrix

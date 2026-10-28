@@ -22,13 +22,17 @@ class ModelSIR : public Model<TSeq>
 {
 public:
 
+    static const int SUSCEPTIBLE = 0;
+    static const int INFECTED    = 1;
+    static const int RECOVERED   = 2;
+
     ModelSIR() = delete;
 
     ModelSIR(
         const std::string & vname,
         epiworld_fast_uint n,
         epiworld_double prevalence,
-        epiworld_double transmission_rate,
+        epiworld_double transmission_prob,
         epiworld_double recovery_rate
     );
 
@@ -49,7 +53,7 @@ inline ModelSIR<TSeq>::ModelSIR(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double transmission_rate,
+    epiworld_double transmission_prob,
     epiworld_double recovery_rate
     )
 {
@@ -63,14 +67,14 @@ inline ModelSIR<TSeq>::ModelSIR(
 
     // Setting up parameters
     this->add_param(recovery_rate, "Recovery rate");
-    this->add_param(transmission_rate, "Transmission rate");
+    this->add_param(transmission_prob, "Transmission probability");
 
     // Preparing the virus -------------------------------------------
     Virus<TSeq> virus(vname, prevalence, true);
     virus.set_state(1,2,2);
     
     virus.set_prob_recovery("Recovery rate");
-    virus.set_prob_infecting("Transmission rate");
+    virus.set_prob_infecting("Transmission probability");
     
     this->add_virus(virus);
 

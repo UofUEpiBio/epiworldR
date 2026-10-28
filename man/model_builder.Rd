@@ -6,6 +6,8 @@
 \alias{add_state}
 \alias{update_fun_susceptible}
 \alias{epiworld_update_fun}
+\alias{set_infectious_states}
+\alias{get_infectious_states}
 \alias{update_fun_rate}
 \alias{set_state_function}
 \title{Model building functions}
@@ -14,7 +16,11 @@ Model(n)
 
 add_state(model, state_name, update_fun = NULL)
 
-update_fun_susceptible(exclude = integer(0L))
+update_fun_susceptible(exclude)
+
+set_infectious_states(model, states)
+
+get_infectious_states(model)
 
 update_fun_rate(param_names, target_states)
 
@@ -31,8 +37,10 @@ set_state_function(model, state_name, update_fun)
 the update function to be used for the new state. A \code{NULL} value
 can be used if the state does not update (e.g., a "dead" state).}
 
-\item{exclude}{An integer vector with the state indices to be
-excluded from the infection process (see details).}
+\item{exclude}{Defunct. Use \code{set_infectious_states()} instead.}
+
+\item{states}{An integer vector with the indices (starting at 0) of the
+states whose agents transmit; \code{integer(0)} makes every state infectious.}
 
 \item{param_names}{A string vector with the name(s) of the parameter(s) to be
 used in the update function.}
@@ -59,6 +67,11 @@ susceptible state.
 }
 
 \itemize{
+\item \code{set_infectious_states()} returns the model invisibly, and
+\code{get_infectious_states()} the states set (empty: every state).
+}
+
+\itemize{
 \item The function \code{update_fun_rate()} returns an object of class
 \code{epiworld_update_fun} that can be used as an update function
 for a state that updates at a constant rate (e.g., recovery, death).
@@ -79,11 +92,15 @@ states, parameters, viruses, tools and other components. These functions are
 useful for users who want to create custom models that are not included in
 the package or to modify existing models.
 
-When using \code{update_fun_susceptible()}, the \code{exclude} argument can
-be used to specify which agents carrying the virus should be excluded
-from infecting susceptible agents. This can be useful in cases where
-a virus may have a delayed effect on agents (e.g., an incubation period) or
-when agents can recover but still carry the virus for some time.
+\code{update_fun_susceptible()} draws a susceptible agent's infection from its
+contacts in every layer of the model. Only contacts in the model's
+infectious states transmit: by default every state (any agent carrying a
+virus), or the states set with \code{set_infectious_states()}. Use it when a
+virus has a delayed effect on agents (e.g., a latent period) or when agents
+can recover but still carry the virus for some time. Agents in the other
+states can still be met (in a mixing layer, they take their share of each
+agent's contacts). Called during a run (e.g., from a global event),
+\code{set_infectious_states()} applies from the next day.
 
 The \code{update_fun_rate()} function creates an update function for a state that
 updates at a constant rate (e.g., recovery, death). The \code{param_names}
@@ -107,9 +124,8 @@ model <- Model(1000)
 add_param(model, "Rec Rate", 0.1)
 add_param(model, "Trans Rate", 0.5)
 
-# Creating the update function for the susceptible state. Recovered
-# agents (state 2) keep the virus, so we exclude them as sources.
-update_fun_s <- update_fun_susceptible(exclude = 2L)
+# Creating the update function for the susceptible state
+update_fun_s <- update_fun_susceptible()
 
 # Adding the susceptible state to the model
 add_state(model, "S", update_fun_s)
@@ -125,6 +141,10 @@ add_state(model, "I", update_fun_i)
 
 # Adding the recovered state to the model
 add_state(model, "R", NULL)
+
+# Recovered agents (state 2) keep the virus, but only the infected
+# (state 1) transmit
+set_infectious_states(model, 1L)
 
 # Creating a virus
 flu <- virus(

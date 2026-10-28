@@ -1,18 +1,23 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-agents-and-dist-virus-tool.R")
 
 ###############################################################################
-# Test Group 1: ModelSEIRCONN
+# Test Group 1: ModelSEIR with random mixing
 ###############################################################################
 # First case: Everyone is vaccinated, so only the 
 # index case is infected
-abm <- ModelSEIRCONN(
+abm <- ModelSEIR(
   name = "COVID-19",
   n = 200,
   prevalence = 0,
-  contact_rate = 2,
-  transmission_rate = 0.9,
-  incubation_days = 7,
+  transmission_prob = 0.9,
+  latent_period = 7,
   recovery_rate = 0.3
+)
+add_param(abm, "Contact rate", 2)
+add_layer(
+  abm,
+  layer_mixing("everyone", groups = rep(0, 200), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 
 # Add a vaccine tool that provides 100% protection
@@ -77,17 +82,17 @@ set_distribution_tool(
 )
 
 # Making sure that the agents become infected
-set_param(abm, "Prob. Transmission", 1.0)
+set_param(abm, "Transmission probability", 1.0)
 set_param(abm, "Contact rate", 100)
 
 run(abm, 100, 200)
 states <- get_agents_states(abm)
 
 # Agents 26 and 37 (indices 25 and 36) should stay susceptible (vaccinated)
-# All others should be recovered
+# All others should be removed
 expect_true(
   all(states[c(26, 37)] == "Susceptible") &&
-  all(states[-c(26, 37)] == "Recovered")
+  all(states[-c(26, 37)] == "Removed")
 )
 
 expect_stdout(print(get_agents(abm)), "more agents ...")
@@ -124,7 +129,7 @@ expect_true(ans[, all(counts %in% c(1, 2, 199))])
 
 
 ###############################################################################
-# Test Group 2: ModelSEIRMixing
+# Test Group 2: ModelSEIR on a mixing layer
 ###############################################################################
 # First case: Everyone is vaccinated, so only the 
 # index case is infected
@@ -138,15 +143,17 @@ contact_matrix <- (c(
   c(1/3, 1/3, 1/3)
 ) * (15/0.9/4)) |> as.double() |> matrix(byrow = TRUE, nrow = 3)
 
-abm <- ModelSEIRMixing(
+abm <- ModelSEIR(
   name = "COVID-19",
   n = 900,
   prevalence = 1 / 900,
-  transmission_rate = 0.9,
+  transmission_prob = 0.9,
   recovery_rate = 1 / 10,
-  incubation_days = 1/12,
-  contact_matrix = contact_matrix
+  latent_period = 1/12
 )
+
+# Everyone mixes evenly (the three populations are entities, below)
+add_layer(abm, layer_mixing("mixing", rep(0, 900), contact_matrix = sum(contact_matrix[1, ])))
 
 vaccine <- tool(
   name = "Vaccine",
@@ -218,14 +225,14 @@ set_distribution_tool(
 )
 
 # Making sure that the agents become infected
-set_param(abm, "Prob. Transmission", 1.0)
+set_param(abm, "Transmission probability", 1.0)
 
 run(abm, 100, 200)
 states <- get_agents_states(abm)
 
 expect_true(
   all(states[c(26, 37)] == "Susceptible") &&
-    all(states[-c(26, 37)] == "Recovered")
+    all(states[-c(26, 37)] == "Removed")
 )
 
 expect_stdout(print(get_agents(abm)), "more agents ...")

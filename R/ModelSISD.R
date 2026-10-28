@@ -5,7 +5,7 @@
 #' @param name String. Name of the virus.
 #' @param n Number of individuals in the population.
 #' @param prevalence Double. Initial proportion of individuals with the virus.
-#' @param transmission_rate Numeric scalar between 0 and 1. Virus's rate of
+#' @param transmission_prob Numeric scalar between 0 and 1. Virus's rate of
 #' infection.
 #' @param recovery_rate Numeric scalar between 0 and 1. Rate of recovery from virus.
 #' @param death_rate Numeric scalar between 0 and 1. Rate of death from virus.
@@ -22,7 +22,7 @@
 #'   name = "COVID-19",
 #'   n          = 1000,
 #'   prevalence = 0.01,
-#'   transmission_rate = 0.9,
+#'   transmission_prob = 0.9,
 #'   recovery_rate = 0.1,
 #'   death_rate = 0.01
 #' )
@@ -42,19 +42,19 @@ ModelSISD <- function(
   name,
   n,
   prevalence,
-  transmission_rate,
+  transmission_prob,
   recovery_rate,
   death_rate) {
   # Check input parameters
   stopifnot_string(name)
   stopifnot_int(n)
   stopifnot_double(prevalence)
-  stopifnot_double(transmission_rate)
+  stopifnot_double(transmission_prob)
   stopifnot_double(recovery_rate)
   stopifnot_double(death_rate)
 
   structure(
-    ModelSISD_cpp(name, n, prevalence, transmission_rate, recovery_rate, death_rate),
+    ModelSISD_cpp(name, n, prevalence, transmission_prob, recovery_rate, death_rate),
     class = c("epiworld_sisd", "epiworld_model")
   )
 

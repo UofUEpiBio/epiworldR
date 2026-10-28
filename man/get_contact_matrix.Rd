@@ -11,8 +11,7 @@ set_contact_matrix(layer, contact_matrix)
 }
 \arguments{
 \item{layer}{A mixing layer (class \code{epiworld_layer_mixing}), from
-\code{\link[=layer_mixing]{layer_mixing()}} or \code{\link[=get_layer]{get_layer()}} (the mixing models name theirs
-\code{"mixing"}).}
+\code{\link[=layer_mixing]{layer_mixing()}} or \code{\link[=get_layer]{get_layer()}}.}
 
 \item{contact_matrix}{A numeric matrix with the contact matrix to be
 set for the layer. The matrix should be square and have as many rows as the
@@ -47,16 +46,20 @@ cmatrix <- (c(
 
 N <- 9e3
 
-flu_model <- ModelSIRMixing(
+flu_model <- ModelSIR(
   name              = "Flu",
   n                 = N,
   prevalence        = 1 / N,
-  transmission_rate = 0.1,
-  recovery_rate     = 1 / 7,
-  contact_matrix    = cmatrix
+  transmission_prob = 0.1,
+  recovery_rate     = 1 / 7
 )
 
-mixing <- get_layer(flu_model, "mixing")
+mixing <- layer_mixing(
+  "mixing",
+  groups         = rep(0:2, each = N / 3),
+  contact_matrix = cmatrix
+)
+add_layer(flu_model, mixing)
 get_contact_matrix(mixing)
 
 # Modifying the contact matrix

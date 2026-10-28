@@ -9,25 +9,19 @@ class Mixing;
 /**
  * @brief A mixing layer (see `Mixing`).
  * @param name Name of the layer (unique in a model).
- * @param infectious States whose agents can be sampled as contacts.
- * @param available States whose agents take part in the mixing.
  * @ingroup contact_layers
  */
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-std::shared_ptr< Mixing<TSeq> > mixing(
-    std::string name,
-    std::vector< int > infectious,
-    std::vector< int > available
-);
+std::shared_ptr< Mixing<TSeq> > mixing(std::string name);
 
 /**
  * @brief Contact layer with mixing: contacts drawn fresh every step, by group.
  *
- * @details Created with `layer::mixing()`. The layer is configured with two
- * lists of states: the
- * *infectious* states (whose agents can be contacted and transmit) and the
- * *available* states (agents that take part in the mixing, which is what the
- * contact rate is spread over).
+ * @details Created with `layer::mixing()`. Every agent of a group takes part
+ * in the mixing (the contacts are spread over all of them), and the agents in
+ * the model's infectious states transmit (`Model::set_infectious_states()`).
+ * The quarantine model takes its isolated agents out of the mixing altogether
+ * (see `Model::set_excluded_states()`).
  *
  * ### Groups
  *
@@ -44,7 +38,11 @@ std::shared_ptr< Mixing<TSeq> > mixing(
  * The contacts are given in one of two ways:
  * - `set_contact_matrix()`: contacts across groups, for a few groups that meet
  *   each other (age groups in public spaces). Entry `(g, h)` is the expected
- *   number of contacts per day of an agent in `g` with agents in `h`.
+ *   number of contacts per day of an agent in `g` with agents in `h`. With
+ *   `set_contact_rate(param)`, the contacts are the model parameter `param`
+ *   times the matrix, so a global event or a calibration can change them
+ *   (one group and a 1 x 1 matrix of 1: everyone meets "Contact rate" others
+ *   a day, at random).
  * - `set_contact_prob()`: contacts within groups only, for many small groups
  *   (households, classrooms, transit trips). Each member meets each other
  *   member of its group with probability `q` per day, whatever the size of the
@@ -59,10 +57,10 @@ std::shared_ptr< Mixing<TSeq> > mixing(
  * ### Sampling
  *
  * Each step, `update()` rebuilds the pool of infectious agents of each group,
- * and the number of available agents per group, without scanning the
- * population: infectious agents come from the model's per-state index (and are
- * walked in ascending id order), and available counts are the group sizes
- * minus the few agents in non-available states.
+ * and the number of agents in the mixing per group, without scanning the
+ * population: infectious agents are the carriers in infectious states, from
+ * the model's per-state index (walked in ascending id order), and the counts
+ * are the group sizes minus the few agents in excluded states.
  *
  * `sample()` then meets each infectious agent of a group `g` with a
  * probability `p` per pair, independently: it draws a binomial number of
@@ -70,9 +68,10 @@ std::shared_ptr< Mixing<TSeq> > mixing(
  * ones (a partial shuffle of the pool), skipping the agent itself. With
  * `p = 1` it takes them all, with no random draws. Within groups, the only
  * group is the agent's own and `p = q[g]`. With a matrix, `p = min(1,
- * contact_matrix(group of agent, g) / others(g))`, where `others(g)` is the
- * number of available agents of `g` other than the agent itself: the
- * contacts per day stay as the matrix says when agents become unavailable.
+ * rate * contact_matrix(group of agent, g) / others(g))`, where `rate` is the
+ * contact-rate parameter (1 without one) and `others(g)` is the number of
+ * agents of `g` in the mixing other than the agent itself: the contacts per
+ * day stay as the matrix says when agents are excluded.
  *
  * ### Edits
  *
@@ -97,10 +96,7 @@ public:
 
 private:
 
-    std::vector< char > is_infectious; ///< Lookup table, one entry per state
-    std::vector< char > is_available;  ///< Lookup table, one entry per state
-    std::vector< int > infectious_states;
-    std::vector< int > available_states;
+    std::optional< ParamRef > rate_ref; ///< Empty: rate 1
 
     // Grouping
     std::vector< size_t > groups;          ///< Group of each agent
@@ -124,10 +120,30 @@ private:
     std::vector< size_t > pool;      ///< Infectious agents, partitioned by group
     std::vector< size_t > offsets;   ///< Where each group starts in `pool`
     std::vector< size_t > counts;    ///< Infectious agents per group
-    std::vector< size_t > n_available; ///< Available agents, per group
+    std::vector< size_t > n_available; ///< Agents in the mixing, per group
 
     std::vector< uint64_t > marks;   ///< Bitset used to order the pool
     std::vector< size_t > ordered;   ///< Infectious ids (ascending), scratch
+
+    /**
+     * @brief How many agents of a group an agent meets in a day: the draw of
+     * `Model::rbinom(n, p)` (same distribution, same random numbers), with
+     * its parameters set once a day instead of at every draw.
+     */
+    struct DailyDraw {
+        int n = 0;      ///< Infectious agents of the group
+        double p = 0.0; ///< Probability of meeting each
+        bool poisson = false;
+        std::poisson_distribution<>::param_type pois;
+        std::binomial_distribution<>::param_type binom;
+        void set(int n_, double p_);
+        int operator()(Model<TSeq> & model) const;
+    };
+
+    /// With a contact matrix: entry `own * n_groups + g` is the draw of an
+    /// agent of group `own` (in the mixing) from group `g`, set by `update()`.
+    std::vector< DailyDraw > daily;
+    void daily_build(const Model<TSeq> & model);
 
     void rebuild_layout();
     void rebuild_members();
@@ -135,25 +151,17 @@ private:
     void check_agent(size_t agent_id) const;
     void check_group(size_t group) const;
 
-    /// Meets each infectious agent of group `g` with probability `p`.
-    void draw(size_t g, double p, size_t agent, Model<TSeq> & model,
+    /// Meets `n_met` distinct infectious agents of group `g`.
+    void draw(size_t g, size_t n_met, size_t agent, Model<TSeq> & model,
         std::vector< size_t > & out);
 
 protected:
 
     // Created with layer::mixing()
-    Mixing(
-        std::string name,
-        std::vector< int > infectious,
-        std::vector< int > available
-    ) : ContactLayer<TSeq>(std::move(name)),
-        infectious_states(std::move(infectious)),
-        available_states(std::move(available)) {}
+    explicit Mixing(std::string name) : ContactLayer<TSeq>(std::move(name)) {}
 
     template<typename T>
-    friend std::shared_ptr< Mixing<T> > mixing(
-        std::string, std::vector< int >, std::vector< int >
-    );
+    friend std::shared_ptr< Mixing<T> > mixing(std::string);
 
     // Reads the groups unchecked (as the ties of a network layer)
     friend class Queue<TSeq>;
@@ -202,6 +210,17 @@ public:
     {
         return contact_matrix;
     }
+
+    /**
+     * @brief The contacts are the model parameter `param` times the contact
+     * matrix (read at the end of every step, after the global events, so a
+     * change to the parameter applies from the next step).
+     * @details For a layer with a contact matrix only; `reset()` throws for a
+     * layer with contact probabilities.
+     */
+    void set_contact_rate(std::string param) { rate_ref.emplace(std::move(param)); }
+
+    bool has_contact_rate() const { return rate_ref.has_value(); }
 
     /**
      * @brief Sets the probability that two members of a group meet on a given
@@ -257,8 +276,8 @@ public:
     /**
      * @brief Samples the infectious contacts of `agent` (none if it is not in
      * the layer), appending them to `out`.
-     * @details `exclude` is ignored: the infectious states of the layer say
-     * who can be contacted. See `ContactLayer::sample()`.
+     * @details `exclude` is ignored: the pools hold the agents in the model's
+     * infectious states only. See `ContactLayer::sample()`.
      */
     size_t sample(
         size_t agent,
@@ -273,15 +292,9 @@ public:
 };
 
 template<typename TSeq>
-inline std::shared_ptr< Mixing<TSeq> > mixing(
-    std::string name,
-    std::vector< int > infectious,
-    std::vector< int > available
-)
+inline std::shared_ptr< Mixing<TSeq> > mixing(std::string name)
 {
-    return std::shared_ptr< Mixing<TSeq> >(new Mixing<TSeq>(
-        std::move(name), std::move(infectious), std::move(available)
-    ));
+    return std::shared_ptr< Mixing<TSeq> >(new Mixing<TSeq>(std::move(name)));
 }
 
 template<typename TSeq>
@@ -519,24 +532,6 @@ template<typename TSeq>
 inline void Mixing<TSeq>::reset(Model<TSeq> & model)
 {
 
-    const size_t ns = model.get_n_states();
-    is_infectious.assign(ns, 0);
-    is_available.assign(ns, 0);
-
-    for (int s : infectious_states)
-    {
-        if ((s < 0) || (static_cast< size_t >(s) >= ns))
-            throw std::range_error("Mixing layer: infectious state out of range.");
-        is_infectious[s] = 1;
-    }
-
-    for (int s : available_states)
-    {
-        if ((s < 0) || (static_cast< size_t >(s) >= ns))
-            throw std::range_error("Mixing layer: available state out of range.");
-        is_available[s] = 1;
-    }
-
     const size_t n = model.size();
 
     if (explicit_groups)
@@ -590,6 +585,13 @@ inline void Mixing<TSeq>::reset(Model<TSeq> & model)
             );
 
         contact_matrix.clear();
+
+        if (has_contact_rate())
+            throw std::logic_error(
+                "Mixing layer '" + this->get_name() + "': a contact rate "
+                "scales a contact matrix; this layer has contact "
+                "probabilities (within groups)."
+            );
 
     }
     else
@@ -647,18 +649,23 @@ inline void Mixing<TSeq>::update(Model<TSeq> & model)
     if (layout_stale)
         rebuild_layout();
 
-    const size_t ns = is_infectious.size();
+    const size_t ns = static_cast< size_t >(model.nstates);
+    const auto & not_infectious = model.state_not_infectious;
 
     std::fill(counts.begin(), counts.end(), 0u);
 
-    // Marking the infectious agents; walking the bitset gives ascending ids
+    // Marking the carriers in infectious states; walking the bitset gives
+    // ascending ids. States without carriers (e.g., the susceptible) are
+    // skipped without a scan.
     for (size_t s = 0u; s < ns; ++s)
     {
-        if (!is_infectious[s])
+        if ((model.state_carriers[s] == 0u) ||
+            (!not_infectious.empty() && not_infectious[s]))
             continue;
 
-        for (size_t id : model.get_agents_in_state(s))
-            marks[id >> 6] |= (uint64_t(1) << (id & 63u));
+        for (size_t id : model.state_index_members(s))
+            if (model.agent_carrier[id])
+                marks[id >> 6] |= (uint64_t(1) << (id & 63u));
     }
 
     ordered.clear();
@@ -683,16 +690,16 @@ inline void Mixing<TSeq>::update(Model<TSeq> & model)
         pool[offsets[g] + counts[g]++] = id;
     }
 
-    // Available = group size - agents in non-available states
+    // In the mixing = group size - agents in excluded states
     for (size_t g = 0u; g < n_groups; ++g)
         n_available[g] = group_size[g];
 
     for (size_t s = 0u; s < ns; ++s)
     {
-        if (is_available[s])
+        if (!model.state_excluded[s])
             continue;
 
-        for (size_t id : model.get_agents_in_state(s))
+        for (size_t id : model.state_index_members(s))
         {
             const size_t g = groups[id];
             if (g == NO_GROUP)
@@ -703,12 +710,90 @@ inline void Mixing<TSeq>::update(Model<TSeq> & model)
         }
     }
 
+    if (!within_groups())
+        daily_build(model);
+
+}
+
+template<typename TSeq>
+inline void Mixing<TSeq>::DailyDraw::set(int n_, double p_)
+{
+
+    n = n_;
+    p = p_;
+    poisson = false;
+
+    if ((n == 0) || (p <= 0.0) || (p >= 1.0))
+        return;
+
+    // The same choice as Model::rbinom(n, p)
+    #ifdef EPI_FAST_BINOM
+    if ((p <= 0.01) && (static_cast< double >(n) * p * p <= 0.1))
+    {
+        poisson = true;
+        pois = std::poisson_distribution<>::param_type(static_cast< double >(n) * p);
+        return;
+    }
+    #endif
+
+    binom = std::binomial_distribution<>::param_type(n, p);
+
+}
+
+template<typename TSeq>
+inline int Mixing<TSeq>::DailyDraw::operator()(Model<TSeq> & model) const
+{
+
+    if ((n == 0) || (p <= 0.0))
+        return 0;
+
+    // Everyone, with no random draws
+    if (p >= 1.0)
+        return n;
+
+    if (poisson)
+        return std::min(model.rpoissd(*model.engine, pois), n);
+
+    return model.rbinomd(*model.engine, binom);
+
+}
+
+template<typename TSeq>
+inline void Mixing<TSeq>::daily_build(const Model<TSeq> & model)
+{
+
+    // The contact rate scales the whole matrix
+    const double scale = rate_ref ? (*rate_ref)(model) : 1.0;
+
+    daily.resize(n_groups * n_groups);
+    for (size_t own = 0u; own < n_groups; ++own)
+    {
+
+        // Column of the group: entry (own, g) is rate[g * n_groups]
+        const double * rate = contact_matrix.data() + own;
+        for (size_t g = 0u; g < n_groups; ++g)
+        {
+
+            // In its own group, an agent's contacts are the others
+            const size_t others = n_available[g] - ((g == own) ? 1u : 0u);
+            const double p = (others == 0u || n_available[g] == 0u) ? 0.0 :
+                std::min(
+                    1.0,
+                    scale * rate[g * n_groups] / static_cast< double >(others)
+                );
+
+            daily[own * n_groups + g].set(static_cast< int >(counts[g]), p);
+
+        }
+
+    }
+
 }
 
 template<typename TSeq>
 inline void Mixing<TSeq>::draw(
     size_t g,
-    double p,
+    size_t n_met,
     size_t agent,
     Model<TSeq> & model,
     std::vector< size_t > & out
@@ -717,16 +802,9 @@ inline void Mixing<TSeq>::draw(
 
     const size_t n_pool = counts[g];
 
-    if ((n_pool == 0u) || (p <= 0.0))
-        return;
-
     // A binomial number of distinct agents is the same as meeting each one
     // independently with probability p; with p = 1 (a clique) it is everyone,
     // with no draws. A partial shuffle of the pool puts the ones met first.
-    const size_t n_met = (p < 1.0) ?
-        static_cast< size_t >(model.rbinom(static_cast< int >(n_pool), p)) :
-        n_pool;
-
     size_t * first = pool.data() + offsets[g];
     for (size_t s = 0u; s < n_met; ++s)
     {
@@ -747,7 +825,7 @@ inline void Mixing<TSeq>::draw(
         const size_t id = first[s];
 
         #ifdef EPI_DEBUG
-        if (!is_infectious[model.get_agent(id).get_state()])
+        if (model.get_agent(id).get_virus() == nullptr)
             throw std::logic_error(
                 "The agent is not infected, but it should be."
             );
@@ -780,28 +858,54 @@ inline size_t Mixing<TSeq>::sample(
     if (within_groups())
     {
         // Only the agent's own group
-        draw(own, contact_prob[own], agent, model, out);
+        const double q = contact_prob[own];
+        const size_t n_pool = counts[own];
+        if ((n_pool > 0u) && (q > 0.0))
+            draw(
+                own,
+                (q < 1.0) ?
+                    static_cast< size_t >(model.rbinom(static_cast< int >(n_pool), q)) :
+                    n_pool,
+                agent, model, out
+            );
+    }
+    else if (!model.state_excluded[model.agent_state[agent]])
+    {
+
+        // The day's draws of the agent's group (see update())
+        const DailyDraw * day = daily.data() + own * n_groups;
+        for (size_t g = 0u; g < n_groups; ++g)
+        {
+            const int n_met = day[g](model);
+            if (n_met > 0)
+                draw(g, static_cast< size_t >(n_met), agent, model, out);
+        }
+
     }
     else
     {
 
-        // In its own group, an available agent's contacts are the others
-        const bool available =
-            is_available[model.get_agent(agent).get_state()];
-
-        // Column of the agent's group: entry (agent's group, g) is rate[g]
+        // An excluded agent is not one of the others of its group (it rarely
+        // samples: its state usually has no sampler)
+        const double scale = rate_ref ? (*rate_ref)(model) : 1.0;
         const double * rate = contact_matrix.data() + own;
         for (size_t g = 0u; g < n_groups; ++g)
         {
-            const size_t others =
-                n_available[g] - (((g == own) && available) ? 1u : 0u);
+            const size_t n_pool = counts[g];
+            const double p = (n_available[g] == 0u) ? 0.0 : std::min(
+                1.0,
+                scale * rate[g * n_groups] / static_cast< double >(n_available[g])
+            );
+            if ((n_pool == 0u) || (p <= 0.0))
+                continue;
 
-            if (others > 0u)
-                draw(
-                    g,
-                    std::min(1.0, rate[g * n_groups] / static_cast< double >(others)),
-                    agent, model, out
-                );
+            draw(
+                g,
+                (p < 1.0) ?
+                    static_cast< size_t >(model.rbinom(static_cast< int >(n_pool), p)) :
+                    n_pool,
+                agent, model, out
+            );
         }
 
     }

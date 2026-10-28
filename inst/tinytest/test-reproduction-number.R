@@ -13,25 +13,28 @@ mixing_matrix <- matrix(
 )
 
 contact_rate <- 20
-transmission_rate <- 0.2
+transmission_prob <- 0.2
 recovery_rate <- 0.5
 infectious_period_days <- 1 / recovery_rate
 nsims <- 500
 
-model <- ModelSEIRMixing(
+model <- ModelSEIR(
   name = "R number check",
   n = 600,
   prevalence = 1 / 600,
-  transmission_rate = transmission_rate,
-  incubation_days = 3,
-  recovery_rate = recovery_rate,
-  contact_matrix = mixing_matrix * contact_rate
+  transmission_prob = transmission_prob,
+  latent_period = 3,
+  recovery_rate = recovery_rate
 )
 
-model |>
-  add_entity(entity("Group 1", 200, FALSE)) |>
-  add_entity(entity("Group 2", 200, FALSE)) |>
-  add_entity(entity("Group 3", 200, FALSE))
+add_layer(
+  model,
+  layer_mixing(
+    "mixing",
+    groups         = rep(0:2, each = 200),
+    contact_matrix = mixing_matrix * contact_rate
+  )
+)
 
 
 verbose_off(model)
@@ -48,8 +51,6 @@ run_multiple(
   nthreads = 1L
 )
 
-entity_sizes <- vapply(get_entities(model), get_entity_size, numeric(1))
-expect_equal(entity_sizes, rep(200, 3))
 
 reproductive <- run_multiple_get_results(model, nthreads = 1L)$reproductive
 
@@ -62,7 +63,7 @@ initial_rt <- reproductive$rt[
 
 expected_rt <- compute_reproduction_number(
   contact_matrix = contact_rate * mixing_matrix,
-  transmission_prob = transmission_rate,
+  transmission_prob = transmission_prob,
   infectious_period_days = infectious_period_days,
   infectiousness = c(1, 1, 1),
   susceptibility = c(1, 1, 1)
@@ -73,4 +74,4 @@ expect_equal(length(initial_rt), nsims)
 expect_true(abs(mean(initial_rt) - expected_rt$R) < 1.0)
 
 # R0 = p_t * c / (1 - p_r)
-R0_naive <- transmission_rate * contact_rate / recovery_rate
+R0_naive <- transmission_prob * contact_rate / recovery_rate

@@ -29,8 +29,10 @@ public:
    * @param vname Name of the model.
  * @param n Number of agents.
    * @param prevalence Initial prevalence of the disease.
-   * @param transmission_rate Transmission rate of the disease.
-   * @param avg_incubation_days Average incubation period of the disease.
+   * @param transmission_prob Probability that a contact with an infected
+   * agent infects.
+   * @param latent_period Mean days in Exposed (carrying the virus, not yet
+   * infectious).
    * @param recovery_rate Recovery rate of the disease.
    * @param death_rate Death rate of the disease.
    */
@@ -38,8 +40,8 @@ public:
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
+    epiworld_double transmission_prob,
+    epiworld_double latent_period,
     epiworld_double recovery_rate,
     epiworld_double death_rate
   );
@@ -133,8 +135,8 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
-    epiworld_double transmission_rate,
-    epiworld_double avg_incubation_days,
+    epiworld_double transmission_prob,
+    epiworld_double latent_period,
     epiworld_double recovery_rate,
     epiworld_double death_rate
 )
@@ -143,19 +145,18 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
     this->set_population_size(n);
   
   // Adding statuses
-  // Exposed agents carry the virus but are not infectious yet
-  this->add_state(
-      "Susceptible",
-      sampler::make_update_susceptible<TSeq>({ModelSEIRD<TSeq>::EXPOSED})
-  );
+  this->add_state("Susceptible", default_update_susceptible<TSeq>);
   this->add_state("Exposed",  this->update_exposed_seir);
   this->add_state("Infected", this->update_infected);
   this->add_state("Removed");
   this->add_state("Deceased");
+
+  // Exposed agents carry the virus but are not infectious yet
+  this->set_infectious_states({INFECTED});
   
   // Setting up parameters
-  this->add_param(transmission_rate, "Transmission rate");
-  this->add_param(avg_incubation_days, "Incubation days");
+  this->add_param(transmission_prob, "Transmission probability");
+  this->add_param(latent_period, "Latent period");
   this->add_param(recovery_rate, "Recovery rate");
   this->add_param(death_rate, "Death rate");
   
@@ -163,8 +164,8 @@ inline ModelSEIRD<TSeq>::ModelSEIRD(
   Virus<TSeq> virus(vname, prevalence, true);
   virus.set_state(ModelSEIRD<TSeq>::EXPOSED, ModelSEIRD<TSeq>::REMOVED, ModelSEIRD<TSeq>::DECEASED);
   
-  virus.set_prob_infecting("Transmission rate");
-  virus.set_incubation("Incubation days");
+  virus.set_prob_infecting("Transmission probability");
+  virus.set_incubation("Latent period");
   virus.set_prob_death("Death rate");
   virus.set_prob_recovery("Recovery rate");
   

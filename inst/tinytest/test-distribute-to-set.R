@@ -8,9 +8,15 @@ vaccine <- tool(
 )
 
 # distribute_virus_randomly() with agents_ids samples within the set
-abm <- ModelSIRCONN(
-  "a virus", n = 1000, prevalence = 0, contact_rate = 0,
-  transmission_rate = 0, recovery_rate = 0
+abm <- ModelSIR(
+  "a virus", n = 1000, prevalence = 0,
+  transmission_prob = 0, recovery_rate = 0
+)
+add_param(abm, "Contact rate", 0)
+add_layer(
+  abm,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 set_distribution_virus(
   get_virus(abm, 0),
@@ -25,9 +31,15 @@ expect_true(all(infected %in% 900:999))
 # distribute_tool_randomly() with agents_ids samples within the set (it used
 # to pick among agents 0..(n-1), n being the size of the set). Everyone but
 # the vaccinated gets infected, so the susceptible are the tool holders.
-abm <- ModelSIRCONN(
-  "a virus", n = 1000, prevalence = 0, contact_rate = 20,
-  transmission_rate = 1, recovery_rate = 0
+abm <- ModelSIR(
+  "a virus", n = 1000, prevalence = 0,
+  transmission_prob = 1, recovery_rate = 0
+)
+add_param(abm, "Contact rate", 20)
+add_layer(
+  abm,
+  layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 set_distribution_virus(get_virus(abm, 0), distribute_virus_to_set(0:9))
 add_tool(abm, vaccine)
@@ -53,9 +65,15 @@ for (d in list(
 n <- 100000L
 ids <- seq(0L, n - 1L, by = 2L)
 
-abm <- ModelSIRCONN(
-  "a virus", n = n, prevalence = 0, contact_rate = 0,
-  transmission_rate = 0, recovery_rate = 0
+abm <- ModelSIR(
+  "a virus", n = n, prevalence = 0,
+  transmission_prob = 0, recovery_rate = 0
+)
+add_param(abm, "Contact rate", 0)
+add_layer(
+  abm,
+  layer_mixing("everyone", groups = rep(0, n), contact_matrix = 1) |>
+    set_contact_rate("Contact rate")
 )
 set_distribution_virus(get_virus(abm, 0), distribute_virus_to_set(ids))
 add_tool(abm, vaccine)

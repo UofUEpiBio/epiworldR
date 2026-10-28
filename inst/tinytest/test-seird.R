@@ -13,8 +13,8 @@ expect_silent(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ))
@@ -37,8 +37,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = bad_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_str)
@@ -47,8 +47,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = bad_numeric_input,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -57,8 +57,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = bad_numeric_input,
-  incubation_days = good_incubation_days,
+  transmission_prob = bad_numeric_input,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -67,8 +67,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = bad_numeric_input,
+  transmission_prob = good_transmission_rate,
+  latent_period = bad_numeric_input,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -77,8 +77,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = bad_numeric_input,
   death_rate = good_death_rate
 ), expected_error_msg_double)
@@ -87,8 +87,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = bad_numeric_input
 ), expected_error_msg_double)
@@ -99,8 +99,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = NA,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_str)
@@ -109,8 +109,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = NA,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_na)
@@ -119,8 +119,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = NA,
-  incubation_days = good_incubation_days,
+  transmission_prob = NA,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_na)
@@ -129,8 +129,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = NA,
+  transmission_prob = good_transmission_rate,
+  latent_period = NA,
   recovery_rate = good_recovery_rate,
   death_rate = good_death_rate
 ), expected_error_msg_na)
@@ -139,8 +139,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = NA,
   death_rate = good_death_rate
 ), expected_error_msg_na)
@@ -149,8 +149,8 @@ expect_error(seird_0 <- ModelSEIRD(
   name = good_name,
   n          = 1000,
   prevalence = good_prevalence,
-  transmission_rate = good_transmission_rate,
-  incubation_days = good_incubation_days,
+  transmission_prob = good_transmission_rate,
+  latent_period = good_incubation_days,
   recovery_rate = good_recovery_rate,
   death_rate = NA
 ), expected_error_msg_na)
