@@ -10,6 +10,7 @@
 \alias{set_group}
 \alias{members_of}
 \alias{groupmates_of}
+\alias{grouping_random}
 \title{Mixing layers}
 \usage{
 layer_mixing(name, groups, contact_matrix = NULL, contact_prob = NULL)
@@ -27,13 +28,16 @@ set_group(layer, agent, group)
 members_of(layer, group)
 
 groupmates_of(layer, agent, from = 1L, to = .Machine$integer.max)
+
+grouping_random(sizes, as_proportion = FALSE)
 }
 \arguments{
 \item{name}{String. Name of the layer (unique within a model).}
 
 \item{groups}{Integer vector with the group of each agent (starting at 0),
-or \code{NA} to leave the agent out of the layer. Its length is the population
-size of the model the layer is added to.}
+or \code{NA} to leave the agent out of the layer; its length is the population
+size of the model the layer is added to. Or a grouping (class
+\code{epiworld_grouping}, e.g., from \code{grouping_random()}).}
 
 \item{contact_matrix}{Numeric square matrix with one row per group.}
 
@@ -54,11 +58,18 @@ takes the agent out of the layer.}
 
 \item{from, to}{Integers. In \code{groupmates_of()}, the first and last day of
 the window (days after the last one simulated are left out).}
+
+\item{sizes}{Numeric vector with one size per group: a number of agents, or,
+with \code{as_proportion = TRUE}, a proportion (in \verb{[0, 1]}) of the agents not
+yet in a group.}
+
+\item{as_proportion}{Logical. Whether \code{sizes} are proportions.}
 }
 \value{
 \itemize{
 \item \code{layer_mixing()} returns a mixing layer, of class
 \code{epiworld_layer_mixing}.
+\item \code{grouping_random()} returns a grouping, of class \code{epiworld_grouping}.
 \item \code{get_contact_prob()} returns the contact probabilities (one per group once
 the model has run; empty for a layer with a contact matrix).
 \item \code{set_contact_prob()}, \code{set_contact_rate()} and \code{set_group()} return the
@@ -86,6 +97,10 @@ every day), with no ties stored.
 }
 }
 \details{
+The groups are fixed (one per agent), or drawn afresh at the start of every
+run by a grouping: \code{grouping_random()} draws groups of given sizes at
+random.
+
 \code{layer_mixing()} creates one to add to any model with \code{\link[=add_layer]{add_layer()}}. Every
 agent of a group takes part in the mixing (the contacts are spread over all
 of them), and the agents in the model's infectious states transmit (see
@@ -100,13 +115,20 @@ connected models, e.g. \code{ModelSIRCONN()}, did; see the example).
 
 Give exactly one of \code{contact_matrix} and \code{contact_prob}. The number of
 groups is the number of rows of \code{contact_matrix}, or the length of
-\code{contact_prob}; with a single \code{contact_prob}, it is \code{max(groups) + 1}.
+\code{contact_prob}; with a single \code{contact_prob}, it is \code{max(groups) + 1}, or
+the number of groups of a grouping.
+
+\code{grouping_random()} draws the groups in order, each from the agents not yet
+in a group; agents left over are in no group. With \code{as_proportion = TRUE}, a
+group takes \code{floor(size * n)} of the \code{n} agents still without a group.
 
 As for every layer, an edit made while the model runs (e.g., from a global
 event) lasts for that run only, and one made between runs is kept. A move
 made with \code{set_group()} during a day takes effect at the end of the day.
 A layer with a contact matrix and one with contact probabilities cannot be
-swapped during a run.
+swapped during a run. The groups of a grouping exist once the model has run
+(\code{get_group()} and \code{members_of()} read the last draw), and moving an agent
+between runs is an error: the next run draws them again.
 
 A layer with contact probabilities that is traced (\code{\link[=enable_tracing]{enable_tracing()}},
 before the run) also keeps the run's history of who was in which group and
@@ -146,9 +168,18 @@ add_layer(
   )
 )
 
+# Two schools of 300 and 200, drawn at random at the start of every run
+schools <- layer_mixing(
+  "schools",
+  groups       = grouping_random(c(300, 200)),
+  contact_prob = .05
+)
+add_layer(sir, schools)
+
 enable_tracing(households)
 run(sir, ndays = 50, seed = 1)
 members_of(households, 0)
+length(members_of(schools, 1))
 get_contact_prob(households)
 
 # Who shared a household with agent 0 in the last week

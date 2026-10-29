@@ -11,6 +11,10 @@
 #' `contact_prob = 1` makes every group a clique (everyone meets everyone,
 #' every day), with no ties stored.
 #'
+#' The groups are fixed (one per agent), or drawn afresh at the start of every
+#' run by a grouping: `grouping_random()` draws groups of given sizes at
+#' random.
+#'
 #' `layer_mixing()` creates one to add to any model with [add_layer()]. Every
 #' agent of a group takes part in the mixing (the contacts are spread over all
 #' of them), and the agents in the model's infectious states transmit (see
@@ -25,8 +29,9 @@
 #'
 #' @param name String. Name of the layer (unique within a model).
 #' @param groups Integer vector with the group of each agent (starting at 0),
-#' or `NA` to leave the agent out of the layer. Its length is the population
-#' size of the model the layer is added to.
+#' or `NA` to leave the agent out of the layer; its length is the population
+#' size of the model the layer is added to. Or a grouping (class
+#' `epiworld_grouping`, e.g., from `grouping_random()`).
 #' @param contact_matrix Numeric square matrix with one row per group.
 #' @param contact_prob Numeric vector with the probability that two members of
 #' a group meet on a given day: one per group, or one for all groups. Each in
@@ -40,17 +45,28 @@
 #' parameter the contact matrix is multiplied by (add it with [add_param()]).
 #' @param from,to Integers. In `groupmates_of()`, the first and last day of
 #' the window (days after the last one simulated are left out).
+#' @param sizes Numeric vector with one size per group: a number of agents, or,
+#' with `as_proportion = TRUE`, a proportion (in `[0, 1]`) of the agents not
+#' yet in a group.
+#' @param as_proportion Logical. Whether `sizes` are proportions.
 #'
 #' @details
 #' Give exactly one of `contact_matrix` and `contact_prob`. The number of
 #' groups is the number of rows of `contact_matrix`, or the length of
-#' `contact_prob`; with a single `contact_prob`, it is `max(groups) + 1`.
+#' `contact_prob`; with a single `contact_prob`, it is `max(groups) + 1`, or
+#' the number of groups of a grouping.
+#'
+#' `grouping_random()` draws the groups in order, each from the agents not yet
+#' in a group; agents left over are in no group. With `as_proportion = TRUE`, a
+#' group takes `floor(size * n)` of the `n` agents still without a group.
 #'
 #' As for every layer, an edit made while the model runs (e.g., from a global
 #' event) lasts for that run only, and one made between runs is kept. A move
 #' made with `set_group()` during a day takes effect at the end of the day.
 #' A layer with a contact matrix and one with contact probabilities cannot be
-#' swapped during a run.
+#' swapped during a run. The groups of a grouping exist once the model has run
+#' (`get_group()` and `members_of()` read the last draw), and moving an agent
+#' between runs is an error: the next run draws them again.
 #'
 #' A layer with contact probabilities that is traced ([enable_tracing()],
 #' before the run) also keeps the run's history of who was in which group and
@@ -65,6 +81,7 @@
 #' @return
 #' - `layer_mixing()` returns a mixing layer, of class
 #' `epiworld_layer_mixing`.
+#' - `grouping_random()` returns a grouping, of class `epiworld_grouping`.
 #' - `get_contact_prob()` returns the contact probabilities (one per group once
 #' the model has run; empty for a layer with a contact matrix).
 #' - `set_contact_prob()`, `set_contact_rate()` and `set_group()` return the
@@ -103,9 +120,18 @@
 #'   )
 #' )
 #'
+#' # Two schools of 300 and 200, drawn at random at the start of every run
+#' schools <- layer_mixing(
+#'   "schools",
+#'   groups       = grouping_random(c(300, 200)),
+#'   contact_prob = .05
+#' )
+#' add_layer(sir, schools)
+#'
 #' enable_tracing(households)
 #' run(sir, ndays = 50, seed = 1)
 #' members_of(households, 0)
+#' length(members_of(schools, 1))
 #' get_contact_prob(households)
 #'
 #' # Who shared a household with agent 0 in the last week
@@ -142,25 +168,35 @@ layer_mixing <- function(
 
   stopifnot_string(name)
 
-  # A fraction would be truncated, and a negative id would be NO_GROUP in C++
-  if (
-    !(is.numeric(groups) || all(is.na(groups))) ||
-      any(groups < 0 | groups != round(groups), na.rm = TRUE)
-  )
-    stop("-groups- must be non-negative integers (NA for no group).")
-
   if (is.null(contact_matrix) == is.null(contact_prob))
     stop("Give exactly one of -contact_matrix- and -contact_prob-.")
 
-  n_groups <- if (!is.null(contact_matrix)) {
-    nrow(as.matrix(contact_matrix))
-  } else if (length(contact_prob) > 1L) {
-    length(contact_prob)
-  } else {
-    max(groups, -1L, na.rm = TRUE) + 1L
-  }
+  ptr <- layer_mixing_cpp(name)
 
-  ptr <- layer_mixing_cpp(name, as.integer(groups), as.integer(n_groups))
+  if (inherits(groups, "epiworld_grouping")) {
+    set_grouping_cpp(ptr, groups)
+  } else {
+    # A fraction would be truncated, and a negative id would be NO_GROUP in C++
+    if (
+      !(is.numeric(groups) || all(is.na(groups))) ||
+        any(groups < 0 | groups != round(groups), na.rm = TRUE)
+    )
+      stop(
+        "-groups- must be non-negative integers (NA for no group) or a ",
+        "grouping (e.g., grouping_random())."
+      )
+
+    n_groups <- if (!is.null(contact_matrix)) {
+      nrow(as.matrix(contact_matrix))
+    } else if (length(contact_prob) > 1L) {
+      length(contact_prob)
+    } else {
+      max(groups, -1L, na.rm = TRUE) + 1L
+    }
+
+    set_groups_cpp(ptr, as.integer(groups), as.integer(n_groups))
+
+  }
 
   if (!is.null(contact_matrix)) {
     stopifany_na(contact_matrix)
@@ -243,4 +279,15 @@ groupmates_of <- function(
   stopifnot_int(to)
   groupmates_of_cpp(layer, agent, from, to)
 
+}
+
+#' @export
+#' @rdname mixing-layers
+grouping_random <- function(sizes, as_proportion = FALSE) {
+  stopifnot_numvector(sizes)
+  stopifnot_bool(as_proportion)
+  structure(
+    grouping_random_cpp(as.double(sizes), as_proportion),
+    class = "epiworld_grouping"
+  )
 }

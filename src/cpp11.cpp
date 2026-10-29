@@ -412,6 +412,13 @@ extern "C" SEXP _epiworldR_graph_edgelist_cpp(SEXP source, SEXP target, SEXP siz
   END_CPP11
 }
 // layers.cpp
+SEXP grouping_random_cpp(std::vector< double > sizes, bool as_proportion);
+extern "C" SEXP _epiworldR_grouping_random_cpp(SEXP sizes, SEXP as_proportion) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(grouping_random_cpp(cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(sizes), cpp11::as_cpp<cpp11::decay_t<bool>>(as_proportion)));
+  END_CPP11
+}
+// layers.cpp
 SEXP rewire_degseq_cpp(std::string param);
 extern "C" SEXP _epiworldR_rewire_degseq_cpp(SEXP param) {
   BEGIN_CPP11
@@ -433,10 +440,24 @@ extern "C" SEXP _epiworldR_layer_network_graph_cpp(SEXP name, SEXP graph) {
   END_CPP11
 }
 // layers.cpp
-SEXP layer_mixing_cpp(std::string name, const std::vector< int > & groups, int n_groups);
-extern "C" SEXP _epiworldR_layer_mixing_cpp(SEXP name, SEXP groups, SEXP n_groups) {
+SEXP layer_mixing_cpp(std::string name);
+extern "C" SEXP _epiworldR_layer_mixing_cpp(SEXP name) {
   BEGIN_CPP11
-    return cpp11::as_sexp(layer_mixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<const std::vector< int > &>>(groups), cpp11::as_cpp<cpp11::decay_t<int>>(n_groups)));
+    return cpp11::as_sexp(layer_mixing_cpp(cpp11::as_cpp<cpp11::decay_t<std::string>>(name)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_groups_cpp(SEXP layer, const std::vector< int > & groups, int n_groups);
+extern "C" SEXP _epiworldR_set_groups_cpp(SEXP layer, SEXP groups, SEXP n_groups) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_groups_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<const std::vector< int > &>>(groups), cpp11::as_cpp<cpp11::decay_t<int>>(n_groups)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_grouping_cpp(SEXP layer, SEXP grouping);
+extern "C" SEXP _epiworldR_set_grouping_cpp(SEXP layer, SEXP grouping) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_grouping_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<SEXP>>(grouping)));
   END_CPP11
 }
 // layers.cpp
@@ -1661,13 +1682,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_graph_edgelist_cpp",                   (DL_FUNC) &_epiworldR_graph_edgelist_cpp,                    4},
     {"_epiworldR_graph_sbm_cpp",                        (DL_FUNC) &_epiworldR_graph_sbm_cpp,                         3},
     {"_epiworldR_graph_smallworld_cpp",                 (DL_FUNC) &_epiworldR_graph_smallworld_cpp,                  3},
+    {"_epiworldR_grouping_random_cpp",                  (DL_FUNC) &_epiworldR_grouping_random_cpp,                   2},
     {"_epiworldR_groupmates_of_cpp",                    (DL_FUNC) &_epiworldR_groupmates_of_cpp,                     4},
     {"_epiworldR_has_edge_cpp",                         (DL_FUNC) &_epiworldR_has_edge_cpp,                          3},
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_initial_states_cpp",                   (DL_FUNC) &_epiworldR_initial_states_cpp,                    2},
     {"_epiworldR_is_tracing_cpp",                       (DL_FUNC) &_epiworldR_is_tracing_cpp,                        1},
-    {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      3},
+    {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      1},
     {"_epiworldR_layer_network_generator_cpp",          (DL_FUNC) &_epiworldR_layer_network_generator_cpp,           2},
     {"_epiworldR_layer_network_graph_cpp",              (DL_FUNC) &_epiworldR_layer_network_graph_cpp,               2},
     {"_epiworldR_load_agents_entities_ties_cpp",        (DL_FUNC) &_epiworldR_load_agents_entities_ties_cpp,         3},
@@ -1703,6 +1725,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_distribution_tool_cpp",            (DL_FUNC) &_epiworldR_set_distribution_tool_cpp,             2},
     {"_epiworldR_set_distribution_virus_cpp",           (DL_FUNC) &_epiworldR_set_distribution_virus_cpp,            2},
     {"_epiworldR_set_group_cpp",                        (DL_FUNC) &_epiworldR_set_group_cpp,                         3},
+    {"_epiworldR_set_grouping_cpp",                     (DL_FUNC) &_epiworldR_set_grouping_cpp,                      2},
+    {"_epiworldR_set_groups_cpp",                       (DL_FUNC) &_epiworldR_set_groups_cpp,                        3},
     {"_epiworldR_set_incubation_cpp",                   (DL_FUNC) &_epiworldR_set_incubation_cpp,                    2},
     {"_epiworldR_set_incubation_fun_cpp",               (DL_FUNC) &_epiworldR_set_incubation_fun_cpp,                3},
     {"_epiworldR_set_incubation_ptr_cpp",               (DL_FUNC) &_epiworldR_set_incubation_ptr_cpp,                3},

@@ -98,6 +98,11 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 * A mixing layer whose groups do not cover the model's agents is an error
   when the model runs (before, `add_layer()` checked it).
 
+* A mixing layer's groups can be drawn afresh at the start of every run:
+  `layer_mixing(name, groups = grouping_random(sizes, as_proportion))` draws
+  groups of the given sizes at random, the draws `distribute_entity_randomly()`
+  made for entities. Moving an agent between runs is then an error.
+
 * In `ModelSEIR()`, infected agents recover through the virus, so tools that
   enhance recovery now work, as in the other models. Results for a given seed
   change.
