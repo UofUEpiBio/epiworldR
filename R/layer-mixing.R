@@ -45,9 +45,9 @@
 #' parameter the contact matrix is multiplied by (add it with [add_param()]).
 #' @param from,to Integers. In `groupmates_of()`, the first and last day of
 #' the window (days after the last one simulated are left out).
-#' @param sizes Numeric vector with one size per group: a number of agents, or,
-#' with `as_proportion = TRUE`, a proportion (in `[0, 1]`) of the agents not
-#' yet in a group.
+#' @param sizes Numeric vector with one size per group: a whole number of
+#' agents, or, with `as_proportion = TRUE`, a proportion (in `[0, 1]`) of the
+#' agents not yet in a group.
 #' @param as_proportion Logical. Whether `sizes` are proportions.
 #'
 #' @details

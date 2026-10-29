@@ -312,6 +312,7 @@ run(drawn, ndays = 1, seed = 1)
 expect_equal(lengths(list(members_of(halves, 0), members_of(halves, 1))),
   c(500L, 250L))
 expect_error(grouping_random(-1), "non-negative")
+expect_error(grouping_random(1.9), "whole numbers")
 
 # A contact rate from a model parameter: a global event on day 10 that sets it
 # to 0 stops new infections from day 11 on
