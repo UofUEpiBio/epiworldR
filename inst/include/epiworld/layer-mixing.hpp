@@ -1220,8 +1220,8 @@ namespace grouping {
  *
  * @details Group by group, in order, the agents are drawn at random from those
  * not yet in a group; agents left over are in no group. A group of size `s`
- * takes `s` agents, or, with `as_proportion`, `floor(s x n)` of the `n` agents
- * still without a group. These are the draws of the random entity
+ * takes `s` agents (a whole number), or, with `as_proportion`, `floor(s x n)`
+ * of the `n` agents still without a group. These are the draws of the random entity
  * distribution with `to_unassigned` (`distribute_entity_randomly()`), so a
  * mixing layer grouped this way runs as the same entities did.
  *
@@ -1236,10 +1236,14 @@ inline typename layer::Mixing<TSeq>::Grouping random(
 {
 
     for (epiworld_double s : sizes)
-        if (!std::isfinite(s) || (s < 0.0) || (as_proportion && (s > 1.0)))
+        if (
+            !std::isfinite(s) || (s < 0.0) ||
+            (as_proportion ? (s > 1.0) : (s != std::floor(s)))
+        )
             throw std::range_error(
-                "grouping::random(): sizes must be finite and non-negative "
-                "(proportions at most 1); got " + std::to_string(s) + "."
+                "grouping::random(): sizes must be non-negative whole numbers "
+                "of agents, or proportions in [0, 1] with as_proportion; got " +
+                std::to_string(s) + "."
             );
 
     return {
@@ -1269,7 +1273,7 @@ inline typename layer::Mixing<TSeq>::Grouping random(
                 else
                 {
                     // Compared before the cast, which a huge size overflows
-                    if (sizes[g] >= static_cast< epiworld_double >(n + 1u))
+                    if (sizes[g] > static_cast< epiworld_double >(n))
                         throw std::range_error(
                             "grouping::random(): group " + std::to_string(g) +
                             " takes " + std::to_string(sizes[g]) + " agents, "

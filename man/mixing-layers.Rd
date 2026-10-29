@@ -59,9 +59,9 @@ takes the agent out of the layer.}
 \item{from, to}{Integers. In \code{groupmates_of()}, the first and last day of
 the window (days after the last one simulated are left out).}
 
-\item{sizes}{Numeric vector with one size per group: a number of agents, or,
-with \code{as_proportion = TRUE}, a proportion (in \verb{[0, 1]}) of the agents not
-yet in a group.}
+\item{sizes}{Numeric vector with one size per group: a whole number of
+agents, or, with \code{as_proportion = TRUE}, a proportion (in \verb{[0, 1]}) of the
+agents not yet in a group.}
 
 \item{as_proportion}{Logical. Whether \code{sizes} are proportions.}
 }
