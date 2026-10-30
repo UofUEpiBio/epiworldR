@@ -2,7 +2,8 @@
 #define EPIWORLD_ADJLIST_MEAT_HPP
 
 #include <vector>
-#include <map>
+#include <algorithm>
+#include <numeric>
 #include <string>
 #include <stdexcept>
 #include <fstream>
@@ -29,15 +30,18 @@ inline AdjList::AdjList(
             std::to_string(target.size()) + ")."
             );
 
-    dat.resize(size, std::map<int,int>({}));
+    N = size;
+    E = source.size();
     int max_id = size - 1;
 
-    int i,j;
-    for (int m = 0; m < static_cast<int>(source.size()); ++m)
+    // Counting sort of the tie ends by vertex: first the size of each row (an
+    // undirected tie counts in both), then the rows themselves
+    start.assign(N + 1u, 0u);
+    for (size_t m = 0u; m < source.size(); ++m)
     {
 
-        i = source[m];
-        j = target[m];
+        int i = source[m];
+        int j = target[m];
 
         if ((i < 0) || (i > max_id))
             throw std::range_error(
@@ -51,62 +55,46 @@ inline AdjList::AdjList(
                 " is above the max_id " + std::to_string(max_id)
                 );
 
-        // Adding nodes
-        if (dat[i].find(j) == dat[i].end())
-            dat[i].insert(std::pair<int, int>(j, 1u));
-        else
-            dat[i][j]++; 
-        
+        start[i + 1]++;
         if (!directed)
-        {
-
-            if (dat[j].find(i) == dat[j].end())
-                dat[j].insert(std::pair<int, int>(i, 1u));
-            else
-                dat[j][i]++;
-
-        }
-
-        E++;
+            start[j + 1]++;
 
     }
 
-    N = size;
+    std::partial_sum(start.begin(), start.end(), start.begin());
+
+    ids.resize(start[N]);
+    std::vector< size_t > next(start.begin(), start.end() - 1);
+    for (size_t m = 0u; m < source.size(); ++m)
+    {
+        ids[next[source[m]]++] = target[m];
+        if (!directed)
+            ids[next[target[m]]++] = source[m];
+    }
+
+    // Each row sorted and without repeats, moved down over the repeats
+    // dropped before it
+    size_t kept = 0u;
+    for (size_t i = 0u; i < N; ++i)
+    {
+
+        auto first = ids.begin() + static_cast< std::ptrdiff_t >(start[i]);
+        auto last  = ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u]);
+
+        std::sort(first, last);
+        last = std::unique(first, last);
+
+        start[i] = kept;
+        for (auto it = first; it != last; ++it)
+            ids[kept++] = *it;
+
+    }
+
+    start[N] = kept;
+    ids.resize(kept);
 
     return;
 
-}
-
-
-inline AdjList::AdjList(AdjList && a) :
-    dat(std::move(a.dat)),
-    directed(a.directed),
-    N(a.N),
-    E(a.E)
-{
-
-}
-
-inline AdjList::AdjList(const AdjList & a) :
-    dat(a.dat),
-    directed(a.directed),
-    N(a.N),
-    E(a.E)
-{
-
-}
-
-inline AdjList& AdjList::operator=(const AdjList& a)
-{
-    if (this == &a)
-        return *this;
-
-    this->dat = a.dat;
-    this->directed = a.directed;
-    this->N = a.N;
-    this->E = a.E;
-
-    return *this;
 }
 
 inline void AdjList::read_edgelist(
@@ -173,7 +161,7 @@ inline void AdjList::read_edgelist(
 
 }
 
-inline std::map<int,int> AdjList::operator()(
+inline std::vector< int > AdjList::operator()(
     epiworld_fast_uint i
     ) const {
 
@@ -182,39 +170,33 @@ inline std::map<int,int> AdjList::operator()(
             "The vertex id " + std::to_string(i) + " is not in the network."
             );
 
-    return dat[i];
+    return std::vector< int >(
+        ids.begin() + static_cast< std::ptrdiff_t >(start[i]),
+        ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u])
+    );
 
 }
 
 inline void AdjList::print(epiworld_fast_uint limit) const {
 
-
-    epiworld_fast_uint counter = 0;
     printf_epiworld("Nodeset:\n");
-    int i = -1;
-    for (auto & n : dat)
+    for (epiworld_fast_uint i = 0u; (i < N) && (i <= limit); ++i)
     {
 
-        if (counter++ > limit)
-            break;
+        printf_epiworld("  % 3i: {", static_cast<int>(i));
+        for (size_t k = start[i]; k < start[i + 1u]; ++k)
+        {
+            printf_epiworld("%s%i", (k > start[i]) ? ", " : "", ids[k]);
+        }
+        printf_epiworld("}\n");
 
-        printf_epiworld("  % 3i: {", ++i);
-        int niter = 0;
-        for (auto n_n : n)
-            if (++niter < static_cast<int>(n.size()))
-            {    
-                printf_epiworld("%i, ", static_cast<int>(n_n.first));
-            }
-            else {
-                printf_epiworld("%i}\n", static_cast<int>(n_n.first));
-            }
     }
 
-    if (limit < dat.size())
+    if (limit < N)
     {
         printf_epiworld(
             "  (... skipping %i records ...)\n",
-            static_cast<int>(dat.size() - limit)
+            static_cast<int>(N - limit)
             );
     }
 
@@ -232,7 +214,7 @@ inline size_t AdjList::ecount() const
 
 inline bool AdjList::is_directed() const {
 
-    if (dat.size() == 0u)
+    if (N == 0u)
         throw std::logic_error("The edgelist is empty.");
     
     return directed;
