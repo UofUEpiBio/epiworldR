@@ -30,6 +30,16 @@ expect_equal(get_edgelist(contacts), el1)
 expect_identical(get_edgelist(get_layer(sir, "contacts")), el1)
 expect_error(get_layer(sir, "nope"))
 
+# graph_bernoulli(0) draws no ties (it used to give an almost complete graph)
+empty <- ModelSIR("flu", n = 200, prevalence = .05, transmission_prob = 1,
+  recovery_rate = .1)
+verbose_off(empty)
+none <- layer_network("none", graph_bernoulli(0))
+add_layer(empty, none)
+run(empty, ndays = 20, seed = 1)
+expect_equal(nrow(get_edgelist(none)), 0L)
+expect_equal(nrow(subset(get_transmissions(empty), source >= 0)), 0L)
+
 # A fixed network: ties come from the edgelist; edits between runs persist ----
 src <- c(0L, 1L, 2L)
 tgt <- c(1L, 2L, 3L)

@@ -10,57 +10,73 @@ class Agent;
 class AdjList;
 
 
+/**
+ * @brief The first `i` with `prob <= cumulative[i]`, or the last index.
+ *
+ * @details The draw of an agent with probability proportional to its weight,
+ * given the cumulative probabilities (non-decreasing); the same index as a
+ * scan from the start, found by bisection.
+ */
+inline size_t pick_cumulative(
+    const std::vector< epiworld_double > & cumulative,
+    epiworld_double prob
+)
+{
+    auto it = std::lower_bound(cumulative.begin(), cumulative.end(), prob);
+    return (it == cumulative.end()) ?
+        cumulative.size() - 1u :
+        static_cast< size_t >(it - cumulative.begin());
+}
+
+/**
+ * @brief Degree-preserving rewiring of a graph under construction (used by
+ * `rgraph_smallworld()`).
+ *
+ * @details `rows[i]` holds the neighbors of `i` in ascending order, without
+ * repeats (in an undirected graph, each tie in the rows of both ends), and is
+ * kept that way. Picks two agents with probability proportional to their
+ * degree and one tie of each, uniformly, and swaps them, skipping swaps that
+ * would create self-ties or repeated ties. A network layer is rewired with
+ * `graph::rewire_degseq()` instead.
+ */
 template<typename TSeq>
-inline void rewire_degseq(
-    AdjList * agents,
-    Model<TSeq> * model,
+inline void rewire_degseq_rows(
+    std::vector< std::vector< int > > & rows,
+    bool directed,
+    Model<TSeq> & model,
     epiworld_double proportion
     )
 {
 
-    // Identifying individuals with degree > 0
-    std::vector< epiworld_fast_int > nties(agents->vcount(), 0);
-
     #ifdef EPI_DEBUG
-    std::vector< int > _degree0(agents->vcount(), 0);
-    for (size_t i = 0u; i < _degree0.size(); ++i)
-        _degree0[i] = agents->get_dat()[i].size();
+    std::vector< size_t > _degree0(rows.size(), 0u);
+    for (size_t i = 0u; i < rows.size(); ++i)
+        _degree0[i] = rows[i].size();
     #endif
-    
+
     std::vector< int > non_isolates;
-    non_isolates.reserve(nties.size());
+    non_isolates.reserve(rows.size());
 
     std::vector< epiworld_double > weights;
-    weights.reserve(nties.size());
+    weights.reserve(rows.size());
 
     epiworld_double nedges = 0.0;
-    auto & dat = agents->get_dat();
-
-    if (dat.size() > nties.size())
-        throw std::logic_error("Inconsistent adjacency list data.");
-
-    for (size_t i = 0u; i < dat.size(); ++i)
-        nties[i] += dat[i].size();
-
-    bool directed = agents->is_directed();
-    for (size_t i = 0u; i < dat.size(); ++i)
+    for (size_t i = 0u; i < rows.size(); ++i)
     {
-        if (nties[i] > 0)
+        if (rows[i].empty())
+            continue;
+
+        non_isolates.push_back(static_cast< int >(i));
+        const epiworld_double nties = static_cast< epiworld_double >(rows[i].size());
+        if (directed)
         {
-            non_isolates.push_back(i);
-            if (directed)
-            {
-                weights.push_back(
-                    static_cast<epiworld_double>(nties[i])
-                );
-                nedges += static_cast<epiworld_double>(nties[i]);
-            }
-            else {
-                weights.push_back(
-                    static_cast<epiworld_double>(nties[i])/2.0
-                );
-                nedges += static_cast<epiworld_double>(nties[i]) / 2.0;
-            }
+            weights.push_back(nties);
+            nedges += nties;
+        }
+        else
+        {
+            weights.push_back(nties / 2.0);
+            nedges += nties / 2.0;
         }
     }
 
@@ -69,117 +85,86 @@ inline void rewire_degseq(
 
     // Cumulative probs
     weights[0u] /= nedges;
-    for (epiworld_fast_uint i = 1u; i < non_isolates.size(); ++i)
+    for (size_t i = 1u; i < non_isolates.size(); ++i)
     {
          weights[i] /= nedges;
          weights[i] += weights[i - 1u];
     }
 
-    // Only swap if needed
-    epiworld_fast_uint N = non_isolates.size();
-    epiworld_double prob;
-    int nrewires = floor(proportion * nedges / (
-        agents->is_directed() ? 1.0 : 2.0
-    ));
+    const int N = static_cast< int >(non_isolates.size());
+    int nrewires = floor(proportion * nedges / (directed ? 1.0 : 2.0));
+
+    auto has = [](const std::vector< int > & row, int j) {
+        return std::binary_search(row.begin(), row.end(), j);
+    };
+
+    auto insert = [](std::vector< int > & row, int j) {
+        row.insert(std::lower_bound(row.begin(), row.end(), j), j);
+    };
+
+    auto erase = [](std::vector< int > & row, int j) {
+        row.erase(std::lower_bound(row.begin(), row.end(), j));
+    };
 
     while (nrewires-- > 0)
     {
 
         // Picking egos
-        prob = model->runif();
-        int id0 = N - 1;
-        for (epiworld_fast_uint i = 0u; i < N; ++i)
-            if (prob <= weights[i])
-            {
-                id0 = i;
-                break;
-            }
-
-        prob = model->runif();
-        int id1 = N - 1;
-        for (epiworld_fast_uint i = 0u; i < N; ++i)
-            if (prob <= weights[i])
-            {
-                id1 = i;
-                break;
-            }
+        int id0 = static_cast< int >(pick_cumulative(weights, model.runif()));
+        int id1 = static_cast< int >(pick_cumulative(weights, model.runif()));
 
         // Correcting for under or overflow.
         if (id1 == id0)
             id1++;
 
-        if (id1 >= static_cast<int>(N))
+        if (id1 >= N)
             id1 = 0;
 
-        std::map<int,int> & p0 = agents->get_dat()[non_isolates[id0]];
-        std::map<int,int> & p1 = agents->get_dat()[non_isolates[id1]];
+        const int ego0 = non_isolates[id0];
+        const int ego1 = non_isolates[id1];
+        std::vector< int > & p0 = rows[ego0];
+        std::vector< int > & p1 = rows[ego1];
 
-        // Picking alters (relative location in their lists)
-        // In this case, these are uniformly distributed within the list
-        int id01 = model->runif_index(p0.size());
-        int id11 = model->runif_index(p1.size());
+        // Picking alters (relative location in their lists), uniformly
+        int id01 = model.runif_index(p0.size());
+        int id11 = model.runif_index(p1.size());
 
-        // Since it is a map, we need to find the actual ids (positions)
-        // are not good enough.
+        // From positions to ids. The scan keeps comparing the count with the
+        // id it found (so a later position can replace it), as the version on
+        // std::map did; kept so that the same seed gives the same graph.
         int count = 0;
-        for (auto & n : p0)
+        for (int j : p0)
             if (count++ == id01)
-                id01 = n.first;
+                id01 = j;
 
         count = 0;
-        for (auto & n : p1)
+        for (int j : p1)
             if (count++ == id11)
-                id11 = n.first;
+                id11 = j;
 
-        // When rewiring, we need to actually swap the edges, not just the weights
-        // We'll swap edges: (id0, id01) <-> (id1, id11)
-        // After swap: (id0, id11) and (id1, id01)
-        // But first, check if the swap would create duplicate or self-loop edges
-        
-        // Check for self-loops (new edge would connect node to itself)
-        if (id01 == non_isolates[id1] || id11 == non_isolates[id0]) {
+        // After the swap: (ego0, id11) and (ego1, id01). Skip self-ties,
+        // repeated ties, and swaps of the same neighbor.
+        if (id01 == ego1 || id11 == ego0)
             continue;
-        }
-        
-        // Check for duplicate edges (new edge already exists)
-        if (p0.find(id11) != p0.end() || p1.find(id01) != p1.end()) {
-            continue; // Skip this rewire attempt to avoid duplicate edges
-        }
-        
-        // Check if we're trying to swap the same neighbor
-        if (id01 == id11) {
+
+        if (has(p0, id11) || has(p1, id01))
             continue;
-        }
-        
-        // Save the weights before removing edges
-        int weight_0_01 = p0[id01];
-        int weight_1_11 = p1[id11];
-        
-        // Remove old edges from ego perspectives
-        p0.erase(id01);
-        p1.erase(id11);
-        
-        // Add new edges from ego perspectives with swapped alters
-        p0[id11] = weight_0_01;
-        p1[id01] = weight_1_11;
-        
+
+        if (id01 == id11)
+            continue;
+
+        erase(p0, id01);
+        erase(p1, id11);
+        insert(p0, id11);
+        insert(p1, id01);
+
         // For undirected graphs, also update from alter perspectives
-        if (!agents->is_directed())
+        if (!directed)
         {
-            std::map<int,int> & p01 = agents->get_dat()[id01];
-            std::map<int,int> & p11 = agents->get_dat()[id11];
-            
-            // Save weights from alter perspectives
-            int weight_01_0 = p01[non_isolates[id0]];
-            int weight_11_1 = p11[non_isolates[id1]];
-            
-            // Remove old edges from alter perspectives
-            p01.erase(non_isolates[id0]);
-            p11.erase(non_isolates[id1]);
-            
-            // Add new edges from alter perspectives
-            p01[non_isolates[id1]] = weight_11_1;
-            p11[non_isolates[id0]] = weight_01_0;
+            erase(rows[id01], ego0);
+            erase(rows[id11], ego1);
+            insert(rows[id01], ego1);
+            insert(rows[id11], ego0);
         }
 
     }
@@ -187,19 +172,16 @@ inline void rewire_degseq(
     #ifdef EPI_DEBUG
     for (size_t _i = 0u; _i < _degree0.size(); ++_i)
     {
-        if (_degree0[_i] != static_cast<int>(agents->get_dat()[_i].size()))
+        if (_degree0[_i] != rows[_i].size())
             throw std::logic_error(
                 "[epi-debug] Degree does not match afted rewire_degseq. " +
                 std::string("Expected: ") +
                 std::to_string(_degree0[_i]) +
                 std::string(", observed: ") +
-                std::to_string(agents->get_dat()[_i].size())
+                std::to_string(rows[_i].size())
                 );
     }
     #endif
-
-
-    return;
 
 }
 
@@ -478,11 +460,35 @@ inline AdjList rgraph_smallworld(
     // Creating the ring lattice
     AdjList ring = rgraph_ring_lattice(n,k,directed);
 
-    // Rewiring and returning
-    if (k > 0u)
-        rewire_degseq(&ring, &model, p);
+    if (k == 0u)
+        return ring;
 
-    return ring;
+    // Rewired as rows, which stay sorted, then loaded back
+    const auto & start = ring.get_start();
+    const auto & ids = ring.get_ids();
+    std::vector< std::vector< int > > rows(n);
+    for (size_t i = 0u; i < n; ++i)
+        rows[i].assign(
+            ids.begin() + static_cast< std::ptrdiff_t >(start[i]),
+            ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u])
+        );
+
+    rewire_degseq_rows(rows, directed, model, p);
+
+    // Each undirected tie once
+    std::vector< int > source;
+    std::vector< int > target;
+    source.reserve(ids.size());
+    target.reserve(ids.size());
+    for (size_t i = 0u; i < n; ++i)
+        for (int j : rows[i])
+            if (directed || (static_cast< int >(i) <= j))
+            {
+                source.push_back(static_cast< int >(i));
+                target.push_back(j);
+            }
+
+    return AdjList(source, target, static_cast< int >(n), directed);
 
 }
 

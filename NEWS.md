@@ -112,6 +112,18 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   enhance recovery now work, as in the other models. Results for a given seed
   change.
 
+## Other changes
+
+* Network layers are built about 10 times faster, with a third of the peak
+  memory, from an edge list (`layer_network(name, graph_edgelist(...))`) and
+  from `graph_bernoulli()` and `graph_sbm()`; `graph_smallworld()` is 20 to
+  100 times faster on large populations
+  ([epiworld#341](https://github.com/UofUEpiBio/epiworld/pull/341)). Seeded
+  results are unchanged.
+
+* `graph_bernoulli(0)` draws no ties; it gave an almost complete graph
+  ([epiworld#343](https://github.com/UofUEpiBio/epiworld/pull/343)).
+
 # epiworldR 0.19.0-0
 
 Syncs the C++ core with epiworld 0.19.0 (commit c340f87).

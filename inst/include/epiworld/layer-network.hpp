@@ -90,7 +90,8 @@ private:
     /// Position of each neighbor, only for agents with many ties
     std::unordered_map< size_t, std::unordered_map< size_t, size_t > > index;
 
-    // The fixed graph the next reset restores, one row per agent
+    // The fixed graph the next reset restores, one row per agent; empty until
+    // the first edit
     std::vector< size_t > baseline_start;
     std::vector< size_t > baseline_ids;
     bool baseline_stale = false; ///< Edited between runs
@@ -262,7 +263,6 @@ inline Network<TSeq>::Network(std::string name, const AdjList & graph) :
     ContactLayer<TSeq>(std::move(name))
 {
     set_graph(graph);
-    capture_baseline();
 }
 
 template<typename TSeq>
@@ -285,46 +285,21 @@ inline void Network<TSeq>::set_graph(const AdjList & graph)
     // AdjList::is_directed() throws on a graph with no vertices
     directed = (n > 0u) && graph.is_directed();
 
-    const auto & dat = graph.get_dat();
+    // Each row of the graph (sorted, without repeats) becomes its agent's
+    // ties. Resizing rather than reassigning keeps the rows' memory from one
+    // draw of a generator to the next.
+    const auto & start = graph.get_start();
+    const auto & ids = graph.get_ids();
 
-    // Counting sort of the tie ends by agent: row i (from start[i] to
-    // start[i + 1]) holds i's neighbors. An undirected tie i - j is written to
-    // both rows, so the result does not depend on the list being symmetric.
-    std::vector< size_t > start(n + 1u, 0u);
-    for (size_t i = 0u; i < n; ++i)
-    {
-        start[i + 1u] += dat[i].size();
-        if (!directed)
-            for (const auto & link : dat[i])
-                start[static_cast< size_t >(link.first) + 1u]++;
-    }
-
-    std::partial_sum(start.begin(), start.end(), start.begin());
-
-    std::vector< size_t > ids(start[n]);
-    std::vector< size_t > next(start.begin(), start.end() - 1);
-    for (size_t i = 0u; i < n; ++i)
-        for (const auto & link : dat[i])
-        {
-            size_t j = static_cast< size_t >(link.first);
-            ids[next[i]++] = j;
-            if (!directed)
-                ids[next[j]++] = i;
-        }
-
-    // Each row becomes its agent's ties: sorted and without repeats
-    ties.assign(n, {});
+    ties.resize(n);
     index.clear();
     for (size_t i = 0u; i < n; ++i)
     {
 
-        auto first = ids.begin() + static_cast< std::ptrdiff_t >(start[i]);
-        auto last  = ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u]);
-
-        std::sort(first, last);
-        last = std::unique(first, last);
-
-        ties[i].assign(first, last);
+        ties[i].assign(
+            ids.begin() + static_cast< std::ptrdiff_t >(start[i]),
+            ids.begin() + static_cast< std::ptrdiff_t >(start[i + 1u])
+        );
 
         if (ties[i].size() > EPI_NEIGHBOR_INDEX_THRESHOLD)
             build_index(i);
@@ -474,6 +449,11 @@ inline void Network<TSeq>::check_endpoints(size_t i, size_t j) const
 template<typename TSeq>
 inline void Network<TSeq>::edit()
 {
+
+    // A fixed graph keeps a copy to restore, taken before its first edit, so
+    // that a graph never edited is held once
+    if (!generator && baseline_start.empty())
+        capture_baseline();
 
     // Between runs, a fixed graph is edited from its baseline: the edits of the
     // last run are dropped first, and the next reset takes the result as the
@@ -840,23 +820,8 @@ inline void rewire_degseq(
     {
 
         // Picking egos
-        epiworld_double prob = model.runif();
-        int id0 = static_cast< int >(N) - 1;
-        for (size_t i = 0u; i < N; ++i)
-            if (prob <= weights[i])
-            {
-                id0 = static_cast< int >(i);
-                break;
-            }
-
-        prob = model.runif();
-        int id1 = static_cast< int >(N) - 1;
-        for (size_t i = 0u; i < N; ++i)
-            if (prob <= weights[i])
-            {
-                id1 = static_cast< int >(i);
-                break;
-            }
+        int id0 = static_cast< int >(pick_cumulative(weights, model.runif()));
+        int id1 = static_cast< int >(pick_cumulative(weights, model.runif()));
 
         // Correcting for under or overflow.
         if (id1 == id0)
