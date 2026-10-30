@@ -45,8 +45,9 @@
 #'
 #' `distribute_virus_to_groups()` creates a distribution function that assigns
 #' the virus to a share of each group of a mixing layer: a proportion of its
-#' members (or, with `as_proportion = FALSE`, a number of them), drawn at
-#' random at every run. For example, vaccination rates by school.
+#' members (or, with `as_proportion = FALSE`, a whole number of them, capped
+#' at the group's size), drawn at random at every run. For example,
+#' vaccination rates by school.
 #'
 #' @examples
 #' model <- ModelSEIR(

@@ -1350,12 +1350,13 @@ inline void draw_in_groups(
         idx = mix->members_of(g);
         std::sort(idx.begin(), idx.end());
 
+        // A count above the group size takes the whole group (capped before
+        // the cast, which is undefined for doubles beyond size_t)
         size_t n = idx.size();
-        size_t n_draw = as_proportion ?
-            static_cast< size_t >(std::floor(prevalence[g] * n)) :
-            static_cast< size_t >(prevalence[g]);
-        if (n_draw > n)
-            n_draw = n;
+        const double want = as_proportion ?
+            std::floor(prevalence[g] * n) : prevalence[g];
+        size_t n_draw = (want >= static_cast< double >(n)) ?
+            n : static_cast< size_t >(want);
 
         for (size_t i = 0u; i < n_draw; ++i)
         {
@@ -1379,10 +1380,13 @@ inline void check_group_prevalence(
         throw std::range_error("Prevalence vector cannot be empty");
 
     for (auto p: prevalence)
-        if (!(p >= 0.0) || (as_proportion && (p > 1.0)))
+        if (
+            !std::isfinite(p) || (p < 0.0) ||
+            (as_proportion ? (p > 1.0) : (p != std::floor(p)))
+        )
             throw std::range_error(
-                "Prevalences must be non-negative (proportions at most 1); "
-                "got " + std::to_string(p) + "."
+                "Prevalences must be non-negative whole numbers (or, as "
+                "proportions, in [0, 1]); got " + std::to_string(p) + "."
             );
 }
 

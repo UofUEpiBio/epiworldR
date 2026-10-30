@@ -346,6 +346,7 @@ infected <- which(get_agents_states(schools) == "Infected")
 expect_equal(length(infected), 10L)
 expect_true(all(infected <= 400))
 expect_error(distribute_tool_to_groups(1, .5))
+expect_error(distribute_tool_to_groups("schools", 1.5, as_proportion = FALSE))
 
 # A contact rate from a model parameter: a global event on day 10 that sets it
 # to 0 stops new infections from day 11 on
