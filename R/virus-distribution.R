@@ -6,10 +6,13 @@
 #' @param virus An object of class `epiworld_virus`.
 #' @param distfun An object of class `epiworld_virus_distfun`.
 #' @param prevalence Numeric scalar. Prevalence of the virus. In the case of
-#' `distribute_virus_to_entities()`, it is a vector of prevalences, one per
-#' entity.
+#' `distribute_virus_to_entities()` and `distribute_virus_to_groups()`, it is a
+#' vector of prevalences, one per entity or group.
 #' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
-#' as a proportion of the total number of agents in the model.
+#' as a proportion of the total number of agents in the model (of each group,
+#' in `distribute_virus_to_groups()`).
+#' @param layer String. Name of the mixing layer whose groups are used (see
+#' [layer_mixing()]).
 #' @param agents_ids Integer vector. Indices of the agents that will receive the
 #' virus.
 #' @returns
@@ -22,8 +25,8 @@
 #' `epiworld_virus_distfun`.
 #' - `distribute_virus_set()` is a deprecated alias for
 #' `distribute_virus_to_set()`.
-#' - `distribute_virus_to_entities()` returns a distribution function of class
-#' `epiworld_virus_distfun`.
+#' - `distribute_virus_to_entities()` and `distribute_virus_to_groups()` return
+#' a distribution function of class `epiworld_virus_distfun`.
 #' @details
 #' `set_distribution_virus()` assigns a distribution function to the specified
 #' virus of class [epiworld_virus]. Distribution functions can be created with
@@ -39,6 +42,11 @@
 #' `distribute_virus_to_entities()` creates a distribution function that
 #' assigns the virus to a number of agents based on entity-level prevalence.
 #' This is only useful for the mixing models.
+#'
+#' `distribute_virus_to_groups()` creates a distribution function that assigns
+#' the virus to a share of each group of a mixing layer: a proportion of its
+#' members (or, with `as_proportion = FALSE`, a number of them), drawn at
+#' random at every run. For example, vaccination rates by school.
 #'
 #' @examples
 #' model <- ModelSEIR(
@@ -133,6 +141,26 @@ distribute_virus_to_entities <- function(
 
   structure(
     distribute_virus_to_entities_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
+    ),
+    class = "epiworld_virus_distfun"
+  )
+
+}
+
+#' @export
+#' @rdname virus-distribution
+distribute_virus_to_groups <- function(
+  layer,
+  prevalence,
+  as_proportion = TRUE
+) {
+
+  stopifnot_string(layer)
+  structure(
+    distribute_virus_to_groups_cpp(
+      layer,
       as.double(prevalence),
       as.logical(as_proportion)
     ),

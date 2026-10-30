@@ -410,6 +410,28 @@ SEXP distribute_tool_to_entities_cpp(
 }
 
 
+// A share of each group of a mixing layer (by name)
+[[cpp11::register]]
+SEXP distribute_tool_to_groups_cpp(
+  std::string layer,
+  doubles prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<ToolToAgentFun<>> distfun(
+    new ToolToAgentFun<>(
+      distribute_tool_to_groups(
+        layer,
+        as_cpp<std::vector<double>>(prevalence),
+        as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
+
 #undef WrapTool
 
 [[cpp11::register]]

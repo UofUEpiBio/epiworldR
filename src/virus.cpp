@@ -350,6 +350,28 @@ SEXP distribute_virus_to_entities_cpp(
 }
 
 
+// A share of each group of a mixing layer (by name)
+[[cpp11::register]]
+SEXP distribute_virus_to_groups_cpp(
+  std::string layer,
+  doubles prevalence,
+  bool as_proportion
+) {
+
+  external_pointer<VirusToAgentFun<>> distfun(
+    new VirusToAgentFun<>(
+      distribute_virus_to_groups(
+        layer,
+        as_cpp<std::vector<double>>(prevalence),
+        as_proportion
+      )
+    )
+  );
+
+  return distfun;
+
+}
+
 #undef WrapVirus
 
 [[cpp11::register]]

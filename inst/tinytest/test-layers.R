@@ -314,6 +314,39 @@ expect_equal(lengths(list(members_of(halves, 0), members_of(halves, 1))),
 expect_error(grouping_random(-1), "non-negative")
 expect_error(grouping_random(1.9), "whole numbers")
 
+# Tools and viruses by group: a share of each group of a mixing layer, here a
+# vaccine for 25% and 50% of two schools (100 + 300 agents) and the 10 initial
+# cases in the first
+schools <- ModelSIR("flu", n = 1000, prevalence = 0, transmission_prob = 0,
+  recovery_rate = 0)
+verbose_off(schools)
+add_layer(
+  schools,
+  layer_mixing("schools", groups = rep(0:1, c(400, 600)), contact_prob = 0)
+)
+mmr <- tool(
+  "MMR",
+  prevalence               = 0,
+  as_proportion            = TRUE,
+  susceptibility_reduction = 1,
+  transmission_reduction   = 0,
+  recovery_enhancer        = 0,
+  death_reduction          = 0
+)
+set_distribution_tool(mmr, distribute_tool_to_groups("schools", c(.25, .5)))
+add_tool(schools, mmr)
+set_distribution_virus(
+  get_virus(schools, 0),
+  distribute_virus_to_groups("schools", c(10, 0), as_proportion = FALSE)
+)
+run(schools, ndays = 1, seed = 1)
+vaxed <- subset(get_hist_tool(schools), date == 0)
+expect_equal(sum(vaxed$counts), 100L + 300L)
+infected <- which(get_agents_states(schools) == "Infected")
+expect_equal(length(infected), 10L)
+expect_true(all(infected <= 400))
+expect_error(distribute_tool_to_groups(1, .5))
+
 # A contact rate from a model parameter: a global event on day 10 that sets it
 # to 0 stops new infections from day 11 on
 crate <- ModelSIR("flu", n = 2000, prevalence = .01, transmission_prob = .1,
