@@ -289,6 +289,13 @@ public:
 
     bool has_contact_rate() const { return rate_ref.has_value(); }
 
+    /// The contact rate: the value of the `set_contact_rate()` parameter (1
+    /// without one).
+    double get_contact_rate(const Model<TSeq> & model) const
+    {
+        return rate_ref ? (*rate_ref)(model) : 1.0;
+    }
+
     /**
      * @brief Sets the probability that two members of a group meet on a given
      * day (contacts within groups only).
@@ -1051,7 +1058,7 @@ inline void Mixing<TSeq>::daily_build(const Model<TSeq> & model)
 {
 
     // The contact rate scales the whole matrix
-    const double scale = rate_ref ? (*rate_ref)(model) : 1.0;
+    const double scale = get_contact_rate(model);
 
     daily.resize(n_groups * n_groups);
     for (size_t own = 0u; own < n_groups; ++own)
@@ -1175,7 +1182,7 @@ inline size_t Mixing<TSeq>::sample(
 
         // An excluded agent is not one of the others of its group (it rarely
         // samples: its state usually has no sampler)
-        const double scale = rate_ref ? (*rate_ref)(model) : 1.0;
+        const double scale = get_contact_rate(model);
         const double * rate = contact_matrix.data() + own;
         for (size_t g = 0u; g < n_groups; ++g)
         {
@@ -1300,6 +1307,148 @@ inline typename layer::Mixing<TSeq>::Grouping random(
     };
 
 }
+
+}
+
+/**
+ * @brief Draws, in each group of the mixing layer `layer`, a share of its
+ * members at random and calls `f(agent_id)` on each (the draws of the
+ * distributions to groups below).
+ *
+ * @details Group by group, `prevalence[g]` of the members of group `g`: a
+ * proportion (`floor(p x size)` agents) or a count (at most the group's
+ * size). Within a group, the members are drawn in ascending id order, so a
+ * group of consecutive agents draws what an entity with those agents did.
+ */
+template<typename TSeq, typename F>
+inline void draw_in_groups(
+    Model<TSeq> & model,
+    const std::string & layer,
+    const std::vector< double > & prevalence,
+    bool as_proportion,
+    F && f
+)
+{
+
+    auto * mix = dynamic_cast< layer::Mixing<TSeq> * >(&model.get_layer(layer));
+    if (mix == nullptr)
+        throw std::logic_error(
+            "The layer '" + layer + "' is not a mixing layer: it has no groups."
+        );
+
+    if (prevalence.size() != mix->get_n_groups())
+        throw std::range_error(
+            "There are " + std::to_string(prevalence.size()) + " prevalences, "
+            "but the layer '" + layer + "' has " +
+            std::to_string(mix->get_n_groups()) + " groups."
+        );
+
+    std::vector< size_t > idx;
+    for (size_t g = 0u; g < prevalence.size(); ++g)
+    {
+
+        idx = mix->members_of(g);
+        std::sort(idx.begin(), idx.end());
+
+        // A count above the group size takes the whole group (capped before
+        // the cast, which is undefined for doubles beyond size_t)
+        size_t n = idx.size();
+        const double want = as_proportion ?
+            std::floor(prevalence[g] * n) : prevalence[g];
+        size_t n_draw = (want >= static_cast< double >(n)) ?
+            n : static_cast< size_t >(want);
+
+        for (size_t i = 0u; i < n_draw; ++i)
+        {
+            // runif_index(n) is in [0, n); n-- leaves n at the last slot
+            size_t loc = model.runif_index(static_cast< uint32_t >(n--));
+            f(idx[loc]);
+            std::swap(idx[loc], idx[n]);
+        }
+
+    }
+
+}
+
+/// Checks the prevalences of a distribution to groups.
+inline void check_group_prevalence(
+    const std::vector< double > & prevalence,
+    bool as_proportion
+)
+{
+    if (prevalence.empty())
+        throw std::range_error("Prevalence vector cannot be empty");
+
+    for (auto p: prevalence)
+        if (
+            !std::isfinite(p) || (p < 0.0) ||
+            (as_proportion ? (p > 1.0) : (p != std::floor(p)))
+        )
+            throw std::range_error(
+                "Prevalences must be non-negative whole numbers (or, as "
+                "proportions, in [0, 1]); got " + std::to_string(p) + "."
+            );
+}
+
+/**
+ * @brief Distributes a tool to a share of each group of a mixing layer.
+ *
+ * @param layer Name of the mixing layer whose groups are used.
+ * @param prevalence One per group: a proportion of the group's members, or,
+ * with `as_proportion = false`, a count.
+ * @param as_proportion Whether the prevalences are proportions.
+ * @return A distribution function (see `Tool::set_distribution()`).
+ */
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+inline ToolToAgentFun<TSeq> distribute_tool_to_groups(
+    std::string layer,
+    std::vector< double > prevalence,
+    bool as_proportion = true
+)
+{
+
+    check_group_prevalence(prevalence, as_proportion);
+
+    return [layer, prevalence, as_proportion](
+        Tool<TSeq> & tool, Model<TSeq> * model
+    ) -> void {
+        auto & population = model->get_agents();
+        draw_in_groups(
+            *model, layer, prevalence, as_proportion,
+            [&](size_t id) { population[id].add_tool(*model, tool); }
+        );
+    };
+
+}
+
+/**
+ * @brief Distributes a virus to a share of each group of a mixing layer.
+ *
+ * @param layer Name of the mixing layer whose groups are used.
+ * @param prevalence One per group: a proportion of the group's members, or,
+ * with `as_proportion = false`, a count.
+ * @param as_proportion Whether the prevalences are proportions.
+ * @return A distribution function (see `Virus::set_distribution()`).
+ */
+template<typename TSeq = EPI_DEFAULT_TSEQ>
+inline VirusToAgentFun<TSeq> distribute_virus_to_groups(
+    std::string layer,
+    std::vector< double > prevalence,
+    bool as_proportion = true
+)
+{
+
+    check_group_prevalence(prevalence, as_proportion);
+
+    return [layer, prevalence, as_proportion](
+        Virus<TSeq> & virus, Model<TSeq> * model
+    ) -> void {
+        auto & population = model->get_agents();
+        draw_in_groups(
+            *model, layer, prevalence, as_proportion,
+            [&](size_t id) { population[id].set_virus(*model, virus); }
+        );
+    };
 
 }
 

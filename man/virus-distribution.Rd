@@ -7,6 +7,7 @@
 \alias{distribute_virus_to_set}
 \alias{distribute_virus_set}
 \alias{distribute_virus_to_entities}
+\alias{distribute_virus_to_groups}
 \title{Virus distribution functions}
 \usage{
 set_distribution_virus(virus, distfun)
@@ -18,6 +19,8 @@ distribute_virus_to_set(agents_ids)
 distribute_virus_set(agents_ids)
 
 distribute_virus_to_entities(prevalence, as_proportion)
+
+distribute_virus_to_groups(layer, prevalence, as_proportion = TRUE)
 }
 \arguments{
 \item{virus}{An object of class \code{epiworld_virus}.}
@@ -25,14 +28,18 @@ distribute_virus_to_entities(prevalence, as_proportion)
 \item{distfun}{An object of class \code{epiworld_virus_distfun}.}
 
 \item{prevalence}{Numeric scalar. Prevalence of the virus. In the case of
-\code{distribute_virus_to_entities()}, it is a vector of prevalences, one per
-entity.}
+\code{distribute_virus_to_entities()} and \code{distribute_virus_to_groups()}, it is a
+vector of prevalences, one per entity or group.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
-as a proportion of the total number of agents in the model.}
+as a proportion of the total number of agents in the model (of each group,
+in \code{distribute_virus_to_groups()}).}
 
 \item{agents_ids}{Integer vector. Indices of the agents that will receive the
 virus.}
+
+\item{layer}{String. Name of the mixing layer whose groups are used (see
+\code{\link[=layer_mixing]{layer_mixing()}}).}
 }
 \value{
 \itemize{
@@ -45,8 +52,8 @@ virus randomly within that set. Otherwise it uses all agents in the model.
 \code{epiworld_virus_distfun}.
 \item \code{distribute_virus_set()} is a deprecated alias for
 \code{distribute_virus_to_set()}.
-\item \code{distribute_virus_to_entities()} returns a distribution function of class
-\code{epiworld_virus_distfun}.
+\item \code{distribute_virus_to_entities()} and \code{distribute_virus_to_groups()} return
+a distribution function of class \code{epiworld_virus_distfun}.
 }
 }
 \description{
@@ -68,6 +75,12 @@ virus to a fixed set of agents.
 \code{distribute_virus_to_entities()} creates a distribution function that
 assigns the virus to a number of agents based on entity-level prevalence.
 This is only useful for the mixing models.
+
+\code{distribute_virus_to_groups()} creates a distribution function that assigns
+the virus to a share of each group of a mixing layer: a proportion of its
+members (or, with \code{as_proportion = FALSE}, a whole number of them, capped
+at the group's size), drawn at random at every run. For example,
+vaccination rates by school.
 }
 \examples{
 model <- ModelSEIR(

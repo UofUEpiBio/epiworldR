@@ -98,6 +98,11 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 * A mixing layer whose groups do not cover the model's agents is an error
   when the model runs (before, `add_layer()` checked it).
 
+* `distribute_tool_to_groups(layer, prevalence)` and
+  `distribute_virus_to_groups()` give a tool or a virus to a share of each
+  group of a mixing layer (e.g., vaccination rates by school), what
+  `distribute_tool_to_entities()` did for entities.
+
 * A mixing layer's groups can be drawn afresh at the start of every run:
   `layer_mixing(name, groups = grouping_random(sizes, as_proportion))` draws
   groups of the given sizes at random, the draws `distribute_entity_randomly()`

@@ -229,10 +229,11 @@ static constexpr long long BB_FPU_THRESHOLD = 200;
  *
  * @tparam TSeq Type of the sequence (template parameter of the model).
  * @param n Number of nodes.
- * @param p Edge probability.
+ * @param p Edge probability, in [0, 1].
  * @param directed Whether the graph is directed.
  * @param model A reference to the Model, used for random number generation.
  * @return An AdjList representing the generated network.
+ * @throws std::range_error if `p` is not in [0, 1].
  */
 template<typename TSeq>
 inline AdjList rgraph_bernoulli(
@@ -242,8 +243,20 @@ inline AdjList rgraph_bernoulli(
     Model<TSeq> & model
 ) {
 
+    // Written so that NaN fails too
+    if (!((p >= 0.0) && (p <= 1.0)))
+        throw std::range_error(
+            "The edge probability must be in [0, 1]; got " +
+            std::to_string(p) + "."
+        );
+
     std::vector< int > source;
     std::vector< int > target;
+
+    // No ties, and nothing to draw: with p = 0, log(1 - p) below is 0 and
+    // the first skip would be infinite
+    if (p == 0.0)
+        return AdjList(source, target, static_cast<int>(n), directed);
 
     // Pre-allocate based on expected edge count
     double n_possible = directed

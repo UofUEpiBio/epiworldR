@@ -6,10 +6,13 @@
 #' @param tool An object of class `epiworld_tool`.
 #' @param distfun An object of class `epiworld_tool_distfun`.
 #' @param prevalence Numeric scalar. Prevalence of the tool. In the case of
-#' `distribute_tool_to_entities()`, it is a vector of prevalences, one per
-#' entity.
+#' `distribute_tool_to_entities()` and `distribute_tool_to_groups()`, it is a
+#' vector of prevalences, one per entity or group.
 #' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
-#' as a proportion of the total number of agents in the model.
+#' as a proportion of the total number of agents in the model (of each group,
+#' in `distribute_tool_to_groups()`).
+#' @param layer String. Name of the mixing layer whose groups are used (see
+#' [layer_mixing()]).
 #' @param agents_ids Integer vector. Indices of the agents to which the tool
 #' will be assigned.
 #' @returns
@@ -20,8 +23,8 @@
 #' tool randomly within that set. Otherwise it uses all agents in the model.
 #' - `distribute_tool_to_set()` returns a distribution function of class
 #' `epiworld_tool_distfun`.
-#' - `distribute_tool_to_entities()` returns a distribution function of class
-#' `epiworld_tool_distfun`.
+#' - `distribute_tool_to_entities()` and `distribute_tool_to_groups()` return
+#' a distribution function of class `epiworld_tool_distfun`.
 #' @details
 #' `set_distribution_tool()` assigns a distribution function to the specified
 #' tool of class [epiworld_tool]. Distribution functions can be created with
@@ -37,6 +40,12 @@
 #' `distribute_tool_to_entities()` creates a distribution function that assigns
 #' the tool to a number of agents based on entity-level prevalence. This is
 #' only useful for the mixing models.
+#'
+#' `distribute_tool_to_groups()` creates a distribution function that assigns
+#' the tool to a share of each group of a mixing layer: a proportion of its
+#' members (or, with `as_proportion = FALSE`, a whole number of them, capped
+#' at the group's size), drawn at random at every run. For example,
+#' vaccination rates by school.
 #'
 #' @examples
 #' model <- ModelSIR(
@@ -132,6 +141,26 @@ distribute_tool_to_entities <- function(
 
   structure(
     distribute_tool_to_entities_cpp(
+      as.double(prevalence),
+      as.logical(as_proportion)
+    ),
+    class = "epiworld_tool_distfun"
+  )
+
+}
+
+#' @export
+#' @rdname tool-distribution
+distribute_tool_to_groups <- function(
+  layer,
+  prevalence,
+  as_proportion = TRUE
+) {
+
+  stopifnot_string(layer)
+  structure(
+    distribute_tool_to_groups_cpp(
+      layer,
       as.double(prevalence),
       as.logical(as_proportion)
     ),

@@ -776,6 +776,10 @@ distribute_tool_to_entities_cpp <- function(prevalence, as_proportion) {
   .Call(`_epiworldR_distribute_tool_to_entities_cpp`, prevalence, as_proportion)
 }
 
+distribute_tool_to_groups_cpp <- function(layer, prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_tool_to_groups_cpp`, layer, prevalence, as_proportion)
+}
+
 clone_tool_cpp <- function(tool) {
   .Call(`_epiworldR_clone_tool_cpp`, tool)
 }
@@ -878,6 +882,10 @@ distribute_virus_to_set_cpp <- function(agents_ids) {
 
 distribute_virus_to_entities_cpp <- function(prevalence, as_proportion) {
   .Call(`_epiworldR_distribute_virus_to_entities_cpp`, prevalence, as_proportion)
+}
+
+distribute_virus_to_groups_cpp <- function(layer, prevalence, as_proportion) {
+  .Call(`_epiworldR_distribute_virus_to_groups_cpp`, layer, prevalence, as_proportion)
 }
 
 clone_virus_cpp <- function(virus) {

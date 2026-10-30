@@ -6,6 +6,7 @@
 \alias{distribute_tool_randomly}
 \alias{distribute_tool_to_set}
 \alias{distribute_tool_to_entities}
+\alias{distribute_tool_to_groups}
 \title{Tool distribution functions}
 \usage{
 set_distribution_tool(tool, distfun)
@@ -15,6 +16,8 @@ distribute_tool_randomly(prevalence, as_proportion, agents_ids = integer(0))
 distribute_tool_to_set(agents_ids)
 
 distribute_tool_to_entities(prevalence, as_proportion)
+
+distribute_tool_to_groups(layer, prevalence, as_proportion = TRUE)
 }
 \arguments{
 \item{tool}{An object of class \code{epiworld_tool}.}
@@ -22,14 +25,18 @@ distribute_tool_to_entities(prevalence, as_proportion)
 \item{distfun}{An object of class \code{epiworld_tool_distfun}.}
 
 \item{prevalence}{Numeric scalar. Prevalence of the tool. In the case of
-\code{distribute_tool_to_entities()}, it is a vector of prevalences, one per
-entity.}
+\code{distribute_tool_to_entities()} and \code{distribute_tool_to_groups()}, it is a
+vector of prevalences, one per entity or group.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
-as a proportion of the total number of agents in the model.}
+as a proportion of the total number of agents in the model (of each group,
+in \code{distribute_tool_to_groups()}).}
 
 \item{agents_ids}{Integer vector. Indices of the agents to which the tool
 will be assigned.}
+
+\item{layer}{String. Name of the mixing layer whose groups are used (see
+\code{\link[=layer_mixing]{layer_mixing()}}).}
 }
 \value{
 \itemize{
@@ -40,8 +47,8 @@ distribution function to the specified tool.
 tool randomly within that set. Otherwise it uses all agents in the model.
 \item \code{distribute_tool_to_set()} returns a distribution function of class
 \code{epiworld_tool_distfun}.
-\item \code{distribute_tool_to_entities()} returns a distribution function of class
-\code{epiworld_tool_distfun}.
+\item \code{distribute_tool_to_entities()} and \code{distribute_tool_to_groups()} return
+a distribution function of class \code{epiworld_tool_distfun}.
 }
 }
 \description{
@@ -63,6 +70,12 @@ tool to a fixed set of agents.
 \code{distribute_tool_to_entities()} creates a distribution function that assigns
 the tool to a number of agents based on entity-level prevalence. This is
 only useful for the mixing models.
+
+\code{distribute_tool_to_groups()} creates a distribution function that assigns
+the tool to a share of each group of a mixing layer: a proportion of its
+members (or, with \code{as_proportion = FALSE}, a whole number of them, capped
+at the group's size), drawn at random at every run. For example,
+vaccination rates by school.
 }
 \examples{
 model <- ModelSIR(
