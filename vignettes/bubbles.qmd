@@ -294,3 +294,12 @@ outbreak grows accordingly. The two settings bracket the policy: `ties =
 "existing"` assumes bubbled households only meet through the contacts they
 already had, while `ties = "complete"` assumes members of a bubble meet with a
 given probability a day (here, half the days).
+
+These examples use `flavor = "household"`, where whole households bubble
+together, as in New Zealand, the UK's support bubbles, or Belgium in May 2020.
+`flavor = "peer"` instead has each person nominate close contacts among the
+people they already know, as in Belgium's October 2020 rule of one close
+contact per person. That rule lets the person meet their contact, not their
+contact's household, so pair it with `ties = "existing"`, which keeps the
+nominated tie and damps the rest: `ties = "complete"` would have both
+households meet in full.

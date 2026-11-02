@@ -155,6 +155,22 @@ both layers.
 }
 }
 
+\subsection{Matching a policy}{
+
+\code{flavor} decides who bubbles together; \code{ties} decides who then meets.
+Two combinations match policies that were used during COVID-19:\tabular{lll}{
+   Policy \tab \code{flavor} \tab \code{ties} \cr
+   Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) \tab \code{"household"} \tab \code{"complete"} \cr
+   One close contact per person (Belgium, October 2020) \tab \code{"peer"} \tab \code{"existing"} \cr
+}
+
+
+\code{flavor = "peer"} with \code{ties = "complete"} makes both households meet in
+full, not just the two people: more contact than the one-contact rule
+allows. Use it to explore the case where a person brings their household
+along.
+}
+
 \subsection{Dialling the policy through the model}{
 
 The transmission factor is \strong{not} stored in the intervention: \code{bubbles()}

@@ -100,6 +100,21 @@
 #' - The layer can be retrieved with `get_layer(model, layer)`, e.g., for
 #'   [get_group()] or [members_of()].
 #'
+#' ## Matching a policy
+#'
+#' `flavor` decides who bubbles together; `ties` decides who then meets.
+#' Two combinations match policies that were used during COVID-19:
+#'
+#' | Policy | `flavor` | `ties` |
+#' |---|---|---|
+#' | Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) | `"household"` | `"complete"` |
+#' | One close contact per person (Belgium, October 2020) | `"peer"` | `"existing"` |
+#'
+#' `flavor = "peer"` with `ties = "complete"` makes both households meet in
+#' full, not just the two people: more contact than the one-contact rule
+#' allows. Use it to explore the case where a person brings their household
+#' along.
+#'
 #' ## Dialling the policy through the model
 #'
 #' The transmission factor is **not** stored in the intervention: `bubbles()`
