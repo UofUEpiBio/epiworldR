@@ -20,8 +20,8 @@ outbreak with three household-based policies created by `bubbles()`:
 
 1. one household per bubble,
 2. up to three households per bubble, and
-3. up to three households per bubble, whose members all meet while the policy
-   is in force (`ties = "complete"`).
+3. up to three households per bubble, whose members meet in a household layer
+   while the policy is in force (`ties = "complete"`).
 
 All three policies operate from day 20 through day 59. In `bubbles()`, `end_day` is
 exclusive, so `start_day = 20` and `end_day = 60` give that interval. The following diagram illustrates three potential bubbles:
@@ -228,12 +228,16 @@ between them -- the rest of the two households never meet, although the policy
 says they have bubbled. The same gap exists inside a household, whose members
 need not all be tied to each other.
 
-With `ties = "complete"`, `bubbles()` completes every bubble to a clique while
-the policy is in force: each pair of agents sharing a bubble is tied, so
-households become complete and merged households meet in full. Grouping is
-unchanged -- the same seed draws the same bubbles -- and the ties are withdrawn
-when the policy lifts (and at the end of each run), so the network is left as it
-was found. Contacts outside the bubble are still damped by the same 80%.
+With `ties = "complete"`, `bubbles()` adds a household layer to the model, a
+mixing layer with one group per household (see `?"mixing-layers"`). Outside the
+policy window everyone meets their household; while the policy is in force each
+bubble is a group of the layer, so merged households meet too. How often a pair
+meets is a probability per day: `household_contact_prob` for housemates and
+`bubble_contact_prob` inside a bubble that merged households (both `1` by
+default: everyone, every day). Grouping is unchanged -- the same seed draws the
+same bubbles -- and the network layer is left alone. Contacts outside the bubble
+are still damped by the same 80%. Here members of a merged bubble meet half the
+days.
 
 ```{r}
 #| label: complete-ties-model
@@ -248,14 +252,17 @@ bubbles(
   start_day           = 20L,
   end_day             = 60L,
   ties                = "complete",
-  layer               = "network"
+  layer               = "household",
+  bubble_contact_prob = 0.5
 )
 ```
 
-Every tie is an independent daily exposure, so completing a bubble raises the
-force of infection inside it. Here a bubble holds up to three households of two
-to six members, so an agent may be tied to as many as 17 bubble-mates, all of
-them transmitting at the full, undamped rate while the policy lasts.
+Every bubblemate met is an independent exposure, so completing a bubble raises
+the force of infection inside it. Here a bubble holds up to three households of
+two to six members, so an agent may meet as many as 17 bubblemates, each on
+half the days, all of them transmitting at the full, undamped rate while the
+policy lasts. The household layer also adds household contacts before and
+after the policy, which the other scenarios do not have.
 
 # Compare outbreak sizes
 
@@ -281,8 +288,9 @@ The table reports the mean, median, central 95% simulation interval, and mean
 percentage of the population ever infected. Comparing the first two bubble
 policies shows the trade-off directly: allowing households to combine preserves
 more contacts, but it generally produces larger outbreaks than keeping each
-household in its own bubble. Completing the bubbles adds the contacts that the
-policy allows but the network lacked, and the outbreak grows accordingly. The
-two settings bracket the policy: `ties = "existing"` assumes bubbled households
-only meet through the contacts they already had, while `ties = "complete"`
-assumes everyone in a bubble meets everyone else in it every day.
+household in its own bubble. Completing the bubbles adds the household
+contacts, and the contacts within bubbles that the network lacked, and the
+outbreak grows accordingly. The two settings bracket the policy: `ties =
+"existing"` assumes bubbled households only meet through the contacts they
+already had, while `ties = "complete"` assumes members of a bubble meet with a
+given probability a day (here, half the days).

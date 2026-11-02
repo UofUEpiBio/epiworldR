@@ -19,7 +19,9 @@ SEXP bubbles_cpp(
     int max_households,
     std::string param_name,
     std::string ties,
-    std::string layer
+    std::string layer,
+    double household_contact_prob,
+    double bubble_contact_prob
 ) {
 
   external_pointer< Model<int> > modelptr(model);
@@ -44,8 +46,14 @@ SEXP bubbles_cpp(
     static_cast< size_t >(max_households),
     param_name,
     tt,
-    layer
+    layer,
+    bubble_contact_prob
   );
+
+  // Under "complete" the bubbles are groups of the household layer, which the
+  // policy builds (one group per household) and the model must have
+  if (tt == BubbleTies::Complete)
+    modelptr->add_layer(bubbles.make_layer(household_contact_prob));
 
   // Registering the transmission factor as a model parameter here, rather than
   // leaving it to the intervention (which does it at the start of each run), is

@@ -76,10 +76,10 @@ extern "C" SEXP _epiworldR_change_state_cpp(SEXP agent, SEXP model, SEXP new_sta
   END_CPP11
 }
 // bubbles.cpp
-SEXP bubbles_cpp(SEXP model, std::vector< int > household_id, std::string flavor, int group_size, double transmission_factor, int start_day, int end_day, int rewire_every, std::string name, int max_households, std::string param_name, std::string ties, std::string layer);
-extern "C" SEXP _epiworldR_bubbles_cpp(SEXP model, SEXP household_id, SEXP flavor, SEXP group_size, SEXP transmission_factor, SEXP start_day, SEXP end_day, SEXP rewire_every, SEXP name, SEXP max_households, SEXP param_name, SEXP ties, SEXP layer) {
+SEXP bubbles_cpp(SEXP model, std::vector< int > household_id, std::string flavor, int group_size, double transmission_factor, int start_day, int end_day, int rewire_every, std::string name, int max_households, std::string param_name, std::string ties, std::string layer, double household_contact_prob, double bubble_contact_prob);
+extern "C" SEXP _epiworldR_bubbles_cpp(SEXP model, SEXP household_id, SEXP flavor, SEXP group_size, SEXP transmission_factor, SEXP start_day, SEXP end_day, SEXP rewire_every, SEXP name, SEXP max_households, SEXP param_name, SEXP ties, SEXP layer, SEXP household_contact_prob, SEXP bubble_contact_prob) {
   BEGIN_CPP11
-    return cpp11::as_sexp(bubbles_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(household_id), cpp11::as_cpp<cpp11::decay_t<std::string>>(flavor), cpp11::as_cpp<cpp11::decay_t<int>>(group_size), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_factor), cpp11::as_cpp<cpp11::decay_t<int>>(start_day), cpp11::as_cpp<cpp11::decay_t<int>>(end_day), cpp11::as_cpp<cpp11::decay_t<int>>(rewire_every), cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<int>>(max_households), cpp11::as_cpp<cpp11::decay_t<std::string>>(param_name), cpp11::as_cpp<cpp11::decay_t<std::string>>(ties), cpp11::as_cpp<cpp11::decay_t<std::string>>(layer)));
+    return cpp11::as_sexp(bubbles_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(household_id), cpp11::as_cpp<cpp11::decay_t<std::string>>(flavor), cpp11::as_cpp<cpp11::decay_t<int>>(group_size), cpp11::as_cpp<cpp11::decay_t<double>>(transmission_factor), cpp11::as_cpp<cpp11::decay_t<int>>(start_day), cpp11::as_cpp<cpp11::decay_t<int>>(end_day), cpp11::as_cpp<cpp11::decay_t<int>>(rewire_every), cpp11::as_cpp<cpp11::decay_t<std::string>>(name), cpp11::as_cpp<cpp11::decay_t<int>>(max_households), cpp11::as_cpp<cpp11::decay_t<std::string>>(param_name), cpp11::as_cpp<cpp11::decay_t<std::string>>(ties), cpp11::as_cpp<cpp11::decay_t<std::string>>(layer), cpp11::as_cpp<cpp11::decay_t<double>>(household_contact_prob), cpp11::as_cpp<cpp11::decay_t<double>>(bubble_contact_prob)));
   END_CPP11
 }
 // db.cpp
@@ -1484,7 +1484,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   5},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         2},
     {"_epiworldR_add_virus_target_cpp",                 (DL_FUNC) &_epiworldR_add_virus_target_cpp,                  2},
-    {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          13},
+    {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          15},
     {"_epiworldR_change_state_cpp",                     (DL_FUNC) &_epiworldR_change_state_cpp,                      4},
     {"_epiworldR_clear_targets_tool_cpp",               (DL_FUNC) &_epiworldR_clear_targets_tool_cpp,                1},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
