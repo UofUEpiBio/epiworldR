@@ -185,7 +185,6 @@ summary(sir)
 #> Name of the model   : Susceptible-Infected-Recovered (SIR)
 #> Population size     : 100000
 #> Agents' data        : (none)
-#> Number of entities  : 0
 #> Days (duration)     : 50 (of 50)
 #> Number of viruses   : 1
 #> Last run elapsed t  : 90.00ms
@@ -272,7 +271,6 @@ summary(model_seirconn)
 #> Name of the model   : Susceptible-Exposed-Infected-Removed (SEIR) (connected)
 #> Population size     : 10000
 #> Agents' data        : (none)
-#> Number of entities  : 0
 #> Days (duration)     : 100 (of 100)
 #> Number of viruses   : 2
 #> Last run elapsed t  : 18.00ms

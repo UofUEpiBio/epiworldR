@@ -82,9 +82,6 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Tool;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Entity;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class GlobalEvent;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
@@ -102,9 +99,6 @@ using VirusPtr = std::shared_ptr< Virus< TSeq > >;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using ToolPtr = std::shared_ptr< Tool< TSeq > >;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using EntityPtr = std::shared_ptr< Entity< TSeq > >;
 
 template<typename TSeq = EPI_DEFAULT_TSEQ>
 using GlobalEventPtr = std::shared_ptr< GlobalEvent< TSeq > >;
@@ -139,10 +133,8 @@ using EventFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
 enum class EventAction : uint8_t {
     AddVirus,
     AddTool,
-    AddEntity,
     RemoveVirus,
     RemoveTool,
-    RemoveEntity,
     ChangeState
 };
 
@@ -206,12 +198,6 @@ template<typename TSeq = EPI_DEFAULT_TSEQ>
 using ToolToAgentFun = std::function<void(Tool<TSeq>&,Model<TSeq>*)>;
 
 /**
- * @brief Decides how to distribute entities at initialization
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using EntityToAgentFun = std::function<void(Entity<TSeq>&,Model<TSeq>*)>;
-
-/**
  * @brief Event data for update an agent
  *
  * @tparam TSeq
@@ -221,7 +207,6 @@ struct Event {
     Agent<TSeq> * agent;
     VirusPtr<TSeq> virus;
     ToolPtr<TSeq> tool;
-    Entity<TSeq> * entity;
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
     EventAction action;
@@ -246,12 +231,11 @@ public:
         Agent<TSeq> * agent_,
         VirusPtr<TSeq> & virus_,
         ToolPtr<TSeq> & tool_,
-        Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
         EventAction action_,
         int layer_ = -1
-    ) : agent(agent_), virus(virus_), tool(tool_), entity(entity_),
+    ) : agent(agent_), virus(virus_), tool(tool_),
         new_state(new_state_),
         queue(queue_), action(action_), layer(layer_) {
             return;

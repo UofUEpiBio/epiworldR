@@ -183,36 +183,4 @@ inline void Model<TSeq>::post_sampling_dispatch()
 
 }
 
-/**
- * @brief A `PostSamplingFun` that records each batch in the model's
- * `ContactTracing`.
- *
- * @details For every contact, it calls
- * `add_contact(infectious_id, contacted_id, today)`, which is what the
- * built-in models with tracing used to do inline. The model needs
- * `contact_tracing_on()`; turning tracing on does not install this callback.
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline PostSamplingFun<TSeq> make_contact_tracing_post_sampling()
-{
-
-    return [](
-        Agent<TSeq> * infectious,
-        const SampledContactsView & contacts,
-        Model<TSeq> * m
-    ) -> void {
-
-        if (!m->is_contact_tracing_on())
-            return;
-
-        auto & ct = m->get_contact_tracing();
-        const size_t id = infectious->get_id();
-        const size_t today = static_cast< size_t >(m->today());
-        for (const auto c : contacts)
-            ct.add_contact(id, c, today);
-
-    };
-
-}
-
 #endif

@@ -102,7 +102,6 @@ inline void Model<TSeq>::_add_event(
     Agent<TSeq> * agent_,
     VirusPtr<TSeq> virus_,
     ToolPtr<TSeq> tool_,
-    Entity<TSeq> * entity_,
     epiworld_fast_int new_state_,
     epiworld_fast_int queue_,
     EventAction action_,
@@ -121,7 +120,7 @@ inline void Model<TSeq>::_add_event(
 
         events.emplace_back(
             Event<TSeq>(
-                agent_, virus_, tool_, entity_, new_state_, queue_, action_,
+                agent_, virus_, tool_, new_state_, queue_, action_,
                 layer_
             ));
 
@@ -134,7 +133,6 @@ inline void Model<TSeq>::_add_event(
         A.agent      = std::move(agent_);
         A.virus      = std::move(virus_);
         A.tool       = std::move(tool_);
-        A.entity     = std::move(entity_);
         A.new_state  = std::move(new_state_);
         A.queue      = std::move(queue_);
         A.action     = std::move(action_);
@@ -403,17 +401,11 @@ inline void Model<TSeq>::events_run()
         case EventAction::AddTool:
             _event_add_tool(a);
             break;
-        case EventAction::AddEntity:
-            _event_add_entity(a);
-            break;
         case EventAction::RemoveVirus:
             _event_rm_virus(a);
             break;
         case EventAction::RemoveTool:
             _event_rm_tool(a);
-            break;
-        case EventAction::RemoveEntity:
-            _event_rm_entity(a);
             break;
         case EventAction::ChangeState:
             _event_change_state(a);
@@ -588,7 +580,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     population(model.population),
     viruses(),
     tools(),
-    entities(model.entities),
     param_values(model.param_values),
     param_index(model.param_index),
     param_layout_id(model.param_layout_id),
@@ -606,13 +597,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     sim_id(model.sim_id),
     post_sampling_fun(model.post_sampling_fun),
     post_sampling_on(model.post_sampling_on),
-    contact_tracing(
-        model.contact_tracing
-            ? std::make_unique<ContactTracing>(*model.contact_tracing)
-            : nullptr
-    ),
-    use_contact_tracing(model.use_contact_tracing),
-    contact_tracing_max_contacts(model.contact_tracing_max_contacts),
     state_order(model.state_order),
     state_start(model.state_start),
     state_member_pos(model.state_member_pos),
@@ -670,9 +654,6 @@ inline Model<TSeq>::Model(const Model<TSeq> & model) :
     // A copy is not in a run, even if the source is
     set_running(running);
 
-    // Entity-agent relationships now use size_t IDs, so they copy
-    // correctly without any rebinding needed.
-
 }
 
 template<typename TSeq>
@@ -686,8 +667,6 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     viruses(std::move(model.viruses)),
     // Tools
     tools(std::move(model.tools)),
-    // Entities
-    entities(std::move(model.entities)),
     // Pseudo-RNG
     engine(std::move(model.engine)),
     runifd_a(model.runifd_a),
@@ -719,9 +698,6 @@ inline Model<TSeq>::Model(Model<TSeq> && model) :
     sim_id(model.sim_id),
     post_sampling_fun(std::move(model.post_sampling_fun)),
     post_sampling_on(model.post_sampling_on),
-    contact_tracing(std::move(model.contact_tracing)),
-    use_contact_tracing(model.use_contact_tracing),
-    contact_tracing_max_contacts(model.contact_tracing_max_contacts),
     state_order(std::move(model.state_order)),
     state_start(std::move(model.state_start)),
     state_member_pos(std::move(model.state_member_pos)),
@@ -774,8 +750,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     for (const auto & t : m.tools)
         tools.emplace_back(std::shared_ptr<Tool<TSeq>>(t->clone_ptr()));
 
-    entities        = m.entities;
-
     param_values    = m.param_values;
     param_index     = m.param_index;
     param_layout_id = m.param_layout_id;
@@ -814,12 +788,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
     post_sampling_on = m.post_sampling_on;
     post_sampling_scratch.reset(0u);
 
-    contact_tracing = m.contact_tracing
-        ? std::make_unique<ContactTracing>(*m.contact_tracing)
-        : nullptr;
-    use_contact_tracing = m.use_contact_tracing;
-    contact_tracing_max_contacts = m.contact_tracing_max_contacts;
-
     state_order = m.state_order;
     state_start = m.state_start;
     state_member_pos = m.state_member_pos;
@@ -852,8 +820,6 @@ inline Model<TSeq> & Model<TSeq>::operator=(const Model<TSeq> & m)
         queue.model = this;
 
     sim_id = m.sim_id;
-    // Entity-agent relationships now use size_t IDs, so they copy
-    // correctly without any rebinding needed.
 
     return *this;
 
@@ -916,49 +882,6 @@ inline std::vector< Viruses<TSeq> > Model<TSeq>::get_agents_viruses()
         viruses[i] = population[i].get_virus();
 
     return viruses;
-
-}
-
-template<typename TSeq>
-inline std::vector<Entity<TSeq>> & Model<TSeq>::get_entities()
-{
-    return entities;
-}
-
-template<typename TSeq>
-inline Entity<TSeq> & Model<TSeq>::get_entity(size_t i, int * entity_pos)
-{
-
-    for (size_t j = 0u; j < entities.size(); ++j)
-        if (entities[j].get_id() == static_cast<int>(i))
-        {
-
-            if (entity_pos)
-                *entity_pos = j;
-
-            return entities[j];
-
-        }
-
-    throw std::range_error("The entity with id " + std::to_string(i) + " was not found.");
-
-}
-
-template<typename TSeq>
-inline const Entity<TSeq> & Model<TSeq>::get_entity(size_t i, int * entity_pos) const
-{
-    for (size_t j = 0u; j < entities.size(); ++j)
-        if (entities[j].get_id() == static_cast<int>(i))
-        {
-
-            if (entity_pos)
-                *entity_pos = j;
-
-            return entities[j];
-
-        }
-
-    throw std::range_error("The entity with id " + std::to_string(i) + " was not found.");
 
 }
 
@@ -1028,22 +951,6 @@ inline void Model<TSeq>::dist_tools()
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::dist_entities()
-{
-
-    for (auto & entity: entities)
-    {
-
-        entity.distribute(this);
-
-        // Apply the events
-        events_run();
-
-    }
-
-}
-
-template<typename TSeq>
 inline void Model<TSeq>::chrono_start() {
     time_start = std::chrono::steady_clock::now();
 }
@@ -1098,32 +1005,6 @@ inline void Model<TSeq>::add_tool(Tool<TSeq> & t)
 }
 
 template<typename TSeq>
-inline void Model<TSeq>::add_entity(Entity<TSeq> e)
-{
-
-    e.id = entities.size();
-    entities.push_back(e);
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::rm_entity(size_t entity_id)
-{
-
-    int entity_pos = 0;
-    auto & entity = this->get_entity(entity_id, &entity_pos);
-
-    // First, resetting the entity
-    entity.reset();
-
-    // How should
-    if (entity_pos != (static_cast<int>(entities.size()) - 1))
-        std::swap(entities[entity_pos], entities[entities.size() - 1]);
-
-    entities.pop_back();
-}
-
-template<typename TSeq>
 inline void Model<TSeq>::rm_virus(size_t virus_pos)
 {
 
@@ -1172,129 +1053,6 @@ inline void Model<TSeq>::rm_tool(size_t tool_pos)
     tools.pop_back();
 
     return;
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::load_agents_entities_ties(
-    const std::vector< int > & agents_ids,
-    const std::vector< int > & entities_ids
-) {
-
-
-    // Checking the size
-    if (agents_ids.size() != entities_ids.size())
-        throw std::length_error(
-            std::string("The size of agents_ids (") +
-            std::to_string(agents_ids.size()) +
-            std::string(") and entities_ids (") +
-            std::to_string(entities_ids.size()) +
-            std::string(") must be the same.")
-            );
-
-    return this->load_agents_entities_ties(
-        agents_ids.data(),
-        entities_ids.data(),
-        agents_ids.size()
-    );
-
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::load_agents_entities_ties(
-    const int * agents_ids,
-    const int * entities_ids,
-    size_t n
-) {
-
-
-    auto get_agent = [agents_ids](int i) -> int {
-        return *(agents_ids + i);
-        };
-
-    auto get_entity = [entities_ids](int i) -> int {
-        return *(entities_ids + i);
-        };
-
-    std::vector< std::vector< size_t > > ties(entities.size());
-    for (size_t i = 0u; i < n; ++i)
-    {
-
-        if (get_agent(i) < 0)
-            throw std::length_error(
-                std::string("agents_ids[") +
-                std::to_string(i) +
-                std::string("] = ") +
-                std::to_string(get_agent(i)) +
-                std::string(" is negative.")
-                );
-
-        if (get_entity(i) < 0)
-            throw std::length_error(
-                std::string("entities_ids[") +
-                std::to_string(i) +
-                std::string("] = ") +
-                std::to_string(get_entity(i)) +
-                std::string(" is negative.")
-                );
-
-        int pop_size = static_cast<int>(this->population.size());
-        if (get_agent(i) >= pop_size)
-            throw std::length_error(
-                std::string("agents_ids[") +
-                std::to_string(i) +
-                std::string("] = ") +
-                std::to_string(get_agent(i)) +
-                std::string(" is out of range (population size: ") +
-                std::to_string(pop_size) +
-                std::string(").")
-                );
-
-        int ent_size = static_cast<int>(this->entities.size());
-        if (get_entity(i) >= ent_size)
-            throw std::length_error(
-                std::string("entities_ids[") +
-                std::to_string(i) +
-                std::string("] = ") +
-                std::to_string(get_entity(i)) +
-                std::string(" is out of range (entities size: ") +
-                std::to_string(ent_size) +
-                std::string(").")
-                );
-
-        ties[get_entity(i)].push_back(static_cast< size_t >(get_agent(i)));
-
-    }
-
-    // The ties become part of each entity's distribution: reset() clears every
-    // tie before a run, and the distribution adds them back.
-    for (size_t j = 0u; j < ties.size(); ++j)
-    {
-
-        if (ties[j].empty())
-            continue;
-
-        auto agents = std::make_shared< const std::vector< size_t > >(
-            std::move(ties[j])
-        );
-
-        auto previous = entities[j].dist_fun;
-        entities[j].dist_fun = [previous, agents](
-            Entity<TSeq> & e, Model<TSeq> * m
-        ) -> void {
-
-            if (previous)
-                previous(e, m);
-
-            for (auto i : *agents)
-                e.add_agent(&m->get_agent(i), *m);
-
-        };
-
-    }
-
-    return;
-
 
 }
 
@@ -1359,7 +1117,7 @@ inline Model<TSeq> & Model<TSeq>::run(
 {
 
     // Set this model as the current model in scope for this thread.
-    // This enables Model::the() calls from agents, entities, etc.
+    // This enables Model::the() calls from agents, etc.
 
     if (size() == 0u)
         throw std::logic_error("There are no agents in this model!");
@@ -1832,11 +1590,6 @@ inline void Model<TSeq>::set_sim_id(size_t id)
 }
 
 template<typename TSeq>
-inline size_t Model<TSeq>::get_n_entities() const {
-    return entities.size();
-}
-
-template<typename TSeq>
 inline void Model<TSeq>::set_ndays(epiworld_fast_uint ndays) {
     this->ndays = ndays;
 }
@@ -1911,8 +1664,8 @@ inline void Model<TSeq>::reset() {
     // Who transmits and who is excluded, which the layers read
     state_masks_build();
 
-    // The layers come first: what is distributed below (entities, viruses,
-    // tools, the global events' set-up) sees the run's contacts -- the queue
+    // The layers come first: what is distributed below (viruses, tools,
+    // the global events' set-up) sees the run's contacts -- the queue
     // follows the ties as agents get a virus, and an intervention may edit
     // them.
     for (auto & layer : layers)
@@ -1940,9 +1693,6 @@ inline void Model<TSeq>::reset() {
     }
     #endif
 
-    for (auto & e: entities)
-        e.reset();
-
     current_date = 0;
 
     db.reset();
@@ -1958,14 +1708,7 @@ inline void Model<TSeq>::reset() {
         post_sampling_prepare_scratch();
     }
 
-    // Reset contact tracing if active
-    if (use_contact_tracing)
-        contact_tracing = std::make_unique<ContactTracing>(
-            population.size(), contact_tracing_max_contacts
-        );
-
     // Re distributing tools and virus
-    dist_entities();
     dist_virus();
     dist_tools();
 
@@ -2668,43 +2411,6 @@ inline Queue<TSeq> & Model<TSeq>::get_queue()
 }
 
 template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::contact_tracing_on(size_t max_contacts)
-{
-    if (max_contacts < 1u)
-        throw std::logic_error("Contact tracing should use at least one contact.");
-    use_contact_tracing = true;
-    contact_tracing_max_contacts = max_contacts;
-    return *this;
-}
-
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::contact_tracing_off()
-{
-    use_contact_tracing = false;
-    contact_tracing.reset();
-    return *this;
-}
-
-template<typename TSeq>
-inline bool Model<TSeq>::is_contact_tracing_on() const
-{
-    return use_contact_tracing;
-}
-
-template<typename TSeq>
-inline ContactTracing & Model<TSeq>::get_contact_tracing()
-{
-    if (!use_contact_tracing)
-        throw std::logic_error(
-            "Contact tracing is not active. Call contact_tracing_on() first."
-        );
-
-    if (!contact_tracing)
-        contact_tracing = std::make_unique<ContactTracing>();
-    return *contact_tracing;
-}
-
-template<typename TSeq>
 inline const std::vector< VirusPtr<TSeq> > & Model<TSeq>::get_viruses() const
 {
     return viruses;
@@ -2862,19 +2568,6 @@ inline bool Model<TSeq>::operator==(const Model<TSeq> & other) const
         EPI_DEBUG_FAIL_AT_TRUE(
             *tools[i] != *other.tools[i],
             "Model:: *tools[i] don't match"
-        )
-
-    }
-
-    EPI_DEBUG_FAIL_AT_TRUE(
-        entities.size() != other.entities.size(),
-        "Model:: entities.size() don't match"
-        )
-    for (size_t i = 0u; i < entities.size(); ++i)
-    {
-        EPI_DEBUG_FAIL_AT_TRUE(
-            entities[i] != other.entities[i],
-            "Model:: *entities[i] don't match"
         )
 
     }

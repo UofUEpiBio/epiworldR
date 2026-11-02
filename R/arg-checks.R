@@ -133,24 +133,6 @@ stopifnot_agent <- function(agent) {
     )
 }
 
-# checks if entity object is of class "epiworld_entity"
-stopifnot_entity <- function(entity) {
-  if (!inherits(entity, "epiworld_entity")) {
-    stop(
-      "The -entity- object must be of class 'epiworld_entity'. ",
-      "The object passed to the function is of class(es): ",
-      paste(class(entity), collapse = ", ")
-    )
-  }
-}
-
-# Checks if distfun object is of class "epiworld_distribution_entity"
-stopifnot_entity_distfun <- function(distfun) {
-  if (!inherits(distfun, "epiworld_distribution_entity")) {
-    stop("Argument 'distfun' must be a distribution function.")
-  }
-}
-
 # Checks if object is of class "epiworld_lfmcmc"
 stopifnot_lfmcmc <- function(x) {
   # Catching the value of x

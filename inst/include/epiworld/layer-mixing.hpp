@@ -1228,9 +1228,9 @@ namespace grouping {
  * @details Group by group, in order, the agents are drawn at random from those
  * not yet in a group; agents left over are in no group. A group of size `s`
  * takes `s` agents (a whole number), or, with `as_proportion`, `floor(s x n)`
- * of the `n` agents still without a group. These are the draws of the random entity
- * distribution with `to_unassigned` (`distribute_entity_randomly()`), so a
- * mixing layer grouped this way runs as the same entities did.
+ * of the `n` agents still without a group. These are the draws that the
+ * random entity distribution of epiworld 0.x made, so a model ported from
+ * entities keeps its groups for a seed.
  *
  * @param sizes One size per group.
  * @param as_proportion Whether the sizes are proportions of the agents left.
@@ -1317,8 +1317,8 @@ inline typename layer::Mixing<TSeq>::Grouping random(
  *
  * @details Group by group, `prevalence[g]` of the members of group `g`: a
  * proportion (`floor(p x size)` agents) or a count (at most the group's
- * size). Within a group, the members are drawn in ascending id order, so a
- * group of consecutive agents draws what an entity with those agents did.
+ * size). Within a group, the members are drawn in ascending id order, as
+ * the entity distribution of epiworld 0.x did for consecutive agents.
  */
 template<typename TSeq, typename F>
 inline void draw_in_groups(

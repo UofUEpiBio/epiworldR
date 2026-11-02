@@ -107,13 +107,6 @@
     [](epiworld::Model<tseq>* m) -> void
 
 
-#define EPI_NEW_ENTITYTOAGENTFUN(funname,tseq) inline void \
-    (funname)(epiworld::Entity<tseq> & e, epiworld::Model<tseq> * m)
-
-#define EPI_NEW_ENTITYTOAGENTFUN_LAMBDA(funname,tseq) \
-    epiworld::EntityToAgentFun<tseq> funname = \
-    [](epiworld::Entity<tseq> & e, epiworld::Model<tseq> * m) -> void
-
 // Use this to make it more efficient for storage if the type is small
 // and the pointer is not needed
 #define EPI_TYPENAME_TRAITS(tseq, bound) typename std::conditional< \

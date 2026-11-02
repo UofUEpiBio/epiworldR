@@ -13,6 +13,21 @@
 \alias{ModelSIRMixing}
 \alias{ModelSEIRMixing}
 \alias{ModelSEIRMixingQuarantine}
+\alias{get_entities}
+\alias{entity}
+\alias{get_entity_size}
+\alias{get_entity_name}
+\alias{entity_add_agent}
+\alias{add_entity}
+\alias{rm_entity}
+\alias{load_agents_entities_ties}
+\alias{entity_get_agents}
+\alias{distribute_entity_randomly}
+\alias{distribute_entity_to_set}
+\alias{set_distribution_entity}
+\alias{add_entities_from_dataframe}
+\alias{distribute_tool_to_entities}
+\alias{distribute_virus_to_entities}
 \title{Defunct functions in epiworldR}
 \usage{
 agents_smallworld(...)
@@ -36,6 +51,36 @@ ModelSIRMixing(...)
 ModelSEIRMixing(...)
 
 ModelSEIRMixingQuarantine(...)
+
+get_entities(...)
+
+entity(...)
+
+get_entity_size(...)
+
+get_entity_name(...)
+
+entity_add_agent(...)
+
+add_entity(...)
+
+rm_entity(...)
+
+load_agents_entities_ties(...)
+
+entity_get_agents(...)
+
+distribute_entity_randomly(...)
+
+distribute_entity_to_set(...)
+
+set_distribution_entity(...)
+
+add_entities_from_dataframe(...)
+
+distribute_tool_to_entities(...)
+
+distribute_virus_to_entities(...)
 }
 \arguments{
 \item{...}{Ignored.}
@@ -61,6 +106,21 @@ Calling them is an error that says what to use instead:
 \item \code{ModelSIRMixing()}: Use ModelSIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
 \item \code{ModelSEIRMixing()}: Use ModelSEIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
 \item \code{ModelSEIRMixingQuarantine()}: Use ModelSEIRQuarantine() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)); it traces every layer it is given.
+\item \code{get_entities()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{get_entity_size()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{get_entity_name()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity_add_agent()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{add_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{rm_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{load_agents_entities_ties()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity_get_agents()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_entity_randomly()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_entity_to_set()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{set_distribution_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{add_entities_from_dataframe()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_tool_to_entities()}: Use distribute_tool_to_groups(layer, prevalence, as_proportion) with the name of a mixing layer.
+\item \code{distribute_virus_to_entities()}: Use distribute_virus_to_groups(layer, prevalence, as_proportion) with the name of a mixing layer.
 }
 }
 \keyword{internal}

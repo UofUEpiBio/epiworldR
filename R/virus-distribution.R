@@ -6,8 +6,8 @@
 #' @param virus An object of class `epiworld_virus`.
 #' @param distfun An object of class `epiworld_virus_distfun`.
 #' @param prevalence Numeric scalar. Prevalence of the virus. In the case of
-#' `distribute_virus_to_entities()` and `distribute_virus_to_groups()`, it is a
-#' vector of prevalences, one per entity or group.
+#' `distribute_virus_to_groups()`, it is a vector of prevalences, one per
+#' group.
 #' @param as_proportion Logical scalar. If `TRUE`, `prevalence` is interpreted
 #' as a proportion of the total number of agents in the model (of each group,
 #' in `distribute_virus_to_groups()`).
@@ -25,23 +25,18 @@
 #' `epiworld_virus_distfun`.
 #' - `distribute_virus_set()` is a deprecated alias for
 #' `distribute_virus_to_set()`.
-#' - `distribute_virus_to_entities()` and `distribute_virus_to_groups()` return
-#' a distribution function of class `epiworld_virus_distfun`.
+#' - `distribute_virus_to_groups()` returns a distribution function of class `epiworld_virus_distfun`.
 #' @details
 #' `set_distribution_virus()` assigns a distribution function to the specified
 #' virus of class [epiworld_virus]. Distribution functions can be created with
 #' [distribute_virus_randomly()], [distribute_virus_to_set()], and
-#' [distribute_virus_to_entities()].
+#' [distribute_virus_to_groups()].
 #'
 #' `distribute_virus_randomly()` creates a distribution function that randomly
 #' assigns the virus to a proportion of the population.
 #'
 #' `distribute_virus_to_set()` creates a distribution function that assigns the
 #' virus to a fixed set of agents.
-#'
-#' `distribute_virus_to_entities()` creates a distribution function that
-#' assigns the virus to a number of agents based on entity-level prevalence.
-#' This is only useful for the mixing models.
 #'
 #' `distribute_virus_to_groups()` creates a distribution function that assigns
 #' the virus to a share of each group of a mixing layer: a proportion of its
@@ -130,23 +125,6 @@ distribute_virus_to_set <- function(agents_ids) {
 distribute_virus_set <- function(agents_ids) {
 
   .Deprecated("distribute_virus_to_set")
-
-}
-
-#' @export
-#' @rdname virus-distribution
-distribute_virus_to_entities <- function(
-  prevalence,
-  as_proportion
-) {
-
-  structure(
-    distribute_virus_to_entities_cpp(
-      as.double(prevalence),
-      as.logical(as_proportion)
-    ),
-    class = "epiworld_virus_distfun"
-  )
 
 }
 
