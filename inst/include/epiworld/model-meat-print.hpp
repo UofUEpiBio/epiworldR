@@ -77,7 +77,6 @@ inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
         printf_epiworld("Agents' data        : (none)\n");
     }
 
-    printf_epiworld("Number of entities  : %i\n", static_cast<int>(entities.size()));
     printf_epiworld("Days (duration)     : %i (of %i)\n", today(), static_cast<int>(ndays));
     printf_epiworld("Number of viruses   : %i\n", static_cast<int>(db.get_n_viruses()));
     if (n_replicates > 0u)

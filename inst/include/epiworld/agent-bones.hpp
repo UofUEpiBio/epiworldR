@@ -24,12 +24,6 @@ template<typename TSeq>
 struct Event;
 
 template<typename TSeq>
-class Entity;
-
-template<typename TSeq>
-class Entities;
-
-template<typename TSeq>
 class AgentsSample;
 
 /**
@@ -135,8 +129,6 @@ class Agent {
     friend class AgentsSample<TSeq>;
 protected:
 
-    std::vector< size_t > entities; ///< Entity IDs (indices into Model::entities)
-
     unsigned int state = 0u;
     unsigned int state_prev = 0u; ///< For accounting, if need to undo a change.
     
@@ -147,7 +139,7 @@ protected:
 
     std::vector< ToolPtr<TSeq> > tools;
 
-    void reset(); ///< Resets the agent to the initial state (no virus, no tools, no entities, state 0.)
+    void reset(); ///< Resets the agent to the initial state (no virus, no tools, state 0.)
 
 public:
 
@@ -182,13 +174,6 @@ public:
         epiworld_fast_int queue = -99
         );
 
-    void add_entity(
-        Model<TSeq> & model,
-        Entity<TSeq> & entity,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-        );
-
     void rm_tool(
         Model<TSeq> & model,
         epiworld_fast_uint tool_idx,
@@ -205,20 +190,6 @@ public:
 
     void rm_virus(
         Model<TSeq> & model,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-    );
-
-    void rm_entity(
-        Model<TSeq> & model,
-        epiworld_fast_uint entity_idx,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-    );
-
-    void rm_entity(
-        Model<TSeq> & model,
-        Entity<TSeq> & entity,
         epiworld_fast_int state_new = -99,
         epiworld_fast_int queue = -99
     );
@@ -272,8 +243,6 @@ public:
     bool has_virus(epiworld_fast_uint t) const;
     bool has_virus(std::string_view name) const;
     bool has_virus(const Virus<TSeq> & v) const;
-    bool has_entity(epiworld_fast_uint t) const;
-    bool has_entity(std::string_view name, const Model<TSeq> & model) const;
 
     void print(Model<TSeq> & model, bool compressed = false) const;
 
@@ -292,13 +261,6 @@ public:
     double & operator()(size_t j, Model<TSeq> & model);
     double operator()(size_t j, const Model<TSeq> & model) const;
     ///@}
-
-    const std::vector< size_t > & get_entities() const;
-
-    const Entity<TSeq> & get_entity(size_t i, const Model<TSeq> & model) const;
-    Entity<TSeq> & get_entity(size_t i, Model<TSeq> & model);
-
-    size_t get_n_entities() const;
 
     bool operator==(const Agent<TSeq> & other) const;
     bool operator!=(const Agent<TSeq> & other) const {return !operator==(other);};

@@ -108,6 +108,17 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   groups of the given sizes at random, the draws `distribute_entity_randomly()`
   made for entities. Moving an agent between runs is then an error.
 
+* Entities are gone; groups live in mixing layers
+  ([epiworld#349](https://github.com/UofUEpiBio/epiworld/pull/349)).
+  `entity()`, `add_entity()`, `rm_entity()`, `get_entities()`,
+  `load_agents_entities_ties()`, `add_entities_from_dataframe()`, the other
+  entity functions, and `distribute_tool_to_entities()` and
+  `distribute_virus_to_entities()` are defunct. Use `layer_mixing(name,
+  groups, ...)` with a vector of groups or `grouping_random()`, read groups
+  with `members_of()` and `get_group()`, and give tools and viruses to groups
+  with `distribute_tool_to_groups()` and `distribute_virus_to_groups()`. The
+  model summary no longer prints a number of entities.
+
 * In `ModelSEIR()`, infected agents recover through the virus, so tools that
   enhance recovery now work, as in the other models. Results for a given seed
   change.
@@ -120,6 +131,10 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   100 times faster on large populations
   ([epiworld#341](https://github.com/UofUEpiBio/epiworld/pull/341)). Seeded
   results are unchanged.
+
+* A binomial draw with no trials or a zero probability returns 0 instead of
+  drawing a Poisson with mean 0 (undefined behavior, an abort in debug builds
+  of GCC 15) ([epiworld#350](https://github.com/UofUEpiBio/epiworld/pull/350)).
 
 * `graph_bernoulli(0)` draws no ties; it gave an almost complete graph
   ([epiworld#343](https://github.com/UofUEpiBio/epiworld/pull/343)).

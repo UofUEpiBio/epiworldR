@@ -6,7 +6,6 @@
 \alias{distribute_virus_randomly}
 \alias{distribute_virus_to_set}
 \alias{distribute_virus_set}
-\alias{distribute_virus_to_entities}
 \alias{distribute_virus_to_groups}
 \title{Virus distribution functions}
 \usage{
@@ -18,8 +17,6 @@ distribute_virus_to_set(agents_ids)
 
 distribute_virus_set(agents_ids)
 
-distribute_virus_to_entities(prevalence, as_proportion)
-
 distribute_virus_to_groups(layer, prevalence, as_proportion = TRUE)
 }
 \arguments{
@@ -28,8 +25,8 @@ distribute_virus_to_groups(layer, prevalence, as_proportion = TRUE)
 \item{distfun}{An object of class \code{epiworld_virus_distfun}.}
 
 \item{prevalence}{Numeric scalar. Prevalence of the virus. In the case of
-\code{distribute_virus_to_entities()} and \code{distribute_virus_to_groups()}, it is a
-vector of prevalences, one per entity or group.}
+\code{distribute_virus_to_groups()}, it is a vector of prevalences, one per
+group.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
 as a proportion of the total number of agents in the model (of each group,
@@ -52,8 +49,7 @@ virus randomly within that set. Otherwise it uses all agents in the model.
 \code{epiworld_virus_distfun}.
 \item \code{distribute_virus_set()} is a deprecated alias for
 \code{distribute_virus_to_set()}.
-\item \code{distribute_virus_to_entities()} and \code{distribute_virus_to_groups()} return
-a distribution function of class \code{epiworld_virus_distfun}.
+\item \code{distribute_virus_to_groups()} returns a distribution function of class \code{epiworld_virus_distfun}.
 }
 }
 \description{
@@ -64,17 +60,13 @@ agents in a model.
 \code{set_distribution_virus()} assigns a distribution function to the specified
 virus of class \link{epiworld_virus}. Distribution functions can be created with
 \code{\link[=distribute_virus_randomly]{distribute_virus_randomly()}}, \code{\link[=distribute_virus_to_set]{distribute_virus_to_set()}}, and
-\code{\link[=distribute_virus_to_entities]{distribute_virus_to_entities()}}.
+\code{\link[=distribute_virus_to_groups]{distribute_virus_to_groups()}}.
 
 \code{distribute_virus_randomly()} creates a distribution function that randomly
 assigns the virus to a proportion of the population.
 
 \code{distribute_virus_to_set()} creates a distribution function that assigns the
 virus to a fixed set of agents.
-
-\code{distribute_virus_to_entities()} creates a distribution function that
-assigns the virus to a number of agents based on entity-level prevalence.
-This is only useful for the mixing models.
 
 \code{distribute_virus_to_groups()} creates a distribution function that assigns
 the virus to a share of each group of a mixing layer: a proportion of its

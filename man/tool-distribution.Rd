@@ -5,7 +5,6 @@
 \alias{set_distribution_tool}
 \alias{distribute_tool_randomly}
 \alias{distribute_tool_to_set}
-\alias{distribute_tool_to_entities}
 \alias{distribute_tool_to_groups}
 \title{Tool distribution functions}
 \usage{
@@ -15,8 +14,6 @@ distribute_tool_randomly(prevalence, as_proportion, agents_ids = integer(0))
 
 distribute_tool_to_set(agents_ids)
 
-distribute_tool_to_entities(prevalence, as_proportion)
-
 distribute_tool_to_groups(layer, prevalence, as_proportion = TRUE)
 }
 \arguments{
@@ -25,8 +22,8 @@ distribute_tool_to_groups(layer, prevalence, as_proportion = TRUE)
 \item{distfun}{An object of class \code{epiworld_tool_distfun}.}
 
 \item{prevalence}{Numeric scalar. Prevalence of the tool. In the case of
-\code{distribute_tool_to_entities()} and \code{distribute_tool_to_groups()}, it is a
-vector of prevalences, one per entity or group.}
+\code{distribute_tool_to_groups()}, it is a vector of prevalences, one per
+group.}
 
 \item{as_proportion}{Logical scalar. If \code{TRUE}, \code{prevalence} is interpreted
 as a proportion of the total number of agents in the model (of each group,
@@ -47,8 +44,7 @@ distribution function to the specified tool.
 tool randomly within that set. Otherwise it uses all agents in the model.
 \item \code{distribute_tool_to_set()} returns a distribution function of class
 \code{epiworld_tool_distfun}.
-\item \code{distribute_tool_to_entities()} and \code{distribute_tool_to_groups()} return
-a distribution function of class \code{epiworld_tool_distfun}.
+\item \code{distribute_tool_to_groups()} returns a distribution function of class \code{epiworld_tool_distfun}.
 }
 }
 \description{
@@ -59,17 +55,13 @@ agents in a model.
 \code{set_distribution_tool()} assigns a distribution function to the specified
 tool of class \link{epiworld_tool}. Distribution functions can be created with
 \code{\link[=distribute_tool_randomly]{distribute_tool_randomly()}}, \code{\link[=distribute_tool_to_set]{distribute_tool_to_set()}}, and
-\code{\link[=distribute_tool_to_entities]{distribute_tool_to_entities()}}.
+\code{\link[=distribute_tool_to_groups]{distribute_tool_to_groups()}}.
 
 \code{distribute_tool_randomly()} creates a distribution function that randomly
 assigns the tool to a proportion of the population.
 
 \code{distribute_tool_to_set()} creates a distribution function that assigns the
 tool to a fixed set of agents.
-
-\code{distribute_tool_to_entities()} creates a distribution function that assigns
-the tool to a number of agents based on entity-level prevalence. This is
-only useful for the mixing models.
 
 \code{distribute_tool_to_groups()} creates a distribution function that assigns
 the tool to a share of each group of a mixing layer: a proportion of its

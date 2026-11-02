@@ -92,62 +92,6 @@ get_hospitalizations_cpp <- function(model) {
   .Call(`_epiworldR_get_hospitalizations_cpp`, model)
 }
 
-get_entities_cpp <- function(model) {
-  .Call(`_epiworldR_get_entities_cpp`, model)
-}
-
-get_entity_cpp <- function(entities, idx) {
-  .Call(`_epiworldR_get_entity_cpp`, entities, idx)
-}
-
-entity_cpp <- function(name, preval, as_proportion, to_unassigned) {
-  .Call(`_epiworldR_entity_cpp`, name, preval, as_proportion, to_unassigned)
-}
-
-get_entity_size_cpp <- function(entity) {
-  .Call(`_epiworldR_get_entity_size_cpp`, entity)
-}
-
-entity_add_agent_cpp <- function(entity, agent, model) {
-  .Call(`_epiworldR_entity_add_agent_cpp`, entity, agent, model)
-}
-
-get_entity_name_cpp <- function(entity) {
-  .Call(`_epiworldR_get_entity_name_cpp`, entity)
-}
-
-add_entity_cpp <- function(model, entity) {
-  .Call(`_epiworldR_add_entity_cpp`, model, entity)
-}
-
-rm_entity_cpp <- function(model, entity_pos) {
-  .Call(`_epiworldR_rm_entity_cpp`, model, entity_pos)
-}
-
-load_agents_entities_ties_cpp <- function(model, agents_ids, entities_ids) {
-  .Call(`_epiworldR_load_agents_entities_ties_cpp`, model, agents_ids, entities_ids)
-}
-
-entity_get_agents_cpp <- function(entity) {
-  .Call(`_epiworldR_entity_get_agents_cpp`, entity)
-}
-
-print_entity_cpp <- function(entity) {
-  .Call(`_epiworldR_print_entity_cpp`, entity)
-}
-
-set_distribution_entity_cpp <- function(entity, fun) {
-  .Call(`_epiworldR_set_distribution_entity_cpp`, entity, fun)
-}
-
-distribute_entity_randomly_cpp <- function(prevalence, as_proportion, to_unassigned) {
-  .Call(`_epiworldR_distribute_entity_randomly_cpp`, prevalence, as_proportion, to_unassigned)
-}
-
-distribute_entity_to_set_cpp <- function(agents_ids) {
-  .Call(`_epiworldR_distribute_entity_to_set_cpp`, agents_ids)
-}
-
 ModelSURV_cpp <- function(name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_prob, prob_death, prob_noreinfect) {
   .Call(`_epiworldR_ModelSURV_cpp`, name, n, prevalence, efficacy_vax, latent_period, prob_symptoms, prop_vaccinated, prop_vax_redux_transm, infect_period, prop_vax_redux_infect, surveillance_prob, transmission_prob, prob_death, prob_noreinfect)
 }
@@ -772,10 +716,6 @@ distribute_tool_to_set_cpp <- function(agents_ids) {
   .Call(`_epiworldR_distribute_tool_to_set_cpp`, agents_ids)
 }
 
-distribute_tool_to_entities_cpp <- function(prevalence, as_proportion) {
-  .Call(`_epiworldR_distribute_tool_to_entities_cpp`, prevalence, as_proportion)
-}
-
 distribute_tool_to_groups_cpp <- function(layer, prevalence, as_proportion) {
   .Call(`_epiworldR_distribute_tool_to_groups_cpp`, layer, prevalence, as_proportion)
 }
@@ -878,10 +818,6 @@ distribute_virus_randomly_cpp <- function(prevalence, as_proportion, agents_ids)
 
 distribute_virus_to_set_cpp <- function(agents_ids) {
   .Call(`_epiworldR_distribute_virus_to_set_cpp`, agents_ids)
-}
-
-distribute_virus_to_entities_cpp <- function(prevalence, as_proportion) {
-  .Call(`_epiworldR_distribute_virus_to_entities_cpp`, prevalence, as_proportion)
 }
 
 distribute_virus_to_groups_cpp <- function(layer, prevalence, as_proportion) {

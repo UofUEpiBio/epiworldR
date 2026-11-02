@@ -131,8 +131,6 @@ protected:
     std::vector< VirusPtr<TSeq> > viruses = {};
     std::vector< ToolPtr<TSeq> > tools = {};
 
-    std::vector< Entity<TSeq> > entities = {};
-
     std::shared_ptr< epi_xoshiro256ss > engine = std::make_shared< epi_xoshiro256ss >();
 
     epiworld_double runifd_a = 0.0;
@@ -187,7 +185,6 @@ protected:
 
     void dist_tools();
     void dist_virus();
-    void dist_entities();
 
     std::chrono::time_point<std::chrono::steady_clock> time_start;
     std::chrono::time_point<std::chrono::steady_clock> time_end;
@@ -279,10 +276,6 @@ protected:
     PostSamplingScratch post_sampling_scratch;         ///< Never copied
     void post_sampling_dispatch();
     void post_sampling_prepare_scratch(); ///< Sizes the scratch for the population
-
-    std::unique_ptr<ContactTracing> contact_tracing;
-    bool use_contact_tracing = false;
-    size_t contact_tracing_max_contacts = EPI_MAX_TRACKING;
 
     /**
      * @name Agents by state
@@ -390,7 +383,6 @@ protected:
      * @param agent_ Agent over which the action will be called
      * @param virus_ Virus pointer included in the action
      * @param tool_ Tool pointer included in the action
-     * @param entity_ Entity pointer included in the action
      * @param new_state_ New state of the agent
      * @param queue_ Change in the queue
       * @param action_ Action to execute when processing the event
@@ -399,7 +391,6 @@ protected:
         Agent<TSeq> * agent_,
         VirusPtr<TSeq> virus_,
         ToolPtr<TSeq> tool_,
-        Entity<TSeq> * entity_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
         EventAction action_,
@@ -410,15 +401,13 @@ protected:
      * @name Default event handlers
      *
      * These member functions implement the default behavior for each
-     * event action (add/remove virus, tool, entity, or change state).
+     * event action (add/remove virus or tool, or change state).
      */
     ///@{
     void _event_add_virus(Event<TSeq> & a);
     void _event_add_tool(Event<TSeq> & a);
-    void _event_add_entity(Event<TSeq> & a);
     void _event_rm_virus(Event<TSeq> & a);
     void _event_rm_tool(Event<TSeq> & a);
-    void _event_rm_entity(Event<TSeq> & a);
     void _event_change_state(Event<TSeq> & a);
     ///@}
 
@@ -592,28 +581,9 @@ public:
     ///@{
     void add_virus(Virus<TSeq> & v);
     void add_tool(Tool<TSeq> & t);
-    void add_entity(Entity<TSeq> e);
     void rm_virus(size_t virus_pos);
     void rm_tool(size_t tool_pos);
-    void rm_entity(size_t entity_id);
     ///@}
-
-    /**
-     * @brief Associate agents-entities from data
-     *
-     * Agent `agents_ids[i]` joins entity `entities_ids[i]` at the start of
-     * every run, after the entity's own distribution function (if any).
-    */
-    void load_agents_entities_ties(
-        const std::vector<int> & agents_ids,
-        const std::vector<int> & entities_ids
-        );
-
-    void load_agents_entities_ties(
-        const int * agents_id,
-        const int * entities_id,
-        size_t n
-        );
 
     /**
      * @name Accessing population of the model
@@ -628,11 +598,6 @@ public:
     std::vector< Viruses_const<TSeq> > get_agents_viruses() const; ///< Returns a const vector with the viruses of the agents.
 
     std::vector< Viruses<TSeq> > get_agents_viruses(); ///< Returns a vector with the viruses of the agents.
-
-    std::vector< Entity<TSeq> > & get_entities();
-
-    Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr);
-    const Entity<TSeq> & get_entity(size_t entity_id, int * entity_pos = nullptr) const;
 
 
 
@@ -680,7 +645,6 @@ public:
     bool is_running() const;
     epiworld_fast_uint get_n_replicates() const;
     size_t get_sim_id() const;
-    size_t get_n_entities() const;
     void set_ndays(epiworld_fast_uint ndays);
     bool get_verbose() const;
     Model<TSeq> & verbose_off();
@@ -1124,28 +1088,6 @@ public:
     ///@}
 
     /**
-     * @name Contact tracing
-     * @details When contact tracing is on, the model will track contacts
-     * between agents. Users must actively record contacts in their update
-     * functions by calling `get_contact_tracing().add_contact(...)`.
-     * Contact tracing is off by default.
-     *
-     * A contact layer keeps its own log instead (see
-     * `ContactLayer::enable_tracing()`), which the SEIR quarantine models
-     * read. The model's log stays only for the measles models, which do not
-     * sample from layers yet, and goes when they do.
-     *
-     * @param max_contacts Maximum number of contacts to track per agent
-     * (default: EPI_MAX_TRACKING). Only used when turning tracing on.
-     */
-    ///@{
-    Model<TSeq> & contact_tracing_on(size_t max_contacts = EPI_MAX_TRACKING); ///< Activates contact tracing.
-    Model<TSeq> & contact_tracing_off(); ///< Deactivates contact tracing.
-    bool is_contact_tracing_on() const; ///< Query if contact tracing is on.
-    ContactTracing & get_contact_tracing(); ///< Retrieve the `ContactTracing` object.
-    ///@}
-
-    /**
      * @name Post-sampling callback
      * @details A callback that receives, for each infectious agent, the agents
      * it was in contact with during the step (see `PostSamplingFun`). The
@@ -1155,9 +1097,8 @@ public:
      * push). Pull and push report the same contacts. The callback is kept by
      * copies of the model, including the ones `run_multiple()` makes.
      *
-     * Installing a callback replaces the previous one. The measles models
-     * install `make_contact_tracing_post_sampling()` to fill the model's
-     * contact log; replacing it stops them from recording contacts.
+     * Installing a callback replaces the previous one. Contact tracing does
+     * not use it: a layer keeps its own log (`ContactLayer::enable_tracing()`).
      */
     ///@{
     Model<TSeq> & set_post_sampling(PostSamplingFun<TSeq> fun); ///< Install a callback (an empty function clears it).

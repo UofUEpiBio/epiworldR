@@ -43,7 +43,7 @@ This matrix represents the mean number of interactions per day between an agent 
 The following code chunk defines the group of each agent (three populations of 3,000) and the contact matrix.
 
 ```{r}
-#| label: entity-matrix-setup
+#| label: matrix-setup
 library(epiworldR)
 
 N <- 9e3

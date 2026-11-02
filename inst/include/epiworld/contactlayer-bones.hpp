@@ -13,7 +13,7 @@
  * The model drives the life cycle of its layers:
  *
  * - `reset()` at the start of `Model::reset()`, before anything is distributed
- *   (entities, viruses, tools, the global events' set-up), so that those see
+ *   (viruses, tools, the global events' set-up), so that those see
  *   the run's contacts. A layer restores its baseline if it was edited during
  *   the previous run (see `is_dirty()`), or draws a new one, and sizes its
  *   per-run buffers.

@@ -133,10 +133,6 @@ expect_true(ans[, all(counts %in% c(1, 2, 199))])
 ###############################################################################
 # First case: Everyone is vaccinated, so only the 
 # index case is infected
-e1 <- entity("Population 1", 300, FALSE)
-e2 <- entity("Population 2", 300, FALSE)
-e3 <- entity("Population 3", 300, FALSE)
-
 contact_matrix <- (c(
   c(1/3, 1/3, 1/3),
   c(1/3, 1/3, 1/3),
@@ -152,7 +148,7 @@ abm <- ModelSEIR(
   latent_period = 1/12
 )
 
-# Everyone mixes evenly (the three populations are entities, below)
+# Everyone mixes evenly
 add_layer(abm, layer_mixing("mixing", rep(0, 900), contact_matrix = sum(contact_matrix[1, ])))
 
 vaccine <- tool(
@@ -171,11 +167,6 @@ set_distribution_tool(
 )
 
 add_tool(abm, vaccine)
-
-abm |>
-  add_entity(e1) |>
-  add_entity(e2) |>
-  add_entity(e3)
 
 # Changing the distribution of the virus
 set_distribution_virus(

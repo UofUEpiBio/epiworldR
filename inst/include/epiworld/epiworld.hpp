@@ -122,10 +122,6 @@ namespace epiworld {
     #include "tool-distribute-meat.hpp"
     #include "tool-meat.hpp"
 
-    #include "entity-bones.hpp"
-    #include "entity-distribute-meat.hpp"
-    #include "entity-meat.hpp"
-    
     #include "agent-meat-state.hpp"
     #include "agent-bones.hpp"
     #include "agent-meat.hpp"
