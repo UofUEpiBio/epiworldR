@@ -298,8 +298,10 @@ given probability a day (here, half the days).
 These examples use `flavor = "household"`, where whole households bubble
 together, as in New Zealand, the UK's support bubbles, or Belgium in May 2020.
 `flavor = "peer"` instead has each person nominate close contacts among the
-people they already know, as in Belgium's October 2020 rule of one close
-contact per person. That rule lets the person meet their contact, not their
-contact's household, so pair it with `ties = "existing"`, which keeps the
-nominated tie and damps the rest: `ties = "complete"` would have both
+people they already know, which approximates Belgium's October 2020 rule of
+one close contact per person. The approximation is coarse: a nomination
+commits both whole households, so with `max_households = 2` (the default)
+one accepted choice pairs two households and their other members choose no
+one else. Pair it with `ties = "existing"`, which spares the ties between
+the two households and damps the rest; `ties = "complete"` would have both
 households meet in full.

@@ -158,17 +158,24 @@ both layers.
 \subsection{Matching a policy}{
 
 \code{flavor} decides who bubbles together; \code{ties} decides who then meets.
-Two combinations match policies that were used during COVID-19:\tabular{lll}{
-   Policy \tab \code{flavor} \tab \code{ties} \cr
-   Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) \tab \code{"household"} \tab \code{"complete"} \cr
-   One close contact per person (Belgium, October 2020) \tab \code{"peer"} \tab \code{"existing"} \cr
+These are the closest settings for two styles of rule used during
+COVID-19, not exact matches:\tabular{ll}{
+   Policy style \tab Settings \cr
+   Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) \tab \code{flavor = "household"}, \code{group_size} = households per bubble, \code{ties = "complete"} \cr
+   One close contact per person (Belgium, October 2020) \tab \code{flavor = "peer"}, \code{max_households = 2} (the default), \code{ties = "existing"} \cr
 }
 
 
-\code{flavor = "peer"} with \code{ties = "complete"} makes both households meet in
-full, not just the two people: more contact than the one-contact rule
-allows. Use it to explore the case where a person brings their household
-along.
+The second is an approximation. \code{"peer"} commits whole households, so with
+\code{max_households = 2} one accepted choice pairs two households and the other
+members of either can choose no one else (\code{group_size} then has no
+effect). Under \code{"existing"} every tie between the two households is
+spared, not only the chosen one. The model therefore gives a household one
+partner household where the rule gives each person their own contact; a
+larger \code{max_households} lets more members choose, at the cost of larger
+bubbles. \code{flavor = "peer"} with \code{ties = "complete"} has both households
+meet in full: more contact than the rule allows, but still allowed, for the
+case where a person brings their household along.
 }
 
 \subsection{Dialling the policy through the model}{

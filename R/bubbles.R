@@ -103,17 +103,24 @@
 #' ## Matching a policy
 #'
 #' `flavor` decides who bubbles together; `ties` decides who then meets.
-#' Two combinations match policies that were used during COVID-19:
+#' These are the closest settings for two styles of rule used during
+#' COVID-19, not exact matches:
 #'
-#' | Policy | `flavor` | `ties` |
-#' |---|---|---|
-#' | Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) | `"household"` | `"complete"` |
-#' | One close contact per person (Belgium, October 2020) | `"peer"` | `"existing"` |
+#' | Policy style | Settings |
+#' |---|---|
+#' | Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) | `flavor = "household"`, `group_size` = households per bubble, `ties = "complete"` |
+#' | One close contact per person (Belgium, October 2020) | `flavor = "peer"`, `max_households = 2` (the default), `ties = "existing"` |
 #'
-#' `flavor = "peer"` with `ties = "complete"` makes both households meet in
-#' full, not just the two people: more contact than the one-contact rule
-#' allows. Use it to explore the case where a person brings their household
-#' along.
+#' The second is an approximation. `"peer"` commits whole households, so with
+#' `max_households = 2` one accepted choice pairs two households and the other
+#' members of either can choose no one else (`group_size` then has no
+#' effect). Under `"existing"` every tie between the two households is
+#' spared, not only the chosen one. The model therefore gives a household one
+#' partner household where the rule gives each person their own contact; a
+#' larger `max_households` lets more members choose, at the cost of larger
+#' bubbles. `flavor = "peer"` with `ties = "complete"` has both households
+#' meet in full: more contact than the rule allows, but still allowed, for the
+#' case where a person brings their household along.
 #'
 #' ## Dialling the policy through the model
 #'
