@@ -40,14 +40,19 @@
 #' @param param_name Character scalar. Name of the model parameter in which the
 #' transmission factor is stored. Give two interventions deployed on the same
 #' model different names if they are to be dialled independently.
-#' @param ties Character scalar. What being in a bubble together does to the
-#' contact network. `"existing"` (the default) leaves the network untouched: the
-#' bubble is only a transmission rule. `"complete"` also ties every pair of
-#' agents sharing a bubble while the policy is in force, so households become
-#' complete and merged households meet in full (see Details).
+#' @param ties Character scalar. What being in a bubble together does.
+#' `"existing"` (the default) leaves the contacts untouched: the bubble is only
+#' a transmission rule. `"complete"` also makes bubblemates meet: `bubbles()`
+#' adds a household layer, and while the policy is in force each bubble is a
+#' group of it (see Details).
 #' @param layer Character scalar. With `ties = "complete"`, the name of the
-#' network layer (see [contact-layers]) the ties are added to. It must be
-#' undirected and have no rewiring function.
+#' household layer that `bubbles()` adds to the model (e.g., `"household"`).
+#' @param household_contact_prob Numeric scalar in `[0, 1]`. With
+#' `ties = "complete"`, the probability that two housemates meet on a given
+#' day (`1`: every day).
+#' @param bubble_contact_prob Numeric scalar in `[0, 1]`. With
+#' `ties = "complete"`, the probability that two members of a bubble that
+#' merged households meet on a given day while the policy is in force.
 #'
 #' @details
 #' With `ties = "existing"` (the default) the contact network is **not**
@@ -68,30 +73,47 @@
 #' between them, and the rest of the two households never meet. The same gap
 #' exists inside a household, whose members need not all be tied to each other.
 #'
-#' With `ties = "complete"` every bubble is completed to a clique: each pair of
-#' agents sharing a bubble is tied for as long as the bubble lasts. Ties the
-#' network already had are left alone; the intervention only records the ones it
-#' created and withdraws exactly those when the bubble is redrawn (see
-#' `rewire_every`), when the policy lifts at `end_day`, and on the last day of
-#' the run, so a run never leaves the network changed. Contacts *outside* the
-#' bubble stay in the network and are damped by the transmission factor, as
-#' under `"existing"`. How households are grouped does not depend on `ties`: the
-#' same seed draws the same bubbles.
+#' With `ties = "complete"`, `bubbles()` adds a household layer named `layer`
+#' to the model: a mixing layer with one group per household (see
+#' [mixing-layers]), in which each pair meets with probability
+#' `household_contact_prob` a day. While the policy is in force each agent is
+#' in its bubble's group instead, where each pair meets with probability
+#' `bubble_contact_prob` a day; a household that bubbled with nobody keeps
+#' `household_contact_prob`. When the bubbles are redrawn (see `rewire_every`)
+#' agents move to the new ones, and when the policy lifts at `end_day` they go
+#' back to their households. Contacts *outside* the bubble stay in the other
+#' layers and are damped by the transmission factor, as under `"existing"`.
+#' How households are grouped does not depend on `ties`: the same seed draws
+#' the same bubbles.
 #'
 #' A few consequences to keep in mind:
 #'
-#' - Completing a bubble **raises the force of infection inside it**: every tie
-#'   is an independent daily exposure, so a bubble of `k` agents gives each
-#'   member `k - 1` chances a day to be infected by a bubble-mate.
-#' - The ties only exist while the policy is in force. For the same reason,
-#'   `"complete"` is not neutral at `transmission_factor = 1`: it adds contacts
-#'   inside the bubble and damps nothing outside it.
-#' - While they are up, the ties are real network ties (they show up, for
-#'   instance, in the edgelist and in the number of neighbours).
-#' - `"complete"` requires an undirected network layer, named in `layer`
-#'   (e.g., `directed = FALSE` in [graph_smallworld()] or [graph_edgelist()]);
-#'   otherwise the run stops with an error. A bubble whose clique would give an
-#'   agent more than 1,024 contacts is also refused.
+#' - Households meet before and after the policy too: the household layer is
+#'   part of the model, and the bubbles are larger groups of it.
+#' - Completing a bubble **raises the force of infection inside it**: every
+#'   bubblemate met is an independent exposure, so with both probabilities at
+#'   `1` a bubble of `k` agents gives each member `k - 1` chances a day.
+#' - There is one probability per group, so in a merged bubble housemates
+#'   meet with `bubble_contact_prob` too.
+#' - A pair of bubblemates that is also tied in a network layer meets in
+#'   both layers.
+#' - The layer can be retrieved with `get_layer(model, layer)`, e.g., for
+#'   [get_group()] or [members_of()].
+#'
+#' ## Matching a policy
+#'
+#' `flavor` decides who bubbles together; `ties` decides who then meets.
+#' Two combinations match policies that were used during COVID-19:
+#'
+#' | Policy | `flavor` | `ties` |
+#' |---|---|---|
+#' | Households join one or a few others (New Zealand; UK support bubbles; Belgium, May 2020) | `"household"` | `"complete"` |
+#' | One close contact per person (Belgium, October 2020) | `"peer"` | `"existing"` |
+#'
+#' `flavor = "peer"` with `ties = "complete"` makes both households meet in
+#' full, not just the two people: more contact than the one-contact rule
+#' allows. Use it to explore the case where a person brings their household
+#' along.
 #'
 #' ## Dialling the policy through the model
 #'
@@ -254,21 +276,23 @@
 #' #
 #' # Two households per bubble, whose members all meet while the policy lasts:
 #' #   bubbles(model, household_id, "household", group_size = 2,
-#' #           ties = "complete", layer = "network")
+#' #           ties = "complete", layer = "household")
 bubbles <- function(
   model,
   household_id,
-  flavor              = c("household", "peer"),
+  flavor                 = c("household", "peer"),
   group_size,
-  transmission_factor = 0.0,
-  start_day           = 0L,
-  end_day             = -1L,
-  rewire_every        = 0L,
-  name                = "Social bubble",
-  max_households      = 2L,
-  param_name          = "Bubble transmission factor",
-  ties                = c("existing", "complete"),
-  layer               = ""
+  transmission_factor    = 0.0,
+  start_day              = 0L,
+  end_day                = -1L,
+  rewire_every           = 0L,
+  name                   = "Social bubble",
+  max_households         = 2L,
+  param_name             = "Bubble transmission factor",
+  ties                   = c("existing", "complete"),
+  layer                  = "",
+  household_contact_prob = 1.0,
+  bubble_contact_prob    = 1.0
 ) {
 
   stopifnot_model(model)
@@ -296,6 +320,10 @@ bubbles <- function(
   rewire_every        <- as_scalar_int(rewire_every, "rewire_every")
   max_households      <- as_scalar_int(max_households, "max_households")
   transmission_factor <- as_scalar_num(transmission_factor, "transmission_factor")
+  household_contact_prob <- as_scalar_num(
+    household_contact_prob, "household_contact_prob"
+  )
+  bubble_contact_prob <- as_scalar_num(bubble_contact_prob, "bubble_contact_prob")
 
   if (length(name) != 1L || is.na(name) || !is.character(name))
     stop("`name` must be a single, non-missing string.")
@@ -324,6 +352,12 @@ bubbles <- function(
   if (transmission_factor < 0 || transmission_factor > 1)
     stop("`transmission_factor` must be between 0 and 1.")
 
+  if (household_contact_prob < 0 || household_contact_prob > 1)
+    stop("`household_contact_prob` must be between 0 and 1.")
+
+  if (bubble_contact_prob < 0 || bubble_contact_prob > 1)
+    stop("`bubble_contact_prob` must be between 0 and 1.")
+
   if (identical(flavor, "household") && group_size < 1L)
     stop("For the `household` flavor, `group_size` must be >= 1.")
 
@@ -343,7 +377,9 @@ bubbles <- function(
     max_households,
     param_name,
     ties,
-    layer
+    layer,
+    household_contact_prob,
+    bubble_contact_prob
   )
 
   invisible(model)

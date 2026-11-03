@@ -108,6 +108,15 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   groups of the given sizes at random, the draws `distribute_entity_randomly()`
   made for entities. Moving an agent between runs is then an error.
 
+* `bubbles(ties = "complete")` no longer adds clique ties to a network layer
+  ([epiworld#353](https://github.com/UofUEpiBio/epiworld/pull/353)). It adds a
+  household layer named `layer` (a mixing layer with one group per household),
+  and while the policy is in force each bubble is a group of it: households
+  meet before and after the policy, bubbles while it lasts. How often a pair
+  meets is a probability per day, set with the new arguments
+  `household_contact_prob` and `bubble_contact_prob` (both `1` by default).
+  `layer` now names that new layer, not a network layer. Results change.
+
 * Entities are gone; groups live in mixing layers
   ([epiworld#349](https://github.com/UofUEpiBio/epiworld/pull/349)).
   `entity()`, `add_entity()`, `rm_entity()`, `get_entities()`,

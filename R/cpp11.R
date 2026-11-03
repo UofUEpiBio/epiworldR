@@ -40,8 +40,8 @@ change_state_cpp <- function(agent, model, new_state, queue) {
   .Call(`_epiworldR_change_state_cpp`, agent, model, new_state, queue)
 }
 
-bubbles_cpp <- function(model, household_id, flavor, group_size, transmission_factor, start_day, end_day, rewire_every, name, max_households, param_name, ties, layer) {
-  .Call(`_epiworldR_bubbles_cpp`, model, household_id, flavor, group_size, transmission_factor, start_day, end_day, rewire_every, name, max_households, param_name, ties, layer)
+bubbles_cpp <- function(model, household_id, flavor, group_size, transmission_factor, start_day, end_day, rewire_every, name, max_households, param_name, ties, layer, household_contact_prob, bubble_contact_prob) {
+  .Call(`_epiworldR_bubbles_cpp`, model, household_id, flavor, group_size, transmission_factor, start_day, end_day, rewire_every, name, max_households, param_name, ties, layer, household_contact_prob, bubble_contact_prob)
 }
 
 get_hist_total_cpp <- function(model) {
