@@ -50,16 +50,16 @@ plot(model_sis, main = "SIS Model")
 \seealso{
 epiworld-methods
 
-Other Models: 
-\code{\link{ModelDiffNet}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()}
+Other Models:
+\code{\link[=ModelDiffNet]{ModelDiffNet()}},
+\code{\link[=ModelSEIR]{ModelSEIR()}},
+\code{\link[=ModelSEIRD]{ModelSEIRD()}},
+\code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}},
+\code{\link[=ModelSIR]{ModelSIR()}},
+\code{\link[=ModelSIRD]{ModelSIRD()}},
+\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
+\code{\link[=ModelSISD]{ModelSISD()}},
+\code{\link[=ModelSURV]{ModelSURV()}}
 }
 \concept{Models}
 \concept{general-models}

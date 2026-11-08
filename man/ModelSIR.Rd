@@ -28,9 +28,10 @@ infection.}
 SIR model
 }
 \details{
-The \link{initial_states} function allows the user to set the initial state of the
-model. In particular, the user can specify how many of the non-infected
-agents have been removed at the beginning of the simulation.
+\code{\link[=set_initial]{set_initial()}} places agents, at the start of each run, in stages without
+the virus (e.g., \code{set_initial(model, assign_shares(c(Recovered = 0.2)))}); the
+model's stages are listed by \code{\link[=get_stages]{get_stages()}}. The model is built by
+\code{\link[=make_model]{make_model()}} (see \code{\link[=get_model_info]{get_model_info()}} for its arguments' limits).
 }
 \section{Model diagram}{
 
@@ -54,16 +55,16 @@ plot(model_sir)
 \seealso{
 epiworld-methods
 
-Other Models: 
-\code{\link{ModelDiffNet}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRQuarantine}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()}
+Other Models:
+\code{\link[=ModelDiffNet]{ModelDiffNet()}},
+\code{\link[=ModelSEIR]{ModelSEIR()}},
+\code{\link[=ModelSEIRD]{ModelSEIRD()}},
+\code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}},
+\code{\link[=ModelSIRD]{ModelSIRD()}},
+\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
+\code{\link[=ModelSIS]{ModelSIS()}},
+\code{\link[=ModelSISD]{ModelSISD()}},
+\code{\link[=ModelSURV]{ModelSURV()}}
 }
 \concept{Models}
 \concept{general-models}

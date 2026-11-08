@@ -45,17 +45,18 @@ ModelSISD <- function(
   transmission_prob,
   recovery_rate,
   death_rate) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(recovery_rate)
-  stopifnot_double(death_rate)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSISD_cpp(name, n, prevalence, transmission_prob, recovery_rate, death_rate),
-    class = c("epiworld_sisd", "epiworld_model")
+  make_model(
+    "SISD",
+    list(
+      n                 = n,
+      prevalence        = prevalence,
+      transmission_prob = transmission_prob,
+      recovery_rate     = recovery_rate,
+      death_rate        = death_rate
+    ),
+    virus_name = name
   )
 
 }

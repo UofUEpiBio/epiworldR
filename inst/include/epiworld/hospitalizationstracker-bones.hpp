@@ -1,10 +1,8 @@
 #ifndef EPIWORLD_HOSPITALIZATIONSTRACKER_BONES_HPP
 #define EPIWORLD_HOSPITALIZATIONSTRACKER_BONES_HPP
 
-template<typename TSeq>
 class Agent;
 
-template<typename TSeq>
 class Model;
 
 /**
@@ -23,9 +21,7 @@ class Model;
  * date, virus_id, and tool_id, with weight summed across all matching
  * records.
  * 
- * @tparam TSeq Type of sequence (should match `TSeq` across the model)
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class HospitalizationsTracker {
 
 private:
@@ -59,7 +55,7 @@ public:
      * - If the agent has no tools, a single record with tool_id = -1 and
      *   weight = 1.0
      */
-    void record(Agent<TSeq> & agent, Model<TSeq> & model);
+    void record(Agent & agent, Model & model);
 
     /**
      * @brief Get the full time series of hospitalizations.

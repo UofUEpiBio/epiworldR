@@ -213,8 +213,6 @@ verbose_off(model3)
 # Creating a tool (vaccine)
 epitool <- tool(
   name = "Vaccine",
-  prevalence = 0,
-  as_proportion = FALSE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5,
@@ -283,10 +281,14 @@ expect_equal(
   info = "State history should have one entry per simulation day"
 )
 
-# Each entry should be a named vector with state counts
+# Each entry should be a data frame with the counts by status and stage
 expect_true(
-  all(vapply(state_history, function(x) is.numeric(x) && !is.null(names(x)), logical(1))),
-  info = "Each state history entry should be a named numeric vector"
+  all(vapply(
+    state_history,
+    function(x) is.data.frame(x) && identical(names(x), c("status", "stage", "counts")),
+    logical(1)
+  )),
+  info = "Each state history entry should be a data frame of counts"
 )
 
 # =============================================================================
@@ -362,8 +364,6 @@ expect_stdout(print(param_event))
 # Test print for globalevent_tool
 tool_print <- tool(
   name = "PrintTest",
-  prevalence = 0,
-  as_proportion = FALSE,
   susceptibility_reduction = 0.5,
   transmission_reduction = 0.3,
   recovery_enhancer = 0.4,

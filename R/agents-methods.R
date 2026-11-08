@@ -4,7 +4,7 @@
 #' `get_agents` function returns an object of class [epiworld_agents] which
 #' contains all the information about the agents in the model. The
 #' `get_agent` function returns the information of a single agent.
-#' And the `get_state` function returns the state of a single agent.
+#' And `get_stage` and `get_status` return a single agent's stage and status.
 #'
 #' @param model An object of class [epiworld_model].
 #' @param x An object of class [epiworld_agents].
@@ -76,15 +76,6 @@ get_agents.epiworld_model <- function(model, ...) {
   )
 
 }
-`[.epiworld_agents` <- function(x, i) {
-
-  structure(
-    get_agent_cpp(x, i),
-    class = "epiworld_agent",
-    model = attr(x, "model")
-  )
-
-}
 
 #' @export
 #' @param compressed Logical scalar. When FALSE, it prints detailed information
@@ -125,8 +116,18 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
 
 #' @export
 #' @returns
-#' - The `get_state` function returns the state of the [epiworld_agents] object.
+#' - `get_stage` and `get_status` return the agent's stage and status (labels).
 #' @rdname agents
-get_state <- function(x) {
-  get_state_agent_cpp(x)
+get_stage <- function(model, x) {
+  stopifnot_model(model)
+  stopifnot_agent(x)
+  get_stage_agent_cpp(model, x)
+}
+
+#' @export
+#' @rdname agents
+get_status <- function(model, x) {
+  stopifnot_model(model)
+  stopifnot_agent(x)
+  get_status_agent_cpp(model, x)
 }

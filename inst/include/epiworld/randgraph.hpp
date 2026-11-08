@@ -1,10 +1,8 @@
 #ifndef EPIWORLD_RANDGRA
 #define EPIWORLD_RANDGRA
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class Agent;
 
 class AdjList;
@@ -39,11 +37,10 @@ inline size_t pick_cumulative(
  * would create self-ties or repeated ties. A network layer is rewired with
  * `graph::rewire_degseq()` instead.
  */
-template<typename TSeq>
 inline void rewire_degseq_rows(
     std::vector< std::vector< int > > & rows,
     bool directed,
-    Model<TSeq> & model,
+    Model & model,
     epiworld_double proportion
     )
 {
@@ -209,7 +206,6 @@ static constexpr long long BB_FPU_THRESHOLD = 200;
  * Reference: V. Batagelj and U. Brandes, "Efficient generation of large
  * random networks," Physical Review E, vol. 71, no. 3, 2005.
  *
- * @tparam TSeq Type of the sequence (template parameter of the model).
  * @param n Number of nodes.
  * @param p Edge probability, in [0, 1].
  * @param directed Whether the graph is directed.
@@ -217,12 +213,11 @@ static constexpr long long BB_FPU_THRESHOLD = 200;
  * @return An AdjList representing the generated network.
  * @throws std::range_error if `p` is not in [0, 1].
  */
-template<typename TSeq>
 inline AdjList rgraph_bernoulli(
     epiworld_fast_uint n,
     epiworld_double p,
     bool directed,
-    Model<TSeq> & model
+    Model & model
 ) {
 
     // Written so that NaN fails too
@@ -351,56 +346,6 @@ inline AdjList rgraph_bernoulli(
 
 }
 
-template<typename TSeq>
-inline AdjList rgraph_bernoulli2(
-    epiworld_fast_uint n,
-    epiworld_double p,
-    bool directed,
-    Model<TSeq> & model
-) {
-
-    std::vector< int > source;
-    std::vector< int > target;
-
-    // Checking the density (how many)
-    std::binomial_distribution<> d(
-        n * (n - 1.0) / (directed ? 1.0 : 2.0),
-        p
-    );
-
-    // Need to compensate for the possible number of diagonal
-    // elements sampled. If n * n, then each diag element has
-    // 1/(n^2) chance of sampling
-
-    epiworld_fast_uint m = d(model.get_rand_endgine());
-
-    source.resize(m);
-    target.resize(m);
-
-    double n2 = static_cast<double>(n * n);
-
-    int loc,row,col;
-    for (epiworld_fast_uint i = 0u; i < m; ++i)
-    {
-        loc = floor(model.runif() * n2);
-        col = floor(static_cast<double>(loc)/static_cast<double>(n));
-        row = loc - row * n;
-
-        // Undirected needs to swap
-        if (!directed && (col > row))
-            std::swap(col, row);
-
-        source[i] = row;
-        target[i] = col;
-
-    }
-
-    AdjList al(source, target, static_cast<int>(n), directed);
-
-    return al;
-
-}
-
 inline AdjList rgraph_ring_lattice(
     epiworld_fast_uint n,
     epiworld_fast_uint k,
@@ -440,7 +385,6 @@ inline AdjList rgraph_ring_lattice(
 /**
  * @brief Smallworld network (Watts-Strogatz)
  *
- * @tparam TSeq
  * @param n
  * @param k
  * @param p
@@ -448,13 +392,12 @@ inline AdjList rgraph_ring_lattice(
  * @param model
  * @return AdjList
  */
-template<typename TSeq>
 inline AdjList rgraph_smallworld(
     epiworld_fast_uint n,
     epiworld_fast_uint k,
     epiworld_double p,
     bool directed,
-    Model<TSeq> & model
+    Model & model
 ) {
 
     // Creating the ring lattice
@@ -498,19 +441,17 @@ inline AdjList rgraph_smallworld(
  * Since block sizes and number of connections between blocks are fixed,
  * this routine is fully deterministic.
  *
- * @tparam TSeq
  * @param n Size of the network
  * @param blocksize Size of the block.
  * @param ncons Number of connections between blocks
  * @param model A model
  * @return AdjList
  */
-template<typename TSeq>
 inline AdjList rgraph_blocked(
     epiworld_fast_uint n,
     epiworld_fast_uint blocksize,
     epiworld_fast_uint ncons,
-    Model<TSeq>&
+    Model&
 ) {
 
     std::vector< int > source_;
@@ -609,7 +550,6 @@ inline AdjList rgraph_blocked(
  * Reference: V. Batagelj and U. Brandes, "Efficient generation of large
  * random networks," Physical Review E, vol. 71, no. 3, 2005.
  *
- * @tparam TSeq Type of the sequence (template parameter of the model).
  * @param block_sizes A vector of size \f$K\f$ indicating the number of agents
  *   per block. The total number of agents is \f$\sum_k \text{block\_sizes}[k]\f$.
  * @param mixing_matrix A vector of size \f$K \times K\f$ representing the
@@ -627,12 +567,11 @@ inline AdjList rgraph_blocked(
  * @throws std::range_error If any mixing matrix entry is negative or if
  *   \f$M(g, h) / n_h > 1\f$ for any pair of blocks.
  */
-template<typename TSeq>
 inline AdjList rgraph_sbm(
     const std::vector< size_t > & block_sizes,
     const std::vector< double > & mixing_matrix,
     bool row_major,
-    Model<TSeq> & model
+    Model & model
 ) {
 
     size_t n_blocks = block_sizes.size();

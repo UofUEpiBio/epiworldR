@@ -155,7 +155,7 @@ outbreak_sizes <- function(m, nthreads) {
                  verbose = FALSE, nthreads = nthreads)
   )
   res <- run_multiple_get_results(m, nthreads = nthreads)$total_hist
-  res <- res[res$date == 40 & res$state == "Recovered", ]
+  res <- res[res$date == 40 & res$stage == "Recovered", ]
   res$counts[order(res$sim_num)]
 }
 
@@ -267,7 +267,7 @@ total_removed <- function(ties, bubble_contact_prob = 1) {
             layer = "household", bubble_contact_prob = bubble_contact_prob)
     verbose_off(m)
     run(m, ndays = 60, seed = s)
-    sum(get_agents_states(m) == "Removed")
+    sum(get_agents_stages(m) == "Removed")
   }))
 }
 expect_true(total_removed("complete") > total_removed("existing"))

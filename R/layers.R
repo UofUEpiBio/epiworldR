@@ -169,6 +169,8 @@ add_layer <- function(model, layer) {
   stopifnot_model(model)
   stopifnot_layer(layer)
   add_layer_cpp(model, layer)
+  if (uses_r(layer))
+    attr(model, "single_threaded") <- TRUE
   invisible(model)
 }
 

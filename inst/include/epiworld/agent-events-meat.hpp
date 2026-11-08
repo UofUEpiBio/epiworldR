@@ -1,12 +1,11 @@
 #ifndef EPIWORLD_AGENT_EVENTS_MEAT_HPP
 #define EPIWORLD_AGENT_EVENTS_MEAT_HPP
 
-template<typename TSeq>
-inline void Model<TSeq>::_event_add_virus(Event<TSeq> & a)
+inline void Model::_event_add_virus(Event & a)
 {
 
-    Agent<TSeq> *  p = a.agent;
-    VirusPtr<TSeq> & v = a.virus;
+    Agent *  p = a.agent;
+    VirusPtr & v = a.virus;
     
     db.record_transmission(
         v->get_agent() ? v->get_agent()->get_id() : -1,
@@ -49,12 +48,11 @@ inline void Model<TSeq>::_event_add_virus(Event<TSeq> & a)
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::_event_add_tool(Event<TSeq> & a)
+inline void Model::_event_add_tool(Event & a)
 {
 
-    Agent<TSeq> * p = a.agent;
-    ToolPtr<TSeq> & t = a.tool;
+    Agent * p = a.agent;
+    ToolPtr & t = a.tool;
     
     // Update tool accounting
     p->tools.emplace_back(std::move(t));
@@ -86,15 +84,11 @@ inline void Model<TSeq>::_event_add_tool(Event<TSeq> & a)
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::_event_rm_virus(Event<TSeq> & a)
+inline void Model::_event_rm_virus(Event & a)
 {
 
-    Agent<TSeq> * p    = a.agent;
-    VirusPtr<TSeq> & v = a.virus;
-
-    // Calling the virus action over the removed virus
-    v->post_recovery(this);
+    Agent * p    = a.agent;
+    VirusPtr & v = a.virus;
 
     p->virus = nullptr;
 
@@ -128,12 +122,11 @@ inline void Model<TSeq>::_event_rm_virus(Event<TSeq> & a)
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
+inline void Model::_event_rm_tool(Event & a)
 {
 
-    Agent<TSeq> * p = a.agent;
-    ToolPtr<TSeq> & t = a.tool;
+    Agent * p = a.agent;
+    ToolPtr & t = a.tool;
     bool removed = false;
 
     if (t)
@@ -142,7 +135,7 @@ inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
         auto new_end = std::remove_if(
             p->tools.begin(),
             p->tools.end(),
-            [&t](const ToolPtr<TSeq> & tool_ptr) -> bool
+            [&t](const ToolPtr & tool_ptr) -> bool
             {
                 return tool_ptr && (tool_ptr->get_id() == t->get_id());
             }
@@ -190,11 +183,10 @@ inline void Model<TSeq>::_event_rm_tool(Event<TSeq> & a)
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::_event_change_state(Event<TSeq> & a)
+inline void Model::_event_change_state(Event & a)
 {
 
-    Agent<TSeq> * p = a.agent;
+    Agent * p = a.agent;
 
     if ((a.new_state != -99) && (static_cast<int>(p->state) != a.new_state))
     {

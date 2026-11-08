@@ -9,19 +9,17 @@
  * @brief Global event that distributes a tool to agents with probability p.
  * @ingroup model_utilities
  * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param p Probability of distributing the tool.
  * @param tool Tool function.
- * @return std::function<void(Model<TSeq>*)> 
+ * @return std::function<void(Model*)> 
  */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalevent_tool(
-    Tool<TSeq> & tool,
+inline std::function<void(Model*)> globalevent_tool(
+    Tool & tool,
     double p
 ) {
 
-    std::function<void(Model<TSeq>*)> fun = [p,&tool](
-        Model<TSeq> * model
+    std::function<void(Model*)> fun = [p,&tool](
+        Model * model
         ) -> void {
 
         for (auto & agent : model->get_agents())
@@ -58,21 +56,19 @@ inline std::function<void(Model<TSeq>*)> globalevent_tool(
  * p = 1 / (1 + exp(-\sum_i coef_i * agent(vars_i))).
  * @ingroup model_utilities
  * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param coefs Vector of coefficients.
  * @param vars Vector of variables.
  * @param tool_fun Tool function.
- * @return std::function<void(Model<TSeq>*)> 
+ * @return std::function<void(Model*)> 
  */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalevent_tool_logit(
-    Tool<TSeq> & tool,
+inline std::function<void(Model*)> globalevent_tool_logit(
+    Tool & tool,
     std::vector< size_t > vars,
     std::vector< double > coefs
 ) {
 
-    std::function<void(Model<TSeq>*)> fun = [coefs,vars,&tool](
-        Model<TSeq> * model
+    std::function<void(Model*)> fun = [coefs,vars,&tool](
+        Model * model
         ) -> void {
 
         for (auto & agent : model->get_agents())
@@ -118,19 +114,17 @@ inline std::function<void(Model<TSeq>*)> globalevent_tool_logit(
  * @brief Global event that updates a parameter in the model.
  * @ingroup model_utilities
  * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
  * @param param Parameter to update.
  * @param value Value to update the parameter to.
- * @return std::function<void(Model<TSeq>*)> 
+ * @return std::function<void(Model*)> 
  */
-template<typename TSeq>
-inline std::function<void(Model<TSeq>*)> globalevent_set_param(
+inline std::function<void(Model*)> globalevent_set_param(
     std::string param,
     double value
 ) {
 
-    std::function<void(Model<TSeq>*)> fun = [value,param](
-        Model<TSeq> * model
+    std::function<void(Model*)> fun = [value,param](
+        Model * model
         ) -> void {
 
         model->set_param(param, value);

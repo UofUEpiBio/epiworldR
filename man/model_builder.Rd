@@ -3,181 +3,77 @@
 \name{model_builder}
 \alias{model_builder}
 \alias{Model}
-\alias{add_state}
-\alias{update_fun_susceptible}
-\alias{epiworld_update_fun}
-\alias{set_infectious_states}
-\alias{get_infectious_states}
-\alias{update_fun_rate}
-\alias{set_state_function}
-\title{Model building functions}
+\alias{set_initial}
+\alias{get_statuses}
+\alias{fire}
+\title{Building a model}
 \usage{
 Model(n)
 
-add_state(model, state_name, update_fun = NULL)
+set_initial(model, assign)
 
-update_fun_susceptible(exclude)
+get_statuses(model)
 
-set_infectious_states(model, states)
-
-get_infectious_states(model)
-
-update_fun_rate(param_names, target_states)
-
-set_state_function(model, state_name, update_fun)
+fire(model, transition, agent_id)
 }
 \arguments{
 \item{n}{Number of individuals in the population.}
 
-\item{model}{An object of class \link{epiworld_model}.}
+\item{model}{An object of class \code{epiworld_model}.}
 
-\item{state_name}{A string with the name of the state to be added.}
+\item{assign}{A placement from the \link{assign} functions whose labels are
+stages without the virus (e.g., \code{assign_shares(c(Recovered = 0.2))}).}
 
-\item{update_fun}{An object of class \code{epiworld_update_fun} with
-the update function to be used for the new state. A \code{NULL} value
-can be used if the state does not update (e.g., a "dead" state).}
+\item{transition}{Character scalar. A declared transition, by name (see
+\code{\link[=add_external]{add_external()}}).}
 
-\item{exclude}{Defunct. Use \code{set_infectious_states()} instead.}
-
-\item{states}{An integer vector with the indices (starting at 0) of the
-states whose agents transmit; \code{integer(0)} makes every state infectious.}
-
-\item{param_names}{A string vector with the name(s) of the parameter(s) to be
-used in the update function.}
-
-\item{target_states}{An integer vector with the state index(es) to which the
-agent will transition when the update function is executed.}
+\item{agent_id}{Integer scalar. The agent (starting at 0).}
 }
 \value{
 \itemize{
-\item The function \code{Model()} returns a new model object of class
-\link{epiworld_model}.
-}
-
-\itemize{
-\item The function \code{add_state()} returns the modified model object
-with the new state added. The function is called for its side
-effects and returns the modified model invisibly.
-}
-
-\itemize{
-\item The function \code{update_fun_susceptible()} returns an object of class
-\code{epiworld_update_fun} that can be used as an update function for a
-susceptible state.
-}
-
-\itemize{
-\item \code{set_infectious_states()} returns the model invisibly, and
-\code{get_infectious_states()} the states set (empty: every state).
-}
-
-\itemize{
-\item The function \code{update_fun_rate()} returns an object of class
-\code{epiworld_update_fun} that can be used as an update function
-for a state that updates at a constant rate (e.g., recovery, death).
-}
-
-\itemize{
-\item The function \code{set_state_function()} returns the modified model object with
-the specified update function for the given state. The function is called
-for its side effects and returns the modified.
+\item \code{Model()} returns a model, of class \code{epiworld_model}.
+\item \code{set_initial()} returns the model (invisibly).
+\item \code{get_statuses()} returns the labels of the model's statuses.
+\item \code{fire()} returns \code{TRUE} if the agent moved.
 }
 }
 \description{
-Functions to build models from scratch (or to modify existing models).
+A model built from scratch: a population (\code{Model(n)}), its parameters
+(\code{\link[=add_param]{add_param()}}), its contact layers (\code{\link[=add_layer]{add_layer()}}) and its viruses
+(\code{\link[=add_virus]{add_virus()}}). The first virus gives the model its stages (see \code{\link[=virus]{virus()}}).
 }
 \details{
-The model building functions allow users to create new models by adding
-states, parameters, viruses, tools and other components. These functions are
-useful for users who want to create custom models that are not included in
-the package or to modify existing models.
+\code{set_initial()} places agents, at the start of each run, in stages without
+the virus (e.g., recovered or vaccinated at the start). It draws from the
+agents that are still in the first stage after the viruses are placed.
 
-\code{update_fun_susceptible()} draws a susceptible agent's infection from its
-contacts in every layer of the model. Only contacts in the model's
-infectious states transmit: by default every state (any agent carrying a
-virus), or the states set with \code{set_infectious_states()}. Use it when a
-virus has a delayed effect on agents (e.g., a latent period) or when agents
-can recover but still carry the virus for some time. Agents in the other
-states can still be met (in a mixing layer, they take their share of each
-agent's contacts). Called during a run (e.g., from a global event),
-\code{set_infectious_states()} applies from the next day.
+A model without statuses has one, \code{"Free"}; the models that have statuses
+(e.g., \code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}}) declare them in C++. \code{get_statuses()} lists
+them.
 
-The \code{update_fun_rate()} function creates an update function for a state that
-updates at a constant rate (e.g., recovery, death). The \code{param_names}
-argument specifies the name(s) of the parameter(s) that will be used in the
-update function (e.g., "Recovery rate"). The \code{target_states} argument
-specifies the state index(es) to which the agent will transition when the
-update function is executed (e.g., 3 for a transition to a "Removed" state).
-The function returns an object of class \code{epiworld_update_fun} that can be
-used as an update function for a state in the model.
-
-Rates in the \code{update_fun_rate()} are daily probabilities of transitioning
-to the target state(s). For example, if the recovery rate is 0.1, then there
-is a 10\% chance that an infected agent will transition to the "Removed"
-state each day.
+\code{fire()} applies a declared transition to an agent now (e.g., an external
+transition from a global event). It returns whether the agent moved: it
+does not if it is not in one of the transition's stages.
 }
 \examples{
-# Create a new model
+flu <- virus("Flu")
+add_stage(flu, "Susceptible")
+add_stage(flu, "Infected", infectious = TRUE)
+add_stage(flu, "Recovered")
+add_infection(flu, "Susceptible", "Infected", rate = "Transmission rate")
+add_rate(flu, "Infected", "Recovered", rate = "Recovery rate")
+
 model <- Model(1000)
+add_param(model, "Transmission rate", 0.3)
+add_param(model, "Recovery rate", 0.1)
+add_layer(model, layer_network("contacts", graph_smallworld(8, 0.1)))
+add_virus(model, flu, assign_share(0.01))
 
-# Adding recovery rate
-add_param(model, "Rec Rate", 0.1)
-add_param(model, "Trans Rate", 0.5)
+# A fifth of the agents start recovered
+set_initial(model, assign_shares(c(Recovered = 0.2)))
 
-# Creating the update function for the susceptible state
-update_fun_s <- update_fun_susceptible()
-
-# Adding the susceptible state to the model
-add_state(model, "S", update_fun_s)
-
-# Creating the update function for the infected
-update_fun_i <- update_fun_rate(
-  param_names = "Rec Rate",
-  target_states = 2L
-)
-
-# Adding the infected state to the model
-add_state(model, "I", update_fun_i)
-
-# Adding the recovered state to the model
-add_state(model, "R", NULL)
-
-# Recovered agents (state 2) keep the virus, but only the infected
-# (state 1) transmit
-set_infectious_states(model, 1L)
-
-# Creating a virus
-flu <- virus(
-  "Flu", 0, .5, .2, .01,
-  prevalence = 0, as_proportion = TRUE
-)
-
-# We need to specify the effect that the virus
-# has on agents when assigned, recovered, or removed.
-# States are indexed starting at 0. In this model:
-# 0 = S, 1 = I, 2 = R
-virus_set_state(flu, 1, 2, 2)
-
-# We can set the transmission rate to be a function
-# of the parameter "Trans Rate" using the
-# set_prob_infecting_ptr function.
-set_prob_infecting_ptr(flu, model, "Trans Rate")
-
-set_distribution_virus(
-  flu,
-  distribute_virus_randomly(1L, FALSE)
-)
-
-# Adding the virus to the model
-add_virus(model, flu)
-
-# Adding a small-world network
-add_layer(model, layer_network("network", graph_smallworld(k = 20, p = .01)))
-
-# Running the model
-run(model, ndays = 100, seed = 1912)
-
-summary(model)
-
+run(model, ndays = 50, seed = 1)
+get_stages(model)
+get_statuses(model)
 }
-\concept{model-building-functions}
+\concept{model-builder}

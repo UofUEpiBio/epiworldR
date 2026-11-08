@@ -4,9 +4,8 @@
 #include <memory>
 #include "globalevent-bones.hpp"
 
-template<typename TSeq>
-inline GlobalEvent<TSeq>::GlobalEvent(
-    GlobalFun<TSeq> fun,
+inline GlobalEvent::GlobalEvent(
+    GlobalFun fun,
     std::string name,
     int day
     )
@@ -16,8 +15,7 @@ inline GlobalEvent<TSeq>::GlobalEvent(
     this->day = day;
 }
 
-template<typename TSeq>
-inline void GlobalEvent<TSeq>::operator()(Model<TSeq> * m, int day)
+inline void GlobalEvent::operator()(Model * m, int day)
 {   
     
     if (this->fun == nullptr)
@@ -31,38 +29,32 @@ inline void GlobalEvent<TSeq>::operator()(Model<TSeq> * m, int day)
 
 }
 
-template<typename TSeq>
-inline void GlobalEvent<TSeq>::reset(Model<TSeq> *)
+inline void GlobalEvent::reset(Model *)
 {
     return;
 }
 
-template<typename TSeq>
-inline void GlobalEvent<TSeq>::set_name(std::string name)
+inline void GlobalEvent::set_name(std::string name)
 {
     this->name = name;
 }
 
-template<typename TSeq>
-inline std::string GlobalEvent<TSeq>::get_name() const
+inline std::string GlobalEvent::get_name() const
 {
     return this->name;
 }
 
-template<typename TSeq>
-inline void GlobalEvent<TSeq>::set_day(int day)
+inline void GlobalEvent::set_day(int day)
 {
     this->day = day;
 }
 
-template<typename TSeq>
-inline int GlobalEvent<TSeq>::get_day() const
+inline int GlobalEvent::get_day() const
 {
     return this->day;
 }
 
-template<typename TSeq>
-inline void GlobalEvent<TSeq>::print() const
+inline void GlobalEvent::print() const
 {
     printf_epiworld(
         "Global action: %s\n"
@@ -72,22 +64,19 @@ inline void GlobalEvent<TSeq>::print() const
         );
 }
 
-template<typename TSeq>
-inline bool GlobalEvent<TSeq>::operator==(const GlobalEvent<TSeq> & other) const
+inline bool GlobalEvent::operator==(const GlobalEvent & other) const
 {
     return (this->name == other.name) && (this->day == other.day);
 }
 
-template<typename TSeq>
-inline bool GlobalEvent<TSeq>::operator!=(const GlobalEvent<TSeq> & other) const
+inline bool GlobalEvent::operator!=(const GlobalEvent & other) const
 {
     return !(*this == other);
 }
 
-template<typename TSeq>
-inline std::unique_ptr<GlobalEvent<TSeq>> GlobalEvent<TSeq>::clone_ptr() const
+inline std::unique_ptr<GlobalEvent> GlobalEvent::clone_ptr() const
 {
-    return std::make_unique<GlobalEvent<TSeq>>(*this);
+    return std::make_unique<GlobalEvent>(*this);
 }
 
 #endif

@@ -30,14 +30,14 @@
 #'
 #' ## Setup LFMCMC
 #' # Extract the observed data from the model
-#' obs_data <- get_today_total(model_sir)
+#' obs_data <- get_today_total(model_sir)$counts
 #'
 #' # Define the simulation function
 #' simfun <- function(params, lfmcmc_obj) {
 #'   set_param(model_sir, "Recovery rate", params[1])
 #'   set_param(model_sir, "Transmission probability", params[2])
 #'   run(model_sir, ndays = 50)
-#'   res <- get_today_total(model_sir)
+#'   res <- get_today_total(model_sir)$counts
 #'   return(res)
 #' }
 #'
@@ -71,7 +71,7 @@
 #' )
 #'
 #' # Print the results
-#' set_stats_names(lfmcmc_model, get_states(model_sir))
+#' set_stats_names(lfmcmc_model, get_stages(model_sir))
 #' set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 #'
 #' print(lfmcmc_model)
@@ -166,7 +166,9 @@ use_proposal_norm_reflective <- function(lfmcmc) {
 set_simulation_fun <- function(lfmcmc, fun) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_simulation_fun_cpp(lfmcmc, fun)
+
+  # Counts (e.g., get_today_total(model)$counts) are integers; C++ takes doubles
+  set_simulation_fun_cpp(lfmcmc, function(...) as.double(fun(...)))
   invisible(lfmcmc)
 
 }
@@ -176,7 +178,7 @@ set_simulation_fun <- function(lfmcmc, fun) {
 set_summary_fun <- function(lfmcmc, fun) {
 
   stopifnot_lfmcmc(lfmcmc)
-  set_summary_fun_cpp(lfmcmc, fun)
+  set_summary_fun_cpp(lfmcmc, function(...) as.double(fun(...)))
   invisible(lfmcmc)
 
 }

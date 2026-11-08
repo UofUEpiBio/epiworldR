@@ -9,7 +9,6 @@
 \alias{verbose_on}
 \alias{run}
 \alias{summary.epiworld_model}
-\alias{get_states}
 \alias{get_param}
 \alias{add_param}
 \alias{add_param.epiworld_model}
@@ -26,7 +25,6 @@
 \alias{get_agents_data_ncols}
 \alias{get_virus}
 \alias{get_tool}
-\alias{initial_states}
 \title{Methods for epiworldR objects}
 \usage{
 queuing_on(x)
@@ -40,8 +38,6 @@ verbose_on(x)
 run(model, ndays, seed = NULL)
 
 \method{summary}{epiworld_model}(object, ...)
-
-get_states(x)
 
 get_param(x, pname)
 
@@ -74,8 +70,6 @@ get_agents_data_ncols(model)
 get_virus(model, virus_pos)
 
 get_tool(model, tool_pos)
-
-initial_states(model, proportions)
 }
 \arguments{
 \item{x}{An object of class \code{epiworld_model}.}
@@ -103,9 +97,6 @@ in the model}
 
 \item{tool_pos}{Integer. Relative location (starting from 0) of the tool
 in the model}
-
-\item{proportions}{Numeric vector. Proportions in which agents will be
-distributed (see details).}
 }
 \value{
 \itemize{
@@ -119,10 +110,6 @@ distributed (see details).}
 
 \itemize{
 \item The \code{summary} function prints a more detailed view of the model, and returns the same model invisibly.
-}
-
-\itemize{
-\item The \code{get_states} function returns the unique states found in a model.
 }
 
 \itemize{
@@ -187,10 +174,6 @@ of \code{epiworld_model}.
 \itemize{
 \item \code{get_tool} returns a \link{tool}.
 }
-
-\itemize{
-\item \code{inital_states} returns the model with an updated initial state.
-}
 }
 \description{
 The functions described in this section are methods for objects of class
@@ -231,7 +214,7 @@ verbose_on(model_sirconn)
 verbose_off(model_sirconn)
 run(model_sirconn, ndays = 100, seed = 1912)
 
-get_states(model_sirconn) # Returns all unique states found within the model.
+get_stages(model_sirconn) # Returns the model's stages.
 
 get_param(model_sirconn, "Contact rate") # Returns the value of the selected
 # parameter within the model object.
@@ -285,7 +268,7 @@ get_agents_data_ncols(model_sirconn) # Returns number of columns
 get_virus(model_sirconn, 0) # Returns information about the first virus in
 # the model (index begins at 0).
 
-add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1, prevalence = 0.5, as_prop = TRUE))
+add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1), assign_share(0.5))
 get_tool(model_sirconn, 0) # Returns information about the first tool in the
 # model. In this case, there are no tools so an
 # error message will occur.

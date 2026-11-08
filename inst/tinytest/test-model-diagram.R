@@ -25,16 +25,16 @@ test_output_file <- tempfile("mermaid_diagram", fileext = ".txt")
 
 # Check draw_mermaid_from_data
 expect_silent(md_basic <- draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = c(get_transition_probability(model))
 ))
 expect_silent(md_self_transitions <- draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = c(get_transition_probability(model)),
     allow_self_transitions = TRUE
 ))
 expect_message(md_with_output_file <- draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = c(get_transition_probability(model)),
     output_file = test_output_file
 ), "Diagram written")
@@ -127,16 +127,16 @@ expect_error(draw_mermaid_from_data(
     transition_probs = c(get_transition_probability(model))
 ), "must be a string vector")
 expect_error(draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = NA
 ), "must be a numeric vector")
 expect_error(draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = c(get_transition_probability(model)),
     output_file = NA
 ), "must be a string")
 expect_error(draw_mermaid_from_data(
-    states = get_states(model),
+    states = rownames(get_transition_probability(model)),
     transition_probs = c(get_transition_probability(model)),
     allow_self_transitions = "Not a Bool"
 ), "must be a boolean")
@@ -190,3 +190,8 @@ expect_error(draw_mermaid_from_files(
     transitions_files = test_files,
     allow_self_transitions = "Not a Bool"
 ), "must be a boolean")
+# The natural history, drawn from its declarations (no run needed) -----------
+nh_diagram <- draw_natural_history(ModelSEIR("flu", 100, .01, .2, 4, .1))
+expect_inherits(nh_diagram, "epiworld_diagram")
+expect_true(grepl("s1[\"Exposed\"]:::carrier", nh_diagram, fixed = TRUE))
+expect_true(grepl("s1 ==>", nh_diagram, fixed = TRUE)) # The latent period

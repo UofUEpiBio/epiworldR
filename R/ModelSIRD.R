@@ -14,10 +14,10 @@
 #' @export
 #' @concept general-models
 #' @details
-#' The [initial_states] function allows the user to set the initial state of the
-#' model. The user must provide a vector of proportions indicating the following
-#' values: (1) proportion of non-infected agents already removed, and (2) proportion of
-#' non-ifected agents already deceased.
+#' [set_initial()] places agents, at the start of each run, in stages without
+#' the virus (e.g., `set_initial(model, assign_shares(c(Recovered = 0.2)))`); the
+#' model's stages are listed by [get_stages()]. The model is built by
+#' [make_model()] (see [get_model_info()] for its arguments' limits).
 #' @section Model diagram:
 #' ![](sird.png "SIRD Diagram")
 #' @family Models
@@ -47,17 +47,18 @@
 ModelSIRD <- function(
   name, n, prevalence, transmission_prob, recovery_rate, death_rate
 ) {
-  # Check inputs
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(recovery_rate)
-  stopifnot_double(death_rate)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSIRD_cpp(name, n, prevalence, transmission_prob, recovery_rate, death_rate),
-    class = c("epiworld_sird", "epiworld_model")
+  make_model(
+    "SIRD",
+    list(
+      n                 = n,
+      prevalence        = prevalence,
+      transmission_prob = transmission_prob,
+      recovery_rate     = recovery_rate,
+      death_rate        = death_rate
+    ),
+    virus_name = name
   )
 
 }

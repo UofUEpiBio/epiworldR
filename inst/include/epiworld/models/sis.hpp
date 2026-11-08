@@ -4,7 +4,7 @@
 #include "../model-bones.hpp"
 
 /**
- * @brief Template for a Susceptible-Infected-Susceptible (SIS) model
+ * @brief A Susceptible-Infected-Susceptible (SIS) model
  * 
  * ![Model Diagram](../assets/img/sis.png)
  * 
@@ -12,18 +12,17 @@
  * 
  * @param vname std::string Name of the virus
  * @param n Number of agents.
- * @param initial_prevalence epiworld_double Initial prevalence
- * @param initial_efficacy epiworld_double Initial susceptibility_reduction of the immune system
- * @param initial_recovery epiworld_double Initial recovery_rate rate of the immune system
+ * @param prevalence epiworld_double Initial share of infected agents
+ * @param transmission_prob epiworld_double Probability of transmission per contact
+ * @param recovery_rate epiworld_double Daily probability of recovery
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelSIS : public Model<TSeq>
+class ModelSIS : public Model
 {
 
 public:
 
-    static const int SUSCEPTIBLE = 0;
-    static const int INFECTED    = 1;
+    static constexpr int SUSCEPTIBLE = 0;
+    static constexpr int INFECTED    = 1;
 
     ModelSIS() = delete;
 
@@ -35,10 +34,12 @@ public:
         epiworld_double recovery_rate
     );
 
+
+    /// This model's entry in a `ModelRegistry`: arguments and builder
+    static ModelInfo model_info();
 };
 
-template<typename TSeq>
-inline ModelSIS<TSeq>::ModelSIS(
+inline ModelSIS::ModelSIS(
     const std::string & vname,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -51,24 +52,41 @@ inline ModelSIS<TSeq>::ModelSIS(
 
     this->set_name("Susceptible-Infected-Susceptible (SIS)");
 
-    // Adding statuses
-    this->add_state("Susceptible", default_update_susceptible<TSeq>);
-    this->add_state("Infected", default_update_exposed<TSeq>);
-
-    // Setting up parameters
     this->add_param(transmission_prob, "Transmission probability");
     this->add_param(recovery_rate, "Recovery rate");
 
-    // Preparing the virus -------------------------------------------
-    Virus<TSeq> virus(vname, prevalence, true);
-    virus.set_state(INFECTED, SUSCEPTIBLE, SUSCEPTIBLE);
-    
-    virus.set_prob_infecting("Transmission probability");
-    virus.set_prob_recovery("Recovery rate");
-    virus.set_prob_death(0.0);
-    
-    this->add_virus(virus);
+    Virus virus(vname);
+    virus.add_stage("Susceptible");
+    virus.add_stage("Infected", stage::infectious);
+    virus.infection(SUSCEPTIBLE, INFECTED, "Transmission probability");
+    virus.rate(INFECTED, SUSCEPTIBLE, "Recovery rate").effect(Effect::recovery);
 
+    this->add_virus(virus, assign::share(prevalence));
+
+}
+
+inline ModelInfo ModelSIS::model_info()
+{
+
+    using uint_t = epiworld_fast_uint;
+
+    return {"SIS", "Susceptible-Infected-Susceptible",
+        "Infected agents become susceptible again when they recover.",
+        "Disease",
+        {
+            ParamInfo::agents(10000),
+            ParamInfo::prevalence(0.01),
+            ParamInfo::probability("transmission_prob", "Transmission probability",
+                0.05, "Probability that a contact with an infected agent infects."),
+            ParamInfo::probability("recovery_rate", "Recovery rate", 0.14,
+                "Daily probability that an infected agent recovers.")
+        },
+        [](const ModelArgs & a) -> std::unique_ptr< Model > {
+            return std::make_unique< ModelSIS >(
+                a.virus_name(), static_cast< uint_t >(a("n")), a("prevalence"),
+                a("transmission_prob"), a("recovery_rate")
+            );
+        }};
 }
 
 #endif

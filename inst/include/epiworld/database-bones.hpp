@@ -1,13 +1,10 @@
 #ifndef EPIWORLD_DATABASE_BONES_HPP
 #define EPIWORLD_DATABASE_BONES_HPP
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class Virus;
 
-template<typename TSeq>
 class UserData;
 
 /**
@@ -17,30 +14,24 @@ class UserData;
  * <a href="../impl/data-collection-and-analysis.md">Data Collection and Analysis</a>,
  * <a href="../impl/generation-interval-and-reproductive-number.md">Generation Interval and Reproductive Number Calculation</a>
  *
- * @tparam TSeq
  */
-template<typename TSeq>
 class DataBase {
-    friend class Model<TSeq>;
+    friend class Model;
 private:
-    Model<TSeq> * model;
+    Model * model;
 
-    HospitalizationsTracker<TSeq> m_hospitalizations; ///< Tracker for hospitalization events
+    HospitalizationsTracker m_hospitalizations; ///< Tracker for hospitalization events
 
-    // Variants information
-    MapVec_type<int,int> virus_id; ///< The squence is the key
+    // Variants, by id: the viruses added to the model first (founders, kept
+    // even if removed, so ids stay put), then the run's mutations
+    size_t n_founders = 0u;
     std::vector< std::string > virus_name;
-    std::vector< TSeq> virus_sequence;
     std::vector< int > virus_origin_date;
     std::vector< int > virus_parent_id;
 
-    MapVec_type<int,int> tool_id; ///< The squence is the key
+    // Tools, by id
     std::vector< std::string > tool_name;
-    std::vector< TSeq> tool_sequence;
     std::vector< int > tool_origin_date;
-
-    std::function<std::vector<int>(const TSeq&)> seq_hasher = default_seq_hasher<TSeq>;
-    std::function<std::string(const TSeq &)> seq_writer = default_seq_writer<TSeq>;
 
     // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     std::vector< std::vector<int> > today_virus;
@@ -85,7 +76,20 @@ private:
 
     std::vector< int > transition_matrix;
 
-    UserData<TSeq> user_data;
+    /**
+     * @name Declared transitions (natural history)
+     * @details How many agents took each declared transition, since the last
+     * record (see `get_hist_transitions()`).
+     */
+    ///@{
+    std::vector< int > transition_today;       ///< [transition]
+    std::vector< int > hist_transition_date;
+    std::vector< int > hist_transition_id;
+    std::vector< int > hist_transition_counts;
+    void record_declared_transition(int id) { ++transition_today[static_cast< size_t >(id)]; }
+    ///@}
+
+    UserData user_data;
 
     void update_state(
         epiworld_fast_uint prev_state,
@@ -109,6 +113,26 @@ private:
 
     void record_transition(epiworld_fast_uint from, epiworld_fast_uint to, bool undo);
 
+    /**
+     * @brief The status and the stage of a state of the engine (the one place
+     * the pair is split; models without statuses have the status "Free").
+     */
+    void split_state(
+        epiworld_fast_uint state,
+        std::string & status,
+        std::string & stage
+    ) const;
+
+    /// `split_state()` over a vector of states.
+    void split_states(
+        const std::vector< epiworld_fast_uint > & states,
+        std::vector< std::string > * status,
+        std::vector< std::string > * stage
+    ) const;
+
+    /// Today's total of a stage (`by_stage`) or of a status.
+    int today_total_of(const std::string & name, bool by_stage) const;
+
 
 public:
 
@@ -118,55 +142,64 @@ public:
     #endif
 
     DataBase() = delete;
-    DataBase(Model<TSeq> & m) : model(&m), m_hospitalizations(), user_data(m) {};
-    DataBase(const DataBase<TSeq> & db);
-    // DataBase<TSeq> & operator=(const DataBase<TSeq> & m);
+    DataBase(Model & m) : model(&m), m_hospitalizations(), user_data(m) {};
+    DataBase(const DataBase & db);
+    // DataBase & operator=(const DataBase & m);
 
     /**
-     * @brief Registering a new variant
+     * @brief Records a new variant, giving the virus its id
      *
-     * @param v Pointer to the new virus.
-     * Since viruses are originated in the agent, the numbers simply move around.
-     * From the parent virus to the new virus. And the total number of infected
-     * does not change.
-     * @param founder `true` when `Model::add_virus()` registers the virus,
-     * which then starts its own lineage (unless its sequence is on record).
+     * @param v The virus.
+     * @param founder `true` when `Model::add_virus()` records the virus: it
+     * starts its own lineage (and the variants of the last run are dropped).
+     * Otherwise `v` has mutated: the new variant is a child of the id it had,
+     * and its agent's counts move from the parent to it.
      */
-    void record_virus(Virus<TSeq> & v, bool founder = false);
-    void record_tool(Tool<TSeq> & t);
-    void set_seq_hasher(std::function<std::vector<int>(TSeq)> fun);
+    void record_virus(Virus & v, bool founder = false);
+    void record_tool(Tool & t); ///< Gives the tool the next id.
     void reset();
-    Model<TSeq> * get_model();
+    void drop_variants(); ///< Keeps the founders' records, dropping the run's variants.
+    Model * get_model();
     void record();
 
-    const std::vector< TSeq > & get_sequence() const;
     const std::vector< int > & get_nexposed() const;
     size_t size() const;
 
     /**
      * @name Get recorded information from the model
      *
-     * @param what std::string, The state, e.g., 0, 1, 2, ...
-     * @return In `get_today_total`, the current counts of `what`.
-     * @return In `get_today_virus`, the current counts of `what` for
+     * @details The counts are by status and stage: one row per pair (and
+     * day, and virus or tool, in the histories). Models without statuses
+     * report the status "Free". A total by stage or by status is a sum over
+     * the rows.
+     *
+     * @param stage A stage's name.
+     * @param status A status's name.
+     * @return In `get_today_total_stage(stage)` and
+     * `get_today_total_status(status)`, how many agents are in that stage (in
+     * any status) or in that status (in any stage) now. A stage and a status
+     * may share a name; each function looks only among its own.
+     * @return In `get_today_total`, the current counts of each pair.
+     * @return In `get_today_virus`, the current counts of each pair for
      * each virus.
-     * @return In `get_hist_total`, the time series of `what`
-     * @return In `get_hist_virus`, the time series of what for each virus.
-     * @return In `get_hist_total_date` and `get_hist_virus_date` the
-     * corresponding date
+     * @return In `get_hist_total`, the time series of each pair.
+     * @return In `get_hist_virus` and `get_hist_tool`, the time series of
+     * each pair for each virus and tool.
      * @return In `get_active_cases`, the number of active cases (currently infected individuals)
      * for each virus at each point in time.
      */
     ///@{
-    int get_today_total(const std::string & what) const;
-    int get_today_total(const epiworld_fast_uint & what) const;
+    int get_today_total_stage(const std::string & stage) const;
+    int get_today_total_status(const std::string & status) const;
     void get_today_total(
-        std::vector< std::string > * state = nullptr,
-        std::vector< int > * counts = nullptr
+        std::vector< std::string > * status,
+        std::vector< std::string > * stage,
+        std::vector< int > * counts
     ) const;
 
     void get_today_virus(
-        std::vector< std::string > & state,
+        std::vector< std::string > & status,
+        std::vector< std::string > & stage,
         std::vector< int > & id,
         std::vector< int > & counts
     ) const;
@@ -177,27 +210,45 @@ public:
 
     void get_hist_total(
         std::vector< int > * date,
-        std::vector< std::string > * state,
+        std::vector< std::string > * status,
+        std::vector< std::string > * stage,
         std::vector< int > * counts
     ) const;
 
     void get_hist_virus(
         std::vector< int > & date,
         std::vector< int > & id,
-        std::vector< std::string > & state,
+        std::vector< std::string > & status,
+        std::vector< std::string > & stage,
         std::vector< int > & counts
     ) const;
 
     void get_hist_tool(
         std::vector< int > & date,
         std::vector< int > & id,
-        std::vector< std::string > & state,
+        std::vector< std::string > & status,
+        std::vector< std::string > & stage,
+        std::vector< int > & counts
+    ) const;
+
+    /**
+     * @brief How many agents took each declared transition of the natural
+     * history, by day.
+     * @details One row per recorded day and transition, the transitions in
+     * the order they were declared. Seeding and initial placements are not
+     * transitions. Requires a natural history.
+     */
+    void get_hist_transitions(
+        std::vector< int > & date,
+        std::vector< std::string > & transition,
         std::vector< int > & counts
     ) const;
 
     void get_hist_transition_matrix(
-        std::vector< std::string > & state_from,
-        std::vector< std::string > & state_to,
+        std::vector< std::string > & status_from,
+        std::vector< std::string > & stage_from,
+        std::vector< std::string > & status_to,
+        std::vector< std::string > & stage_to,
         std::vector< int > & date,
         std::vector< int > & counts,
         bool skip_zeros
@@ -288,7 +339,7 @@ public:
     void set_user_data(std::vector< std::string > names);
     void add_user_data(std::vector< epiworld_double > x);
     void add_user_data(epiworld_fast_uint j, epiworld_double x);
-    UserData<TSeq> & get_user_data();
+    UserData & get_user_data();
 
 
     /**
@@ -336,8 +387,8 @@ public:
         bool normalize = true
     ) const;
 
-    bool operator==(const DataBase<TSeq> & other) const;
-    bool operator!=(const DataBase<TSeq> & other) const {return !operator==(other);};
+    bool operator==(const DataBase & other) const;
+    bool operator!=(const DataBase & other) const {return !operator==(other);};
 
     /**
      * Calculates the generating time
@@ -374,7 +425,7 @@ public:
      * - If the agent has no tools, a single record with tool_id = -1 and
      *   weight = 1.0
      */
-    void record_hospitalization(Agent<TSeq> & agent);
+    void record_hospitalization(Agent & agent);
 
     /**
      * @brief Get the full time series of hospitalization data.

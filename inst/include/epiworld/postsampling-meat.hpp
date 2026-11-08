@@ -1,8 +1,7 @@
 #ifndef EPIWORLD_POSTSAMPLING_MEAT_HPP
 #define EPIWORLD_POSTSAMPLING_MEAT_HPP
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::set_post_sampling(PostSamplingFun<TSeq> fun)
+inline Model & Model::set_post_sampling(PostSamplingFun fun)
 {
 
     post_sampling_fun = std::move(fun);
@@ -21,8 +20,7 @@ inline Model<TSeq> & Model<TSeq>::set_post_sampling(PostSamplingFun<TSeq> fun)
  * of a model leave the scratch empty, so this is also what makes them safe to
  * continue stepping without a reset.
  */
-template<typename TSeq>
-inline void Model<TSeq>::post_sampling_prepare_scratch()
+inline void Model::post_sampling_prepare_scratch()
 {
 
     if (post_sampling_scratch.counts.size() == population.size())
@@ -40,14 +38,12 @@ inline void Model<TSeq>::post_sampling_prepare_scratch()
 
 }
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::clear_post_sampling()
+inline Model & Model::clear_post_sampling()
 {
     return set_post_sampling(nullptr);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::register_sampled_contact(
+inline void Model::register_sampled_contact(
     size_t infectious_id,
     size_t contacted_id
 )
@@ -56,8 +52,7 @@ inline void Model<TSeq>::register_sampled_contact(
     post_sampling_scratch.pairs.push_back(static_cast< uint32_t >(contacted_id));
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::register_sampled_contacts(
+inline void Model::register_sampled_contacts(
     const size_t * infectious_ids,
     size_t n,
     size_t contacted_id
@@ -76,8 +71,7 @@ inline void Model<TSeq>::register_sampled_contacts(
  * sorted, never an N-sized array) and runs the callback on each group, in
  * ascending id order. The scratch is left clean even if the callback throws.
  */
-template<typename TSeq>
-inline void Model<TSeq>::post_sampling_dispatch()
+inline void Model::post_sampling_dispatch()
 {
 
     auto & sc = post_sampling_scratch;
@@ -88,7 +82,7 @@ inline void Model<TSeq>::post_sampling_dispatch()
 
     // The callback gets the model: it can clear or replace the callback. The
     // whole dispatch runs on a snapshot, so that takes effect next step.
-    const PostSamplingFun<TSeq> fun = post_sampling_fun;
+    const PostSamplingFun fun = post_sampling_fun;
 
     post_sampling_prepare_scratch();
 

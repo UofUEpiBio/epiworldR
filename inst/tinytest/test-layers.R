@@ -114,15 +114,10 @@ set_param(seir, "household weight", 1)
 run(seir, ndays = 20, seed = 1)
 expect_true(nrow(subset(get_transmissions(seir), source >= 0)) > 0)
 
-other <- virus(
-  "other",
-  prevalence     = 0,
-  as_proportion  = TRUE,
-  prob_infecting = .5,
-  recovery_rate  = .1
-)
+other <- clone_epi(get_virus(seir, 0))
+set_name_virus(other, "other")
 add_virus(seir, other)
-add_virus_target(get_layer(seir, "household"), other)
+add_virus_target(get_layer(seir, "household"), get_virus(seir, 1))
 run(seir, ndays = 20, seed = 1)
 expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
 
@@ -147,7 +142,7 @@ expect_equal(unique(subset(get_transmissions(conn), source >= 0)$layer), 1L)
 sir <- ModelSIR("flu", n = 1000, prevalence = 0, transmission_prob = 1,
   recovery_rate = 0)
 verbose_off(sir)
-set_distribution_virus(get_virus(sir, 0), distribute_virus_to_set(0L))
+assign_virus(sir, 0, assign_agents(0L))
 
 hh <- layer_mixing(
   "households",
@@ -157,7 +152,7 @@ hh <- layer_mixing(
 expect_inherits(hh, "epiworld_layer_mixing")
 add_layer(sir, hh)
 
-infected <- function(m) which(get_agents_states(m) == "Infected") - 1L
+infected <- function(m) which(get_agents_stages(m) == "Infected") - 1L
 
 run(sir, ndays = 1, seed = 1)
 expect_equal(infected(sir), 0:9)
@@ -268,7 +263,7 @@ same_run <- function(...) {
   verbose_off(m)
   add_layer(m, layer_mixing("households", (0:999) %/% 10, ...))
   run(m, ndays = 30, seed = 2026)
-  get_agents_states(m)
+  get_agents_stages(m)
 }
 expect_equal(
   same_run(contact_prob = .5),
@@ -294,7 +289,7 @@ expect_error(run(bad, ndays = 1), "agents")
 # a move between runs is an error (the next run would draw them again)
 schools <- layer_mixing(
   "schools",
-  groups       = grouping_random(c(300, 200)),
+  groups       = assign_counts(c(300, 200)),
   contact_prob = .05
 )
 drawn <- ModelSIR("flu", n = 1000, prevalence = .01, transmission_prob = .2,
@@ -311,18 +306,19 @@ expect_identical(draw(1), first)
 expect_false(identical(draw(2), first))
 expect_error(set_group(schools, 0, 1), "drawn at every reset")
 
-# Proportions are of the agents still without a group
+# Shares are of all the agents, drawn in order from those without a group
 halves <- layer_mixing(
   "halves",
-  groups       = grouping_random(c(.5, .5), as_proportion = TRUE),
+  groups       = assign_shares(c(.5, .5)),
   contact_prob = .05
 )
 add_layer(drawn, halves)
 run(drawn, ndays = 1, seed = 1)
 expect_equal(lengths(list(members_of(halves, 0), members_of(halves, 1))),
-  c(500L, 250L))
-expect_error(grouping_random(-1), "non-negative")
-expect_error(grouping_random(1.9), "whole numbers")
+  c(500L, 500L))
+expect_error(assign_counts(-1), "non-negative")
+expect_error(assign_counts(1.9), "whole numbers")
+expect_error(grouping_random(c(300, 200)), "assign_counts")
 
 # Tools and viruses by group: a share of each group of a mixing layer, here a
 # vaccine for 25% and 50% of two schools (100 + 300 agents) and the 10 initial
@@ -336,27 +332,21 @@ add_layer(
 )
 mmr <- tool(
   "MMR",
-  prevalence               = 0,
-  as_proportion            = TRUE,
   susceptibility_reduction = 1,
   transmission_reduction   = 0,
   recovery_enhancer        = 0,
   death_reduction          = 0
 )
-set_distribution_tool(mmr, distribute_tool_to_groups("schools", c(.25, .5)))
-add_tool(schools, mmr)
-set_distribution_virus(
-  get_virus(schools, 0),
-  distribute_virus_to_groups("schools", c(10, 0), as_proportion = FALSE)
-)
+add_tool(schools, mmr, assign_group_shares("schools", c(.25, .5)))
+assign_virus(schools, 0, assign_group_counts("schools", c(10, 0)))
 run(schools, ndays = 1, seed = 1)
 vaxed <- subset(get_hist_tool(schools), date == 0)
 expect_equal(sum(vaxed$counts), 100L + 300L)
-infected <- which(get_agents_states(schools) == "Infected")
+infected <- which(get_agents_stages(schools) == "Infected")
 expect_equal(length(infected), 10L)
 expect_true(all(infected <= 400))
-expect_error(distribute_tool_to_groups(1, .5))
-expect_error(distribute_tool_to_groups("schools", 1.5, as_proportion = FALSE))
+expect_error(assign_group_shares(1, .5), "string")
+expect_error(assign_group_counts("schools", 1.5), "whole numbers")
 
 # A contact rate from a model parameter: a global event on day 10 that sets it
 # to 0 stops new infections from day 11 on
@@ -373,21 +363,21 @@ add_globalevent(crate, globalevent_set_params("Contact rate", 0, day = 10))
 run(crate, ndays = 30, seed = 2211)
 expect_equal(max(subset(get_transmissions(crate), source >= 0)$date), 10)
 
-# Infectious states: Exposed agents that never leave Exposed infect nobody,
-# until every state is made infectious
+# Infectious stages: Exposed agents that never leave Exposed infect nobody
 seir <- ModelSEIR("flu", n = 2000, prevalence = .01, transmission_prob = .5,
   latent_period = 1e9, recovery_rate = 0)
 verbose_off(seir)
-expect_equal(get_infectious_states(seir), 2L)
+expect_identical(
+  get_stages(get_virus(seir, 0))$infectious,
+  c(FALSE, FALSE, TRUE, FALSE)
+)
 add_layer(
   seir,
   layer_mixing("everyone", groups = rep(0, 2000), contact_matrix = 5)
 )
 run(seir, ndays = 5, seed = 1)
 expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
-set_infectious_states(seir, integer(0))
-run(seir, ndays = 5, seed = 1)
-expect_true(nrow(subset(get_transmissions(seir), source >= 0)) > 0L)
+expect_error(set_infectious_states(seir, integer(0)), "infectious = TRUE")
 
 # Defunct functions say what replaces them -------------------------------------
 expect_error(agents_smallworld(sir, 1000, 5, FALSE, .01), "layer_network")
@@ -400,8 +390,8 @@ expect_error(ModelSEIRDCONN(), "ModelSEIRD\\(\\)")
 expect_error(ModelSIRMixing(), "layer_mixing")
 expect_error(ModelSEIRMixing(), "layer_mixing")
 expect_error(ModelSEIRMixingQuarantine(), "ModelSEIRQuarantine")
-expect_error(update_fun_susceptible(exclude = 1L), "set_infectious_states")
+expect_error(update_fun_susceptible(exclude = 1L), "States are gone")
 expect_error(entity("Population 1", 300, FALSE), "layer_mixing")
-expect_error(add_entity(sir), "grouping_random")
-expect_error(distribute_tool_to_entities(c(.5, .5), TRUE), "distribute_tool_to_groups")
-expect_error(distribute_virus_to_entities(c(.5, .5), TRUE), "distribute_virus_to_groups")
+expect_error(add_entity(sir), "assign_counts")
+expect_error(distribute_tool_to_entities(c(.5, .5), TRUE), "assign_group_shares")
+expect_error(distribute_virus_to_entities(c(.5, .5), TRUE), "assign_group_shares")

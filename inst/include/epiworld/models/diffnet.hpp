@@ -7,10 +7,10 @@
 #include "../model-bones.hpp"
 
 /**
- * @brief Template for a Network Diffusion Model
+ * @brief A Network Diffusion Model
  * @ingroup special_models
  * 
- * @param model A Model<TSeq> object where to set up the SIR.
+ * @param model A Model object where to set up the SIR.
  * @param vname std::string Name of the virus
  * @param n Number of agents.
  * @param initial_prevalence epiworld_double Initial prevalence
@@ -18,15 +18,14 @@
  * @param initial_recovery epiworld_double Initial recovery rate of the immune system
  * 
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class ModelDiffNet : public Model<TSeq>
+class ModelDiffNet : public Model
 {
 private:
 public:
 
     // Statuses
-    static const int NONADOPTER = 0;
-    static const int ADOPTER    = 1;
+    static constexpr int NONADOPTER = 0;
+    static constexpr int ADOPTER    = 1;
 
     ModelDiffNet() = delete;
 
@@ -47,8 +46,7 @@ public:
     std::vector< double > params;
 };
 
-template<typename TSeq>
-inline ModelDiffNet<TSeq>::ModelDiffNet(
+inline ModelDiffNet::ModelDiffNet(
     const std::string & innovation_name,
     epiworld_fast_uint n,
     epiworld_double prevalence,
@@ -68,113 +66,81 @@ inline ModelDiffNet<TSeq>::ModelDiffNet(
     this->data_cols = data_cols;
     this->params = params;
 
-    UpdateFun<TSeq> update_non_adopters = [](
-        Agent<TSeq> * p, Model<TSeq> * m
-    ) -> void {
+    std::string parname = std::string("Prob. Adopting ") + innovation_name;
+    this->add_param(prob_adopt, parname);
 
-        // Measuring exposure
-        // If the neighbor is infected, then proceed
-        size_t nviruses = m->get_n_viruses();
-        std::vector< Virus<TSeq>* > innovations(nviruses, {});
-        std::vector< bool > stored(nviruses, false);
+    // Adoption: for each innovation, a logit of the exposure (the share of
+    // neighbors who adopted it, optionally normalized) plus the agent's
+    // features and the baseline probability; one draw picks one, or none
+    InfectionSampler sampler = [](
+        Agent & agent, Model & m
+    ) -> Virus * {
+
+        const size_t nviruses = m.get_n_viruses();
+        std::vector< Virus* > innovations(nviruses, nullptr);
         std::vector< double > exposure(nviruses, 0.0);
 
-        ModelDiffNet<TSeq> * diffmodel = model_cast<ModelDiffNet<TSeq>,TSeq>(m);
+        ModelDiffNet * diffmodel = model_cast<ModelDiffNet>(&m);
 
-        Agent<TSeq> & agent = *p;
-
-        // For each one of the possible innovations, we have to compute
-        // the adoption probability, which is a function of exposure
-        auto & m_ref = *m;
         size_t n_neighbors = 0u;
         // Every network layer, in the order the layers were added
-        for (auto * net : m->get_network_layers())
+        for (auto * net : m.get_network_layers())
         for (auto * neighbor : net->neighbors_view(static_cast< size_t >(agent.get_id())))
         {
 
             ++n_neighbors;
 
-            if (neighbor->get_state() == ModelDiffNet<TSeq>::ADOPTER)
-            {
+            auto & v = neighbor->get_virus();
+            if (v == nullptr)
+                continue;
 
-                auto & v = neighbor->get_virus();
-                
-                if (v == nullptr)
-                    continue;
-    
-                /* And it is a function of susceptibility_reduction as well */ 
-                double p_i =
-                    (1.0 - agent.get_susceptibility_reduction(v, m_ref)) *
-                    (1.0 - agent.get_transmission_reduction(v, m_ref)) 
-                    ; 
-            
-                size_t vid = v->get_id();
-                if (!stored[vid])
-                {
-                    stored[vid] = true;
-                    innovations[vid] = &(*v);
-                }
-                exposure[vid] += p_i;
+            const size_t vid = static_cast< size_t >(v->get_id());
+            if (innovations[vid] == nullptr)
+                innovations[vid] = &(*v);
 
-
-            }
+            exposure[vid] +=
+                (1.0 - agent.get_susceptibility_reduction(v, m)) *
+                (1.0 - agent.get_transmission_reduction(v, m));
 
         }
 
-        // Computing probability of adoption
         for (size_t i = 0u; i < nviruses; ++i)
         {
 
-            if (diffmodel->normalize_exposure)
-                exposure.at(i) /= n_neighbors;
+            if (diffmodel->normalize_exposure && (n_neighbors > 0u))
+                exposure[i] /= static_cast< double >(n_neighbors);
 
             for (auto & j: diffmodel->data_cols)
-                exposure.at(i) += agent(j, m_ref) * diffmodel->params.at(j);
+                exposure[i] += agent(j, m) * diffmodel->params.at(j);
 
             // Baseline probability of adoption
-            double p = m->get_viruses()[i]->get_prob_infecting(m);
-            exposure.at(i) += std::log(p) - std::log(1.0 - p);
+            const double p = m.par(
+                std::string("Prob. Adopting ") + m.get_viruses()[i]->get_name()
+            );
+            exposure[i] += std::log(p) - std::log(1.0 - p);
 
-            // Computing as log
-            exposure.at(i) = 1.0/(1.0 + std::exp(-exposure.at(i)));
+            exposure[i] = 1.0 / (1.0 + std::exp(-exposure[i]));
 
         }
 
-        // Running the roulette to see is an innovation is adopted
-        int which = roulette<int>(exposure, m);
-
-        // No innovation was adopted
+        const int which = roulette(exposure, &m);
         if (which < 0)
-            return;
+            return nullptr;
 
-        // Otherwise, it is adopted from any of the neighbors
-        agent.set_virus(*m, 
-            *innovations.at(which),
-            ADOPTER
-        );
+        // An innovation no neighbor has is adopted from the model's own
+        Virus * v = innovations[static_cast< size_t >(which)];
+        return (v != nullptr) ? v : m.get_viruses()[static_cast< size_t >(which)].get();
 
-        return;
+    };
 
-        };
-
-    // Adding agents data
     this->set_agents_data(agents_data, data_ncols);
-    
-    // Adding statuses
-    this->add_state("Non adopters", update_non_adopters);
-    this->add_state("Adopters");
 
-    // Adding parameters
-    std::string parname = std::string("Prob. Adopting ") + innovation_name;
-    this->add_param(prob_adopt, parname);
+    Virus virus(innovation_name);
+    virus.add_stage("Non adopters");
+    virus.add_stage("Adopters", stage::infectious);
+    virus.infection(NONADOPTER, ADOPTER, parname).sampler(sampler);
 
-    // Preparing the virus -------------------------------------------
-    Virus<TSeq> innovation(innovation_name, prevalence, true);
-    innovation.set_state(1,1,1);
-    
-    innovation.set_prob_infecting(parname);
-    
-    this->add_virus(innovation);
+    this->add_virus(virus, assign::share(prevalence));
 
     this->set_name(
         std::string("Diffusion of Innovations - ") + innovation_name);

@@ -2,26 +2,26 @@
 % Please edit documentation in R/agents.R, R/tool.R
 \name{agent-functions}
 \alias{agent-functions}
-\alias{get_agents_states}
+\alias{get_agents_stages}
+\alias{get_agents_statuses}
 \alias{add_virus_agent}
 \alias{add_tool_agent}
 \alias{has_virus}
 \alias{has_tool}
-\alias{change_state}
 \alias{get_agents_tools}
 \title{Agent functions}
 \usage{
-get_agents_states(model)
+get_agents_stages(model)
 
-add_virus_agent(agent, model, virus, state_new = -99, queue = -99)
+get_agents_statuses(model)
 
-add_tool_agent(agent, model, tool, state_new = -99, queue = -99)
+add_virus_agent(agent, model, virus)
+
+add_tool_agent(agent, model, tool)
 
 has_virus(agent, virus)
 
 has_tool(agent, tool)
-
-change_state(agent, model, state_new, queue = -99)
 
 get_agents_tools(model)
 }
@@ -32,16 +32,12 @@ get_agents_tools(model)
 
 \item{virus}{Virus object of class \code{epiworld_virus}.}
 
-\item{state_new}{Integer scalar. New state of the agent after the action is executed.}
-
-\item{queue}{Integer scalar. Change in the queuing system after the action is executed.}
-
 \item{tool}{Tool object of class \code{epiworld_tool}.}
 }
 \value{
 \itemize{
-\item \code{get_agents_states} returns an character vector with the states of the
-agents by the end of the simulation.
+\item \code{get_agents_stages} and \code{get_agents_statuses} return a character vector
+with each agent's stage (status), by the end of the simulation.
 }
 
 \itemize{
@@ -68,14 +64,22 @@ with \code{epiworld_tools} (list of lists).
 Functions to retrieve and modify the agents of a model.
 }
 \details{
-The \code{new_state} and \code{queue} parameters are optional. If they are not
-provided, the agent will be updated with the default values of the virus/tool.
+\code{add_virus_agent()} takes the agent through the virus's infection
+transition (into the infection's target), as a contact would; the agent must
+be in a stage the infection leaves. The change applies at the end of the
+day, with the model's other events. To move an agent along any other
+declared transition, use \code{\link[=fire]{fire()}}.
+
+The virus and the tool are the model's own copies, from \code{\link[=get_virus]{get_virus()}} and
+\code{\link[=get_tool]{get_tool()}} (the copies given to \code{\link[=add_virus]{add_virus()}} and \code{\link[=add_tool]{add_tool()}} are not in
+the model). These functions are typically called from a global event (see
+\code{\link[=globalevent_fun]{globalevent_fun()}}), with the agent from \code{get_agents(model)[i]}.
 }
 \examples{
 sir <- ModelSIR(name = "COVID-19", n = 1000, prevalence = 0.01,
   transmission_prob = 0.9, recovery_rate = 0.1)
 add_layer(sir, layer_network("contacts", graph_smallworld(k = 5, p = .01)))
 run(sir, ndays = 100, seed = 1912)
-table(get_agents_states(sir))
+table(get_agents_stages(sir))
 }
 \concept{model-utility-functions}

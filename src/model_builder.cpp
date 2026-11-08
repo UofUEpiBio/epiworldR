@@ -2,86 +2,80 @@
 #include "cpp11/external_pointer.hpp"
 
 #include "epiworld-common.h"
+#include "assign.h"
 
 using namespace epiworld;
 
 [[cpp11::register]]
 SEXP Model_cpp(unsigned int n) {
-  return cpp11::external_pointer<Model<>>(
-    new Model<>(n)
+  return cpp11::external_pointer<Model>(
+    new Model(n)
   );
 }
 
+// The model's natural history (its stages come from its first virus)
+static const NaturalHistory & model_nh(const Model & model) {
+
+  const NaturalHistory * nh = model.get_natural_history();
+  if (nh == nullptr)
+    cpp11::stop(
+      "The model has no stages yet: add a virus with a natural history "
+      "(add_virus())."
+    );
+
+  return *nh;
+
+}
+
 [[cpp11::register]]
-SEXP add_state_cpp(SEXP model, std::string state_label, SEXP update_fun) {
+SEXP set_initial_cpp(SEXP model, SEXP assign) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
+  const NaturalHistory & nh = model_nh(*ptr);
 
-  // Checking if the update function is NULL SEXP
-  if (update_fun == R_NilValue) {
-    ptr->add_state(state_label, nullptr);
-    return model;
-  }
-
-  cpp11::external_pointer<UpdateFun<>> funptr(update_fun);
-  ptr->add_state(state_label, *(funptr.get()));
+  // The labels are the model's stages
+  ptr->set_initial(
+    assign_from_r(assign, [&nh](const std::string & label) {
+      return nh.stage_id(label);
+    })
+  );
 
   return model;
 
 }
 
+[[cpp11::register]]
+cpp11::strings get_stages_model_cpp(SEXP model) {
+
+  cpp11::external_pointer<Model> ptr(model);
+  return cpp11::as_sexp(model_nh(*ptr).get_stages());
+
+}
 
 [[cpp11::register]]
-SEXP update_fun_susceptible_cpp() {
+cpp11::strings get_statuses_model_cpp(SEXP model) {
 
-  // The function pointer, so the model can update these agents by pushing
-  return cpp11::external_pointer<UpdateFun<>>(
-    new UpdateFun<>(default_update_susceptible<>)
+  cpp11::external_pointer<Model> ptr(model);
+  const Statuses * st = ptr->get_statuses();
+  if (st == nullptr)
+    return cpp11::as_sexp(std::vector< std::string >({"Free"}));
+
+  return cpp11::as_sexp(st->get_stages());
+
+}
+
+[[cpp11::register]]
+bool fire_cpp(SEXP model, std::string transition, int agent_id) {
+
+  cpp11::external_pointer<Model> ptr(model);
+  return ptr->fire(
+    ptr->transition_id(transition),
+    ptr->get_agent(static_cast< size_t >(agent_id))
   );
 
 }
 
 [[cpp11::register]]
-SEXP update_fun_rate_cpp(
-    cpp11::strings param_names,
-    cpp11::integers target_states
-) {
-
-  std::vector< std::string > param_names_vec(param_names.begin(), param_names.end());
-  std::vector< epiworld_fast_uint > target_states_vec;
-  for (auto i : target_states) {
-    if (i < 0)
-      throw std::logic_error(
-        "Trying to target a negative state: " + std::to_string(i) + "."
-      );
-
-    target_states_vec.push_back(static_cast<epiworld_fast_uint>(i));
-  }
-
-  return cpp11::external_pointer<UpdateFun<>>(
-    new UpdateFun<>(
-      std::move(new_state_update_transition<>(
-        param_names_vec, target_states_vec
-      ))
-    )
-  );
-
-}
-
-[[cpp11::register]]
-SEXP set_state_function_cpp(SEXP model, std::string state_label, SEXP update_fun) {
-
-  cpp11::external_pointer<Model<>> ptr(model);
-
-  // Checking if the update function is NULL SEXP
-  if (update_fun == R_NilValue) {
-    ptr->set_state_function(state_label, nullptr);
-    return model;
-  }
-
-  cpp11::external_pointer<UpdateFun<>> funptr(update_fun);
-  ptr->set_state_function(state_label, *(funptr.get()));
-
-  return model;
-
+std::string draw_natural_history_cpp(SEXP model) {
+  return cpp11::external_pointer<Model>(model)->draw_natural_history();
 }

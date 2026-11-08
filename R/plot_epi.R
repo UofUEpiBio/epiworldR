@@ -99,9 +99,9 @@ plot_epi.epiworld_hist <- function(
   counts_scale,
   ...
 ) {
-
-  curves      <- x
-  state_names <- attr(curves, "states")
+  # One curve per stage (summed over the statuses)
+  curves      <- stats::aggregate(counts ~ date + stage, data = x, FUN = sum)
+  state_names <- attr(x, "stages")
 
   # If the user didn't say what scale
   if (missing(counts_scale))
@@ -118,7 +118,7 @@ plot_epi.epiworld_hist <- function(
 
     for (i in 1L:length(state_names)) {
       date_candidates[i] <- with(
-        curves[curves$state == state_names[i], ],
+        curves[curves$stage == state_names[i], ],
         sum(abs(diff(counts)) > benchmark_value)
       )
     }
@@ -138,7 +138,7 @@ plot_epi.epiworld_hist <- function(
 
   # Plot the first state
   with(
-    curves[curves$state == state_names[1L], ],
+    curves[curves$stage == state_names[1L], ],
     graphics::plot(
       x    = date,
       y    = counts,
@@ -159,7 +159,7 @@ plot_epi.epiworld_hist <- function(
   for (i in 2L:length(state_names)) {
 
     with(
-      curves[curves$state == state_names[i], ],
+      curves[curves$stage == state_names[i], ],
       graphics::lines(
         x    = date,
         y    = counts,

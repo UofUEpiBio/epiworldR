@@ -6,18 +6,16 @@
 // be re-included here).
 #include "bubbles-bones.hpp"
 
-template<typename TSeq>
-inline BubbleTool<TSeq>::BubbleTool(
+inline BubbleTool::BubbleTool(
     std::string name,
     std::string event_name
-) : Tool<TSeq>(name), _event_name(std::move(event_name))
+) : Tool(name), _event_name(std::move(event_name))
 {
 }
 
-template<typename TSeq>
-inline epiworld_double BubbleTool<TSeq>::get_susceptibility_reduction(
-    VirusPtr<TSeq> & v,
-    Model<TSeq> * model
+inline epiworld_double BubbleTool::get_susceptibility_reduction(
+    VirusPtr & v,
+    Model * model
 )
 {
 
@@ -27,7 +25,7 @@ inline epiworld_double BubbleTool<TSeq>::get_susceptibility_reduction(
     if (_policy == nullptr)
     {
 
-        _policy = Bubbles<TSeq>::get_from(*model, _event_name);
+        _policy = Bubbles::get_from(*model, _event_name);
 
         if (_policy == nullptr)
             throw std::logic_error(
@@ -43,16 +41,14 @@ inline epiworld_double BubbleTool<TSeq>::get_susceptibility_reduction(
 
 }
 
-template<typename TSeq>
-inline std::unique_ptr<Tool<TSeq>> BubbleTool<TSeq>::clone_ptr() const
+inline std::unique_ptr<Tool> BubbleTool::clone_ptr() const
 {
-    auto ans = std::make_unique<BubbleTool<TSeq>>(*this);
+    auto ans = std::make_unique<BubbleTool>(*this);
     ans->_policy = nullptr; // the copy resolves against its own model
     return ans;
 }
 
-template<typename TSeq>
-inline Bubbles<TSeq>::Bubbles(
+inline Bubbles::Bubbles(
     std::vector< size_t > household_id,
     BubbleFlavor flavor,
     size_t group_size,
@@ -118,8 +114,7 @@ inline Bubbles<TSeq>::Bubbles(
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::partition_household(Model<TSeq> * model)
+inline void Bubbles::partition_household(Model * model)
 {
 
     size_t nh = n_households;
@@ -224,8 +219,7 @@ inline void Bubbles<TSeq>::partition_household(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model)
+inline void Bubbles::partition_peer(Model * model)
 {
 
     size_t n  = household.size();
@@ -341,8 +335,7 @@ inline void Bubbles<TSeq>::partition_peer(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline std::shared_ptr< layer::Mixing<TSeq> > Bubbles<TSeq>::make_layer(
+inline std::shared_ptr< layer::Mixing > Bubbles::make_layer(
     double household_contact_prob
 ) const
 {
@@ -355,21 +348,20 @@ inline std::shared_ptr< layer::Mixing<TSeq> > Bubbles<TSeq>::make_layer(
 
     // Everyone with their household: the bubbles are larger groups of the
     // same layer (households are never split)
-    auto res = layer::mixing<TSeq>(layer);
-    res->set_groups(household, n_households);
+    auto res = layer::mixing(layer);
+    res->set_groups(assign::labels(household), n_households);
     res->set_contact_prob(household_contact_prob);
 
     return res;
 
 }
 
-template<typename TSeq>
-inline layer::Mixing<TSeq> & Bubbles<TSeq>::bubble_layer(
-    Model<TSeq> * model
+inline layer::Mixing & Bubbles::bubble_layer(
+    Model * model
 ) const
 {
 
-    layer::Mixing<TSeq> * res = (!layer.empty() && model->has_layer(layer)) ?
+    layer::Mixing * res = (!layer.empty() && model->has_layer(layer)) ?
         model->get_layer(layer).as_mixing() : nullptr;
 
     if ((res == nullptr) || !res->within_groups())
@@ -383,8 +375,7 @@ inline layer::Mixing<TSeq> & Bubbles<TSeq>::bubble_layer(
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::sync_groups(Model<TSeq> * model)
+inline void Bubbles::sync_groups(Model * model)
 {
 
     // Global events run after the day's transitions, so the moves take effect
@@ -410,19 +401,19 @@ inline void Bubbles<TSeq>::sync_groups(Model<TSeq> * model)
     if (want)
     {
         std::vector< double > q(home_prob.size(), bubble_contact_prob);
-        std::vector< size_t > first(home_prob.size(), layer::Mixing<TSeq>::NO_GROUP);
+        std::vector< size_t > first(home_prob.size(), layer::Mixing::NO_GROUP);
         std::vector< bool > merged(home_prob.size(), false);
         for (size_t i = 0u; i < household.size(); ++i)
         {
             const size_t b = static_cast< size_t >(bubble_id[i]);
-            if (first[b] == layer::Mixing<TSeq>::NO_GROUP)
+            if (first[b] == layer::Mixing::NO_GROUP)
                 first[b] = household[i];
             else if (first[b] != household[i])
                 merged[b] = true;
         }
 
         for (size_t b = 0u; b < q.size(); ++b)
-            if (!merged[b] && (first[b] != layer::Mixing<TSeq>::NO_GROUP))
+            if (!merged[b] && (first[b] != layer::Mixing::NO_GROUP))
                 q[b] = home_prob[first[b]];
 
         groups.set_contact_prob(std::move(q));
@@ -434,8 +425,7 @@ inline void Bubbles<TSeq>::sync_groups(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::compute_partition(Model<TSeq> * model)
+inline void Bubbles::compute_partition(Model * model)
 {
 
     bubble_id.assign(household.size(), -1);
@@ -450,17 +440,15 @@ inline void Bubbles<TSeq>::compute_partition(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline bool Bubbles<TSeq>::is_active(int today) const
+inline bool Bubbles::is_active(int today) const
 {
     return (today >= start_day) && ((end_day < 0) || (today < end_day));
 }
 
-template<typename TSeq>
-inline epiworld_double Bubbles<TSeq>::susceptibility_reduction(
-    const Agent<TSeq> * p,
-    const Agent<TSeq> * transmitter,
-    Model<TSeq> * model
+inline epiworld_double Bubbles::susceptibility_reduction(
+    const Agent * p,
+    const Agent * transmitter,
+    Model * model
 ) const
 {
 
@@ -494,8 +482,7 @@ inline epiworld_double Bubbles<TSeq>::susceptibility_reduction(
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
+inline void Bubbles::_setup(Model * model)
 {
 
     if (household.size() != model->size())
@@ -514,7 +501,7 @@ inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
         // An agent is in one group per layer, so two policies need two layers
         for (size_t e = 0u; e < model->get_n_globalevents(); ++e)
         {
-            const auto * other = dynamic_cast< const Bubbles<TSeq> * >(
+            const auto * other = dynamic_cast< const Bubbles * >(
                 &model->get_globalevent(e)
             );
 
@@ -586,7 +573,7 @@ inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
     // identical.
     if (!model->has_tool(this->get_name()))
     {
-        BubbleTool<TSeq> bubble_tool(this->get_name(), this->get_name());
+        BubbleTool bubble_tool(this->get_name(), this->get_name());
         model->add_tool(bubble_tool);
     }
 
@@ -596,8 +583,7 @@ inline void Bubbles<TSeq>::_setup(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::reset(Model<TSeq> * model)
+inline void Bubbles::reset(Model * model)
 {
 
     // Model::reset() runs this once per run -- and once per replicate of
@@ -609,8 +595,7 @@ inline void Bubbles<TSeq>::reset(Model<TSeq> * model)
 
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::operator()(Model<TSeq> * model, int day)
+inline void Bubbles::operator()(Model * model, int day)
 {
 
     // Under Model::run() this never fires: reset() has already set us up for
@@ -649,9 +634,8 @@ inline void Bubbles<TSeq>::operator()(Model<TSeq> * model, int day)
 
 }
 
-template<typename TSeq>
-inline Bubbles<TSeq> * Bubbles<TSeq>::get_from(
-    Model<TSeq> & model,
+inline Bubbles * Bubbles::get_from(
+    Model & model,
     const std::string & name
 )
 {
@@ -659,36 +643,31 @@ inline Bubbles<TSeq> * Bubbles<TSeq>::get_from(
     if (!model.has_globalevent(name))
         return nullptr;
 
-    return dynamic_cast< Bubbles<TSeq> * >(&model.get_globalevent(name));
+    return dynamic_cast< Bubbles * >(&model.get_globalevent(name));
 
 }
 
-template<typename TSeq>
-inline const std::vector< int > & Bubbles<TSeq>::get_bubble_id() const
+inline const std::vector< int > & Bubbles::get_bubble_id() const
 {
     return bubble_id;
 }
 
-template<typename TSeq>
-inline int Bubbles<TSeq>::get_last_epoch() const
+inline int Bubbles::get_last_epoch() const
 {
     return last_epoch;
 }
 
-template<typename TSeq>
-inline BubbleFlavor Bubbles<TSeq>::get_flavor() const
+inline BubbleFlavor Bubbles::get_flavor() const
 {
     return flavor;
 }
 
-template<typename TSeq>
-inline BubbleTies Bubbles<TSeq>::get_ties() const
+inline BubbleTies Bubbles::get_ties() const
 {
     return ties;
 }
 
-template<typename TSeq>
-inline void Bubbles<TSeq>::set_ties(
+inline void Bubbles::set_ties(
     BubbleTies ties,
     std::string layer,
     double bubble_contact_prob
@@ -706,16 +685,14 @@ inline void Bubbles<TSeq>::set_ties(
 
 }
 
-template<typename TSeq>
-inline const std::string & Bubbles<TSeq>::get_param_name() const
+inline const std::string & Bubbles::get_param_name() const
 {
     return param_name;
 }
 
-template<typename TSeq>
-inline std::unique_ptr< GlobalEvent<TSeq> > Bubbles<TSeq>::clone_ptr() const
+inline std::unique_ptr< GlobalEvent > Bubbles::clone_ptr() const
 {
-    return std::make_unique< Bubbles<TSeq> >(*this);
+    return std::make_unique< Bubbles >(*this);
 }
 
 #endif

@@ -16,16 +16,17 @@ cpp11::data_frame get_hist_total_cpp(
 
   // Making some room
   std::vector< int > date;
-  std::vector< std::string > state;
+  std::vector< std::string > status, stage;
   std::vector< int > counts;
 
-  cpp11::external_pointer<Model<>> ptr(model);
-  ptr->get_db().get_hist_total(&date, &state, &counts);
+  cpp11::external_pointer<Model> ptr(model);
+  ptr->get_db().get_hist_total(&date, &status, &stage, &counts);
 
-  // Preparing the output
+  // One row per day, status and stage
   cpp11::writable::data_frame res({
     "date"_nm   = date,
-    "state"_nm  = state,
+    "status"_nm = status,
+    "stage"_nm  = stage,
     "counts"_nm = counts
   });
 
@@ -38,15 +39,15 @@ cpp11::data_frame get_hist_virus_cpp(
   SEXP model
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   std::vector<int> date;
   std::vector<int> id;
-  std::vector<std::string> state;
+  std::vector<std::string> status, stage;
   std::vector<int> counts;
 
   ptr->get_db().get_hist_virus(
-    date, id, state, counts
+    date, id, status, stage, counts
   );
 
   // Mapping the id to the name
@@ -65,7 +66,8 @@ cpp11::data_frame get_hist_virus_cpp(
     "date"_nm      = date,
     "virus_id"_nm  = id,
     "virus"_nm     = vnames,
-    "state"_nm     = state,
+    "status"_nm    = status,
+    "stage"_nm     = stage,
     "counts"_nm    = counts,
   });
 
@@ -76,15 +78,15 @@ cpp11::data_frame get_hist_tool_cpp(
     SEXP model
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   std::vector<int> date;
   std::vector<int> id;
-  std::vector<std::string> state;
+  std::vector<std::string> status, stage;
   std::vector<int> counts;
 
   ptr->get_db().get_hist_tool(
-      date, id, state, counts
+      date, id, status, stage, counts
   );
 
   // Same as before, but with tools
@@ -102,7 +104,8 @@ cpp11::data_frame get_hist_tool_cpp(
     "date"_nm    = date,
     "tool_id"_nm = id,
     "tool"_nm    = tnames,
-    "state"_nm   = state,
+    "status"_nm  = status,
+    "stage"_nm   = stage,
     "counts"_nm  = counts,
   });
 
@@ -113,7 +116,7 @@ doubles get_transition_probability_cpp(
     SEXP model
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
   return cpp11::writable::doubles(
     ptr->get_db().get_transition_probability(false)
   );
@@ -126,22 +129,41 @@ cpp11::data_frame get_hist_transition_matrix_cpp(
   bool skip_zeros
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
-  std::vector< std::string > state_from;
-  std::vector< std::string > state_to;
+  std::vector< std::string > status_from, stage_from, status_to, stage_to;
   std::vector< int > date;
   std::vector< int > counts;
 
   ptr->get_db().get_hist_transition_matrix(
-    state_from, state_to, date, counts, skip_zeros
+    status_from, stage_from, status_to, stage_to, date, counts, skip_zeros
   );
 
   return cpp11::writable::data_frame({
-    "state_from"_nm = state_from,
-    "state_to"_nm   = state_to,
+    "status_from"_nm = status_from,
+    "stage_from"_nm  = stage_from,
+    "status_to"_nm   = status_to,
+    "stage_to"_nm    = stage_to,
+    "date"_nm        = date,
+    "counts"_nm      = counts,
+  });
+
+}
+
+// How many times each declared transition fired, by day
+[[cpp11::register]]
+cpp11::data_frame get_hist_transitions_cpp(SEXP model) {
+
+  cpp11::external_pointer<Model> ptr(model);
+
+  std::vector< int > date, counts;
+  std::vector< std::string > transition;
+  ptr->get_db().get_hist_transitions(date, transition, counts);
+
+  return cpp11::writable::data_frame({
     "date"_nm       = date,
-    "counts"_nm     = counts,
+    "transition"_nm = transition,
+    "counts"_nm     = counts
   });
 
 }
@@ -158,7 +180,7 @@ cpp11::data_frame get_reproductive_number_cpp(
   std::vector< int > counts;
 
   // Getting the right class
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
   std::unordered_map< std::vector< int >, int, epiworld::vecHasher<int>> rn =
     ptr->get_db().get_reproductive_number();
 
@@ -197,7 +219,7 @@ cpp11::data_frame get_transmissions_cpp(
   SEXP model
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   std::vector<int> date;
   std::vector<int> source;
@@ -243,7 +265,7 @@ cpp11::data_frame get_generation_time_cpp(
   SEXP model
 ) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   std::vector<int> agent_id;
   std::vector<int> virus_id;
@@ -279,20 +301,19 @@ cpp11::data_frame get_generation_time_cpp(
 }
 
 [[cpp11::register]]
-cpp11::writable::doubles get_today_total_cpp(SEXP model) {
+cpp11::writable::data_frame get_today_total_cpp(SEXP model) {
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
-  std::vector< int > totals;
-  std::vector< std::string > names;
-  ptr->get_db().get_today_total(&names, &totals);
+  std::vector< int > counts;
+  std::vector< std::string > status, stage;
+  ptr->get_db().get_today_total(&status, &stage, &counts);
 
-  cpp11::writable::doubles totals_r(totals.begin(), totals.end());
-  cpp11::writable::strings names_r(names.begin(), names.end());
-
-  totals_r.names() = names_r;
-
-  return totals_r;
+  return cpp11::writable::data_frame({
+    "status"_nm = status,
+    "stage"_nm  = stage,
+    "counts"_nm = counts
+  });
 
 }
 
@@ -303,7 +324,7 @@ cpp11::writable::data_frame get_active_cases_cpp(SEXP model) {
   std::vector< int > virus;
   std::vector< int > counts;
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   ptr->get_db().
     get_active_cases(date, virus, counts);
@@ -335,7 +356,7 @@ cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model) {
   std::vector< int > virus;
   std::vector< int > counts;
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   ptr->get_db().
     get_outbreak_size(date, virus, counts);
@@ -370,7 +391,7 @@ cpp11::writable::data_frame get_hospitalizations_cpp(SEXP model) {
   std::vector< int > count;
   std::vector< double > weight;
 
-  cpp11::external_pointer<Model<>> ptr(model);
+  cpp11::external_pointer<Model> ptr(model);
 
   ptr->get_db().
     get_hospitalizations(date, virus_id, tool_id, count, weight);

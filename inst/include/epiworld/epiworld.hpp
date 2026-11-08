@@ -79,61 +79,50 @@ namespace epiworld {
 
     #include "math/lfmcmc.hpp"
 
-    #include "userdata-bones.hpp"
-    #include "userdata-meat.hpp"
-
-    #include "seq_processing.hpp"
-
-    #include "hospitalizationstracker-bones.hpp"
-    #include "hospitalizationstracker-meat.hpp"
-
     #include "run-outputs.hpp"
-    #include "database-bones.hpp"
-    #include "database-meat.hpp"
+
+    // The classes, then their member functions: with no templates, a
+    // function body needs the classes it uses defined before it
+    #include "userdata-bones.hpp"
+    #include "hospitalizationstracker-bones.hpp"
     #include "adjlist-bones.hpp"
-    #include "adjlist-meat.hpp"
-
-    #include "randgraph.hpp"
-
-    #include "queue-bones.hpp"
-
     #include "contacttracing-bones.hpp"
-    #include "contacttracing-meat.hpp"
-
-    #include "contactlayer-bones.hpp"
-
-    #include "globalevent-bones.hpp"
-    #include "globalevent-meat.hpp"
-
     #include "model-bones.hpp"
-    #include "model-rand-meat.hpp"
-    #include "model-meat.hpp"
-    #include "postsampling-meat.hpp"
+    #include "contactlayer-bones.hpp"
+    #include "agentssample-bones.hpp"
+    #include "globalevents/quarantinetrigger-bones.hpp"
+    #include "globalevents/bubbles-bones.hpp"
 
-    #include "viruses-bones.hpp"
-
-    #include "virus-bones.hpp"
-    #include "virus-distribute-meat.hpp"
-    #include "virus-meat.hpp"
-    
-    // #include "tools-bones.hpp"
-
-    #include "tool-bones.hpp"
-    #include "tool-distribute-meat.hpp"
-    #include "tool-meat.hpp"
-
-    #include "agent-meat-state.hpp"
-    #include "agent-bones.hpp"
-    #include "agent-meat.hpp"
-    #include "model-meat-transmission.hpp"
+    // Classes with their member functions (they come before the other
+    // member functions, which use them), and the graphs they build on
+    #include "randgraph.hpp"
     #include "layer-mixing.hpp"
     #include "layer-network.hpp"
 
-    #include "agentssample-bones.hpp"
+    #include "assign-meat.hpp"
+    #include "queue-meat.hpp"
+    #include "userdata-meat.hpp"
+    #include "hospitalizationstracker-meat.hpp"
+    #include "database-meat.hpp"
+    #include "adjlist-meat.hpp"
+    #include "contacttracing-meat.hpp"
+    #include "globalevent-meat.hpp"
+    #include "model-rand-meat.hpp"
+    #include "model-meat.hpp"
+    #include "postsampling-meat.hpp"
+    #include "virus-meat.hpp"
+    #include "tool-meat.hpp"
+    #include "agent-meat.hpp"
+    #include "model-meat-transmission.hpp"
+    #include "naturalhistory-meat.hpp"
+    #include "model-meat-naturalhistory.hpp"
 
     #include "tools/vaccine.hpp"
     #include "globalevents/quarantinetrigger-meat.hpp"
     #include "globalevents/bubbles-meat.hpp"
+
+    #include "registry-bones.hpp"
+    #include "registry-meat.hpp"
 
     #include "models/models.hpp"
 

@@ -74,18 +74,21 @@ plot(model_sirconn)
 
 ### Add the Flu Virus
 
-Create the second virus using the `virus()` function. The parameter `prob_infecting` is the transmission rate. The parameter `as_proportion` tells the function to interpret the prevalence as a proportion of the population, rather than a fixed value.
+A second virus in a model is a strain of the model's own: a copy of it with its own name, whose transitions may read other parameters. Create it with `clone_epi()`, and give it its own transmission probability with `use_param()`.
 
 ```{r}
 #| label: create-flu-virus
-flu_virus <- virus(name = "Flu", prob_infecting = .35, prevalence = 0.001, as_proportion = TRUE)
+flu_virus <- clone_epi(get_virus(model_sirconn, 0))
+set_name_virus(flu_virus, "Flu")
+add_param(model_sirconn, "Flu transmission probability", .35)
+use_param(flu_virus, "Transmission probability", "Flu transmission probability")
 ```
 
-Add the virus to the model with the `add_virus()` function.
+Add the virus to the model with the `add_virus()` function. Its placement, `assign_share(0.001)`, gives it to 0.1% of the agents at the start of each run (see `help("assign")`).
 
 ```{r}
 #| label: add-flu
-add_virus(model_sirconn, flu_virus)
+add_virus(model_sirconn, flu_virus, assign_share(0.001))
 ```
 
 ```{r}
@@ -105,27 +108,15 @@ vaccine_tool <- tool(
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5,
-  death_reduction = .9,
-  prevalence = 0.5,
-  as_proportion = TRUE
+  death_reduction = .9
 )
 ```
 
-Use the `set_distribution_tool()` function to define the proportion of the population to receive the tool (set here to 50%).
-
-```{r}
-#| label: set-vaccine-distribution
-set_distribution_tool(
-  tool = vaccine_tool,
-  distfun = distribute_tool_randomly(0.5, TRUE)
-)
-```
-
-Add the vaccine to the model using the `add_tool()` function.
+Add the vaccine to the model using the `add_tool()` function, with its placement: `assign_share(0.5)` gives it to half of the population at the start of each run.
 
 ```{r}
 #| label: add-vaccine
-add_tool(model_sirconn, vaccine_tool)
+add_tool(model_sirconn, vaccine_tool, assign_share(0.5))
 ```
 
 ```{r}

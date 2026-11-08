@@ -6,8 +6,6 @@
 \alias{globalaction_set_params}
 \alias{globalaction_fun}
 \alias{epiworldR-deprecated}
-\alias{add_tool_n}
-\alias{add_virus_n}
 \alias{clone_model}
 \title{Deprecated and removed functions in epiworldR}
 \usage{
@@ -19,22 +17,12 @@ globalaction_set_params(...)
 
 globalaction_fun(...)
 
-add_tool_n(model, tool, n)
-
-add_virus_n(model, virus, n)
-
 clone_model(model)
 }
 \arguments{
 \item{...}{Arguments to be passed to the new function.}
 
 \item{model}{Model object of class \code{epiworld_model}.}
-
-\item{tool}{Tool object of class \code{epiworld_tool}.}
-
-\item{n}{Deprecated.}
-
-\item{virus}{Virus object of class \code{epiworld_virus}.}
 }
 \description{
 Starting version 0.0-4, epiworld changed how it refered to "actions."

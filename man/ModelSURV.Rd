@@ -98,16 +98,16 @@ plot(model_surv, main = "SURV Model")
 \seealso{
 epiworld-methods
 
-Other Models: 
-\code{\link{ModelDiffNet}()},
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()}
+Other Models:
+\code{\link[=ModelDiffNet]{ModelDiffNet()}},
+\code{\link[=ModelSEIR]{ModelSEIR()}},
+\code{\link[=ModelSEIRD]{ModelSEIRD()}},
+\code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}},
+\code{\link[=ModelSIR]{ModelSIR()}},
+\code{\link[=ModelSIRD]{ModelSIRD()}},
+\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
+\code{\link[=ModelSIS]{ModelSIS()}},
+\code{\link[=ModelSISD]{ModelSISD()}}
 }
 \concept{Models}
 \concept{general-models}

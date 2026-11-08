@@ -19,14 +19,14 @@ SEXP globalevent_tool_logit_cpp(
 
     std::vector< size_t > vars_size_t(vars.begin(), vars.end());
 
-    GlobalFun<int> event(epimodels::globalevent_tool_logit<int>(
-        *cpp11::external_pointer<Tool<int>>(tool),
+    GlobalFun event(epimodels::globalevent_tool_logit(
+        *cpp11::external_pointer<Tool>(tool),
         vars_size_t,
         coefs
     ));
 
-    cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(event, name, day)
+    cpp11::external_pointer<GlobalEvent> ptr(
+        new GlobalEvent(event, name, day)
     );
 
     return ptr;
@@ -41,13 +41,13 @@ SEXP globalevent_tool_cpp(
     int day
 ) {
 
-    GlobalFun<int> event(epimodels::globalevent_tool<int>(
-        *cpp11::external_pointer<Tool<int>>(tool),
+    GlobalFun event(epimodels::globalevent_tool(
+        *cpp11::external_pointer<Tool>(tool),
         prob
     ));
 
-    cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(event, name, day)
+    cpp11::external_pointer<GlobalEvent> ptr(
+        new GlobalEvent(event, name, day)
     );
 
     return ptr;
@@ -62,13 +62,13 @@ SEXP globalevent_set_param_cpp(
     int day
 ) {
 
-    GlobalFun<int> event(epimodels::globalevent_set_param<int>(
+    GlobalFun event(epimodels::globalevent_set_param(
         param,
         value
     ));
 
-    cpp11::external_pointer<GlobalEvent<int>> ptr(
-        new GlobalEvent<int>(event, name, day)
+    cpp11::external_pointer<GlobalEvent> ptr(
+        new GlobalEvent(event, name, day)
     );
 
     return ptr;
@@ -80,7 +80,7 @@ SEXP print_globalevent_cpp(
     SEXP event
 ) {
 
-  external_pointer<GlobalEvent<int>> eventptr(event);
+  external_pointer<GlobalEvent> eventptr(event);
 
   eventptr->print();
 
@@ -95,8 +95,8 @@ SEXP add_globalevent_cpp(
     SEXP event
 ) {
 
-  external_pointer<Model<int>> modelptr(model);
-  external_pointer<GlobalEvent<int>> eventptr(event);
+  external_pointer<Model> modelptr(model);
+  external_pointer<GlobalEvent> eventptr(event);
 
   modelptr->add_globalevent(*eventptr);
 
@@ -110,7 +110,7 @@ SEXP rm_globalevent_cpp(
     std::string name
 ) {
 
-  external_pointer<Model<int>> modelptr(model);
+  external_pointer<Model> modelptr(model);
 
   modelptr->rm_globalevent(name);
 
@@ -130,9 +130,9 @@ SEXP globalevent_fun_cpp(
   // nthreads > 1, this lambda is invoked from OpenMP worker threads, which
   // is undefined behavior. Users must set nthreads = 1 when using
   // globalevent_fun() with run_multiple().
-  GlobalFun<int> fun_call = [fun](Model<int> * model) -> void {
+  GlobalFun fun_call = [fun](Model * model) -> void {
 
-    cpp11::external_pointer<Model<int>> modelptr(model, false);
+    cpp11::external_pointer<Model> modelptr(model, false);
 
     sexp modelptrs(modelptr);
     modelptrs.attr("class") = "epiworld_model";
@@ -143,8 +143,8 @@ SEXP globalevent_fun_cpp(
 
   };
 
-  return external_pointer<GlobalEvent<int>>(
-    new GlobalEvent<int>(fun_call, name, day)
+  return external_pointer<GlobalEvent>(
+    new GlobalEvent(fun_call, name, day)
   );
 
 

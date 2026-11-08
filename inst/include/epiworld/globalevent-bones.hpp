@@ -6,15 +6,14 @@
 
 /**
  * @brief Template for a Global Event
- * @details Global events are functions that Model<TSeq> executes
+ * @details Global events are functions that Model executes
  * at the end of a day.
  * 
  */
-template<typename TSeq>
 class GlobalEvent
 {
 private:
-    GlobalFun<TSeq> fun = nullptr;
+    GlobalFun fun = nullptr;
     std::string name = "A global action";
     int day = -99;
 public:
@@ -24,15 +23,15 @@ public:
     /**
      * @brief Construct a new Global Event object
      * 
-     * @param fun A function that takes a Model<TSeq> * as argument and returns void.
+     * @param fun A function that takes a Model * as argument and returns void.
      * @param name A descriptive name for the action.
      * @param day The day when the action will be executed. If negative, it will be executed every day.
      */
-    GlobalEvent(GlobalFun<TSeq> fun, std::string name, int day = -99);
+    GlobalEvent(GlobalFun fun, std::string name, int day = -99);
     
     virtual ~GlobalEvent() = default;
 
-    virtual void operator()(Model<TSeq> * m, int day);
+    virtual void operator()(Model * m, int day);
 
     /**
      * @brief Prepare the event for a run.
@@ -45,7 +44,7 @@ public:
      *
      * @param m The model the event belongs to.
      */
-    virtual void reset(Model<TSeq> * m);
+    virtual void reset(Model * m);
 
     void set_name(std::string name);
     std::string get_name() const;
@@ -56,10 +55,10 @@ public:
     void print() const;
 
     // Comparison operators
-    bool operator==(const GlobalEvent<TSeq> & other) const;
-    bool operator!=(const GlobalEvent<TSeq> & other) const;
+    bool operator==(const GlobalEvent & other) const;
+    bool operator!=(const GlobalEvent & other) const;
 
-    virtual std::unique_ptr<GlobalEvent<TSeq>> clone_ptr() const;
+    virtual std::unique_ptr<GlobalEvent> clone_ptr() const;
 
 };
 

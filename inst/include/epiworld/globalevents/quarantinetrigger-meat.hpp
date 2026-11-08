@@ -2,8 +2,7 @@
 #define QUARANTINETRIGGER_MEAT_HPP
 #include "quarantinetrigger-bones.hpp"
 
-template<typename TSeq>
-inline void QuarantineTrigger<TSeq>::_setup(const Model<TSeq> & model) {
+inline void QuarantineTrigger::_setup(const Model & model) {
 
     if (
         (static_cast<int>(model.get_sim_id()) != _model_sim_id) ||
@@ -17,10 +16,9 @@ inline void QuarantineTrigger<TSeq>::_setup(const Model<TSeq> & model) {
 
 }
 
-template<typename TSeq>
-inline void QuarantineTrigger<TSeq>::add_triggering_agent(
-    const Model<TSeq> & model,
-    const Agent<TSeq> & agent,
+inline void QuarantineTrigger::add_triggering_agent(
+    const Model & model,
+    const Agent & agent,
     int date_infectious
 ) {
     
@@ -30,13 +28,11 @@ inline void QuarantineTrigger<TSeq>::add_triggering_agent(
     this->_date_infectious.push_back(date_infectious);
 }
 
-template<typename TSeq>
-inline std::vector< size_t > & QuarantineTrigger<TSeq>::get_triggering_agents() {
+inline std::vector< size_t > & QuarantineTrigger::get_triggering_agents() {
     return this->_agents_triggering_quarantine;
 }
 
-template<typename TSeq>
-inline std::vector< int > & QuarantineTrigger<TSeq>::get_date_infectious() {
+inline std::vector< int > & QuarantineTrigger::get_date_infectious() {
     return this->_date_infectious;
 }
 

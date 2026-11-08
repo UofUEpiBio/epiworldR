@@ -1,119 +1,130 @@
-#' Virus design
+#' Viruses and their natural history
 #'
-#' Viruses can be considered to be anything that can be transmitted (e.g.,
-#' diseases, as well as ideas.) Most models in epiworldR can feature multiple
-#' viruses.
+#' A virus carries its natural history: the **stages** of the disease and the
+#' **transitions** between them. Build a virus with `virus()`, declare its
+#' stages and transitions, and add it to a model with [add_virus()], which
+#' gives the model its stages.
 #'
-#' @param name of the virus
-#' @param post_immunity Numeric scalar. Post immunity (prob of re-infection).
-#' @param prob_infecting Numeric scalar. Probability of infection (transmission).
-#' @param recovery_rate Numeric scalar. Probability of recovery.
-#' @param prob_death Numeric scalar. Probability of death.
-#' @param virus_pos Positive integer. Index of the virus's position in the model.
-#' @param incubation Numeric scalar. Incubation period (in days) of the virus.
-#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
-#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
-#' @param prevalence Numeric scalar. Proportion or count of agents that will be
-#' assigned the virus. The interpretation of this argument depends on the value
-#' of `as_proportion`.
+#' @param name Character scalar. The name of the virus.
+#' @param virus An object of class `epiworld_virus`.
+#' @param label Character scalar. The stage's label.
+#' @param infectious Logical scalar. Whether agents in the stage transmit
+#' (implies `carrier`).
+#' @param carrier Logical scalar. Whether agents in the stage hold the virus.
+#' @param stage Character scalar. A stage, by label.
+#' @param weight Numeric scalar. The stage's contact weight (default 1). `0`
+#' takes its agents out of every layer: they are not met and do not transmit.
+#' On networks, a fraction scales the per-contact probability; mixing layers
+#' thin the contacts.
+#' @param from Character vector. The stages the transition leaves (by label).
+#' `add_after()` takes one.
+#' @param to Character scalar. The stage the transition enters.
+#' @param rate The transition's value: a number, the name of a model parameter,
+#' or an object from [value_inverse()], [value_complement()], [value_fun()] or
+#' [rate_fun_logit()]. For `add_infection()`, the probability of infection per
+#' contact; for `add_rate()`, the daily probability. A number becomes a model
+#' parameter (named after the virus and the transition) when the virus is
+#' added to a model.
+#' @param effect Character scalar. The tool effect a rate takes: `"none"`,
+#' `"recovery"` (the probability becomes `1 - (1 - p) * (1 - recovery
+#' enhancer)`) or `"death"` (`p * (1 - death reduction)`).
+#' @param duration How long the stage lasts, drawn when the agent enters it: an
+#' object from one of the [duration] functions.
+#' @param since Character scalar or `NULL`. Counts the duration from the day
+#' the agent entered this stage (in the same infection), instead of the day it
+#' entered `from`.
+#' @param transition_name Character scalar or `NULL`. The transition's name
+#' (default: `"From -> To"`), used by the outputs and by [fire()].
+#' @param param,replacement Character scalars. The model parameter the
+#' transitions name, and the one this virus reads instead.
+#' @param ... Not used: a virus takes no prevalence or probabilities (see
+#' Details).
+#'
 #' @details
-#' The [virus()] function can be used to initialize a virus. Virus features can
-#' then be modified using the functions `set_prob_*`.
+#' Four kinds of transitions leave a stage:
 #'
-#' The function [virus_fun_logit()] creates a "virus function" that can be
-#' evaluated for transmission, recovery, and death. As the name sugests, it
-#' computes those probabilities using a logit function (see examples).
+#' - `add_infection()`: by contact, drawn from the model's layers. Taking it
+#'   gives the agent the virus. A stage is susceptible because an infection
+#'   leaves it.
+#' - `add_rate()`: a daily probability. The rates out of a stage compete: one
+#'   draw a day picks one of them, or none.
+#' - `add_after()`: a duration, drawn when the agent enters the stage; the
+#'   agent leaves on the day it ends, unless a rate fired first.
+#' - `add_external()`: fired by code, through [fire()].
 #'
+#' The first stage is where agents start. Entering a stage that is not a
+#' carrier releases the virus. A death is a stage with contact weight 0 and no
+#' exits.
+#'
+#' **Strains.** A virus added to a model is a variant with its own id. A strain
+#' of the model's virus is a copy (`clone_epi(get_virus(model, 0))`) with its own
+#' name; `use_param()` points its transitions to other parameters, so the
+#' strain shares the stages and differs in its values.
+#'
+#' **Placement.** [add_virus()] takes a placement from the [assign] functions:
+#' its labels are the stages the agents start in (a carrier stage); a form
+#' without labels uses the infection's target.
+#'
+#' @returns
+#' - `virus()` returns a virus, of class `epiworld_virus`.
+#' - `add_stage()`, `set_contact()`, `add_infection()`, `add_rate()`,
+#'   `add_after()`, `add_external()` and `use_param()` return the virus
+#'   (invisibly), so they can be chained.
+#' - `get_stages()` returns a data frame with the stages of a virus (label,
+#'   whether they carry the virus or transmit it, and their contact weight), or
+#'   the labels of a model's stages.
 #' @examples
-#' mseirconn <- ModelSEIR(
-#'   name                = "COVID-19",
-#'   prevalence          = 0.01,
-#'   n                   = 10000,
-#'   latent_period     = 7,
-#'   transmission_prob   = 0.5,
-#'   recovery_rate       = 0.99
+#' # An SIR, from scratch
+#' flu <- virus("Flu")
+#' add_stage(flu, "Susceptible")
+#' add_stage(flu, "Infected", infectious = TRUE)
+#' add_stage(flu, "Recovered")
+#' add_infection(flu, "Susceptible", "Infected", rate = "Transmission rate")
+#' add_rate(
+#'   flu, "Infected", "Recovered", rate = "Recovery rate", effect = "recovery"
 #' )
-#' add_param(mseirconn, "Contact rate", 4)
-#' add_layer(
-#'   mseirconn,
-#'   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
-#'     set_contact_rate("Contact rate")
-#' )
+#' get_stages(flu)
 #'
-#' delta <- virus(
-#'   "Delta Variant", 0, .5, .2, .01, prevalence = 0.3, as_proportion = TRUE
-#' )
+#' model <- Model(5000)
+#' add_param(model, "Transmission rate", 0.1)
+#' add_param(model, "Recovery rate", 1 / 7)
+#' add_layer(model, layer_network("contacts", graph_smallworld(10, 0.1)))
+#' add_virus(model, flu, assign_share(0.01))
+#' run(model, ndays = 50, seed = 1)
+#' model
 #'
-#' # Adding virus and setting/getting virus name
-#' add_virus(mseirconn, delta)
-#' set_name_virus(delta, "COVID-19 Strain")
-#' get_name_virus(delta)
+#' # A more transmissible strain of the model's virus
+#' delta <- clone_epi(get_virus(model, 0))
+#' set_name_virus(delta, "Delta")
+#' add_param(model, "Delta transmission rate", 0.2)
+#' use_param(delta, "Transmission rate", "Delta transmission rate")
+#' add_virus(model, delta, assign_count(10))
+#' run(model, ndays = 50, seed = 1)
 #'
-#' run(mseirconn, ndays = 100, seed = 992)
-#' mseirconn
-#'
-#' rm_virus(mseirconn, 0) # Removing the first virus from the model object
-#'
-#' # Setting parameters for the delta virus manually
-#' set_prob_infecting(delta, 0.5)
-#' set_prob_recovery(delta, 0.9)
-#' set_prob_death(delta, 0.01)
-#' run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
-#'
-#' # If the states were (for example):
-#' # 1: Infected
-#' # 2: Recovered
-#' # 3: Dead
-#' delta2 <- virus(
-#'   "Delta Variant 2", 0, .5, .2, .01, prevalence = 0, as_proportion = TRUE
-#' )
-#' virus_set_state(delta2, 1, 2, 3)
+#' # An SEIR with a fixed latent period of 4 days
+#' covid <- virus("COVID-19")
+#' add_stage(covid, "Susceptible")
+#' add_stage(covid, "Exposed", carrier = TRUE)
+#' add_stage(covid, "Infected", infectious = TRUE)
+#' add_stage(covid, "Recovered")
+#' add_infection(covid, "Susceptible", "Exposed", rate = 0.1)
+#' add_after(covid, "Exposed", "Infected", duration_fixed(4))
+#' add_rate(covid, "Infected", "Recovered", rate = 1 / 7)
 #' @export
 #' @concept virus-functions
 #' @aliases epiworld_virus
-virus <- function(
-  name,
-  prevalence,
-  as_proportion,
-  prob_infecting,
-  recovery_rate = 0.5,
-  prob_death    = 0.0,
-  post_immunity = -1.0,
-  incubation    = 7.0
-) {
+virus <- function(name, ...) {
 
-  uses_deprecated <- FALSE
-  if (missing(prevalence)) {
-
-    warning(
-      "Starting version 0.3-0, the 'prevalence' argument is required.",
-      " It will be set to be 0.5. Next versions will fail with an error."
+  if (...length())
+    stop(
+      "virus() takes only a name: declare its stages and transitions ",
+      "(add_stage(), add_infection(), add_rate(), add_after()) and place it ",
+      "with add_virus(model, virus, assign). See help(\"virus\").",
+      call. = FALSE
     )
 
-    prevalence <- 0.5
-    as_proportion <- TRUE
-    uses_deprecated <- TRUE
-
-  }
-
-  structure(
-    virus_cpp(
-      name,
-      prevalence,
-      as_proportion,
-      prob_infecting,
-      recovery_rate,
-      prob_death,
-      post_immunity,
-      incubation
-    ),
-    class = "epiworld_virus",
-    uses_deprecated = uses_deprecated,
-    deprecated_args = list(
-      prevalence = prevalence,
-      as_proportion = as_proportion
-    )
-  )
+  stopifnot_string(name)
+  structure(virus_cpp(name), class = "epiworld_virus")
 
 }
 
@@ -122,14 +133,163 @@ print.epiworld_virus <- function(x, ...) {
   invisible(print_virus_cpp(x))
 }
 
+#' @export
+#' @rdname virus
+add_stage <- function(virus, label, infectious = FALSE, carrier = infectious) {
+
+  stopifnot_virus(virus)
+  stopifnot_string(label)
+  stopifnot_bool(infectious)
+  stopifnot_bool(carrier)
+  if (infectious && !carrier)
+    stop("An infectious stage is a carrier.", call. = FALSE)
+
+  add_stage_cpp(virus, label, carrier, infectious)
+  invisible(virus)
+
+}
 
 #' @export
-#' @details
-#' The name of the `epiworld_virus` object can be manipulated with the functions
-#' [set_name_virus()] and [get_name_virus()].
-#' @returns
-#' - The `set_name_virus` function does not return a value, but merely assigns
-#' a name to the virus of choice.
+#' @rdname virus
+set_contact <- function(virus, stage, weight) {
+
+  stopifnot_virus(virus)
+  stopifnot_string(stage)
+  stopifnot_double(weight, lb = 0)
+  invisible(set_contact_cpp(virus, stage, as.double(weight)))
+
+}
+
+stopifnot_value <- function(x, what = "rate") {
+  ok <- inherits(x, "epiworld_value") ||
+    ((is.numeric(x) || is.character(x)) && length(x) == 1L && !is.na(x))
+  if (!ok)
+    stop(
+      "-", what, "- must be a number, the name of a model parameter, or an ",
+      "object from value_inverse(), value_complement(), value_fun() or ",
+      "rate_fun_logit().",
+      call. = FALSE
+    )
+  if (is.numeric(x))
+    x <- as.double(x)
+  x
+}
+
+stopifnot_transition_name <- function(x) {
+  if (!is.null(x))
+    stopifnot_string(x)
+  invisible(TRUE)
+}
+
+#' @export
+#' @rdname virus
+add_infection <- function(virus, from, to, rate, transition_name = NULL) {
+
+  stopifnot_virus(virus)
+  stopifnot_stringvector(from)
+  stopifnot_string(to)
+  stopifnot_transition_name(transition_name)
+  add_infection_cpp(virus, from, to, stopifnot_value(rate), transition_name)
+  if (uses_r(rate))
+    attr(virus, "single_threaded") <- TRUE
+  invisible(virus)
+
+}
+
+#' @export
+#' @rdname virus
+add_rate <- function(
+  virus,
+  from,
+  to,
+  rate,
+  effect          = "none",
+  transition_name = NULL
+) {
+
+  stopifnot_virus(virus)
+  stopifnot_stringvector(from)
+  stopifnot_string(to)
+  stopifnot_string(effect)
+  stopifnot_transition_name(transition_name)
+  add_rate_cpp(
+    virus, from, to, stopifnot_value(rate), effect, transition_name
+  )
+  if (uses_r(rate))
+    attr(virus, "single_threaded") <- TRUE
+  invisible(virus)
+
+}
+
+#' @export
+#' @rdname virus
+add_after <- function(
+  virus,
+  from,
+  to,
+  duration,
+  since           = NULL,
+  transition_name = NULL
+) {
+
+  stopifnot_virus(virus)
+  stopifnot_string(from)
+  stopifnot_string(to)
+  if (!inherits(duration, "epiworld_duration"))
+    stop(
+      "-duration- is made by one of the duration_*() functions.",
+      call. = FALSE
+    )
+  if (!is.null(since))
+    stopifnot_string(since)
+  stopifnot_transition_name(transition_name)
+  add_after_cpp(virus, from, to, duration, since, transition_name)
+  if (uses_r(duration))
+    attr(virus, "single_threaded") <- TRUE
+  invisible(virus)
+
+}
+
+#' @export
+#' @rdname virus
+add_external <- function(virus, from, to, transition_name) {
+
+  stopifnot_virus(virus)
+  stopifnot_stringvector(from)
+  stopifnot_string(to)
+  stopifnot_string(transition_name)
+  add_external_cpp(virus, from, to, transition_name)
+  invisible(virus)
+
+}
+
+#' @export
+#' @rdname virus
+use_param <- function(virus, param, replacement) {
+
+  stopifnot_virus(virus)
+  stopifnot_string(param)
+  stopifnot_string(replacement)
+  invisible(use_param_cpp(virus, param, replacement))
+
+}
+
+#' @export
+#' @param x A virus or a model.
+#' @rdname virus
+get_stages <- function(x) UseMethod("get_stages")
+
+#' @export
+get_stages.epiworld_virus <- function(x) {
+  as.data.frame(get_stages_virus_cpp(x))
+}
+
+#' @export
+get_stages.epiworld_model <- function(x) {
+  get_stages_model_cpp(x)
+}
+
+#' @export
 #' @rdname virus
 set_name_virus <- function(virus, name) {
   stopifnot_virus(virus)
@@ -137,364 +297,180 @@ set_name_virus <- function(virus, name) {
 }
 
 #' @export
-#' @returns
-#' - The `get_name_virus` function returns the name of the virus of class
-#' [epiworld_virus].
 #' @rdname virus
 get_name_virus <- function(virus) {
   stopifnot_virus(virus)
   get_name_virus_cpp(virus)
 }
 
-# Virus add --------------------------------------------------------------------
+# The virus in a model ---------------------------------------------------------
 
 #' @export
 #' @rdname virus
 #' @param model An object of class `epiworld_model`.
-#' @param virus An object of class `epiworld_virus`
-#' @param proportion Deprecated.
-#' @returns
-#' - The `add_virus` function does not return a value, instead it adds the
-#' virus of choice to the model object of class [epiworld_model].
-add_virus <- function(model, virus, proportion) {
+#' @param assign Who gets the virus at the start of each run: a placement from
+#' one of the [assign] functions (e.g., `assign_share(0.01)`), or `NULL` for
+#' nobody.
+add_virus <- function(model, virus, assign = NULL) {
 
-  if (!missing(proportion)) {
-
-    warning(
-      "The argument 'proportion' is deprecated and will be removed in ",
-      "the next version."
-    )
-
-    set_distribution_virus(
-      virus = virus,
-      distfun = distribute_virus_randomly(proportion, as_proportion = TRUE)
-    )
-
-  } else if (isTRUE(attr(tool, "uses_deprecated"))) {
-
-    set_distribution_virus(
-      virus = tool,
-      distfun = distribute_virus_randomly(
-        prevalence = attr(tool, "deprecated_args")$prevalence,
-        as_proportion = attr(tool, "deprecated_args")$as_proportion
-      )
-    )
-
-  }
-
-  UseMethod("add_virus")
-
-}
-
-#' @export
-add_virus.epiworld_model <- function(model, virus, proportion) {
-
+  stopifnot_model(model)
   stopifnot_virus(virus)
-  add_virus_cpp(model, virus)
+  stopifnot_assign(assign)
+  add_virus_cpp(model, virus, assign)
+  if (uses_r(virus, assign))
+    attr(model, "single_threaded") <- TRUE
   invisible(model)
 
 }
 
 #' @export
-add_virus.epiworld_sir <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 2, removed = 2)
-  invisible(add_virus_cpp(model, virus))
-
-}
-
-#' @export
-add_virus.epiworld_sird <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 2, removed = 3)
-  invisible(add_virus_cpp(model, virus))
-
-}
-
-
-#' @export
-add_virus.epiworld_seir <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 3, removed = 3)
-  invisible(add_virus_cpp(model, virus))
-
-}
-
-#' @export
-add_virus.epiworld_seird <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 3, removed = 4)
-  invisible(add_virus_cpp(model, virus))
-
-}
-
-#' @export
-add_virus.epiworld_seirquarantine <- function(model, virus, proportion) {
-
-  stopifnot_virus(virus)
-  virus_set_state(virus, init = 1, end = 9, removed = 9)
-  invisible(add_virus_cpp(model, virus))
-
-}
-
-# Virus MISC -------------------------------------------------------------------
-
-#' @export
 #' @rdname virus
-#' @param init,end,removed states after acquiring a virus, removing a virus,
-#' and removing the agent as a result of the virus, respectively.
-#' @returns
-#' - The `virus_set_state` function does not return a value but assigns
-#' epidemiological properties to the specified virus of class [epiworld_virus].
-virus_set_state <- function(virus, init, end, removed) {
+#' @param virus_pos Integer. The virus's position in the model (starting at 0).
+assign_virus <- function(model, virus_pos, assign) {
 
-  stopifnot_virus(virus)
-  invisible(virus_set_state_cpp(virus, init, end, removed))
+  stopifnot_model(model)
+  stopifnot_assign(assign, null_ok = FALSE)
+  assign_virus_cpp(model, as.integer(virus_pos), assign)
+  if (uses_r(assign))
+    attr(model, "single_threaded") <- TRUE
+  invisible(model)
 
 }
 
 #' @export
-#' @returns
-#' - The `rm_virus` function does not return a value, but instead removes
-#' a specified virus from the model of class [epiworld_model].
 #' @rdname virus
 rm_virus <- function(model, virus_pos) {
 
   stopifnot_model(model)
-  invisible(rm_virus_cpp(model, virus_pos))
+  invisible(rm_virus_cpp(model, as.integer(virus_pos)))
 
 }
 
-# Virus functions --------------------------------------------------------------
-
-#' @export
-#' @param vars Integer vector. Indices (starting from 0) of the positions of the
-#' variables used to compute the logit probability.
-#' @param coefs Numeric vector. Of the same length of `vars`, is a vector of
-#' coefficients associated to the logit probability.
-#' @rdname virus
-#' @examples
-#' # Using the logit function --------------
-#' sir <- ModelSIR(
-#'   name = "COVID-19", 10000, prevalence = 0.01,
-#'   transmission_prob = 0.9, recovery = 0.1
-#' )
+#' Durations of a stage
 #'
-#' # Adding a small world population
-#' add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
+#' How many days a stage lasts, drawn when the agent enters it (see
+#' [add_after()]). Always a whole number of days, at least one.
 #'
-#' run(sir, ndays = 50, seed = 11)
-#' plot(sir)
-#'
-#' # And adding features
-#' dat <- cbind(
-#'   female = sample.int(2, 10000, replace = TRUE) - 1,
-#'   x      = rnorm(10000)
-#' )
-#'
-#' set_agents_data(sir, dat)
-#'
-#' # Creating the logit function
-#' vfun <- virus_fun_logit(
-#'   vars  = c(0L, 1L),
-#'   coefs = c(-1, 1),
-#'   model = sir
-#' )
-#'
-#' # The infection prob is lower
-#' hist(plogis(dat %*% rbind(-1, 1)))
-#'
-#' vfun # printing
-#'
-#' set_prob_infecting_fun(
-#'   virus = get_virus(sir, 0),
-#'   model = sir,
-#'   vfun  = vfun
-#' )
-#'
-#' run(sir, ndays = 50, seed = 11)
-#' plot(sir)
-#'
-virus_fun_logit <- function(vars, coefs, model) {
-
-  stopifnot_model(model)
-
-  structure(
-    virus_fun_logit_cpp(vars, coefs, model),
-    class   = "epiworld_virus_fun",
-    builder = "virus_fun_logit",
-    vars    = vars,
-    coefs   = coefs,
-    model   = model
-  )
-
-}
-
-#' @export
-print.epiworld_virus_fun <- function(x, ...) {
-
-  cat("An epiworld_virus_function object.\n")
-  cat("(model: ", get_name(attr(x, "model")), ")\n", sep = "")
-  cat("This function was built using -virus_fun_logit()-. and it features ")
-  cat("the following coefficients:\n")
-  cat(
-    paste(sprintf(
-      " % 2i: %5.2f",
-      attr(x, "vars"),
-      attr(x, "coefs")
-    ), collapse = "\n"
-    ), "\n"
-  )
-
-  invisible(x)
-
-}
-
-
-#' @export
-#' @param prob Numeric scalar. A probability (between zero and one).
-#' @returns
-#' - The `set_prob_infecting` function does not return a value, but instead
-#' assigns a probability to infection for the specified virus of class
-#' [epiworld_virus].
-#' @rdname virus
-set_prob_infecting <- function(virus, prob) {
-
-  stopifnot_virus(virus)
-  invisible(set_prob_infecting_cpp(virus, as.numeric(prob)))
-
-}
-
-#' @export
-#' @param param Character scalar. Name of the parameter featured in `model` that
-#' will be added to the virus (see details).
+#' @param days,mean,sd Each a number, the name of a model parameter, or an
+#' object from [value_inverse()] or [value_complement()].
 #' @details
-#' In the case of `set_prob_infecting_ptr`, `set_prob_recovery_ptr`, and
-#' `set_prob_death_ptr`, the corresponding parameters is passed as a pointer to
-#' the virus. The implication of using pointers is that the values will be
-#' read directly from the `model` object, so changes will be reflected.
-#' @rdname virus
-set_prob_infecting_ptr <- function(virus, model, param) {
+#' - `duration_fixed(days)`: `days`, rounded.
+#' - `duration_geometric(mean)`: a geometric number of days with that mean (the
+#'   same as leaving each day with probability `1 / mean`).
+#' - `duration_lognormal(mean, sd)`, `duration_gamma(mean, sd)`: the mean and
+#'   standard deviation of the duration, in days. A standard deviation of zero
+#'   is fixed.
+#' @returns An object of class `epiworld_duration`.
+#' @examples
+#' duration_fixed(4)
+#' duration_lognormal("Incubation period", 2)
+#' @name duration
+#' @concept virus-functions
+NULL
 
-  stopifnot_virus(virus)
+# A duration whose values call R calls R too
+new_duration <- function(kind, mean, sd = NULL) {
+  res <- duration_cpp(kind, mean, sd)
+  if (uses_r(mean, sd))
+    attr(res, "single_threaded") <- TRUE
+  res
+}
+
+#' @export
+#' @rdname duration
+duration_fixed <- function(days) {
+  new_duration("fixed", stopifnot_value(days, "days"))
+}
+
+#' @export
+#' @rdname duration
+duration_geometric <- function(mean) {
+  new_duration("geometric", stopifnot_value(mean, "mean"))
+}
+
+#' @export
+#' @rdname duration
+duration_lognormal <- function(mean, sd) {
+  new_duration(
+    "lognormal", stopifnot_value(mean, "mean"), stopifnot_value(sd, "sd")
+  )
+}
+
+#' @export
+#' @rdname duration
+duration_gamma <- function(mean, sd) {
+  new_duration(
+    "gamma", stopifnot_value(mean, "mean"), stopifnot_value(sd, "sd")
+  )
+}
+
+#' @export
+print.epiworld_duration <- function(x, ...) {
+  cat("A stage duration (see help(\"duration\")).\n")
+  invisible(x)
+}
+
+#' Values of a transition
+#'
+#' Besides a number or the name of a model parameter, a transition's value (see
+#' [add_rate()]) can be one of these.
+#'
+#' @param param Character scalar. A model parameter.
+#' @param fun A function of `(agent, model)` returning the value for that agent.
+#' @param vars Integer vector. The columns of the agents' data (starting at 0;
+#' see [set_agents_data()]).
+#' @param coefs Numeric vector. One coefficient per column.
+#' @param model An object of class `epiworld_model` (with the agents' data).
+#' @details
+#' - `value_inverse(param)`: `1 / param` (e.g., a rate from a mean duration).
+#' - `value_complement(param)`: `1 - param`.
+#' - `value_fun(fun)`: `fun(agent, model)`. It calls R once per agent and day
+#'   it applies to, which is slow, and [run_multiple()] then needs
+#'   `nthreads = 1`.
+#' - `rate_fun_logit(vars, coefs, model)`: `1 / (1 + exp(-x'b))`, with `x`
+#'   the agent's data in the columns `vars` and `b` the coefficients. Computed
+#'   in C++.
+#' @returns An object of class `epiworld_value`.
+#' @examples
+#' value_inverse("Infectious period")
+#' value_complement("Vaccine efficacy")
+#' @name value
+#' @concept virus-functions
+NULL
+
+#' @export
+#' @rdname value
+value_inverse <- function(param) {
+  stopifnot_string(param)
+  value_inverse_cpp(param)
+}
+
+#' @export
+#' @rdname value
+value_complement <- function(param) {
+  stopifnot_string(param)
+  value_complement_cpp(param)
+}
+
+#' @export
+#' @rdname value
+value_fun <- function(fun) {
+  if (!is.function(fun))
+    stop("-fun- must be a function of (agent, model).", call. = FALSE)
+  res <- value_fun_cpp(fun)
+  attr(res, "single_threaded") <- TRUE
+  res
+}
+
+#' @export
+#' @rdname value
+rate_fun_logit <- function(vars, coefs, model) {
   stopifnot_model(model)
-  invisible(set_prob_infecting_ptr_cpp(virus, model, param))
-
+  rate_fun_logit_cpp(as.integer(vars), as.double(coefs), model)
 }
 
 #' @export
-#' @param vfun An object of class `epiworld_virus_fun`.
-#' @rdname virus
-set_prob_infecting_fun <- function(virus, model, vfun) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  stopifnot_vfun(vfun)
-  invisible(set_prob_infecting_fun_cpp(virus, model, vfun))
-
-}
-
-#' @export
-#' @returns
-#' - The `set_prob_recovery` function does not return a value, but instead
-#' assigns a probability to recovery for the specified virus of class
-#' [epiworld_virus].
-#' @rdname virus
-set_prob_recovery <- function(virus, prob) {
-
-  stopifnot_virus(virus)
-  invisible(set_prob_recovery_cpp(virus, as.numeric(prob)))
-
-}
-
-#' @export
-#' @rdname virus
-set_prob_recovery_ptr <- function(virus, model, param) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  invisible(set_prob_recovery_ptr_cpp(virus, model, param))
-
-}
-
-#' @export
-#' @rdname virus
-set_prob_recovery_fun <- function(virus, model, vfun) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  stopifnot_vfun(vfun)
-  invisible(set_prob_recovery_fun_cpp(virus, model, vfun))
-
-}
-
-#' @export
-#' @returns
-#' - The `set_prob_death` function does not return a value, but instead
-#' assigns a probability to death for the specified virus of class
-#' [epiworld_virus].
-#' @rdname virus
-set_prob_death <- function(virus, prob) {
-
-  stopifnot_virus(virus)
-  invisible(set_prob_death_cpp(virus, as.numeric(prob)))
-
-}
-
-#' @export
-#' @rdname virus
-set_prob_death_ptr <- function(virus, model, param) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  invisible(set_prob_death_ptr_cpp(virus, model, param))
-
-}
-
-#' @export
-#' @rdname virus
-set_prob_death_fun <- function(virus, model, vfun) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  stopifnot_vfun(vfun)
-  invisible(set_prob_death_fun_cpp(virus, model, vfun))
-
-}
-
-#' @export
-#' @return
-#' - The `set_incubation` function does not return a value, but instead
-#' assigns an incubation period to the specified virus of class [epiworld_virus].
-#' @rdname virus
-set_incubation <- function(virus, incubation) {
-
-  stopifnot_virus(virus)
-  invisible(set_incubation_cpp(virus, as.numeric(incubation)))
-
-}
-
-#' @export
-#' @rdname virus
-set_incubation_ptr <- function(virus, model, param) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  invisible(set_incubation_ptr_cpp(virus, model, param))
-
-}
-
-#' @export
-#' @rdname virus
-set_incubation_fun <- function(virus, model, vfun) {
-
-  stopifnot_virus(virus)
-  stopifnot_model(model)
-  stopifnot_vfun(vfun)
-  invisible(set_incubation_fun_cpp(virus, model, vfun))
-
+print.epiworld_value <- function(x, ...) {
+  cat("A transition value (see help(\"value\")).\n")
+  invisible(x)
 }

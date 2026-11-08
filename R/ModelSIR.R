@@ -14,9 +14,10 @@
 #' @family Models
 #' @concept general-models
 #' @details
-#' The [initial_states] function allows the user to set the initial state of the
-#' model. In particular, the user can specify how many of the non-infected
-#' agents have been removed at the beginning of the simulation.
+#' [set_initial()] places agents, at the start of each run, in stages without
+#' the virus (e.g., `set_initial(model, assign_shares(c(Recovered = 0.2)))`); the
+#' model's stages are listed by [get_stages()]. The model is built by
+#' [make_model()] (see [get_model_info()] for its arguments' limits).
 #' @section Model diagram:
 #' ![](sir.png "SIR Diagram")
 #' @aliases epiworld_sir
@@ -43,16 +44,17 @@ ModelSIR <- function(
   transmission_prob,
   recovery_rate
 ) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(recovery_rate)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSIR_cpp(name, n, prevalence, transmission_prob, recovery_rate),
-    class = c("epiworld_sir", "epiworld_model")
+  make_model(
+    "SIR",
+    list(
+      n                 = n,
+      prevalence        = prevalence,
+      transmission_prob = transmission_prob,
+      recovery_rate     = recovery_rate
+    ),
+    virus_name = name
   )
 
 }

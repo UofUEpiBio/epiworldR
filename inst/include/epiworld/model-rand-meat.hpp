@@ -4,39 +4,33 @@
 #include "rng-utils.hpp"
 #include "model-bones.hpp"
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_gamma(epiworld_double alpha, epiworld_double beta)
+inline void Model::set_rand_gamma(epiworld_double alpha, epiworld_double beta)
 {
     rgammad = std::gamma_distribution<>(alpha,beta);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_norm(epiworld_double mean, epiworld_double sd)
+inline void Model::set_rand_norm(epiworld_double mean, epiworld_double sd)
 {
     rnormd  = std::normal_distribution<>(mean, sd);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_unif(epiworld_double a, epiworld_double b)
+inline void Model::set_rand_unif(epiworld_double a, epiworld_double b)
 {
     runifd_a = a;
     runifd_b = b;
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_lognormal(epiworld_double mean, epiworld_double shape)
+inline void Model::set_rand_lognormal(epiworld_double mean, epiworld_double shape)
 {
     rlognormald  = std::lognormal_distribution<>(mean, shape);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_exp(epiworld_double lambda)
+inline void Model::set_rand_exp(epiworld_double lambda)
 {
     rexpd  = std::exponential_distribution<>(lambda);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_binom(int n, epiworld_double p)
+inline void Model::set_rand_binom(int n, epiworld_double p)
 {
     rbinomd  = std::binomial_distribution<>(n, p);
     rbinomd_n = n;
@@ -54,51 +48,43 @@ inline void Model<TSeq>::set_rand_binom(int n, epiworld_double p)
 #endif
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_nbinom(int n, epiworld_double p)
+inline void Model::set_rand_nbinom(int n, epiworld_double p)
 {
     rnbinomd  = std::negative_binomial_distribution<>(n, p);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_geom(epiworld_double p)
+inline void Model::set_rand_geom(epiworld_double p)
 {
     rgeomd  = std::geometric_distribution<>(p);
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_poiss(epiworld_double lambda)
+inline void Model::set_rand_poiss(epiworld_double lambda)
 {
     rpoissd  = std::poisson_distribution<>(lambda);
 }
 
-template<typename TSeq>
-inline std::shared_ptr< epi_xoshiro256ss > & Model<TSeq>::get_rand_endgine()
+inline std::shared_ptr< epi_xoshiro256ss > & Model::get_rand_endgine()
 {
     return engine;
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng)
+inline void Model::set_rand_engine(std::shared_ptr< epi_xoshiro256ss > & eng)
 {
     engine = eng;
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::runif() {
+inline epiworld_double Model::runif() {
     // CHECK_INIT()
     epiworld_double res = runif_epi(*engine);
     return res * (runifd_b - runifd_a) + runifd_a;
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::runif_int(int a, int b) {
+inline int Model::runif_int(int a, int b) {
     // CHECK_INIT()
     return a + runif_index(static_cast<uint32_t>(b - a + 1));
 }
 
-template<typename TSeq>
-inline uint32_t Model<TSeq>::runif_index(uint32_t n) {
+inline uint32_t Model::runif_index(uint32_t n) {
 
     // If asking for a 0-range, return 0 to prevent division by zero in the bias check
     if (n == 0) return 0;
@@ -126,31 +112,26 @@ inline uint32_t Model<TSeq>::runif_index(uint32_t n) {
     return static_cast<uint32_t>(m >> 32);
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::runif(epiworld_double a, epiworld_double b) {
+inline epiworld_double Model::runif(epiworld_double a, epiworld_double b) {
     // CHECK_INIT()
     return runif_epi(*engine) * (b - a) + a;
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rnorm() {
+inline epiworld_double Model::rnorm() {
     // CHECK_INIT()
     return rnormd(*engine);
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rnorm(epiworld_double mean, epiworld_double sd) {
+inline epiworld_double Model::rnorm(epiworld_double mean, epiworld_double sd) {
     // CHECK_INIT()
     return rnormd(*engine) * sd + mean;
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rgamma() {
+inline epiworld_double Model::rgamma() {
     return rgammad(*engine);
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_double beta) {
+inline epiworld_double Model::rgamma(epiworld_double alpha, epiworld_double beta) {
 
     return rgammad(
         *engine,
@@ -159,13 +140,11 @@ inline epiworld_double Model<TSeq>::rgamma(epiworld_double alpha, epiworld_doubl
 
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rexp() {
+inline epiworld_double Model::rexp() {
     return rexpd(*engine);
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rexp(epiworld_double lambda) {
+inline epiworld_double Model::rexp(epiworld_double lambda) {
 
     return rexpd(
         *engine,
@@ -174,13 +153,11 @@ inline epiworld_double Model<TSeq>::rexp(epiworld_double lambda) {
 
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rlognormal() {
+inline epiworld_double Model::rlognormal() {
     return rlognormald(*engine);
 }
 
-template<typename TSeq>
-inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_double shape) {
+inline epiworld_double Model::rlognormal(epiworld_double mean, epiworld_double shape) {
 
     return rlognormald(
         *engine,
@@ -188,8 +165,7 @@ inline epiworld_double Model<TSeq>::rlognormal(epiworld_double mean, epiworld_do
     );
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rbinom() {
+inline int Model::rbinom() {
 #ifdef EPI_FAST_BINOM
     if (rbinomd_use_poisson)
     {
@@ -200,8 +176,7 @@ inline int Model<TSeq>::rbinom() {
     return rbinomd(*engine);
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
+inline int Model::rbinom(int n, epiworld_double p) {
 
     if (n == 0 || p == 0.0)
         return 0;
@@ -224,13 +199,11 @@ inline int Model<TSeq>::rbinom(int n, epiworld_double p) {
 
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rnbinom() {
+inline int Model::rnbinom() {
     return rnbinomd(*engine);
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rnbinom(int n, epiworld_double p) {
+inline int Model::rnbinom(int n, epiworld_double p) {
 
     return rnbinomd(
         *engine,
@@ -238,13 +211,11 @@ inline int Model<TSeq>::rnbinom(int n, epiworld_double p) {
     );
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rgeom() {
+inline int Model::rgeom() {
     return rgeomd(*engine);
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rgeom(epiworld_double p) {
+inline int Model::rgeom(epiworld_double p) {
 
     return rgeomd(
         *engine,
@@ -253,13 +224,11 @@ inline int Model<TSeq>::rgeom(epiworld_double p) {
 
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rpoiss() {
+inline int Model::rpoiss() {
     return rpoissd(*engine);
 }
 
-template<typename TSeq>
-inline int Model<TSeq>::rpoiss(epiworld_double lambda) {
+inline int Model::rpoiss(epiworld_double lambda) {
 
     return rpoissd(
         *engine,
@@ -268,8 +237,7 @@ inline int Model<TSeq>::rpoiss(epiworld_double lambda) {
 
 }
 
-template<typename TSeq>
-inline size_t Model<TSeq>::sample_from_probs(size_t n) {
+inline size_t Model::sample_from_probs(size_t n) {
 
     epiworld_double p_total = runif();
     size_t ans;
@@ -283,8 +251,7 @@ inline size_t Model<TSeq>::sample_from_probs(size_t n) {
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::reserve_tmp(size_t n) {
+inline void Model::reserve_tmp(size_t n) {
 
     if (n <= array_virus_tmp.size())
         return;
@@ -297,8 +264,7 @@ inline void Model<TSeq>::reserve_tmp(size_t n) {
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::seed(size_t s) {
+inline void Model::seed(size_t s) {
 
     this->engine->seed(s);
 
@@ -313,6 +279,137 @@ inline void Model<TSeq>::seed(size_t s) {
     rnbinomd.reset();
     rgeomd.reset();
     rpoissd.reset();
+
+}
+
+/**
+ * @brief Conditional Weighted Sampling
+ *
+ * @details
+ * The sampling function will draw one of `{-1, 0,...,probs.size() - 1}` in a
+ * weighted fashion. The probabilities are drawn given that either one or none
+ * of the cases is drawn; in the latter returns -1.
+ *
+ * @param probs Vector of probabilities.
+ * @param m A `Model`. This is used to draw random uniform numbers.
+ * @return int If -1 then it means that none got sampled, otherwise the index
+ * of the entry that got drawn.
+ */
+template<typename TDbl = epiworld_double>
+inline int roulette(
+    const std::vector< TDbl > & probs,
+    Model * m
+    )
+{
+
+    // Step 1: a probability of 1 is a certain event; if there are any, one of
+    // them is drawn uniformly. (This used to test `> 1 - 1e-100`, which is
+    // `> 1` in floating point, so p == 1 fell through to 0/0 below and the
+    // last entry won regardless.)
+    std::vector< int > certain_infection;
+    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
+        if (probs[p] >= 1.0)
+            certain_infection.push_back(static_cast<int>(p));
+
+    TDbl r = static_cast<TDbl>(m->runif());
+    if (certain_infection.size() > 0)
+        return certain_infection[std::floor(r * certain_infection.size())];
+
+    // Step 2: the odds r_p = p / (1 - p) and their sum R. Then
+    // P(none) = 1 / (1 + R) and P(p) = r_p / (1 + R), the same as normalizing
+    // by prod(1 - p), which underflows to 0 with many entries (0/0 weights).
+    std::vector< TDbl > odds(probs.size());
+    TDbl odds_total = 0.0;
+    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
+    {
+        odds[p] = probs[p] / (1.0 - probs[p]);
+        odds_total += odds[p];
+    }
+
+    // Step 3: Roulette
+    TDbl cumsum = 1.0 / (1.0 + odds_total);
+    if (r < cumsum)
+        return -1;
+
+    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
+    {
+        // If it yield here, then bingo, the individual will acquire the disease
+        cumsum += odds[p] / (1.0 + odds_total);
+        if (r < cumsum)
+            return static_cast<int>(p);
+
+    }
+
+    #ifdef EPI_DEBUG
+    printf_epiworld("[epi-debug] roulette::cumsum = %.4f\n", cumsum);
+    #endif
+
+    return static_cast<int>(probs.size() - 1u);
+
+}
+
+inline int roulette(std::vector< double > & probs, Model * m)
+{
+    return roulette<double>(probs, m);
+}
+
+inline int roulette(std::vector< float > & probs, Model * m)
+{
+    return roulette<float>(probs, m);
+}
+
+
+inline int roulette(
+    epiworld_fast_uint nelements,
+    Model * m
+    )
+{
+
+    if ((nelements * 2) > m->array_double_tmp.size())
+    {
+        throw std::logic_error(
+            "Trying to sample from more data than there is in roulette!" +
+            std::to_string(nelements) + " vs " +
+            std::to_string(m->array_double_tmp.size())
+            );
+    }
+
+    auto & tmp = m->array_double_tmp;
+
+    // Step 1: certain events (p >= 1; see the vector version), drawn uniformly
+    epiworld_fast_uint ncertain = 0u;
+    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
+        if (tmp[p] >= 1.0)
+            tmp[nelements + ncertain++] = p;
+
+    epiworld_double r = m->runif();
+    if (ncertain > 0u)
+        return tmp[nelements + std::floor(ncertain * r)];
+
+    // Step 2: the odds and their sum, normalized by 1 + sum (see the vector
+    // version; prod(1 - p) underflows with many exposures)
+    epiworld_double odds_total = 0.0;
+    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
+    {
+        tmp[nelements + p] = tmp[p] / (1.0 - tmp[p]);
+        odds_total += tmp[nelements + p];
+    }
+
+    // Step 3: Roulette
+    epiworld_double cumsum = 1.0 / (1.0 + odds_total);
+    if (r < cumsum)
+        return -1;
+
+    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
+    {
+        // If it yield here, then bingo, the individual will acquire the disease
+        cumsum += tmp[nelements + p] / (1.0 + odds_total);
+        if (r < cumsum)
+            return static_cast<int>(p);
+
+    }
+
+    return static_cast<int>(nelements - 1u);
 
 }
 

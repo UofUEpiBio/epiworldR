@@ -1,6 +1,7 @@
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "epiworld-common.h"
+#include "assign.h"
 
 using namespace epiworld;
 using namespace cpp11;
@@ -8,17 +9,16 @@ using namespace cpp11;
 // A layer is held through a std::shared_ptr, so an R layer object and the
 // model it is added to share the same layer (a layer created in R) or the R
 // object borrows the model's (get_layer(); the R side keeps the model alive).
-typedef std::shared_ptr< ContactLayer<> > LayerPtr;
-typedef layer::Network<>::Generator Generator;
-typedef layer::Network<>::Rewiring Rewiring;
-typedef layer::Mixing<>::Grouping Grouping;
+typedef std::shared_ptr< ContactLayer > LayerPtr;
+typedef layer::Network::Generator Generator;
+typedef layer::Network::Rewiring Rewiring;
 
 static LayerPtr & layer_ptr(SEXP layer) {
   external_pointer< LayerPtr > ptr(layer);
   return *ptr;
 }
 
-static layer::Network<> & network_ref(SEXP layer) {
+static layer::Network & network_ref(SEXP layer) {
 
   auto * net = layer_ptr(layer)->as_network();
   if (net == nullptr)
@@ -28,9 +28,9 @@ static layer::Network<> & network_ref(SEXP layer) {
 
 }
 
-static layer::Mixing<> & mixing_ref(SEXP layer) {
+static layer::Mixing & mixing_ref(SEXP layer) {
 
-  auto * mix = dynamic_cast< layer::Mixing<> * >(layer_ptr(layer).get());
+  auto * mix = dynamic_cast< layer::Mixing * >(layer_ptr(layer).get());
   if (mix == nullptr)
     stop("The layer is not a mixing layer.");
 
@@ -43,14 +43,14 @@ static layer::Mixing<> & mixing_ref(SEXP layer) {
 [[cpp11::register]]
 SEXP graph_smallworld_cpp(int k, double p, bool directed) {
   return external_pointer< Generator >(
-    new Generator(graph::smallworld<>(k, p, directed))
+    new Generator(graph::smallworld(k, p, directed))
   );
 }
 
 [[cpp11::register]]
 SEXP graph_bernoulli_cpp(double p, bool directed) {
   return external_pointer< Generator >(
-    new Generator(graph::bernoulli<>(p, directed))
+    new Generator(graph::bernoulli(p, directed))
   );
 }
 
@@ -63,7 +63,7 @@ SEXP graph_sbm_cpp(
 
   std::vector< size_t > sizes(block_sizes.begin(), block_sizes.end());
   return external_pointer< Generator >(
-    new Generator(graph::sbm<>(sizes, mixing_matrix, row_major))
+    new Generator(graph::sbm(sizes, mixing_matrix, row_major))
   );
 
 }
@@ -81,16 +81,9 @@ SEXP graph_edgelist_cpp(
 }
 
 [[cpp11::register]]
-SEXP grouping_random_cpp(std::vector< double > sizes, bool as_proportion) {
-  return external_pointer< Grouping >(
-    new Grouping(grouping::random<>(std::move(sizes), as_proportion))
-  );
-}
-
-[[cpp11::register]]
 SEXP rewire_degseq_cpp(std::string param) {
   return external_pointer< Rewiring >(
-    new Rewiring(graph::rewire_degseq<>(param))
+    new Rewiring(graph::rewire_degseq(param))
   );
 }
 
@@ -100,7 +93,7 @@ SEXP rewire_degseq_cpp(std::string param) {
 SEXP layer_network_generator_cpp(std::string name, SEXP generator) {
   external_pointer< Generator > gen(generator);
   return external_pointer< LayerPtr >(
-    new LayerPtr(layer::network<>(name, *gen))
+    new LayerPtr(layer::network(name, *gen))
   );
 }
 
@@ -108,39 +101,30 @@ SEXP layer_network_generator_cpp(std::string name, SEXP generator) {
 SEXP layer_network_graph_cpp(std::string name, SEXP graph) {
   external_pointer< AdjList > al(graph);
   return external_pointer< LayerPtr >(
-    new LayerPtr(layer::network<>(name, *al))
+    new LayerPtr(layer::network(name, *al))
   );
 }
 
 [[cpp11::register]]
 SEXP layer_mixing_cpp(std::string name) {
-  return external_pointer< LayerPtr >(new LayerPtr(layer::mixing<>(name)));
+  return external_pointer< LayerPtr >(new LayerPtr(layer::mixing(name)));
 }
 
-// Groups from R: 0-based, NA for none (NO_GROUP)
+// The groups, placed with an `epiworld_assign` whose labels are the groups
+// (0-based; NA for none)
 [[cpp11::register]]
-SEXP set_groups_cpp(SEXP layer, const std::vector< int > & groups, int n_groups) {
+SEXP set_groups_cpp(SEXP layer, SEXP assign, int n_groups) {
 
-  std::vector< size_t > g(groups.size());
-  for (size_t i = 0u; i < groups.size(); ++i)
-    g[i] = (groups[i] == NA_INTEGER) ?
-      layer::Mixing<>::NO_GROUP : static_cast< size_t >(groups[i]);
-
-  mixing_ref(layer).set_groups(std::move(g), n_groups);
+  mixing_ref(layer).set_groups(
+    assign_from_r(assign, nullptr), static_cast< size_t >(n_groups)
+  );
   return layer;
 
-}
-
-[[cpp11::register]]
-SEXP set_grouping_cpp(SEXP layer, SEXP grouping) {
-  external_pointer< Grouping > gr(grouping);
-  mixing_ref(layer).set_groups(*gr);
-  return layer;
 }
 
 [[cpp11::register]]
 SEXP add_layer_cpp(SEXP model, SEXP layer) {
-  external_pointer< Model<> > ptr(model);
+  external_pointer< Model > ptr(model);
   ptr->add_layer(layer_ptr(layer));
   return model;
 }
@@ -150,13 +134,13 @@ SEXP add_layer_cpp(SEXP model, SEXP layer) {
 [[cpp11::register]]
 SEXP get_layer_cpp(SEXP model, SEXP which) {
 
-  external_pointer< Model<> > ptr(model);
+  external_pointer< Model > ptr(model);
   auto & layer = (TYPEOF(which) == STRSXP) ?
     ptr->get_layer(as_cpp< std::string >(which)) :
     ptr->get_layer(as_cpp< size_t >(which));
 
   return external_pointer< LayerPtr >(
-    new LayerPtr(&layer, [](ContactLayer<> *) {})
+    new LayerPtr(&layer, [](ContactLayer *) {})
   );
 
 }
@@ -168,7 +152,7 @@ std::string get_layer_kind_cpp(SEXP layer) {
   if (ptr->as_network() != nullptr)
     return "network";
 
-  if (dynamic_cast< layer::Mixing<> * >(ptr) != nullptr)
+  if (dynamic_cast< layer::Mixing * >(ptr) != nullptr)
     return "mixing";
 
   return "other";
@@ -251,7 +235,7 @@ SEXP set_contact_prob_cpp(SEXP layer, std::vector< double > contact_prob) {
 [[cpp11::register]]
 int get_group_cpp(SEXP layer, int agent) {
   size_t g = mixing_ref(layer).get_group(agent);
-  return (g == layer::Mixing<>::NO_GROUP) ? NA_INTEGER : static_cast< int >(g);
+  return (g == layer::Mixing::NO_GROUP) ? NA_INTEGER : static_cast< int >(g);
 }
 
 [[cpp11::register]]
@@ -259,7 +243,7 @@ SEXP set_group_cpp(SEXP layer, int agent, int group) {
   mixing_ref(layer).set_group(
     agent,
     (group == NA_INTEGER) ?
-      layer::Mixing<>::NO_GROUP : static_cast< size_t >(group)
+      layer::Mixing::NO_GROUP : static_cast< size_t >(group)
   );
   return layer;
 }
@@ -273,7 +257,7 @@ std::vector< int > members_of_cpp(SEXP layer, int group) {
 [[cpp11::register]]
 cpp11::data_frame groupmates_of_cpp(SEXP layer, int agent, int from, int to) {
 
-  std::vector< layer::Mixing<>::Groupmate > mates;
+  std::vector< layer::Mixing::Groupmate > mates;
   mixing_ref(layer).groupmates_of(agent, from, to, mates);
 
   std::vector< int > id, last_day, n_days;

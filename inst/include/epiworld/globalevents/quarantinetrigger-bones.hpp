@@ -4,7 +4,6 @@
 #include <vector>
 #include "../config.hpp"
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class QuarantineTrigger {
 private:
     int _model_sim_id = -1;
@@ -12,12 +11,12 @@ private:
     std::vector< size_t > _agents_triggering_quarantine;
     std::vector< int > _date_infectious;
     
-    void _setup(const Model<TSeq> & model);
+    void _setup(const Model & model);
 public:
     QuarantineTrigger() = default;
     void add_triggering_agent(
-        const Model<TSeq> & model,
-        const Agent<TSeq> & agent,
+        const Model & model,
+        const Agent & agent,
         int date_infectious
     );
 

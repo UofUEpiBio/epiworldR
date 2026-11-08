@@ -3,271 +3,188 @@
 \name{virus}
 \alias{virus}
 \alias{epiworld_virus}
+\alias{add_stage}
+\alias{set_contact}
+\alias{add_infection}
+\alias{add_rate}
+\alias{add_after}
+\alias{add_external}
+\alias{use_param}
+\alias{get_stages}
 \alias{set_name_virus}
 \alias{get_name_virus}
 \alias{add_virus}
-\alias{virus_set_state}
+\alias{assign_virus}
 \alias{rm_virus}
-\alias{virus_fun_logit}
-\alias{set_prob_infecting}
-\alias{set_prob_infecting_ptr}
-\alias{set_prob_infecting_fun}
-\alias{set_prob_recovery}
-\alias{set_prob_recovery_ptr}
-\alias{set_prob_recovery_fun}
-\alias{set_prob_death}
-\alias{set_prob_death_ptr}
-\alias{set_prob_death_fun}
-\alias{set_incubation}
-\alias{set_incubation_ptr}
-\alias{set_incubation_fun}
-\title{Virus design}
+\title{Viruses and their natural history}
 \usage{
-virus(
-  name,
-  prevalence,
-  as_proportion,
-  prob_infecting,
-  recovery_rate = 0.5,
-  prob_death = 0,
-  post_immunity = -1,
-  incubation = 7
-)
+virus(name, ...)
+
+add_stage(virus, label, infectious = FALSE, carrier = infectious)
+
+set_contact(virus, stage, weight)
+
+add_infection(virus, from, to, rate, transition_name = NULL)
+
+add_rate(virus, from, to, rate, effect = "none", transition_name = NULL)
+
+add_after(virus, from, to, duration, since = NULL, transition_name = NULL)
+
+add_external(virus, from, to, transition_name)
+
+use_param(virus, param, replacement)
+
+get_stages(x)
 
 set_name_virus(virus, name)
 
 get_name_virus(virus)
 
-add_virus(model, virus, proportion)
+add_virus(model, virus, assign = NULL)
 
-virus_set_state(virus, init, end, removed)
+assign_virus(model, virus_pos, assign)
 
 rm_virus(model, virus_pos)
-
-virus_fun_logit(vars, coefs, model)
-
-set_prob_infecting(virus, prob)
-
-set_prob_infecting_ptr(virus, model, param)
-
-set_prob_infecting_fun(virus, model, vfun)
-
-set_prob_recovery(virus, prob)
-
-set_prob_recovery_ptr(virus, model, param)
-
-set_prob_recovery_fun(virus, model, vfun)
-
-set_prob_death(virus, prob)
-
-set_prob_death_ptr(virus, model, param)
-
-set_prob_death_fun(virus, model, vfun)
-
-set_incubation(virus, incubation)
-
-set_incubation_ptr(virus, model, param)
-
-set_incubation_fun(virus, model, vfun)
 }
 \arguments{
-\item{name}{of the virus}
+\item{name}{Character scalar. The name of the virus.}
 
-\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
-assigned the virus. The interpretation of this argument depends on the value
-of \code{as_proportion}.}
+\item{...}{Not used: a virus takes no prevalence or probabilities (see
+Details).}
 
-\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
-treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
+\item{virus}{An object of class \code{epiworld_virus}.}
 
-\item{prob_infecting}{Numeric scalar. Probability of infection (transmission).}
+\item{label}{Character scalar. The stage's label.}
 
-\item{recovery_rate}{Numeric scalar. Probability of recovery.}
+\item{infectious}{Logical scalar. Whether agents in the stage transmit
+(implies \code{carrier}).}
 
-\item{prob_death}{Numeric scalar. Probability of death.}
+\item{carrier}{Logical scalar. Whether agents in the stage hold the virus.}
 
-\item{post_immunity}{Numeric scalar. Post immunity (prob of re-infection).}
+\item{stage}{Character scalar. A stage, by label.}
 
-\item{incubation}{Numeric scalar. Incubation period (in days) of the virus.}
+\item{weight}{Numeric scalar. The stage's contact weight (default 1). \code{0}
+takes its agents out of every layer: they are not met and do not transmit.
+On networks, a fraction scales the per-contact probability; mixing layers
+thin the contacts.}
 
-\item{virus}{An object of class \code{epiworld_virus}}
+\item{from}{Character vector. The stages the transition leaves (by label).
+\code{add_after()} takes one.}
+
+\item{to}{Character scalar. The stage the transition enters.}
+
+\item{rate}{The transition's value: a number, the name of a model parameter,
+or an object from \code{\link[=value_inverse]{value_inverse()}}, \code{\link[=value_complement]{value_complement()}}, \code{\link[=value_fun]{value_fun()}} or
+\code{\link[=rate_fun_logit]{rate_fun_logit()}}. For \code{add_infection()}, the probability of infection per
+contact; for \code{add_rate()}, the daily probability. A number becomes a model
+parameter (named after the virus and the transition) when the virus is
+added to a model.}
+
+\item{transition_name}{Character scalar or \code{NULL}. The transition's name
+(default: \code{"From -> To"}), used by the outputs and by \code{\link[=fire]{fire()}}.}
+
+\item{effect}{Character scalar. The tool effect a rate takes: \code{"none"},
+\code{"recovery"} (the probability becomes \verb{1 - (1 - p) * (1 - recovery enhancer)}) or \code{"death"} (\verb{p * (1 - death reduction)}).}
+
+\item{duration}{How long the stage lasts, drawn when the agent enters it: an
+object from one of the \link{duration} functions.}
+
+\item{since}{Character scalar or \code{NULL}. Counts the duration from the day
+the agent entered this stage (in the same infection), instead of the day it
+entered \code{from}.}
+
+\item{param, replacement}{Character scalars. The model parameter the
+transitions name, and the one this virus reads instead.}
+
+\item{x}{A virus or a model.}
 
 \item{model}{An object of class \code{epiworld_model}.}
 
-\item{proportion}{Deprecated.}
+\item{assign}{Who gets the virus at the start of each run: a placement from
+one of the \link{assign} functions (e.g., \code{assign_share(0.01)}), or \code{NULL} for
+nobody.}
 
-\item{init, end, removed}{states after acquiring a virus, removing a virus,
-and removing the agent as a result of the virus, respectively.}
-
-\item{virus_pos}{Positive integer. Index of the virus's position in the model.}
-
-\item{vars}{Integer vector. Indices (starting from 0) of the positions of the
-variables used to compute the logit probability.}
-
-\item{coefs}{Numeric vector. Of the same length of \code{vars}, is a vector of
-coefficients associated to the logit probability.}
-
-\item{prob}{Numeric scalar. A probability (between zero and one).}
-
-\item{param}{Character scalar. Name of the parameter featured in \code{model} that
-will be added to the virus (see details).}
-
-\item{vfun}{An object of class \code{epiworld_virus_fun}.}
+\item{virus_pos}{Integer. The virus's position in the model (starting at 0).}
 }
 \value{
 \itemize{
-\item The \code{set_name_virus} function does not return a value, but merely assigns
-a name to the virus of choice.
-}
-
-\itemize{
-\item The \code{get_name_virus} function returns the name of the virus of class
-\link{epiworld_virus}.
-}
-
-\itemize{
-\item The \code{add_virus} function does not return a value, instead it adds the
-virus of choice to the model object of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{virus_set_state} function does not return a value but assigns
-epidemiological properties to the specified virus of class \link{epiworld_virus}.
-}
-
-\itemize{
-\item The \code{rm_virus} function does not return a value, but instead removes
-a specified virus from the model of class \link{epiworld_model}.
-}
-
-\itemize{
-\item The \code{set_prob_infecting} function does not return a value, but instead
-assigns a probability to infection for the specified virus of class
-\link{epiworld_virus}.
-}
-
-\itemize{
-\item The \code{set_prob_recovery} function does not return a value, but instead
-assigns a probability to recovery for the specified virus of class
-\link{epiworld_virus}.
-}
-
-\itemize{
-\item The \code{set_prob_death} function does not return a value, but instead
-assigns a probability to death for the specified virus of class
-\link{epiworld_virus}.
-}
-
-\itemize{
-\item The \code{set_incubation} function does not return a value, but instead
-assigns an incubation period to the specified virus of class \link{epiworld_virus}.
+\item \code{virus()} returns a virus, of class \code{epiworld_virus}.
+\item \code{add_stage()}, \code{set_contact()}, \code{add_infection()}, \code{add_rate()},
+\code{add_after()}, \code{add_external()} and \code{use_param()} return the virus
+(invisibly), so they can be chained.
+\item \code{get_stages()} returns a data frame with the stages of a virus (label,
+whether they carry the virus or transmit it, and their contact weight), or
+the labels of a model's stages.
 }
 }
 \description{
-Viruses can be considered to be anything that can be transmitted (e.g.,
-diseases, as well as ideas.) Most models in epiworldR can feature multiple
-viruses.
+A virus carries its natural history: the \strong{stages} of the disease and the
+\strong{transitions} between them. Build a virus with \code{virus()}, declare its
+stages and transitions, and add it to a model with \code{\link[=add_virus]{add_virus()}}, which
+gives the model its stages.
 }
 \details{
-The \code{\link[=virus]{virus()}} function can be used to initialize a virus. Virus features can
-then be modified using the functions \verb{set_prob_*}.
+Four kinds of transitions leave a stage:
+\itemize{
+\item \code{add_infection()}: by contact, drawn from the model's layers. Taking it
+gives the agent the virus. A stage is susceptible because an infection
+leaves it.
+\item \code{add_rate()}: a daily probability. The rates out of a stage compete: one
+draw a day picks one of them, or none.
+\item \code{add_after()}: a duration, drawn when the agent enters the stage; the
+agent leaves on the day it ends, unless a rate fired first.
+\item \code{add_external()}: fired by code, through \code{\link[=fire]{fire()}}.
+}
 
-The function \code{\link[=virus_fun_logit]{virus_fun_logit()}} creates a "virus function" that can be
-evaluated for transmission, recovery, and death. As the name sugests, it
-computes those probabilities using a logit function (see examples).
+The first stage is where agents start. Entering a stage that is not a
+carrier releases the virus. A death is a stage with contact weight 0 and no
+exits.
 
-The name of the \code{epiworld_virus} object can be manipulated with the functions
-\code{\link[=set_name_virus]{set_name_virus()}} and \code{\link[=get_name_virus]{get_name_virus()}}.
+\strong{Strains.} A virus added to a model is a variant with its own id. A strain
+of the model's virus is a copy (\code{clone_epi(get_virus(model, 0))}) with its own
+name; \code{use_param()} points its transitions to other parameters, so the
+strain shares the stages and differs in its values.
 
-In the case of \code{set_prob_infecting_ptr}, \code{set_prob_recovery_ptr}, and
-\code{set_prob_death_ptr}, the corresponding parameters is passed as a pointer to
-the virus. The implication of using pointers is that the values will be
-read directly from the \code{model} object, so changes will be reflected.
+\strong{Placement.} \code{\link[=add_virus]{add_virus()}} takes a placement from the \link{assign} functions:
+its labels are the stages the agents start in (a carrier stage); a form
+without labels uses the infection's target.
 }
 \examples{
-mseirconn <- ModelSEIR(
-  name                = "COVID-19",
-  prevalence          = 0.01,
-  n                   = 10000,
-  latent_period     = 7,
-  transmission_prob   = 0.5,
-  recovery_rate       = 0.99
+# An SIR, from scratch
+flu <- virus("Flu")
+add_stage(flu, "Susceptible")
+add_stage(flu, "Infected", infectious = TRUE)
+add_stage(flu, "Recovered")
+add_infection(flu, "Susceptible", "Infected", rate = "Transmission rate")
+add_rate(
+  flu, "Infected", "Recovered", rate = "Recovery rate", effect = "recovery"
 )
-add_param(mseirconn, "Contact rate", 4)
-add_layer(
-  mseirconn,
-  layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
-    set_contact_rate("Contact rate")
-)
+get_stages(flu)
 
-delta <- virus(
-  "Delta Variant", 0, .5, .2, .01, prevalence = 0.3, as_proportion = TRUE
-)
+model <- Model(5000)
+add_param(model, "Transmission rate", 0.1)
+add_param(model, "Recovery rate", 1 / 7)
+add_layer(model, layer_network("contacts", graph_smallworld(10, 0.1)))
+add_virus(model, flu, assign_share(0.01))
+run(model, ndays = 50, seed = 1)
+model
 
-# Adding virus and setting/getting virus name
-add_virus(mseirconn, delta)
-set_name_virus(delta, "COVID-19 Strain")
-get_name_virus(delta)
+# A more transmissible strain of the model's virus
+delta <- clone_epi(get_virus(model, 0))
+set_name_virus(delta, "Delta")
+add_param(model, "Delta transmission rate", 0.2)
+use_param(delta, "Transmission rate", "Delta transmission rate")
+add_virus(model, delta, assign_count(10))
+run(model, ndays = 50, seed = 1)
 
-run(mseirconn, ndays = 100, seed = 992)
-mseirconn
-
-rm_virus(mseirconn, 0) # Removing the first virus from the model object
-
-# Setting parameters for the delta virus manually
-set_prob_infecting(delta, 0.5)
-set_prob_recovery(delta, 0.9)
-set_prob_death(delta, 0.01)
-run(mseirconn, ndays = 100, seed = 992) # Run the model to observe changes
-
-# If the states were (for example):
-# 1: Infected
-# 2: Recovered
-# 3: Dead
-delta2 <- virus(
-  "Delta Variant 2", 0, .5, .2, .01, prevalence = 0, as_proportion = TRUE
-)
-virus_set_state(delta2, 1, 2, 3)
-# Using the logit function --------------
-sir <- ModelSIR(
-  name = "COVID-19", 10000, prevalence = 0.01,
-  transmission_prob = 0.9, recovery = 0.1
-)
-
-# Adding a small world population
-add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
-
-run(sir, ndays = 50, seed = 11)
-plot(sir)
-
-# And adding features
-dat <- cbind(
-  female = sample.int(2, 10000, replace = TRUE) - 1,
-  x      = rnorm(10000)
-)
-
-set_agents_data(sir, dat)
-
-# Creating the logit function
-vfun <- virus_fun_logit(
-  vars  = c(0L, 1L),
-  coefs = c(-1, 1),
-  model = sir
-)
-
-# The infection prob is lower
-hist(plogis(dat \%*\% rbind(-1, 1)))
-
-vfun # printing
-
-set_prob_infecting_fun(
-  virus = get_virus(sir, 0),
-  model = sir,
-  vfun  = vfun
-)
-
-run(sir, ndays = 50, seed = 11)
-plot(sir)
-
+# An SEIR with a fixed latent period of 4 days
+covid <- virus("COVID-19")
+add_stage(covid, "Susceptible")
+add_stage(covid, "Exposed", carrier = TRUE)
+add_stage(covid, "Infected", infectious = TRUE)
+add_stage(covid, "Recovered")
+add_infection(covid, "Susceptible", "Exposed", rate = 0.1)
+add_after(covid, "Exposed", "Infected", duration_fixed(4))
+add_rate(covid, "Infected", "Recovered", rate = 1 / 7)
 }
 \concept{virus-functions}

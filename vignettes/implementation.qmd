@@ -37,8 +37,9 @@ The core function of `epiworldR` is the `run()` function. This function executes
 
 2. After resetting the model, we start an iterative process repeating the following steps:
 
-    a.  The state of each agent is updated. States are updated according to
-    their corresponding `update_state` function.
+    a.  Each agent's stage is updated. The transitions declared on the
+    virus's natural history (see `help("virus")`) propose the agent's next
+    stage: an infection by contact, a daily rate, or the end of a duration.
 
         Since the model is discrete-time, **state changes are stored as promises**, meaning that agents' states are not updated immediately. Instead, the state is updated at the end of the updates. This is done to avoid updating the state of an agent and then using the updated state to update the state of another agent. For example, if agent $i$ infects agent $j$, then agent $j$ should not be able to infect agent $i$ in the same step.
 
@@ -73,9 +74,10 @@ computed.
 
 ## Adjusted probabilities
 
-Viruses and tools provide a way to adjust how agents move between states.
-Viruses in `epiworldR` contain various baseline probabilities used
-across models, including transmission, recovery, and death.
+Viruses and tools provide a way to adjust how agents move between stages.
+A virus's transitions name model parameters with the baseline probabilities
+(transmission, recovery, death, ...), and a strain may read other parameters
+(`use_param()`).
 On the other hand, tools alter these probabilities by reducing/increasing
 them. Furthermore, tools alter agents' susceptibility, infectiousness,
 recovery, and death probabilities. Currently, tools alter these probabilities

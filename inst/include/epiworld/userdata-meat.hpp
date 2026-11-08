@@ -1,11 +1,9 @@
 #ifndef EPIWORLD_USERDATA_MEAT_HPP
 #define EPIWORLD_USERDATA_MEAT_HPP
 
-template<typename TSeq>
 class UserData;
 
-template<typename TSeq>
-inline UserData<TSeq>::UserData(std::vector< std::string > names)
+inline UserData::UserData(std::vector< std::string > names)
 {
 
     k = names.size();
@@ -13,8 +11,7 @@ inline UserData<TSeq>::UserData(std::vector< std::string > names)
 
 }
 
-template<typename TSeq>
-inline void UserData<TSeq>::add(std::vector<epiworld_double> x)
+inline void UserData::add(std::vector<epiworld_double> x)
 {
 
     if (x.size() != k)
@@ -32,8 +29,7 @@ inline void UserData<TSeq>::add(std::vector<epiworld_double> x)
 
 }
 
-template<typename TSeq>
-inline void UserData<TSeq>::add(epiworld_fast_uint j, epiworld_double x)
+inline void UserData::add(epiworld_fast_uint j, epiworld_double x)
 {
 
     // Starting with a new day?
@@ -56,26 +52,22 @@ inline void UserData<TSeq>::add(epiworld_fast_uint j, epiworld_double x)
 
 }
 
-template<typename TSeq>
-inline std::vector< std::string > & UserData<TSeq>::get_names() 
+inline std::vector< std::string > & UserData::get_names() 
 {
     return data_names;
 }
 
-template<typename TSeq>
-inline std::vector< int > & UserData<TSeq>::get_dates() 
+inline std::vector< int > & UserData::get_dates() 
 {
     return data_dates;
 }
 
-template<typename TSeq>
-inline std::vector< epiworld_double > & UserData<TSeq>::get_data() 
+inline std::vector< epiworld_double > & UserData::get_data() 
 {
     return data_data;
 }
 
-template<typename TSeq>
-inline void UserData<TSeq>::get_all(
+inline void UserData::get_all(
     std::vector< std::string > * names,
     std::vector< int > * date,
     std::vector< epiworld_double > * data
@@ -93,8 +85,7 @@ inline void UserData<TSeq>::get_all(
 
 }
 
-template<typename TSeq>
-inline epiworld_double & UserData<TSeq>::operator()(
+inline epiworld_double & UserData::operator()(
     epiworld_fast_uint i,
     epiworld_fast_uint j
 )
@@ -110,8 +101,7 @@ inline epiworld_double & UserData<TSeq>::operator()(
 
 }
 
-template<typename TSeq>
-inline epiworld_double & UserData<TSeq>::operator()(
+inline epiworld_double & UserData::operator()(
     epiworld_fast_uint i,
     std::string name
 )
@@ -140,20 +130,17 @@ inline epiworld_double & UserData<TSeq>::operator()(
 
 }
 
-template<typename TSeq>
-inline epiworld_fast_uint UserData<TSeq>::nrow() const
+inline epiworld_fast_uint UserData::nrow() const
 {
     return n;
 }
 
-template<typename TSeq>
-inline epiworld_fast_uint UserData<TSeq>::ncol() const
+inline epiworld_fast_uint UserData::ncol() const
 {
     return k;
 }
 
-template<typename TSeq>
-inline void UserData<TSeq>::write(std::string fn)
+inline void UserData::write(std::string fn)
 {
     std::ofstream file_ud(fn, std::ios_base::out);
 
@@ -177,8 +164,7 @@ inline void UserData<TSeq>::write(std::string fn)
     return;
 }
 
-template<typename TSeq>
-inline void UserData<TSeq>::print() const
+inline void UserData::print() const
 {
     // File header
     printf_epiworld("Total records: %llu\n", n);

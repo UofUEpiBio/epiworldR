@@ -272,14 +272,14 @@ run(model_sir, ndays = 50, seed = model_seed)
 
 ## Setup LFMCMC
 # Extract the observed data from the model
-obs_data <- get_today_total(model_sir)
+obs_data <- get_today_total(model_sir)$counts
 
 # Define the simulation function
 simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission probability", params[2])
   run(model_sir, ndays = 50)
-  res <- get_today_total(model_sir)
+  res <- get_today_total(model_sir)$counts
   return(res)
 }
 
@@ -313,7 +313,7 @@ run_lfmcmc(
 )
 
 # Print the results
-set_stats_names(lfmcmc_model, get_states(model_sir))
+set_stats_names(lfmcmc_model, get_stages(model_sir))
 set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness"))
 
 print(lfmcmc_model)

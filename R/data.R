@@ -53,7 +53,9 @@ NULL
 #' @export
 #' @returns
 #' - The `get_hist_total` function returns an object of class
-#' [epiworld_hist_total].
+#' [epiworld_hist_total]: a data frame with one row per day, status and stage
+#' (`date`, `status`, `stage`, `counts`). Models without statuses have one,
+#' `"Free"`. Totals by stage (or by status) are a sum over the other column.
 #' @rdname epiworld-history
 #' @aliases epiworld_hist_total
 get_hist_total <- function(x) UseMethod("get_hist_total")
@@ -65,7 +67,7 @@ get_hist_total.epiworld_model <- function(x) {
   structure(
     res,
     class  = c("epiworld_hist_total", "epiworld_hist", "data.frame"),
-    states = sort(unique(res$state))
+    stages = unique(res$stage)
   )
 
 }
@@ -73,8 +75,9 @@ get_hist_total.epiworld_model <- function(x) {
 #' @export
 #' @rdname epiworld-history
 #' @returns
-#' - The `get_today_total` function returns a named vector with the
-#' total number of individuals in each state at the end of the simulation.
+#' - The `get_today_total` function returns a data frame with the number of
+#' agents in each status and stage (`status`, `stage`, `counts`) at the end of
+#' the simulation. Models without statuses have one, `"Free"`.
 get_today_total <- function(x) UseMethod("get_today_total")
 
 #' @export
@@ -104,7 +107,7 @@ get_hist_virus.epiworld_model <- function(x) {
   structure(
     res,
     class  = c("epiworld_hist_virus", "epiworld_hist", "data.frame"),
-    states = sort(unique(res$state))
+    stages = unique(res$stage)
   )
 }
 
@@ -121,7 +124,7 @@ get_hist_tool.epiworld_model <- function(x) {
   structure(
     res,
     class  = c("epiworld_hist_tool", "epiworld_hist", "data.frame"),
-    states = sort(unique(res$state))
+    stages = unique(res$stage)
   )
 }
 
@@ -174,7 +177,8 @@ NULL
 #' @export
 #' @returns
 #' - The `get_transition_probability` function returns an object of class
-#' `matrix`.
+#' `matrix`, one row and column per stage (in a model with statuses, per pair
+#' of status and stage, labeled `"Status / Stage"`).
 #' @rdname epiworld-summaries
 get_transition_probability <- function(x) {
   UseMethod("get_transition_probability")
@@ -183,7 +187,7 @@ get_transition_probability <- function(x) {
 #' @export
 get_transition_probability.epiworld_model <- function(x) {
   res <- get_transition_probability_cpp(x)
-  s   <- get_states(x)
+  s   <- cell_labels(x)
 
   ns <- length(s)
 
@@ -461,11 +465,31 @@ plot_reproductive_number <- function(x, ...) {
 #'
 NULL
 
+# The engine's index of the pair (status, stage), as labels: the stage, or
+# "Status / Stage" in a model with statuses (stage by stage, as in C++)
+cell_labels <- function(x) {
+  stages   <- get_stages(x)
+  statuses <- get_statuses(x)
+  if (length(statuses) == 1L)
+    return(stages)
+  paste(
+    rep(statuses, times = length(stages)),
+    rep(stages, each = length(statuses)),
+    sep = " / "
+  )
+}
+
+cell_label <- function(status, stage, labels) {
+  if (all(stage %in% labels))
+    return(stage)
+  paste(status, stage, sep = " / ")
+}
+
 #' @export
 #' @rdname epiworld-transition
 #' @returns
-#' - `get_hist_transition_matrix` returns a [data.frame] with four columns:
-#' "state_from", "state_to", "date", and "counts."
+#' - `get_hist_transition_matrix` returns a [data.frame] with six columns:
+#' "status_from", "stage_from", "status_to", "stage_to", "date", and "counts".
 get_hist_transition_matrix <- function(x, skip_zeros = FALSE)
   UseMethod("get_hist_transition_matrix")
 
@@ -475,7 +499,7 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
   res <- get_hist_transition_matrix_cpp(x, skip_zeros)
   class(res) <- c("epiworld_hist_transition", class(res))
 
-  attr(res, "states") <- get_states(x)
+  attr(res, "states") <- cell_labels(x)
   attr(res, "nsteps") <- get_ndays(x)
 
   res
@@ -484,11 +508,23 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
 
 
 #' @export
+#' @rdname epiworld-transition
+#' @returns
+#' - `get_hist_transitions` returns a [data.frame] with how many times each
+#' declared transition fired each day: "date", "transition" (its name, see
+#' [add_rate()]), and "counts".
+get_hist_transitions <- function(x) {
+  stopifnot_model(x)
+  get_hist_transitions_cpp(x)
+}
+
+#' @export
 #' @returns
 #' - The `as.array` method for `epiworld_hist_transition` objects turns the
 #' `data.frame` returned by `get_hist_transition_matrix` into an array of
-#' `nstates x nstates x (ndays + 1)`
-#' entries, where the first entry is the initial state.
+#' `nstages x nstages x (ndays + 1)` entries (in a model with statuses, one row
+#' and column per pair of status and stage, labeled `"Status / Stage"`), where
+#' the first entry is the initial state.
 #' @rdname epiworld-transition
 as.array.epiworld_hist_transition <- function(x, ...) {
 
@@ -502,7 +538,9 @@ as.array.epiworld_hist_transition <- function(x, ...) {
     dimnames = list(states, states, 0:n_steps)
   )
 
-  res[cbind(x[, 1], x[, 2], x[, 3])] <- x[, 4]
+  from <- cell_label(x$status_from, x$stage_from, states)
+  to   <- cell_label(x$status_to, x$stage_to, states)
+  res[cbind(from, to, as.character(x$date))] <- x$counts
 
   res
 
@@ -528,8 +566,8 @@ plot_incidence <- function(x, ...) {
 #' desired statistic.
 #' @param ylab,xlab,main,type Further parameters passed to [graphics::plot()]
 #' @details The plot method for the `epiworld_hist_transition` class plots the
-#' daily incidence of each state. The function returns the data frame used for
-#' plotting.
+#' daily incidence of each stage: the agents that entered it each day, from
+#' another stage. The function returns the data frame used for plotting.
 plot.epiworld_hist_transition <- function(
   x,
   type = "b",
@@ -548,9 +586,10 @@ plot.epiworld_hist_transition <- function(
   n_states <- length(states)
   n_steps  <- attr(x, "nsteps")
 
-  # Agregating the data
-  x <- x[x[, "state_from"] != x[, "state_to"], , drop = FALSE]
-  res <- tapply(x[["counts"]], INDEX = list(x[, "state_to"], x[, "date"]), FUN = sum)
+  # Agregating the data: entries into each stage
+  x <- x[x[, "stage_from"] != x[, "stage_to"], , drop = FALSE]
+  res <- tapply(x[["counts"]], INDEX = list(x[, "stage_to"], x[, "date"]), FUN = sum)
+  res[is.na(res)] <- 0
   res <- as.data.frame(t(res))
 
   # Checking if any of the columns is all zeros
@@ -610,7 +649,7 @@ plot.epiworld_hist_transition <- function(
         col    = 1L:n_states,
         lwd    = 2,
         lty    = 1L:n_states,
-        title  = "States",
+        title  = "Stages",
         bty    = "n"
       )
 

@@ -5,16 +5,14 @@
 /**
  * @brief Factory function of ToolFun base on logit
  * 
- * @tparam TSeq 
  * @param vars Vector indicating the position of the variables to use.
  * @param coefs Vector of coefficients.
- * @return ToolFun<TSeq> 
+ * @return ToolFun 
  */
-template<typename TSeq>
-inline ToolFun<TSeq> tool_fun_logit(
+inline ToolFun tool_fun_logit(
     std::vector< int > vars,
     std::vector< double > coefs,
-    Model<TSeq> * model
+    Model * model
 ) {
 
     // Checking that there are features
@@ -56,11 +54,11 @@ inline ToolFun<TSeq> tool_fun_logit(
     for (auto c: coefs)
         coefs_f.push_back(static_cast<epiworld_double>(c));
 
-    ToolFun<TSeq> fun_ = [coefs_f,vars](
-        Tool<TSeq>&,
-        Agent<TSeq> * agent,
-        VirusPtr<TSeq> &,
-        Model<TSeq> * model
+    ToolFun fun_ = [coefs_f,vars](
+        Tool&,
+        Agent * agent,
+        VirusPtr &,
+        Model * model
         ) -> epiworld_double {
 
         size_t K = coefs_f.size();
@@ -80,84 +78,19 @@ inline ToolFun<TSeq> tool_fun_logit(
 
 }
 
-template<typename TSeq>
-inline Tool<TSeq>::Tool()
+inline Tool::Tool()
 {
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        sequence = -1;
-    }
-    else
-    {
-        sequence = nullptr;
-    }
-
     set_name("Tool");
 }
 
-template<typename TSeq>
-inline Tool<TSeq>::Tool(std::string name)
+inline Tool::Tool(std::string name)
 {
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        sequence = -1;
-    }
-    else
-    {
-        sequence = nullptr;
-    }
-
     set_name(name);
 }
 
-template<typename TSeq>
-inline Tool<TSeq>::Tool(
-    std::string name,
-    epiworld_double prevalence,
-    bool as_proportion
-    )
-{
-
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        sequence = -1;
-    }
-    else
-    {
-        sequence = nullptr;
-    }
-
-    set_name(name);
-
-    set_distribution(
-        distribute_tool_randomly<TSeq>(prevalence, as_proportion)
-    );
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::set_sequence(TSeq d) {
-    sequence = std::make_shared<TSeq>(d);
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::set_sequence(std::shared_ptr<TSeq> d) {
-    sequence = d;
-}
-
-template<>
-inline void Tool<int>::set_sequence(int d) {
-    sequence = d;
-}
-
-template<typename TSeq>
-inline EPI_TYPENAME_TRAITS(TSeq, int) Tool<TSeq>::get_sequence() {
-    return sequence;
-}
-
-template<typename TSeq>
-inline epiworld_double Tool<TSeq>::get_susceptibility_reduction(
-    VirusPtr<TSeq> & v,
-    Model<TSeq> * model
+inline epiworld_double Tool::get_susceptibility_reduction(
+    VirusPtr & v,
+    Model * model
 )
 {
 
@@ -170,10 +103,9 @@ inline epiworld_double Tool<TSeq>::get_susceptibility_reduction(
 
 }
 
-template<typename TSeq>
-inline epiworld_double Tool<TSeq>::get_transmission_reduction(
-    VirusPtr<TSeq> & v,
-    Model<TSeq> * model
+inline epiworld_double Tool::get_transmission_reduction(
+    VirusPtr & v,
+    Model * model
 )
 {
 
@@ -186,10 +118,9 @@ inline epiworld_double Tool<TSeq>::get_transmission_reduction(
 
 }
 
-template<typename TSeq>
-inline epiworld_double Tool<TSeq>::get_recovery_enhancer(
-    VirusPtr<TSeq> & v,
-    Model<TSeq> * model
+inline epiworld_double Tool::get_recovery_enhancer(
+    VirusPtr & v,
+    Model * model
 )
 {
 
@@ -200,10 +131,9 @@ inline epiworld_double Tool<TSeq>::get_recovery_enhancer(
 
 }
 
-template<typename TSeq>
-inline epiworld_double Tool<TSeq>::get_death_reduction(
-    VirusPtr<TSeq> & v,
-    Model<TSeq> * model
+inline epiworld_double Tool::get_death_reduction(
+    VirusPtr & v,
+    Model * model
 )
 {
 
@@ -214,46 +144,41 @@ inline epiworld_double Tool<TSeq>::get_death_reduction(
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_susceptibility_reduction_fun(
-    ToolFun<TSeq> fun
+inline void Tool::set_susceptibility_reduction_fun(
+    ToolFun fun
 )
 {
     susceptibility_reduction = fun;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_transmission_reduction_fun(
-    ToolFun<TSeq> fun
+inline void Tool::set_transmission_reduction_fun(
+    ToolFun fun
 )
 {
     transmission_reduction = fun;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_recovery_enhancer_fun(
-    ToolFun<TSeq> fun
+inline void Tool::set_recovery_enhancer_fun(
+    ToolFun fun
 )
 {
     recovery_enhancer = fun;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_death_reduction_fun(
-    ToolFun<TSeq> fun
+inline void Tool::set_death_reduction_fun(
+    ToolFun fun
 )
 {
     death_reduction = fun;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_susceptibility_reduction(std::string param)
+inline void Tool::set_susceptibility_reduction(std::string param)
 {
 
     auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
-    ToolFun<TSeq> tmpfun =
-        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+    ToolFun tmpfun =
+        [param_ref](Tool &, Agent *, VirusPtr&, Model* model)
         {
             return (*param_ref)(*model);
         };
@@ -263,14 +188,13 @@ inline void Tool<TSeq>::set_susceptibility_reduction(std::string param)
 }
 
 // EPIWORLD_SET_LAMBDA(susceptibility_reduction)
-template<typename TSeq>
-inline void Tool<TSeq>::set_transmission_reduction(std::string param)
+inline void Tool::set_transmission_reduction(std::string param)
 {
 
     auto param_ref = std::make_shared< const ParamRef >(std::move(param));
     
-    ToolFun<TSeq> tmpfun =
-        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+    ToolFun tmpfun =
+        [param_ref](Tool &, Agent *, VirusPtr&, Model* model)
         {
             return (*param_ref)(*model);
         };
@@ -280,14 +204,13 @@ inline void Tool<TSeq>::set_transmission_reduction(std::string param)
 }
 
 // EPIWORLD_SET_LAMBDA(transmission_reduction)
-template<typename TSeq>
-inline void Tool<TSeq>::set_recovery_enhancer(std::string param)
+inline void Tool::set_recovery_enhancer(std::string param)
 {
 
     auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
-    ToolFun<TSeq> tmpfun =
-        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+    ToolFun tmpfun =
+        [param_ref](Tool &, Agent *, VirusPtr&, Model* model)
         {
             return (*param_ref)(*model);
         };
@@ -297,14 +220,13 @@ inline void Tool<TSeq>::set_recovery_enhancer(std::string param)
 }
 
 // EPIWORLD_SET_LAMBDA(recovery_enhancer)
-template<typename TSeq>
-inline void Tool<TSeq>::set_death_reduction(std::string param)
+inline void Tool::set_death_reduction(std::string param)
 {
 
     auto param_ref = std::make_shared< const ParamRef >(std::move(param));
 
-    ToolFun<TSeq> tmpfun =
-        [param_ref](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq>* model)
+    ToolFun tmpfun =
+        [param_ref](Tool &, Agent *, VirusPtr&, Model* model)
         {
             return (*param_ref)(*model);
         };
@@ -316,14 +238,13 @@ inline void Tool<TSeq>::set_death_reduction(std::string param)
 // EPIWORLD_SET_LAMBDA(death_reduction)
 
 // #undef EPIWORLD_SET_LAMBDA
-template<typename TSeq>
-inline void Tool<TSeq>::set_susceptibility_reduction(
+inline void Tool::set_susceptibility_reduction(
     epiworld_double prob
 )
 {
 
-    ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq> *)
+    ToolFun tmpfun = 
+        [prob](Tool &, Agent *, VirusPtr&, Model *)
         {
             return prob;
         };
@@ -332,14 +253,13 @@ inline void Tool<TSeq>::set_susceptibility_reduction(
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_transmission_reduction(
+inline void Tool::set_transmission_reduction(
     epiworld_double prob
 )
 {
 
-    ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq> *)
+    ToolFun tmpfun = 
+        [prob](Tool &, Agent *, VirusPtr&, Model *)
         {
             return prob;
         };
@@ -348,14 +268,13 @@ inline void Tool<TSeq>::set_transmission_reduction(
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_recovery_enhancer(
+inline void Tool::set_recovery_enhancer(
     epiworld_double prob
 )
 {
 
-    ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq> *)
+    ToolFun tmpfun = 
+        [prob](Tool &, Agent *, VirusPtr&, Model *)
         {
             return prob;
         };
@@ -364,14 +283,13 @@ inline void Tool<TSeq>::set_recovery_enhancer(
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_death_reduction(
+inline void Tool::set_death_reduction(
     epiworld_double prob
 )
 {
 
-    ToolFun<TSeq> tmpfun = 
-        [prob](Tool<TSeq> &, Agent<TSeq> *, VirusPtr<TSeq>&, Model<TSeq> *)
+    ToolFun tmpfun = 
+        [prob](Tool &, Agent *, VirusPtr&, Model *)
         {
             return prob;
         };
@@ -380,21 +298,18 @@ inline void Tool<TSeq>::set_death_reduction(
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_name(std::string name)
+inline void Tool::set_name(std::string name)
 {
     tool_name = name;
 }
 
-template<typename TSeq>
-inline std::string Tool<TSeq>::get_name() const {
+inline std::string Tool::get_name() const {
 
     return tool_name;
 
 }
 
-template<typename TSeq>
-inline uint64_t Tool<TSeq>::target_bit(int lineage_id)
+inline uint64_t Tool::target_bit(int lineage_id)
 {
 
     if ((lineage_id < 0) || (lineage_id >= 63))
@@ -409,8 +324,7 @@ inline uint64_t Tool<TSeq>::target_bit(int lineage_id)
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::add_target(int lineage_id)
+inline void Tool::add_target(int lineage_id)
 {
 
     uint64_t bit = target_bit(lineage_id);
@@ -423,8 +337,7 @@ inline void Tool<TSeq>::add_target(int lineage_id)
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::add_target(const Virus<TSeq> & v)
+inline void Tool::add_target(const Virus & v)
 {
 
     if (v.get_lineage_id() < 0)
@@ -438,8 +351,7 @@ inline void Tool<TSeq>::add_target(const Virus<TSeq> & v)
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_targets(const std::vector< int > & lineage_ids)
+inline void Tool::set_targets(const std::vector< int > & lineage_ids)
 {
 
     // Validate every id before touching the current targets
@@ -451,8 +363,7 @@ inline void Tool<TSeq>::set_targets(const std::vector< int > & lineage_ids)
 
 }
 
-template<typename TSeq>
-inline std::vector< int > Tool<TSeq>::get_targets() const
+inline std::vector< int > Tool::get_targets() const
 {
 
     std::vector< int > res;
@@ -467,170 +378,56 @@ inline std::vector< int > Tool<TSeq>::get_targets() const
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::clear_targets()
+inline void Tool::clear_targets()
 {
     target_mask = ~uint64_t(0);
 }
 
-template<typename TSeq>
-inline bool Tool<TSeq>::targets(const Virus<TSeq> & v) const
+inline bool Tool::targets(const Virus & v) const
 {
     return (target_mask & v.lineage_bit) != 0u;
 }
 
-template<typename TSeq>
-inline Agent<TSeq> * Tool<TSeq>::get_agent()
+inline Agent * Tool::get_agent()
 {
     return this->agent;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_agent(Agent<TSeq> * p, size_t idx)
+inline void Tool::set_agent(Agent * p, size_t idx)
 {
     agent        = p;
     pos_in_agent = static_cast<int>(idx);
 }
 
-template<typename TSeq>
-inline int Tool<TSeq>::get_id() const {
+inline int Tool::get_id() const {
     return id;
 }
 
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_id(int id)
+inline void Tool::set_id(int id)
 {
     this->id = id;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_date(int d)
+inline void Tool::set_date(int d)
 {
     this->date = d;
 }
 
-template<typename TSeq>
-inline int Tool<TSeq>::get_date() const
+inline int Tool::get_date() const
 {
     return date;
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::set_state(
-    epiworld_fast_int init,
-    epiworld_fast_int end
-)
+inline bool Tool::operator==(const Tool & other) const
 {
-    state_init = init;
-    state_post = end;
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::set_queue(
-    epiworld_fast_int init,
-    epiworld_fast_int end
-)
-{
-    queue_init = init;
-    queue_post = end;
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::get_state(
-    epiworld_fast_int * init,
-    epiworld_fast_int * post
-)
-{
-    if (init != nullptr)
-        *init = state_init;
-
-    if (post != nullptr)
-        *post = state_post;
-
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::get_queue(
-    epiworld_fast_int * init,
-    epiworld_fast_int * post
-)
-{
-    if (init != nullptr)
-        *init = queue_init;
-
-    if (post != nullptr)
-        *post = queue_post;
-
-}
-
-template<>
-inline bool Tool<std::vector<int>>::operator==(
-    const Tool<std::vector<int>> & other
-    ) const
-{
-    
-    if (sequence->size() != other.sequence->size())
-        return false;
-
-    for (size_t i = 0u; i < sequence->size(); ++i)
-    {
-        if (sequence->operator[](i) != other.sequence->operator[](i))
-            return false;
-    }
 
     if (tool_name != other.tool_name)
         return false;
     
-    if (state_init != other.state_init)
-        return false;
-
-    if (state_post != other.state_post)
-        return false;
-
-    if (queue_init != other.queue_init)
-        return false;
-
-    if (queue_post != other.queue_post)
-        return false;
-
-    if (target_mask != other.target_mask)
-        return false;
 
 
-    return true;
 
-}
-
-template<typename TSeq>
-inline bool Tool<TSeq>::operator==(const Tool<TSeq> & other) const
-{
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        if (sequence != other.sequence)
-            return false;
-    }
-    else
-    {
-        if (*sequence != *other.sequence)
-            return false;
-    }
-
-
-    if (tool_name != other.tool_name)
-        return false;
-    
-    if (state_init != other.state_init)
-        return false;
-
-    if (state_post != other.state_post)
-        return false;
-
-    if (queue_init != other.queue_init)
-        return false;
-
-    if (queue_post != other.queue_post)
-        return false;
 
     if (target_mask != other.target_mask)
         return false;
@@ -640,16 +437,11 @@ inline bool Tool<TSeq>::operator==(const Tool<TSeq> & other) const
 }
 
 
-template<typename TSeq>
-inline void Tool<TSeq>::print() const
+inline void Tool::print() const
 {
 
     printf_epiworld("Tool       : %s\n", this->get_name().c_str());
     printf_epiworld("Id         : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
-    printf_epiworld("state_init : %i\n", static_cast<int>(state_init));
-    printf_epiworld("state_post : %i\n", static_cast<int>(state_post));
-    printf_epiworld("queue_init : %i\n", static_cast<int>(queue_init));
-    printf_epiworld("queue_post : %i\n", static_cast<int>(queue_post));
 
     if (target_mask != ~uint64_t(0))
     {
@@ -661,29 +453,9 @@ inline void Tool<TSeq>::print() const
 
 }
 
-template<typename TSeq>
-inline void Tool<TSeq>::distribute(Model<TSeq> * model)
+inline std::unique_ptr<Tool> Tool::clone_ptr() const
 {
-
-    if (dist)
-    {
-
-        dist(*this, model);
-
-    }
-
-}
-
-template<typename TSeq>
-inline void Tool<TSeq>::set_distribution(ToolToAgentFun<TSeq> fun)
-{
-    dist = fun;
-}
-
-template<typename TSeq>
-inline std::unique_ptr<Tool<TSeq>> Tool<TSeq>::clone_ptr() const
-{
-    auto cloned = std::make_unique<Tool<TSeq>>(*this);
+    auto cloned = std::make_unique<Tool>(*this);
     return cloned;
 }
 

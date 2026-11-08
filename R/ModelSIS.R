@@ -37,16 +37,17 @@ ModelSIS <- function(
   prevalence,
   transmission_prob,
   recovery_rate) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(recovery_rate)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSIS_cpp(name, n, prevalence, transmission_prob, recovery_rate),
-    class = c("epiworld_sis", "epiworld_model")
+  make_model(
+    "SIS",
+    list(
+      n                 = n,
+      prevalence        = prevalence,
+      transmission_prob = transmission_prob,
+      recovery_rate     = recovery_rate
+    ),
+    virus_name = name
   )
 
 }

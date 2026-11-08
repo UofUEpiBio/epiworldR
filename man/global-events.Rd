@@ -132,8 +132,6 @@ add_layer(
 # Creating a tool
 epitool <- tool(
   name = "Vaccine",
-  prevalence = 0,
-  as_proportion = FALSE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5,
@@ -193,17 +191,20 @@ add_layer(
 # We create the object where the history of the agents will be stored
 agents_history <- NULL
 
-# This function prints the total number of agents in each state
+# This function prints the total number of agents in each stage
 # and stores the history of the agents in the object `agents_history`
 hist_saver <- function(m) {
 
-  message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
+  message(
+    "Today's totals are: ",
+    paste(get_today_total(m)$counts, collapse = ", ")
+  )
 
   # We use the `<<-` operator to assign the value to the global variable
   # `agents_history` (see ?"<<-")
   agents_history <<- cbind(
     agents_history,
-    get_agents_states(m)
+    get_agents_stages(m)
   )
 
 }

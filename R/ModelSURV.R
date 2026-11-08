@@ -73,28 +73,26 @@ ModelSURV <- function(
   prob_death,
   prob_noreinfect
 ) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(efficacy_vax)
-  stopifnot_double(latent_period)
-  stopifnot_double(infect_period)
-  stopifnot_double(prob_symptoms)
-  stopifnot_double(prop_vaccinated)
-  stopifnot_double(prop_vax_redux_transm)
-  stopifnot_double(prop_vax_redux_infect)
-  stopifnot_double(surveillance_prob)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(prob_death)
-  stopifnot_double(prob_noreinfect)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSURV_cpp(name, n, prevalence, efficacy_vax, latent_period, infect_period,
-      prob_symptoms, prop_vaccinated, prop_vax_redux_transm,
-      prop_vax_redux_infect, surveillance_prob, transmission_prob,
-      prob_death, prob_noreinfect),
-    class = c("epiworld_surv", "epiworld_model")
+  make_model(
+    "SURV",
+    list(
+      n                     = n,
+      prevalence            = prevalence,
+      efficacy_vax          = efficacy_vax,
+      latent_period         = latent_period,
+      infect_period         = infect_period,
+      prob_symptoms         = prob_symptoms,
+      prop_vaccinated       = prop_vaccinated,
+      prop_vax_redux_transm = prop_vax_redux_transm,
+      prop_vax_redux_infect = prop_vax_redux_infect,
+      surveillance_prob     = surveillance_prob,
+      transmission_prob     = transmission_prob,
+      prob_death            = prob_death,
+      prob_noreinfect       = prob_noreinfect
+    ),
+    virus_name = name
   )
 
 }

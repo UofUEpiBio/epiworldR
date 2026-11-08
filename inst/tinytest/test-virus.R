@@ -1,168 +1,228 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-virus.R")
 
-# Check creating valid distribution function
-expect_silent(distfun <- distribute_virus_randomly(
-  prevalence = 2L,
-  as_proportion = FALSE,
-  agents_ids = integer(0)
-))
-
-expect_inherits(distfun, "epiworld_virus_distfun")
-expect_length(class(distfun), 1)
-
-# Check distributing virus to invalid agent IDs
-expect_error(distribute_virus_randomly(
-  prevalence = 2L,
-  as_proportion = FALSE,
-  agents_ids = c(-1, -2, -33)
-), "ID must be a positive integer")
-
-# Test virus creation and printing ---------------------------------------------
-expect_silent(virus_1 <- virus(
-  name = "Test Virus",
-  prevalence = 0.01,
-  as_proportion = TRUE,
-  prob_infecting = 0.5,
-  recovery_rate = 0.3
-))
-expect_inherits(virus_1, "epiworld_virus")
-expect_stdout(print(virus_1))
-
-# Test virus probability setters -----------------------------------------------
-expect_silent(set_prob_infecting(virus_1, 0.8))
-expect_silent(set_prob_recovery(virus_1, 0.4))
-expect_silent(set_prob_death(virus_1, 0.01))
-expect_silent(set_incubation(virus_1, 5.0))
-
-# Test virus name functions ----------------------------------------------------
-expect_equal(get_name_virus(virus_1), "Test Virus")
-expect_silent(set_name_virus(virus_1, "Modified Virus"))
-expect_equal(get_name_virus(virus_1), "Modified Virus")
-
-# Scenario (a): High infectiousness, no recovery ------------------------------
-# With perfect transmission and no recovery, epidemic should spread widely
-model_a <- ModelSIR(
-  name = "Virus Test (a)",
-  n = 100,
-  prevalence = 0.01,
-  transmission_prob = 1.0,
-  recovery_rate = 0.0
-)
-add_param(model_a, "Contact rate", 10)
-add_layer(
-  model_a,
-  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
-    set_contact_rate("Contact rate")
-)
-
-expect_silent(verbose_off(model_a))
-expect_silent(run(model_a, ndays = 10, seed = 123))
-
-hist_a <- get_hist_total(model_a)
-final_data_a <- hist_a[hist_a$date == max(hist_a$date), ]
-final_infected_a <- final_data_a[final_data_a$state == "Infected", "counts"]
-final_recovered_a <- final_data_a[final_data_a$state == "Recovered", "counts"]
-
-expect_true(final_infected_a > 50, info = "Most agents should be infected")
-expect_equal(final_recovered_a, 0, info = "No one should recover with 0 recovery rate")
-
-# Scenario (b): No infectiousness, immediate recovery -------------------------
-# Only the initially infected person should recover immediately
-model_b <- ModelSIR(
-  name = "Virus Test (b)",
-  n = 100,
-  prevalence = 0.01,
-  transmission_prob = 0.0,
-  recovery_rate = 1.0
-)
-add_param(model_b, "Contact rate", 10)
-add_layer(
-  model_b,
-  layer_mixing("everyone", groups = rep(0, 100), contact_matrix = 1) |>
-    set_contact_rate("Contact rate")
-)
-
-expect_silent(verbose_off(model_b))
-expect_silent(run(model_b, ndays = 1, seed = 123))
-
-hist_b <- get_hist_total(model_b)
-final_data_b <- hist_b[hist_b$date == max(hist_b$date), ]
-final_infected_b <- final_data_b[final_data_b$state == "Infected", "counts"]
-final_removed_b <- final_data_b[final_data_b$state == "Recovered", "counts"]
-final_susceptible_b <- final_data_b[final_data_b$state == "Susceptible", "counts"]
-
-expect_equal(final_infected_b, 0, info = "No agents should remain infected")
-expect_equal(final_removed_b, 1, info = "Only the initially infected should recover")
-expect_equal(final_susceptible_b, 99, info = "Rest should remain susceptible")
-
-# Test virus with pointer-based parameters -------------------------------------
-model_ptr <- ModelSIR(
-  name = "Virus Ptr Test",
-  n = 50,
-  prevalence = 0.1,
-  transmission_prob = 0.5,
-  recovery_rate = 0.3
-)
-add_param(model_ptr, "Contact rate", 5)
-add_layer(
-  model_ptr,
-  layer_mixing("everyone", groups = rep(0, 50), contact_matrix = 1) |>
-    set_contact_rate("Contact rate")
-)
-
-# Add custom parameters to the model
-expect_silent(add_param(model_ptr, "custom_trans", 0.9))
-expect_silent(add_param(model_ptr, "custom_death", 0.05))
-expect_silent(add_param(model_ptr, "custom_incubation", 3.0))
-
-virus_ptr <- virus(
-  name = "Pointer Virus",
-  prevalence = 0,
-  as_proportion = TRUE,
-  prob_infecting = 0.1,
-  recovery_rate = 0.2
-)
-
-# Test pointer-based probability setting
-expect_silent(set_prob_infecting_ptr(virus_ptr, model_ptr, "custom_trans"))
-expect_silent(set_prob_recovery_ptr(virus_ptr, model_ptr, "Recovery rate"))
-expect_silent(set_prob_death_ptr(virus_ptr, model_ptr, "custom_death"))
-expect_silent(set_incubation_ptr(virus_ptr, model_ptr, "custom_incubation"))
-
-# Verify parameters can be retrieved
-expect_equal(get_param(model_ptr, "custom_trans"), 0.9)
-expect_equal(get_param(model_ptr, "custom_death"), 0.05)
-expect_equal(get_param(model_ptr, "custom_incubation"), 3.0)
-
-expect_silent(add_virus(model_ptr, virus_ptr))
-expect_silent(verbose_off(model_ptr))
-expect_silent(run(model_ptr, ndays = 5, seed = 789))
-
-# Adding a second virus to models on a mixing layer ----------------------------
-cmat <- matrix(c(0.9, 0.1, 0.1, 0.9), nrow = 2) * 5
-groups <- rep(0:1, each = 250)
-mixing_models <- list(
-  ModelSIR("A virus", 500, 0.01, 0.2, 1 / 7),
-  ModelSEIR("A virus", 500, 0.01, 0.2, 3, 1 / 7)
-)
-for (m in mixing_models) {
-  add_layer(m, layer_mixing("mixing", groups, contact_matrix = cmat))
-  other <- virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)
-  expect_silent(add_virus(m, other))
-  verbose_off(m)
-  expect_silent(run(m, ndays = 10, seed = 1))
+# A virus carries its natural history -----------------------------------------
+sir_virus <- function(name = "Flu") {
+  v <- virus(name)
+  add_stage(v, "Susceptible")
+  add_stage(v, "Infected", infectious = TRUE)
+  add_stage(v, "Recovered")
+  add_infection(v, "Susceptible", "Infected", rate = "Transmission probability")
+  add_rate(v, "Infected", "Recovered", rate = "Recovery rate", effect = "recovery")
+  v
 }
 
-quarantine_model <- ModelSEIRQuarantine(
-  name = "A virus", n = 500, prevalence = 0.01, transmission_prob = 0.2,
-  recovery_rate = 1 / 7, latent_period = 3,
-  hospitalization_rate = 0.05, hospitalization_period = 7,
-  detection_delay = 3, quarantine_period = 14, quarantine_willingness = 0.8,
-  isolation_willingness = 0.5, isolation_period = 7,
-  contact_tracing_prob = 0.7, contact_tracing_window = 3
+flu <- sir_virus()
+expect_inherits(flu, "epiworld_virus")
+expect_equal(get_name_virus(flu), "Flu")
+expect_silent(set_name_virus(flu, "Influenza"))
+expect_equal(get_name_virus(flu), "Influenza")
+
+expect_identical(
+  get_stages(flu),
+  data.frame(
+    stage      = c("Susceptible", "Infected", "Recovered"),
+    carrier    = c(FALSE, TRUE, FALSE),
+    infectious = c(FALSE, TRUE, FALSE),
+    contact    = c(1, 1, 1)
+  )
 )
-add_layer(quarantine_model, layer_mixing("mixing", groups, contact_matrix = cmat))
-expect_silent(add_virus(
-  quarantine_model,
-  virus("Another virus", 0.02, TRUE, 0.2, recovery_rate = 1 / 7)
-))
+
+# Stages are named by their labels, and checked
+expect_error(add_rate(flu, "Infected", "Dead", rate = .1), "no stage \"Dead\"")
+expect_error(add_rate(flu, "Infected", "Recovered", rate = NA), "-rate- must be")
+expect_error(add_rate(flu, "Infected", "Recovered", rate = .1, effect = "x"), "effect")
+expect_error(add_stage(flu, "X", infectious = TRUE, carrier = FALSE), "carrier")
+expect_error(add_after(flu, "Infected", "Recovered", 3), "duration_")
+expect_error(virus("Flu", 0.01, TRUE, 0.5), "takes only a name")
+expect_error(set_prob_infecting(flu, .1), "defunct")
+expect_error(virus_set_state(flu, 1, 2, 3), "defunct")
+
+# Built in R, it is the same model as ModelSIR() ------------------------------
+# The same parameters, stages and transitions give the same history, seed by
+# seed.
+built_in <- ModelSIR(
+  name              = "Flu",
+  n                 = 2000,
+  prevalence        = 0.01,
+  transmission_prob = 0.2,
+  recovery_rate     = 0.1
+)
+
+from_scratch <- Model(2000)
+add_param(from_scratch, "Recovery rate", 0.1)
+add_param(from_scratch, "Transmission probability", 0.2)
+add_virus(from_scratch, sir_virus(), assign_share(0.01))
+
+for (m in list(built_in, from_scratch)) {
+  add_layer(m, layer_network("contacts", graph_smallworld(k = 6, p = .05)))
+  verbose_off(m)
+  run(m, ndays = 60, seed = 2231)
+}
+
+expect_identical(get_hist_total(built_in), get_hist_total(from_scratch))
+expect_identical(get_stages(built_in), get_stages(from_scratch))
+expect_true(
+  subset(get_hist_total(from_scratch), date == 60 & stage == "Recovered")$counts > 100
+)
+
+# The SEIR's latent period is a duration
+seir_virus <- virus("Flu")
+add_stage(seir_virus, "Susceptible")
+add_stage(seir_virus, "Exposed", carrier = TRUE)
+add_stage(seir_virus, "Infected", infectious = TRUE)
+add_stage(seir_virus, "Removed")
+add_infection(seir_virus, "Susceptible", "Exposed", rate = "Transmission probability")
+add_after(seir_virus, "Exposed", "Infected", duration_geometric("Latent period"))
+add_rate(
+  seir_virus, "Infected", "Removed", rate = "Recovery rate", effect = "recovery"
+)
+
+built_in <- ModelSEIR("Flu", 2000, 0.01, 0.2, 4, 0.1)
+from_scratch <- Model(2000)
+add_param(from_scratch, "Transmission probability", 0.2)
+add_param(from_scratch, "Latent period", 4)
+add_param(from_scratch, "Recovery rate", 0.1)
+add_virus(from_scratch, seir_virus, assign_share(0.01))
+
+for (m in list(built_in, from_scratch)) {
+  add_layer(m, layer_network("contacts", graph_smallworld(k = 6, p = .05)))
+  verbose_off(m)
+  run(m, ndays = 60, seed = 77)
+}
+expect_identical(get_hist_total(built_in), get_hist_total(from_scratch))
+
+# A fixed duration: the seeds (in Exposed on day 0, with no transmission) all
+# become infectious on day 4
+fixed <- virus("Fixed")
+add_stage(fixed, "Susceptible")
+add_stage(fixed, "Exposed", carrier = TRUE)
+add_stage(fixed, "Infected", infectious = TRUE)
+add_infection(fixed, "Susceptible", "Exposed", rate = 0)
+add_after(fixed, "Exposed", "Infected", duration_fixed(4))
+
+m <- Model(100)
+add_virus(m, fixed, assign_count(10))
+verbose_off(m)
+run(m, ndays = 6, seed = 1)
+h <- subset(get_hist_total(m), stage == "Infected")
+expect_equal(h$counts, c(0, 0, 0, 0, 10, 10, 10))
+
+# Transitions by name: the outputs count each, and fire() applies one -------
+vax <- sir_virus("Measles")
+add_external(vax, "Susceptible", "Recovered", "Vaccination")
+
+m <- Model(100)
+add_param(m, "Recovery rate", 0.1)
+add_param(m, "Transmission probability", 0)
+add_virus(m, vax, assign_agents(0:4))
+verbose_off(m)
+run(m, ndays = 5, seed = 1)
+
+expect_identical(
+  unique(get_hist_transitions(m)$transition),
+  c("Susceptible -> Infected", "Infected -> Recovered", "Vaccination")
+)
+
+expect_true(fire(m, "Vaccination", 50))
+expect_false(fire(m, "Vaccination", 0)) # Agent 0 was infected: not susceptible
+expect_error(fire(m, "Vaccinate", 50), "Vaccinate")
+
+# Strains of the model's virus -------------------------------------------------
+# A copy with its own name reads other parameters (use_param()): this one
+# does not transmit, so only its seeds ever carry it.
+model <- ModelSIR("A virus", 1000, 0.01, 0.3, 0.1)
+add_layer(model, layer_network("contacts", graph_smallworld(k = 6, p = .05)))
+verbose_off(model)
+
+strain <- clone_epi(get_virus(model, 0))
+set_name_virus(strain, "B")
+add_param(model, "B transmission", 0)
+expect_silent(use_param(strain, "Transmission probability", "B transmission"))
+add_virus(model, strain, assign_count(20))
+run(model, ndays = 30, seed = 12)
+
+hv <- get_hist_virus(model)
+expect_identical(unique(hv$virus), c("A virus", "B"))
+carried_b <- subset(hv, virus == "B" & stage != "Susceptible")
+expect_true(all(tapply(carried_b$counts, carried_b$date, sum) <= 20))
+# The virus history counts the agents that carry each virus (not the
+# recovered): the model's virus spreads
+carried_a <- subset(hv, virus == "A virus" & stage == "Infected")
+expect_true(max(carried_a$counts) > 20)
+
+# The natural history of a virus in a model cannot change
+expect_error(add_stage(get_virus(model, 0), "Other"), "is in a model")
+
+# Values ----------------------------------------------------------------------
+# 1 / parameter, 1 - parameter, an R function, and a logit of the agents' data
+expect_inherits(value_inverse("Infectious period"), "epiworld_value")
+expect_inherits(value_complement("Efficacy"), "epiworld_value")
+
+v <- virus("Values")
+add_stage(v, "Susceptible")
+add_stage(v, "Infected", infectious = TRUE)
+add_stage(v, "Recovered")
+add_infection(v, "Susceptible", "Infected", rate = value_complement("Efficacy"))
+add_rate(v, "Infected", "Recovered", rate = value_inverse("Infectious period"))
+
+m <- Model(500)
+add_param(m, "Efficacy", 1) # 1 - 1: nobody is infected
+add_param(m, "Infectious period", 1) # 1 / 1: everyone recovers the next day
+add_layer(m, layer_network("contacts", graph_smallworld(k = 6, p = .05)))
+add_virus(m, v, assign_count(50))
+verbose_off(m)
+run(m, ndays = 3, seed = 1)
+expect_equal(subset(get_hist_total(m), date == 3)$counts, c(450, 0, 50))
+
+calls <- 0
+v <- virus("R function")
+add_stage(v, "Susceptible")
+add_stage(v, "Infected", infectious = TRUE)
+add_stage(v, "Recovered")
+add_infection(v, "Susceptible", "Infected", rate = 0)
+add_rate(
+  v, "Infected", "Recovered",
+  rate = value_fun(function(agent, model) {
+    calls <<- calls + 1
+    1
+  })
+)
+expect_true(isTRUE(attr(v, "single_threaded")))
+m <- Model(100)
+add_virus(m, v, assign_count(10))
+expect_true(isTRUE(attr(m, "single_threaded")))
+verbose_off(m)
+run(m, ndays = 2, seed = 1)
+expect_equal(calls, 10) # Once per infected agent, on the day it recovers
+expect_equal(subset(get_hist_total(m), date == 2)$counts, c(90, 0, 10))
+
+m <- Model(100)
+set_agents_data(m, matrix(rep(c(-100, 100), 50), ncol = 1))
+v <- virus("Logit")
+add_stage(v, "Susceptible")
+add_stage(v, "Infected", infectious = TRUE)
+add_stage(v, "Recovered")
+add_infection(v, "Susceptible", "Infected", rate = 0)
+add_rate(v, "Infected", "Recovered", rate = rate_fun_logit(0L, 1, m))
+add_virus(m, v, assign_agents(0:9))
+verbose_off(m)
+run(m, ndays = 1, seed = 1)
+# Agents with x = 100 recover (p ~ 1), those with x = -100 do not (p ~ 0)
+expect_equal(get_agents_stages(m)[1:10], rep(c("Infected", "Recovered"), 5))
+expect_error(rate_fun_logit(3L, 1, m), "out of range")
+
+# Contact weights --------------------------------------------------------------
+# A stage with contact weight 0 is out of every layer: its agents do not
+# transmit
+v <- sir_virus("Away")
+set_contact(v, "Infected", 0)
+expect_equal(get_stages(v)$contact, c(1, 0, 1))
+
+m <- Model(1000)
+add_param(m, "Recovery rate", 0)
+add_param(m, "Transmission probability", 1)
+add_layer(m, layer_network("contacts", graph_smallworld(k = 6, p = .05)))
+add_virus(m, v, assign_count(10))
+verbose_off(m)
+run(m, ndays = 10, seed = 1)
+expect_equal(subset(get_hist_total(m), date == 10 & stage == "Infected")$counts, 10)

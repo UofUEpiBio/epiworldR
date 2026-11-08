@@ -84,16 +84,16 @@ run(adopt_chatgpt, 50)
 plot(adopt_chatgpt)
 }
 \seealso{
-Other Models: 
-\code{\link{ModelSEIR}()},
-\code{\link{ModelSEIRD}()},
-\code{\link{ModelSEIRQuarantine}()},
-\code{\link{ModelSIR}()},
-\code{\link{ModelSIRD}()},
-\code{\link{ModelSIRLogit}()},
-\code{\link{ModelSIS}()},
-\code{\link{ModelSISD}()},
-\code{\link{ModelSURV}()}
+Other Models:
+\code{\link[=ModelSEIR]{ModelSEIR()}},
+\code{\link[=ModelSEIRD]{ModelSEIRD()}},
+\code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}},
+\code{\link[=ModelSIR]{ModelSIR()}},
+\code{\link[=ModelSIRD]{ModelSIRD()}},
+\code{\link[=ModelSIRLogit]{ModelSIRLogit()}},
+\code{\link[=ModelSIS]{ModelSIS()}},
+\code{\link[=ModelSISD]{ModelSISD()}},
+\code{\link[=ModelSURV]{ModelSURV()}}
 }
 \concept{Models}
 \concept{general-models}

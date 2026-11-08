@@ -15,8 +15,8 @@ SEXP get_agents_cpp(
 
   // Making some room
 
-  cpp11::external_pointer<Model<>> ptr(model);
-  cpp11::external_pointer<std::vector< Agent<> >> agents(
+  cpp11::external_pointer<Model> ptr(model);
+  cpp11::external_pointer<std::vector< Agent >> agents(
       &ptr->get_agents(),
       false
       );
@@ -31,14 +31,14 @@ SEXP get_agent_cpp(
   size_t i
 ) {
 
-  cpp11::external_pointer<std::vector<Agent<>>> ptr(agents);
+  cpp11::external_pointer<std::vector<Agent>> ptr(agents);
 
   if (i >= ptr->size())
     stop("The agent index %lu is out of range.\n", i);
 
-  return cpp11::external_pointer< Agent<> >(
-      new Agent<>(ptr->operator[](i))
-    );
+  // The model's own agent, not a copy: add_virus_agent() and add_tool_agent()
+  // act on it (the R object keeps the model alive)
+  return cpp11::external_pointer< Agent >(&ptr->operator[](i), false);
 
 }
 
@@ -49,49 +49,70 @@ SEXP print_agent_cpp(
     bool compressed
 ) {
 
-  cpp11::external_pointer<Agent<>>(agent)->
+  cpp11::external_pointer<Agent>(agent)->
     print(
-      *cpp11::external_pointer<Model<>>(model),
+      *cpp11::external_pointer<Model>(model),
       compressed
     );
   return agent;
 
 }
 
+// The agent's stage and status, by label
 [[cpp11::register]]
-int get_state_agent_cpp(SEXP agent) {
-  return cpp11::external_pointer<Agent<>>(agent)->get_state();
-}
+std::string get_stage_agent_cpp(SEXP model, SEXP agent) {
 
-// Function to get agent's states using get_agents_states()
-[[cpp11::register]]
-std::vector<std::string> get_agents_states_cpp(SEXP model) {
-
-  cpp11::external_pointer<Model<>> ptr(model);
-
-  std::vector<std::string> states;
-  states.reserve(ptr->size());
-
-  auto states_uint = ptr->get_agents_states();
-
-  // Getting the model's states
-  auto model_states = ptr->get_states();
-
-  // Copying the data to states
-  for (auto i : states_uint)
-    states.push_back(model_states[i]);
-
-  return states;
+  cpp11::external_pointer<Model> ptr(model);
+  const int s = ptr->get_stage(*cpp11::external_pointer<Agent>(agent));
+  return ptr->get_natural_history()->get_stages()[static_cast<size_t>(s)];
 
 }
 
 [[cpp11::register]]
-SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, int state_new, int queue) {
+std::string get_status_agent_cpp(SEXP model, SEXP agent) {
+
+  cpp11::external_pointer<Model> ptr(model);
+  const Statuses * st = ptr->get_statuses();
+  if (st == nullptr)
+    return "Free";
+
+  const int k = ptr->get_status(*cpp11::external_pointer<Agent>(agent));
+  return st->get_stages()[static_cast<size_t>(k)];
+
+}
+
+// Every agent's stage (or status), by label
+[[cpp11::register]]
+std::vector<std::string> get_agents_stages_cpp(SEXP model, bool status) {
+
+  cpp11::external_pointer<Model> ptr(model);
+  const NaturalHistory * labels = status ?
+    static_cast< const NaturalHistory * >(ptr->get_statuses()) :
+    ptr->get_natural_history();
+
+  std::vector<std::string> res;
+  res.reserve(ptr->size());
+  for (auto & a : ptr->get_agents())
+  {
+    if (labels == nullptr)
+      res.push_back(status ? "Free" : "");
+    else
+      res.push_back(labels->get_stages()[static_cast<size_t>(
+        status ? ptr->get_status(a) : ptr->get_stage(a)
+      )]);
+  }
+
+  return res;
+
+}
+
+[[cpp11::register]]
+SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus) {
 
 
-  cpp11::external_pointer<Agent<>> ptr_agent(agent);
-  cpp11::external_pointer<Model<>> ptr_model(model);
-  cpp11::external_pointer<Virus<>> ptr_virus(virus);
+  cpp11::external_pointer<Agent> ptr_agent(agent);
+  cpp11::external_pointer<Model> ptr_model(model);
+  cpp11::external_pointer<Virus> ptr_virus(virus);
 
   ptr_agent->set_virus(*ptr_model, *ptr_virus);
 
@@ -100,11 +121,11 @@ SEXP add_virus_agent_cpp(SEXP agent, SEXP model, SEXP virus, int state_new, int 
 }
 
 [[cpp11::register]]
-SEXP add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool, int state_new, int queue) {
+SEXP add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool) {
 
-  cpp11::external_pointer<Agent<>> ptr_agent(agent);
-  cpp11::external_pointer<Model<>> ptr_model(model);
-  cpp11::external_pointer<Tool<>> ptr_tool(tool);
+  cpp11::external_pointer<Agent> ptr_agent(agent);
+  cpp11::external_pointer<Model> ptr_model(model);
+  cpp11::external_pointer<Tool> ptr_tool(tool);
 
   ptr_agent->add_tool(*ptr_model, *ptr_tool);
 
@@ -116,8 +137,8 @@ SEXP add_tool_agent_cpp(SEXP agent, SEXP model, SEXP tool, int state_new, int qu
 [[cpp11::register]]
 bool has_virus_cpp(SEXP agent, SEXP virus) {
 
-  cpp11::external_pointer<Agent<>> ptr_agent(agent);
-  cpp11::external_pointer<Virus<>> ptr_virus(virus);
+  cpp11::external_pointer<Agent> ptr_agent(agent);
+  cpp11::external_pointer<Virus> ptr_virus(virus);
 
   return ptr_agent->has_virus(*ptr_virus);
 
@@ -126,21 +147,9 @@ bool has_virus_cpp(SEXP agent, SEXP virus) {
 [[cpp11::register]]
 bool has_tool_cpp(SEXP agent, SEXP tool) {
 
-  cpp11::external_pointer<Agent<>> ptr_agent(agent);
-  cpp11::external_pointer<Tool<>> ptr_tool(tool);
+  cpp11::external_pointer<Agent> ptr_agent(agent);
+  cpp11::external_pointer<Tool> ptr_tool(tool);
 
   return ptr_agent->has_tool(*ptr_tool);
-
-}
-
-[[cpp11::register]]
-SEXP change_state_cpp(SEXP agent, SEXP model, int new_state, int queue) {
-
-  cpp11::external_pointer<Agent<>> ptr_agent(agent);
-  cpp11::external_pointer<Model<>> ptr_model(model);
-
-  ptr_agent->change_state(*ptr_model, new_state, queue);
-
-  return agent;
 
 }

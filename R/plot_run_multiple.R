@@ -95,13 +95,13 @@ compute_ts_ci_area <- function(
 #' `epiworld_multiple_save`. It constructs a transition matrix from the
 #' provided data frame, normalizes the rows to represent probabilities, and
 #' then visualizes it using a mermaid diagram. The resulting plot illustrates
-#' the transitions between different states in the model, with the thickness of
-#' the arrows corresponding to the transition.
+#' the transitions between the stages of the model (summed over the statuses),
+#' with the thickness of the arrows corresponding to the transition.
 #' @export
 #' @concept epiworld-model-diagrams
 plot_multiple_transition <- function(x, ...) {
-  # Figuring out the states
-  states <- unique(c(x$from, x$to)) |>
+  # Figuring out the stages
+  states <- unique(c(x$from_stage, x$to_stage)) |>
     sort()
 
   # Creating the matrix with transitions
@@ -114,7 +114,7 @@ plot_multiple_transition <- function(x, ...) {
   for (s_i in states) {
     for (s_j in states) {
       # Filtering and aggregating
-      mat[s_i, s_j] <- x[x$from == s_i & x$to == s_j, ]$counts |> sum()
+      mat[s_i, s_j] <- x[x$from_stage == s_i & x$to_stage == s_j, ]$counts |> sum()
     }
   }
 
@@ -150,8 +150,15 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
   } else if (what == "transition") {
     plot_multiple_transition(x, ...)
   } else {
-
-    states <- unique(x$state)
+    # One panel per stage (summed over the statuses)
+    counts <- if ("counts" %in% names(x)) "counts" else "n"
+    x <- stats::aggregate(
+      x[[counts]],
+      by  = list(sim_num = x$sim_num, date = x$date, stage = x$stage),
+      FUN = sum
+    )
+    names(x)[4L] <- "counts"
+    states <- unique(x$stage)
     ncols <- max(1L, ceiling(length(states) / 2))
     oldpar <- graphics::par(
       mfrow = c(2L, ncols)
@@ -162,7 +169,7 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
 
       graphics::boxplot(
         counts ~ date,
-        data = x[x$state == state_name, , drop = FALSE],
+        data = x[x$stage == state_name, , drop = FALSE],
         main = state_name,
         xlab = "Date",
         ylab = "Counts",
