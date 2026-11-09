@@ -168,7 +168,9 @@ of \code{epiworld_model}.
 }
 
 \itemize{
-\item 'get_virus' returns a \link{virus}.
+\item 'get_virus' returns a \link{virus}. Like \code{get_tool()}, it is marked as calling
+R if the model is (e.g., the model has a \code{\link[=value_fun]{value_fun()}}), so that a model
+it is added to, or a copy of it (\code{\link[=clone_epi]{clone_epi()}}), runs single-threaded.
 }
 
 \itemize{

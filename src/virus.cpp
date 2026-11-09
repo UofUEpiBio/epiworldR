@@ -268,10 +268,7 @@ SEXP add_virus_cpp(SEXP m, SEXP v, SEXP assign) {
 
   // A placement's labels are the virus's stages
   external_pointer<Model>(m)->add_virus(
-    virus,
-    assign_from_r(assign, [&virus](const std::string & label) {
-      return stage_from_label(virus, label);
-    })
+    virus, assign_from_r(assign, stage_resolver(virus_nh(virus)))
   );
 
   return m;
@@ -285,9 +282,7 @@ SEXP assign_virus_cpp(SEXP m, int virus_pos, SEXP assign) {
   const Virus & virus = mptr->get_virus(static_cast< size_t >(virus_pos));
   mptr->assign_virus(
     static_cast< size_t >(virus_pos),
-    assign_from_r(assign, [&virus](const std::string & label) {
-      return stage_from_label(virus, label);
-    })
+    assign_from_r(assign, stage_resolver(virus_nh(virus)))
   );
 
   return m;

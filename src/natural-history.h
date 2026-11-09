@@ -4,6 +4,7 @@
 // Conversions shared by the natural-history bindings (virus.cpp): the values
 // and durations of the transitions, and stages named by their labels.
 
+#include <functional>
 #include "cpp11.hpp"
 #include "cpp11/external_pointer.hpp"
 #include "epiworld-common.h"
@@ -28,8 +29,8 @@ inline epiworld::Value value_from_r(SEXP x) {
 
 }
 
-// The stage of `virus` labeled `label` (throws, naming the stages, if none)
-inline int stage_from_label(const epiworld::Virus & virus, const std::string & label) {
+// The natural history of `virus` (throws if it has no stages yet)
+inline const epiworld::NaturalHistory & virus_nh(const epiworld::Virus & virus) {
 
   const epiworld::NaturalHistory * nh = virus.get_natural_history();
   if (nh == nullptr)
@@ -38,8 +39,13 @@ inline int stage_from_label(const epiworld::Virus & virus, const std::string & l
       virus.get_name().c_str()
     );
 
-  return nh->stage_id(label);
+  return *nh;
 
+}
+
+// The stage of `virus` labeled `label` (throws if none)
+inline int stage_from_label(const epiworld::Virus & virus, const std::string & label) {
+  return virus_nh(virus).stage_id(label);
 }
 
 inline epiworld::Nodes stages_from_labels(
@@ -52,6 +58,28 @@ inline epiworld::Nodes stages_from_labels(
     ids.push_back(stage_from_label(virus, std::string(l)));
 
   return epiworld::Nodes(ids);
+
+}
+
+// A placement's stage labels, resolved against a copy of the stages' labels.
+// The resolver is kept with the placement (assign_by() calls it at every
+// reset, and a cloned model copies it), so it owns what it reads: it never
+// refers to the caller's virus or to the model it was made from.
+inline std::function< int(const std::string &) > stage_resolver(
+  const epiworld::NaturalHistory & nh
+) {
+
+  return [name = nh.get_name(), labels = nh.get_stages()](
+    const std::string & label
+  ) -> int {
+    for (size_t s = 0u; s < labels.size(); ++s)
+      if (labels[s] == label)
+        return static_cast< int >(s);
+    cpp11::stop(
+      "The natural history \"%s\" has no stage \"%s\".",
+      name.c_str(), label.c_str()
+    );
+  };
 
 }
 

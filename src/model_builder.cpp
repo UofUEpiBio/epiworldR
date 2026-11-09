@@ -3,6 +3,7 @@
 
 #include "epiworld-common.h"
 #include "assign.h"
+#include "natural-history.h"
 
 using namespace epiworld;
 
@@ -34,11 +35,7 @@ SEXP set_initial_cpp(SEXP model, SEXP assign) {
   const NaturalHistory & nh = model_nh(*ptr);
 
   // The labels are the model's stages
-  ptr->set_initial(
-    assign_from_r(assign, [&nh](const std::string & label) {
-      return nh.stage_id(label);
-    })
-  );
+  ptr->set_initial(assign_from_r(assign, stage_resolver(nh)));
 
   return model;
 

@@ -57,7 +57,8 @@ clone_epi <- function(x, ...) UseMethod("clone_epi")
 clone_epi.epiworld_tool <- function(x, ...) {
   structure(
     clone_tool_cpp(x),
-    class = class(x)
+    class           = class(x),
+    single_threaded = attr(x, "single_threaded")
   )
 }
 
@@ -66,7 +67,8 @@ clone_epi.epiworld_tool <- function(x, ...) {
 clone_epi.epiworld_virus <- function(x, ...) {
   structure(
     clone_virus_cpp(x),
-    class = class(x)
+    class           = class(x),
+    single_threaded = attr(x, "single_threaded")
   )
 }
 
@@ -75,7 +77,8 @@ clone_epi.epiworld_virus <- function(x, ...) {
 clone_epi.epiworld_model <- function(x, ...) {
   structure(
     clone_model_cpp(x),
-    class = class(x)
+    class           = class(x),
+    single_threaded = attr(x, "single_threaded")
   )
 }
 

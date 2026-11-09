@@ -196,6 +196,13 @@ run(m, ndays = 2, seed = 1)
 expect_equal(calls, 10) # Once per infected agent, on the day it recovers
 expect_equal(subset(get_hist_total(m), date == 2)$counts, c(90, 0, 10))
 
+# Copies of the virus, and of the model's copy, still call R: a model they are
+# added to runs single-threaded
+expect_true(isTRUE(attr(clone_epi(v), "single_threaded")))
+m_strain <- Model(100)
+add_virus(m_strain, clone_epi(get_virus(m, 0)), assign_count(10))
+expect_true(isTRUE(attr(m_strain, "single_threaded")))
+
 m <- Model(100)
 set_agents_data(m, matrix(rep(c(-100, 100), 50), ncol = 1))
 v <- virus("Logit")

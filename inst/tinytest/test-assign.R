@@ -80,6 +80,35 @@ expect_error(assign_count(2.5), "whole")
 expect_error(assign_agents(-1), "agent ids")
 expect_error(add_tool(abm, vaccine, .5), "assign_")
 
+# The placement keeps its own copy of the stages: a function's labels are
+# resolved after the virus given to add_virus() is gone, and in a copy of the
+# model after the original is gone. The copy calls R too, so it runs
+# single-threaded.
+place_flu <- function(model) {
+  flu <- virus("Flu") |>
+    add_stage("Susceptible") |>
+    add_stage("Infected", infectious = TRUE) |>
+    add_infection("Susceptible", "Infected", rate = 0)
+  add_virus(model, flu, assign_by(function(agent, model) "Infected"))
+  rm(flu) # the function keeps this frame: without rm(), it keeps the virus
+}
+
+abm <- Model(200)
+place_flu(abm)
+invisible(gc())
+abm_copy <- clone_epi(abm)
+rm(abm)
+invisible(gc())
+
+verbose_off(abm_copy)
+run(abm_copy, ndays = 0, seed = 1)
+expect_equal(get_agents_stages(abm_copy), rep("Infected", 200))
+expect_true(isTRUE(attr(abm_copy, "single_threaded")))
+expect_warning(
+  run_multiple(abm_copy, ndays = 0, nsims = 2, nthreads = 2, verbose = FALSE),
+  "cannot be executed in parallel"
+)
+
 # assign_agents() with a large set ---------------------------------------------
 # Placing k agents takes about as long as a random share (it once took O(k^2)).
 n <- 100000L

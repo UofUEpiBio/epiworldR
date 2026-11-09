@@ -343,12 +343,15 @@ get_agents_data_ncols <- function(model) {
 #' @param virus_pos Integer. Relative location (starting from 0) of the virus
 #' in the model
 #' @returns
-#' - 'get_virus' returns a [virus].
+#' - 'get_virus' returns a [virus]. Like `get_tool()`, it is marked as calling
+#'   R if the model is (e.g., the model has a [value_fun()]), so that a model
+#'   it is added to, or a copy of it ([clone_epi()]), runs single-threaded.
 #' @rdname epiworld-methods
 get_virus <- function(model, virus_pos) {
   structure(
     get_virus_model_cpp(model, virus_pos),
-    class = c("epiworld_virus")
+    class           = "epiworld_virus",
+    single_threaded = attr(model, "single_threaded")
   )
 }
 
@@ -361,6 +364,7 @@ get_virus <- function(model, virus_pos) {
 get_tool <- function(model, tool_pos) {
   structure(
     get_tool_model_cpp(model, tool_pos),
-    class = "epiworld_tool"
+    class           = "epiworld_tool",
+    single_threaded = attr(model, "single_threaded")
   )
 }
