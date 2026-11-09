@@ -9,6 +9,7 @@
 \alias{draw_mermaid_from_file}
 \alias{draw_mermaid_from_files}
 \alias{draw_mermaid}
+\alias{draw_natural_history}
 \title{Model Diagram}
 \usage{
 \method{print}{epiworld_diagram}(x, ...)
@@ -41,6 +42,8 @@ draw_mermaid_from_files(
 )
 
 draw_mermaid(model, output_file = "", allow_self_transitions = FALSE)
+
+draw_natural_history(model)
 }
 \arguments{
 \item{x}{An \code{epiworld_diagram} object.}
@@ -87,6 +90,13 @@ mermaid diagram as a string.
 \itemize{
 \item The \code{draw_mermaid} returns the mermaid diagram as a string.
 }
+
+\itemize{
+\item The \code{draw_natural_history} function returns a mermaid diagram of the
+model's natural history (and statuses), drawn from their declarations: one
+node per stage and one edge per transition, labeled with its kind and value.
+It does not need the model to have run.
+}
 }
 \description{
 Functions described here are helper functions for drawing
@@ -119,9 +129,10 @@ verbose_off(model)
 run(model, ndays = 50, seed = 1912)
 
 # Draw mermaid diagrams from model data
+tprob <- get_transition_probability(model)
 diagram <- draw_mermaid_from_data(
-  states = get_states(model),
-  transition_probs = c(get_transition_probability(model))
+  states = rownames(tprob),
+  transition_probs = c(tprob)
 )
 
 \dontrun{
@@ -131,6 +142,9 @@ plot(diagram)
 
 # Draw a mermaid diagram of the transitions
 draw_mermaid(model)
+
+# Draw the natural history, from its declarations
+draw_natural_history(model)
 
 }
 \concept{epiworld-model-diagrams}

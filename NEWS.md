@@ -7,6 +7,74 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 ## Breaking changes
 
+* **Natural histories** (epiworld NH-1 to NH-3): a virus carries the course of
+  the disease, its **stages** and the **transitions** between them, and the
+  first virus added gives the model its stages. Build one with `virus(name)`,
+  `add_stage(virus, label, infectious, carrier)`, and `add_infection()`,
+  `add_rate()`, `add_after()` (a duration: `duration_fixed()`,
+  `duration_geometric()`, `duration_lognormal()`, `duration_gamma()`) and
+  `add_external()`; stages and transitions are named by their labels. A
+  transition's value is a number, a model parameter's name, `value_inverse()`,
+  `value_complement()`, `value_fun()` (an R function) or `rate_fun_logit()`.
+  `set_contact(virus, stage, weight)` sets a stage's contact weight (0 takes
+  its agents out of every layer). The states and their update functions are
+  defunct: `add_state()`, `set_state_function()`, `update_fun_rate()`,
+  `update_fun_susceptible()`, `virus_set_state()`, `set_infectious_states()`
+  and `get_infectious_states()` (a stage is declared infectious), `get_states()`
+  (`get_stages()`, `get_statuses()`), `get_state()` (`get_stage()`,
+  `get_status()`), `get_agents_states()` (`get_agents_stages()`,
+  `get_agents_statuses()`), `change_state()` (`fire(model, transition, agent)`
+  applies a declared transition), and the virus's values: `set_prob_infecting()`,
+  `set_prob_recovery()`, `set_prob_death()`, `set_incubation()` (and their
+  `_ptr` and `_fun` forms) and `virus_fun_logit()` (`rate_fun_logit()`).
+  `draw_natural_history()` draws a model's stages and transitions from their
+  declarations.
+
+* **Placement** (`help("assign")`): one vocabulary says who has the virus or a
+  tool, or starts in a stage, at the start of each run: `assign_share()`,
+  `assign_count()`, `assign_shares()`, `assign_counts()` (labels: stages, or
+  groups), `assign_group_shares()`, `assign_group_counts()` (a share of each
+  group of a mixing layer), `assign_agents()`, `assign_labels()` and
+  `assign_by()`. `add_virus(model, virus, assign)` and `add_tool(model, tool,
+  assign)` take it, `assign_virus()` and `assign_tool()` change it, and
+  `set_initial(model, assign)` places agents in stages without the virus
+  (replacing `initial_states()`). `virus()` and `tool()` no longer take a
+  prevalence, and `set_distribution_virus()`, `set_distribution_tool()`, the
+  `distribute_virus_*()` and `distribute_tool_*()` functions, `add_virus_n()`
+  and `add_tool_n()` are defunct. A mixing layer's `groups` take a placement,
+  so `grouping_random(sizes)` is `assign_counts(sizes)` (or
+  `assign_shares()`, whose shares are of all the agents).
+
+* **Statuses and the outputs**: a model may also have statuses (where agents
+  are: free, quarantined, isolated, hospitalized; `ModelSEIRQuarantine()`), so
+  the outputs keep status and stage apart. `get_hist_total()`,
+  `get_hist_virus()` and `get_hist_tool()` have `status` and `stage` columns
+  (a model without statuses has one, `"Free"`); `get_today_total()` returns a
+  data frame (`status`, `stage`, `counts`) instead of a named vector;
+  `get_hist_transition_matrix()` has `status_from`, `stage_from`, `status_to`
+  and `stage_to`; and so do the results of `run_multiple_get_results()`. The
+  new `get_hist_transitions()` counts each declared transition by day. Plots
+  show stages.
+
+* **The registry**: every built-in model whose arguments are numbers is built
+  by `make_model(id, values, virus_name)`; `list_models()` and
+  `get_model_info(id)` list the models and their arguments (names, defaults,
+  limits, descriptions). The named constructors (`ModelSIR()`, `ModelSEIR()`,
+  `ModelSIRD()`, `ModelSEIRD()`, `ModelSIS()`, `ModelSISD()`, `ModelSURV()`,
+  `ModelSEIRQuarantine()`) call it with the same arguments; the registry checks
+  the values. The per-model `add_virus()` methods are gone: a second virus is a
+  strain of the model's own, a copy (`clone_epi(get_virus(model, 0))`) with
+  its own name whose transitions may read other parameters (`use_param()`).
+  The SEIR family's last stage is "Removed".
+
+* **Variants by id**: a virus gets its id (and lineage) when it is added to a
+  model; the model keeps its own copy, so target a tool with the model's copy
+  (`add_target_tool(tool, get_virus(model, 1))`). `globalevent_tool()` gives
+  agents the model's copy of the tool.
+
+* Values and placements that call R (`value_fun()`, `assign_by()`) make
+  `run_multiple()` use one thread, as `globalevent_fun()` does.
+
 * A model's states describe the course of infection; its layers describe who
   meets whom (a model can still carry several viruses). The models that
   differed only in where contacts come from are defunct: `ModelSIRMixing()` and
@@ -29,9 +97,8 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 * `layer_mixing()` no longer takes `infectious_states` and
   `available_states`: every agent of a group can be met, and the model says
-  once which states transmit, for every layer, with the new
-  `set_infectious_states()` (e.g., Infected, not Exposed, in `ModelSEIR()`).
-  `update_fun_susceptible()` loses `exclude` for the same reason.
+  once which stages transmit, for every layer (now the infectious stages of
+  its natural history, above; e.g., Infected, not Exposed, in `ModelSEIR()`).
 
 * `set_contact_rate(layer, param)` makes a mixing layer's contacts a model
   parameter times its contact matrix, read every day, so global events and

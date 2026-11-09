@@ -77,7 +77,7 @@ Note the "Model parameters" and the "Distribution of the population at time 50" 
 ```{r}
 #| label: get-sir-model-data
 model_sir_data <- c(
-  get_today_total(model_sir),
+  get_today_total(model_sir)$counts,
   mean(get_active_cases(model_sir)$active_cases)
 )
 ```
@@ -103,7 +103,7 @@ simulation_fun <- function(params, lfmcmc_obj) {
   )
 
   c(
-    get_today_total(model_sir),
+    get_today_total(model_sir)$counts,
     mean(get_active_cases(model_sir)$active_cases)
   )
 
@@ -186,7 +186,7 @@ To make the printed results easier to read, we use the `set_params_names` and `s
 set_params_names(lfmcmc_model, c("Recovery rate", "Transmission probability"))
 set_stats_names(
   lfmcmc_model,
-  c(get_states(model_sir), "Average active cases")
+  c(get_stages(model_sir), "Average active cases")
 )
 
 print(lfmcmc_model, burnin = 1500)

@@ -166,15 +166,6 @@ stopifnot_tfun <- function(tfun) {
 }
 
 # Checks if tool_distfun is of class "epiworld_tool_distfun"
-stopifnot_tool_distfun <- function(tool_distfun) {
-  if (!inherits(tool_distfun, "epiworld_tool_distfun")) {
-    stop(
-      "The -tool_distfun- object must be of class 'epiworld_tool_distfun'. ",
-      "The object passed to the function is of class(es): ",
-      paste(class(tool_distfun), collapse = ", ")
-    )
-  }
-}
 
 # Checks if virus object is of class "epiworld_virus"
 stopifnot_virus <- function(virus) {
@@ -188,26 +179,8 @@ stopifnot_virus <- function(virus) {
 }
 
 # Checks if vfun is of class "epiworld_virus_fun"
-stopifnot_vfun <- function(vfun) {
-  if (!inherits(vfun, "epiworld_virus_fun")) {
-    stop(
-      "The -vfun- object must be of class 'epiworld_virus_fun'. ",
-      "The object passed to the function is of class(es): ",
-      paste(class(vfun), collapse = ", ")
-    )
-  }
-}
 
 # Checks if virus_distfun is of class "epiworld_virus_distfun"
-stopifnot_virus_distfun <- function(virus_distfun) {
-  if (!inherits(virus_distfun, "epiworld_virus_distfun")) {
-    stop(
-      "The -virus_distfun- object must be of class 'epiworld_virus_distfun'. ",
-      "The object passed to the function is of class(es): ",
-      paste(class(virus_distfun), collapse = ", ")
-    )
-  }
-}
 
 stopifnot_dataframe <- function(df) {
   if (!inherits(df, "data.frame"))
@@ -230,14 +203,4 @@ stopifnot_columns <- function(df, expected_cols) {
     )
 
   invisible(TRUE)
-}
-
-stopifnot_update_fun <- function(update_fun) {
-  if (!inherits(update_fun, "epiworld_update_fun")) {
-    stop(
-      "The -update_fun- object must be of class 'epiworld_update_fun'. ",
-      "The object passed to the function is of class(es): ",
-      paste(class(update_fun), collapse = ", ")
-    )
-  }
 }

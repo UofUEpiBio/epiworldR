@@ -29,17 +29,20 @@ get_hist_tool(x)
 \item{y}{Ignored.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 }
 \value{
 \itemize{
 \item The \code{get_hist_total} function returns an object of class
-\link{epiworld_hist_total}.
+\link{epiworld_hist_total}: a data frame with one row per day, status and stage
+(\code{date}, \code{status}, \code{stage}, \code{counts}). Models without statuses have one,
+\code{"Free"}. Totals by stage (or by status) are a sum over the other column.
 }
 
 \itemize{
-\item The \code{get_today_total} function returns a named vector with the
-total number of individuals in each state at the end of the simulation.
+\item The \code{get_today_total} function returns a data frame with the number of
+agents in each status and stage (\code{status}, \code{stage}, \code{counts}) at the end of
+the simulation. Models without statuses have one, \code{"Free"}.
 }
 
 \itemize{

@@ -2,9 +2,11 @@
 #'
 #' These functions were removed in epiworldR 1.0.0, when the population and
 #' the contacts of a model moved to its constructor and its contact layers
-#' (see [contact-layers]). A model's states describe the course of infection and
-#' its layers describe who meets whom, so the models that differed only in
-#' where contacts came from are gone too.
+#' (see [contact-layers]), and the course of infection moved to the virus's
+#' natural history (its stages and transitions, see [virus()]). A model's
+#' layers describe who meets whom, so the models that differed only in where
+#' contacts came from are gone too; and one vocabulary ([assign]) places
+#' viruses, tools, initial stages and groups.
 #' Calling them is an error that says what to use instead:
 #'
 #' `r defunct_doc()`
@@ -19,7 +21,7 @@ NULL
 defunct_entity <- paste(
   "Entities are gone: groups live in a mixing layer.",
   "add_layer(model, layer_mixing(name, groups, ...)), with groups a vector",
-  "(one group per agent) or grouping_random(sizes, as_proportion);",
+  "(one group per agent) or a placement (e.g., assign_counts(sizes));",
   "members_of(layer, group) and get_group(layer, agent) read them."
 )
 
@@ -38,6 +40,37 @@ defunct_entity_fns <- c(
   "set_distribution_entity",
   "add_entities_from_dataframe"
 )
+
+# The natural history (epiworld NH-1, NH-2) replaced the states and their
+# update functions; viruses carry their stages and transitions.
+defunct_state <- paste(
+  "States are gone: the virus carries the stages of the disease and the",
+  "transitions between them (add_stage(), add_infection(), add_rate(),",
+  "add_after(); see help(\"virus\"))."
+)
+
+# Placement (decision 14 of natural-history.md): one vocabulary, assign_*()
+defunct_assign_virus <- paste(
+  "Place the virus when adding it: add_virus(model, virus, assign), with",
+  "assign_share(p), assign_count(n), assign_agents(ids) or",
+  "assign_group_shares(layer, p) (see help(\"assign\"))."
+)
+
+defunct_assign_tool <- paste(
+  "Place the tool when adding it: add_tool(model, tool, assign), with",
+  "assign_share(p), assign_count(n), assign_agents(ids) or",
+  "assign_group_shares(layer, p) (see help(\"assign\"))."
+)
+
+defunct_virus_value <- function(what) {
+  paste(
+    "A virus holds no values: its transitions name model parameters.",
+    sprintf("Declare the %s as a transition", what),
+    "(add_infection(), add_rate() or add_after(), with a number, a parameter",
+    "name, value_fun() or rate_fun_logit()); a strain reads other parameters",
+    "with use_param()."
+  )
+}
 
 # What replaces each defunct function. This one table feeds the stubs and
 # their help page.
@@ -91,13 +124,56 @@ defunct_table <- c(
     "contact_matrix = contact_matrix)); it traces every layer it is given."
   ),
   setNames(rep(defunct_entity, length(defunct_entity_fns)), defunct_entity_fns),
-  distribute_tool_to_entities = paste(
-    "Use distribute_tool_to_groups(layer, prevalence, as_proportion) with the",
-    "name of a mixing layer."
+  distribute_tool_to_entities = defunct_assign_tool,
+  distribute_virus_to_entities = defunct_assign_virus,
+  add_state = defunct_state,
+  set_state_function = defunct_state,
+  update_fun_rate = defunct_state,
+  update_fun_susceptible = defunct_state,
+  virus_set_state = defunct_state,
+  set_infectious_states = paste(
+    "A stage transmits if it is declared infectious:",
+    "add_stage(virus, label, infectious = TRUE)."
   ),
-  distribute_virus_to_entities = paste(
-    "Use distribute_virus_to_groups(layer, prevalence, as_proportion) with the",
-    "name of a mixing layer."
+  get_infectious_states = "Use get_stages(virus) (its -infectious- column).",
+  get_states = "Use get_stages(model) and get_statuses(model).",
+  get_state = "Use get_stage(model, agent) and get_status(model, agent).",
+  get_agents_states = "Use get_agents_stages(model) and get_agents_statuses(model).",
+  change_state = paste(
+    "An agent moves only along a declared transition: fire(model, transition,",
+    "agent_id) (e.g., an external one, add_external())."
+  ),
+  initial_states = paste(
+    "Use set_initial(model, assign_shares(c(<stage> = <share>, ...))): the",
+    "agents start in stages without the virus."
+  ),
+  set_prob_infecting = defunct_virus_value("probability of infection"),
+  set_prob_infecting_ptr = defunct_virus_value("probability of infection"),
+  set_prob_infecting_fun = defunct_virus_value("probability of infection"),
+  set_prob_recovery = defunct_virus_value("recovery"),
+  set_prob_recovery_ptr = defunct_virus_value("recovery"),
+  set_prob_recovery_fun = defunct_virus_value("recovery"),
+  set_prob_death = defunct_virus_value("death"),
+  set_prob_death_ptr = defunct_virus_value("death"),
+  set_prob_death_fun = defunct_virus_value("death"),
+  set_incubation = defunct_virus_value("incubation"),
+  set_incubation_ptr = defunct_virus_value("incubation"),
+  set_incubation_fun = defunct_virus_value("incubation"),
+  virus_fun_logit = "Use rate_fun_logit(vars, coefs, model) as a transition's value.",
+  set_distribution_virus = defunct_assign_virus,
+  distribute_virus_randomly = defunct_assign_virus,
+  distribute_virus_to_set = defunct_assign_virus,
+  distribute_virus_set = defunct_assign_virus,
+  distribute_virus_to_groups = defunct_assign_virus,
+  add_virus_n = defunct_assign_virus,
+  set_distribution_tool = defunct_assign_tool,
+  distribute_tool_randomly = defunct_assign_tool,
+  distribute_tool_to_set = defunct_assign_tool,
+  distribute_tool_to_groups = defunct_assign_tool,
+  add_tool_n = defunct_assign_tool,
+  grouping_random = paste(
+    "Give layer_mixing() a placement whose labels are the groups:",
+    "assign_counts(sizes) or assign_shares(proportions) (see help(\"assign\"))."
   )
 )
 
@@ -218,3 +294,151 @@ distribute_tool_to_entities <- function(...) defunct("distribute_tool_to_entitie
 #' @export
 #' @rdname epiworldR-defunct
 distribute_virus_to_entities <- function(...) defunct("distribute_virus_to_entities")
+
+#' @export
+#' @rdname epiworldR-defunct
+add_state <- function(...) defunct("add_state")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_state_function <- function(...) defunct("set_state_function")
+
+#' @export
+#' @rdname epiworldR-defunct
+update_fun_rate <- function(...) defunct("update_fun_rate")
+
+#' @export
+#' @rdname epiworldR-defunct
+update_fun_susceptible <- function(...) defunct("update_fun_susceptible")
+
+#' @export
+#' @rdname epiworldR-defunct
+virus_set_state <- function(...) defunct("virus_set_state")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_infectious_states <- function(...) defunct("set_infectious_states")
+
+#' @export
+#' @rdname epiworldR-defunct
+get_infectious_states <- function(...) defunct("get_infectious_states")
+
+#' @export
+#' @rdname epiworldR-defunct
+get_states <- function(...) defunct("get_states")
+
+#' @export
+#' @rdname epiworldR-defunct
+get_state <- function(...) defunct("get_state")
+
+#' @export
+#' @rdname epiworldR-defunct
+get_agents_states <- function(...) defunct("get_agents_states")
+
+#' @export
+#' @rdname epiworldR-defunct
+change_state <- function(...) defunct("change_state")
+
+#' @export
+#' @rdname epiworldR-defunct
+initial_states <- function(...) defunct("initial_states")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_infecting <- function(...) defunct("set_prob_infecting")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_infecting_ptr <- function(...) defunct("set_prob_infecting_ptr")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_infecting_fun <- function(...) defunct("set_prob_infecting_fun")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_recovery <- function(...) defunct("set_prob_recovery")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_recovery_ptr <- function(...) defunct("set_prob_recovery_ptr")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_recovery_fun <- function(...) defunct("set_prob_recovery_fun")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_death <- function(...) defunct("set_prob_death")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_death_ptr <- function(...) defunct("set_prob_death_ptr")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_prob_death_fun <- function(...) defunct("set_prob_death_fun")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_incubation <- function(...) defunct("set_incubation")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_incubation_ptr <- function(...) defunct("set_incubation_ptr")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_incubation_fun <- function(...) defunct("set_incubation_fun")
+
+#' @export
+#' @rdname epiworldR-defunct
+virus_fun_logit <- function(...) defunct("virus_fun_logit")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_distribution_virus <- function(...) defunct("set_distribution_virus")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_virus_randomly <- function(...) defunct("distribute_virus_randomly")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_virus_to_set <- function(...) defunct("distribute_virus_to_set")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_virus_set <- function(...) defunct("distribute_virus_set")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_virus_to_groups <- function(...) defunct("distribute_virus_to_groups")
+
+#' @export
+#' @rdname epiworldR-defunct
+add_virus_n <- function(...) defunct("add_virus_n")
+
+#' @export
+#' @rdname epiworldR-defunct
+set_distribution_tool <- function(...) defunct("set_distribution_tool")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_tool_randomly <- function(...) defunct("distribute_tool_randomly")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_tool_to_set <- function(...) defunct("distribute_tool_to_set")
+
+#' @export
+#' @rdname epiworldR-defunct
+distribute_tool_to_groups <- function(...) defunct("distribute_tool_to_groups")
+
+#' @export
+#' @rdname epiworldR-defunct
+add_tool_n <- function(...) defunct("add_tool_n")
+
+#' @export
+#' @rdname epiworldR-defunct
+grouping_random <- function(...) defunct("grouping_random")

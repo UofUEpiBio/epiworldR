@@ -10,7 +10,6 @@
 \alias{set_group}
 \alias{members_of}
 \alias{groupmates_of}
-\alias{grouping_random}
 \title{Mixing layers}
 \usage{
 layer_mixing(name, groups, contact_matrix = NULL, contact_prob = NULL)
@@ -28,16 +27,14 @@ set_group(layer, agent, group)
 members_of(layer, group)
 
 groupmates_of(layer, agent, from = 1L, to = .Machine$integer.max)
-
-grouping_random(sizes, as_proportion = FALSE)
 }
 \arguments{
 \item{name}{String. Name of the layer (unique within a model).}
 
 \item{groups}{Integer vector with the group of each agent (starting at 0),
 or \code{NA} to leave the agent out of the layer; its length is the population
-size of the model the layer is added to. Or a grouping (class
-\code{epiworld_grouping}, e.g., from \code{grouping_random()}).}
+size of the model the layer is added to. Or a placement whose labels are
+the groups (see \link{assign}), drawn at the start of every run.}
 
 \item{contact_matrix}{Numeric square matrix with one row per group.}
 
@@ -58,18 +55,11 @@ takes the agent out of the layer.}
 
 \item{from, to}{Integers. In \code{groupmates_of()}, the first and last day of
 the window (days after the last one simulated are left out).}
-
-\item{sizes}{Numeric vector with one size per group: a whole number of
-agents, or, with \code{as_proportion = TRUE}, a proportion (in \verb{[0, 1]}) of the
-agents not yet in a group.}
-
-\item{as_proportion}{Logical. Whether \code{sizes} are proportions.}
 }
 \value{
 \itemize{
 \item \code{layer_mixing()} returns a mixing layer, of class
 \code{epiworld_layer_mixing}.
-\item \code{grouping_random()} returns a grouping, of class \code{epiworld_grouping}.
 \item \code{get_contact_prob()} returns the contact probabilities (one per group once
 the model has run; empty for a layer with a contact matrix).
 \item \code{set_contact_prob()}, \code{set_contact_rate()} and \code{set_group()} return the
@@ -98,13 +88,13 @@ every day), with no ties stored.
 }
 \details{
 The groups are fixed (one per agent), or drawn afresh at the start of every
-run by a grouping: \code{grouping_random()} draws groups of given sizes at
-random.
+run by a placement (see \link{assign}): e.g., \code{assign_counts(c(300, 200))} draws
+groups of 300 and 200 agents at random.
 
 \code{layer_mixing()} creates one to add to any model with \code{\link[=add_layer]{add_layer()}}. Every
 agent of a group takes part in the mixing (the contacts are spread over all
-of them), and the agents in the model's infectious states transmit (see
-\code{\link[=set_infectious_states]{set_infectious_states()}}; e.g., Infected, not Exposed, in \code{\link[=ModelSEIR]{ModelSEIR()}}).
+of them), and the agents in the virus's infectious stages transmit (see
+\code{\link[=add_stage]{add_stage()}}; e.g., Infected, not Exposed, in \code{\link[=ModelSEIR]{ModelSEIR()}}).
 
 With \code{set_contact_rate()}, the contacts of a layer with a contact matrix are
 a model parameter times the matrix. The parameter is read at the end of
@@ -115,18 +105,19 @@ connected models, e.g. \code{ModelSIRCONN()}, did; see the example).
 
 Give exactly one of \code{contact_matrix} and \code{contact_prob}. The number of
 groups is the number of rows of \code{contact_matrix}, or the length of
-\code{contact_prob}; with a single \code{contact_prob}, it is \code{max(groups) + 1}, or
-the number of groups of a grouping.
+\code{contact_prob}; with a single \code{contact_prob}, it is \code{max(groups) + 1}, or,
+for a placement, the number of its shares or counts (or \code{max(labels) + 1}
+for \code{assign_labels()}).
 
-\code{grouping_random()} draws the groups in order, each from the agents not yet
-in a group; agents left over are in no group. With \code{as_proportion = TRUE}, a
-group takes \code{floor(size * n)} of the \code{n} agents still without a group.
+\code{assign_shares()} and \code{assign_counts()} draw the groups in order, each from
+the agents not yet in a group; agents left over are in no group. A share \code{p}
+takes \code{floor(p * n)} agents, \code{n} being all the agents.
 
 As for every layer, an edit made while the model runs (e.g., from a global
 event) lasts for that run only, and one made between runs is kept. A move
 made with \code{set_group()} during a day takes effect at the end of the day.
 A layer with a contact matrix and one with contact probabilities cannot be
-swapped during a run. The groups of a grouping exist once the model has run
+swapped during a run. The groups of a placement exist once the model has run
 (\code{get_group()} and \code{members_of()} read the last draw), and moving an agent
 between runs is an error: the next run draws them again.
 
@@ -137,7 +128,7 @@ in \code{\link[=ModelSEIRQuarantine]{ModelSEIRQuarantine()}}). \code{groupmates_
 with \code{agent}, both present, between days \code{from} and \code{to}. With
 \code{contact_prob = 1} that is exactly who the agent met; below 1, who it could
 have met ("notify the household"). The history covers whole runs: tracing
-turned on during a run, or a grouping edited after it, gives none (an
+turned on during a run, or groups placed after it, gives none (an
 error) until the next run.
 }
 \examples{
@@ -171,7 +162,7 @@ add_layer(
 # Two schools of 300 and 200, drawn at random at the start of every run
 schools <- layer_mixing(
   "schools",
-  groups       = grouping_random(c(300, 200)),
+  groups       = assign_counts(c(300, 200)),
   contact_prob = .05
 )
 add_layer(sir, schools)

@@ -21,8 +21,6 @@ make_model <- function() {
 perfect_vaccine <- function() {
   tool(
     name                     = "Perfect vaccine",
-    prevalence               = 1,
-    as_proportion            = TRUE,
     susceptibility_reduction = 1,
     transmission_reduction   = 0,
     recovery_enhancer        = 0,
@@ -32,7 +30,7 @@ perfect_vaccine <- function() {
 
 final_recovered <- function(model) {
   hist <- get_hist_total(model)
-  hist[hist$date == max(hist$date) & hist$state == "Recovered", "counts"]
+  hist[hist$date == max(hist$date) & hist$stage == "Recovered", "counts"]
 }
 
 # ------------------------------------------------------------------------------
@@ -52,13 +50,13 @@ expect_equal(get_name_tool(vax2), "Useless vaccine")
 
 # Everyone gets the original (perfect) vaccine: only the initial cases
 model <- make_model()
-add_tool(model, vax)
+add_tool(model, vax, assign_share(1))
 run(model, ndays = 50, seed = 123)
 expect_equal(final_recovered(model), 50)
 
 # Everyone gets the copy (useless) vaccine: the outbreak spreads
 model <- make_model()
-add_tool(model, vax2)
+add_tool(model, vax2, assign_share(1))
 run(model, ndays = 50, seed = 123)
 expect_true(final_recovered(model) > 100)
 
@@ -68,8 +66,8 @@ vax  <- perfect_vaccine()
 vax2 <- clone_epi(vax)
 set_name_tool(vax2, "Useless vaccine")
 model <- make_model()
-add_tool(model, vax)
-add_tool(model, vax2)
+add_tool(model, vax, assign_share(1))
+add_tool(model, vax2, assign_share(1))
 expect_equal(get_n_tools(model), 2L)
 expect_equal(get_name_tool(get_tool(model, 0)), "Perfect vaccine")
 expect_equal(get_name_tool(get_tool(model, 1)), "Useless vaccine")
@@ -78,10 +76,10 @@ expect_equal(sort(unique(get_hist_tool(model)$tool_id)), c(0L, 1L))
 
 # Cloning a tool that is already in a model also gives a new tool
 model <- make_model()
-add_tool(model, vax)
+add_tool(model, vax, assign_share(1))
 vax3 <- clone_epi(get_tool(model, 0))
 set_name_tool(vax3, "Copy")
-add_tool(model, vax3)
+add_tool(model, vax3, assign_share(1))
 run(model, ndays = 10, seed = 123)
 expect_equal(get_name_tool(get_tool(model, 0)), "Perfect vaccine")
 expect_equal(sort(unique(get_hist_tool(model)$tool_id)), c(0L, 1L))

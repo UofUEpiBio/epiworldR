@@ -5,235 +5,105 @@
 #include "epiworld-common.h"
 
 using namespace cpp11;
+using namespace epiworld;
 
 // Model definitions:
 // https://github.com/UofUEpiBio/epiworld/tree/master/include/epiworld/models
 
-#define WrapSURV(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSURV<>> (a)
+// The registry: every registered model is built by make_model() ------------
 
-[[cpp11::register]]
-SEXP ModelSURV_cpp(
-  std::string name,
-  unsigned int n,
-  double prevalence,
-  double efficacy_vax,
-  double latent_period,
-  double prob_symptoms,
-  double prop_vaccinated,
-  double prop_vax_redux_transm,
-  double infect_period,
-  double prop_vax_redux_infect,
-  double surveillance_prob,
-  double transmission_prob,
-  double prob_death,
-  double prob_noreinfect
-) {
+// The core models (the measles package registers its own)
+static const ModelRegistry & registry() {
 
-  // Creating a pointer to a ModelSIR model
-  WrapSURV(ptr)(
-    new epiworld::epimodels::ModelSURV<>(
-      name,
-      n,
-      prevalence,
-      efficacy_vax,
-      latent_period,
-      infect_period,
-      prob_symptoms,
-      prop_vaccinated,
-      prop_vax_redux_transm,
-      prop_vax_redux_infect,
-      surveillance_prob,
-      transmission_prob,
-      prob_death,
-      prob_noreinfect
-    )
-  );
+  static const ModelRegistry reg = [] {
+    ModelRegistry r;
+    epimodels::register_models(r);
+    return r;
+  }();
 
-  return ptr;
+  return reg;
+
 }
 
-#undef WrapSURV
+static cpp11::writable::data_frame params_df(const ModelInfo & info) {
 
-#define WrapSEIR(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIR<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSEIR_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double latent_period,
-    double recovery_rate
-
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSEIR(ptr)(
-      new epiworld::epimodels::ModelSEIR<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          latent_period,
-          recovery_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSEIR
-
-#define WrapSIS(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIS<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSIS_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double recovery_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSIS(ptr)(
-      new epiworld::epimodels::ModelSIS<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          recovery_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSIS
-
-#define WrapSIR(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIR<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSIR_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double recovery_rate
-) {
-
-  // Creating a pointer to a ModelSIR model
-  WrapSIR(ptr)(
-      new epiworld::epimodels::ModelSIR<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          recovery_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSIR
-
-#define WrapSIRD(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSIRD<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSIRD_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double recovery_rate,
-    double death_rate
-) {
-
-  // Creating a pointer to a ModelSIRD model
-  WrapSIRD(ptr)(
-      new epiworld::epimodels::ModelSIRD<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          recovery_rate,
-          death_rate
-      )
-  );
-
-  return ptr;
-}
-
-#undef WrapSIRD
-
-#define WrapSEIRD(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRD<>> (a)
-
-[[cpp11::register]]
-  SEXP ModelSEIRD_cpp(
-      std::string name,
-      unsigned int n,
-      double prevalence,
-      double transmission_prob,
-      double latent_period,
-      double recovery_rate,
-      double death_rate
-
-  ) {
-
-    // Creating a pointer to a ModelSEIRD model
-    WrapSEIRD(ptr)(
-        new epiworld::epimodels::ModelSEIRD<>(
-            name,
-            n,
-            prevalence,
-            transmission_prob,
-            latent_period,
-            recovery_rate,
-            death_rate
-        )
-    );
-
-    return ptr;
+  cpp11::writable::strings arg, name, description;
+  cpp11::writable::doubles value, min, max;
+  cpp11::writable::logicals integer;
+  for (const auto & p : info.params)
+  {
+    arg.push_back(p.arg);
+    name.push_back(p.name);
+    value.push_back(p.value);
+    min.push_back(p.min);
+    max.push_back(p.max);
+    integer.push_back(p.integer ? TRUE : FALSE);
+    description.push_back(p.description);
   }
 
-#undef WrapSEIRD
+  return cpp11::writable::data_frame({
+    "arg"_nm         = arg,
+    "name"_nm        = name,
+    "value"_nm       = value,
+    "min"_nm         = min,
+    "max"_nm         = max,
+    "integer"_nm     = integer,
+    "description"_nm = description
+  });
 
-#define WrapSISD(a) \
-  cpp11::external_pointer<epiworld::epimodels::ModelSISD<>> (a)
-
-[[cpp11::register]]
-SEXP ModelSISD_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double recovery_rate,
-    double death_rate
-) {
-
-  // Creating a pointer to a ModelSISD model
-  WrapSISD(ptr)(
-      new epiworld::epimodels::ModelSISD<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          recovery_rate,
-          death_rate
-      )
-  );
-
-  return ptr;
 }
 
-#undef WrapSISD
+[[cpp11::register]]
+cpp11::writable::data_frame list_models_cpp() {
+
+  cpp11::writable::strings id, label, description, virus_name;
+  for (const auto & info : registry().list_models())
+  {
+    id.push_back(info.id);
+    label.push_back(info.label);
+    description.push_back(info.description);
+    virus_name.push_back(info.virus_name);
+  }
+
+  return cpp11::writable::data_frame({
+    "id"_nm          = id,
+    "label"_nm       = label,
+    "description"_nm = description,
+    "virus_name"_nm  = virus_name
+  });
+
+}
+
+[[cpp11::register]]
+cpp11::writable::list get_model_info_cpp(std::string id) {
+
+  const ModelInfo & info = registry().get_model_info(id);
+  return cpp11::writable::list({
+    "id"_nm          = info.id,
+    "label"_nm       = info.label,
+    "description"_nm = info.description,
+    "virus_name"_nm  = info.virus_name,
+    "params"_nm      = params_df(info)
+  });
+
+}
+
+[[cpp11::register]]
+SEXP make_model_cpp(std::string id, cpp11::doubles values, std::string virus_name) {
+
+  std::map< std::string, double > v;
+  if (values.size() > 0)
+  {
+    cpp11::strings names(values.names());
+    for (R_xlen_t i = 0; i < values.size(); ++i)
+      v[std::string(names[i])] = values[i];
+  }
+
+  return cpp11::external_pointer<Model>(
+    registry().make_model(id, v, virus_name).release()
+  );
+
+}
 
 [[cpp11::register]]
 SEXP ModelSIRLogit_cpp(
@@ -259,8 +129,8 @@ SEXP ModelSIRLogit_cpp(
   for (auto i : coef_recover_cols)
     crecover.push_back(static_cast<size_t>(i));
 
-  cpp11::external_pointer<epiworld::epimodels::ModelSIRLogit<>> ptr(
-    new epiworld::epimodels::ModelSIRLogit<>(
+  cpp11::external_pointer<epiworld::epimodels::ModelSIRLogit> ptr(
+    new epiworld::epimodels::ModelSIRLogit(
         vname,
         n,
         REAL(data),
@@ -297,8 +167,8 @@ SEXP ModelDiffNet_cpp(
   for (auto i : data_cols)
     data_cols_s.push_back(static_cast<size_t>(i));
 
-  cpp11::external_pointer<epiworld::epimodels::ModelDiffNet<>> ptr(
-    new epiworld::epimodels::ModelDiffNet<>(
+  cpp11::external_pointer<epiworld::epimodels::ModelDiffNet> ptr(
+    new epiworld::epimodels::ModelDiffNet(
       name,
       n,
       prevalence,
@@ -309,49 +179,6 @@ SEXP ModelDiffNet_cpp(
       data_cols_s,
       params
     )
-  );
-
-  return ptr;
-
-}
-
-[[cpp11::register]]
-SEXP ModelSEIRQuarantine_cpp(
-    std::string name,
-    unsigned int n,
-    double prevalence,
-    double transmission_prob,
-    double latent_period,
-    double recovery_rate,
-    double hospitalization_rate,
-    double hospitalization_period,
-    double detection_delay,
-    int quarantine_period,
-    double quarantine_willingness,
-    double isolation_willingness,
-    int isolation_period,
-    double contact_tracing_prob,
-    unsigned int contact_tracing_window
-) {
-
-  cpp11::external_pointer<epiworld::epimodels::ModelSEIRQuarantine<>> ptr(
-      new epiworld::epimodels::ModelSEIRQuarantine<>(
-          name,
-          n,
-          prevalence,
-          transmission_prob,
-          latent_period,
-          recovery_rate,
-          hospitalization_rate,
-          hospitalization_period,
-          detection_delay,
-          quarantine_period,
-          quarantine_willingness,
-          isolation_willingness,
-          isolation_period,
-          contact_tracing_prob,
-          contact_tracing_window
-      )
   );
 
   return ptr;

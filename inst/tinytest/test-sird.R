@@ -18,7 +18,7 @@ expect_silent(add_layer(sird_0, layer_network("network", graph_smallworld(k = 5,
 
 # Check model run --------------------------------------------------------------
 expect_silent(verbose_off(sird_0))
-expect_silent(initial_states(sird_0, c(.05, .05)))
+expect_silent(set_initial(sird_0, assign_shares(c(Recovered = .05))))
 expect_error(plot(sird_0), "model must be run before it can be plotted")
 expect_silent(run(sird_0, ndays = 100, seed = 1231))
 expect_silent(plot(sird_0)) # Plot succeeds after model is run
@@ -36,7 +36,7 @@ bad_name <- 10
 bad_numeric_input <- "not a number"
 
 expected_error_msg_str <- "must be a string"
-expected_error_msg_double <- "must be a double"
+expected_error_msg_double <- "must be a number"
 
 expect_error(sird_0 <- ModelSIRD(
   name = bad_name,

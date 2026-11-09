@@ -20,17 +20,26 @@ expect_silent(add_layer(seir_0, layer_network("network", graph_smallworld(k = 5,
 # Check model run without queuing ----------------------------------------------
 expect_silent(verbose_off(seir_0))
 expect_silent(queuing_off(seir_0))
-expect_silent(initial_states(seir_0, c(.3, .5)))
+# Half of the agents without the virus start removed
+expect_silent(set_initial(seir_0, assign_shares(c(Removed = .5))))
 expect_error(plot(seir_0), "model must be run before it can be plotted")
 expect_silent(run(seir_0, ndays = 100, seed = 1231))
 expect_silent(plot(seir_0)) # Plot succeeds after model is run
 
 hist_0 <- get_hist_total(seir_0)
+expect_identical(
+  names(hist_0), c("date", "status", "stage", "counts")
+)
 
-expect_equal(hist_0[1,3], 4950)
-expect_equal(hist_0[2,3], 70)
-expect_equal(hist_0[3,3], 30)
-expect_equal(hist_0[4,3], 4950)
+# Day 0: the seeds start in the infection's target (Exposed)
+h0 <- hist_0[hist_0$date == 0, ]
+expect_equal(
+  h0$counts,
+  c(4950, 100, 0, 4950)
+)
+expect_identical(
+  h0$stage, c("Susceptible", "Exposed", "Infected", "Removed")
+)
 
 # Check functions fail with invalid inputs -------------------------------------
 good_name <- "A Virus"
@@ -42,9 +51,9 @@ good_recovery_rate <- 1.0/7.0
 bad_name <- 10
 bad_numeric_input <- "not a number"
 
-expected_error_msg_na <- "must not be NA"
+expected_error_msg_na <- "must be a number"
 expected_error_msg_str <- "must be a string"
-expected_error_msg_double <- "must be a double"
+expected_error_msg_double <- "must be a number"
 
 expect_error(seir_0 <- ModelSEIR(
   name = bad_name,

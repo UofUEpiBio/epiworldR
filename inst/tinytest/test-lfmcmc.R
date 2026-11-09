@@ -24,7 +24,7 @@ expect_inherits(lfmcmc_model, "epiworld_lfmcmc")
 expect_length(class(lfmcmc_model), 1)
 
 # Extract observed data from the model
-obs_data <- get_today_total(model_sir)
+obs_data <- get_today_total(model_sir)$counts
 
 expect_silent(set_observed_data(lfmcmc_model, obs_data))
 
@@ -33,7 +33,7 @@ simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission probability", params[2])
   run(model_sir, ndays = 50)
-  res <- get_today_total(model_sir)
+  res <- get_today_total(model_sir)$counts
   return(res)
 }
 
@@ -69,7 +69,7 @@ expect_silent(run_lfmcmc(
   seed = model_seed
 ))
 
-expect_silent(set_stats_names(lfmcmc_model, get_states(model_sir)))
+expect_silent(set_stats_names(lfmcmc_model, get_stages(model_sir)))
 expect_silent(set_params_names(lfmcmc_model, c("Immune recovery", "Infectiousness")))
 
 # Check printing LFMCMC --------------------------------------------------------
@@ -193,7 +193,7 @@ simfun <- function(params, lfmcmc_obj) {
   set_param(model_sir, "Recovery rate", params[1])
   set_param(model_sir, "Transmission probability", params[2])
   run(model_sir, ndays = 50)
-  res <- get_today_total(model_sir)
+  res <- get_today_total(model_sir)$counts
   return(res)
 }
 
@@ -304,7 +304,7 @@ expect_error(set_kernel_fun(not_lfmcmc, kernelfun), expected_error_msg)
 expect_error(use_kernel_fun_gaussian(not_lfmcmc), expected_error_msg)
 
 expect_error(set_params_names(not_lfmcmc, c("Par 1", "Par 2")), expected_error_msg)
-expect_error(set_stats_names(not_lfmcmc, get_states(model_sir)), expected_error_msg)
+expect_error(set_stats_names(not_lfmcmc, get_stages(model_sir)), expected_error_msg)
 
 expect_error(get_mean_params(not_lfmcmc), expected_error_msg)
 expect_error(get_mean_stats(not_lfmcmc), expected_error_msg)

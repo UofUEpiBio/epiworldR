@@ -42,7 +42,7 @@
 #' verbose_off(model_sirconn)
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #'
-#' get_states(model_sirconn) # Returns all unique states found within the model.
+#' get_stages(model_sirconn) # Returns the model's stages.
 #'
 #' get_param(model_sirconn, "Contact rate") # Returns the value of the selected
 #' # parameter within the model object.
@@ -96,7 +96,7 @@
 #' get_virus(model_sirconn, 0) # Returns information about the first virus in
 #' # the model (index begins at 0).
 #'
-#' add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1, prevalence = 0.5, as_prop = TRUE))
+#' add_tool(model_sirconn, tool("Vaccine", .9, .9, .5, 1), assign_share(0.5))
 #' get_tool(model_sirconn, 0) # Returns information about the first tool in the
 #' # model. In this case, there are no tools so an
 #' # error message will occur.
@@ -181,15 +181,6 @@ summary.epiworld_model <- function(object, ...) {
   print_cpp(object, lite = FALSE)
   invisible(object)
 }
-
-#' @export
-#' @returns
-#' - The `get_states` function returns the unique states found in a model.
-#' @rdname epiworld-methods
-get_states <- function(x) UseMethod("get_states")
-
-#' @export
-get_states.epiworld_model <- function(x) get_states_cpp(x)
 
 #' @export
 #' @param pname String. Name of the parameter.
@@ -352,12 +343,15 @@ get_agents_data_ncols <- function(model) {
 #' @param virus_pos Integer. Relative location (starting from 0) of the virus
 #' in the model
 #' @returns
-#' - 'get_virus' returns a [virus].
+#' - 'get_virus' returns a [virus]. Like `get_tool()`, it is marked as calling
+#'   R if the model is (e.g., the model has a [value_fun()]), so that a model
+#'   it is added to, or a copy of it ([clone_epi()]), runs single-threaded.
 #' @rdname epiworld-methods
 get_virus <- function(model, virus_pos) {
   structure(
     get_virus_model_cpp(model, virus_pos),
-    class = c("epiworld_virus")
+    class           = "epiworld_virus",
+    single_threaded = attr(model, "single_threaded")
   )
 }
 
@@ -370,19 +364,7 @@ get_virus <- function(model, virus_pos) {
 get_tool <- function(model, tool_pos) {
   structure(
     get_tool_model_cpp(model, tool_pos),
-    class = "epiworld_tool"
+    class           = "epiworld_tool",
+    single_threaded = attr(model, "single_threaded")
   )
-}
-
-#' @export
-#' @param proportions Numeric vector. Proportions in which agents will be
-#' distributed (see details).
-#' @return
-#' - `inital_states` returns the model with an updated initial state.
-#' @rdname epiworld-methods
-initial_states <- function(model, proportions) {
-
-  stopifnot_model(model)
-  invisible(initial_states_cpp(model, proportions))
-
 }

@@ -6,8 +6,8 @@
 #include <functional>
 #include <vector>
 
-template<typename TSeq> class Agent;
-template<typename TSeq> class Model;
+class Agent;
+class Model;
 
 /**
  * @brief Read-only view of the agents one infectious agent was in contact with.
@@ -44,9 +44,8 @@ public:
  * Arguments: the infectious agent, the ids of the agents it was in contact
  * with (see `SampledContactsView`), and the model.
  */
-template<typename TSeq>
 using PostSamplingFun = std::function<
-    void(Agent<TSeq> *, const SampledContactsView &, Model<TSeq> *)
+    void(Agent *, const SampledContactsView &, Model *)
 >;
 
 /**

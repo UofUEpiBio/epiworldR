@@ -61,10 +61,9 @@
  *
  * @ingroup contact_layers
  */
-template<typename TSeq>
 class ContactLayer {
 
-    friend class Model<TSeq>;
+    friend class Model;
 
 private:
 
@@ -88,7 +87,7 @@ private:
 protected:
 
     /// The model the layer belongs to (set by the model), or `nullptr`.
-    Model<TSeq> * model = nullptr;
+    Model * model = nullptr;
 
     /**
      * @brief Call it from every method that edits the layer.
@@ -109,12 +108,12 @@ public:
     explicit ContactLayer(std::string name_) : name(std::move(name_)) {}
 
     /// A copy belongs to no model (see `clone()`).
-    ContactLayer(const ContactLayer<TSeq> & other) :
+    ContactLayer(const ContactLayer & other) :
         name(other.name), dirty(other.dirty), weight_ref(other.weight_ref),
         virus_mask(other.virus_mask), trace_max(other.trace_max),
         trace_log(other.trace_log) {}
 
-    ContactLayer<TSeq> & operator=(const ContactLayer<TSeq> &) = delete;
+    ContactLayer & operator=(const ContactLayer &) = delete;
 
     virtual ~ContactLayer() = default;
 
@@ -128,7 +127,7 @@ public:
     bool has_weight() const { return weight_ref.has_value(); }
 
     /// Current weight in `model`.
-    epiworld_double get_weight(const Model<TSeq> & model) const
+    epiworld_double get_weight(const Model & model) const
     {
         return weight_ref ? (*weight_ref)(model) : 1.0;
     }
@@ -141,7 +140,7 @@ public:
      */
     ///@{
     void add_virus_target(int lineage_id);
-    void add_virus_target(const Virus<TSeq> & v);
+    void add_virus_target(const Virus & v);
     ///@}
 
     /**
@@ -175,13 +174,13 @@ public:
     ///@}
 
     /// Whether the virus spreads through the layer.
-    bool admits(const Virus<TSeq> & v) const
+    bool admits(const Virus & v) const
     {
         return (virus_mask & v.lineage_bit) != 0u;
     }
 
     /// Restore the baseline if dirty and size the buffers for a new run.
-    virtual void reset(Model<TSeq> & model) = 0;
+    virtual void reset(Model & model) = 0;
 
     /**
      * @brief Appends to `out` the contacts of agent `agent` this step that
@@ -194,22 +193,22 @@ public:
      */
     virtual size_t sample(
         size_t agent,
-        Model<TSeq> & model,
+        Model & model,
         const std::vector< bool > * exclude,
         std::vector< size_t > & out
     ) = 0;
 
     /// Rebuild what depends on the state of the population (end of each step).
-    virtual void update(Model<TSeq> & model) = 0;
+    virtual void update(Model & model) = 0;
 
     /// Deep copy (the model's copy constructor calls it).
-    virtual std::shared_ptr< ContactLayer<TSeq> > clone() const = 0;
+    virtual std::shared_ptr< ContactLayer > clone() const = 0;
 
     /// The layer as a network layer, or `nullptr` if it is of another kind.
-    virtual layer::Network<TSeq> * as_network() { return nullptr; }
+    virtual layer::Network * as_network() { return nullptr; }
 
     /// The layer as a mixing layer, or `nullptr` if it is of another kind.
-    virtual layer::Mixing<TSeq> * as_mixing() { return nullptr; }
+    virtual layer::Mixing * as_mixing() { return nullptr; }
 
     /**
      * @brief Whether the model's queue sees this layer's contacts.
@@ -222,8 +221,7 @@ public:
 
 };
 
-template<typename TSeq>
-inline void ContactLayer<TSeq>::enable_tracing(size_t max_contacts)
+inline void ContactLayer::enable_tracing(size_t max_contacts)
 {
     if (max_contacts == 0u)
         throw std::invalid_argument(
@@ -237,15 +235,13 @@ inline void ContactLayer<TSeq>::enable_tracing(size_t max_contacts)
         reset_tracing(model->size());
 }
 
-template<typename TSeq>
-inline void ContactLayer<TSeq>::disable_tracing()
+inline void ContactLayer::disable_tracing()
 {
     trace_max = 0u;
     trace_log = ContactTracing();
 }
 
-template<typename TSeq>
-inline ContactTracing & ContactLayer<TSeq>::get_tracing()
+inline ContactTracing & ContactLayer::get_tracing()
 {
     if (trace_max == 0u)
         throw std::logic_error(
@@ -256,11 +252,10 @@ inline ContactTracing & ContactLayer<TSeq>::get_tracing()
     return trace_log;
 }
 
-template<typename TSeq>
-inline void ContactLayer<TSeq>::add_virus_target(int lineage_id)
+inline void ContactLayer::add_virus_target(int lineage_id)
 {
 
-    const uint64_t bit = Tool<TSeq>::target_bit(lineage_id);
+    const uint64_t bit = Tool::target_bit(lineage_id);
 
     // The first target turns the default off
     if (virus_mask == ~uint64_t(0))
@@ -270,8 +265,7 @@ inline void ContactLayer<TSeq>::add_virus_target(int lineage_id)
 
 }
 
-template<typename TSeq>
-inline void ContactLayer<TSeq>::add_virus_target(const Virus<TSeq> & v)
+inline void ContactLayer::add_virus_target(const Virus & v)
 {
 
     if (v.get_lineage_id() < 0)

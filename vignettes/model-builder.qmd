@@ -22,28 +22,28 @@ If you use **epiworldR** in published work, please cite it — run
 
 ## Introduction
 
-The `model_builder` functions in `epiworldR` let you assemble a model one piece
-at a time. Instead of starting from a predefined model such as `ModelSIR()` or
-`ModelSEIRD()`, you begin with an empty model and add the ingredients yourself.
-This is useful when you want to understand how a model is constructed or when
-you need a compartment structure that is not already available in the package.
+The model builder lets you assemble a model one piece at a time. Instead of
+starting from a predefined model such as `ModelSIR()` or `ModelSEIRD()`, you
+begin with an empty model and add the ingredients yourself. This is useful when
+you want to understand how a model is constructed or when you need a disease
+that is not already available in the package.
 
 There are four moving parts:
 
-1. Parameters, which store values such as transmission or recovery rates.
-2. States, which define the compartments of the model.
-3. Update functions, which tell agents what can happen while they are in a
-   given state.
-4. Viruses, which connect the infection process to the model states.
+1. **Parameters**, which store values such as transmission or recovery rates.
+2. **The virus and its natural history**: the **stages** of the disease and the
+   **transitions** between them. Each transition names the parameters it
+   reads.
+3. **Placement**, which says who has the virus (or a tool, or starts in a
+   given stage) at the start of each run (see `help("assign")`).
+4. **Contact layers**, which say who meets whom (see `help("contact-layers")`).
 
-One important detail is that states are indexed in the order they are added,
-starting at 0. We will use those indices when defining transitions.
+Stages are named by their labels, and the first one is where agents start.
 
 ## A minimal model built from scratch
 
-We begin with a simple three-state model: susceptible, infected, and recovered.
-The goal here is to make the model builder workflow explicit before moving to a
-slightly richer example.
+We begin with a simple disease with three stages: susceptible, infected, and
+recovered.
 
 ```{r}
 #| label: builder-setup
@@ -55,73 +55,47 @@ add_param(sir_builder, "Transmission probability", 0.25)
 add_param(sir_builder, "Recovery rate", 1 / 7)
 ```
 
-At this point the model has parameters, but no states. Next we create the
-update functions. Susceptible agents use `update_fun_susceptible()`, which
-evaluates infection from their contacts. Infected agents use
-`update_fun_rate()`, which moves them to another state according to a daily
-transition probability. A transition only changes an agent's state: recovered
-agents still carry the virus, so once the states are added we say that only
-the infected state transmits (`set_infectious_states()`); otherwise recovered
-agents would keep infecting others.
+At this point the model has parameters, but no stages. They come from the
+virus. A stage is a **carrier** if its agents hold the virus, and
+**infectious** if they transmit it (which implies carrier). Here only infected
+agents carry the virus and transmit it:
 
 ```{r}
-#| label: builder-update-functions
-update_s <- update_fun_susceptible()
-update_i <- update_fun_rate(
-  param_names = "Recovery rate",
-  target_states = 2L
-)
+#| label: builder-stages
+flu <- virus("Flu") |>
+  add_stage("Susceptible") |>
+  add_stage("Infected", infectious = TRUE) |>
+  add_stage("Recovered")
+
+get_stages(flu)
 ```
 
-Now we add the states. Because states are indexed from 0, the order matters (we can use the `|>` operator to make it clear which state gets which index):
+Next, the transitions. Susceptible agents are infected by contact
+(`add_infection()`), with the per-contact probability in the model parameter
+`"Transmission probability"`. Infected agents recover each day with
+probability `"Recovery rate"` (`add_rate()`); `effect = "recovery"` lets tools
+that enhance recovery act on it. Entering `"Recovered"`, which is not a carrier
+stage, releases the virus.
 
 ```{r}
-#| label: builder-states
-sir_builder |>
-  add_state("Susceptible", update_s) |>
-  add_state("Infected", update_i) |>
-  add_state("Recovered", NULL)
-
-# Only infected agents (state 1) transmit
-set_infectious_states(sir_builder, 1L)
-
-data.frame(
-  index = 0:(length(get_states(sir_builder)) - 1),
-  state = get_states(sir_builder)
-)
+#| label: builder-transitions
+flu |>
+  add_infection("Susceptible", "Infected", rate = "Transmission probability") |>
+  add_rate("Infected", "Recovered", rate = "Recovery rate", effect = "recovery")
 ```
 
-The infected state points to `2L`, meaning that infected agents move to the
-third state added to the model, `"Recovered"`. The `"Recovered"` state has no update function, so agents who enter that state remain there until the end of the simulation.
-
-The last piece is the virus. Here we define how the virus maps to the model
-states:
-
-- newly infected agents move to state `1L` (`"Infected"`),
-- agents who recover end in state `2L` (`"Recovered"`),
-- and agents removed from the virus also end in state `2L`.
+The virus is added with its placement: 1% of the agents have it at the start
+of each run, in the stage the infection leads to (`"Infected"`). Adding the
+first virus gives the model its stages.
 
 ```{r}
 #| label: builder-virus
-flu <- virus(
-  name = "Flu",
-  prevalence = 0.01,
-  as_proportion = TRUE,
-  prob_infecting = 0.25,
-  recovery_rate = 1 / 7
-) |>
-  # Associating the virus with the model states
-  virus_set_state(init = 1L, end = 2L, removed = 2L) |>
-  # Linking the virus rate to a model parameter
-  set_prob_infecting_ptr(sir_builder, "Transmission probability") |>
-  # Setting the distribution (random to 1% of the agents)
-  set_distribution_virus(distribute_virus_randomly(0.01, TRUE))
-
-add_virus(sir_builder, flu)
+add_virus(sir_builder, flu, assign_share(0.01))
+get_stages(sir_builder)
 ```
 
-With states and virus in place, we still need a population. The following code
-creates a small-world network, runs the simulation, and shows the result:
+With the disease in place, we still need contacts. The following code
+adds a small-world network, runs the simulation, and shows the result:
 
 ```{r}
 #| label: builder-run
@@ -134,98 +108,67 @@ plot_incidence(sir_builder)
 ```
 
 This is the full model builder pattern in its simplest form: create an empty
-model, add parameters, add states with their update rules, attach a virus, add
-a population, and run.
+model, add parameters, build a virus with its stages and transitions, add it
+with a placement, add contacts, and run. The model is the same as `ModelSIR()`:
+with the same parameters and seed, both give the same history.
 
 ## Extending the model to SEIRD
 
-We can now use the same pattern to build a model with five states:
+We can now use the same pattern to build a disease with five stages:
 
 1. Susceptible
-2. Exposed
+2. Exposed (carries the virus, does not transmit yet)
 3. Infected
 4. Recovered
 5. Deceased
 
-The main new feature is that infected agents can transition to more than one
-state. In this example, they can recover or die.
+Two things are new. The latent period is a **duration**, drawn when the agent
+enters `"Exposed"` (`add_after()`), and infected agents can leave in two ways,
+recovering or dying: the rates out of a stage compete, and one draw a day picks
+one of them, or none.
 
 ```{r}
 #| label: seird-builder-setup
 seird_builder <- Model(5000) |>
   add_param("Transmission probability", 0.25) |>
-  add_param("Incubation rate", 1 / 5) |>
+  add_param("Latent period", 5) |>
   add_param("Recovery rate", 1 / 7) |>
   add_param("Death rate", 0.01)
 ```
 
-The exposed state has one possible transition, from exposed to infected. The
-infected state has two possible transitions, one to recovery and one to death.
-These are specified by passing a vector of parameter names and a matching vector
-of target states. Since this model has a latent period (Exposed state), only the infected state should transmit: exposed agents carry the virus but are not infectious yet, and recovered and deceased agents keep the virus (a transition only changes their state). We say so with `set_infectious_states()` once the states are added:
-
-```{r}
-#| label: seird-builder-update-functions
-update_s <- update_fun_susceptible()
-update_e <- update_fun_rate(
-  param_names = "Incubation rate",
-  target_states = 2L
-)
-update_i <- update_fun_rate(
-  param_names = c("Recovery rate", "Death rate"),
-  target_states = c(3L, 4L)
-)
-```
-
-Now we add the five states:
-
-```{r}
-#| label: seird-builder-states
-seird_builder |>
-  add_state("Susceptible", update_s) |>
-  add_state("Exposed", update_e) |>
-  add_state("Infected", update_i) |>
-  add_state("Recovered", NULL) |>
-  add_state("Deceased", NULL)
-
-# Only infected agents (state 2) transmit
-set_infectious_states(seird_builder, 2L)
-
-data.frame(
-  index = 0:(length(get_states(seird_builder)) - 1),
-  state = get_states(seird_builder)
-)
-```
-
-As before, the order is what determines the state indices. In particular:
-
-- `1L` is `"Exposed"`,
-- `3L` is `"Recovered"`,
-- `4L` is `"Deceased"`.
-
-Those indices are used when defining the virus. Newly infected agents enter the
-exposed state, recovered agents end in the recovered state, and agents removed
-through death end in the deceased state.
+A death is a stage that agents never leave, out of every layer (contact weight
+0): they are not met and do not transmit.
 
 ```{r}
 #| label: seird-builder-virus
-virus(
-  name = "COVID-19",
-  prevalence = 0.01,
-  as_proportion = TRUE,
-  prob_infecting = 0.25,
-  recovery_rate = 1 / 7,
-  prob_death = 0.01
-) |>
-  virus_set_state(init = 1L, end = 3L, removed = 4L) |>
-  set_prob_infecting_ptr(seird_builder, "Transmission probability") |>
-  set_distribution_virus(distribute_virus_randomly(0.01, TRUE)) |>
-  # Notice we can also use the pipe here!
-  add_virus(model = seird_builder)
+covid <- virus("COVID-19") |>
+  add_stage("Susceptible") |>
+  add_stage("Exposed", carrier = TRUE) |>
+  add_stage("Infected", infectious = TRUE) |>
+  add_stage("Recovered") |>
+  add_stage("Deceased") |>
+  set_contact("Deceased", 0) |>
+  add_infection("Susceptible", "Exposed", rate = "Transmission probability") |>
+  add_after("Exposed", "Infected", duration_geometric("Latent period")) |>
+  add_rate("Infected", "Recovered", rate = "Recovery rate", effect = "recovery") |>
+  add_rate("Infected", "Deceased", rate = "Death rate", effect = "death")
+
+get_stages(covid)
+
+# The seeds start in the stage the infection leads to, "Exposed"
+add_virus(seird_builder, covid, assign_share(0.01))
 ```
 
-The remainder is the same as before: define the population, run the model, and
-inspect the output.
+The model draws its natural history from these declarations:
+
+```{r}
+#| label: seird-builder-diagram
+draw_natural_history(seird_builder)
+```
+
+The remainder is the same as before: add contacts, run the model, and
+inspect the output. `get_hist_transitions()` counts how many times each
+transition fired each day.
 
 ```{r}
 #| label: seird-builder-run
@@ -235,17 +178,39 @@ verbose_off(seird_builder)
 run(seird_builder, ndays = 100, seed = 1912)
 summary(seird_builder)
 plot_incidence(seird_builder)
+
+transitions <- get_hist_transitions(seird_builder)
+tapply(transitions$counts, transitions$transition, sum)
 ```
 
-This reproduces the main SEIRD compartment logic using the model builder
-functions. The key step is the infected-state update:
+## Initial stages and strains
+
+Agents can also start a run in a stage without the virus, for example already
+recovered. `set_initial()` takes a placement whose labels are stages:
 
 ```{r}
-#| label: seird-builder-focus
-update_i
+#| label: seird-builder-initial
+set_initial(seird_builder, assign_shares(c(Recovered = 0.3)))
+run(seird_builder, ndays = 100, seed = 1912)
+summary(seird_builder)
 ```
 
-That single object encodes two possible exits from infection. Once that pattern
-is clear, building other compartment models becomes much easier: add the states
-you need, then give each state an update rule that matches the transitions you
-want to allow.
+A second virus in a model is a strain of the first: a copy with its own name,
+whose transitions may read other parameters (`use_param()`). Here a strain
+twice as transmissible:
+
+```{r}
+#| label: seird-builder-strain
+delta <- clone_epi(get_virus(seird_builder, 0))
+set_name_virus(delta, "Delta")
+add_param(seird_builder, "Delta transmission probability", 0.5)
+use_param(delta, "Transmission probability", "Delta transmission probability")
+add_virus(seird_builder, delta, assign_count(10))
+
+run(seird_builder, ndays = 100, seed = 1912)
+summary(seird_builder)
+```
+
+Once this pattern is clear, building other diseases becomes much easier:
+declare the stages you need, then the transitions that leave each one, and
+place the virus in the model.

@@ -171,16 +171,14 @@ add_layer(
   model_seirconn,
   layer_mixing("everyone", groups = rep(0, 10000), contact_matrix = 1) |>
     set_contact_rate("Contact rate")
-) |> add_virus(
-  virus(
-    name = "COVID-19 (delta)",
-    prevalence = 0.01,
-    as_proportion = TRUE,
-    prob_infecting = 0.2,
-    recovery_rate = 0.6,
-    prob_death = 0.5,
-    incubation = 7
-))
+)
+
+# A second strain of the model's virus, twice as transmissible
+delta <- clone_epi(get_virus(model_seirconn, 0))
+set_name_virus(delta, "COVID-19 (delta)")
+add_param(model_seirconn, "Delta transmission probability", 0.2)
+use_param(delta, "Transmission probability", "Delta transmission probability")
+add_virus(model_seirconn, delta, assign_share(0.01))
 
 set.seed(132)
 run(model_seirconn, ndays = 100)

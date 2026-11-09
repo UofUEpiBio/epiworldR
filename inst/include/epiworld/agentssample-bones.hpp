@@ -7,21 +7,19 @@
  * A sample without replacement from the model's agents, optionally restricted
  * to some states.
  * 
- * @tparam TSeq 
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class AgentsSample {
 private:
 
     size_t sample_size = 0u;
 
-    std::vector< Agent<TSeq>* >* agents = nullptr; ///< Pointer to sample of agents
+    std::vector< Agent* >* agents = nullptr; ///< Pointer to sample of agents
     size_t * agents_n = nullptr;                    ///< Size of sample of agents
     
     std::vector< size_t >* agents_left = nullptr;  ///< Pointer to agents left (iota)
     size_t * agents_left_n = nullptr;               ///< Size of agents left
 
-    Model<TSeq> * model = nullptr; ///< Extracts runif() and the population.
+    Model * model = nullptr; ///< Extracts runif() and the population.
     std::vector< size_t > states = {};
 
     void sample_n(size_t n); ///< Backbone function for sampling
@@ -31,29 +29,28 @@ public:
 
     // Not available (for now)
     AgentsSample() = delete;                             ///< Default constructor
-    AgentsSample(const AgentsSample<TSeq> & a) = delete; ///< Copy constructor
-    AgentsSample(AgentsSample<TSeq> && a) = delete;      ///< Move constructor
+    AgentsSample(const AgentsSample & a) = delete; ///< Copy constructor
+    AgentsSample(AgentsSample && a) = delete;      ///< Move constructor
 
     AgentsSample(
-        Model<TSeq> & model_, size_t n,
+        Model & model_, size_t n,
         std::vector< size_t > states_ = {},
         bool truncate = false
         );
 
     ~AgentsSample();
 
-    typename std::vector< Agent<TSeq> * >::iterator begin();
-    typename std::vector< Agent<TSeq> * >::iterator end();
+    typename std::vector< Agent * >::iterator begin();
+    typename std::vector< Agent * >::iterator end();
 
-    Agent<TSeq> * operator[](size_t n);
-    Agent<TSeq> * operator()(size_t n);
+    Agent * operator[](size_t n);
+    Agent * operator()(size_t n);
     size_t size() const noexcept;
 
 };
 
-template<typename TSeq>
-inline AgentsSample<TSeq>::AgentsSample(
-    Model<TSeq> & model_,
+inline AgentsSample::AgentsSample(
+    Model & model_,
     size_t n,
     std::vector< size_t > states_,
     bool truncate
@@ -87,25 +84,21 @@ inline AgentsSample<TSeq>::AgentsSample(
 
 }
 
-template<typename TSeq>
-inline AgentsSample<TSeq>::~AgentsSample() {}
+inline AgentsSample::~AgentsSample() {}
 
-template<typename TSeq>
-inline size_t AgentsSample<TSeq>::size() const noexcept
+inline size_t AgentsSample::size() const noexcept
 { 
     return this->sample_size;
 }
 
-template<typename TSeq>
-inline Agent<TSeq> * AgentsSample<TSeq>::operator[](size_t i)
+inline Agent * AgentsSample::operator[](size_t i)
 {
 
     return agents->operator[](i);
 
 }
 
-template<typename TSeq>
-inline Agent<TSeq> * AgentsSample<TSeq>::operator()(size_t i)
+inline Agent * AgentsSample::operator()(size_t i)
 {
 
     if (i >= this->sample_size)
@@ -115,30 +108,27 @@ inline Agent<TSeq> * AgentsSample<TSeq>::operator()(size_t i)
 
 }
 
-template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::iterator AgentsSample<TSeq>::begin()
+inline typename std::vector< Agent * >::iterator AgentsSample::begin()
 {
     // Check for null pointer
     if (agents == nullptr)
-        return typename std::vector< Agent<TSeq> * >::iterator{};
+        return typename std::vector< Agent * >::iterator{};
     
     return agents->begin();
 }
 
-template<typename TSeq>
-inline typename std::vector< Agent<TSeq> * >::iterator AgentsSample<TSeq>::end()
+inline typename std::vector< Agent * >::iterator AgentsSample::end()
 {
     // Check for null pointer
     if (agents == nullptr)
-        return typename std::vector< Agent<TSeq> * >::iterator{};
+        return typename std::vector< Agent * >::iterator{};
     
     // Ensure we don't go beyond the actual vector size
     size_t actual_end = std::min(sample_size, agents->size());
     return agents->begin() + actual_end;
 }
 
-template<typename TSeq>
-inline void AgentsSample<TSeq>::sample_n(size_t n)
+inline void AgentsSample::sample_n(size_t n)
 {
 
     if (states.size())

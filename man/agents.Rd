@@ -9,7 +9,8 @@
 \alias{epiworld_agent}
 \alias{print.epiworld_agent}
 \alias{print.epiworld_agents}
-\alias{get_state}
+\alias{get_stage}
+\alias{get_status}
 \title{Agents in epiworldR}
 \usage{
 get_agents(model, ...)
@@ -22,7 +23,9 @@ get_agents(model, ...)
 
 \method{print}{epiworld_agents}(x, compressed = TRUE, max_print = 10, ...)
 
-get_state(x)
+get_stage(model, x)
+
+get_status(model, x)
 }
 \arguments{
 \item{model}{An object of class \link{epiworld_model}.}
@@ -53,7 +56,7 @@ class \link{epiworld_agent}.
 }
 
 \itemize{
-\item The \code{get_state} function returns the state of the \link{epiworld_agents} object.
+\item \code{get_stage} and \code{get_status} return the agent's stage and status (labels).
 }
 }
 \description{
@@ -61,7 +64,7 @@ These functions provide read-access to the agents of the model. The
 \code{get_agents} function returns an object of class \link{epiworld_agents} which
 contains all the information about the agents in the model. The
 \code{get_agent} function returns the information of a single agent.
-And the \code{get_state} function returns the state of a single agent.
+And \code{get_stage} and \code{get_status} return a single agent's stage and status.
 }
 \examples{
 

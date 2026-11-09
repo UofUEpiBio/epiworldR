@@ -33,7 +33,7 @@ outbreak_size <- get_outbreak_size(model)
 # Checking active cases
 hist_total_infected <- aggregate(
   counts ~ date,
-  data = hist_total[hist_total$state == "Infected", ],
+  data = hist_total[hist_total$stage == "Infected", ],
   sum
 )
 
@@ -45,7 +45,7 @@ expect_equal(
 # Checking outbreak size
 hist_total_outbreak_size <- aggregate(
   counts ~ date,
-  data = hist_total[hist_total$state %in% c("Infected", "Recovered"), ],
+  data = hist_total[hist_total$stage %in% c("Infected", "Recovered"), ],
   sum
 )
 

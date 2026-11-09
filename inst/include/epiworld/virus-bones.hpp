@@ -1,64 +1,47 @@
 #ifndef EPIWORLD_VIRUS_HPP
 #define EPIWORLD_VIRUS_HPP
 
-template<typename TSeq>
 class Agent;
 
-template<typename TSeq>
 class Virus;
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class Tool;
 
 /**
  * @brief Virus
  * 
- * @tparam TSeq 
  * @details
- * Raw transmisibility of a virus should be a function of its genetic
- * sequence. Nonetheless, transmisibility can be reduced as a result of
- * having one or more tools to fight the virus. Because of this, transmisibility
- * should be a function of the agent.
+ * A virus is identified by its id, which the model assigns: `Model::add_virus()`
+ * records a new variant (the founder of a lineage), and so does every
+ * mutation (a child of the variant it changed). Tools can reduce what a
+ * virus does, so its effects are a function of the agent.
  */
-template<typename TSeq>
 class Virus {
-    friend class Agent<TSeq>;
-    friend class Model<TSeq>;
-    friend class DataBase<TSeq>;
-    friend class Tool<TSeq>;
-    friend class ContactLayer<TSeq>;
+    friend class Agent;
+    friend class Model;
+    friend class DataBase;
+    friend class Tool;
+    friend class ContactLayer;
 private:
     
-    Agent<TSeq> * agent = nullptr;
+    Agent * agent = nullptr;
 
-    EPI_TYPENAME_TRAITS(TSeq, int) baseline_sequence = 
-        EPI_TYPENAME_TRAITS(TSeq, int)(); 
 
     std::string virus_name = "unknown virus";
     int date = -99;
     int id   = -99;    
     int lineage_id = -99; ///< Id of the founding virus (kept across mutations).
     uint64_t lineage_bit = uint64_t(1) << 63; ///< Bit matched against Tool::target_mask.
-    epiworld_fast_int state_init    = -99; ///< Change of state when added to agent.
-    epiworld_fast_int state_post    = -99; ///< Change of state when removed from agent.
-    epiworld_fast_int state_removed = -99; ///< Change of state when agent is removed
+    MutFun          mutation                 = nullptr;
 
-    epiworld_fast_int queue_init    = Queue<TSeq>::Everyone; ///< Change of state when added to agent.
-    epiworld_fast_int queue_post    = -Queue<TSeq>::Everyone; ///< Change of state when removed from agent.
-    epiworld_fast_int queue_removed = -Queue<TSeq>::Everyone; ///< Change of state when agent is removed
+    /// Parameters this variant reads in place of others (see `use_param()`)
+    std::vector< std::pair< ParamRef, ParamRef > > param_redirects;
 
-    MutFun<TSeq>          mutation                 = nullptr;
-    PostRecoveryFun<TSeq> post_recovery_fun        = nullptr;
-    VirusFun<TSeq>        probability_of_infecting = nullptr;
-    VirusFun<TSeq>        probability_of_recovery  = nullptr;
-    VirusFun<TSeq>        probability_of_death     = nullptr;
-    VirusFun<TSeq>        incubation               = nullptr;
-
-    // Information about how distribution works
-    VirusToAgentFun<TSeq> dist = nullptr;
+    /// Its natural history (shared by its copies; copied on the first edit)
+    std::shared_ptr< NaturalHistory > nh_def = nullptr;
+    NaturalHistory & nh_edit();
         
 public:
 
@@ -75,31 +58,34 @@ public:
 
     Virus(std::string name = "unknown virus");
     
-    Virus(
-        std::string name,
-        epiworld_double prevalence,
-        bool as_proportion
-    );
     
     #ifdef EPI_DEBUG_VIRUS
     
     // Copy and move operations for debugging
-    Virus(const Virus<TSeq>& other);                    // Copy constructor
-    Virus(Virus<TSeq>&& other) noexcept;                // Move constructor
-    Virus<TSeq>& operator=(const Virus<TSeq>& other);   // Copy assignment
-    Virus<TSeq>& operator=(Virus<TSeq>&& other) noexcept; // Move assignment
+    Virus(const Virus& other);                    // Copy constructor
+    Virus(Virus&& other) noexcept;                // Move constructor
+    Virus& operator=(const Virus& other);   // Copy assignment
+    Virus& operator=(Virus&& other) noexcept; // Move assignment
 
     ~Virus();
     #endif
     
-    void mutate(Model<TSeq> * model);
-    void set_mutation(MutFun<TSeq> fun);
+    /**
+     * @brief Mutation
+     * @details The function returns `true` when it changed the virus (it may
+     * change its name or, with `use_param()`, the parameters it reads). The
+     * model then records the virus as a new variant: a new id, whose parent is
+     * the id it had, in the same lineage. Each mutation is a new variant, even
+     * if two of them made the same change.
+     */
+    ///@{
+    void mutate(Model * model);
+    void set_mutation(MutFun fun);
+    ///@}
     
-    EPI_TYPENAME_TRAITS(TSeq, int) get_sequence();
-    void set_sequence(TSeq sequence);
     
-    Agent<TSeq> * get_agent();
-    void set_agent(Agent<TSeq> * p);
+    Agent * get_agent();
+    void set_agent(Agent * p);
     
     void set_date(int d);
     int get_date() const;
@@ -119,105 +105,55 @@ public:
      */
     int get_lineage_id() const;
 
-    /**
-     * @name Get and set the tool functions
-     * 
-     * @param v The virus over which to operate
-     * @param fun the function to be used
-     * 
-     * @return epiworld_double 
-     */
-    ///@{
-    epiworld_double get_prob_infecting(Model<TSeq> * model);
-    epiworld_double get_prob_recovery(Model<TSeq> * model);
-    epiworld_double get_prob_death(Model<TSeq> * model);
-    epiworld_double get_incubation(Model<TSeq> * model);
-    
-    void post_recovery(Model<TSeq> * model);
-    void set_post_recovery(PostRecoveryFun<TSeq> fun);
-    void set_post_immunity(epiworld_double prob);
-    void set_post_immunity(std::string param);
-
-    void set_prob_infecting_fun(VirusFun<TSeq> fun);
-    void set_prob_recovery_fun(VirusFun<TSeq> fun);
-    void set_prob_death_fun(VirusFun<TSeq> fun);
-    void set_incubation_fun(VirusFun<TSeq> fun);
-    
-    void set_prob_infecting(std::string param);
-    void set_prob_recovery(std::string param);
-    void set_prob_death(std::string param);
-    void set_incubation(std::string param);
-
-    // Deleting pointer versions to avoid mistakes
-    void set_prob_infecting(epiworld_double * prob) = delete;
-    void set_prob_recovery(epiworld_double * prob) = delete;
-    void set_prob_death(epiworld_double * prob) = delete;
-    void set_incubation(epiworld_double * prob) = delete;
-    void set_post_immunity(epiworld_double * prob) = delete;
-    
-    void set_prob_infecting(epiworld_double prob);
-    void set_prob_recovery(epiworld_double prob);
-    void set_prob_death(epiworld_double prob);
-    void set_incubation(epiworld_double prob);
-    ///@}
-
-
     void set_name(std::string name);
     std::string get_name() const;
 
-    /**
-     * @name Get and set the state and queue
-     * 
-     * After applied, viruses can change the state and affect
-     * the queue of agents. These function sets the default values,
-     * which are retrieved when adding or removing a virus does not
-     * specify a change in state or in queue.
-     * 
-     * @param init After the virus/tool is added to the agent.
-     * @param end After the virus/tool is removed.
-     * @param removed After the agent (Agent) is removed.
-     */
-    ///@{
-    void set_state(
-        epiworld_fast_int init,
-        epiworld_fast_int end,
-        epiworld_fast_int removed = -99
-        );
-        
-    void set_queue(
-        epiworld_fast_int init,
-        epiworld_fast_int end,
-        epiworld_fast_int removed = -99
-        );
-
-    void get_state(
-        epiworld_fast_int * init,
-        epiworld_fast_int * end,
-        epiworld_fast_int * removed = nullptr
-        ) const;
-
-    void get_queue(
-        epiworld_fast_int * init,
-        epiworld_fast_int * end,
-        epiworld_fast_int * removed = nullptr
-        ) const;
-    ///@}
-
-    bool operator==(const Virus<TSeq> & other) const;
-    bool operator!=(const Virus<TSeq> & other) const {return !operator==(other);};
+    bool operator==(const Virus & other) const;
+    bool operator!=(const Virus & other) const {return !operator==(other);};
 
     void print() const;
 
+
     /**
-     * @brief Get information about the prevalence of the virus
+     * @name Natural history
+     * @brief The disease's stages and the transitions between them, declared
+     * on the virus (see `NaturalHistory` for each method).
+     * @details `Model::add_virus()` gives the model the virus's stages (its
+     * states). A copy of the virus (a strain, or a variant from a mutation)
+     * keeps the natural history; it can read other parameters with
+     * `use_param()`. The viruses of one model share their stages.
      */
     ///@{
-    void distribute(Model<TSeq> * model);
-    void set_distribution(VirusToAgentFun<TSeq> fun);
+    int add_stage(std::string label, unsigned int flags = 0u);
+    void set_contact(int s, epiworld_double weight);
+    TransitionRef infection(Nodes from, int to, Value per_contact);
+    TransitionRef rate(Nodes from, int to, Value daily_probability);
+    TransitionRef after(int from, int to, Duration d);
+    TransitionRef external(Nodes from, int to, std::string label);
+
+    /// The natural history (`nullptr` if the virus has none).
+    const NaturalHistory * get_natural_history() const { return nh_def.get(); }
     ///@}
 
+    /**
+     * @brief This variant reads the model parameter `replacement` wherever a
+     * transition of the natural history reads `param`.
+     * @details Every parameter lives in the model; a variant changes a value
+     * by pointing to another parameter (e.g., `"Recovery rate (Delta)"`).
+     */
+    void use_param(std::string param, std::string replacement);
+
+    /// The parameter this variant reads in place of `id`.
+    ParamId param_redirect(ParamId id, const Model & model) const;
+
+    /// Whether it reads any parameter in place of another (`use_param()`).
+    bool has_param_redirects() const { return !param_redirects.empty(); }
+
+    /// Throws if a parameter it reads (see `use_param()`) is not in `model`.
+    void check_params(const Model & model) const;
+
     virtual ~Virus() = default;
-    virtual std::unique_ptr<Virus<TSeq>> clone_ptr() const;
+    virtual std::unique_ptr<Virus> clone_ptr() const;
 
 };
 

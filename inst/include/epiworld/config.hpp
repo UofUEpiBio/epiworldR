@@ -42,8 +42,6 @@
     #define EPI_FAST_BINOM
 #endif
 
-#define EPI_DEFAULT_TSEQ int
-
 #ifndef EPI_MAX_TRACKING
     #define EPI_MAX_TRACKING 200
 #endif
@@ -60,75 +58,45 @@
     #define EPI_NEIGHBOR_INDEX_THRESHOLD 32u
 #endif
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Model;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Agent;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class PersonTools;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Virus;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Viruses;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Viruses_const;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Tool;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class GlobalEvent;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class ContactLayer;
 
 namespace layer {
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Network;
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class Mixing;
 }
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using VirusPtr = std::shared_ptr< Virus< TSeq > >;
+using VirusPtr = std::shared_ptr< Virus >;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using ToolPtr = std::shared_ptr< Tool< TSeq > >;
+using ToolPtr = std::shared_ptr< Tool >;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using GlobalEventPtr = std::shared_ptr< GlobalEvent< TSeq > >;
+using GlobalEventPtr = std::shared_ptr< GlobalEvent >;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using ToolFun = std::function<epiworld_double(Tool<TSeq>&,Agent<TSeq>*,VirusPtr<TSeq>&,Model<TSeq>*)>;
+using ToolFun = std::function<epiworld_double(Tool&,Agent*,VirusPtr&,Model*)>;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using MixerFun = std::function<epiworld_double(Agent<TSeq>*,VirusPtr<TSeq>&,Model<TSeq>*)>;
+using MixerFun = std::function<epiworld_double(Agent*,VirusPtr&,Model*)>;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using MutFun = std::function<bool(Agent<TSeq>*,Virus<TSeq>&,Model<TSeq>*)>;
+using MutFun = std::function<bool(Agent*,Virus&,Model*)>;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using PostRecoveryFun = std::function<void(Agent<TSeq>*,Virus<TSeq>&,Model<TSeq>*)>;
+/// The engine's update of the agents in a state (see `nh_build_states()`)
+using UpdateFun = std::function<void(Agent*,Model*)>;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using VirusFun = std::function<epiworld_double(Agent<TSeq>*,Virus<TSeq>&,Model<TSeq>*)>;
+using GlobalFun = std::function<void(Model*)>;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using UpdateFun = std::function<void(Agent<TSeq>*,Model<TSeq>*)>;
-
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using GlobalFun = std::function<void(Model<TSeq>*)>;
-
-template<typename TSeq>
 struct Event;
 
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using EventFun = std::function<void(Event<TSeq>&,Model<TSeq>*)>;
+using EventFun = std::function<void(Event&,Model*)>;
 
 enum class EventAction : uint8_t {
     AddVirus,
@@ -141,8 +109,9 @@ enum class EventAction : uint8_t {
 /**
  * @brief How network transmission is sampled each step.
  *
- * @details Susceptible agents whose update function is
- * `default_update_susceptible` can acquire a virus in two ways that give the same distribution of outcomes:
+ * @details Agents in a stage whose only drawn exit is a default infection
+ * (no custom sampler) can acquire a virus in two ways that give the same
+ * distribution of outcomes:
  *
  * - `pull`: each susceptible agent scans its neighbors and draws its infector
  *   with `roulette()` (the approach of epiworld <= 0.15).
@@ -186,31 +155,18 @@ enum class TransmissionMode : uint8_t {
 #endif
 
 /**
- * @brief Decides how to distribute viruses at initialization
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using VirusToAgentFun = std::function<void(Virus<TSeq>&,Model<TSeq>*)>;
-
-/**
- * @brief Decides how to distribute tools at initialization
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-using ToolToAgentFun = std::function<void(Tool<TSeq>&,Model<TSeq>*)>;
-
-/**
  * @brief Event data for update an agent
  *
- * @tparam TSeq
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 struct Event {
-    Agent<TSeq> * agent;
-    VirusPtr<TSeq> virus;
-    ToolPtr<TSeq> tool;
+    Agent * agent;
+    VirusPtr virus;
+    ToolPtr tool;
     epiworld_fast_int new_state;
     epiworld_fast_int queue;
     EventAction action;
     int layer = -1; ///< Layer of the contact that transmitted the virus, if any
+    int transition = -1; ///< Declared transition of the natural history (-1: none)
 public:
 /**
      * @brief Construct a new Event object
@@ -228,9 +184,9 @@ public:
      * @param layer_ Layer of the contact that transmitted the virus, if any
      */
     Event(
-        Agent<TSeq> * agent_,
-        VirusPtr<TSeq> & virus_,
-        ToolPtr<TSeq> & tool_,
+        Agent * agent_,
+        VirusPtr & virus_,
+        ToolPtr & tool_,
         epiworld_fast_int new_state_,
         epiworld_fast_int queue_,
         EventAction action_,

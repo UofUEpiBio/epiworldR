@@ -104,7 +104,6 @@
  */
 namespace epimodels {
 
-    #include "init-functions.hpp"
 
     #include "globalevents.hpp"
 
@@ -118,6 +117,26 @@ namespace epimodels {
     #include "sirlogit.hpp"
     #include "diffnet.hpp"
     #include "seirquarantine.hpp"
+
+    /**
+     * @brief Adds the core models to a model registry.
+     * @ingroup epi_models
+     *
+     * @details Each model's entry is its `model_info()`. `ModelSIRLogit` and
+     * `ModelDiffNet` take data arrays and are built directly.
+     */
+    inline ModelRegistry & register_models(ModelRegistry & registry)
+    {
+        return registry
+            .add(ModelSIS::model_info())
+            .add(ModelSIR::model_info())
+            .add(ModelSEIR::model_info())
+            .add(ModelSISD::model_info())
+            .add(ModelSIRD::model_info())
+            .add(ModelSEIRD::model_info())
+            .add(ModelSEIRQuarantine::model_info())
+            .add(ModelSURV::model_info());
+    }
 }
 
 #endif

@@ -20,10 +20,10 @@
 #' of the virus keeps it, so a tool targeting a virus also acts on its
 #' variants. Only lineages 0 to 62 can be targeted.
 #'
-#' A virus only has a lineage id after it has been added to a model, so call
-#' [add_virus()] before passing the virus to `add_target_tool()` or
-#' `set_targets_tool()`. Viruses that the model creates itself can be
-#' retrieved with [get_virus()].
+#' A virus only has a lineage id once it is in a model, and the model keeps its
+#' own copy of each virus: pass the model's copy, from [get_virus()], to
+#' `add_target_tool()` or `set_targets_tool()` (the copy given to
+#' [add_virus()] is unchanged).
 #'
 #' The model keeps its own copy of each tool, so set the targets *before*
 #' calling [add_tool()], or modify the model's copy retrieved with
@@ -38,7 +38,7 @@
 #' `NA` if the virus has not been added to a model yet.
 #'
 #' @examples
-#' # A model with two diseases: "Flu" (created by the model) and "Measles"
+#' # A model with two strains: "Flu" (created by the model) and "Flu B"
 #' model <- ModelSIR(
 #'   name              = "Flu",
 #'   n                 = 2000,
@@ -53,33 +53,25 @@
 #'     set_contact_rate("Contact rate")
 #' )
 #'
-#' measles <- virus(
-#'   name           = "Measles",
-#'   prevalence     = 20,
-#'   as_proportion  = FALSE,
-#'   prob_infecting = 0.5,
-#'   recovery_rate  = 0.2
-#' )
-#'
-#' add_virus(model, measles) # Assigns the lineage id
+#' flu_b <- clone_epi(get_virus(model, 0))
+#' set_name_virus(flu_b, "Flu B")
+#' add_virus(model, flu_b, assign_count(20))
 #' get_lineage_virus(get_virus(model, 0)) # Flu: 0
-#' get_lineage_virus(measles) # Measles: 1
+#' get_lineage_virus(get_virus(model, 1)) # Flu B: 1
 #'
-#' # A vaccine that only protects against measles
+#' # A vaccine that only protects against Flu B
 #' mmr <- tool(
-#'   name                     = "MMR",
-#'   prevalence               = 0.5,
-#'   as_proportion            = TRUE,
+#'   name                     = "Flu B vaccine",
 #'   susceptibility_reduction = 0.97,
 #'   transmission_reduction   = 0,
 #'   recovery_enhancer        = 0,
 #'   death_reduction          = 0
 #' )
 #'
-#' add_target_tool(mmr, measles)
+#' add_target_tool(mmr, get_virus(model, 1))
 #' get_targets_tool(mmr)
 #'
-#' add_tool(model, mmr)
+#' add_tool(model, mmr, assign_share(0.5))
 #' run(model, ndays = 50, seed = 1912)
 #' summary(model)
 #'

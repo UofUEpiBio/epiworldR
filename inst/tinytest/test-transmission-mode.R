@@ -23,7 +23,7 @@ hist_of <- function(mode) {
   run(model, ndays = 40, seed = 1912)
   expect_equal(get_last_transmission_mode(model), mode)
   h <- get_hist_total(model)
-  h[order(h$date, h$state), ]
+  h[order(h$date, h$status, h$stage), ]
 }
 
 push_1 <- hist_of("push")
@@ -35,7 +35,7 @@ expect_identical(push_1, push_2)
 # Same distribution, different random numbers: the runs differ, but both
 # produce an outbreak.
 expect_false(identical(push_1, pull_1))
-final_recovered <- function(h) h$counts[h$date == 40 & h$state == "Recovered"]
+final_recovered <- function(h) h$counts[h$date == 40 & h$stage == "Recovered"]
 expect_true(final_recovered(push_1) > 50)
 expect_true(final_recovered(pull_1) > 50)
 

@@ -19,8 +19,13 @@ The following models are included:
 
 5. `models::ModelSURV` Surveillance
 
-A model's states describe the course of infection; its layers (networks,
-mixing by group, or both) describe who meets whom. So there is one model per
-compartmental structure, whatever the contacts, and a model can carry several
-viruses (`add_virus()`), which share its states.
+A model's natural history (its virus's stages and transitions, and in some
+models the agents' statuses) describes the course of infection; its layers
+(networks, mixing by group, or both) describe who meets whom. So there is one
+model per compartmental structure, whatever the contacts, and a model can
+carry several viruses (`add_virus()`), which share its stages.
+
+Each model's diagram (`<model>.mmd`) is drawn from its declarations by
+`make diagrams` (at the repository root); do not edit them by hand.
+`make all` here renders them to `docs/assets/img`.
 

@@ -24,7 +24,7 @@ SEXP bubbles_cpp(
     double bubble_contact_prob
 ) {
 
-  external_pointer< Model<int> > modelptr(model);
+  external_pointer< Model > modelptr(model);
 
   std::vector< size_t > hh(household_id.begin(), household_id.end());
 
@@ -34,7 +34,7 @@ SEXP bubbles_cpp(
   BubbleTies tt = (ties == "complete") ?
     BubbleTies::Complete : BubbleTies::Existing;
 
-  Bubbles<int> bubbles(
+  Bubbles bubbles(
     hh,
     fl,
     static_cast< size_t >(group_size),

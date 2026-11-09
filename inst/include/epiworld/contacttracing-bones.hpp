@@ -74,7 +74,7 @@ public:
     /**
      * @brief Construct a new Contact Tracing object
      * 
-     * @param n_agents Agents in the system, usually `Model<TSeq>::size()`.
+     * @param n_agents Agents in the system, usually `Model::size()`.
      * @param max_contacts Maximum number of contacts to track per agent.
      */
     ContactTracing(size_t n_agents, size_t max_contacts);
@@ -84,7 +84,7 @@ public:
      * 
      * @param agent_a Agent id (usually infectious agent)
      * @param agent_b Agent id (usually susceptible agent)
-     * @param day Day of the contact (usually Model<TSeq>::today()).
+     * @param day Day of the contact (usually Model::today()).
      */
     void add_contact(size_t agent_a, size_t agent_b, size_t day);
 
@@ -114,7 +114,7 @@ public:
     /**
      * @brief Reset the contact tracing data
      * 
-     * Usually called by `Model<TSeq>::reset()`.
+     * Usually called by `Model::reset()`.
      * 
      * @param n_agents Number of agents
      * @param max_contacts Maximum number of contacts to track per agent

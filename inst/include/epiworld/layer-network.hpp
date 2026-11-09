@@ -4,29 +4,6 @@
 namespace layer {
 
 /**
- * @brief A fixed network layer (see `Network`).
- * @param name Name of the layer (unique in a model).
- * @param graph The ties; its number of vertices must match the model's
- * population. Directed if the graph is.
- * @ingroup contact_layers
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-std::shared_ptr< Network<TSeq> > network(std::string name, const AdjList & graph);
-
-/**
- * @brief A network layer drawn at every reset (see `Network`).
- * @param name Name of the layer (unique in a model).
- * @param generator Called with the model at every reset; the graph it returns
- * must have one vertex per agent.
- * @ingroup contact_layers
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-std::shared_ptr< Network<TSeq> > network(
-    std::string name,
-    typename Network<TSeq>::Generator generator
-);
-
-/**
  * @brief Contact layer with explicit ties (a network).
  *
  * @details The contacts of an agent in this layer are its ties. A network
@@ -35,7 +12,7 @@ std::shared_ptr< Network<TSeq> > network(
  * returns a graph, which the layer calls at every reset: each run (and each
  * replicate of `run_multiple()`) then gets its own draw, from its own seed.
  * The `graph::` functions return generators; any function
- * `AdjList(Model<TSeq> &)` is one.
+ * `AdjList(Model &)` is one.
  *
  * ### Ties and their order
  *
@@ -62,22 +39,20 @@ std::shared_ptr< Network<TSeq> > network(
  * every step (not on day 0), after the global events, with the layer and the
  * model; `graph::rewire_degseq()` returns the degree-preserving one.
  *
- * @tparam TSeq Type of sequence.
  * @ingroup contact_layers
  */
-template<typename TSeq>
-class Network : public ContactLayer<TSeq>
+class Network : public ContactLayer
 {
-    friend class Model<TSeq>;
-    friend class Queue<TSeq>;
+    friend class epiworld::Model;
+    friend class epiworld::Queue;
 
 public:
 
     /// Returns the graph of a run (called at every reset).
-    using Generator = std::function< AdjList(Model<TSeq> &) >;
+    using Generator = std::function< AdjList(Model &) >;
 
     /// Changes the ties at the end of each step.
-    using Rewiring = std::function< void(Network<TSeq> &, Model<TSeq> &) >;
+    using Rewiring = std::function< void(Network &, Model &) >;
 
 private:
 
@@ -112,12 +87,10 @@ protected:
     Network(std::string name, const AdjList & graph);
     Network(std::string name, Generator generator);
 
-    template<typename T>
-    friend std::shared_ptr< Network<T> > network(std::string, const AdjList &);
+    friend std::shared_ptr< Network > network(std::string, const AdjList &);
 
-    template<typename T>
-    friend std::shared_ptr< Network<T> > network(
-        std::string, typename Network<T>::Generator
+    friend std::shared_ptr< Network > network(
+        std::string, Network::Generator
     );
 
 public:
@@ -133,7 +106,7 @@ public:
      * @details In order (see the class description). The view is invalidated by
      * any change to the agent's ties. The layer must belong to a model.
      */
-    NeighborsView<TSeq> neighbors_view(size_t i);
+    NeighborsView neighbors_view(size_t i);
 
     /**
      * @name Edit the ties
@@ -193,7 +166,7 @@ public:
     template< bool Record >
     size_t pull(
         size_t agent,
-        Model<TSeq> & model,
+        Model & model,
         const std::vector< bool > * exclude,
         size_t * out
     ) const;
@@ -201,7 +174,7 @@ public:
     /// The network's part of a pull (see `ContactLayer::sample()`).
     size_t sample(
         size_t agent,
-        Model<TSeq> & model,
+        Model & model,
         const std::vector< bool > * exclude,
         std::vector< size_t > & out
     ) override
@@ -221,53 +194,63 @@ public:
 
     }
 
-    void reset(Model<TSeq> & model) override;
-    void update(Model<TSeq> & model) override;
+    void reset(Model & model) override;
+    void update(Model & model) override;
 
-    layer::Network<TSeq> * as_network() override { return this; }
+    layer::Network * as_network() override { return this; }
 
     /// An undirected network: a carrier's ties are its contacts' ties too.
     bool supports_queue() const override { return !directed; }
 
-    std::shared_ptr< ContactLayer<TSeq> > clone() const override
+    std::shared_ptr< ContactLayer > clone() const override
     {
-        return std::make_shared< Network<TSeq> >(*this);
+        return std::make_shared< Network >(*this);
     }
 
 };
 
-template<typename TSeq>
-inline std::shared_ptr< Network<TSeq> > network(
+/**
+ * @brief A fixed network layer (see `Network`).
+ * @param name Name of the layer (unique in a model).
+ * @param graph The ties; its number of vertices must match the model's
+ * population. Directed if the graph is.
+ * @ingroup contact_layers
+ */
+inline std::shared_ptr< Network > network(
     std::string name,
     const AdjList & graph
 )
 {
-    return std::shared_ptr< Network<TSeq> >(
-        new Network<TSeq>(std::move(name), graph)
+    return std::shared_ptr< Network >(
+        new Network(std::move(name), graph)
     );
 }
 
-template<typename TSeq>
-inline std::shared_ptr< Network<TSeq> > network(
+/**
+ * @brief A network layer drawn at every reset (see `Network`).
+ * @param name Name of the layer (unique in a model).
+ * @param generator Called with the model at every reset; the graph it returns
+ * must have one vertex per agent.
+ * @ingroup contact_layers
+ */
+inline std::shared_ptr< Network > network(
     std::string name,
-    typename Network<TSeq>::Generator generator
+    Network::Generator generator
 )
 {
-    return std::shared_ptr< Network<TSeq> >(
-        new Network<TSeq>(std::move(name), std::move(generator))
+    return std::shared_ptr< Network >(
+        new Network(std::move(name), std::move(generator))
     );
 }
 
-template<typename TSeq>
-inline Network<TSeq>::Network(std::string name, const AdjList & graph) :
-    ContactLayer<TSeq>(std::move(name))
+inline Network::Network(std::string name, const AdjList & graph) :
+    ContactLayer(std::move(name))
 {
     set_graph(graph);
 }
 
-template<typename TSeq>
-inline Network<TSeq>::Network(std::string name, Generator generator_) :
-    ContactLayer<TSeq>(std::move(name)),
+inline Network::Network(std::string name, Generator generator_) :
+    ContactLayer(std::move(name)),
     generator(std::move(generator_))
 {
     if (!generator)
@@ -276,8 +259,7 @@ inline Network<TSeq>::Network(std::string name, Generator generator_) :
         );
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::set_graph(const AdjList & graph)
+inline void Network::set_graph(const AdjList & graph)
 {
 
     const size_t n = graph.vcount();
@@ -308,8 +290,7 @@ inline void Network<TSeq>::set_graph(const AdjList & graph)
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::capture_baseline()
+inline void Network::capture_baseline()
 {
 
     const size_t n = ties.size();
@@ -326,8 +307,7 @@ inline void Network<TSeq>::capture_baseline()
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::restore_baseline()
+inline void Network::restore_baseline()
 {
 
     const size_t n = baseline_start.size() - 1u;
@@ -348,8 +328,7 @@ inline void Network<TSeq>::restore_baseline()
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::build_index(size_t i)
+inline void Network::build_index(size_t i)
 {
 
     auto & pos = index[i];
@@ -360,8 +339,7 @@ inline void Network<TSeq>::build_index(size_t i)
 
 }
 
-template<typename TSeq>
-inline size_t Network<TSeq>::find(size_t i, size_t j) const
+inline size_t Network::find(size_t i, size_t j) const
 {
 
     const auto & row = ties[i];
@@ -381,8 +359,7 @@ inline size_t Network<TSeq>::find(size_t i, size_t j) const
 
 }
 
-template<typename TSeq>
-inline bool Network<TSeq>::append(size_t i, size_t j, bool check)
+inline bool Network::append(size_t i, size_t j, bool check)
 {
 
     if (check && (find(i, j) != ties[i].size()))
@@ -403,8 +380,7 @@ inline bool Network<TSeq>::append(size_t i, size_t j, bool check)
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::erase_at(size_t i, size_t pos)
+inline void Network::erase_at(size_t i, size_t pos)
 {
 
     auto & row = ties[i];
@@ -420,8 +396,7 @@ inline void Network<TSeq>::erase_at(size_t i, size_t pos)
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::check_endpoints(size_t i, size_t j) const
+inline void Network::check_endpoints(size_t i, size_t j) const
 {
 
     if ((i >= ties.size()) || (j >= ties.size()))
@@ -446,8 +421,7 @@ inline void Network<TSeq>::check_endpoints(size_t i, size_t j) const
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::edit()
+inline void Network::edit()
 {
 
     // A fixed graph keeps a copy to restore, taken before its first edit, so
@@ -472,8 +446,7 @@ inline void Network<TSeq>::edit()
 
 }
 
-template<typename TSeq>
-inline NeighborsView<TSeq> Network<TSeq>::neighbors_view(size_t i)
+inline NeighborsView Network::neighbors_view(size_t i)
 {
 
     if (this->model == nullptr)
@@ -489,15 +462,14 @@ inline NeighborsView<TSeq> Network<TSeq>::neighbors_view(size_t i)
         );
 
     const auto & row = ties[i];
-    return NeighborsView<TSeq>(
+    return NeighborsView(
         row.empty() ? nullptr : row.data(), row.size(),
         &this->model->get_agents()
     );
 
 }
 
-template<typename TSeq>
-inline bool Network<TSeq>::add_edge(size_t i, size_t j)
+inline bool Network::add_edge(size_t i, size_t j)
 {
 
     check_endpoints(i, j);
@@ -518,8 +490,7 @@ inline bool Network<TSeq>::add_edge(size_t i, size_t j)
 
 }
 
-template<typename TSeq>
-inline bool Network<TSeq>::rm_edge(size_t i, size_t j)
+inline bool Network::rm_edge(size_t i, size_t j)
 {
 
     check_endpoints(i, j);
@@ -547,8 +518,7 @@ inline bool Network<TSeq>::rm_edge(size_t i, size_t j)
 
 }
 
-template<typename TSeq>
-inline bool Network<TSeq>::has_edge(size_t i, size_t j) const
+inline bool Network::has_edge(size_t i, size_t j) const
 {
 
     if ((i >= ties.size()) || (j >= ties.size()))
@@ -562,8 +532,7 @@ inline bool Network<TSeq>::has_edge(size_t i, size_t j) const
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::swap_ties(
+inline void Network::swap_ties(
     size_t i,
     size_t pos_i,
     size_t k,
@@ -650,8 +619,7 @@ inline void Network<TSeq>::swap_ties(
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::get_edgelist(
+inline void Network::get_edgelist(
     std::vector< int > & source,
     std::vector< int > & target
 ) const
@@ -667,8 +635,7 @@ inline void Network<TSeq>::get_edgelist(
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::write_edgelist(const std::string & fn) const
+inline void Network::write_edgelist(const std::string & fn) const
 {
 
     std::ofstream efile(fn, std::ios_base::out);
@@ -681,11 +648,10 @@ inline void Network<TSeq>::write_edgelist(const std::string & fn) const
 
 }
 
-template<typename TSeq>
 template< bool Record >
-inline size_t Network<TSeq>::pull(
+inline size_t Network::pull(
     size_t agent,
-    Model<TSeq> & model,
+    Model & model,
     const std::vector< bool > * exclude,
     size_t * out
 ) const
@@ -726,8 +692,7 @@ inline size_t Network<TSeq>::pull(
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::reset(Model<TSeq> & model)
+inline void Network::reset(Model & model)
 {
 
     if (generator)
@@ -750,8 +715,7 @@ inline void Network<TSeq>::reset(Model<TSeq> & model)
 
 }
 
-template<typename TSeq>
-inline void Network<TSeq>::update(Model<TSeq> & model)
+inline void Network::update(Model & model)
 {
 
     // Day 0 is recorded, not stepped: rewiring starts at the end of day 1
@@ -771,10 +735,9 @@ inline void Network<TSeq>::update(Model<TSeq> & model)
  * `floor(proportion * sum of degrees)` attempts. Use it through
  * `graph::rewire_degseq()`.
  */
-template<typename TSeq>
 inline void rewire_degseq(
-    layer::Network<TSeq> & net,
-    Model<TSeq> & model,
+    layer::Network & net,
+    Model & model,
     epiworld_double proportion
 )
 {
@@ -866,7 +829,7 @@ namespace graph {
 /**
  * @name Network generators
  *
- * @details Each returns a `layer::Network<TSeq>::Generator`: a function that
+ * @details Each returns a `layer::Network::Generator`: a function that
  * draws the graph for a model, with one vertex per agent, using the model's
  * random numbers. The arguments are structure, used once per draw (see the
  * contact-layers plan, point 17).
@@ -875,14 +838,13 @@ namespace graph {
 
 /// Small-world network: ring lattice with `k` ties per agent, rewired with
 /// probability `p` (see `rgraph_smallworld()`).
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline typename layer::Network<TSeq>::Generator smallworld(
+inline typename layer::Network::Generator smallworld(
     epiworld_fast_uint k,
     epiworld_double p,
     bool directed = false
 )
 {
-    return [k, p, directed](Model<TSeq> & model) -> AdjList {
+    return [k, p, directed](Model & model) -> AdjList {
         return rgraph_smallworld(
             static_cast< epiworld_fast_uint >(model.size()), k, p, directed, model
         );
@@ -891,13 +853,12 @@ inline typename layer::Network<TSeq>::Generator smallworld(
 
 /// Bernoulli (Erdős–Rényi) network: each tie with probability `p` (see
 /// `rgraph_bernoulli()`).
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline typename layer::Network<TSeq>::Generator bernoulli(
+inline typename layer::Network::Generator bernoulli(
     epiworld_double p,
     bool directed = false
 )
 {
-    return [p, directed](Model<TSeq> & model) -> AdjList {
+    return [p, directed](Model & model) -> AdjList {
         return rgraph_bernoulli(
             static_cast< epiworld_fast_uint >(model.size()), p, directed, model
         );
@@ -906,14 +867,13 @@ inline typename layer::Network<TSeq>::Generator bernoulli(
 
 /// Stochastic block model (see `rgraph_sbm()`); the block sizes must add up to
 /// the model's population.
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline typename layer::Network<TSeq>::Generator sbm(
+inline typename layer::Network::Generator sbm(
     std::vector< size_t > block_sizes,
     std::vector< double > mixing_matrix,
     bool row_major = true
 )
 {
-    return [block_sizes, mixing_matrix, row_major](Model<TSeq> & model) -> AdjList {
+    return [block_sizes, mixing_matrix, row_major](Model & model) -> AdjList {
         return rgraph_sbm(block_sizes, mixing_matrix, row_major, model);
     };
 }
@@ -929,11 +889,10 @@ inline typename layer::Network<TSeq>::Generator sbm(
  * repeated ties. In a directed network only the sources' ties move, which keeps
  * every agent's in- and out-degree.
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline typename layer::Network<TSeq>::Rewiring rewire_degseq(std::string param)
+inline typename layer::Network::Rewiring rewire_degseq(std::string param)
 {
     return [ref = ParamRef(std::move(param))](
-        layer::Network<TSeq> & net, Model<TSeq> & model
+        layer::Network & net, Model & model
     ) -> void {
 
         const epiworld_double proportion = ref(model);

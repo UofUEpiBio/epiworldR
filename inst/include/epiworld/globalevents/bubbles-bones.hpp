@@ -88,7 +88,6 @@ enum class BubbleTies {
     Complete
 };
 
-template<typename TSeq>
 class Bubbles;
 
 /**
@@ -106,14 +105,12 @@ class Bubbles;
  * Users do not instantiate this directly; the intervention hands it to every
  * agent when it sets itself up, at the start of each run.
  *
- * @tparam TSeq Sequence type (should match `TSeq` across the model).
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class BubbleTool : public Tool<TSeq> {
+class BubbleTool : public Tool {
 private:
 
     std::string _event_name;                  ///< Name of the owning intervention.
-    Bubbles<TSeq> * _policy = nullptr;        ///< Resolved lazily, per model.
+    Bubbles * _policy = nullptr;        ///< Resolved lazily, per model.
 
 public:
 
@@ -128,11 +125,11 @@ public:
      * before a partition exists, the reduction is `0.0`.
      */
     epiworld_double get_susceptibility_reduction(
-        VirusPtr<TSeq> & v,
-        Model<TSeq> * model
+        VirusPtr & v,
+        Model * model
     ) override;
 
-    std::unique_ptr<Tool<TSeq>> clone_ptr() const override;
+    std::unique_ptr<Tool> clone_ptr() const override;
 
 };
 
@@ -215,7 +212,7 @@ public:
  * partition of a model that has run, ask the model for its copy:
  *
  * ```cpp
- * const auto & bubble_id = Bubbles<>::get_from(model)->get_bubble_id();
+ * const auto & bubble_id = Bubbles::get_from(model)->get_bubble_id();
  * ```
  *
  * ## Forming bubbles (why ties matter)
@@ -290,6 +287,29 @@ public:
  * say) each need their own layer; sharing one is an error. `Complete` runs
  * within `Model::run()` (or `run_multiple()`): a move outside a run would edit
  * the layer's baseline.
+ *
+ * ### Matching a policy
+ *
+ * These are the closest settings for two styles of rule used during
+ * COVID-19, not exact matches:
+ *
+ * | Policy style                                       | Settings                                       |
+ * |----------------------------------------------------|------------------------------------------------|
+ * | Households join one or a few others (New Zealand;  | `Household`, `group_size` = households per     |
+ * | UK support bubbles; Belgium, May 2020)             | bubble, `Complete`                             |
+ * | One close contact per person (Belgium, Oct. 2020)  | `Peer`, `max_households = 2` (the default),    |
+ * |                                                    | `Existing`                                     |
+ *
+ * The second is an approximation. `Peer` commits whole households, so with
+ * `max_households = 2` one accepted choice pairs two households and the other
+ * members of either can choose no one else (`group_size` then has no effect;
+ * see *The algorithms*). Under `Existing` every tie between the two households
+ * is spared, not only the chosen one. The model therefore gives a household
+ * one partner household where the rule gives each person their own contact. A
+ * larger `max_households` lets more members choose, at the cost of larger
+ * bubbles. `Peer` with `Complete` has both households meet in full: more
+ * contact than the rule allows, but still allowed, for the case where a
+ * person brings their household along.
  *
  * ## The algorithms
  *
@@ -367,7 +387,7 @@ public:
  * ## Example
  *
  * ```cpp
- * epimodels::ModelSEIR<> model("flu", 10000, 0.01, 0.1, 4.5, 1.0/7.0);
+ * epimodels::ModelSEIR model("flu", 10000, 0.01, 0.1, 4.5, 1.0/7.0);
  * model.add_layer(layer::network(
  *     "contacts", graph::smallworld(8, 0.05)
  * ));
@@ -377,7 +397,7 @@ public:
  *     household_id[i] = i / 3;             // households of three
  *
  * // Two households per bubble from day 10, halving out-of-bubble transmission.
- * Bubbles<> bubbles(
+ * Bubbles bubbles(
  *     household_id, BubbleFlavor::Household,
  *     2,      // group_size
  *     0.5,    // transmission_factor (default of the model parameter)
@@ -392,7 +412,7 @@ public:
  * model.run(100, 1231);
  *
  * // The partition belongs to the model, not to `bubbles`.
- * const auto & bubble_id = Bubbles<>::get_from(model)->get_bubble_id();
+ * const auto & bubble_id = Bubbles::get_from(model)->get_bubble_id();
  * ```
  *
  * To have those two households actually meet -- every member of one meeting
@@ -410,7 +430,7 @@ public:
  * `group_size == 1` with a non-zero factor:
  *
  * ```cpp
- * Bubbles<> household_only(
+ * Bubbles household_only(
  *     household_id, BubbleFlavor::Household,
  *     1,      // group_size: nobody bubbles with another household
  *     0.15,   // but the bubble leaks: 15% of out-of-bubble transmission remains
@@ -429,10 +449,8 @@ public:
  * regions, and caps on the number of individuals (as opposed to households) a
  * bubble may contain.
  *
- * @tparam TSeq Sequence type (should match `TSeq` across the model).
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-class Bubbles final : public GlobalEvent<TSeq> {
+class Bubbles final : public GlobalEvent {
 private:
 
     std::vector< size_t > household; ///< Household of each agent, 0..n_households - 1.
@@ -450,7 +468,7 @@ private:
     double bubble_contact_prob;      ///< daily meeting probability in a merged bubble.
 
     /// The household layer of `BubbleTies::Complete` (throws if there is none).
-    layer::Mixing<TSeq> & bubble_layer(Model<TSeq> * model) const;
+    layer::Mixing & bubble_layer(Model * model) const;
 
     // Per-model state. Copied with the intervention, so each model (including
     // each per-thread copy made by run_multiple) owns its own partition.
@@ -463,8 +481,8 @@ private:
 
     /// @name The two grouping rules.
     ///@{
-    void partition_household(Model<TSeq> * model);
-    void partition_peer(Model<TSeq> * model);
+    void partition_household(Model * model);
+    void partition_peer(Model * model);
     ///@}
 
     /**
@@ -479,7 +497,7 @@ private:
      * @throws std::length_error if `household_id` does not have exactly one
      *         entry per agent.
      */
-    void _setup(Model<TSeq> * model);
+    void _setup(Model * model);
 
     /**
      * @brief Moves agents in the household layer to match the policy as of
@@ -489,7 +507,7 @@ private:
      * partition was redrawn), back to their households when it is about to
      * lapse. Nothing under `BubbleTies::Existing`.
      */
-    void sync_groups(Model<TSeq> * model);
+    void sync_groups(Model * model);
 
 public:
 
@@ -573,8 +591,8 @@ public:
      * @return Pointer to the model's own intervention, or `nullptr` if the
      *         model has no global event by that name, or it is not a `Bubbles`.
      */
-    static Bubbles<TSeq> * get_from(
-        Model<TSeq> & model,
+    static Bubbles * get_from(
+        Model & model,
         const std::string & name = "Social bubble"
     );
 
@@ -584,7 +602,7 @@ public:
      * Called when the intervention sets itself up (at reset) and at each
      * rewiring epoch. Rarely needed directly.
      */
-    void compute_partition(Model<TSeq> * model);
+    void compute_partition(Model * model);
 
     /**
      * @brief Current bubble label of every agent, indexed by agent id.
@@ -636,7 +654,7 @@ public:
      *        on a given day (`1`: every day).
      * @throws std::logic_error if the layer has no name.
      */
-    std::shared_ptr< layer::Mixing<TSeq> > make_layer(
+    std::shared_ptr< layer::Mixing > make_layer(
         double household_contact_prob = 1.0
     ) const;
 
@@ -665,9 +683,9 @@ public:
      * The tool's side of the intervention; see `BubbleTool`.
      */
     epiworld_double susceptibility_reduction(
-        const Agent<TSeq> * p,
-        const Agent<TSeq> * transmitter,
-        Model<TSeq> * model
+        const Agent * p,
+        const Agent * transmitter,
+        Model * model
     ) const;
 
     /**
@@ -676,13 +694,13 @@ public:
      * Called by `Model::reset()`; see `_setup()`. This is what makes adding the
      * intervention to a model the only step there is.
      */
-    void reset(Model<TSeq> * model) override;
+    void reset(Model * model) override;
 
     /// @brief Re-randomises the partition at rewiring epochs, and keeps the
     /// household layer of a `Complete` bubble in step with the policy.
-    void operator()(Model<TSeq> * model, int day) override;
+    void operator()(Model * model, int day) override;
 
-    std::unique_ptr< GlobalEvent<TSeq> > clone_ptr() const override;
+    std::unique_ptr< GlobalEvent > clone_ptr() const override;
 
 };
 

@@ -14,9 +14,8 @@ add_layer(
     set_contact_rate("Contact rate")
 )
 
-t1 <- tool("mytool", 0, FALSE, 1, 0, 0, 0)
-set_distribution_tool(t1, distribute_tool_to_set(c(2L, 5L)))
-add_tool(abm, t1)
+t1 <- tool("mytool", 1, 0, 0, 0)
+add_tool(abm, t1, assign_agents(c(2L, 5L)))
 run(abm, 0, seed = 1)
 
 hist <- get_hist_tool(abm)
@@ -36,13 +35,11 @@ add_layer(
     set_contact_rate("Contact rate")
 )
 
-t_a <- tool("tool_a", 0, FALSE, 1, 0, 0, 0)
-set_distribution_tool(t_a, distribute_tool_to_set(c(2L, 5L)))
-add_tool(abm2, t_a)
+t_a <- tool("tool_a", 1, 0, 0, 0)
+add_tool(abm2, t_a, assign_agents(c(2L, 5L)))
 
-t_b <- tool("tool_b", 0, FALSE, 1, 0, 0, 0)
-set_distribution_tool(t_b, distribute_tool_to_set(c(3L, 7L, 8L)))
-add_tool(abm2, t_b)
+t_b <- tool("tool_b", 1, 0, 0, 0)
+add_tool(abm2, t_b, assign_agents(c(3L, 7L, 8L)))
 
 run(abm2, 0, seed = 1)
 

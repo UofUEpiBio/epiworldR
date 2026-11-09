@@ -61,9 +61,10 @@ plot.epiworld_diagram <- function(x, ...) {
 #' run(model, ndays = 50, seed = 1912)
 #'
 #' # Draw mermaid diagrams from model data
+#' tprob <- get_transition_probability(model)
 #' diagram <- draw_mermaid_from_data(
-#'   states = get_states(model),
-#'   transition_probs = c(get_transition_probability(model))
+#'   states = rownames(tprob),
+#'   transition_probs = c(tprob)
 #' )
 #'
 #' \dontrun{
@@ -73,6 +74,9 @@ plot.epiworld_diagram <- function(x, ...) {
 #'
 #' # Draw a mermaid diagram of the transitions
 #' draw_mermaid(model)
+#'
+#' # Draw the natural history, from its declarations
+#' draw_natural_history(model)
 #'
 #' @param states String vector. List of model states.
 #' @param transition_probs Numeric vector. Transition probability matrix
@@ -281,4 +285,16 @@ draw_mermaid <- function(
       )
     )
   }
+}
+
+#' @rdname epiworld-model-diagram
+#' @returns
+#' - The `draw_natural_history` function returns a mermaid diagram of the
+#' model's natural history (and statuses), drawn from their declarations: one
+#' node per stage and one edge per transition, labeled with its kind and value.
+#' It does not need the model to have run.
+#' @export
+draw_natural_history <- function(model) {
+  stopifnot_model(model)
+  as_epiworld_diagram(draw_natural_history_cpp(model))
 }

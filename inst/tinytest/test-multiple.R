@@ -42,8 +42,8 @@ res1 <- run_multiple_get_results(model_seircon, nthreads = 2L)
 
 res1 <- lapply(res1, data.table::as.data.table)
 
-avg_infected <- res1$total_hist[date==50 & state=="Infected"]$counts |> mean()
-avg_recovered <- res1$total_hist[date==50 & state=="Removed"]$counts |> mean()
+avg_infected <- res1$total_hist[date==50 & stage=="Infected"]$counts |> mean()
+avg_recovered <- res1$total_hist[date==50 & stage=="Removed"]$counts |> mean()
 
 expect_true(abs(avg_infected - 13.8) < 50)
 expect_true(abs(avg_recovered - 4986) < 50)

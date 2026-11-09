@@ -12,11 +12,10 @@
 #' @export
 #' @concept general-models
 #' @details
-#' The [initial_states] function allows the user to set the initial state of the
-#' model. The user must provide a vector of proportions indicating the following
-#' values: (1) Proportion of exposed agents who are infected, (2)
-#' proportion of non-infected agents already removed, and (3) proportion of
-#' non-ifected agents already deceased.
+#' [set_initial()] places agents, at the start of each run, in stages without
+#' the virus (e.g., `set_initial(model, assign_shares(c(Removed = 0.2)))`); the
+#' model's stages are listed by [get_stages()]. The model is built by
+#' [make_model()] (see [get_model_info()] for its arguments' limits).
 #' @section Model diagram:
 #' ![](seird.png "SEIRD Diagram")
 #' @family Models
@@ -46,26 +45,19 @@ ModelSEIRD <- function(
   recovery_rate,
   death_rate
 ) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n)
-  stopifnot_double(prevalence)
-  stopifnot_double(transmission_prob)
-  stopifnot_double(latent_period)
-  stopifnot_double(recovery_rate)
-  stopifnot_double(death_rate)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSEIRD_cpp(
-      name              = name,
+  make_model(
+    "SEIRD",
+    list(
       n                 = n,
       prevalence        = prevalence,
       transmission_prob = transmission_prob,
-      latent_period   = latent_period,
+      latent_period     = latent_period,
       recovery_rate     = recovery_rate,
       death_rate        = death_rate
     ),
-    class = c("epiworld_seird", "epiworld_model")
+    virus_name = name
   )
 
 }

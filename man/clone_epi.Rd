@@ -58,7 +58,7 @@ add_layer(
 )
 
 vax <- tool(
-  name = "Vaccine", prevalence = 0.5, as_proportion = TRUE,
+  name = "Vaccine",
   susceptibility_reduction = 0.9, transmission_reduction = 0.5,
   recovery_enhancer = 0.5, death_reduction = 0.9
 )
@@ -68,7 +68,7 @@ vax2 <- clone_epi(vax)
 set_name_tool(vax2, "Vaccine (lower efficacy)")
 set_susceptibility_reduction(vax2, 0.7)
 
-add_tool(model, vax)
-add_tool(model, vax2)
+add_tool(model, vax, assign_share(0.5))
+add_tool(model, vax2, assign_share(0.5))
 model
 }

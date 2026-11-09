@@ -26,7 +26,7 @@ bad_name                <- 10
 bad_numeric_input       <- "not a number"
 
 expected_error_msg_str    <- "must be a string"
-expected_error_msg_double <- "must be a double"
+expected_error_msg_double <- "must be a number"
 
 expect_error(sisd_0 <- ModelSISD(
   name                = bad_name,

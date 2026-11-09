@@ -14,7 +14,7 @@ std::string epiworld_cpp_version_cpp()
 [[cpp11::register]]
 SEXP print_cpp(SEXP m, bool lite) {
 
-  external_pointer<Model<>> ptr(m);
+  external_pointer<Model> ptr(m);
   ptr->print(lite);
 
   return m;
@@ -24,14 +24,14 @@ SEXP print_cpp(SEXP m, bool lite) {
 [[cpp11::register]]
 SEXP run_cpp(SEXP m, int ndays, int seed) {
 
-  external_pointer<Model<>> ptr(m);
+  external_pointer<Model> ptr(m);
   ptr->run(ndays, seed);
 
   return m;
 
 }
 
-typedef std::function<void(size_t,Model<>*)> funptr;
+typedef std::function<void(size_t,Model*)> funptr;
 
 [[cpp11::register]]
 SEXP make_saver_cpp(
@@ -50,7 +50,7 @@ SEXP make_saver_cpp(
   bool hospitalizations
 ) {
 
-  funptr* saver = new funptr(make_save_run<int>(
+  funptr* saver = new funptr(make_save_run(
     fn,
     total_hist,
     virus_info,
@@ -84,7 +84,7 @@ SEXP run_multiple_cpp(
     int nthreads
 ) {
 
-  external_pointer<Model<>> ptr(m);
+  external_pointer<Model> ptr(m);
   external_pointer<funptr> sav_ptr(saver);
 
   ptr->run_multiple(
@@ -106,7 +106,7 @@ SEXP queuing_on_cpp(
     SEXP model
 ) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->queuing_on();
   return model;
 
@@ -117,29 +117,16 @@ SEXP queuing_off_cpp(
     SEXP model
 ) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->queuing_off();
   return model;
 
 }
 
 [[cpp11::register]]
-SEXP set_infectious_states_cpp(SEXP model, std::vector< int > states) {
-  external_pointer<Model<>> ptr(model);
-  ptr->set_infectious_states(states);
-  return model;
-}
-
-[[cpp11::register]]
-std::vector< int > get_infectious_states_cpp(SEXP model) {
-  external_pointer<Model<>> ptr(model);
-  return ptr->get_infectious_states();
-}
-
-[[cpp11::register]]
 SEXP set_transmission_mode_cpp(SEXP model, std::string mode, double kappa) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->set_transmission_mode(mode, kappa);
   return model;
 
@@ -160,19 +147,19 @@ static std::string transmission_mode_str(TransmissionMode mode) {
 
 [[cpp11::register]]
 std::string get_transmission_mode_cpp(SEXP model) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return transmission_mode_str(ptr->get_transmission_mode());
 }
 
 [[cpp11::register]]
 std::string get_last_transmission_mode_cpp(SEXP model) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return transmission_mode_str(ptr->get_last_transmission_mode());
 }
 
 [[cpp11::register]]
 double get_transmission_kappa_cpp(SEXP model) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return ptr->get_transmission_kappa();
 }
 
@@ -183,14 +170,14 @@ double default_transmission_kappa_cpp() {
 
 [[cpp11::register]]
 double get_param_cpp(SEXP model, std::string pname) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<double>(ptr->get_param(pname));
 }
 
 [[cpp11::register]]
 SEXP set_param_cpp(SEXP model, std::string pname, double val) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->set_param(pname, val);
 
   return model;
@@ -199,7 +186,7 @@ SEXP set_param_cpp(SEXP model, std::string pname, double val) {
 [[cpp11::register]]
 SEXP add_param_cpp(SEXP model, std::string pname, double val) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->add_param(val, pname);
 
   return model;
@@ -207,31 +194,21 @@ SEXP add_param_cpp(SEXP model, std::string pname, double val) {
 
 [[cpp11::register]]
 SEXP set_name_cpp(SEXP model, std::string mname) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->set_name(mname);
   return model;
 }
 
 [[cpp11::register]]
 std::string get_name_cpp(SEXP model) {
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return ptr->get_name();
-}
-
-[[cpp11::register]]
-strings get_states_cpp(
-    SEXP model
-) {
-
-  external_pointer<Model<>> ptr(model);
-  return writable::strings(ptr->get_states());
-
 }
 
 [[cpp11::register]]
 SEXP verbose_on_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->verbose_on();
   return model;
 
@@ -240,7 +217,7 @@ SEXP verbose_on_cpp(SEXP model) {
 [[cpp11::register]]
 SEXP verbose_off_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   ptr->verbose_off();
   return model;
 
@@ -249,7 +226,7 @@ SEXP verbose_off_cpp(SEXP model) {
 [[cpp11::register]]
 int get_n_viruses_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<int>(ptr->get_n_viruses());
 
 }
@@ -257,7 +234,7 @@ int get_n_viruses_cpp(SEXP model) {
 [[cpp11::register]]
 int get_n_tools_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<int>(ptr->get_n_tools());
 
 }
@@ -265,7 +242,7 @@ int get_n_tools_cpp(SEXP model) {
 [[cpp11::register]]
 int get_ndays_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<int>(ptr->get_ndays());
 
 }
@@ -273,7 +250,7 @@ int get_ndays_cpp(SEXP model) {
 [[cpp11::register]]
 int today_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<int>(ptr->today());
 
 }
@@ -281,20 +258,20 @@ int today_cpp(SEXP model) {
 [[cpp11::register]]
 int get_n_replicates_cpp(SEXP model) {
 
-  external_pointer<Model<>> ptr(model);
+  external_pointer<Model> ptr(model);
   return static_cast<int>(ptr->get_n_replicates());
 
 }
 
 [[cpp11::register]]
 int size_cpp(SEXP model) {
-  return external_pointer<Model<>>(model)->size();
+  return external_pointer<Model>(model)->size();
 }
 
 [[cpp11::register]]
 SEXP set_agents_data_cpp(SEXP model, SEXP data, int ncols) {
 
-  external_pointer<Model<>> modelptr(model);
+  external_pointer<Model> modelptr(model);
   modelptr->set_agents_data(
     REAL(data),
     ncols
@@ -309,16 +286,16 @@ int get_agents_data_ncols_cpp(SEXP model) {
 
   return
     static_cast<int>(
-      external_pointer<Model<>>(model)->get_agents_data_ncols()
+      external_pointer<Model>(model)->get_agents_data_ncols()
     );
 
 }
 
 [[cpp11::register]]
 SEXP get_virus_model_cpp(SEXP model, int virus_pos) {
-  external_pointer<Model<>> modelptr(model);
+  external_pointer<Model> modelptr(model);
 
-  external_pointer<Virus<>> res(
+  external_pointer<Virus> res(
       &modelptr->get_virus(static_cast<size_t>(virus_pos)),
       false
   );
@@ -329,9 +306,9 @@ SEXP get_virus_model_cpp(SEXP model, int virus_pos) {
 
 [[cpp11::register]]
 SEXP get_tool_model_cpp(SEXP model, int tool_pos) {
-  external_pointer<Model<>> modelptr(model);
+  external_pointer<Model> modelptr(model);
 
-  external_pointer<Tool<>> res(
+  external_pointer<Tool> res(
       &modelptr->get_tool(static_cast<size_t>(tool_pos)),
       false
   );
@@ -340,27 +317,14 @@ SEXP get_tool_model_cpp(SEXP model, int tool_pos) {
 
 }
 
-[[cpp11::register]]
-SEXP initial_states_cpp(SEXP model, cpp11::doubles proportions) {
-
-  external_pointer<Model<>> modelptr(model);
-
-  std::vector< double > states_vec(proportions.begin(), proportions.end());
-
-  modelptr->initial_states(states_vec, std::vector< int >({}));
-
-  return model;
-
-}
-
 // Function for cloning a model
 [[cpp11::register]]
 SEXP clone_model_cpp(const SEXP & model) {
 
-  external_pointer<const Model<>> modelptr(model);
+  external_pointer<const Model> modelptr(model);
 
-  return external_pointer<Model<>>(
-    new Model<>(*modelptr)
+  return external_pointer<Model>(
+    new Model(*modelptr)
   );
 
 }
@@ -372,7 +336,7 @@ void draw_mermaid_cpp(
     bool self
 ) {
 
-  external_pointer<Model<>> modelptr(model);
+  external_pointer<Model> modelptr(model);
   modelptr->draw(
     DiagramType::Mermaid,
     fn_output,

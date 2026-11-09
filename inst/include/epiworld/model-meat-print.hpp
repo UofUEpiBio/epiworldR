@@ -1,8 +1,7 @@
 #ifndef EPIWORLD_MODEL_MEAT_PRINT_HPP
 #define EPIWORLD_MODEL_MEAT_PRINT_HPP
 
-template<typename TSeq>
-inline const Model<TSeq> & Model<TSeq>::print(bool lite) const
+inline const Model & Model::print(bool lite) const
 {
 
     // Horizontal line

@@ -9,13 +9,13 @@ model <- ModelSIR("a virus", n, prevalence = 0, transmission_prob = 1,
 add_layer(model, layer_network("network", graph_edgelist(0L:(n - 2L), 1L:(n - 1L), n, TRUE)))
 verbose_off(model)
 
-set_distribution_virus(get_virus(model, 0), distribute_virus_to_set(n - 1L))
+assign_virus(model, 0, assign_agents(n - 1L))
 run(model, ndays = 20, seed = 1)
-expect_equal(sum(get_agents_states(model) == "Infected"), n)
+expect_equal(sum(get_agents_stages(model) == "Infected"), n)
 
-set_distribution_virus(get_virus(model, 0), distribute_virus_to_set(0L))
+assign_virus(model, 0, assign_agents(0L))
 run(model, ndays = 20, seed = 1)
-expect_equal(sum(get_agents_states(model) == "Infected"), 1L)
+expect_equal(sum(get_agents_stages(model) == "Infected"), 1L)
 
 # The ties are kept as given, not mirrored
 net <- get_edgelist(get_layer(model, "network"))

@@ -6,10 +6,9 @@
  * @brief Transmission: from contacts to infections, and network transmission
  * by pushing infection odds.
  *
- * @details A susceptible agent `i` whose update function is
- * `default_update_susceptible` *pulls*: it scans its neighbors, collects the
- * per-contact probabilities `p_ij` of those carrying a virus (in the model's
- * infectious states), and `roulette()` draws "no infection" or a
+ * @details A susceptible agent `i` in a stage with a default infection
+ * *pulls*: it scans its neighbors, collects the per-contact probabilities
+ * `p_ij` of those carrying a virus (in an infectious stage), and `roulette()` draws "no infection" or a
  * single infector. That draw depends only on the odds `r_ij = p_ij / (1 - p_ij)`:
  *
  *     P(no infection) = 1 / (1 + R_i),   P(infected by j) = r_ij / (1 + R_i),
@@ -27,29 +26,7 @@
  * has the derivation.
  */
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::set_infectious_states(std::vector< int > states)
-{
-    infectious_states = std::move(states);
-
-    // After a reset (e.g., from a global event), from the next step on
-    if (state_index_ready)
-        state_masks_build();
-
-    return *this;
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::set_excluded_states(std::vector< int > states)
-{
-    excluded_states = std::move(states);
-
-    if (state_index_ready)
-        state_masks_build();
-}
-
-template<typename TSeq>
-inline void Model<TSeq>::state_masks_build()
+inline void Model::state_masks_build()
 {
 
     const size_t ns = static_cast< size_t >(nstates);
@@ -87,10 +64,9 @@ inline void Model<TSeq>::state_masks_build()
 
 }
 
-template<typename TSeq>
-inline size_t Model<TSeq>::add_exposures(
-    Agent<TSeq> * agent,
-    const ContactLayer<TSeq> * layer,
+inline size_t Model::add_exposures(
+    Agent * agent,
+    const ContactLayer * layer,
     const size_t * contacts,
     size_t n,
     size_t n_exposures
@@ -120,7 +96,7 @@ inline size_t Model<TSeq>::add_exposures(
 
         epiworld_double p =
             (1.0 - agent->get_susceptibility_reduction(v, *this)) *
-            v->get_prob_infecting(this) *
+            nh_infection_prob(*agent, *v) *
             (1.0 - contact.get_transmission_reduction(v, *this))
             ;
 
@@ -138,8 +114,7 @@ inline size_t Model<TSeq>::add_exposures(
 
 }
 
-template<typename TSeq>
-inline Virus<TSeq> * Model<TSeq>::draw_exposure(size_t n_exposures)
+inline Virus * Model::draw_exposure(size_t n_exposures)
 {
 
     sampled_layer = -1;
@@ -157,12 +132,11 @@ inline Virus<TSeq> * Model<TSeq>::draw_exposure(size_t n_exposures)
 
 }
 
-template<typename TSeq>
-inline Virus<TSeq> * Model<TSeq>::sample_virus(
-    Agent<TSeq> * agent,
+inline Virus * Model::sample_virus(
+    Agent * agent,
     const size_t * contacts,
     size_t n,
-    const ContactLayer<TSeq> * layer
+    const ContactLayer * layer
 )
 {
 
@@ -170,8 +144,7 @@ inline Virus<TSeq> * Model<TSeq>::sample_virus(
 
 }
 
-template<typename TSeq>
-inline Virus<TSeq> * Model<TSeq>::sample_virus(Agent<TSeq> * agent)
+inline Virus * Model::sample_virus(Agent * agent)
 {
 
     if (agent->get_virus() != nullptr)
@@ -211,7 +184,7 @@ inline Virus<TSeq> * Model<TSeq>::sample_virus(Agent<TSeq> * agent)
     db.n_transmissions_potential++;
     #endif
 
-    Virus<TSeq> * virus = draw_exposure(n_exposures);
+    Virus * virus = draw_exposure(n_exposures);
 
     #ifdef EPI_DEBUG
     if (virus != nullptr)
@@ -222,8 +195,7 @@ inline Virus<TSeq> * Model<TSeq>::sample_virus(Agent<TSeq> * agent)
 
 }
 
-template<typename TSeq>
-inline bool Model<TSeq>::transmission_prepare()
+inline bool Model::transmission_prepare()
 {
 
     const size_t ns = static_cast< size_t >(nstates);
@@ -233,27 +205,27 @@ inline bool Model<TSeq>::transmission_prepare()
 
     bool any = false;
 
-    // Recognizing the samplers needs std::function::target(), i.e., RTTI.
-    // Without it, every state keeps pulling.
-    #if defined(__cpp_rtti) || defined(__GXX_RTTI) || defined(_CPPRTTI)
-    for (size_t t = 0u; t < ns; ++t)
+    // A natural history says which stages are pushed to
+    if (nh)
     {
-
-        const auto & fun = state_fun[t];
-        if (!fun)
-            continue;
-
-        using FunPtr = void(*)(Agent<TSeq>*, Model<TSeq>*);
-        const FunPtr * fp = fun.template target< FunPtr >();
-
-        if ((fp != nullptr) && (*fp == &default_update_susceptible<TSeq>))
+        // A cell is pushed to if its stage's only drawn exit is a default
+        // infection, its status has no drawn exit, and it is in the layers
+        for (size_t c = 0u; c < ns; ++c)
         {
-            push_pushable[t] = 1;
-            any = true;
+            const unsigned int cu = static_cast< unsigned int >(c);
+            const bool status_drawn = st &&
+                st->stages[static_cast< size_t >(nh_status_of(cu))].needs_visit;
+            const bool excluded = !state_excluded.empty() && state_excluded[c];
+            if (
+                nh->stages[static_cast< size_t >(nh_stage_of(cu))].pushable &&
+                !status_drawn && !excluded
+            )
+            {
+                push_pushable[c] = 1;
+                any = true;
+            }
         }
-
     }
-    #endif
 
     // The infectious states are the sources, if anyone is pushed to
     if (any)
@@ -265,8 +237,7 @@ inline bool Model<TSeq>::transmission_prepare()
 
 }
 
-template<typename TSeq>
-inline bool Model<TSeq>::transmission_choose_push() const
+inline bool Model::transmission_choose_push() const
 {
 
     if (transmission_mode == TransmissionMode::pull)
@@ -300,9 +271,8 @@ inline bool Model<TSeq>::transmission_choose_push() const
 
 }
 
-template<typename TSeq>
-inline typename Model<TSeq>::TransmissionSums
-Model<TSeq>::get_transmission_sums() const
+inline typename Model::TransmissionSums
+Model::get_transmission_sums() const
 {
 
     TransmissionSums sums = {0u, 0u, 0u, 0u};
@@ -328,8 +298,7 @@ Model<TSeq>::get_transmission_sums() const
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::transmission_push()
+inline void Model::transmission_push()
 {
 
     // The recording path is chosen once per step, not per contact
@@ -344,9 +313,8 @@ inline void Model<TSeq>::transmission_push()
 
 }
 
-template<typename TSeq>
 template<bool Record>
-inline void Model<TSeq>::transmission_push_impl()
+inline void Model::transmission_push_impl()
 {
 
     const size_t ns = static_cast< size_t >(nstates);
@@ -391,11 +359,11 @@ inline void Model<TSeq>::transmission_push_impl()
             const size_t j_id = (w << 6) + epi_ctz64(word);
             word &= (word - 1u);
 
-            Agent<TSeq> & j = population[j_id];
+            Agent & j = population[j_id];
             if (j.virus == nullptr)
                 continue;
 
-            VirusPtr<TSeq> & v = j.virus;
+            VirusPtr & v = j.virus;
 
             // Every network, in the order the layers were added, as a pull
             // reads them
@@ -419,7 +387,7 @@ inline void Model<TSeq>::transmission_push_impl()
                     if (!push_pushable[t])
                         continue;
 
-                    Agent<TSeq> & i = population[i_id];
+                    Agent & i = population[i_id];
 
                     // An agent with a virus is not susceptible (pulling would
                     // refuse it; update_state() reports it).
@@ -449,7 +417,7 @@ inline void Model<TSeq>::transmission_push_impl()
                     // Exactly the expression the pull uses, in the same order.
                     epiworld_double p =
                         (1.0 - i.get_susceptibility_reduction(v, *this)) *
-                        v->get_prob_infecting(this) *
+                        nh_infection_prob(i, *v) *
                         (1.0 - j.get_transmission_reduction(v, *this))
                         ;
 
@@ -535,21 +503,26 @@ inline void Model<TSeq>::transmission_push_impl()
         )
             continue;
 
-        Agent<TSeq> & i = population[target.id];
+        Agent & i = population[target.id];
 
         #ifdef EPI_DEBUG
         db.n_transmissions_today++;
         #endif
 
         sampled_layer = target.layer;
-        i.set_virus(*this, *target.candidate);
+        if (nh)
+            nh_propose(
+                nh->stages[static_cast< size_t >(nh_stage_of(i.state))].infection,
+                i, target.candidate
+            );
+        else
+            i.set_virus(*this, *target.candidate);
 
     }
 
 }
 
-template<typename TSeq>
-inline void Model<TSeq>::transmission_update_others()
+inline void Model::transmission_update_others()
 {
 
     const size_t ns = static_cast< size_t >(nstates);
@@ -568,7 +541,7 @@ inline void Model<TSeq>::transmission_update_others()
             const auto & p = population[id];
             if ((p.virus != nullptr) && (!use_queuing || (queue[id] > 0)))
                 throw std::logic_error(
-                    std::string("Using the -default_update_susceptible- on agents WITH viruses makes no sense! ") +
+                    std::string("A pushed-to stage has agents WITH viruses! ") +
                     std::string("Agent id ") + std::to_string(p.get_id()) +
                     std::string(" has a virus.")
                     );
@@ -617,8 +590,7 @@ inline void Model<TSeq>::transmission_update_others()
 
 }
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::set_transmission_mode(
+inline Model & Model::set_transmission_mode(
     TransmissionMode mode,
     double kappa
 )
@@ -635,8 +607,7 @@ inline Model<TSeq> & Model<TSeq>::set_transmission_mode(
 
 }
 
-template<typename TSeq>
-inline Model<TSeq> & Model<TSeq>::set_transmission_mode(
+inline Model & Model::set_transmission_mode(
     std::string_view mode,
     double kappa
 )
@@ -656,20 +627,17 @@ inline Model<TSeq> & Model<TSeq>::set_transmission_mode(
 
 }
 
-template<typename TSeq>
-inline TransmissionMode Model<TSeq>::get_transmission_mode() const
+inline TransmissionMode Model::get_transmission_mode() const
 {
     return transmission_mode;
 }
 
-template<typename TSeq>
-inline TransmissionMode Model<TSeq>::get_last_transmission_mode() const
+inline TransmissionMode Model::get_last_transmission_mode() const
 {
     return transmission_mode_last;
 }
 
-template<typename TSeq>
-inline double Model<TSeq>::get_transmission_kappa() const
+inline double Model::get_transmission_kappa() const
 {
     return transmission_kappa;
 }

@@ -11,11 +11,10 @@
 #' @param recovery_enhancer Numeric. Proportion it improves recovery.
 #' @param death_reduction Numeric. Proportion it reduces probability of death.
 #' @param tool_pos Positive integer. Index of the tool's position in the model.
-#' @param as_proportion Logical scalar. If `TRUE`, the `prevalence` argument is
-#' treated as a proportion. If `FALSE`, it is treated as a count of agents.
-#' @param prevalence Numeric scalar. Proportion or count of agents that will be
-#' assigned the tool. The interpretation of this argument depends on the value
-#' of `as_proportion`.
+#' @param assign Who gets the tool at the start of each run: a placement from
+#' one of the [assign] functions (e.g., `assign_share(0.5)`), or `NULL` for
+#' nobody (the tool is then given by events or functions).
+#' @param ... Not used: a tool takes no prevalence (see `assign`).
 #' @examples
 #' # Simple model
 #' model_sirconn <- ModelSIR(
@@ -38,8 +37,6 @@
 #'
 #' epitool <- tool(
 #'   name = "Vaccine",
-#'   prevalence = 0.5,
-#'   as_proportion = TRUE,
 #'   susceptibility_reduction = .9,
 #'   transmission_reduction = .5,
 #'   recovery_enhancer = .5,
@@ -50,7 +47,7 @@
 #'
 #' set_name_tool(epitool, "Pfizer") # Assigning name to the tool
 #' get_name_tool(epitool) # Returning the name of the tool
-#' add_tool(model_sirconn, epitool)
+#' add_tool(model_sirconn, epitool, assign_share(0.5))
 #' run(model_sirconn, ndays = 100, seed = 1912)
 #' model_sirconn
 #' plot(model_sirconn)
@@ -62,7 +59,7 @@
 #' set_death_reduction(epitool, 0.05) # Probability reduction of death
 #'
 #' rm_tool(model_sirconn, 0)
-#' add_tool(model_sirconn, epitool)
+#' add_tool(model_sirconn, epitool, assign_share(0.5))
 #' run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 #'
 #' @export
@@ -72,44 +69,29 @@
 #' @aliases epiworld_tool
 tool <- function(
   name,
-  prevalence,
-  as_proportion,
   susceptibility_reduction,
   transmission_reduction,
   recovery_enhancer,
-  death_reduction
+  death_reduction,
+  ...
 ) {
 
-  uses_deprecated <- FALSE
-  if (missing(prevalence)) {
-
-    warning(
-      "Starting version 0.3-0, the 'prevalence' argument is required.",
-      " It will be set to be 0.5. Next versions will fail with an error."
+  if (...length())
+    stop(
+      "tool() takes no prevalence: place the tool with ",
+      "add_tool(model, tool, assign), e.g., assign_share(p) or assign_count(n).",
+      call. = FALSE
     )
-
-    prevalence <- 0.5
-    as_proportion <- TRUE
-    uses_deprecated <- TRUE
-
-  }
 
   structure(
     tool_cpp(
       name,
-      prevalence,
-      as_proportion,
       susceptibility_reduction,
       transmission_reduction,
       recovery_enhancer,
       death_reduction
     ),
-    class = "epiworld_tool",
-    uses_deprecated = uses_deprecated,
-    deprecated_args = list(
-      prevalence = prevalence,
-      as_proportion = as_proportion
-    )
+    class = "epiworld_tool"
   )
 
 }
@@ -146,46 +128,35 @@ get_name_tool <- function(tool) {
 
 #' @export
 #' @param tool An object of class `epiworld_tool`
-#' @param proportion Deprecated.
 #' @details
 #' The `add_tool` function adds the specified tool to the model of class
-#' [epiworld_model] with specified proportion.
+#' [epiworld_model], placed with `assign`. The model keeps its own copy of the
+#' tool: changes to `tool` after `add_tool()` do not reach the model (use
+#' [get_tool()] for the model's copy).
 #' @rdname tool
-add_tool <- function(model, tool, proportion) {
+add_tool <- function(model, tool, assign = NULL) {
 
-  if (!missing(proportion)) {
-
-    warning(
-      "The 'proportion' argument is deprecated. ",
-      "Use 'set_distribution_tool' instead."
-    )
-
-    set_distribution_tool(
-      tool = tool,
-      distfun = distribute_tool_randomly(proportion, TRUE)
-    )
-
-  } else if (isTRUE(attr(tool, "uses_deprecated"))) {
-
-    set_distribution_tool(
-      tool = tool,
-      distfun = distribute_tool_randomly(
-        prevalence = attr(tool, "deprecated_args")$prevalence,
-        as_proportion = attr(tool, "deprecated_args")$as_proportion
-      )
-    )
-
-  }
-
-  UseMethod("add_tool")
+  stopifnot_model(model)
+  stopifnot_tool(tool)
+  stopifnot_assign(assign)
+  add_tool_cpp(model, tool, assign)
+  if (uses_r(assign))
+    attr(model, "single_threaded") <- TRUE
+  invisible(model)
 
 }
 
 #' @export
-add_tool.epiworld_model <- function(model, tool, proportion) {
+#' @returns
+#' - `assign_tool` replaces the placement of a tool already in the model.
+#' @rdname tool
+assign_tool <- function(model, tool_pos, assign) {
 
-  stopifnot_tool(tool)
-  add_tool_cpp(model, tool)
+  stopifnot_model(model)
+  stopifnot_assign(assign, null_ok = FALSE)
+  assign_tool_cpp(model, as.integer(tool_pos), assign)
+  if (uses_r(assign))
+    attr(model, "single_threaded") <- TRUE
   invisible(model)
 
 }
@@ -223,15 +194,13 @@ rm_tool <- function(model, tool_pos) {
 #' # Creating a tool
 #' mask_wearing <- tool(
 #'   name = "Mask",
-#'   prevalence               = 0.5,
-#'   as_proportion            = TRUE,
 #'   susceptibility_reduction = 0.0,
 #'   transmission_reduction   = 0.3, # Only transmission
 #'   recovery_enhancer        = 0.0,
 #'   death_reduction          = 0.0
 #' )
 #'
-#' add_tool(sir, mask_wearing)
+#' add_tool(sir, mask_wearing, assign_share(0.5))
 #'
 #' run(sir, ndays = 50, seed = 11)
 #' hist_0 <- get_hist_total(sir)

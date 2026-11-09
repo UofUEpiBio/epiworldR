@@ -8,8 +8,7 @@
 #include "misc.hpp"
 #include "database-bones.hpp"
 
-template<typename TSeq>
-inline void DataBase<TSeq>::reset()
+inline void DataBase::reset()
 {
 
     // Initializing the counts
@@ -34,6 +33,9 @@ inline void DataBase<TSeq>::reset()
     transition_matrix.assign(model->nstates * model->nstates, 0);
     for (size_t s = 0u; s < model->nstates; ++s)
         transition_matrix[s + s * model->nstates] = today_total[s];
+
+    // The last run's variants go; the founders keep their ids
+    drop_variants();
 
     hist_virus_date.clear();
     hist_virus_id.clear();
@@ -66,26 +68,31 @@ inline void DataBase<TSeq>::reset()
     transmission_source_exposure_date.clear();
     transmission_layer.clear();
 
+    transition_today.assign(
+        model->nh ?
+            model->nh->get_n_transitions() +
+                (model->st ? model->st->get_n_transitions() : 0u) :
+            0u,
+        0
+    );
+    hist_transition_date.clear();
+    hist_transition_id.clear();
+    hist_transition_counts.clear();
+
     m_hospitalizations.reset();
 
     return;
 
 }
 
-template<typename TSeq>
-inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
+inline DataBase::DataBase(const DataBase & db) :
     m_hospitalizations(db.m_hospitalizations),
-    virus_id(db.virus_id),
+    n_founders(db.n_founders),
     virus_name(db.virus_name),
-    virus_sequence(db.virus_sequence),
     virus_origin_date(db.virus_origin_date),
     virus_parent_id(db.virus_parent_id),
-    tool_id(db.tool_id),
     tool_name(db.tool_name),
-    tool_sequence(db.tool_sequence),
     tool_origin_date(db.tool_origin_date),
-    seq_hasher(db.seq_hasher),
-    seq_writer(db.seq_writer),
     // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
     today_virus(db.today_virus),
     // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
@@ -119,26 +126,23 @@ inline DataBase<TSeq>::DataBase(const DataBase<TSeq> & db) :
     transmission_source_exposure_date(db.transmission_source_exposure_date),
     transmission_layer(db.transmission_layer),
     transition_matrix(db.transition_matrix),
+    transition_today(db.transition_today),
+    hist_transition_date(db.hist_transition_date),
+    hist_transition_id(db.hist_transition_id),
+    hist_transition_counts(db.hist_transition_counts),
     user_data(nullptr)
 {}
 
-// DataBase<TSeq> & DataBase<TSeq>::operator=(const DataBase<TSeq> & m)
+// DataBase & DataBase::operator=(const DataBase & m)
 // {
 
 // }
 
-template<typename TSeq>
-inline Model<TSeq> * DataBase<TSeq>::get_model() {
+inline Model * DataBase::get_model() {
     return model;
 }
 
-template<typename TSeq>
-inline const std::vector< TSeq > & DataBase<TSeq>::get_sequence() const {
-    return virus_sequence;
-}
-
-template<typename TSeq>
-inline void DataBase<TSeq>::record() 
+inline void DataBase::record() 
 {
 
     ////////////////////////////////////////////////////////////////////////////
@@ -248,40 +252,40 @@ inline void DataBase<TSeq>::record()
     {
 
         // Recording virus's history
-        for (auto & p : virus_id)
+        for (size_t v = 0u; v < today_virus.size(); ++v)
         {
 
             for (epiworld_fast_uint s = 0u; s < model->nstates; ++s)
             {
 
                 hist_virus_date.push_back(model->today());
-                hist_virus_id.push_back(p.second);
+                hist_virus_id.push_back(static_cast< int >(v));
                 hist_virus_state.push_back(s);
 
                 #ifdef EPI_DEBUG
-                if (today_virus[p.second][s] < 0)
+                if (today_virus[v][s] < 0)
                     throw std::logic_error(
                         "The count of viruses in DataBase::record cannot be negative."
                     );
                 #endif
 
-                hist_virus_counts.push_back(today_virus[p.second][s]);
+                hist_virus_counts.push_back(today_virus[v][s]);
 
             }
 
         }
 
         // Recording tool's history
-        for (auto & p : tool_id)
+        for (size_t t = 0u; t < today_tool.size(); ++t)
         {
 
             for (epiworld_fast_uint s = 0u; s < model->nstates; ++s)
             {
 
                 hist_tool_date.push_back(model->today());
-                hist_tool_id.push_back(p.second);
+                hist_tool_id.push_back(static_cast< int >(t));
                 hist_tool_state.push_back(s);
-                hist_tool_counts.push_back(today_tool[p.second][s]);
+                hist_tool_counts.push_back(today_tool[t][s]);
 
             }
 
@@ -298,6 +302,14 @@ inline void DataBase<TSeq>::record()
 
         for (const auto& cell : transition_matrix)
             hist_transition_matrix.push_back(cell);
+
+        for (size_t k = 0u; k < transition_today.size(); ++k)
+        {
+            hist_transition_date.push_back(model->today());
+            hist_transition_id.push_back(static_cast< int >(k));
+            hist_transition_counts.push_back(transition_today[k]);
+            transition_today[k] = 0;
+        }
 
         // Now the diagonal must reflect the state
         for (size_t s_i = 0u; s_i < model->nstates; ++s_i)
@@ -333,295 +345,80 @@ inline void DataBase<TSeq>::record()
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::record_virus(Virus<TSeq> & v, bool founder)
+inline void DataBase::drop_variants()
 {
 
-    // If no sequence, then need to add one. This is regardless of the case
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        if (v.get_sequence() == -1)
-            v.set_sequence(default_sequence<TSeq>(
-                static_cast<int>(virus_name.size())
-                ));
-    }
-    else
-    {
-        if (v.get_sequence() == nullptr)
-            v.set_sequence(default_sequence<TSeq>(
-                static_cast<int>(virus_name.size())
-                ));        
-    }
+    const size_t n = n_founders;
+    if (virus_name.size() <= n)
+        return;
 
-    std::vector< int > hash;
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        hash = seq_hasher(v.get_sequence());
-    }
-    else
-    {
-        hash = seq_hasher(*v.get_sequence());
-    }
+    virus_name.resize(n);
+    virus_origin_date.resize(n);
+    virus_parent_id.resize(n);
+    today_virus.resize(n);
+    today_total_nviruses_active = static_cast< int >(n);
 
-    // Lineages 63 and above share the overflow bit, which tools cannot target
-    auto set_lineage = [&v](int lineage_id) {
-        v.lineage_id  = lineage_id;
-        v.lineage_bit = uint64_t(1) << std::min(lineage_id, 63);
-    };
-
-    // A virus added to the model founds a lineage. Its id may come from
-    // another model, so only its sequence identifies it here.
-    if (founder)
-    {
-
-        auto match = virus_id.find(hash);
-        if (match == virus_id.end())
-            v.set_id(-99);
-        else
-        {
-            // Already on record (e.g., added twice): keep its lineage
-            int id = static_cast< int >(match->second);
-            v.set_id(id);
-            v.set_date(virus_origin_date[id]);
-
-            while (virus_parent_id[id] >= 0)
-                id = virus_parent_id[id];
-
-            set_lineage(id);
-            return;
-        }
-
-    }
-
-    // Negative id -> virus hasn't been recorded
-    if (v.get_id() < 0)
-    {
-
-        epiworld_fast_uint new_id = virus_id.size();
-        virus_name.push_back(v.get_name());
-        virus_id[hash] = new_id;
-
-        EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-        {
-            virus_sequence.push_back(v.get_sequence());
-        }
-        else
-        {
-            virus_sequence.push_back(*v.get_sequence());
-        }
-
-
-        virus_origin_date.push_back(model->today());
-        
-        virus_parent_id.push_back(v.get_id()); // Must be -99
-        
-        today_virus.push_back({});
-        today_virus[new_id].resize(model->nstates, 0);
-       
-        // Updating the variant
-        v.set_id(new_id);
-        v.set_date(model->today());
-
-        // A new founder starts a lineage (mutations keep it)
-        set_lineage(static_cast< int >(new_id));
-
-        today_total_nviruses_active++;
-
-    }
-    else
-    { // In this case, the virus is already on record, need to make sure
-             // The new sequence is new.
-
-        // Updating registry
-        epiworld_fast_uint old_id = v.get_id();
-        epiworld_fast_uint new_id;
-
-        // If the sequence is new, then it means that the
-        if (virus_id.find(hash) == virus_id.end())
-        {
-
-            new_id = virus_id.size();
-            virus_id[hash] = new_id;
-            virus_name.push_back(v.get_name());
-
-            EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-            {
-                virus_sequence.push_back(v.get_sequence());
-            }
-            else
-            {
-                virus_sequence.push_back(*v.get_sequence());
-            }
-
-            virus_origin_date.push_back(model->today());
-            
-            virus_parent_id.push_back(old_id);
-            
-            today_virus.push_back({});
-            today_virus[new_id].resize(model->nstates, 0);
-        
-            // Updating the variant
-            v.set_id(new_id);
-            v.set_date(model->today());
-
-            today_total_nviruses_active++;
-
-        } else {
-
-            // Finding the id
-            new_id = virus_id[hash];
-
-            // Reflecting the change
-            v.set_id(new_id);
-            v.set_date(virus_origin_date[new_id]);
-
-        }
-
-        // Moving statistics (only if we are affecting an individual)
-        if (v.get_agent() != nullptr)
-        {
-            // Correcting math
-            epiworld_fast_uint tmp_state = v.get_agent()->get_state();
-            today_virus[old_id][tmp_state]--;
-            today_virus[new_id][tmp_state]++;
-
-            #ifdef EPI_DEBUG
-            if (today_virus[old_id][tmp_state] < 0)
-                throw std::logic_error("An entry in today_virus is negative.");
-            #endif
-
-        }
-
-    }
-    
-    return;
-
-} 
-
-template<typename TSeq>
-inline void DataBase<TSeq>::record_tool(Tool<TSeq> & t)
-{
-
-    EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-    {
-        if (t.get_sequence() == -1)
-            t.set_sequence(default_sequence<TSeq>(
-                static_cast<int>(tool_name.size())
-            ));
-    }
-    else
-    {
-        if (t.get_sequence() == nullptr)
-            t.set_sequence(default_sequence<TSeq>(
-                static_cast<int>(tool_name.size())
-            ));
-    }
-
-    if (t.get_id() < 0) 
-    {
-
-        epiworld_fast_uint new_id = tool_id.size();
-        tool_name.push_back(t.get_name());
-
-        std::vector< int > hash;
-        EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-        {
-            hash = seq_hasher(t.get_sequence());
-            tool_id[hash] = new_id;
-            tool_sequence.push_back(t.get_sequence());
-        }
-        else
-        {
-            hash = seq_hasher(*t.get_sequence());
-            tool_id[hash] = new_id;
-            tool_sequence.push_back(*t.get_sequence());
-
-        }
-        tool_origin_date.push_back(model->today());
-                
-        today_tool.push_back({});
-        today_tool[new_id].resize(model->nstates, 0);
-
-        // Updating the tool
-        t.set_id(new_id);
-        t.set_date(model->today());
-
-    } else {
-
-        // Updating registry
-        std::vector< int > hash;
-        EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-        {
-            hash = seq_hasher(t.get_sequence());
-        }
-        else
-        {
-            hash = seq_hasher(*t.get_sequence());
-        }
-        epiworld_fast_uint old_id = t.get_id();
-        epiworld_fast_uint new_id;
-        
-        if (tool_id.find(hash) == tool_id.end())
-        {
-
-            new_id = tool_id.size();
-            tool_id[hash] = new_id;
-            tool_name.push_back(t.get_name());
-
-            EPI_IF_TSEQ_LESS_EQ_INT( TSeq )
-            {
-                tool_sequence.push_back(t.get_sequence());
-            }
-            else
-            {
-                tool_sequence.push_back(*t.get_sequence());
-            }
-            
-            tool_origin_date.push_back(model->today());
-                    
-            today_tool.push_back({});
-            today_tool[new_id].resize(model->nstates, 0);
-
-            // Updating the tool
-            t.set_id(new_id);
-            t.set_date(model->today());
-
-        } else {
-
-            // Finding the id
-            new_id = tool_id[hash];
-
-            // Reflecting the change
-            t.set_id(new_id);
-            t.set_date(tool_origin_date[new_id]);
-
-        }
-
-        // Moving statistics (only if we are affecting an individual)
-        if (t.get_agent() != nullptr)
-        {
-            // Correcting math
-            epiworld_fast_uint tmp_state = t.get_agent()->get_state();
-            today_tool[old_id][tmp_state]--;
-            today_tool[new_id][tmp_state]++;
-
-        }
-
-    }
-
-    
-    
-    return;
-} 
-
-template<typename TSeq>
-inline size_t DataBase<TSeq>::size() const
-{
-    return virus_id.size();
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::update_state(
+inline void DataBase::record_virus(Virus & v, bool founder)
+{
+
+    if (founder)
+    {
+        drop_variants();
+        ++n_founders;
+    }
+    else if (v.get_id() < 0)
+        throw std::logic_error(
+            "The virus \"" + v.get_name() + "\" mutated but is not on record."
+        );
+
+    const int parent = founder ? -99 : v.get_id();
+    const int id = static_cast< int >(virus_name.size());
+
+    virus_name.push_back(v.get_name());
+    virus_origin_date.push_back(model->today());
+    virus_parent_id.push_back(parent);
+    today_virus.push_back(std::vector< int >(model->nstates, 0));
+    today_total_nviruses_active++;
+
+    v.set_id(id);
+    v.set_date(model->today());
+
+    // A founder starts a lineage, which its mutations keep. Lineages 63 and
+    // above share the overflow bit, which tools cannot target.
+    if (founder)
+    {
+        v.lineage_id  = id;
+        v.lineage_bit = uint64_t(1) << std::min(id, 63);
+    }
+    else if (v.get_agent() != nullptr)
+    {
+        // The agent's counts move from the parent to the variant
+        const auto s = v.get_agent()->get_state();
+        today_virus[parent][s]--;
+        today_virus[id][s]++;
+    }
+
+}
+
+inline void DataBase::record_tool(Tool & t)
+{
+
+    t.set_id(static_cast< int >(tool_name.size()));
+    t.set_date(model->today());
+    tool_name.push_back(t.get_name());
+    tool_origin_date.push_back(model->today());
+    today_tool.push_back(std::vector< int >(model->nstates, 0));
+
+}
+
+inline size_t DataBase::size() const
+{
+    return virus_name.size();
+}
+
+inline void DataBase::update_state(
         epiworld_fast_uint prev_state,
         epiworld_fast_uint new_state,
         bool undo
@@ -664,8 +461,7 @@ inline void DataBase<TSeq>::update_state(
     return;
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::update_virus(
+inline void DataBase::update_virus(
         epiworld_fast_uint virus_id,
         epiworld_fast_uint prev_state,
         epiworld_fast_uint new_state,
@@ -694,8 +490,7 @@ inline void DataBase<TSeq>::update_virus(
     
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::update_tool(
+inline void DataBase::update_tool(
         epiworld_fast_uint tool_id,
         epiworld_fast_uint prev_state,
         epiworld_fast_uint new_state,
@@ -717,8 +512,7 @@ inline void DataBase<TSeq>::update_tool(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::record_transition(
+inline void DataBase::record_transition(
     epiworld_fast_uint from,
     epiworld_fast_uint to,
     bool undo
@@ -744,69 +538,146 @@ inline void DataBase<TSeq>::record_transition(
 
 }
 
-template<typename TSeq>
-inline int DataBase<TSeq>::get_today_total(
-    const std::string & what
+inline void DataBase::split_state(
+    epiworld_fast_uint state,
+    std::string & status,
+    std::string & stage
 ) const
 {
 
-    for (auto i = 0u; i < model->states_labels.size(); ++i)
+    if (!model->nh)
     {
-        if (model->states_labels[i] == what)
-            return today_total[i];
+        status = "Free";
+        stage = model->states_labels[state];
+        return;
     }
 
-    throw std::range_error("The value '" + what + "' is not in the model.");
+    const unsigned int c = static_cast< unsigned int >(state);
+    stage = model->nh->get_stages()[static_cast< size_t >(model->nh_stage_of(c))];
+    status = model->st ?
+        model->st->get_stages()[static_cast< size_t >(model->nh_status_of(c))] :
+        std::string("Free");
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_today_total(
-    std::vector< std::string > * state,
+inline void DataBase::split_states(
+    const std::vector< epiworld_fast_uint > & states,
+    std::vector< std::string > * status,
+    std::vector< std::string > * stage
+) const
+{
+
+    std::string k, s;
+    if (status != nullptr)
+        status->resize(states.size());
+    if (stage != nullptr)
+        stage->resize(states.size());
+
+    for (size_t i = 0u; i < states.size(); ++i)
+    {
+        split_state(states[i], k, s);
+        if (status != nullptr)
+            (*status)[i] = k;
+        if (stage != nullptr)
+            (*stage)[i] = s;
+    }
+
+}
+
+inline int DataBase::today_total_of(
+    const std::string & name,
+    bool by_stage
+) const
+{
+
+    bool found = false;
+    int total = 0;
+    std::string k, s;
+    for (epiworld_fast_uint i = 0u; i < today_total.size(); ++i)
+    {
+        split_state(i, k, s);
+        if ((by_stage ? s : k) == name)
+        {
+            found = true;
+            total += today_total[i];
+        }
+    }
+
+    if (!found)
+        throw std::range_error(
+            "'" + name + "' is not a " + (by_stage ? "stage" : "status") +
+            " of the model."
+        );
+
+    return total;
+
+}
+
+inline int DataBase::get_today_total_stage(
+    const std::string & stage
+) const
+{
+    return today_total_of(stage, true);
+}
+
+inline int DataBase::get_today_total_status(
+    const std::string & status
+) const
+{
+    return today_total_of(status, false);
+}
+
+inline void DataBase::get_today_total(
+    std::vector< std::string > * status,
+    std::vector< std::string > * stage,
     std::vector< int > * counts
 ) const
 {
-    if (state != nullptr)
-        (*state) = model->states_labels;
+
+    std::vector< epiworld_fast_uint > states(today_total.size());
+    for (size_t i = 0u; i < states.size(); ++i)
+        states[i] = static_cast< epiworld_fast_uint >(i);
+
+    split_states(states, status, stage);
 
     if (counts != nullptr)
         *counts = today_total;
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_today_virus(
-    std::vector< std::string > & state,
+inline void DataBase::get_today_virus(
+    std::vector< std::string > & status,
+    std::vector< std::string > & stage,
     std::vector< int > & id,
     std::vector< int > & counts
     ) const
 {
-    
-    // Total entries = number of viruses × number of states
-    size_t n_viruses = today_virus.size();
-    size_t n_states = model->states_labels.size();
-    size_t total_entries = n_viruses * n_states;
 
-    state.resize(total_entries, "");
-    id.resize(total_entries, 0);
-    counts.resize(total_entries, 0);
+    // One row per virus and state
+    const size_t n_viruses = today_virus.size();
+    const size_t n_states = model->states_labels.size();
 
-    size_t n = 0u;
+    std::vector< epiworld_fast_uint > states;
+    states.reserve(n_viruses * n_states);
+    id.clear();
+    counts.clear();
+
     for (epiworld_fast_uint v = 0u; v < n_viruses; ++v)
         for (epiworld_fast_uint s = 0u; s < n_states; ++s)
         {
-            state[n]   = model->states_labels[s];
-            id[n]      = static_cast<int>(v);
-            counts[n]  = today_virus[v][s];
-            ++n;
+            states.push_back(s);
+            id.push_back(static_cast<int>(v));
+            counts.push_back(today_virus[v][s]);
         }
+
+    split_states(states, &status, &stage);
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_hist_total(
+inline void DataBase::get_hist_total(
     std::vector< int > * date,
-    std::vector< std::string > * state,
+    std::vector< std::string > * status,
+    std::vector< std::string > * stage,
     std::vector< int > * counts
 ) const
 {
@@ -814,67 +685,44 @@ inline void DataBase<TSeq>::get_hist_total(
     if (date != nullptr)
         *date = hist_total_date;
 
-    if (state != nullptr)
-    {
-        state->resize(hist_total_state.size(), "");
-        for (epiworld_fast_uint i = 0u; i < hist_total_state.size(); ++i)
-            state->operator[](i) = model->states_labels[hist_total_state[i]];
-    }
+    split_states(hist_total_state, status, stage);
 
     if (counts != nullptr)
         *counts = hist_total_counts;
 
-    return;
-
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_hist_virus(
+inline void DataBase::get_hist_virus(
     std::vector< int > & date,
     std::vector< int > & id,
-    std::vector< std::string > & state,
+    std::vector< std::string > & status,
+    std::vector< std::string > & stage,
     std::vector< int > & counts
 ) const {
 
     date = hist_virus_date;
-    const auto& labels = model->states_labels;
-    
     id = hist_virus_id;
-    state.resize(hist_virus_state.size(), "");
-    for (epiworld_fast_uint i = 0u; i < hist_virus_state.size(); ++i)
-        state[i] = labels[hist_virus_state[i]];
-
+    split_states(hist_virus_state, &status, &stage);
     counts = hist_virus_counts;
-
-    return;
 
 }
 
-
-template<typename TSeq>
-inline void DataBase<TSeq>::get_hist_tool(
+inline void DataBase::get_hist_tool(
     std::vector< int > & date,
     std::vector< int > & id,
-    std::vector< std::string > & state,
+    std::vector< std::string > & status,
+    std::vector< std::string > & stage,
     std::vector< int > & counts
 ) const {
 
     date = hist_tool_date;
-    const auto& labels = model->states_labels;
-    
     id = hist_tool_id;
-    state.resize(hist_tool_state.size(), "");
-    for (size_t i = 0u; i < hist_tool_state.size(); ++i)
-        state[i] = labels[hist_tool_state[i]];
-
+    split_states(hist_tool_state, &status, &stage);
     counts = hist_tool_counts;
-
-    return;
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_today_transition_matrix(
+inline void DataBase::get_today_transition_matrix(
     std::vector< int > & counts
 ) const
 {
@@ -885,10 +733,11 @@ inline void DataBase<TSeq>::get_today_transition_matrix(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_hist_transition_matrix(
-    std::vector< std::string > & state_from,
-    std::vector< std::string > & state_to,
+inline void DataBase::get_hist_transition_matrix(
+    std::vector< std::string > & status_from,
+    std::vector< std::string > & stage_from,
+    std::vector< std::string > & status_to,
+    std::vector< std::string > & stage_to,
     std::vector< int > & date,
     std::vector< int > & counts,
     bool skip_zeros
@@ -896,16 +745,12 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 {
 
     size_t n = this->hist_transition_matrix.size();
-    
-    // Clearing the previous vectors
-    state_from.clear();
-    state_to.clear();
+
+    std::vector< epiworld_fast_uint > from, to;
+    from.reserve(n);
+    to.reserve(n);
     date.clear();
     counts.clear();
-
-    // Reserving space
-    state_from.reserve(n);
-    state_to.reserve(n);
     date.reserve(n);
     counts.reserve(n);
 
@@ -914,7 +759,11 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
 
     // If n is zero, then we are done
     if (n == 0u)
+    {
+        split_states(from, &status_from, &stage_from);
+        split_states(to, &status_to, &stage_to);
         return;
+    }
 
     for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
     {
@@ -933,8 +782,8 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
                 if (skip_zeros && v == 0)
                     continue;
                                 
-                state_from.push_back(model->states_labels[i]);
-                state_to.push_back(model->states_labels[j]);
+                from.push_back(static_cast< epiworld_fast_uint >(i));
+                to.push_back(static_cast< epiworld_fast_uint >(j));
                 date.push_back(hist_total_date[step * n_states]);
                 counts.push_back(v);
 
@@ -943,14 +792,14 @@ inline void DataBase<TSeq>::get_hist_transition_matrix(
         }
     }
 
-    return;
+    split_states(from, &status_from, &stage_from);
+    split_states(to, &status_to, &stage_to);
 
 
 }
 
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_active_cases(
+inline void DataBase::get_active_cases(
     std::vector<int> & date,
     std::vector<int> & virus_id,
     std::vector<int> & count
@@ -982,8 +831,7 @@ inline void DataBase<TSeq>::get_active_cases(
     
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_outbreak_size(
+inline void DataBase::get_outbreak_size(
     std::vector<int> & date,
     std::vector<int> & virus_id,
     std::vector<int> & outbreak_size
@@ -1027,8 +875,7 @@ inline void DataBase<TSeq>::get_outbreak_size(
     
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_transmissions(
+inline void DataBase::get_transmissions(
     std::vector<int> & date,
     std::vector<int> & source,
     std::vector<int> & target,
@@ -1058,8 +905,7 @@ inline void DataBase<TSeq>::get_transmissions(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_transmissions(
+inline void DataBase::get_transmissions(
     int * date,
     int * source,
     int * target,
@@ -1085,8 +931,7 @@ inline void DataBase<TSeq>::get_transmissions(
 
 }
 
-template<typename TSeq>
-inline RunOutputs DataBase<TSeq>::get_run_outputs(
+inline RunOutputs DataBase::get_run_outputs(
     const std::vector< std::string > & whats
 ) const
 {
@@ -1112,13 +957,16 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
         return names;
     };
 
-    // Labels of the states, given their ids
-    auto labels = [this](const std::vector< epiworld_fast_uint > & ids) {
-        std::vector< std::string > names;
-        names.reserve(ids.size());
-        for (auto i : ids)
-            names.push_back(model->states_labels[i]);
-        return names;
+    // The status and stage columns of a vector of states
+    auto add_pairs = [this](
+        OutputTable & t,
+        const std::vector< epiworld_fast_uint > & states,
+        const std::string & prefix
+    ) {
+        std::vector< std::string > status, stage;
+        split_states(states, &status, &stage);
+        t.add(prefix + "status", status);
+        t.add(prefix + "stage", stage);
     };
 
     RunOutputs out;
@@ -1130,58 +978,41 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
 
         if (what == "virus_info")
         {
-            std::vector< int > id, date, parent;
-            std::vector< std::string > name, seq;
-            for (const auto & v : virus_id)
-            {
-                id.push_back(v.second);
-                name.push_back(virus_name[v.second]);
-                seq.push_back(seq_writer(virus_sequence[v.second]));
-                date.push_back(virus_origin_date[v.second]);
-                parent.push_back(virus_parent_id[v.second]);
-            }
+            std::vector< int > id(virus_name.size());
+            std::iota(id.begin(), id.end(), 0);
             t.add("virus_id", id);
-            t.add("virus", name);
-            t.add("virus_sequence", seq);
-            t.add("date_recorded", date);
-            t.add("parent", parent);
+            t.add("virus", virus_name);
+            t.add("date_recorded", virus_origin_date);
+            t.add("parent", virus_parent_id);
         }
         else if (what == "virus_hist")
         {
             t.add("date", hist_virus_date);
             t.add("virus_id", hist_virus_id);
             t.add("virus", vnames(hist_virus_id));
-            t.add("state", labels(hist_virus_state));
+            add_pairs(t, hist_virus_state, "");
             t.add("n", hist_virus_counts);
         }
         else if (what == "tool_info")
         {
-            std::vector< int > id, date;
-            std::vector< std::string > name, seq;
-            for (const auto & v : tool_id)
-            {
-                id.push_back(v.second);
-                name.push_back(tool_name[v.second]);
-                seq.push_back(seq_writer(tool_sequence[v.second]));
-                date.push_back(tool_origin_date[v.second]);
-            }
+            std::vector< int > id(tool_name.size());
+            std::iota(id.begin(), id.end(), 0);
             t.add("id", id);
-            t.add("tool_name", name);
-            t.add("tool_sequence", seq);
-            t.add("date_recorded", date);
+            t.add("tool_name", tool_name);
+            t.add("date_recorded", tool_origin_date);
         }
         else if (what == "tool_hist")
         {
             t.add("date", hist_tool_date);
             t.add("id", hist_tool_id);
-            t.add("state", labels(hist_tool_state));
+            add_pairs(t, hist_tool_state, "");
             t.add("n", hist_tool_counts);
         }
         else if (what == "total_hist")
         {
             t.add("date", hist_total_date);
             t.add("nviruses", hist_total_nviruses_active);
-            t.add("state", labels(hist_total_state));
+            add_pairs(t, hist_total_state, "");
             t.add("counts", hist_total_counts);
         }
         else if (what == "transmission")
@@ -1198,7 +1029,7 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
         else if (what == "transition")
         {
             std::vector< int > date, counts;
-            std::vector< std::string > from, to;
+            std::vector< epiworld_fast_uint > from, to;
             int ns = model->nstates;
             for (int i = 0; i <= model->today(); ++i)
                 for (int f = 0; f < ns; ++f)
@@ -1208,13 +1039,13 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
                         if (n == 0)
                             continue;
                         date.push_back(i);
-                        from.push_back(model->states_labels[f]);
-                        to.push_back(model->states_labels[s]);
+                        from.push_back(static_cast< epiworld_fast_uint >(f));
+                        to.push_back(static_cast< epiworld_fast_uint >(s));
                         counts.push_back(n);
                     }
             t.add("date", date);
-            t.add("from", from);
-            t.add("to", to);
+            add_pairs(t, from, "from_");
+            add_pairs(t, to, "to_");
             t.add("counts", counts);
         }
         else if (what == "reproductive")
@@ -1308,8 +1139,7 @@ inline RunOutputs DataBase<TSeq>::get_run_outputs(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::write_data(
+inline void DataBase::write_data(
     std::string fn_virus_info,
     std::string fn_virus_hist,
     std::string fn_tool_info,
@@ -1346,8 +1176,7 @@ inline void DataBase<TSeq>::write_data(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::record_transmission(
+inline void DataBase::record_transmission(
     int i,
     int j,
     int virus,
@@ -1364,30 +1193,26 @@ inline void DataBase<TSeq>::record_transmission(
 
 }
 
-template<typename TSeq>
-inline size_t DataBase<TSeq>::get_n_viruses() const
+inline size_t DataBase::get_n_viruses() const
 {
-    return virus_id.size();
+    return virus_name.size();
 }
 
-template<typename TSeq>
-inline size_t DataBase<TSeq>::get_n_tools() const
+inline size_t DataBase::get_n_tools() const
 {
-    return tool_id.size();
+    return tool_name.size();
 }
 
 
-template<typename TSeq>
-inline void DataBase<TSeq>::set_user_data(
+inline void DataBase::set_user_data(
     std::vector< std::string > names
 )
 {
-    user_data = UserData<TSeq>(names);
+    user_data = UserData(names);
     user_data.model = model;
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::add_user_data(
+inline void DataBase::add_user_data(
     std::vector< epiworld_double > x
 )
 {
@@ -1396,8 +1221,7 @@ inline void DataBase<TSeq>::add_user_data(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::add_user_data(
+inline void DataBase::add_user_data(
     epiworld_fast_uint k,
     epiworld_double x
 )
@@ -1407,14 +1231,12 @@ inline void DataBase<TSeq>::add_user_data(
 
 }
 
-template<typename TSeq>
-inline UserData<TSeq> & DataBase<TSeq>::get_user_data()
+inline UserData & DataBase::get_user_data()
 {
     return user_data;
 }
 
-template<typename TSeq>
-inline MapVec_type<int,int> DataBase<TSeq>::get_reproductive_number()
+inline MapVec_type<int,int> DataBase::get_reproductive_number()
 const {
 
     // Checking size
@@ -1451,8 +1273,7 @@ const {
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_reproductive_number(
+inline void DataBase::get_reproductive_number(
     std::string fn
 ) const {
 
@@ -1460,13 +1281,12 @@ inline void DataBase<TSeq>::get_reproductive_number(
 
 }
 
-template<typename TSeq>
-inline std::vector< epiworld_double > DataBase<TSeq>::get_transition_probability(
+inline std::vector< epiworld_double > DataBase::get_transition_probability(
     bool print,
     bool normalize
 ) const {
 
-    const auto& states_labels = model->get_states();
+    const auto& states_labels = model->states_labels;
     size_t n_state = states_labels.size();
     size_t n_days   = model->get_ndays();
     std::vector< epiworld_double > res(n_state * n_state, 0.0);
@@ -1573,233 +1393,7 @@ inline std::vector< epiworld_double > DataBase<TSeq>::get_transition_probability
         EPI_DEBUG_FAIL_AT_TRUE(a[__i] != b[__i], c) \
     }
 
-template<>
-inline bool DataBase<std::vector<int>>::operator==(const DataBase<std::vector<int>> & other) const
-{
-    VECT_MATCH(
-        virus_name, other.virus_name,
-        "DataBase:: virus_name don't match"
-        )
-
-    EPI_DEBUG_FAIL_AT_TRUE(
-        virus_sequence.size() != other.virus_sequence.size(),
-        "DataBase:: virus_sequence don't match."
-        )
-
-    for (size_t i = 0u; i < virus_sequence.size(); ++i)
-    {
-        VECT_MATCH(
-            virus_sequence[i], other.virus_sequence[i],
-            "DataBase:: virus_sequence[i] don't match"
-            )
-    }
-
-    VECT_MATCH(
-        virus_origin_date,
-        other.virus_origin_date,
-        "DataBase:: virus_origin_date[i] don't match"
-    )
-
-    VECT_MATCH(
-        virus_parent_id,
-        other.virus_parent_id,
-        "DataBase:: virus_parent_id[i] don't match"
-    )
-
-    VECT_MATCH(
-        tool_name,
-        other.tool_name,
-        "DataBase:: tool_name[i] don't match"
-    )
-
-    VECT_MATCH(
-        tool_sequence,
-        other.tool_sequence,
-        "DataBase:: tool_sequence[i] don't match"
-    )
-
-    VECT_MATCH(
-        tool_origin_date,
-        other.tool_origin_date,
-        "DataBase:: tool_origin_date[i] don't match"
-    )
-
-
-    EPI_DEBUG_FAIL_AT_TRUE(
-        sampling_freq != other.sampling_freq,
-        "DataBase:: sampling_freq don't match."
-        )
-
-    // Variants history
-    VECT_MATCH(
-        hist_virus_date,
-        other.hist_virus_date,
-        "DataBase:: hist_virus_date[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_virus_id,
-        other.hist_virus_id,
-        "DataBase:: hist_virus_id[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_virus_state,
-        other.hist_virus_state,
-        "DataBase:: hist_virus_state[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_virus_counts,
-        other.hist_virus_counts,
-        "DataBase:: hist_virus_counts[i] don't match"
-        )
-
-    // Tools history
-    VECT_MATCH(
-        hist_tool_date,
-        other.hist_tool_date,
-        "DataBase:: hist_tool_date[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_tool_id,
-        other.hist_tool_id,
-        "DataBase:: hist_tool_id[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_tool_state,
-        other.hist_tool_state,
-        "DataBase:: hist_tool_state[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_tool_counts,
-        other.hist_tool_counts,
-        "DataBase:: hist_tool_counts[i] don't match"
-        )
-
-    // Overall hist
-    VECT_MATCH(
-        hist_total_date,
-        other.hist_total_date,
-        "DataBase:: hist_total_date[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_total_nviruses_active,
-        other.hist_total_nviruses_active,
-        "DataBase:: hist_total_nviruses_active[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_total_state,
-        other.hist_total_state,
-        "DataBase:: hist_total_state[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_total_counts,
-        other.hist_total_counts,
-        "DataBase:: hist_total_counts[i] don't match"
-        )
-
-    VECT_MATCH(
-        hist_transition_matrix,
-        other.hist_transition_matrix,
-        "DataBase:: hist_transition_matrix[i] don't match"
-        )
-
-    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
-    EPI_DEBUG_FAIL_AT_TRUE(
-        today_virus.size() != other.today_virus.size(),
-        "DataBase:: today_virus don't match."
-        )
-    
-    for (size_t i = 0u; i < today_virus.size(); ++i)
-    {
-        VECT_MATCH(
-            today_virus[i], other.today_virus[i],
-            "DataBase:: today_virus[i] don't match"
-            )
-    }
-
-    // {Variant 1: {state 1, state 2, etc.}, Variant 2: {...}, ...}
-    if (today_tool.size() != other.today_tool.size())
-        return false;
-    
-    for (size_t i = 0u; i < today_tool.size(); ++i)
-    {
-        VECT_MATCH(
-            today_tool[i], other.today_tool[i],
-            "DataBase:: today_tool[i] don't match"
-            )
-    }
-
-    // {Susceptible, Infected, etc.}
-    VECT_MATCH(
-        today_total, other.today_total,
-        "DataBase:: today_total don't match"
-        )
-
-    // Totals
-    EPI_DEBUG_FAIL_AT_TRUE(
-        today_total_nviruses_active != other.today_total_nviruses_active,
-        "DataBase:: today_total_nviruses_active don't match."
-        )
-
-    // Transmission network
-    VECT_MATCH(
-        transmission_date,
-        other.transmission_date,                 ///< Date of the transmission eve,
-        "DataBase:: transmission_date[i] don't match"
-        )
-
-    VECT_MATCH(
-        transmission_source,
-        other.transmission_source,               ///< Id of the sour,
-        "DataBase:: transmission_source[i] don't match"
-        )
-
-    VECT_MATCH(
-        transmission_target,
-        other.transmission_target,               ///< Id of the targ,
-        "DataBase:: transmission_target[i] don't match"
-        )
-
-    VECT_MATCH(
-        transmission_virus,
-        other.transmission_virus,              ///< Id of the varia,
-        "DataBase:: transmission_virus[i] don't match"
-        )
-
-    VECT_MATCH(
-        transmission_source_exposure_date,
-        other.transmission_source_exposure_date, ///< Date when the source acquired the varia,
-        "DataBase:: transmission_source_exposure_date[i] don't match"
-        )
-
-    VECT_MATCH(
-        transmission_layer,
-        other.transmission_layer,
-        "DataBase:: transmission_layer[i] don't match"
-        )
-
-
-    VECT_MATCH(
-        transition_matrix,
-        other.transition_matrix,
-        "DataBase:: transition_matrix[i] don't match"
-        )
-
-
-    return true;
-
-}
-
-template<typename TSeq>
-inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
+inline bool DataBase::operator==(const DataBase & other) const
 {
     VECT_MATCH(
         virus_name,
@@ -1808,12 +1402,6 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
     )
 
     VECT_MATCH(
-        virus_sequence,
-        other.virus_sequence,
-        "DataBase:: virus_sequence[i] don't match"
-    )
-
-    VECT_MATCH(
         virus_origin_date,
         other.virus_origin_date,
         "DataBase:: virus_origin_date[i] don't match"
@@ -1829,12 +1417,6 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
         tool_name,
         other.tool_name,
         "DataBase:: tool_name[i] don't match"
-    )
-
-    VECT_MATCH(
-        tool_sequence,
-        other.tool_sequence,
-        "DataBase:: tool_sequence[i] don't match"
     )
 
     VECT_MATCH(
@@ -2017,8 +1599,7 @@ inline bool DataBase<TSeq>::operator==(const DataBase<TSeq> & other) const
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_generation_time(
+inline void DataBase::get_generation_time(
     std::vector< int > & agent_id,
     std::vector< int > & virus_id,
     std::vector< int > & time,
@@ -2069,8 +1650,7 @@ inline void DataBase<TSeq>::get_generation_time(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_generation_time(
+inline void DataBase::get_generation_time(
     std::string fn
 ) const
 {
@@ -2079,14 +1659,12 @@ inline void DataBase<TSeq>::get_generation_time(
 
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::record_hospitalization(Agent<TSeq> & agent)
+inline void DataBase::record_hospitalization(Agent & agent)
 {
     m_hospitalizations.record(agent, *model);
 }
 
-template<typename TSeq>
-inline void DataBase<TSeq>::get_hospitalizations(
+inline void DataBase::get_hospitalizations(
     std::vector<int> & date,
     std::vector<int> & virus_id,
     std::vector<int> & tool_id,
@@ -2101,5 +1679,40 @@ inline void DataBase<TSeq>::get_hospitalizations(
 }
 
 #undef VECT_MATCH
+
+inline void DataBase::get_hist_transitions(
+    std::vector< int > & date,
+    std::vector< std::string > & transition,
+    std::vector< int > & counts
+) const
+{
+
+    if (!model->nh)
+        throw std::logic_error(
+            "get_hist_transitions() needs a model with a natural history."
+        );
+
+    date = hist_transition_date;
+    counts = hist_transition_counts;
+    // Stage transitions first, then the status ones
+    const int n_stage = static_cast< int >(model->nh->get_n_transitions());
+    transition.resize(hist_transition_id.size());
+    for (size_t k = 0u; k < hist_transition_id.size(); ++k)
+    {
+        const int t = hist_transition_id[k];
+        transition[k] = (t < n_stage) ?
+            model->nh->get_transition(t).name :
+            model->st->get_transition(t - n_stage).name;
+    }
+
+}
+
+inline void SaverMemory::operator()(size_t sim_id, Model * model) const
+{
+    auto out = model->get_db().get_run_outputs(state->whats);
+    if (sim_id >= state->runs.size())
+        state->runs.resize(sim_id + 1u);
+    state->runs[sim_id] = std::move(out);
+}
 
 #endif

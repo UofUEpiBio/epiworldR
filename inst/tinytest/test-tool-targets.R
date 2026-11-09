@@ -1,8 +1,8 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-tool-targets.R")
 
-# Two-virus model: virus "A" is created by the model (lineage 0) and virus "B"
-# is added afterwards (lineage 1).
-make_model <- function() {
+# Two-virus model: virus "A" is created by the model (lineage 0) and virus "B",
+# a strain of it, is added afterwards (lineage 1).
+two_virus_model <- function() {
 
   model <- ModelSIR(
     name              = "A",
@@ -20,17 +20,12 @@ make_model <- function() {
 
   verbose_off(model)
 
-  virus_b <- virus(
-    name           = "B",
-    prevalence     = 20,
-    as_proportion  = FALSE,
-    prob_infecting = 0.5,
-    recovery_rate  = 0.2
-  )
+  virus_b <- clone_epi(get_virus(model, 0))
+  set_name_virus(virus_b, "B")
+  add_virus(model, virus_b, assign_count(20))
 
-  add_virus(model, virus_b)
-
-  list(model = model, virus_b = virus_b)
+  # The model's copy has the lineage id (the caller's has none)
+  list(model = model, virus_b = get_virus(model, 1), added = virus_b)
 
 }
 
@@ -38,8 +33,6 @@ make_model <- function() {
 make_tool <- function() {
   tool(
     name                     = "Perfect vaccine",
-    prevalence               = 1,
-    as_proportion            = TRUE,
     susceptibility_reduction = 1,
     transmission_reduction   = 0,
     recovery_enhancer        = 0,
@@ -54,16 +47,16 @@ n_transmissions <- function(model, virus_id) {
 }
 
 # Lineage ids ------------------------------------------------------------------
-m <- make_model()
+m <- two_virus_model()
 expect_equal(get_lineage_virus(get_virus(m$model, 0)), 0L)
 expect_equal(get_lineage_virus(get_virus(m$model, 1)), 1L)
-expect_equal(get_lineage_virus(m$virus_b), 1L) # add_virus() assigns it
+expect_equal(get_lineage_virus(m$virus_b), 1L) # The model's copy
 
-virus_c <- virus(
-  name = "C", prevalence = 1, as_proportion = FALSE,
-  prob_infecting = 0.5, recovery_rate = 0.2
-)
-expect_true(is.na(get_lineage_virus(virus_c))) # not added to a model yet
+# The copy given to add_virus() is unchanged: it keeps its source's lineage
+expect_equal(get_lineage_virus(m$added), 0L)
+
+virus_c <- virus("C")
+expect_true(is.na(get_lineage_virus(virus_c))) # never in a model
 
 # Getters and setters ----------------------------------------------------------
 t0 <- make_tool()
@@ -111,36 +104,36 @@ expect_error(set_targets_tool(t0, c(1, 70)))
 expect_identical(get_targets_tool(t0), 4L)
 
 # Default: the tool acts on every virus ----------------------------------------
-m_all <- make_model()
-add_tool(m_all$model, make_tool())
+m_all <- two_virus_model()
+add_tool(m_all$model, make_tool(), assign_share(1))
 run(m_all$model, ndays = 20, seed = 1231)
 expect_equal(n_transmissions(m_all$model, 0), 0)
 expect_equal(n_transmissions(m_all$model, 1), 0)
 
 # Targeting A: protects against A but not B ------------------------------------
-m_a <- make_model()
+m_a <- two_virus_model()
 t_a <- make_tool()
 add_target_tool(t_a, get_virus(m_a$model, 0))
-add_tool(m_a$model, t_a)
+add_tool(m_a$model, t_a, assign_share(1))
 expect_identical(get_targets_tool(get_tool(m_a$model, 0)), 0L)
 run(m_a$model, ndays = 20, seed = 1231)
 expect_equal(n_transmissions(m_a$model, 0), 0)
 expect_true(n_transmissions(m_a$model, 1) > 0)
 
 # Targeting B (by virus object): protects against B but not A ------------------
-m_b <- make_model()
+m_b <- two_virus_model()
 t_b <- make_tool()
 add_target_tool(t_b, m_b$virus_b)
-add_tool(m_b$model, t_b)
+add_tool(m_b$model, t_b, assign_share(1))
 run(m_b$model, ndays = 20, seed = 1231)
 expect_true(n_transmissions(m_b$model, 0) > 0)
 expect_equal(n_transmissions(m_b$model, 1), 0)
 
 # Targets survive run_multiple() (the model's tools are copied per thread) ----
-m_mult <- make_model()
+m_mult <- two_virus_model()
 t_mult <- make_tool()
 add_target_tool(t_mult, 0)
-add_tool(m_mult$model, t_mult)
+add_tool(m_mult$model, t_mult, assign_share(1))
 saver <- make_saver("transmission")
 run_multiple(
   m_mult$model, ndays = 20, nsims = 2, seed = 1231, saver = saver,

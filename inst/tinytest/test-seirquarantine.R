@@ -23,7 +23,7 @@ model <- ModelSEIRQuarantine(
   contact_tracing_window = 4L
 )
 verbose_off(model)
-set_distribution_virus(get_virus(model, 0), distribute_virus_to_set(0L))
+assign_virus(model, 0, assign_agents(0L))
 
 ring <- layer_network(
   "ring",
@@ -43,10 +43,11 @@ run(model, ndays = 3, seed = 1)
 expect_true(is_tracing(ring))
 expect_true(is_tracing(households))
 
-states <- get_agents_states(model)
-expect_equal(states[1], "Isolated")
+statuses <- get_agents_statuses(model)
+stages   <- get_agents_stages(model)
+expect_equal(statuses[1], "Isolated")
 expect_equal(
-  which(states == "Quarantined Susceptible") - 1L,
+  which(statuses == "Quarantined" & stages == "Susceptible") - 1L,
   c(1L, 2L, 3L, n - 1L)
 )
 

@@ -4,12 +4,15 @@
 \alias{epiworld-transition}
 \alias{epiworld_hist_transition}
 \alias{get_hist_transition_matrix}
+\alias{get_hist_transitions}
 \alias{as.array.epiworld_hist_transition}
 \alias{plot_incidence}
 \alias{plot.epiworld_hist_transition}
 \title{Transition dynamics and incidence}
 \usage{
 get_hist_transition_matrix(x, skip_zeros = FALSE)
+
+get_hist_transitions(x)
 
 \method{as.array}{epiworld_hist_transition}(x, ...)
 
@@ -33,24 +36,31 @@ plot_incidence(x, ...)
 entries in the transition matrix.}
 
 \item{...}{In the case of plot methods, further arguments passed to
-\link[graphics:plot.default]{graphics::plot}.}
+\link[graphics:plot]{graphics::plot}.}
 
-\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot.default]{graphics::plot()}}}
+\item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
 
 \item{plot}{Logical scalar. If \code{TRUE} (default), the function will plot the
 desired statistic.}
 }
 \value{
 \itemize{
-\item \code{get_hist_transition_matrix} returns a \link{data.frame} with four columns:
-"state_from", "state_to", "date", and "counts."
+\item \code{get_hist_transition_matrix} returns a \link{data.frame} with six columns:
+"status_from", "stage_from", "status_to", "stage_to", "date", and "counts".
+}
+
+\itemize{
+\item \code{get_hist_transitions} returns a \link{data.frame} with how many times each
+declared transition fired each day: "date", "transition" (its name, see
+\code{\link[=add_rate]{add_rate()}}), and "counts".
 }
 
 \itemize{
 \item The \code{as.array} method for \code{epiworld_hist_transition} objects turns the
 \code{data.frame} returned by \code{get_hist_transition_matrix} into an array of
-\verb{nstates x nstates x (ndays + 1)}
-entries, where the first entry is the initial state.
+\verb{nstages x nstages x (ndays + 1)} entries (in a model with statuses, one row
+and column per pair of status and stage, labeled \code{"Status / Stage"}), where
+the first entry is the initial state.
 }
 
 \itemize{
@@ -72,8 +82,8 @@ The \code{plot_incidence} function is a wrapper between
 \link{get_hist_transition_matrix} and its plot method.
 
 The plot method for the \code{epiworld_hist_transition} class plots the
-daily incidence of each state. The function returns the data frame used for
-plotting.
+daily incidence of each stage: the agents that entered it each day, from
+another stage. The function returns the data frame used for plotting.
 }
 \examples{
 # SEIR Connected model

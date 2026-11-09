@@ -28,6 +28,43 @@
 \alias{add_entities_from_dataframe}
 \alias{distribute_tool_to_entities}
 \alias{distribute_virus_to_entities}
+\alias{add_state}
+\alias{set_state_function}
+\alias{update_fun_rate}
+\alias{update_fun_susceptible}
+\alias{virus_set_state}
+\alias{set_infectious_states}
+\alias{get_infectious_states}
+\alias{get_states}
+\alias{get_state}
+\alias{get_agents_states}
+\alias{change_state}
+\alias{initial_states}
+\alias{set_prob_infecting}
+\alias{set_prob_infecting_ptr}
+\alias{set_prob_infecting_fun}
+\alias{set_prob_recovery}
+\alias{set_prob_recovery_ptr}
+\alias{set_prob_recovery_fun}
+\alias{set_prob_death}
+\alias{set_prob_death_ptr}
+\alias{set_prob_death_fun}
+\alias{set_incubation}
+\alias{set_incubation_ptr}
+\alias{set_incubation_fun}
+\alias{virus_fun_logit}
+\alias{set_distribution_virus}
+\alias{distribute_virus_randomly}
+\alias{distribute_virus_to_set}
+\alias{distribute_virus_set}
+\alias{distribute_virus_to_groups}
+\alias{add_virus_n}
+\alias{set_distribution_tool}
+\alias{distribute_tool_randomly}
+\alias{distribute_tool_to_set}
+\alias{distribute_tool_to_groups}
+\alias{add_tool_n}
+\alias{grouping_random}
 \title{Defunct functions in epiworldR}
 \usage{
 agents_smallworld(...)
@@ -81,6 +118,80 @@ add_entities_from_dataframe(...)
 distribute_tool_to_entities(...)
 
 distribute_virus_to_entities(...)
+
+add_state(...)
+
+set_state_function(...)
+
+update_fun_rate(...)
+
+update_fun_susceptible(...)
+
+virus_set_state(...)
+
+set_infectious_states(...)
+
+get_infectious_states(...)
+
+get_states(...)
+
+get_state(...)
+
+get_agents_states(...)
+
+change_state(...)
+
+initial_states(...)
+
+set_prob_infecting(...)
+
+set_prob_infecting_ptr(...)
+
+set_prob_infecting_fun(...)
+
+set_prob_recovery(...)
+
+set_prob_recovery_ptr(...)
+
+set_prob_recovery_fun(...)
+
+set_prob_death(...)
+
+set_prob_death_ptr(...)
+
+set_prob_death_fun(...)
+
+set_incubation(...)
+
+set_incubation_ptr(...)
+
+set_incubation_fun(...)
+
+virus_fun_logit(...)
+
+set_distribution_virus(...)
+
+distribute_virus_randomly(...)
+
+distribute_virus_to_set(...)
+
+distribute_virus_set(...)
+
+distribute_virus_to_groups(...)
+
+add_virus_n(...)
+
+set_distribution_tool(...)
+
+distribute_tool_randomly(...)
+
+distribute_tool_to_set(...)
+
+distribute_tool_to_groups(...)
+
+add_tool_n(...)
+
+grouping_random(...)
 }
 \arguments{
 \item{...}{Ignored.}
@@ -88,9 +199,11 @@ distribute_virus_to_entities(...)
 \description{
 These functions were removed in epiworldR 1.0.0, when the population and
 the contacts of a model moved to its constructor and its contact layers
-(see \link{contact-layers}). A model's states describe the course of infection and
-its layers describe who meets whom, so the models that differed only in
-where contacts came from are gone too.
+(see \link{contact-layers}), and the course of infection moved to the virus's
+natural history (its stages and transitions, see \code{\link[=virus]{virus()}}). A model's
+layers describe who meets whom, so the models that differed only in where
+contacts came from are gone too; and one vocabulary (\link{assign}) places
+viruses, tools, initial stages and groups.
 Calling them is an error that says what to use instead:
 }
 \details{
@@ -106,21 +219,58 @@ Calling them is an error that says what to use instead:
 \item \code{ModelSIRMixing()}: Use ModelSIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
 \item \code{ModelSEIRMixing()}: Use ModelSEIR() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)).
 \item \code{ModelSEIRMixingQuarantine()}: Use ModelSEIRQuarantine() and add_layer(model, layer_mixing(name, groups, contact_matrix = contact_matrix)); it traces every layer it is given.
-\item \code{get_entities()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{get_entity_size()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{get_entity_name()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{entity_add_agent()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{add_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{rm_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{load_agents_entities_ties()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{entity_get_agents()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{distribute_entity_randomly()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{distribute_entity_to_set()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{set_distribution_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{add_entities_from_dataframe()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or grouping_random(sizes, as_proportion); members_of(layer, group) and get_group(layer, agent) read them.
-\item \code{distribute_tool_to_entities()}: Use distribute_tool_to_groups(layer, prevalence, as_proportion) with the name of a mixing layer.
-\item \code{distribute_virus_to_entities()}: Use distribute_virus_to_groups(layer, prevalence, as_proportion) with the name of a mixing layer.
+\item \code{get_entities()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{get_entity_size()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{get_entity_name()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity_add_agent()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{add_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{rm_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{load_agents_entities_ties()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{entity_get_agents()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_entity_randomly()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_entity_to_set()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{set_distribution_entity()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{add_entities_from_dataframe()}: Entities are gone: groups live in a mixing layer. add_layer(model, layer_mixing(name, groups, ...)), with groups a vector (one group per agent) or a placement (e.g., assign_counts(sizes)); members_of(layer, group) and get_group(layer, agent) read them.
+\item \code{distribute_tool_to_entities()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_virus_to_entities()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{add_state()}: States are gone: the virus carries the stages of the disease and the transitions between them (add_stage(), add_infection(), add_rate(), add_after(); see help("virus")).
+\item \code{set_state_function()}: States are gone: the virus carries the stages of the disease and the transitions between them (add_stage(), add_infection(), add_rate(), add_after(); see help("virus")).
+\item \code{update_fun_rate()}: States are gone: the virus carries the stages of the disease and the transitions between them (add_stage(), add_infection(), add_rate(), add_after(); see help("virus")).
+\item \code{update_fun_susceptible()}: States are gone: the virus carries the stages of the disease and the transitions between them (add_stage(), add_infection(), add_rate(), add_after(); see help("virus")).
+\item \code{virus_set_state()}: States are gone: the virus carries the stages of the disease and the transitions between them (add_stage(), add_infection(), add_rate(), add_after(); see help("virus")).
+\item \code{set_infectious_states()}: A stage transmits if it is declared infectious: add_stage(virus, label, infectious = TRUE).
+\item \code{get_infectious_states()}: Use get_stages(virus) (its -infectious- column).
+\item \code{get_states()}: Use get_stages(model) and get_statuses(model).
+\item \code{get_state()}: Use get_stage(model, agent) and get_status(model, agent).
+\item \code{get_agents_states()}: Use get_agents_stages(model) and get_agents_statuses(model).
+\item \code{change_state()}: An agent moves only along a declared transition: fire(model, transition, agent_id) (e.g., an external one, add_external()).
+\item \code{initial_states()}: Use set_initial(model, assign_shares(c(\if{html}{\out{<stage>}} = \if{html}{\out{<share>}}, ...))): the agents start in stages without the virus.
+\item \code{set_prob_infecting()}: A virus holds no values: its transitions name model parameters. Declare the probability of infection as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_infecting_ptr()}: A virus holds no values: its transitions name model parameters. Declare the probability of infection as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_infecting_fun()}: A virus holds no values: its transitions name model parameters. Declare the probability of infection as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_recovery()}: A virus holds no values: its transitions name model parameters. Declare the recovery as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_recovery_ptr()}: A virus holds no values: its transitions name model parameters. Declare the recovery as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_recovery_fun()}: A virus holds no values: its transitions name model parameters. Declare the recovery as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_death()}: A virus holds no values: its transitions name model parameters. Declare the death as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_death_ptr()}: A virus holds no values: its transitions name model parameters. Declare the death as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_prob_death_fun()}: A virus holds no values: its transitions name model parameters. Declare the death as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_incubation()}: A virus holds no values: its transitions name model parameters. Declare the incubation as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_incubation_ptr()}: A virus holds no values: its transitions name model parameters. Declare the incubation as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{set_incubation_fun()}: A virus holds no values: its transitions name model parameters. Declare the incubation as a transition (add_infection(), add_rate() or add_after(), with a number, a parameter name, value_fun() or rate_fun_logit()); a strain reads other parameters with use_param().
+\item \code{virus_fun_logit()}: Use rate_fun_logit(vars, coefs, model) as a transition's value.
+\item \code{set_distribution_virus()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_virus_randomly()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_virus_to_set()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_virus_set()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_virus_to_groups()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{add_virus_n()}: Place the virus when adding it: add_virus(model, virus, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{set_distribution_tool()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_tool_randomly()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_tool_to_set()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{distribute_tool_to_groups()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{add_tool_n()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
+\item \code{grouping_random()}: Give layer_mixing() a placement whose labels are the groups: assign_counts(sizes) or assign_shares(proportions) (see help("assign")).
 }
 }
 \keyword{internal}

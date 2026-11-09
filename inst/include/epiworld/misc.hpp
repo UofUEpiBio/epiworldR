@@ -1,10 +1,8 @@
 #ifndef EPIWORLD_MISC_HPP
 #define EPIWORLD_MISC_HPP
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class Agent;
 
 // Relevant for anything using vecHasher function ------------------------------
@@ -35,65 +33,6 @@ template<typename Ta = epiworld_double, typename Tb = epiworld_fast_uint>
 using MapVec_type = std::unordered_map< std::vector< Ta >, Tb, vecHasher<Ta>>;
 
 /**
- * @name Default sequence initializers
- *
- * @details
- * If the user does not provide a default sequence, this function is used when
- * a sequence needs to be initialized. Some examples: `Agent`, `Virus`, and
- * `Tool` need a default sequence.
- *
- * @tparam TSeq
- * @return TSeq
- */
-///@{
-template<typename TSeq = EPI_DEFAULT_TSEQ>
-inline TSeq default_sequence(int seq_count);
-
-// Making it 'static' so that we don't have problems when including the
-// header. This is important during the linkage, e.g., in R.
-// See https://en.cppreference.com/w/cpp/language/storage_duration#Linkage
-// static int _n_sequences_created = 0;
-
-template<>
-inline bool default_sequence(int seq_count) {
-
-    if (seq_count == 2)
-        throw std::logic_error("Maximum number of sequence created.");
-
-    return seq_count++ ? false : true;
-}
-
-template<>
-inline int default_sequence(int seq_count) {
-    return seq_count++;
-}
-
-template<>
-inline epiworld_double default_sequence(int seq_count) {
-    return static_cast<epiworld_double>(seq_count++);
-}
-
-template<>
-inline std::vector<bool> default_sequence(int seq_count) {
-
-    if (seq_count == 2)
-        throw std::logic_error("Maximum number of sequence created.");
-
-    return {seq_count++ ? false : true};
-}
-
-template<>
-inline std::vector<int> default_sequence(int seq_count) {
-    return {seq_count++};
-}
-
-template<>
-inline std::vector<epiworld_double> default_sequence(int seq_count) {
-    return {static_cast<epiworld_double>(seq_count++)};
-}
-///@}
-
-/**
  * @brief Check whether `a` is included in `b`
  *
  * @tparam Ta Type of `a`. Could be int, epiworld_double, etc.
@@ -109,140 +48,6 @@ inline bool IN(const Ta & a, const std::vector< Ta > & b) noexcept
             return true;
 
     return false;
-}
-
-/**
- * @brief Conditional Weighted Sampling
- *
- * @details
- * The sampling function will draw one of `{-1, 0,...,probs.size() - 1}` in a
- * weighted fashion. The probabilities are drawn given that either one or none
- * of the cases is drawn; in the latter returns -1.
- *
- * @param probs Vector of probabilities.
- * @param m A `Model`. This is used to draw random uniform numbers.
- * @return int If -1 then it means that none got sampled, otherwise the index
- * of the entry that got drawn.
- */
-template<typename TSeq = EPI_DEFAULT_TSEQ, typename TDbl = epiworld_double >
-inline int roulette(
-    const std::vector< TDbl > & probs,
-    Model<TSeq> * m
-    )
-{
-
-    // Step 1: a probability of 1 is a certain event; if there are any, one of
-    // them is drawn uniformly. (This used to test `> 1 - 1e-100`, which is
-    // `> 1` in floating point, so p == 1 fell through to 0/0 below and the
-    // last entry won regardless.)
-    std::vector< int > certain_infection;
-    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
-        if (probs[p] >= 1.0)
-            certain_infection.push_back(static_cast<int>(p));
-
-    TDbl r = static_cast<TDbl>(m->runif());
-    if (certain_infection.size() > 0)
-        return certain_infection[std::floor(r * certain_infection.size())];
-
-    // Step 2: the odds r_p = p / (1 - p) and their sum R. Then
-    // P(none) = 1 / (1 + R) and P(p) = r_p / (1 + R), the same as normalizing
-    // by prod(1 - p), which underflows to 0 with many entries (0/0 weights).
-    std::vector< TDbl > odds(probs.size());
-    TDbl odds_total = 0.0;
-    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
-    {
-        odds[p] = probs[p] / (1.0 - probs[p]);
-        odds_total += odds[p];
-    }
-
-    // Step 3: Roulette
-    TDbl cumsum = 1.0 / (1.0 + odds_total);
-    if (r < cumsum)
-        return -1;
-
-    for (epiworld_fast_uint p = 0u; p < probs.size(); ++p)
-    {
-        // If it yield here, then bingo, the individual will acquire the disease
-        cumsum += odds[p] / (1.0 + odds_total);
-        if (r < cumsum)
-            return static_cast<int>(p);
-
-    }
-
-    #ifdef EPI_DEBUG
-    printf_epiworld("[epi-debug] roulette::cumsum = %.4f\n", cumsum);
-    #endif
-
-    return static_cast<int>(probs.size() - 1u);
-
-}
-
-template<typename TSeq>
-inline int roulette(std::vector< double > & probs, Model<TSeq> * m)
-{
-    return roulette<TSeq, double>(probs, m);
-}
-
-template<typename TSeq>
-inline int roulette(std::vector< float > & probs, Model<TSeq> * m)
-{
-    return roulette<TSeq, float>(probs, m);
-}
-
-
-template<typename TSeq>
-inline int roulette(
-    epiworld_fast_uint nelements,
-    Model<TSeq> * m
-    )
-{
-
-    if ((nelements * 2) > m->array_double_tmp.size())
-    {
-        throw std::logic_error(
-            "Trying to sample from more data than there is in roulette!" +
-            std::to_string(nelements) + " vs " +
-            std::to_string(m->array_double_tmp.size())
-            );
-    }
-
-    auto & tmp = m->array_double_tmp;
-
-    // Step 1: certain events (p >= 1; see the vector version), drawn uniformly
-    epiworld_fast_uint ncertain = 0u;
-    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
-        if (tmp[p] >= 1.0)
-            tmp[nelements + ncertain++] = p;
-
-    epiworld_double r = m->runif();
-    if (ncertain > 0u)
-        return tmp[nelements + std::floor(ncertain * r)];
-
-    // Step 2: the odds and their sum, normalized by 1 + sum (see the vector
-    // version; prod(1 - p) underflows with many exposures)
-    epiworld_double odds_total = 0.0;
-    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
-    {
-        tmp[nelements + p] = tmp[p] / (1.0 - tmp[p]);
-        odds_total += tmp[nelements + p];
-    }
-
-    // Step 3: Roulette
-    epiworld_double cumsum = 1.0 / (1.0 + odds_total);
-    if (r < cumsum)
-        return -1;
-
-    for (epiworld_fast_uint p = 0u; p < nelements; ++p)
-    {
-        // If it yield here, then bingo, the individual will acquire the disease
-        cumsum += tmp[nelements + p] / (1.0 + odds_total);
-        if (r < cumsum)
-            return static_cast<int>(p);
-
-    }
-
-    return static_cast<int>(nelements - 1u);
-
 }
 
 /**
@@ -360,8 +165,8 @@ inline unsigned int epi_ctz64(uint64_t x)
 #endif
 }
 
-template<class To, class TSeq>
-inline To* model_cast(Model<TSeq>* m) {
+template<class To>
+inline To* model_cast(Model* m) {
 #ifdef EPI_DEBUG
     auto* out = dynamic_cast<To*>(m);
     assert(out != nullptr);

@@ -1,29 +1,17 @@
 #ifndef EPIWORLD_PERSON_BONES_HPP
 #define EPIWORLD_PERSON_BONES_HPP
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class Virus;
 
-template<typename TSeq>
-class Viruses;
-
-template<typename TSeq>
-class Viruses_const;
-
-template<typename TSeq>
 class Tool;
 
 
-template<typename TSeq>
 class Queue;
 
-template<typename TSeq>
 struct Event;
 
-template<typename TSeq>
 class AgentsSample;
 
 /**
@@ -42,31 +30,29 @@ class AgentsSample;
  * from the layer and the model, so it must not outlive either, and it is
  * invalidated by anything that changes the agent's ties.
  *
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
  */
-template<typename TSeq = EPI_DEFAULT_TSEQ>
 class NeighborsView {
 private:
 
     const size_t * first = nullptr;
     size_t n = 0u;
-    std::vector< Agent<TSeq> > * pop = nullptr;
+    std::vector< Agent > * pop = nullptr;
 
 public:
 
     class iterator {
 
-        friend class NeighborsView<TSeq>;
+        friend class NeighborsView;
 
         const size_t * ptr = nullptr;
-        std::vector< Agent<TSeq> > * pop = nullptr;
+        std::vector< Agent > * pop = nullptr;
 
-        iterator(const size_t * ptr, std::vector< Agent<TSeq> > * pop) :
+        iterator(const size_t * ptr, std::vector< Agent > * pop) :
             ptr(ptr), pop(pop) {}
 
     public:
 
-        Agent<TSeq> * operator*() const { return &pop->operator[](*ptr); }
+        Agent * operator*() const { return &pop->operator[](*ptr); }
         iterator & operator++() { ++ptr; return *this; }
         bool operator!=(const iterator & other) const { return ptr != other.ptr; }
         bool operator==(const iterator & other) const { return ptr == other.ptr; }
@@ -78,7 +64,7 @@ public:
     NeighborsView(
         const size_t * first,
         size_t n,
-        std::vector< Agent<TSeq> > * pop
+        std::vector< Agent > * pop
     ) : first(first), n(n), pop(pop) {}
 
     // The size is carried rather than derived as `last - first`: an agent with
@@ -101,7 +87,7 @@ public:
 
     /// The `k`-th neighbor.
     /// @throws std::out_of_range if `k >= size()`.
-    Agent<TSeq> * agent(size_t k) const
+    Agent * agent(size_t k) const
     {
         if (k >= n)
             throw std::out_of_range("NeighborsView::agent(): index out of range.");
@@ -118,15 +104,15 @@ public:
 /**
  * @brief Agent (agents)
  * 
- * @tparam TSeq Sequence type (should match `TSeq` across the model)
  */
-template<typename TSeq>
 class Agent {
-    friend class Model<TSeq>;
-    friend class Virus<TSeq>;
-    friend class Tool<TSeq>;
-    friend class Queue<TSeq>;
-    friend class AgentsSample<TSeq>;
+    friend class Model;
+    friend class Virus;
+    friend class Tool;
+    friend class Queue;
+    friend class AgentsSample;
+    friend class DataBase;
+    friend class layer::Network;
 protected:
 
     unsigned int state = 0u;
@@ -135,66 +121,89 @@ protected:
     int state_last_changed = -1; ///< Last time the agent was updated.
     int id = -1;
     
-    VirusPtr<TSeq> virus = nullptr;
+    VirusPtr virus = nullptr;
 
-    std::vector< ToolPtr<TSeq> > tools;
+    std::vector< ToolPtr > tools;
 
     void reset(); ///< Resets the agent to the initial state (no virus, no tools, state 0.)
+
+    /**
+     * @name The engine's changes (with the target state and queue)
+     * @details -99 means the default: no change of state (tools), the
+     * infection's target (a virus given from outside).
+     */
+    ///@{
+    void add_tool(
+        Model & model,
+        const Tool & tool,
+        epiworld_fast_int state_new,
+        epiworld_fast_int queue
+        );
+
+    void set_virus(
+        Model & model,
+        const Virus & virus,
+        epiworld_fast_int state_new,
+        epiworld_fast_int queue
+        );
+
+    void rm_tool(
+        Model & model,
+        epiworld_fast_uint tool_idx,
+        epiworld_fast_int state_new,
+        epiworld_fast_int queue
+    );
+
+    void rm_tool(
+        Model & model,
+        ToolPtr & tool,
+        epiworld_fast_int state_new,
+        epiworld_fast_int queue
+    );
+
+    void rm_virus(
+        Model & model,
+        epiworld_fast_int state_new,
+        epiworld_fast_int queue
+    );
+
+    void change_state(
+        Model & model,
+        epiworld_fast_uint new_state,
+        epiworld_fast_int queue = 0
+        );
+
+    /// The engine's index of the agent's stage and status (see
+    /// `Model::get_stage()` and `Model::get_status()`).
+    unsigned int get_state() const;
+    unsigned int get_state_prev() const;
+    ///@}
 
 public:
 
     Agent() = default;
-    Agent(Agent<TSeq> && p);
-    Agent(const Agent<TSeq> & p);
-    Agent<TSeq> & operator=(const Agent<TSeq> & other_agent);
+    Agent(Agent && p);
+    Agent(const Agent & p);
+    Agent & operator=(const Agent & other_agent);
     ~Agent();
 
     /**
      * @name Add/Remove Virus/Tool
-     * 
-     * Any of these is ultimately reflected at the end of the iteration.
-     * 
+     *
+     * Any of these is ultimately reflected at the end of the iteration. A
+     * virus given to an agent takes it through the infection transition out
+     * of its stage (see `NaturalHistory`); moving an agent otherwise is done
+     * with `Model::fire()`.
+     *
      * @param tool Tool to add
      * @param virus Virus to add
-     * @param state_new state after the change
-     * @param queue 
      */
     ///@{
-    void add_tool(
-        Model<TSeq> & model,
-        const Tool<TSeq> & tool,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-        );
-
-    void set_virus(
-        Model<TSeq> & model,
-        const Virus<TSeq> & virus,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-        );
-
-    void rm_tool(
-        Model<TSeq> & model,
-        epiworld_fast_uint tool_idx,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-    );
-
-    void rm_tool(
-        Model<TSeq> & model,
-        ToolPtr<TSeq> & tool,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-    );
-
-    void rm_virus(
-        Model<TSeq> & model,
-        epiworld_fast_int state_new = -99,
-        epiworld_fast_int queue = -99
-    );
-
-    void rm_agent_by_virus(Model<TSeq> & model) = delete; ///< Agent removed by virus
+    void add_tool(Model & model, const Tool & tool);
+    void set_virus(Model & model, const Virus & virus);
+    void rm_tool(Model & model, epiworld_fast_uint tool_idx);
+    void rm_tool(Model & model, ToolPtr & tool);
+    void rm_agent_by_virus(Model & model) = delete; ///< Agent removed by virus
     ///@}
     
     /**
@@ -204,47 +213,39 @@ public:
      * @return epiworld_double 
      */
     ///@{
-    epiworld_double get_susceptibility_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
-    epiworld_double get_transmission_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
-    epiworld_double get_recovery_enhancer(VirusPtr<TSeq> & v, Model<TSeq> & model);
-    epiworld_double get_death_reduction(VirusPtr<TSeq> & v, Model<TSeq> & model);
+    epiworld_double get_susceptibility_reduction(VirusPtr & v, Model & model);
+    epiworld_double get_transmission_reduction(VirusPtr & v, Model & model);
+    epiworld_double get_recovery_enhancer(VirusPtr & v, Model & model);
+    epiworld_double get_death_reduction(VirusPtr & v, Model & model);
     ///@}
 
     int get_id() const; ///< Id of the individual
 
-    VirusPtr<TSeq> & get_virus();
-    const VirusPtr<TSeq> & get_virus() const;
+    VirusPtr & get_virus();
+    const VirusPtr & get_virus() const;
 
-    ToolPtr<TSeq> & get_tool(int i);
-    ToolPtr<TSeq> & get_tool(std::string name);
+    ToolPtr & get_tool(int i);
+    ToolPtr & get_tool(std::string name);
 
-    std::vector<ToolPtr<TSeq>> get_tools();
-    const std::vector<ToolPtr<TSeq>> get_tools() const;
+    std::vector<ToolPtr> get_tools();
+    const std::vector<ToolPtr> get_tools() const;
     size_t get_n_tools() const noexcept;
 
     /// @brief Applies the virus' mutation function (throws if the agent has no virus).
-    void mutate_virus(Model<TSeq> & model);
+    void mutate_virus(Model & model);
 
-
-    void change_state(
-        Model<TSeq> & model,
-        epiworld_fast_uint new_state,
-        epiworld_fast_int queue = 0
-        );
-
-    unsigned int get_state() const;
-    unsigned int get_state_prev() const;
+    /// The last day the agent's stage or status changed.
     int get_state_last_changed() const;
 
 
     bool has_tool(epiworld_fast_uint t) const;
     bool has_tool(std::string_view name) const;
-    bool has_tool(const Tool<TSeq> & t) const;
+    bool has_tool(const Tool & t) const;
     bool has_virus(epiworld_fast_uint t) const;
     bool has_virus(std::string_view name) const;
-    bool has_virus(const Virus<TSeq> & v) const;
+    bool has_virus(const Virus & v) const;
 
-    void print(Model<TSeq> & model, bool compressed = false) const;
+    void print(Model & model, bool compressed = false) const;
 
     /**
      * @brief Access the j-th column of the agent
@@ -258,12 +259,12 @@ public:
      * @return double& 
      */
     ///@{
-    double & operator()(size_t j, Model<TSeq> & model);
-    double operator()(size_t j, const Model<TSeq> & model) const;
+    double & operator()(size_t j, Model & model);
+    double operator()(size_t j, const Model & model) const;
     ///@}
 
-    bool operator==(const Agent<TSeq> & other) const;
-    bool operator!=(const Agent<TSeq> & other) const {return !operator==(other);};
+    bool operator==(const Agent & other) const;
+    bool operator!=(const Agent & other) const {return !operator==(other);};
 
 };
 

@@ -22,7 +22,7 @@ The function is automatically called when plotting an object of class
 \code{epiworld_multiple_save}. It constructs a transition matrix from the
 provided data frame, normalizes the rows to represent probabilities, and
 then visualizes it using a mermaid diagram. The resulting plot illustrates
-the transitions between different states in the model, with the thickness of
-the arrows corresponding to the transition.
+the transitions between the stages of the model (summed over the statuses),
+with the thickness of the arrows corresponding to the transition.
 }
 \concept{epiworld-model-diagrams}

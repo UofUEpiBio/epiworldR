@@ -6,6 +6,7 @@
 \alias{set_name_tool}
 \alias{get_name_tool}
 \alias{add_tool}
+\alias{assign_tool}
 \alias{rm_tool}
 \alias{tool_fun_logit}
 \alias{set_susceptibility_reduction}
@@ -25,19 +26,20 @@
 \usage{
 tool(
   name,
-  prevalence,
-  as_proportion,
   susceptibility_reduction,
   transmission_reduction,
   recovery_enhancer,
-  death_reduction
+  death_reduction,
+  ...
 )
 
 set_name_tool(tool, name)
 
 get_name_tool(tool)
 
-add_tool(model, tool, proportion)
+add_tool(model, tool, assign = NULL)
+
+assign_tool(model, tool_pos, assign)
 
 rm_tool(model, tool_pos)
 
@@ -72,13 +74,6 @@ set_death_reduction_fun(tool, model, tfun)
 \arguments{
 \item{name}{Name of the tool}
 
-\item{prevalence}{Numeric scalar. Proportion or count of agents that will be
-assigned the tool. The interpretation of this argument depends on the value
-of \code{as_proportion}.}
-
-\item{as_proportion}{Logical scalar. If \code{TRUE}, the \code{prevalence} argument is
-treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
-
 \item{susceptibility_reduction}{Numeric. Proportion it reduces susceptibility.}
 
 \item{transmission_reduction}{Numeric. Proportion it reduces transmission.}
@@ -87,11 +82,15 @@ treated as a proportion. If \code{FALSE}, it is treated as a count of agents.}
 
 \item{death_reduction}{Numeric. Proportion it reduces probability of death.}
 
+\item{...}{Currently ignored.}
+
 \item{tool}{An object of class \code{epiworld_tool}}
 
 \item{model}{Model}
 
-\item{proportion}{Deprecated.}
+\item{assign}{Who gets the tool at the start of each run: a placement from
+one of the \link{assign} functions (e.g., \code{assign_share(0.5)}), or \code{NULL} for
+nobody (the tool is then given by events or functions).}
 
 \item{tool_pos}{Positive integer. Index of the tool's position in the model.}
 
@@ -111,8 +110,6 @@ will be added to the tool (see details).}
 \item{x}{An object of class \code{epiworld_agents_tools}.}
 
 \item{max_print}{Numeric scalar. Maximum number of tools to print.}
-
-\item{...}{Currently ignored.}
 }
 \value{
 \itemize{
@@ -127,6 +124,10 @@ will be added to the tool (see details).}
 \itemize{
 \item The \code{get_name_tool} function returns the name of the tool of class
 \link{epiworld_tool}.
+}
+
+\itemize{
+\item \code{assign_tool} replaces the placement of a tool already in the model.
 }
 
 \itemize{
@@ -163,7 +164,9 @@ The name of the \code{epiworld_tool} object can be manipulated with the function
 \code{\link[=set_name_tool]{set_name_tool()}} and \code{\link[=get_name_tool]{get_name_tool()}}.
 
 The \code{add_tool} function adds the specified tool to the model of class
-\link{epiworld_model} with specified proportion.
+\link{epiworld_model}, placed with \code{assign}. The model keeps its own copy of the
+tool: changes to \code{tool} after \code{add_tool()} do not reach the model (use
+\code{\link[=get_tool]{get_tool()}} for the model's copy).
 
 In the case of \code{set_susceptibility_reduction_ptr}, \code{set_transmission_reduction_ptr},
 \code{set_recovery_enhancer}, and
@@ -193,8 +196,6 @@ plot(model_sirconn)
 
 epitool <- tool(
   name = "Vaccine",
-  prevalence = 0.5,
-  as_proportion = TRUE,
   susceptibility_reduction = .9,
   transmission_reduction = .5,
   recovery_enhancer = .5,
@@ -205,7 +206,7 @@ epitool
 
 set_name_tool(epitool, "Pfizer") # Assigning name to the tool
 get_name_tool(epitool) # Returning the name of the tool
-add_tool(model_sirconn, epitool)
+add_tool(model_sirconn, epitool, assign_share(0.5))
 run(model_sirconn, ndays = 100, seed = 1912)
 model_sirconn
 plot(model_sirconn)
@@ -217,7 +218,7 @@ set_recovery_enhancer(epitool, 0.15) # Probability increase of recovery
 set_death_reduction(epitool, 0.05) # Probability reduction of death
 
 rm_tool(model_sirconn, 0)
-add_tool(model_sirconn, epitool)
+add_tool(model_sirconn, epitool, assign_share(0.5))
 run(model_sirconn, ndays = 100, seed = 1912) # Run model to view changes
 
 
@@ -233,15 +234,13 @@ add_layer(sir, layer_network("network", graph_smallworld(k = 5, p = .01)))
 # Creating a tool
 mask_wearing <- tool(
   name = "Mask",
-  prevalence               = 0.5,
-  as_proportion            = TRUE,
   susceptibility_reduction = 0.0,
   transmission_reduction   = 0.3, # Only transmission
   recovery_enhancer        = 0.0,
   death_reduction          = 0.0
 )
 
-add_tool(sir, mask_wearing)
+add_tool(sir, mask_wearing, assign_share(0.5))
 
 run(sir, ndays = 50, seed = 11)
 hist_0 <- get_hist_total(sir)

@@ -1,25 +1,21 @@
 #ifndef EPIWORLD_USERDATA_BONES_HPP
 #define EPIWORLD_USERDATA_BONES_HPP
 
-template<typename TSeq>
 class Model;
 
-template<typename TSeq>
 class DataBase;
 
 /**
  * @brief Personalized data by the user
  *
- * @tparam TSeq
  */
-template<typename TSeq>
 class UserData
 {
-    friend class Model<TSeq>;
-    friend class DataBase<TSeq>;
+    friend class Model;
+    friend class DataBase;
 
 private:
-    Model<TSeq> * model = nullptr;
+    Model * model = nullptr;
 
     std::vector< std::string > data_names;
     std::vector< int > data_dates;
@@ -33,8 +29,8 @@ private:
 public:
 
     UserData() = delete;
-    UserData(Model<TSeq> & m) : model(&m) {};
-    UserData(Model<TSeq> * m) : model(m) {};
+    UserData(Model & m) : model(&m) {};
+    UserData(Model * m) : model(m) {};
 
     /**
      * @brief Construct a new User Data object

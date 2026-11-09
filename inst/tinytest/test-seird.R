@@ -29,9 +29,9 @@ expect_length(class(seird_0), 2)
 bad_name <- 10
 bad_numeric_input <- "not a number"
 
-expected_error_msg_na <- "must not be NA"
+expected_error_msg_na <- "must be a number"
 expected_error_msg_str <- "must be a string"
-expected_error_msg_double <- "must be a double"
+expected_error_msg_double <- "must be a number"
 
 expect_error(seird_0 <- ModelSEIRD(
   name = bad_name,

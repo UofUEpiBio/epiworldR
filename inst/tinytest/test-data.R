@@ -29,15 +29,14 @@ expect_inherits(hist_total, "epiworld_hist_total")
 expect_inherits(hist_total, "epiworld_hist")
 expect_inherits(hist_total, "data.frame")
 expect_true(nrow(hist_total) > 0)
-expect_true(all(c("date", "state", "counts") %in% names(hist_total)))
-# Check that states attribute exists
-expect_true(!is.null(attr(hist_total, "states")))
+expect_identical(names(hist_total), c("date", "status", "stage", "counts"))
+expect_identical(attr(hist_total, "stages"), get_stages(model))
 
 # Test get_today_total ---------------------------------------------------------
 expect_silent(today_total <- get_today_total(model))
-expect_true(is.numeric(today_total))
-expect_true(length(today_total) > 0)
-expect_true(!is.null(names(today_total)))
+expect_identical(names(today_total), c("status", "stage", "counts"))
+expect_identical(today_total$stage, get_stages(model))
+expect_equal(sum(today_total$counts), size(model))
 
 # Test get_hist_virus ----------------------------------------------------------
 expect_silent(hist_virus <- get_hist_virus(model))
@@ -45,9 +44,8 @@ expect_inherits(hist_virus, "epiworld_hist_virus")
 expect_inherits(hist_virus, "epiworld_hist")
 expect_inherits(hist_virus, "data.frame")
 expect_true(nrow(hist_virus) > 0)
-expect_true(all(c("date", "state", "counts") %in% names(hist_virus)))
-# Check that states attribute exists
-expect_true(!is.null(attr(hist_virus, "states")))
+expect_true(all(c("date", "status", "stage", "counts") %in% names(hist_virus)))
+expect_true(!is.null(attr(hist_virus, "stages")))
 
 # Test get_hist_tool -----------------------------------------------------------
 expect_silent(hist_tool <- get_hist_tool(model))
@@ -55,7 +53,7 @@ expect_inherits(hist_tool, "epiworld_hist_tool")
 expect_inherits(hist_tool, "epiworld_hist")
 expect_inherits(hist_tool, "data.frame")
 # hist_tool may be empty if no tools are added
-expect_true(all(c("date", "state", "counts") %in% names(hist_tool)))
+expect_true(all(c("date", "status", "stage", "counts") %in% names(hist_tool)))
 
 # Test get_transition_probability ----------------------------------------------
 expect_silent(trans_prob <- get_transition_probability(model))
@@ -88,7 +86,10 @@ expect_silent(plot_reproductive_number(model, plot = FALSE))
 expect_silent(trans_matrix <- get_hist_transition_matrix(model))
 expect_inherits(trans_matrix, "epiworld_hist_transition")
 expect_inherits(trans_matrix, "data.frame")
-expect_true(all(c("state_from", "state_to", "date", "counts") %in% names(trans_matrix)))
+expect_identical(
+  names(trans_matrix),
+  c("status_from", "stage_from", "status_to", "stage_to", "date", "counts")
+)
 expect_true(!is.null(attr(trans_matrix, "states")))
 expect_true(!is.null(attr(trans_matrix, "nsteps")))
 

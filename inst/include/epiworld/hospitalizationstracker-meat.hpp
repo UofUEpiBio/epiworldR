@@ -2,8 +2,7 @@
 #define EPIWORLD_HOSPITALIZATIONSTRACKER_MEAT_HPP
 
 
-template<typename TSeq>
-inline void HospitalizationsTracker<TSeq>::reset()
+inline void HospitalizationsTracker::reset()
 {
     _date.clear();
     _virus_id.clear();
@@ -11,10 +10,9 @@ inline void HospitalizationsTracker<TSeq>::reset()
     _weight.clear();
 }
 
-template<typename TSeq>
-inline void HospitalizationsTracker<TSeq>::record(
-    Agent<TSeq> & agent,
-    Model<TSeq> & model
+inline void HospitalizationsTracker::record(
+    Agent & agent,
+    Model & model
 )
 {
     int current_date = model.today();
@@ -50,8 +48,7 @@ inline void HospitalizationsTracker<TSeq>::record(
     }
 }
 
-template<typename TSeq>
-inline void HospitalizationsTracker<TSeq>::get(
+inline void HospitalizationsTracker::get(
     int ndays,
     std::vector<int> & date,
     std::vector<int> & virus_id,
@@ -121,8 +118,7 @@ inline void HospitalizationsTracker<TSeq>::get(
     }
 }
 
-template<typename TSeq>
-inline size_t HospitalizationsTracker<TSeq>::size() const
+inline size_t HospitalizationsTracker::size() const
 {
     return _date.size();
 }

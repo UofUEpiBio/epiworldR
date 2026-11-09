@@ -5,24 +5,24 @@
  * @brief Helper macro to define a new tool
  * 
  */
-#define EPI_NEW_TOOL(fname,tseq) inline epiworld_double \
+#define EPI_NEW_TOOL(fname) inline epiworld_double \
 (fname)(\
-    epiworld::Tool< tseq > & t, \
-    epiworld::Agent< tseq > * p, \
-    std::shared_ptr<epiworld::Virus< tseq >> v, \
-    epiworld::Model< tseq > * m\
+    epiworld::Tool & t, \
+    epiworld::Agent * p, \
+    std::shared_ptr<epiworld::Virus> v, \
+    epiworld::Model * m\
     )
 
 /**
  * @brief Create a Tool within a function
  * 
  */
-#define EPI_NEW_TOOL_LAMBDA(funname,tseq) \
-    epiworld::ToolFun<tseq> funname = \
-    [](epiworld::Tool<tseq> & t, \
-    epiworld::Agent<tseq> * p, \
-    std::shared_ptr<epiworld::Virus<tseq>> v, \
-    epiworld::Model<tseq> * m) -> epiworld_double
+#define EPI_NEW_TOOL_LAMBDA(funname) \
+    epiworld::ToolFun funname = \
+    [](epiworld::Tool & t, \
+    epiworld::Agent * p, \
+    std::shared_ptr<epiworld::Virus> v, \
+    epiworld::Model * m) -> epiworld_double
 
 /**
  * @brief Helper macro for accessing model parameters
@@ -49,74 +49,31 @@
  * @brief Helper macro for defining Mutation Functions
  * 
  */
-#define EPI_NEW_MUTFUN(funname,tseq) inline bool \
+#define EPI_NEW_MUTFUN(funname) inline bool \
     (funname)(\
-    epiworld::Agent<tseq> * p, \
-    epiworld::Virus<tseq> & v, \
-    epiworld::Model<tseq> * m )
+    epiworld::Agent * p, \
+    epiworld::Virus & v, \
+    epiworld::Model * m )
 
-#define EPI_NEW_MUTFUN_LAMBDA(funname,tseq) \
-    epiworld::MutFun<tseq> funname = \
-    [](epiworld::Agent<tseq> * p, \
-    epiworld::Virus<tseq> & v, \
-    epiworld::Model<tseq> * m) -> void
-
-#define EPI_NEW_POSTRECOVERYFUN(funname,tseq) inline void \
-    (funname)( \
-    epiworld::Agent<tseq> * p, \
-    epiworld::Virus<tseq> & v, \
-    epiworld::Model<tseq> * m\
-    )
-
-#define EPI_NEW_POSTRECOVERYFUN_LAMBDA(funname,tseq) \
-    epiworld::PostRecoveryFun<tseq> funname = \
-    [](epiworld::Agent<tseq> * p, \
-    epiworld::Virus<tseq> & v , \
-    epiworld::Model<tseq> * m) -> void
-
-#define EPI_NEW_VIRUSFUN(funname,tseq) inline epiworld_double \
-    (funname)( \
-    epiworld::Agent<tseq> * p, \
-    epiworld::Virus<tseq> & v, \
-    epiworld::Model<tseq> * m\
-    )
-
-#define EPI_NEW_VIRUSFUN_LAMBDA(funname,TSeq) \
-    epiworld::VirusFun<TSeq> funname = \
-    [](epiworld::Agent<TSeq> * p, \
-    epiworld::Virus<TSeq> & v, \
-    epiworld::Model<TSeq> * m) -> epiworld_double
+#define EPI_NEW_MUTFUN_LAMBDA(funname) \
+    epiworld::MutFun funname = \
+    [](epiworld::Agent * p, \
+    epiworld::Virus & v, \
+    epiworld::Model * m) -> bool
 
 #define EPI_RUNIF() m->runif()
 
 #define EPI_TOKENPASTE(a,b) a ## b
 #define MPAR(num) *(m->EPI_TOKENPASTE(p,num))
 
-#define EPI_NEW_UPDATEFUN(funname,tseq) inline void \
-    (funname)(epiworld::Agent<tseq> * p, epiworld::Model<tseq> * m)
 
-#define EPI_NEW_UPDATEFUN_LAMBDA(funname,tseq) \
-    epiworld::UpdateFun<tseq> funname = \
-    [](epiworld::Agent<tseq> * p, epiworld::Model<tseq> * m) -> void
+#define EPI_NEW_GLOBALFUN(funname) inline void \
+    (funname)(epiworld::Model* m)
 
-#define EPI_NEW_GLOBALFUN(funname,tseq) inline void \
-    (funname)(epiworld::Model<tseq>* m)
+#define EPI_NEW_GLOBALFUN_LAMBDA(funname) \
+    epiworld::GlobalFun funname = \
+    [](epiworld::Model* m) -> void
 
-#define EPI_NEW_GLOBALFUN_LAMBDA(funname,tseq) \
-    epiworld::GlobalFun<tseq> funname = \
-    [](epiworld::Model<tseq>* m) -> void
-
-
-// Use this to make it more efficient for storage if the type is small
-// and the pointer is not needed
-#define EPI_TYPENAME_TRAITS(tseq, bound) typename std::conditional< \
-    sizeof( tseq ) <= sizeof( bound ), \
-    tseq, \
-    std::shared_ptr< tseq > \
-    >::type
-
-#define EPI_IF_TSEQ_LESS_EQ_INT(tseq) \
-    if constexpr (sizeof( tseq ) <= sizeof( int ))
 
 #define EPI_CHECK_COALESCE(proposed_, virus_tool_, alt_) \
     if (static_cast<int>(proposed_) == -99) {\

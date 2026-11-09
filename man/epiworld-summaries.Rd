@@ -20,7 +20,8 @@ get_outbreak_size(x)
 \value{
 \itemize{
 \item The \code{get_transition_probability} function returns an object of class
-\code{matrix}.
+\code{matrix}, one row and column per stage (in a model with statuses, per pair
+of status and stage, labeled \code{"Status / Stage"}).
 }
 
 \itemize{
@@ -70,7 +71,7 @@ head(get_outbreak_size(seirconn))
 
 }
 \seealso{
-Other Summaries: 
+Other Summaries:
 \code{\link{epiworld-hospitalizations}}
 }
 \concept{Summaries}

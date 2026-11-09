@@ -30,8 +30,6 @@
 #' # Creating a tool
 #' epitool <- tool(
 #'   name = "Vaccine",
-#'   prevalence = 0,
-#'   as_proportion = FALSE,
 #'   susceptibility_reduction = .9,
 #'   transmission_reduction = .5,
 #'   recovery_enhancer = .5,
@@ -91,11 +89,17 @@ globalevent_tool <- function(
   name = get_name_tool(tool), day = -99
 ) {
 
+  stopifnot_tool(tool)
+
+  # add_globalevent() rebuilds the event with the model's copy of the tool
+  build <- function(t) globalevent_tool_cpp(t, prob, name, day)
+
   structure(
-    globalevent_tool_cpp(tool, prob, name, day),
+    build(tool),
     class = c("epiworld_globalevent_tool", "epiworld_globalevent"),
-    tool = tool,
-    call = match.call()
+    tool  = tool,
+    build = build,
+    call  = match.call()
   )
 }
 
@@ -125,17 +129,23 @@ globalevent_tool_logit <- function(
 
   stopifnot_tool(tool)
 
-  structure(
+  # add_globalevent() rebuilds the event with the model's copy of the tool
+  build <- function(t) {
     globalevent_tool_logit_cpp(
-      tool,
+      t,
       as.integer(vars),
       as.double(coefs),
       name,
       as.integer(day)
-    ),
+    )
+  }
+
+  structure(
+    build(tool),
     class = c("epiworld_globalevent_tool_logit", "epiworld_globalevent"),
-    tool = tool,
-    call = match.call()
+    tool  = tool,
+    build = build,
+    call  = match.call()
   )
 
 }
@@ -220,17 +230,20 @@ globalaction_set_params <- function(...) {
 #' # We create the object where the history of the agents will be stored
 #' agents_history <- NULL
 #'
-#' # This function prints the total number of agents in each state
+#' # This function prints the total number of agents in each stage
 #' # and stores the history of the agents in the object `agents_history`
 #' hist_saver <- function(m) {
 #'
-#'   message("Today's totals are: ", paste(get_today_total(m), collapse = ", "))
+#'   message(
+#'     "Today's totals are: ",
+#'     paste(get_today_total(m)$counts, collapse = ", ")
+#'   )
 #'
 #'   # We use the `<<-` operator to assign the value to the global variable
 #'   # `agents_history` (see ?"<<-")
 #'   agents_history <<- cbind(
 #'     agents_history,
-#'     get_agents_states(m)
+#'     get_agents_stages(m)
 #'   )
 #'
 #' }
@@ -310,8 +323,19 @@ add_globalevent <- function(model, event, action = NULL) {
 
   stopifnot_model(model)
 
-  if (length(attr(event, "tool")))
+  # The model keeps its own copy of the tool, which agents then receive: the
+  # event gives that copy (the caller's has no id in the model)
+  if (length(attr(event, "tool"))) {
     add_tool(model, attr(event, "tool"))
+    model_tool <- get_tool(model, get_n_tools(model) - 1L)
+    event <- structure(
+      attr(event, "build")(model_tool),
+      class      = class(event),
+      tool       = model_tool,
+      build      = attr(event, "build"),
+      call       = attr(event, "call")
+    )
+  }
 
   if (isTRUE(attr(event, "single_threaded")))
     attr(model, "single_threaded") <- TRUE

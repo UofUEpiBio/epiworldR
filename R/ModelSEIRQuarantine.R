@@ -44,9 +44,10 @@
 #' The quarantine and isolation processes can be turned off by specifying
 #' `quarantine_period < 0` and `isolation_period < 0` respectively.
 #'
-#' The [initial_states] function allows the user to set the initial state of the
-#' model. In particular, the user can specify how many of the non-infected
-#' agents have been removed at the beginning of the simulation.
+#' [set_initial()] places agents, at the start of each run, in stages without
+#' the virus (e.g., `set_initial(model, assign_shares(c(Recovered = 0.2)))`); the
+#' model's stages are listed by [get_stages()]. The model is built by
+#' [make_model()] (see [get_model_info()] for its arguments' limits).
 #' @returns
 #' - The `ModelSEIRQuarantine` function returns a model of class [epiworld_model].
 #' @aliases epiworld_seirquarantine
@@ -104,33 +105,27 @@ ModelSEIRQuarantine <- function(
   contact_tracing_prob   = 1,
   contact_tracing_window = 4L
 ) {
-  # Check input parameters
-  stopifnot_string(name)
-  stopifnot_int(n, lb = 1L)
-  stopifnot_double(prevalence, lb = 0, ub = 1)
-  stopifnot_double(transmission_prob, lb = 0, ub = 1)
-  stopifnot_double(latent_period, lb = 0)
-  stopifnot_double(recovery_rate, lb = 0, ub = 1)
-  stopifnot_double(hospitalization_rate, lb = 0, ub = 1)
-  stopifnot_double(hospitalization_period, lb = 0)
-  stopifnot_double(detection_delay)
-  stopifnot_int(quarantine_period)
-  stopifnot_double(quarantine_willingness, lb = 0, ub = 1)
-  stopifnot_double(isolation_willingness, lb = 0, ub = 1)
-  stopifnot_int(isolation_period)
-  stopifnot_double(contact_tracing_prob, lb = 0, ub = 1)
-  stopifnot_int(contact_tracing_window, lb = 0)
+  # The registry checks the values (see get_model_info())
 
-  structure(
-    ModelSEIRQuarantine_cpp(
-      name, n, prevalence,
-      transmission_prob, latent_period, recovery_rate,
-      hospitalization_rate, hospitalization_period,
-      detection_delay, quarantine_period,
-      quarantine_willingness, isolation_willingness, isolation_period,
-      contact_tracing_prob, contact_tracing_window
+  make_model(
+    "SEIRQuarantine",
+    list(
+      n                      = n,
+      prevalence             = prevalence,
+      transmission_prob      = transmission_prob,
+      latent_period          = latent_period,
+      recovery_rate          = recovery_rate,
+      hospitalization_rate   = hospitalization_rate,
+      hospitalization_period = hospitalization_period,
+      detection_delay        = detection_delay,
+      quarantine_period      = quarantine_period,
+      quarantine_willingness = quarantine_willingness,
+      isolation_willingness  = isolation_willingness,
+      isolation_period       = isolation_period,
+      contact_tracing_prob   = contact_tracing_prob,
+      contact_tracing_window = contact_tracing_window
     ),
-    class = c("epiworld_seirquarantine", "epiworld_model")
+    virus_name = name
   )
 
 }
