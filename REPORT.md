@@ -1,7 +1,11 @@
 # Who uses epiworldR
 
-- Repositories / packages: **9**
+- Repositories / packages: **10**
 - Papers: **8** (1 appear not to cite the package)
+
+## New this run
+
+- [starsimhub/lingua_franca](https://github.com/starsimhub/lingua_franca) (repo, uses)
 
 ## Papers that use it without citing it
 
