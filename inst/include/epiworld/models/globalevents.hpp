@@ -10,7 +10,8 @@
  * @ingroup model_utilities
  * 
  * @param p Probability of distributing the tool.
- * @param tool Tool function.
+ * @param tool The model's copy of the tool (`Model::get_tool()`); a tool not in
+ * the model has no id there, and giving it to an agent throws.
  * @return std::function<void(Model*)> 
  */
 inline std::function<void(Model*)> globalevent_tool(
