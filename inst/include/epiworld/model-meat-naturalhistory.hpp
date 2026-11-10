@@ -703,7 +703,7 @@ inline std::string Model::draw_natural_history() const
 
     subgraph("stages", "Stages: " + nh->get_name(), nh->draw_mermaid("s"));
     if (st)
-        subgraph("statuses", "Statuses", st->draw_mermaid("q", nh.get()));
+        subgraph("statuses", "Statuses", st->draw_mermaid("q"));
 
     out +=
         "    classDef infectious fill:#f8d7da,stroke:#b02a37\n"
