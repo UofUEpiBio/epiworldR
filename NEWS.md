@@ -28,7 +28,7 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   `set_prob_recovery()`, `set_prob_death()`, `set_incubation()` (and their
   `_ptr` and `_fun` forms) and `virus_fun_logit()` (`rate_fun_logit()`).
   `draw_natural_history()` draws a model's stages and transitions from their
-  declarations.
+  declarations (one unlabeled arrow per pair of stages a transition joins).
 
 * **Placement** (`help("assign")`): one vocabulary says who has the virus or a
   tool, or starts in a stage, at the start of each run: `assign_share()`,

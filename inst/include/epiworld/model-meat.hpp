@@ -1129,7 +1129,8 @@ inline void Model::add_virus(
                 "The natural history of \"" + v.get_name() + "\" differs from "
                 "the model's (\"" + nh->get_name() + "\"): the viruses of a "
                 "model have the same stages and transitions (their values may "
-                "differ)."
+                "differ). Several diseases per model, each with its own "
+                "natural history, are planned (natural-history.md, NH-5)."
             );
 
         cloned->nh_def = def;

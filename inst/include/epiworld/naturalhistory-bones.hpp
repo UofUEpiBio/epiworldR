@@ -322,18 +322,13 @@ public:
      * @brief The stages and transitions as the body of a mermaid flowchart.
      * @details One node per stage (id `prefix` + index; infectious, carrier
      * and contact-0 stages get the classes `infectious`, `carrier` and
-     * `away`) and one edge per transition, labeled with its name (unless it
-     * is the default "From -> To"), its kind and its value: `-->` for an
-     * infection or a rate, `==>` for a duration, `-.->` for an external
-     * transition. See `Model::draw_natural_history()`.
+     * `away`) and one unlabeled arrow per pair of nodes that some transition
+     * joins. The kinds and values of the transitions are left out: they are
+     * the model's parameters, and differ between models built on the same
+     * stages. See `Model::draw_natural_history()`.
      * @param prefix Prefix of the node ids.
-     * @param stages The natural history whose stages `when()` and `since()`
-     * name (for statuses, the virus's; `nullptr`: this one).
      */
-    std::string draw_mermaid(
-        const std::string & prefix,
-        const NaturalHistory * stages = nullptr
-    ) const;
+    std::string draw_mermaid(const std::string & prefix) const;
 };
 
 /**

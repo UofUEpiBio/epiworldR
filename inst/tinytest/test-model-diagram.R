@@ -194,4 +194,5 @@ expect_error(draw_mermaid_from_files(
 nh_diagram <- draw_natural_history(ModelSEIR("flu", 100, .01, .2, 4, .1))
 expect_inherits(nh_diagram, "epiworld_diagram")
 expect_true(grepl("s1[\"Exposed\"]:::carrier", nh_diagram, fixed = TRUE))
-expect_true(grepl("s1 ==>", nh_diagram, fixed = TRUE)) # The latent period
+expect_true(grepl("s1 --> s2", nh_diagram, fixed = TRUE)) # Exposed to Infected
+expect_false(grepl("|", nh_diagram, fixed = TRUE)) # No labels on the arrows

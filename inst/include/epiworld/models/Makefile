@@ -9,7 +9,10 @@ help:
 all:
 	@for file in *.mmd; do \
 		echo "Processing $$file..."; \
-		cat "$$file" | base64 -w0 | xargs -I {} curl -s "https://mermaid.ink/img/{}" > "$${file%.mmd}.png"; \
+		curl -sSf --retry 5 --retry-delay 3 -o "$${file%.mmd}.png" \
+			"https://mermaid.ink/img/$$(base64 < "$$file" | tr -d '\n')" || \
+			{ rm -f "$${file%.mmd}.png"; echo "Failed to render $$file"; exit 1; }; \
+		sleep 2; \
 	done && \
 	rsync -avz *png ../../../docs/assets/img/ && \
 	rm -f *.png

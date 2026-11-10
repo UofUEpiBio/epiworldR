@@ -94,7 +94,8 @@ mermaid diagram as a string.
 \itemize{
 \item The \code{draw_natural_history} function returns a mermaid diagram of the
 model's natural history (and statuses), drawn from their declarations: one
-node per stage and one edge per transition, labeled with its kind and value.
+node per stage and one unlabeled arrow per pair of stages (or statuses) that
+some transition joins.
 It does not need the model to have run.
 }
 }
