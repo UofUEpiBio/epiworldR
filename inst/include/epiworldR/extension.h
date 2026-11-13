@@ -21,13 +21,11 @@
  * }
  * ```
  *
- * The configuration below is epiworldR's (`src/Makevars`): the epiworld
- * classes must be laid out the same in the extension and in epiworldR.
- * `as_model()` checks it, and stops with a message if the extension was built
- * against other headers or with another configuration.
+ * The configuration below is epiworldR's (`src/Makevars`); do not change
+ * it. `as_model()` checks that the extension and the installed epiworldR use
+ * the same major version of epiworld.
  */
 
-#include <string>
 #include <cpp11.hpp>
 #include <R_ext/Rdynload.h>
 
@@ -42,42 +40,8 @@
 #endif
 
 #include "../epiworld/epiworld.hpp"
-#include "epiworld-commit.h"
 
 namespace epiworldR {
-
-/**
- * @brief What an extension must share with epiworldR: the epiworld commit
- * of the headers, the size of `epiworld_double`, the debug switches that add
- * members, and the sizes of the classes an extension uses.
- * @details `static` (one copy per translation unit): with external linkage,
- * the dynamic linker could resolve an extension's call to epiworldR's own
- * copy, which reports epiworldR's stamp, and a mismatch would go unseen.
- */
-static inline std::string build_stamp()
-{
-
-    auto size = [](const char * name, size_t n) {
-        return std::string("; ") + name + " " + std::to_string(n);
-    };
-
-    return std::string("epiworld ") + EPIWORLDR_EPIWORLD_COMMIT +
-        size("epiworld_double", sizeof(epiworld_double)) +
-        size("Model", sizeof(epiworld::Model)) +
-        size("Agent", sizeof(epiworld::Agent)) +
-        size("Virus", sizeof(epiworld::Virus)) +
-        size("Tool", sizeof(epiworld::Tool)) +
-        size("GlobalEvent", sizeof(epiworld::GlobalEvent)) +
-        size("DataBase", sizeof(epiworld::DataBase))
-        #ifdef EPI_DEBUG
-        + "; EPI_DEBUG"
-        #endif
-        #ifdef EPI_DEBUG_VIRUS
-        + "; EPI_DEBUG_VIRUS"
-        #endif
-        ;
-
-}
 
 /**
  * @brief The model behind an epiworldR model (`Model()`, `make_model()`, a
@@ -86,24 +50,25 @@ static inline std::string build_stamp()
  * global events, tools, viruses with their natural histories, layers,
  * parameters... What is added belongs to the model, as if added from R.
  * Stops with an error if `model` is not an epiworldR model, or if this code
- * was built against other epiworld headers or another configuration than
- * the installed epiworldR (rebuild it). `static`, as `build_stamp()`.
+ * was built against another major version of epiworld than the installed
+ * epiworldR's (rebuild it).
+ * `static` (one copy per translation unit): with external linkage, the
+ * dynamic linker could resolve an extension's call to epiworldR's own copy,
+ * which compares epiworldR's version with itself.
  */
 static inline epiworld::Model & as_model(SEXP model)
 {
 
-    using stamp_fun = const char * (*)();
-    static const stamp_fun installed = reinterpret_cast< stamp_fun >(
-        R_GetCCallable("epiworldR", "build_stamp")
-    );
-    static const std::string here = build_stamp();
+    using version_fun = int (*)();
+    static const int installed = reinterpret_cast< version_fun >(
+        R_GetCCallable("epiworldR", "epiworld_version_major")
+    )();
 
-    const std::string theirs = installed();
-    if (here != theirs)
+    if (installed != EPIWORLD_VERSION_MAJOR)
         cpp11::stop(
-            "This C++ code was built for another epiworldR. Rebuild it against "
-            "the installed epiworldR.\n  This code: %s\n  epiworldR: %s",
-            here.c_str(), theirs.c_str()
+            "This C++ code was built for epiworld %d, but epiworldR uses "
+            "epiworld %d. Rebuild it against the installed epiworldR.",
+            EPIWORLD_VERSION_MAJOR, installed
         );
 
     if (!Rf_inherits(model, "epiworld_model"))

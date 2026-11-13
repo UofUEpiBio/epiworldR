@@ -35,10 +35,9 @@ and gives \code{epiworldR::as_model(SEXP)}, which returns the \verb{epiworld::Mo
 behind an R model. What the code adds to a model belongs to it, as if added
 from R.
 
-The epiworld classes must be the same in the code and in the installed
-epiworldR, so \code{as_model()} stops with an error if the code was built
-against other headers or another configuration (rebuild it after updating
-epiworldR).
+\code{as_model()} stops with an error if the code was built against another
+major version of epiworld than the installed epiworldR's (rebuild it after
+updating epiworldR).
 
 In a package, add \verb{LinkingTo: cpp11, epiworldR} to \code{DESCRIPTION},
 \code{CXX_STD = CXX17} to \code{src/Makevars}, and \verb{#include <epiworldR/extension.h>}

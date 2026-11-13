@@ -15,7 +15,9 @@ vignette: >
 # Compiling C++ takes a while (the epiworld headers are large): the examples
 # run when building the vignette locally, not on CRAN
 knitr::opts_chunk$set(
-  eval = identical(Sys.getenv("NOT_CRAN"), "true") || interactive()
+  eval = (identical(Sys.getenv("NOT_CRAN"), "true") || interactive()) &&
+    all(vapply(c("cpp11", "brio", "decor"), requireNamespace, logical(1),
+      quietly = TRUE))
 )
 ```
 
@@ -41,9 +43,9 @@ There are two ways to compile it:
   to the C++ files. The functions marked `[[cpp11::register]]` become the
   package's R functions.
 
-The C++ must be built against the same epiworld headers as the installed
-epiworldR: after updating epiworldR, compile it again. `as_model()` checks
-this, and stops with an error saying so if they differ.
+The C++ must be built against the same major version of epiworld as the
+installed epiworldR: `as_model()` checks this, and stops with an error saying
+so if they differ. Compiling it again after updating epiworldR is safest.
 
 # Two extensions
 

@@ -2,7 +2,9 @@
 
 # C++ extensions (cpp_source_epiworld()): compiling takes minutes, so these
 # tests run at home only
-if (!at_home() || !requireNamespace("cpp11", quietly = TRUE)) {
+needed <- c("cpp11", "brio", "decor")
+if (!at_home() ||
+  !all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
   exit_file("C++ extensions are compiled at home only")
 }
 
@@ -63,15 +65,21 @@ unvaccinated <- susceptible_on_day_30(new_model())
 expect_true(vaccinated > 900)
 expect_true(unvaccinated < vaccinated - 300)
 
-# Not a model, and an extension built for another configuration
+# Not a model, and an extension built for another major version of epiworld
 expect_error(vaccinate_all(1), "not an epiworldR model")
 cpp11::cpp_source(code = '
 [[cpp11::linking_to("epiworldR")]] void link_();
-#define epiworld_double float
+#include <cpp11.hpp>
+#define printf_epiworld Rprintf
+#define epiworld_double double
+#define EPI_CHECK_USER_INTERRUPT(a) cpp11::check_user_interrupt()
+#include <epiworld/epiworld.hpp>
+#undef EPIWORLD_VERSION_MAJOR
+#define EPIWORLD_VERSION_MAJOR 99
 #include <epiworldR/extension.h>
-[[cpp11::register]] int float_size(SEXP model) {
+[[cpp11::register]] int future_size(SEXP model) {
   return static_cast< int >(epiworldR::as_model(model).size());
 }', cxx_std = "CXX17", quiet = TRUE)
-expect_error(float_size(model), "Rebuild it against the installed epiworldR")
+expect_error(future_size(model), "built for epiworld 99")
 
 expect_error(cpp_source_epiworld(), "either")

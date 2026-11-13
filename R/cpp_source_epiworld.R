@@ -19,10 +19,9 @@
 #' behind an R model. What the code adds to a model belongs to it, as if added
 #' from R.
 #'
-#' The epiworld classes must be the same in the code and in the installed
-#' epiworldR, so `as_model()` stops with an error if the code was built
-#' against other headers or another configuration (rebuild it after updating
-#' epiworldR).
+#' `as_model()` stops with an error if the code was built against another
+#' major version of epiworld than the installed epiworldR's (rebuild it after
+#' updating epiworldR).
 #'
 #' In a package, add `LinkingTo: cpp11, epiworldR` to `DESCRIPTION`,
 #' `CXX_STD = CXX17` to `src/Makevars`, and `#include <epiworldR/extension.h>`
@@ -46,11 +45,14 @@ cpp_source_epiworld <- function(
   env = parent.frame(),
   ...
 ) {
-
-  if (!requireNamespace("cpp11", quietly = TRUE)) {
+  # cpp11::cpp_source() also needs brio and decor
+  needed <- c("cpp11", "brio", "decor")
+  missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
+  if (length(missing)) {
     stop(
-      "cpp_source_epiworld() needs the cpp11 package: ",
-      "install.packages(\"cpp11\")."
+      "cpp_source_epiworld() needs the package(s) ",
+      paste(missing, collapse = ", "), ": install.packages(c(",
+      paste0("\"", missing, "\"", collapse = ", "), "))."
     )
   }
 
