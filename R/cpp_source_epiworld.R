@@ -45,14 +45,11 @@ cpp_source_epiworld <- function(
   env = parent.frame(),
   ...
 ) {
-  # cpp11::cpp_source() also needs brio and decor
-  needed <- c("cpp11", "brio", "decor")
-  missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
-  if (length(missing)) {
+  # cpp11::cpp_source() names the other packages it needs, if missing
+  if (!requireNamespace("cpp11", quietly = TRUE)) {
     stop(
-      "cpp_source_epiworld() needs the package(s) ",
-      paste(missing, collapse = ", "), ": install.packages(c(",
-      paste0("\"", missing, "\"", collapse = ", "), "))."
+      "cpp_source_epiworld() needs the cpp11 package: ",
+      "install.packages(\"cpp11\")."
     )
   }
 

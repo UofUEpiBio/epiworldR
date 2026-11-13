@@ -1,10 +1,12 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-extension.R")
 
 # C++ extensions (cpp_source_epiworld()): compiling takes minutes, so these
-# tests run at home only
-needed <- c("cpp11", "brio", "decor")
+# tests run at home only, with the packages cpp11::cpp_source() needs
+toolchain <- c(
+  "cpp11", "brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"
+)
 if (!at_home() ||
-  !all(vapply(needed, requireNamespace, logical(1), quietly = TRUE))) {
+  !all(vapply(toolchain, requireNamespace, logical(1), quietly = TRUE))) {
   exit_file("C++ extensions are compiled at home only")
 }
 

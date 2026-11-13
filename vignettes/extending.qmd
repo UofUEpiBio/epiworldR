@@ -13,11 +13,14 @@ vignette: >
 #| label: setup
 #| include: false
 # Compiling C++ takes a while (the epiworld headers are large): the examples
-# run when building the vignette locally, not on CRAN
+# run when building the vignette locally with cpp11::cpp_source()'s
+# packages, not on CRAN
+toolchain <- c(
+  "cpp11", "brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"
+)
 knitr::opts_chunk$set(
   eval = (identical(Sys.getenv("NOT_CRAN"), "true") || interactive()) &&
-    all(vapply(c("cpp11", "brio", "decor"), requireNamespace, logical(1),
-      quietly = TRUE))
+    all(vapply(toolchain, requireNamespace, logical(1), quietly = TRUE))
 )
 ```
 
