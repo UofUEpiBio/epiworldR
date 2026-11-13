@@ -1,0 +1,160 @@
+---
+title: "Extending epiworldR in C++"
+author:
+  - George Vega Yon
+date: "`r Sys.Date()`"
+vignette: >
+  %\VignetteIndexEntry{Extending epiworldR in C++}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r}
+#| label: setup
+#| include: false
+# Compiling C++ takes a while (the epiworld headers are large): the examples
+# run when building the vignette locally, not on CRAN
+knitr::opts_chunk$set(
+  eval = identical(Sys.getenv("NOT_CRAN"), "true") || interactive()
+)
+```
+
+# Introduction
+
+Everything in epiworldR runs in C++, in the
+[epiworld](https://github.com/UofUEpiBio/epiworld) library. When R functions
+are not enough (an intervention that runs every day, a rate that depends on
+each agent), you can write that part in C++ and add it to a model built in R.
+It then runs at the speed of the rest of the model.
+
+The C++ reaches a model with one function, `epiworldR::as_model()`, which
+returns the `epiworld::Model` behind an R model. From there, the whole epiworld
+C++ API is available: global events, tools, viruses with their natural
+histories, layers, parameters... What the code adds belongs to the model, as if
+added from R.
+
+There are two ways to compile it:
+
+- **In a session**, with `cpp_source_epiworld()` (this vignette).
+- **In a package**: add `LinkingTo: cpp11, epiworldR` to `DESCRIPTION`,
+  `CXX_STD = CXX17` to `src/Makevars`, and `#include <epiworldR/extension.h>`
+  to the C++ files. The functions marked `[[cpp11::register]]` become the
+  package's R functions.
+
+The C++ must be built against the same epiworld headers as the installed
+epiworldR: after updating epiworldR, compile it again. `as_model()` checks
+this, and stops with an error saying so if they differ.
+
+# Two extensions
+
+The code below defines two functions:
+
+1. `add_campaign()`: a global event, run at the end of every day, that gives
+   the model's vaccine to a share of the susceptible agents without it.
+2. `add_waning_sirs()`: an SIRS disease whose immunity starts to wane only a
+   month after recovery, a rate that reads how long each agent has been
+   recovered.
+
+```{r}
+#| label: compile
+library(epiworldR)
+
+cpp_source_epiworld(code = '
+// A daily vaccination campaign
+class Campaign : public epiworld::GlobalEvent {
+  double p_;
+public:
+  explicit Campaign(double p) : p_(p) { set_name("Campaign"); }
+
+  void operator()(epiworld::Model * m, int) override {
+    auto & vaccine = m->get_tool("Vaccine");
+    for (auto & agent : m->get_agents())
+      if ((m->get_stage(agent) == 0) && (agent.get_n_tools() == 0u) &&
+          (m->runif() < p_))
+        agent.add_tool(*m, vaccine);
+  }
+
+  std::unique_ptr< epiworld::GlobalEvent > clone_ptr() const override {
+    return std::make_unique< Campaign >(*this);
+  }
+};
+
+[[cpp11::register]]
+void add_campaign(SEXP model, double p) {
+  Campaign campaign(p);
+  epiworldR::as_model(model).add_globalevent(campaign);
+}
+
+// SIRS, with immunity that wanes only after 30 days
+[[cpp11::register]]
+void add_waning_sirs(SEXP model, double prevalence) {
+  epiworld::Virus flu("Flu");
+  flu.add_stage("Susceptible");
+  flu.add_stage("Infected", epiworld::stage::infectious);
+  flu.add_stage("Recovered");
+  flu.infection(0, 1, "Transmission rate");
+  flu.rate(1, 2, "Recovery rate").effect(epiworld::Effect::recovery);
+  flu.rate(2, 0, epiworld::ValueFun(
+    [](epiworld::Agent & agent, epiworld::Model & m) -> epiworld_double {
+      const int recovered = m.get_stage_entered(agent.get_id(), 2);
+      return (m.today() - recovered > 30) ? 0.05 : 0.0;
+    }
+  ));
+  epiworldR::as_model(model).add_virus(flu, epiworld::assign::share(prevalence));
+}
+')
+```
+
+`cpp_source_epiworld()` adds `#include <epiworldR/extension.h>`, which sets up
+the epiworld headers as epiworldR uses them.
+
+## A global event
+
+The campaign needs a tool named `"Vaccine"` in the model, added from R and
+given to no one at the start:
+
+```{r}
+#| label: campaign
+model <- ModelSIR(
+  "flu",
+  n                 = 5000,
+  prevalence        = .01,
+  transmission_prob = .3,
+  recovery_rate     = .1
+)
+add_layer(model, layer_network("contacts", graph_smallworld(10, .1)))
+add_tool(model, tool("Vaccine", .9, 0, 0, 0), assign_count(0))
+add_campaign(model, 0.05)
+verbose_off(model)
+run(model, ndays = 60, seed = 1)
+plot(model)
+```
+
+## A disease with a rate written in C++
+
+The model starts empty: it gets its parameters and its layer in R, and its
+disease from C++. The transitions read the parameters by name.
+
+```{r}
+#| label: waning
+model <- Model(5000)
+add_param(model, "Transmission rate", 0.15)
+add_param(model, "Recovery rate", 1 / 7)
+add_layer(model, layer_network("contacts", graph_smallworld(10, .1)))
+add_waning_sirs(model, 0.01)
+verbose_off(model)
+run(model, ndays = 300, seed = 1)
+plot(model)
+```
+
+The infections come in waves: an agent becomes susceptible again only after
+its first month as recovered.
+
+# Going further
+
+- The functions an extension can call are epiworld's C++ API: see the
+  [epiworld documentation](https://uofuepibio.github.io/epiworld/) and its
+  headers, installed with epiworldR (`system.file("include", package =
+  "epiworldR")`).
+- `?cpp_source_epiworld` has the details of the session route and of a
+  package that links to epiworldR.

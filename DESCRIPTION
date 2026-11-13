@@ -30,6 +30,7 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 LinkingTo: cpp11
 Suggests:
+    cpp11,
     quarto,
     tinytest,
     netplot,

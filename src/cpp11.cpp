@@ -1544,8 +1544,11 @@ static const R_CallMethodDef CallEntries[] = {
 };
 }
 
+void register_build_stamp(DllInfo * dll);
+
 extern "C" attribute_visible void R_init_epiworldR(DllInfo* dll){
   R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
   R_useDynamicSymbols(dll, FALSE);
+  register_build_stamp(dll);
   R_forceSymbols(dll, TRUE);
 }
