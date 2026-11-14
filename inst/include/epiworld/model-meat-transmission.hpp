@@ -206,7 +206,7 @@ inline bool Model::transmission_prepare()
     bool any = false;
 
     // A natural history says which stages are pushed to
-    if (nh)
+    if (!tracks.empty())
     {
         // A cell is pushed to if its stage's only drawn exit is a default
         // infection, its status has no drawn exit, and it is in the layers
@@ -217,7 +217,7 @@ inline bool Model::transmission_prepare()
                 st->stages[static_cast< size_t >(nh_status_of(cu))].needs_visit;
             const bool excluded = !state_excluded.empty() && state_excluded[c];
             if (
-                nh->stages[static_cast< size_t >(nh_stage_of(cu))].pushable &&
+                tracks[0u].nh->stages[static_cast< size_t >(nh_stage_of(cu))].pushable &&
                 !status_drawn && !excluded
             )
             {
@@ -510,9 +510,9 @@ inline void Model::transmission_push_impl()
         #endif
 
         sampled_layer = target.layer;
-        if (nh)
+        if (!tracks.empty())
             nh_propose(
-                nh->stages[static_cast< size_t >(nh_stage_of(i.state))].infection,
+                tracks[0u].nh->stages[static_cast< size_t >(nh_stage_of(i.state))].infection,
                 i, target.candidate
             );
         else

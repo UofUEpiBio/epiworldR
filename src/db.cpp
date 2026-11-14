@@ -118,7 +118,7 @@ doubles get_transition_probability_cpp(
 
   cpp11::external_pointer<Model> ptr(model);
   return cpp11::writable::doubles(
-    ptr->get_db().get_transition_probability(false)
+    ptr->get_db().get_transition_probability(epiworld::Margin::pair).values
   );
 
 }
