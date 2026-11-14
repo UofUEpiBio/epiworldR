@@ -359,22 +359,41 @@ protected:
      * shares it. It is shared by the model's copies (it does not change once
      * installed); what it stores per agent is the model's, and is reset with
      * it.
+     *
+     * What the engine keeps for one disease is a **track** (see
+     * `several-diseases.md`). A model has one track for now; the functions
+     * below take theirs, so that a second disease is a second track.
      */
     ///@{
-    std::shared_ptr< const NaturalHistory > nh = nullptr;
-    std::vector< int > nh_until;    ///< [agent] Day the stage's duration ends
-    std::vector< int > nh_row;      ///< [agent] Its record in nh_rows (-1: none yet)
-    /**
-     * Per agent that has left the first stage (`nh_row`), `1 + stages` ints:
-     * its infections so far, then the day it entered each stage in this
-     * infection (-1: not). An agent without a record has been in the first
-     * stage since day 0, with no infection; the records are made as agents
-     * move, so a run touches memory for the agents that do.
-     */
-    std::vector< int > nh_rows;
-    int * nh_record(size_t id);     ///< The agent's record, made on first use
-    std::vector< char > nh_queue;   ///< [stage] Queue mode: 0 none, 1 self, 2 everyone
-    Assign nh_initial;        ///< See set_initial()
+    struct Track {
+        std::shared_ptr< const NaturalHistory > nh; ///< The disease
+        std::vector< int > until;  ///< [agent] Day the stage's duration ends
+        std::vector< int > row;    ///< [agent] Its record in `rows` (-1: none yet)
+        /**
+         * Per agent that has left the first stage (`row`), `1 + stages`
+         * ints: its infections so far, then the day it entered each stage in
+         * this infection (-1: not). An agent without a record has been in
+         * the first stage since day 0, with no infection; the records are
+         * made as agents move, so a run touches memory for the agents that
+         * do.
+         */
+        std::vector< int > rows;
+        std::vector< char > queue; ///< [cell] Queue mode: 0 none, 1 self, 2 everyone
+        Assign initial;            ///< See set_initial()
+
+        int * record(size_t id);   ///< The agent's record, made on first use
+        bool removed(int stage) const; ///< No contacts and no exit
+    };
+    std::vector< Track > tracks;
+
+    /// The track of a virus (its disease), and of an agent's infection
+    /// (without one, the first)
+    Track & nh_track(const Virus *) { return tracks[0u]; }
+    const Track & nh_track(const Virus *) const { return tracks[0u]; }
+
+    /// The agent's cell in a track. The first track's is kept in the agent.
+    unsigned int nh_cell_of(const Track &, const Agent & p) const { return p.state; }
+
     int nh_pending = -1;            ///< Transition of the next event (see _add_event())
 
     /// Event: a seeded infection, and an initial placement (status transitions
@@ -414,26 +433,26 @@ protected:
     int nh_db_id(int t) const
     {
         return nh_is_status_tr(t) ?
-            static_cast< int >(nh->get_n_transitions()) + nh_status_tr(t) : t;
+            static_cast< int >(tracks[0u].nh->get_n_transitions()) + nh_status_tr(t) : t;
     }
     void nh_build_states();
     void nh_react(Agent & p, int transition, int stage_old);
-    bool nh_removed(int stage) const;
 
     void nh_install(std::shared_ptr< NaturalHistory > def);
     void nh_reset();
     void nh_step(Agent & p);
+    bool nh_step_stage(Track & track, Agent & p, unsigned int cell); ///< nh_step()'s stage part
     void nh_step_status(Agent & p, unsigned int cell, int stage); ///< nh_step()'s status part
 
-    /// The natural history whose values apply to `p`: its virus's, or (no
-    /// virus) the model's
-    const NaturalHistory & nh_of(const Agent & p) const
+    /// The natural history whose values apply to `p` in a track: its
+    /// virus's (a strain's values), or (no virus) the track's
+    const NaturalHistory & nh_of(const Track & track, const Agent & p) const
     {
         const auto & v = p.get_virus();
-        return (v && v->nh_def) ? *v->nh_def : *nh;
+        return (v && v->nh_def) ? *v->nh_def : *track.nh;
     }
     void nh_propose(int transition, Agent & p, Virus * virus = nullptr);
-    void nh_enter(Agent & p, unsigned int state_old, int transition);
+    void nh_enter(Track & track, Agent & p, unsigned int state_old, int transition);
     void nh_queue_move(Agent & p, unsigned int state_old);
     void nh_initial_place();
     epiworld_double nh_infection_prob(Agent & target, const Virus & v);
@@ -684,7 +703,16 @@ public:
 
     Agent & get_agent(size_t i);
 
-    std::vector< epiworld_fast_uint > get_agents_states() const; ///< Returns a vector with the states of the agents.
+    /**
+     * @brief Each agent's stage in a disease, and each agent's status
+     * (indices into `get_stages()` and the statuses).
+     * @param disease The disease (`disease_id()`); `all_diseases`, the
+     * default, is the one disease of a model with one.
+     */
+    ///@{
+    std::vector< int > get_agents_stages(int disease = all_diseases) const;
+    std::vector< int > get_agents_statuses() const;
+    ///@}
 
 
 
@@ -807,7 +835,21 @@ public:
     ///@{
 
     /// The natural history of the model's viruses (`nullptr` if none has one).
-    const NaturalHistory * get_natural_history() const { return nh.get(); }
+    const NaturalHistory * get_natural_history() const
+    {
+        return tracks.empty() ? nullptr : tracks[0u].nh.get();
+    }
+
+    /**
+     * @name The model's diseases
+     * @details A disease is a natural history; its strains share it (see
+     * `several-diseases.md`). A model has one for now.
+     */
+    ///@{
+    size_t get_n_diseases() const { return tracks.size(); }
+    std::vector< std::string > get_diseases() const; ///< Their names, by index
+    int disease_id(std::string_view name) const;     ///< Throws if there is none
+    ///@}
 
     /**
      * @brief Fires a declared transition on an agent, applied at the end of

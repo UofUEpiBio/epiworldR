@@ -151,8 +151,9 @@ inline int Duration::draw(Agent & agent, Model & model) const
         // state between calls, so a run's draws depend only on its seed.
         const epiworld_double u1 = 1.0 - model.runif(); // in (0, 1]
         const epiworld_double u2 = model.runif();
+        constexpr double pi = 3.14159265358979323846; // M_PI is not standard
         const epiworld_double z  = std::sqrt(-2.0 * std::log(u1)) *
-            std::cos(2.0 * M_PI * u2);
+            std::cos(2.0 * pi * u2);
 
         const epiworld_double s2 = std::log(1.0 + (s * s) / (m * m));
         return whole(std::exp(std::log(m) - s2 / 2.0 + std::sqrt(s2) * z));

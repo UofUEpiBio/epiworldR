@@ -44,7 +44,7 @@ inline const Model & Model::print(bool lite) const
             {
                 printf_epiworld(
                     "%i %s%s",
-                    static_cast<int>(db.today_total[ i ]),
+                    static_cast<int>(db.rec.today_total[ i ]),
                     states_labels[i].c_str(),
                     (
                         i == (nstate_int - 2)
@@ -301,15 +301,18 @@ inline const Model & Model::print(bool lite) const
                     fmt.c_str(),
                     s,
                     states_labels[s].c_str(),
-                    db.hist_total_counts[s],
-                    db.today_total[ s ]
+                    db.rec.hist_total_counts[s],
+                    db.rec.today_total[ s ]
                     );
 
         }
     }
 
+    // Over the stages without statuses (the labels the model had before)
     if (today() != 0)
-        (void) db.get_transition_probability(true);
+        db.get_transition_probability(
+            st ? Margin::pair : Margin::stage
+        ).print();
 
     return *this;
 

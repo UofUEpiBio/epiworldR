@@ -37,11 +37,11 @@ inline void Model::_event_add_virus(Event & a)
 
     // Lastly, we increase the daily count of the virus
     #ifdef EPI_DEBUG
-    db.today_virus.at(p->virus->get_id()).at(
+    db.rec.today_virus.at(p->virus->get_id()).at(
         a.new_state != -99 ? a.new_state : p->state
     )++;
     #else
-    db.today_virus[p->virus->get_id()][
+    db.rec.today_virus[p->virus->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
     #endif
@@ -77,7 +77,7 @@ inline void Model::_event_add_tool(Event & a)
             );
     }
 
-    db.today_tool[p->tools[tool_pos]->get_id()][
+    db.rec.today_tool[p->tools[tool_pos]->get_id()][
         a.new_state != -99 ? a.new_state : p->state
     ]++;
 
@@ -112,9 +112,9 @@ inline void Model::_event_rm_virus(Event & a)
     // agent's current state (pre-transition), not state_prev.
     // state_prev may refer to an earlier same-day state.
     #ifdef EPI_DEBUG
-    db.today_virus.at(v->get_id()).at(p->state)--;
+    db.rec.today_virus.at(v->get_id()).at(p->state)--;
     #else
-    db.today_virus[v->get_id()][p->state]--;
+    db.rec.today_virus[v->get_id()][p->state]--;
     #endif
 
     
@@ -170,9 +170,9 @@ inline void Model::_event_rm_tool(Event & a)
     if (removed)
     {
         #ifdef EPI_DEBUG
-        db.today_tool.at(t->get_id()).at(p->state)--;
+        db.rec.today_tool.at(t->get_id()).at(p->state)--;
         #else
-        db.today_tool[t->get_id()][p->state]--;
+        db.rec.today_tool[t->get_id()][p->state]--;
         #endif
 
         t->agent = nullptr;

@@ -168,18 +168,19 @@ inline void Agent::set_virus(
 
     // With a natural history, a virus given from outside (seeding, an
     // import) follows the infection transition out of the agent's stage
-    if (model.nh && (state_new == -99))
+    if (!model.tracks.empty() && (state_new == -99))
     {
 
-        const int tr = model.nh->get_stage_info(model.nh_stage_of(state)).infection;
+        const auto & nh = *model.nh_track(&virus).nh;
+        const int tr = nh.get_stage_info(model.nh_stage_of(state)).infection;
         if (tr < 0)
             throw std::logic_error(
                 "Agent " + std::to_string(id) + " is in the stage \"" +
-                model.nh->get_stages()[model.nh_stage_of(state)] + "\", which has no infection "
+                nh.get_stages()[model.nh_stage_of(state)] + "\", which has no infection "
                 "transition, so it cannot be given a virus."
             );
 
-        state_new = model.nh->get_transition(tr).to;
+        state_new = nh.get_transition(tr).to;
         queue = Queue::NoOne;
         if (model.nh_pending == -1)
             model.nh_pending = Model::NH_SEED;
