@@ -221,6 +221,15 @@ Syncs the C++ core with epiworld 0.19.0 (commit c340f87).
 
 ## New features
 
+* **Extensions in C++.** Code compiled against epiworldR can reach a model
+  built in R with `epiworldR::as_model()` (in `<epiworldR/extension.h>`) and
+  use the whole epiworld C++ API on it: global events, tools, viruses with
+  their natural histories, layers, parameters. `cpp_source_epiworld()`
+  compiles such code in a session; a package uses it with
+  `LinkingTo: cpp11, epiworldR`. `as_model()` stops with an error if the code
+  was built against another major version of epiworld than the installed
+  epiworldR's. See `vignette("extending")`.
+
 * The new generic `clone_epi()` creates an independent copy of an
   `epiworld_tool`, `epiworld_virus`, or `epiworld_model` (the assignment
   operator only copies the pointer). Copies keep their C++ type and settings,
