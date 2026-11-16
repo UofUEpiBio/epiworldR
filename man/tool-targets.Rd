@@ -6,64 +6,54 @@
 \alias{set_targets_tool}
 \alias{get_targets_tool}
 \alias{clear_targets_tool}
-\alias{get_lineage_virus}
-\title{Restrict tools to specific viruses}
+\title{Restrict tools to specific diseases}
 \usage{
-add_target_tool(tool, virus)
+add_target_tool(tool, disease)
 
-set_targets_tool(tool, viruses)
+set_targets_tool(tool, diseases)
 
 get_targets_tool(tool)
 
 clear_targets_tool(tool)
-
-get_lineage_virus(virus)
 }
 \arguments{
 \item{tool}{An object of class \link{epiworld_tool}.}
 
-\item{virus}{An object of class \link{epiworld_virus}, a list of them, or an
-integer vector of virus lineage ids (see details). In \code{get_lineage_virus()},
-a single \link{epiworld_virus}.}
+\item{disease}{Character scalar. A disease, by name (see \code{\link[=get_diseases]{get_diseases()}}).}
 
-\item{viruses}{Same as \code{virus}. Use \code{NULL} (or an empty vector) to make the
-tool act on every virus again.}
+\item{diseases}{Character vector of diseases. Use \code{NULL} (or an empty vector)
+to make the tool act on every disease again.}
 }
 \value{
 \itemize{
 \item \code{add_target_tool()}, \code{set_targets_tool()}, and \code{clear_targets_tool()}
 return the tool (invisibly).
-\item \code{get_targets_tool()} returns an integer vector with the targeted lineage
-ids. An empty vector means the tool acts on every virus.
-\item \code{get_lineage_virus()} returns the lineage id of the virus (an integer), or
-\code{NA} if the virus has not been added to a model yet.
+\item \code{get_targets_tool()} returns a character vector with the targeted
+diseases. An empty vector means the tool acts on every disease.
 }
 }
 \description{
-By default, a tool acts on every virus in the model. These functions
+By default, a tool acts on every disease in the model. These functions
 restrict a tool (all four of its effects: susceptibility reduction,
-transmission reduction, recovery enhancer, and death reduction) to specific
-viruses, e.g., a vaccine that only protects against one disease.
+transmission reduction, recovery enhancer, and death reduction) to some
+diseases, by name, e.g., a vaccine that only protects against one disease.
 }
 \details{
-Tools target viruses by \emph{lineage}. A lineage is a virus added to a model
-with \code{\link[=add_virus]{add_virus()}} (or created by the model itself, as in
-\code{\link[=ModelSIR]{ModelSIR()}}) together with all of its mutations. The lineage id is the
-virus id assigned when the virus was added to the model, and every variant
-of the virus keeps it, so a tool targeting a virus also acts on its
-variants. Only lineages 0 to 62 can be targeted.
+A disease is a natural history: a virus built with \code{\link[=virus]{virus()}} (or created by
+a model, as in \code{\link[=ModelSIR]{ModelSIR()}}) is a disease, and its copies (\code{\link[=strain]{strain()}},
+\code{\link[=clone_epi]{clone_epi()}}, and its mutations) are strains of that disease. A tool that
+targets a disease acts on all of its strains.
 
-A virus only has a lineage id once it is in a model, and the model keeps its
-own copy of each virus: pass the model's copy, from \code{\link[=get_virus]{get_virus()}}, to
-\code{add_target_tool()} or \code{set_targets_tool()} (the copy given to
-\code{\link[=add_virus]{add_virus()}} is unchanged).
+The names are checked when the model runs (a name the model does not have
+is an error). \strong{With several diseases, a tool must name the diseases it
+acts on}; with one, a tool without targets acts on it.
 
 The model keeps its own copy of each tool, so set the targets \emph{before}
 calling \code{\link[=add_tool]{add_tool()}}, or modify the model's copy retrieved with
 \code{\link[=get_tool]{get_tool()}}.
 }
 \examples{
-# A model with two strains: "Flu" (created by the model) and "Flu B"
+# A model with two diseases: "Flu" (created by the model) and "RSV"
 model <- ModelSIR(
   name              = "Flu",
   n                 = 2000,
@@ -78,35 +68,30 @@ add_layer(
     set_contact_rate("Contact rate")
 )
 
-flu_b <- clone_epi(get_virus(model, 0))
-set_name_virus(flu_b, "Flu B")
-add_virus(model, flu_b, assign_count(20))
-get_lineage_virus(get_virus(model, 0)) # Flu: 0
-get_lineage_virus(get_virus(model, 1)) # Flu B: 1
+rsv <- virus("RSV") |>
+  add_stage("Susceptible") |>
+  add_stage("Infected", infectious = TRUE) |>
+  add_stage("Recovered") |>
+  add_infection("Susceptible", "Infected", rate = 0.3) |>
+  add_rate("Infected", "Recovered", rate = 0.1)
+add_virus(model, rsv, assign_count(20))
+get_diseases(model)
 
-# A vaccine that only protects against Flu B
-mmr <- tool(
-  name                     = "Flu B vaccine",
-  susceptibility_reduction = 0.97,
+# A vaccine that only protects against RSV
+vax <- tool(
+  name                     = "RSV vaccine",
+  susceptibility_reduction = 0.9,
   transmission_reduction   = 0,
   recovery_enhancer        = 0,
   death_reduction          = 0
 )
 
-add_target_tool(mmr, get_virus(model, 1))
-get_targets_tool(mmr)
+add_target_tool(vax, "RSV")
+get_targets_tool(vax)
 
-add_tool(model, mmr, assign_share(0.5))
+add_tool(model, vax, assign_share(0.5))
 run(model, ndays = 50, seed = 1912)
 summary(model)
-
-# Targets can also be given as lineage ids
-set_targets_tool(mmr, c(0, 1))
-get_targets_tool(mmr)
-
-# Back to acting on every virus
-clear_targets_tool(mmr)
-get_targets_tool(mmr)
 
 }
 \concept{tool-functions}

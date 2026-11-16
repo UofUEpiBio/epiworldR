@@ -12,16 +12,16 @@ print_agent_cpp <- function(agent, model, compressed) {
   .Call(`_epiworldR_print_agent_cpp`, agent, model, compressed)
 }
 
-get_stage_agent_cpp <- function(model, agent) {
-  .Call(`_epiworldR_get_stage_agent_cpp`, model, agent)
+get_stage_agent_cpp <- function(model, agent, disease) {
+  .Call(`_epiworldR_get_stage_agent_cpp`, model, agent, disease)
 }
 
 get_status_agent_cpp <- function(model, agent) {
   .Call(`_epiworldR_get_status_agent_cpp`, model, agent)
 }
 
-get_agents_stages_cpp <- function(model, status) {
-  .Call(`_epiworldR_get_agents_stages_cpp`, model, status)
+get_agents_stages_cpp <- function(model, status, disease) {
+  .Call(`_epiworldR_get_agents_stages_cpp`, model, status, disease)
 }
 
 add_virus_agent_cpp <- function(agent, model, virus) {
@@ -44,56 +44,64 @@ bubbles_cpp <- function(model, household_id, flavor, group_size, transmission_fa
   .Call(`_epiworldR_bubbles_cpp`, model, household_id, flavor, group_size, transmission_factor, start_day, end_day, rewire_every, name, max_households, param_name, ties, layer, household_contact_prob, bubble_contact_prob)
 }
 
-get_hist_total_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_total_cpp`, model)
+get_hist_total_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hist_total_cpp`, model, disease)
 }
 
-get_hist_virus_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_virus_cpp`, model)
+get_hist_virus_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hist_virus_cpp`, model, disease)
 }
 
-get_hist_tool_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_tool_cpp`, model)
+get_hist_tool_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hist_tool_cpp`, model, disease)
 }
 
-get_transition_probability_cpp <- function(model) {
-  .Call(`_epiworldR_get_transition_probability_cpp`, model)
+get_transition_probability_cpp <- function(model, margin, disease, normalize) {
+  .Call(`_epiworldR_get_transition_probability_cpp`, model, margin, disease, normalize)
 }
 
-get_hist_transition_matrix_cpp <- function(model, skip_zeros) {
-  .Call(`_epiworldR_get_hist_transition_matrix_cpp`, model, skip_zeros)
+get_hist_transition_matrix_cpp <- function(model, skip_zeros, disease) {
+  .Call(`_epiworldR_get_hist_transition_matrix_cpp`, model, skip_zeros, disease)
 }
 
-get_hist_transitions_cpp <- function(model) {
-  .Call(`_epiworldR_get_hist_transitions_cpp`, model)
+get_hist_transitions_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hist_transitions_cpp`, model, disease)
 }
 
-get_reproductive_number_cpp <- function(model) {
-  .Call(`_epiworldR_get_reproductive_number_cpp`, model)
+get_hist_virus_transitions_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hist_virus_transitions_cpp`, model, disease)
 }
 
-get_transmissions_cpp <- function(model) {
-  .Call(`_epiworldR_get_transmissions_cpp`, model)
+get_reproductive_number_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_reproductive_number_cpp`, model, disease)
 }
 
-get_generation_time_cpp <- function(model) {
-  .Call(`_epiworldR_get_generation_time_cpp`, model)
+get_transmissions_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_transmissions_cpp`, model, disease)
 }
 
-get_today_total_cpp <- function(model) {
-  .Call(`_epiworldR_get_today_total_cpp`, model)
+get_generation_time_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_generation_time_cpp`, model, disease)
 }
 
-get_active_cases_cpp <- function(model) {
-  .Call(`_epiworldR_get_active_cases_cpp`, model)
+get_today_total_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_today_total_cpp`, model, disease)
 }
 
-get_outbreak_size_cpp <- function(model) {
-  .Call(`_epiworldR_get_outbreak_size_cpp`, model)
+get_active_cases_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_active_cases_cpp`, model, disease)
 }
 
-get_hospitalizations_cpp <- function(model) {
-  .Call(`_epiworldR_get_hospitalizations_cpp`, model)
+get_outbreak_size_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_outbreak_size_cpp`, model, disease)
+}
+
+get_hospitalizations_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_hospitalizations_cpp`, model, disease)
+}
+
+get_diseases_cpp <- function(model) {
+  .Call(`_epiworldR_get_diseases_cpp`, model)
 }
 
 list_models_cpp <- function() {
@@ -256,8 +264,12 @@ set_weight_cpp <- function(layer, param) {
   .Call(`_epiworldR_set_weight_cpp`, layer, param)
 }
 
-add_virus_target_cpp <- function(layer, lineage_id) {
-  .Call(`_epiworldR_add_virus_target_cpp`, layer, lineage_id)
+add_target_layer_cpp <- function(layer, disease) {
+  .Call(`_epiworldR_add_target_layer_cpp`, layer, disease)
+}
+
+get_targets_layer_cpp <- function(layer) {
+  .Call(`_epiworldR_get_targets_layer_cpp`, layer)
 }
 
 enable_tracing_cpp <- function(layer, max_contacts) {
@@ -548,20 +560,20 @@ Model_cpp <- function(n) {
   .Call(`_epiworldR_Model_cpp`, n)
 }
 
-set_initial_cpp <- function(model, assign) {
-  .Call(`_epiworldR_set_initial_cpp`, model, assign)
+set_initial_cpp <- function(model, assign, disease) {
+  .Call(`_epiworldR_set_initial_cpp`, model, assign, disease)
 }
 
-get_stages_model_cpp <- function(model) {
-  .Call(`_epiworldR_get_stages_model_cpp`, model)
+get_stages_model_cpp <- function(model, disease) {
+  .Call(`_epiworldR_get_stages_model_cpp`, model, disease)
 }
 
 get_statuses_model_cpp <- function(model) {
   .Call(`_epiworldR_get_statuses_model_cpp`, model)
 }
 
-fire_cpp <- function(model, transition, agent_id) {
-  .Call(`_epiworldR_fire_cpp`, model, transition, agent_id)
+fire_cpp <- function(model, transition, agent_id, disease) {
+  .Call(`_epiworldR_fire_cpp`, model, transition, agent_id, disease)
 }
 
 draw_natural_history_cpp <- function(model) {
@@ -644,12 +656,12 @@ set_name_tool_cpp <- function(tool, name) {
   .Call(`_epiworldR_set_name_tool_cpp`, tool, name)
 }
 
-add_target_tool_cpp <- function(tool, lineage_id) {
-  .Call(`_epiworldR_add_target_tool_cpp`, tool, lineage_id)
+add_target_tool_cpp <- function(tool, disease) {
+  .Call(`_epiworldR_add_target_tool_cpp`, tool, disease)
 }
 
-set_targets_tool_cpp <- function(tool, lineage_ids) {
-  .Call(`_epiworldR_set_targets_tool_cpp`, tool, lineage_ids)
+set_targets_tool_cpp <- function(tool, diseases) {
+  .Call(`_epiworldR_set_targets_tool_cpp`, tool, diseases)
 }
 
 clear_targets_tool_cpp <- function(tool) {
@@ -752,8 +764,8 @@ get_name_virus_cpp <- function(virus) {
   .Call(`_epiworldR_get_name_virus_cpp`, virus)
 }
 
-get_lineage_virus_cpp <- function(virus) {
-  .Call(`_epiworldR_get_lineage_virus_cpp`, virus)
+strain_cpp <- function(virus, name) {
+  .Call(`_epiworldR_strain_cpp`, virus, name)
 }
 
 set_name_virus_cpp <- function(virus, name) {

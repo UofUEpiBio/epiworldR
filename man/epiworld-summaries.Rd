@@ -7,21 +7,38 @@
 \alias{get_outbreak_size}
 \title{Summary counts and probabilities}
 \usage{
-get_transition_probability(x)
+get_transition_probability(
+  x,
+  margin = c("pair", "stage", "status"),
+  disease = NULL,
+  normalize = TRUE
+)
 
-get_active_cases(x)
+get_active_cases(x, disease = NULL)
 
-get_outbreak_size(x)
+get_outbreak_size(x, disease = NULL)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model).}
+
+\item{margin}{The margin of the transition matrix: \code{"pair"}, \code{"stage"}, or
+\code{"status"}.}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); \code{NULL} (the
+default) returns every disease, one after the other. Every result has a
+\code{disease} column, with one disease too.}
+
+\item{normalize}{Logical scalar. Probabilities (\code{TRUE}) or counts.}
 }
 \value{
 \itemize{
 \item The \code{get_transition_probability} function returns an object of class
-\code{matrix}, one row and column per stage (in a model with statuses, per pair
-of status and stage, labeled \code{"Status / Stage"}).
+\code{matrix} over a margin: \code{"pair"} (the default), one row and column per
+stage (in a model with statuses, per pair of status and stage, labeled
+\code{"Status / Stage"}); \code{"stage"}, per stage; or \code{"status"}, per status. The
+stage and pair margins are of one disease: with several, \code{disease} is
+required. With \code{normalize = FALSE}, the counts.
 }
 
 \itemize{

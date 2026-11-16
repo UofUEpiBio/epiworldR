@@ -16,9 +16,9 @@
 #' [tool()] cannot create.
 #'
 #' Copies of tools and viruses are *new* objects: once added to a model with
-#' [add_tool()] or [add_virus()], they get their own id (and, for viruses,
-#' their own lineage), so the model records them separately from the
-#' original. Use [set_name_tool()] or [set_name_virus()] to tell them apart
+#' [add_tool()] or [add_virus()], they get their own id, so the model records
+#' them separately from the original. A copy of a virus is a strain of the
+#' same disease (as with [strain()]). Use [set_name_tool()] or [set_name_virus()] to tell them apart
 #' in the outputs.
 #'
 #' `clone_epi()` replaces `clone_model()`, which is deprecated.

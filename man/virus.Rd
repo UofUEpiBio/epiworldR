@@ -34,7 +34,7 @@ add_external(virus, from, to, transition_name)
 
 use_param(virus, param, replacement)
 
-get_stages(x)
+get_stages(x, ...)
 
 set_name_virus(virus, name)
 

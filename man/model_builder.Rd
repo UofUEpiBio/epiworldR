@@ -10,11 +10,11 @@
 \usage{
 Model(n)
 
-set_initial(model, assign)
+set_initial(model, assign, disease = NULL)
 
 get_statuses(model)
 
-fire(model, transition, agent_id)
+fire(model, transition, agent_id, disease = NULL)
 }
 \arguments{
 \item{n}{Number of individuals in the population.}
@@ -23,6 +23,11 @@ fire(model, transition, agent_id)
 
 \item{assign}{A placement from the \link{assign} functions whose labels are
 stages without the virus (e.g., \code{assign_shares(c(Recovered = 0.2))}).}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}): the stages of
+\code{assign} (in \code{set_initial()}) or the transition (in \code{fire()}) are of it.
+Required when the model has several diseases (a status transition needs
+none).}
 
 \item{transition}{Character scalar. A declared transition, by name (see
 \code{\link[=add_external]{add_external()}}).}

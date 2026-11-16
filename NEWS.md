@@ -7,6 +7,37 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 ## Breaking changes
 
+* **Several diseases per model** (epiworld NH-5): a model can hold several
+  diseases, each with its own stages, on the same population, layers and
+  statuses; an agent carries one infection at a time (recovered from one, it
+  can catch another). A virus built with `virus()` is a disease; a copy of it,
+  `strain(virus, name)` (or `clone_epi()`), is a strain of the same disease.
+  `get_diseases(model)` lists them (see `?diseases`).
+  - **Every output has a `disease` column first** (`get_hist_total()`,
+    `get_hist_virus()`, `get_hist_tool()`, `get_today_total()`,
+    `get_hist_transitions()`, `get_hist_transition_matrix()`,
+    `get_transmissions()`, `get_reproductive_number()`,
+    `get_generation_time()`, `get_active_cases()`, `get_outbreak_size()`,
+    `get_hospitalizations()`, and the `run_multiple()` savers), with one
+    disease too, and a `disease` argument (a name; `NULL`, the default, is
+    every disease, one after the other).
+  - What refers to one disease's stages takes `disease`, required when the
+    model has several: `get_stages()`, `get_stage()`, `get_agents_stages()`,
+    `set_initial()`, `fire()`, and `get_hist_transition_matrix()`'s array and
+    plot (`plot_incidence(model, disease = )`). Plots of the history show one
+    panel per disease.
+  - `get_transition_probability(model, margin = "pair", disease = NULL,
+    normalize = TRUE)`: the matrix over the pair of status and stage, the stage,
+    or the status. Before a run it is empty (0 x 0).
+  - **Tools and layers target diseases, by name**: `add_target_tool(tool,
+    disease)`, `set_targets_tool(tool, diseases)` and `get_targets_tool()`
+    (names) replace the targets by virus lineage; with several diseases, a tool
+    must name its diseases. `add_target_layer(layer, disease)` and
+    `get_targets_layer()` replace `add_virus_target()`, now defunct, as is
+    `get_lineage_virus()`.
+  - `get_hist_virus_transitions()`: the declared transitions by virus
+    (strain); over a disease's viruses they add up to `get_hist_transitions()`.
+
 * **Natural histories** (epiworld NH-1 to NH-3): a virus carries the course of
   the disease, its **stages** and the **transitions** between them, and the
   first virus added gives the model its stages. Build one with `virus(name)`,

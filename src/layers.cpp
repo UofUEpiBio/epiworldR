@@ -285,9 +285,14 @@ SEXP set_weight_cpp(SEXP layer, std::string param) {
 }
 
 [[cpp11::register]]
-SEXP add_virus_target_cpp(SEXP layer, int lineage_id) {
-  layer_ptr(layer)->add_virus_target(lineage_id);
+SEXP add_target_layer_cpp(SEXP layer, std::string disease) {
+  layer_ptr(layer)->add_target(disease);
   return layer;
+}
+
+[[cpp11::register]]
+cpp11::writable::strings get_targets_layer_cpp(SEXP layer) {
+  return cpp11::writable::strings(layer_ptr(layer)->get_targets());
 }
 
 [[cpp11::register]]

@@ -8,7 +8,7 @@
 \alias{plot_generation_time}
 \title{Generation time}
 \usage{
-get_generation_time(x)
+get_generation_time(x, disease = NULL)
 
 \method{plot}{epiworld_generation_time}(
   x,
@@ -25,6 +25,10 @@ plot_generation_time(x, ...)
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model), or an object of class \link{epiworld_generation_time}.}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); \code{NULL} (the
+default) returns every disease, one after the other. Every result has a
+\code{disease} column, with one disease too.}
 
 \item{ylab, xlab, main, type}{Further parameters passed to \code{\link[graphics:plot]{graphics::plot()}}}
 

@@ -5,10 +5,21 @@
  * @file database-meat-queries.hpp
  * @brief Reading what the database recorded: counts, histories,
  * transitions, transmissions, reproductive numbers and hospitalizations.
+ * @details Each function that returns rows returns those of the diseases its
+ * `disease` argument asks for (every disease by default), one disease after
+ * the other, and their disease's name in `disease_names`.
  */
 
+/// Appends `src` to `dst`
+template< typename T >
+inline void epi_append(std::vector< T > & dst, const std::vector< T > & src)
+{
+    dst.insert(dst.end(), src.begin(), src.end());
+}
+
 inline void DataBase::split_state(
-    epiworld_fast_uint state,
+    int d,
+    epiworld_fast_uint cell,
     std::string & status,
     std::string & stage
 ) const
@@ -17,65 +28,78 @@ inline void DataBase::split_state(
     if (model->tracks.empty())
     {
         status = "Free";
-        stage = model->states_labels[state];
+        stage = model->states_labels[cell];
         return;
     }
 
-    const unsigned int c = static_cast< unsigned int >(state);
-    stage = model->tracks[0u].nh->get_stages()[static_cast< size_t >(model->nh_stage_of(c))];
+    const size_t nk = model->nh_nstatus();
+    stage = model->tracks[static_cast< size_t >(d)].nh->get_stages()[cell / nk];
     status = model->st ?
-        model->st->get_stages()[static_cast< size_t >(model->nh_status_of(c))] :
+        model->st->get_stages()[cell % nk] :
         std::string("Free");
 
 }
 
 inline void DataBase::split_states(
-    const std::vector< epiworld_fast_uint > & states,
+    int d,
+    const std::vector< epiworld_fast_uint > & cells,
     std::vector< std::string > * status,
     std::vector< std::string > * stage
 ) const
 {
 
     std::string k, s;
-    if (status != nullptr)
-        status->resize(states.size());
-    if (stage != nullptr)
-        stage->resize(states.size());
-
-    for (size_t i = 0u; i < states.size(); ++i)
+    for (auto c : cells)
     {
-        split_state(states[i], k, s);
+        split_state(d, c, k, s);
         if (status != nullptr)
-            (*status)[i] = k;
+            status->push_back(k);
         if (stage != nullptr)
-            (*stage)[i] = s;
+            stage->push_back(s);
     }
 
 }
 
 inline int DataBase::today_total_of(
     const std::string & name,
-    bool by_stage
+    bool by_stage,
+    int disease
 ) const
 {
 
-    bool found = false;
+    // A status is counted in the first disease's cells (it is the same in
+    // every disease); a stage, in each disease asked for that has it
+    const auto ds = by_stage ? diseases_of(disease) : std::vector< int >{0};
+
+    int n_found = 0;
     int total = 0;
     std::string k, s;
-    for (epiworld_fast_uint i = 0u; i < rec.today_total.size(); ++i)
+    for (int d : ds)
     {
-        split_state(i, k, s);
-        if ((by_stage ? s : k) == name)
+        const auto & r = recs[static_cast< size_t >(d)];
+        bool found = false;
+        for (epiworld_fast_uint i = 0u; i < r.today_total.size(); ++i)
         {
-            found = true;
-            total += rec.today_total[i];
+            split_state(d, i, k, s);
+            if ((by_stage ? s : k) == name)
+            {
+                found = true;
+                total += r.today_total[i];
+            }
         }
+        n_found += found ? 1 : 0;
     }
 
-    if (!found)
+    if (n_found == 0)
         throw std::range_error(
             "'" + name + "' is not a " + (by_stage ? "stage" : "status") +
             " of the model."
+        );
+
+    if (n_found > 1)
+        throw std::logic_error(
+            "Several diseases have a stage named '" + name + "': pass the "
+            "disease (disease_id())."
         );
 
     return total;
@@ -87,15 +111,14 @@ inline int DataBase::get_today_total_stage(
     int disease
 ) const
 {
-    check_disease(disease);
-    return today_total_of(stage, true);
+    return today_total_of(stage, true, disease);
 }
 
 inline int DataBase::get_today_total_status(
     const std::string & status
 ) const
 {
-    return today_total_of(status, false);
+    return today_total_of(status, false, all_diseases);
 }
 
 inline void DataBase::get_today_total(
@@ -107,19 +130,25 @@ inline void DataBase::get_today_total(
 ) const
 {
 
-    check_disease(disease);
-
-
-    std::vector< epiworld_fast_uint > states(rec.today_total.size());
-    for (size_t i = 0u; i < states.size(); ++i)
-        states[i] = static_cast< epiworld_fast_uint >(i);
-
-    split_states(states, status, stage);
-
+    if (status != nullptr)
+        status->clear();
+    if (stage != nullptr)
+        stage->clear();
     if (counts != nullptr)
-        *counts = rec.today_total;
+        counts->clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    disease_rows(disease_names, rec.today_total.size());
+    for (int d : diseases_of(disease))
+    {
+        const auto & r = recs[static_cast< size_t >(d)];
+        std::vector< epiworld_fast_uint > cells(r.today_total.size());
+        std::iota(cells.begin(), cells.end(), 0u);
+        split_states(d, cells, status, stage);
+        if (counts != nullptr)
+            epi_append(*counts, r.today_total);
+        disease_rows(disease_names, cells.size(), d);
+    }
 
 }
 
@@ -133,29 +162,36 @@ inline void DataBase::get_today_virus(
 ) const
 {
 
-    check_disease(disease);
-
-
-    // One row per virus and state
-    const size_t n_viruses = rec.today_virus.size();
-    const size_t n_states = model->states_labels.size();
-
-    std::vector< epiworld_fast_uint > states;
-    states.reserve(n_viruses * n_states);
+    status.clear();
+    stage.clear();
     id.clear();
     counts.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    for (epiworld_fast_uint v = 0u; v < n_viruses; ++v)
-        for (epiworld_fast_uint s = 0u; s < n_states; ++s)
+    // One row per virus (of the disease) and cell
+    for (int d : diseases_of(disease))
+    {
+
+        const auto & r = recs[static_cast< size_t >(d)];
+        std::vector< epiworld_fast_uint > cells;
+
+        for (size_t v = 0u; v < r.today_virus.size(); ++v)
         {
-            states.push_back(s);
-            id.push_back(static_cast<int>(v));
-            counts.push_back(rec.today_virus[v][s]);
+            if ((recs.size() > 1u) && (disease_of_virus(static_cast< int >(v)) != d))
+                continue;
+            for (epiworld_fast_uint s = 0u; s < r.ncells; ++s)
+            {
+                cells.push_back(s);
+                id.push_back(static_cast< int >(v));
+                counts.push_back(r.today_virus[v][s]);
+            }
         }
 
-    split_states(states, &status, &stage);
+        split_states(d, cells, &status, &stage);
+        disease_rows(disease_names, cells.size(), d);
 
-    disease_rows(disease_names, id.size());
+    }
 
 }
 
@@ -169,18 +205,27 @@ inline void DataBase::get_hist_total(
 ) const
 {
 
-    check_disease(disease);
-
-
     if (date != nullptr)
-        *date = rec.hist_total_date;
-
-    split_states(rec.hist_total_state, status, stage);
-
+        date->clear();
+    if (status != nullptr)
+        status->clear();
+    if (stage != nullptr)
+        stage->clear();
     if (counts != nullptr)
-        *counts = rec.hist_total_counts;
+        counts->clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    disease_rows(disease_names, rec.hist_total_counts.size());
+    for (int d : diseases_of(disease))
+    {
+        const auto & r = recs[static_cast< size_t >(d)];
+        if (date != nullptr)
+            epi_append(*date, r.hist_total_date);
+        split_states(d, r.hist_total_state, status, stage);
+        if (counts != nullptr)
+            epi_append(*counts, r.hist_total_counts);
+        disease_rows(disease_names, r.hist_total_counts.size(), d);
+    }
 
 }
 
@@ -195,15 +240,23 @@ inline void DataBase::get_hist_virus(
 ) const
 {
 
-    check_disease(disease);
+    date.clear();
+    id.clear();
+    status.clear();
+    stage.clear();
+    counts.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-
-    date = rec.hist_virus_date;
-    id = rec.hist_virus_id;
-    split_states(rec.hist_virus_state, &status, &stage);
-    counts = rec.hist_virus_counts;
-
-    disease_rows(disease_names, counts.size());
+    for (int d : diseases_of(disease))
+    {
+        const auto & r = recs[static_cast< size_t >(d)];
+        epi_append(date, r.hist_virus_date);
+        epi_append(id, r.hist_virus_id);
+        split_states(d, r.hist_virus_state, &status, &stage);
+        epi_append(counts, r.hist_virus_counts);
+        disease_rows(disease_names, r.hist_virus_counts.size(), d);
+    }
 
 }
 
@@ -218,15 +271,23 @@ inline void DataBase::get_hist_tool(
 ) const
 {
 
-    check_disease(disease);
+    date.clear();
+    id.clear();
+    status.clear();
+    stage.clear();
+    counts.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-
-    date = rec.hist_tool_date;
-    id = rec.hist_tool_id;
-    split_states(rec.hist_tool_state, &status, &stage);
-    counts = rec.hist_tool_counts;
-
-    disease_rows(disease_names, counts.size());
+    for (int d : diseases_of(disease))
+    {
+        const auto & r = recs[static_cast< size_t >(d)];
+        epi_append(date, r.hist_tool_date);
+        epi_append(id, r.hist_tool_id);
+        split_states(d, r.hist_tool_state, &status, &stage);
+        epi_append(counts, r.hist_tool_counts);
+        disease_rows(disease_names, r.hist_tool_counts.size(), d);
+    }
 
 }
 
@@ -243,61 +304,59 @@ inline void DataBase::get_hist_transition_matrix(
 ) const
 {
 
-    check_disease(disease);
-
-
-    size_t n = rec.hist_transition_matrix.size();
-
-    std::vector< epiworld_fast_uint > from, to;
-    from.reserve(n);
-    to.reserve(n);
+    status_from.clear();
+    stage_from.clear();
+    status_to.clear();
+    stage_to.clear();
     date.clear();
     counts.clear();
-    date.reserve(n);
-    counts.reserve(n);
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    size_t n_states = model->nstates;
-    size_t n_steps  = model->get_ndays();
-
-    // If n is zero, then we are done
-    if (n == 0u)
+    for (int d : diseases_of(disease))
     {
-        split_states(from, &status_from, &stage_from);
-        split_states(to, &status_to, &stage_to);
-        return;
+
+        const auto & r = recs[static_cast< size_t >(d)];
+        const size_t n = r.hist_transition_matrix.size();
+        if (n == 0u)
+            continue;
+
+        std::vector< epiworld_fast_uint > from, to;
+        from.reserve(n);
+        to.reserve(n);
+
+        const size_t n_states = r.ncells;
+        const size_t n_steps  = model->get_ndays();
+        size_t rows = 0u;
+
+        for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
+            for (size_t j = 0u; j < n_states; ++j) // Column major storage
+                for (size_t i = 0u; i < n_states; ++i)
+                {
+                    // Retrieving the value of the day
+                    int v = r.hist_transition_matrix[
+                        step * n_states * n_states + // Day of the data
+                        j * n_states +               // Column (to)
+                        i                            // Row (from)
+                        ];
+
+                    // If we are skipping the zeros and it is zero, then don't save
+                    if (skip_zeros && v == 0)
+                        continue;
+
+                    from.push_back(static_cast< epiworld_fast_uint >(i));
+                    to.push_back(static_cast< epiworld_fast_uint >(j));
+                    date.push_back(r.hist_total_date[step * n_states]);
+                    counts.push_back(v);
+                    ++rows;
+
+                }
+
+        split_states(d, from, &status_from, &stage_from);
+        split_states(d, to, &status_to, &stage_to);
+        disease_rows(disease_names, rows, d);
+
     }
-
-    for (size_t step = 0u; step <= n_steps; ++step) // The final step counts
-    {
-        for (size_t j = 0u; j < n_states; ++j) // Column major storage
-        {
-            for (size_t i = 0u; i < n_states; ++i)
-            {
-                // Retrieving the value of the day
-                int v = rec.hist_transition_matrix[
-                    step * n_states * n_states + // Day of the data
-                    j * n_states +               // Column (to)
-                    i                            // Row (from)
-                    ];
-
-                // If we are skipping the zeros and it is zero, then don't save
-                if (skip_zeros && v == 0)
-                    continue;
-                                
-                from.push_back(static_cast< epiworld_fast_uint >(i));
-                to.push_back(static_cast< epiworld_fast_uint >(j));
-                date.push_back(rec.hist_total_date[step * n_states]);
-                counts.push_back(v);
-
-            }
-
-        }
-    }
-
-    split_states(from, &status_from, &stage_from);
-    split_states(to, &status_to, &stage_to);
-
-    disease_rows(disease_names, counts.size());
 
 }
 
@@ -310,31 +369,55 @@ inline void DataBase::get_active_cases(
 ) const
 {
 
-    check_disease(disease);
-
+    date.clear();
+    virus_id.clear();
+    count.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
     // Extracting useful sizes
-    size_t n_days    = model->get_ndays() + 1u; // Including day 0
-    size_t n_viruses = model->get_n_viruses();
-    
-    // Making room
-    date.assign(n_days * n_viruses, 0);
-    virus_id.assign(n_days * n_viruses, 0);
-    count.assign(n_days * n_viruses, 0);
+    const size_t n_days    = model->get_ndays() + 1u; // Including day 0
+    const size_t n_viruses = model->get_n_viruses();
 
-    for (size_t i = 0u; i < rec.hist_virus_id.size(); ++i)
+    for (int d : diseases_of(disease))
     {
 
-        // With more viruses, there are more days
-        auto location = rec.hist_virus_date[i] + rec.hist_virus_id[i] * n_days;
+        const auto & r = recs[static_cast< size_t >(d)];
 
-        date[location] = rec.hist_virus_date[i];
-        virus_id[location] = rec.hist_virus_id[i];
-        count[location] += rec.hist_virus_counts[i];
+        // Every day of each of the disease's viruses
+        std::vector< int > date_d(n_days * n_viruses, 0);
+        std::vector< int > id_d(n_days * n_viruses, 0);
+        std::vector< int > count_d(n_days * n_viruses, 0);
+
+        for (size_t i = 0u; i < r.hist_virus_id.size(); ++i)
+        {
+
+            // With more viruses, there are more days
+            auto location = r.hist_virus_date[i] + r.hist_virus_id[i] * n_days;
+
+            date_d[location] = r.hist_virus_date[i];
+            id_d[location] = r.hist_virus_id[i];
+            count_d[location] += r.hist_virus_counts[i];
+
+        }
+
+        size_t rows = 0u;
+        for (size_t v = 0u; v < n_viruses; ++v)
+        {
+            if ((recs.size() > 1u) && (disease_of_virus(static_cast< int >(v)) != d))
+                continue;
+            for (size_t k = 0u; k < n_days; ++k)
+            {
+                date.push_back(date_d[k + v * n_days]);
+                virus_id.push_back(id_d[k + v * n_days]);
+                count.push_back(count_d[k + v * n_days]);
+                ++rows;
+            }
+        }
+
+        disease_rows(disease_names, rows, d);
 
     }
-
-    disease_rows(disease_names, count.size());
 
 }
 
@@ -347,43 +430,47 @@ inline void DataBase::get_outbreak_size(
 ) const
 {
 
-    check_disease(disease);
-
+    date.clear();
+    virus_id.clear();
+    outbreak_size.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
     // Extracting useful sizes
-    size_t n_days    = model->get_ndays() + 1u; // Including day 0
-    size_t n_viruses = model->get_n_viruses();
-    
-    // Making room
-    date.assign(n_days * n_viruses, 0);
-    std::iota(date.begin(), date.end(), 0);
+    const size_t n_days    = model->get_ndays() + 1u; // Including day 0
+    const size_t n_viruses = model->get_n_viruses();
 
-    virus_id.assign(n_days * n_viruses, 0);
-    for (size_t v = 0u; v < n_viruses; ++v)
-        for (size_t d = 0u; d < n_days; ++d)
-            virus_id[d + v * n_days] = static_cast<int>(v);
-
-    outbreak_size.assign(n_days * n_viruses, 0);
-
-    // With more viruses, there are more days;
-    for (size_t i = 0u; i < rec.transmission_date.size(); ++i)
+    for (int d : diseases_of(disease))
     {
-        outbreak_size[
-            rec.transmission_date[i] + rec.transmission_virus[i] * n_days
-        ] += 1;
-    }
 
-    // Now, we generate the cumulative sum
-    for (size_t v = 0u; v < n_viruses; ++v)
-    {
-        for (size_t d = 1u; d < n_days; ++d)
+        const auto & r = recs[static_cast< size_t >(d)];
+        std::vector< int > size_d(n_days * n_viruses, 0);
+
+        // With more viruses, there are more days;
+        for (size_t i = 0u; i < r.transmission_date.size(); ++i)
+            size_d[r.transmission_date[i] + r.transmission_virus[i] * n_days] += 1;
+
+        size_t rows = 0u;
+        for (size_t v = 0u; v < n_viruses; ++v)
         {
-            auto location = d + v * n_days;
-            outbreak_size[location] += outbreak_size[location - 1u];
-        }
-    }
+            if ((recs.size() > 1u) && (disease_of_virus(static_cast< int >(v)) != d))
+                continue;
 
-    disease_rows(disease_names, outbreak_size.size());
+            // The cumulative sum
+            for (size_t k = 0u; k < n_days; ++k)
+            {
+                if (k > 0u)
+                    size_d[k + v * n_days] += size_d[k - 1u + v * n_days];
+                date.push_back(static_cast< int >(k + v * n_days));
+                virus_id.push_back(static_cast< int >(v));
+                outbreak_size.push_back(size_d[k + v * n_days]);
+                ++rows;
+            }
+        }
+
+        disease_rows(disease_names, rows, d);
+
+    }
 
 }
 
@@ -399,53 +486,25 @@ inline void DataBase::get_transmissions(
 ) const
 {
 
-    check_disease(disease);
+    date.clear();
+    source.clear();
+    target.clear();
+    virus.clear();
+    source_exposure_date.clear();
+    layer.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-
-    size_t nevents = rec.transmission_date.size();
-
-    date.resize(nevents);
-    source.resize(nevents);
-    target.resize(nevents);
-    virus.resize(nevents);
-    source_exposure_date.resize(nevents);
-    layer.resize(nevents);
-
-    get_transmissions_into(
-        date.data(),
-        source.data(),
-        target.data(),
-        virus.data(),
-        source_exposure_date.data(),
-        layer.data()
-    );
-
-    disease_rows(disease_names, date.size());
-
-}
-
-inline void DataBase::get_transmissions_into(
-    int * date,
-    int * source,
-    int * target,
-    int * virus,
-    int * source_exposure_date,
-    int * layer
-) const 
-{
-
-    size_t nevents = rec.transmission_date.size();
-
-    for (size_t i = 0u; i < nevents; ++i)
+    for (int d : diseases_of(disease))
     {
-
-        *(date + i) = rec.transmission_date.at(i);
-        *(source + i) = rec.transmission_source.at(i);
-        *(target + i) = rec.transmission_target.at(i);
-        *(virus + i) = rec.transmission_virus.at(i);
-        *(source_exposure_date + i) = rec.transmission_source_exposure_date.at(i);
-        *(layer + i) = rec.transmission_layer.at(i);
-
+        const auto & r = recs[static_cast< size_t >(d)];
+        epi_append(date, r.transmission_date);
+        epi_append(source, r.transmission_source);
+        epi_append(target, r.transmission_target);
+        epi_append(virus, r.transmission_virus);
+        epi_append(source_exposure_date, r.transmission_source_exposure_date);
+        epi_append(layer, r.transmission_layer);
+        disease_rows(disease_names, r.transmission_date.size(), d);
     }
 
 }
@@ -454,36 +513,39 @@ inline MapVec_type<int,int> DataBase::get_reproductive_number(
     int disease
 ) const {
 
-    check_disease(disease);
-
-    // Checking size
+    // The keys hold the virus, so the diseases' keys never meet
     MapVec_type<int,int> map;
 
-    // Number of digits of maxid
-    for (size_t i = 0u; i < rec.transmission_date.size(); ++i)
+    for (int d : diseases_of(disease))
     {
-        // Fabricating id
-        std::vector< int > h = {
-            rec.transmission_virus[i],
-            rec.transmission_source[i],
-            rec.transmission_source_exposure_date[i]
-        };
 
-        // Adding to counter
-        if (map.find(h) == map.end())
-            map[h] = 1;
-        else
-            map[h]++;
+        const auto & r = recs[static_cast< size_t >(d)];
+        for (size_t i = 0u; i < r.transmission_date.size(); ++i)
+        {
+            // Fabricating id
+            std::vector< int > h = {
+                r.transmission_virus[i],
+                r.transmission_source[i],
+                r.transmission_source_exposure_date[i]
+            };
 
-        // The target is added
-        std::vector< int > h_target = {
-            rec.transmission_virus[i],
-            rec.transmission_target[i],
-            rec.transmission_date[i]
-        };
+            // Adding to counter
+            if (map.find(h) == map.end())
+                map[h] = 1;
+            else
+                map[h]++;
 
-        map[h_target] = 0;
-        
+            // The target is added
+            std::vector< int > h_target = {
+                r.transmission_virus[i],
+                r.transmission_target[i],
+                r.transmission_date[i]
+            };
+
+            map[h_target] = 0;
+
+        }
+
     }
 
     return map;
@@ -499,18 +561,27 @@ inline TransitionMatrix DataBase::get_transition_probability(
 
     check_disease(disease);
 
+    // A status matrix is the same in every disease (the first one's);
+    // a pair or a stage matrix is one disease's
+    int d = 0;
+    if ((margin != Margin::status) && !model->tracks.empty())
+        d = model->nh_disease(disease, "get_transition_probability()").id;
+    else if (disease != all_diseases)
+        d = disease;
+    const auto & r = recs[static_cast< size_t >(d)];
+
     TransitionMatrix tm;
     tm.margin = margin;
     tm.normalized = normalize;
     if ((margin != Margin::status) && !model->tracks.empty())
-        tm.disease = model->tracks[0u].nh->get_name();
+        tm.disease = model->tracks[static_cast< size_t >(d)].nh->get_name();
 
-    // The labels of each state (cell), and the margin's labels
-    const size_t ns = model->nstates;
+    // The labels of each cell, and the margin's labels
+    const size_t ns = r.ncells;
     std::vector< epiworld_fast_uint > cells(ns);
     std::iota(cells.begin(), cells.end(), 0u);
     std::vector< std::string > status, stage;
-    split_states(cells, &status, &stage);
+    split_states(d, cells, &status, &stage);
 
     std::vector< size_t > row(ns);
     if (margin == Margin::pair)
@@ -536,13 +607,13 @@ inline TransitionMatrix DataBase::get_transition_probability(
     // a day of transitions), summed over the other coordinate
     const size_t n = tm.size();
     tm.values.assign(n * n, 0.0);
-    const size_t recorded = (ns == 0u) ? 0u : rec.hist_transition_matrix.size() / (ns * ns);
+    const size_t recorded = (ns == 0u) ? 0u : r.hist_transition_matrix.size() / (ns * ns);
     const size_t ndays = std::min(static_cast< size_t >(model->get_ndays()), recorded);
     for (size_t t = 0u; t < ndays; ++t)
         for (size_t to = 0u; to < ns; ++to)
             for (size_t from = 0u; from < ns; ++from)
                 tm.values[row[from] + row[to] * n] += static_cast< epiworld_double >(
-                    rec.hist_transition_matrix[t * ns * ns + to * ns + from]
+                    r.hist_transition_matrix[t * ns * ns + to * ns + from]
                 );
 
     if (normalize)
@@ -618,50 +689,50 @@ inline void DataBase::get_generation_time(
 ) const
 {
 
-    check_disease(disease);
+    agent_id.clear();
+    virus_id.clear();
+    time.clear();
+    gentime.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    
-    size_t nevents = rec.transmission_date.size();
-
-    agent_id.reserve(nevents);
-    virus_id.reserve(nevents);
-    time.reserve(nevents);
-    gentime.reserve(nevents);
-
-    // Iterating through the individuals
-    for (size_t i = 0u; i < nevents; ++i)
+    for (int d : diseases_of(disease))
     {
-        int agent_id_i = rec.transmission_target[i];
-        agent_id.push_back(agent_id_i);
-        virus_id.push_back(rec.transmission_virus[i]);
-        time.push_back(rec.transmission_date[i]);
 
-        bool found = false;
-        for (size_t j = i; j < nevents; ++j)
+        const auto & r = recs[static_cast< size_t >(d)];
+        const size_t nevents = r.transmission_date.size();
+
+        // Iterating through the individuals
+        for (size_t i = 0u; i < nevents; ++i)
         {
+            const int agent_id_i = r.transmission_target[i];
+            agent_id.push_back(agent_id_i);
+            virus_id.push_back(r.transmission_virus[i]);
+            time.push_back(r.transmission_date[i]);
 
-            if (rec.transmission_source[j] == agent_id_i)
+            bool found = false;
+            for (size_t j = i; j < nevents; ++j)
             {
-                gentime.push_back(rec.transmission_date[j] - time[i]);
-                found = true;
-                break;
+
+                if (r.transmission_source[j] == agent_id_i)
+                {
+                    gentime.push_back(r.transmission_date[j] - r.transmission_date[i]);
+                    found = true;
+                    break;
+                }
+
             }
+
+            // If there's no transmission, we set the generation time to
+            // minus 1;
+            if (!found)
+                gentime.push_back(-1);
 
         }
 
-        // If there's no transmission, we set the generation time to
-        // minus 1;
-        if (!found)
-            gentime.push_back(-1);
+        disease_rows(disease_names, nevents, d);
 
     }
-
-    agent_id.shrink_to_fit();
-    virus_id.shrink_to_fit();
-    time.shrink_to_fit();
-    gentime.shrink_to_fit();
-
-    disease_rows(disease_names, agent_id.size());
 
 }
 
@@ -676,14 +747,67 @@ inline void DataBase::get_hospitalizations(
 ) const
 {
 
-    check_disease(disease);
+    date.clear();
+    virus_id.clear();
+    tool_id.clear();
+    count.clear();
+    weight.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
     // Get the number of days from the model and add 1 since days are 0-indexed
     // today() returns the last day, so we need today() + 1 for the full count
-    int ndays = model->today() + 1;
-    rec.m_hospitalizations.get(ndays, date, virus_id, tool_id, count, weight);
+    const int ndays = model->today() + 1;
+    for (int d : diseases_of(disease))
+    {
+        std::vector< int > date_d, virus_d, tool_d, count_d;
+        std::vector< double > weight_d;
+        recs[static_cast< size_t >(d)].m_hospitalizations.get(
+            ndays, date_d, virus_d, tool_d, count_d, weight_d
+        );
+        epi_append(date, date_d);
+        epi_append(virus_id, virus_d);
+        epi_append(tool_id, tool_d);
+        epi_append(count, count_d);
+        epi_append(weight, weight_d);
+        disease_rows(disease_names, date_d.size(), d);
+    }
 
-    disease_rows(disease_names, date.size());
+}
+
+inline void DataBase::get_hist_virus_transitions(
+    std::vector< int > & date,
+    std::vector< int > & id,
+    std::vector< std::string > & transition,
+    std::vector< int > & counts,
+    int disease,
+    std::vector< std::string > * disease_names
+) const
+{
+
+    if (model->tracks.empty())
+        throw std::logic_error(
+            "get_hist_virus_transitions() needs a model with a natural history."
+        );
+
+    date.clear();
+    id.clear();
+    transition.clear();
+    counts.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
+
+    for (int d : diseases_of(disease))
+    {
+        const auto & r = recs[static_cast< size_t >(d)];
+        const auto & nh = *model->tracks[static_cast< size_t >(d)].nh;
+        epi_append(date, r.hist_transition_virus_date);
+        epi_append(id, r.hist_transition_virus_id);
+        epi_append(counts, r.hist_transition_virus_counts);
+        for (int t : r.hist_transition_virus_transition)
+            transition.push_back(nh.get_transition(t).name);
+        disease_rows(disease_names, r.hist_transition_virus_id.size(), d);
+    }
 
 }
 
@@ -696,28 +820,62 @@ inline void DataBase::get_hist_transitions(
 ) const
 {
 
-    check_disease(disease);
-
-
     if (model->tracks.empty())
         throw std::logic_error(
             "get_hist_transitions() needs a model with a natural history."
         );
 
-    date = rec.hist_transition_date;
-    counts = rec.hist_transition_counts;
-    // Stage transitions first, then the status ones
-    const int n_stage = static_cast< int >(model->tracks[0u].nh->get_n_transitions());
-    transition.resize(rec.hist_transition_id.size());
-    for (size_t k = 0u; k < rec.hist_transition_id.size(); ++k)
-    {
-        const int t = rec.hist_transition_id[k];
-        transition[k] = (t < n_stage) ?
-            model->tracks[0u].nh->get_transition(t).name :
-            model->st->get_transition(t - n_stage).name;
-    }
+    date.clear();
+    transition.clear();
+    counts.clear();
+    if (disease_names != nullptr)
+        disease_names->clear();
 
-    disease_rows(disease_names, counts.size());
+    // Each disease's transitions; the statuses', recorded once after the
+    // first disease's, belong to every disease: with several diseases they
+    // come with the disease "" (and only when every disease is asked for)
+    const bool several = recs.size() > 1u;
+    for (int d : diseases_of(disease))
+    {
+
+        const auto & r = recs[static_cast< size_t >(d)];
+        const auto & nh = *model->tracks[static_cast< size_t >(d)].nh;
+        const int n_stage = static_cast< int >(nh.get_n_transitions());
+
+        size_t rows = 0u;
+        size_t status_rows = 0u;
+        for (size_t k = 0u; k < r.hist_transition_id.size(); ++k)
+        {
+            const int t = r.hist_transition_id[k];
+            if ((t >= n_stage) && several)
+                continue;
+            date.push_back(r.hist_transition_date[k]);
+            counts.push_back(r.hist_transition_counts[k]);
+            transition.push_back(
+                (t < n_stage) ? nh.get_transition(t).name :
+                    model->st->get_transition(t - n_stage).name
+            );
+            ++rows;
+        }
+        disease_rows(disease_names, rows, d);
+
+        // Several diseases: the statuses' rows, once
+        if (several && (d == 0) && (disease == all_diseases))
+        {
+            for (size_t k = 0u; k < r.hist_transition_id.size(); ++k)
+            {
+                const int t = r.hist_transition_id[k];
+                if (t < n_stage)
+                    continue;
+                date.push_back(r.hist_transition_date[k]);
+                counts.push_back(r.hist_transition_counts[k]);
+                transition.push_back(model->st->get_transition(t - n_stage).name);
+                ++status_rows;
+            }
+            disease_rows(disease_names, status_rows, -1);
+        }
+
+    }
 
 }
 
@@ -743,17 +901,18 @@ inline void DataBase::check_disease(int disease) const
 
 inline void DataBase::disease_rows(
     std::vector< std::string > * names,
-    size_t n
+    size_t n,
+    int d
 ) const
 {
 
     if (names == nullptr)
         return;
 
-    // One disease for now (several: NH-5b-2, several-diseases.md)
-    names->assign(
-        n,
-        model->tracks.empty() ? std::string() : model->tracks[0u].nh->get_name()
+    names->insert(
+        names->end(), n,
+        ((d < 0) || model->tracks.empty()) ? std::string() :
+            model->tracks[static_cast< size_t >(d)].nh->get_name()
     );
 
 }

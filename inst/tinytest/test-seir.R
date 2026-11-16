@@ -28,7 +28,7 @@ expect_silent(plot(seir_0)) # Plot succeeds after model is run
 
 hist_0 <- get_hist_total(seir_0)
 expect_identical(
-  names(hist_0), c("date", "status", "stage", "counts")
+  names(hist_0), c("disease", "date", "status", "stage", "counts")
 )
 
 # Day 0: the seeds start in the infection's target (Exposed)

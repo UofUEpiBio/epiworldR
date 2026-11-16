@@ -23,7 +23,7 @@ get_agents(model, ...)
 
 \method{print}{epiworld_agents}(x, compressed = TRUE, max_print = 10, ...)
 
-get_stage(model, x)
+get_stage(model, x, disease = NULL)
 
 get_status(model, x)
 }
@@ -40,6 +40,9 @@ get_status(model, x)
 about the agent.}
 
 \item{max_print}{Integer scalar. Maximum number of agents to print.}
+
+\item{disease}{In \code{get_stage()}, the disease (by name, see \code{\link[=get_diseases]{get_diseases()}});
+required when the model has several.}
 }
 \value{
 \itemize{

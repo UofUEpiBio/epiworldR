@@ -27,10 +27,10 @@ extern "C" SEXP _epiworldR_print_agent_cpp(SEXP agent, SEXP model, SEXP compress
   END_CPP11
 }
 // agents.cpp
-std::string get_stage_agent_cpp(SEXP model, SEXP agent);
-extern "C" SEXP _epiworldR_get_stage_agent_cpp(SEXP model, SEXP agent) {
+std::string get_stage_agent_cpp(SEXP model, SEXP agent, int disease);
+extern "C" SEXP _epiworldR_get_stage_agent_cpp(SEXP model, SEXP agent, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_stage_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent)));
+    return cpp11::as_sexp(get_stage_agent_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(agent), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // agents.cpp
@@ -41,10 +41,10 @@ extern "C" SEXP _epiworldR_get_status_agent_cpp(SEXP model, SEXP agent) {
   END_CPP11
 }
 // agents.cpp
-std::vector<std::string> get_agents_stages_cpp(SEXP model, bool status);
-extern "C" SEXP _epiworldR_get_agents_stages_cpp(SEXP model, SEXP status) {
+std::vector<std::string> get_agents_stages_cpp(SEXP model, bool status, int disease);
+extern "C" SEXP _epiworldR_get_agents_stages_cpp(SEXP model, SEXP status, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_agents_stages_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(status)));
+    return cpp11::as_sexp(get_agents_stages_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(status), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // agents.cpp
@@ -83,94 +83,108 @@ extern "C" SEXP _epiworldR_bubbles_cpp(SEXP model, SEXP household_id, SEXP flavo
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_total_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model) {
+cpp11::data_frame get_hist_total_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hist_total_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_virus_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hist_virus_cpp(SEXP model) {
+cpp11::data_frame get_hist_virus_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hist_virus_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_tool_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hist_tool_cpp(SEXP model) {
+cpp11::data_frame get_hist_tool_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hist_tool_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-doubles get_transition_probability_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model) {
+cpp11::list get_transition_probability_cpp(SEXP model, std::string margin, int disease, bool normalize);
+extern "C" SEXP _epiworldR_get_transition_probability_cpp(SEXP model, SEXP margin, SEXP disease, SEXP normalize) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_transition_probability_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_transition_probability_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(margin), cpp11::as_cpp<cpp11::decay_t<int>>(disease), cpp11::as_cpp<cpp11::decay_t<bool>>(normalize)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_transition_matrix_cpp(SEXP model, bool skip_zeros);
-extern "C" SEXP _epiworldR_get_hist_transition_matrix_cpp(SEXP model, SEXP skip_zeros) {
+cpp11::data_frame get_hist_transition_matrix_cpp(SEXP model, bool skip_zeros, int disease);
+extern "C" SEXP _epiworldR_get_hist_transition_matrix_cpp(SEXP model, SEXP skip_zeros, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_transition_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_zeros)));
+    return cpp11::as_sexp(get_hist_transition_matrix_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<bool>>(skip_zeros), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_hist_transitions_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hist_transitions_cpp(SEXP model) {
+cpp11::data_frame get_hist_transitions_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hist_transitions_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hist_transitions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_transitions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_reproductive_number_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model) {
+cpp11::data_frame get_hist_virus_transitions_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hist_virus_transitions_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_reproductive_number_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_hist_virus_transitions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_transmissions_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_transmissions_cpp(SEXP model) {
+cpp11::data_frame get_reproductive_number_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_reproductive_number_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_transmissions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_reproductive_number_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::data_frame get_generation_time_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_generation_time_cpp(SEXP model) {
+cpp11::data_frame get_transmissions_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_transmissions_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_generation_time_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_transmissions_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::writable::data_frame get_today_total_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_today_total_cpp(SEXP model) {
+cpp11::data_frame get_generation_time_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_generation_time_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_today_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_generation_time_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::writable::data_frame get_active_cases_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_active_cases_cpp(SEXP model) {
+cpp11::writable::data_frame get_today_total_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_today_total_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_active_cases_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_today_total_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_outbreak_size_cpp(SEXP model) {
+cpp11::writable::data_frame get_active_cases_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_active_cases_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_outbreak_size_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_active_cases_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // db.cpp
-cpp11::writable::data_frame get_hospitalizations_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_hospitalizations_cpp(SEXP model) {
+cpp11::writable::data_frame get_outbreak_size_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_outbreak_size_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_hospitalizations_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_outbreak_size_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
+  END_CPP11
+}
+// db.cpp
+cpp11::writable::data_frame get_hospitalizations_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_hospitalizations_cpp(SEXP model, SEXP disease) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_hospitalizations_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
+  END_CPP11
+}
+// db.cpp
+cpp11::writable::strings get_diseases_cpp(SEXP model);
+extern "C" SEXP _epiworldR_get_diseases_cpp(SEXP model) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_diseases_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
   END_CPP11
 }
 // epimodels.cpp
@@ -454,10 +468,17 @@ extern "C" SEXP _epiworldR_set_weight_cpp(SEXP layer, SEXP param) {
   END_CPP11
 }
 // layers.cpp
-SEXP add_virus_target_cpp(SEXP layer, int lineage_id);
-extern "C" SEXP _epiworldR_add_virus_target_cpp(SEXP layer, SEXP lineage_id) {
+SEXP add_target_layer_cpp(SEXP layer, std::string disease);
+extern "C" SEXP _epiworldR_add_target_layer_cpp(SEXP layer, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(add_virus_target_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(lineage_id)));
+    return cpp11::as_sexp(add_target_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::string>>(disease)));
+  END_CPP11
+}
+// layers.cpp
+cpp11::writable::strings get_targets_layer_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_targets_layer_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_targets_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
   END_CPP11
 }
 // layers.cpp
@@ -969,17 +990,17 @@ extern "C" SEXP _epiworldR_Model_cpp(SEXP n) {
   END_CPP11
 }
 // model_builder.cpp
-SEXP set_initial_cpp(SEXP model, SEXP assign);
-extern "C" SEXP _epiworldR_set_initial_cpp(SEXP model, SEXP assign) {
+SEXP set_initial_cpp(SEXP model, SEXP assign, int disease);
+extern "C" SEXP _epiworldR_set_initial_cpp(SEXP model, SEXP assign, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_initial_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(assign)));
+    return cpp11::as_sexp(set_initial_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<SEXP>>(assign), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // model_builder.cpp
-cpp11::strings get_stages_model_cpp(SEXP model);
-extern "C" SEXP _epiworldR_get_stages_model_cpp(SEXP model) {
+cpp11::strings get_stages_model_cpp(SEXP model, int disease);
+extern "C" SEXP _epiworldR_get_stages_model_cpp(SEXP model, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_stages_model_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model)));
+    return cpp11::as_sexp(get_stages_model_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // model_builder.cpp
@@ -990,10 +1011,10 @@ extern "C" SEXP _epiworldR_get_statuses_model_cpp(SEXP model) {
   END_CPP11
 }
 // model_builder.cpp
-bool fire_cpp(SEXP model, std::string transition, int agent_id);
-extern "C" SEXP _epiworldR_fire_cpp(SEXP model, SEXP transition, SEXP agent_id) {
+bool fire_cpp(SEXP model, std::string transition, int agent_id, int disease);
+extern "C" SEXP _epiworldR_fire_cpp(SEXP model, SEXP transition, SEXP agent_id, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(fire_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(transition), cpp11::as_cpp<cpp11::decay_t<int>>(agent_id)));
+    return cpp11::as_sexp(fire_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(transition), cpp11::as_cpp<cpp11::decay_t<int>>(agent_id), cpp11::as_cpp<cpp11::decay_t<int>>(disease)));
   END_CPP11
 }
 // model_builder.cpp
@@ -1137,17 +1158,17 @@ extern "C" SEXP _epiworldR_set_name_tool_cpp(SEXP tool, SEXP name) {
   END_CPP11
 }
 // tool.cpp
-SEXP add_target_tool_cpp(SEXP tool, int lineage_id);
-extern "C" SEXP _epiworldR_add_target_tool_cpp(SEXP tool, SEXP lineage_id) {
+SEXP add_target_tool_cpp(SEXP tool, std::string disease);
+extern "C" SEXP _epiworldR_add_target_tool_cpp(SEXP tool, SEXP disease) {
   BEGIN_CPP11
-    return cpp11::as_sexp(add_target_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<int>>(lineage_id)));
+    return cpp11::as_sexp(add_target_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<std::string>>(disease)));
   END_CPP11
 }
 // tool.cpp
-SEXP set_targets_tool_cpp(SEXP tool, integers lineage_ids);
-extern "C" SEXP _epiworldR_set_targets_tool_cpp(SEXP tool, SEXP lineage_ids) {
+SEXP set_targets_tool_cpp(SEXP tool, cpp11::strings diseases);
+extern "C" SEXP _epiworldR_set_targets_tool_cpp(SEXP tool, SEXP diseases) {
   BEGIN_CPP11
-    return cpp11::as_sexp(set_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<integers>>(lineage_ids)));
+    return cpp11::as_sexp(set_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(diseases)));
   END_CPP11
 }
 // tool.cpp
@@ -1158,7 +1179,7 @@ extern "C" SEXP _epiworldR_clear_targets_tool_cpp(SEXP tool) {
   END_CPP11
 }
 // tool.cpp
-cpp11::writable::integers get_targets_tool_cpp(SEXP tool);
+cpp11::writable::strings get_targets_tool_cpp(SEXP tool);
 extern "C" SEXP _epiworldR_get_targets_tool_cpp(SEXP tool) {
   BEGIN_CPP11
     return cpp11::as_sexp(get_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool)));
@@ -1326,10 +1347,10 @@ extern "C" SEXP _epiworldR_get_name_virus_cpp(SEXP virus) {
   END_CPP11
 }
 // virus.cpp
-int get_lineage_virus_cpp(SEXP virus);
-extern "C" SEXP _epiworldR_get_lineage_virus_cpp(SEXP virus) {
+SEXP strain_cpp(SEXP virus, std::string name);
+extern "C" SEXP _epiworldR_strain_cpp(SEXP virus, SEXP name) {
   BEGIN_CPP11
-    return cpp11::as_sexp(get_lineage_virus_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus)));
+    return cpp11::as_sexp(strain_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(virus), cpp11::as_cpp<cpp11::decay_t<std::string>>(name)));
   END_CPP11
 }
 // virus.cpp
@@ -1362,12 +1383,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_param_cpp",                        (DL_FUNC) &_epiworldR_add_param_cpp,                         3},
     {"_epiworldR_add_rate_cpp",                         (DL_FUNC) &_epiworldR_add_rate_cpp,                          6},
     {"_epiworldR_add_stage_cpp",                        (DL_FUNC) &_epiworldR_add_stage_cpp,                         4},
+    {"_epiworldR_add_target_layer_cpp",                 (DL_FUNC) &_epiworldR_add_target_layer_cpp,                  2},
     {"_epiworldR_add_target_tool_cpp",                  (DL_FUNC) &_epiworldR_add_target_tool_cpp,                   2},
     {"_epiworldR_add_tool_agent_cpp",                   (DL_FUNC) &_epiworldR_add_tool_agent_cpp,                    3},
     {"_epiworldR_add_tool_cpp",                         (DL_FUNC) &_epiworldR_add_tool_cpp,                          3},
     {"_epiworldR_add_virus_agent_cpp",                  (DL_FUNC) &_epiworldR_add_virus_agent_cpp,                   3},
     {"_epiworldR_add_virus_cpp",                        (DL_FUNC) &_epiworldR_add_virus_cpp,                         3},
-    {"_epiworldR_add_virus_target_cpp",                 (DL_FUNC) &_epiworldR_add_virus_target_cpp,                  2},
     {"_epiworldR_assign_tool_cpp",                      (DL_FUNC) &_epiworldR_assign_tool_cpp,                       3},
     {"_epiworldR_assign_virus_cpp",                     (DL_FUNC) &_epiworldR_assign_virus_cpp,                      3},
     {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          15},
@@ -1385,12 +1406,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_duration_cpp",                         (DL_FUNC) &_epiworldR_duration_cpp,                          3},
     {"_epiworldR_enable_tracing_cpp",                   (DL_FUNC) &_epiworldR_enable_tracing_cpp,                    2},
     {"_epiworldR_epiworld_cpp_version_cpp",             (DL_FUNC) &_epiworldR_epiworld_cpp_version_cpp,              0},
-    {"_epiworldR_fire_cpp",                             (DL_FUNC) &_epiworldR_fire_cpp,                              3},
-    {"_epiworldR_get_active_cases_cpp",                 (DL_FUNC) &_epiworldR_get_active_cases_cpp,                  1},
+    {"_epiworldR_fire_cpp",                             (DL_FUNC) &_epiworldR_fire_cpp,                              4},
+    {"_epiworldR_get_active_cases_cpp",                 (DL_FUNC) &_epiworldR_get_active_cases_cpp,                  2},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
     {"_epiworldR_get_agents_cpp",                       (DL_FUNC) &_epiworldR_get_agents_cpp,                        1},
     {"_epiworldR_get_agents_data_ncols_cpp",            (DL_FUNC) &_epiworldR_get_agents_data_ncols_cpp,             1},
-    {"_epiworldR_get_agents_stages_cpp",                (DL_FUNC) &_epiworldR_get_agents_stages_cpp,                 2},
+    {"_epiworldR_get_agents_stages_cpp",                (DL_FUNC) &_epiworldR_get_agents_stages_cpp,                 3},
     {"_epiworldR_get_agents_tools_cpp",                 (DL_FUNC) &_epiworldR_get_agents_tools_cpp,                  1},
     {"_epiworldR_get_all_accepted_kernel_scores_cpp",   (DL_FUNC) &_epiworldR_get_all_accepted_kernel_scores_cpp,    1},
     {"_epiworldR_get_all_accepted_params_cpp",          (DL_FUNC) &_epiworldR_get_all_accepted_params_cpp,           1},
@@ -1406,21 +1427,22 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_current_accepted_stats_cpp",       (DL_FUNC) &_epiworldR_get_current_accepted_stats_cpp,        1},
     {"_epiworldR_get_current_proposed_params_cpp",      (DL_FUNC) &_epiworldR_get_current_proposed_params_cpp,       1},
     {"_epiworldR_get_current_proposed_stats_cpp",       (DL_FUNC) &_epiworldR_get_current_proposed_stats_cpp,        1},
+    {"_epiworldR_get_diseases_cpp",                     (DL_FUNC) &_epiworldR_get_diseases_cpp,                      1},
     {"_epiworldR_get_edgelist_cpp",                     (DL_FUNC) &_epiworldR_get_edgelist_cpp,                      1},
-    {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               1},
+    {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               2},
     {"_epiworldR_get_group_cpp",                        (DL_FUNC) &_epiworldR_get_group_cpp,                         2},
-    {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     1},
-    {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    1},
-    {"_epiworldR_get_hist_transition_matrix_cpp",       (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,        2},
-    {"_epiworldR_get_hist_transitions_cpp",             (DL_FUNC) &_epiworldR_get_hist_transitions_cpp,              1},
-    {"_epiworldR_get_hist_virus_cpp",                   (DL_FUNC) &_epiworldR_get_hist_virus_cpp,                    1},
-    {"_epiworldR_get_hospitalizations_cpp",             (DL_FUNC) &_epiworldR_get_hospitalizations_cpp,              1},
+    {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     2},
+    {"_epiworldR_get_hist_total_cpp",                   (DL_FUNC) &_epiworldR_get_hist_total_cpp,                    2},
+    {"_epiworldR_get_hist_transition_matrix_cpp",       (DL_FUNC) &_epiworldR_get_hist_transition_matrix_cpp,        3},
+    {"_epiworldR_get_hist_transitions_cpp",             (DL_FUNC) &_epiworldR_get_hist_transitions_cpp,              2},
+    {"_epiworldR_get_hist_virus_cpp",                   (DL_FUNC) &_epiworldR_get_hist_virus_cpp,                    2},
+    {"_epiworldR_get_hist_virus_transitions_cpp",       (DL_FUNC) &_epiworldR_get_hist_virus_transitions_cpp,        2},
+    {"_epiworldR_get_hospitalizations_cpp",             (DL_FUNC) &_epiworldR_get_hospitalizations_cpp,              2},
     {"_epiworldR_get_initial_params_cpp",               (DL_FUNC) &_epiworldR_get_initial_params_cpp,                1},
     {"_epiworldR_get_last_transmission_mode_cpp",       (DL_FUNC) &_epiworldR_get_last_transmission_mode_cpp,        1},
     {"_epiworldR_get_layer_cpp",                        (DL_FUNC) &_epiworldR_get_layer_cpp,                         2},
     {"_epiworldR_get_layer_kind_cpp",                   (DL_FUNC) &_epiworldR_get_layer_kind_cpp,                    1},
     {"_epiworldR_get_layer_name_cpp",                   (DL_FUNC) &_epiworldR_get_layer_name_cpp,                    1},
-    {"_epiworldR_get_lineage_virus_cpp",                (DL_FUNC) &_epiworldR_get_lineage_virus_cpp,                 1},
     {"_epiworldR_get_mean_params_cpp",                  (DL_FUNC) &_epiworldR_get_mean_params_cpp,                   1},
     {"_epiworldR_get_mean_stats_cpp",                   (DL_FUNC) &_epiworldR_get_mean_stats_cpp,                    1},
     {"_epiworldR_get_model_info_cpp",                   (DL_FUNC) &_epiworldR_get_model_info_cpp,                    1},
@@ -1435,22 +1457,23 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_name_virus_cpp",                   (DL_FUNC) &_epiworldR_get_name_virus_cpp,                    1},
     {"_epiworldR_get_ndays_cpp",                        (DL_FUNC) &_epiworldR_get_ndays_cpp,                         1},
     {"_epiworldR_get_observed_stats_cpp",               (DL_FUNC) &_epiworldR_get_observed_stats_cpp,                1},
-    {"_epiworldR_get_outbreak_size_cpp",                (DL_FUNC) &_epiworldR_get_outbreak_size_cpp,                 1},
+    {"_epiworldR_get_outbreak_size_cpp",                (DL_FUNC) &_epiworldR_get_outbreak_size_cpp,                 2},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
-    {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           1},
-    {"_epiworldR_get_stage_agent_cpp",                  (DL_FUNC) &_epiworldR_get_stage_agent_cpp,                   2},
-    {"_epiworldR_get_stages_model_cpp",                 (DL_FUNC) &_epiworldR_get_stages_model_cpp,                  1},
+    {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           2},
+    {"_epiworldR_get_stage_agent_cpp",                  (DL_FUNC) &_epiworldR_get_stage_agent_cpp,                   3},
+    {"_epiworldR_get_stages_model_cpp",                 (DL_FUNC) &_epiworldR_get_stages_model_cpp,                  2},
     {"_epiworldR_get_stages_virus_cpp",                 (DL_FUNC) &_epiworldR_get_stages_virus_cpp,                  1},
     {"_epiworldR_get_status_agent_cpp",                 (DL_FUNC) &_epiworldR_get_status_agent_cpp,                  2},
     {"_epiworldR_get_statuses_model_cpp",               (DL_FUNC) &_epiworldR_get_statuses_model_cpp,                1},
+    {"_epiworldR_get_targets_layer_cpp",                (DL_FUNC) &_epiworldR_get_targets_layer_cpp,                 1},
     {"_epiworldR_get_targets_tool_cpp",                 (DL_FUNC) &_epiworldR_get_targets_tool_cpp,                  1},
-    {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   1},
+    {"_epiworldR_get_today_total_cpp",                  (DL_FUNC) &_epiworldR_get_today_total_cpp,                   2},
     {"_epiworldR_get_tool_model_cpp",                   (DL_FUNC) &_epiworldR_get_tool_model_cpp,                    2},
     {"_epiworldR_get_tracing_cpp",                      (DL_FUNC) &_epiworldR_get_tracing_cpp,                       1},
-    {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        1},
+    {"_epiworldR_get_transition_probability_cpp",       (DL_FUNC) &_epiworldR_get_transition_probability_cpp,        4},
     {"_epiworldR_get_transmission_kappa_cpp",           (DL_FUNC) &_epiworldR_get_transmission_kappa_cpp,            1},
     {"_epiworldR_get_transmission_mode_cpp",            (DL_FUNC) &_epiworldR_get_transmission_mode_cpp,             1},
-    {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 1},
+    {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 2},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
     {"_epiworldR_globalevent_fun_cpp",                  (DL_FUNC) &_epiworldR_globalevent_fun_cpp,                   3},
     {"_epiworldR_globalevent_set_param_cpp",            (DL_FUNC) &_epiworldR_globalevent_set_param_cpp,             4},
@@ -1500,7 +1523,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_death_reduction_ptr_cpp",          (DL_FUNC) &_epiworldR_set_death_reduction_ptr_cpp,           3},
     {"_epiworldR_set_group_cpp",                        (DL_FUNC) &_epiworldR_set_group_cpp,                         3},
     {"_epiworldR_set_groups_cpp",                       (DL_FUNC) &_epiworldR_set_groups_cpp,                        3},
-    {"_epiworldR_set_initial_cpp",                      (DL_FUNC) &_epiworldR_set_initial_cpp,                       2},
+    {"_epiworldR_set_initial_cpp",                      (DL_FUNC) &_epiworldR_set_initial_cpp,                       3},
     {"_epiworldR_set_kernel_fun_cpp",                   (DL_FUNC) &_epiworldR_set_kernel_fun_cpp,                    2},
     {"_epiworldR_set_name_cpp",                         (DL_FUNC) &_epiworldR_set_name_cpp,                          2},
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
@@ -1526,6 +1549,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_transmission_reduction_ptr_cpp",   (DL_FUNC) &_epiworldR_set_transmission_reduction_ptr_cpp,    3},
     {"_epiworldR_set_weight_cpp",                       (DL_FUNC) &_epiworldR_set_weight_cpp,                        2},
     {"_epiworldR_size_cpp",                             (DL_FUNC) &_epiworldR_size_cpp,                              1},
+    {"_epiworldR_strain_cpp",                           (DL_FUNC) &_epiworldR_strain_cpp,                            2},
     {"_epiworldR_today_cpp",                            (DL_FUNC) &_epiworldR_today_cpp,                             1},
     {"_epiworldR_tool_cpp",                             (DL_FUNC) &_epiworldR_tool_cpp,                              5},
     {"_epiworldR_tool_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_tool_fun_logit_cpp,                    3},

@@ -109,17 +109,26 @@ set_weight(get_layer(seir, "household"), "household weight")
 run(seir, ndays = 20, seed = 1)
 expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
 
-# A layer that targets another virus does not spread this one
+# A layer that targets another disease does not spread this one
 set_param(seir, "household weight", 1)
 run(seir, ndays = 20, seed = 1)
 expect_true(nrow(subset(get_transmissions(seir), source >= 0)) > 0)
 
-other <- clone_epi(get_virus(seir, 0))
-set_name_virus(other, "other")
+other <- virus("other") |>
+  add_stage("Susceptible") |>
+  add_stage("Infected", infectious = TRUE) |>
+  add_stage("Recovered") |>
+  add_infection("Susceptible", "Infected", rate = 0.5) |>
+  add_rate("Infected", "Recovered", rate = 0.1)
 add_virus(seir, other)
-add_virus_target(get_layer(seir, "household"), get_virus(seir, 1))
+add_target_layer(get_layer(seir, "household"), "other")
+expect_equal(get_targets_layer(get_layer(seir, "household")), "other")
 run(seir, ndays = 20, seed = 1)
 expect_equal(nrow(subset(get_transmissions(seir), source >= 0)), 0L)
+
+# A disease the model does not have is an error when the model runs
+add_target_layer(get_layer(seir, "household"), "measles")
+expect_error(run(seir, ndays = 5, seed = 1), "measles")
 
 # A contact rate of 0 silences the random mixing; the network still transmits
 conn <- ModelSIR("flu", 1000, .05,

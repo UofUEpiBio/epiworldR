@@ -29,12 +29,13 @@ expect_inherits(hist_total, "epiworld_hist_total")
 expect_inherits(hist_total, "epiworld_hist")
 expect_inherits(hist_total, "data.frame")
 expect_true(nrow(hist_total) > 0)
-expect_identical(names(hist_total), c("date", "status", "stage", "counts"))
+expect_identical(names(hist_total), c("disease", "date", "status", "stage", "counts"))
+expect_identical(unique(hist_total$disease), get_diseases(model))
 expect_identical(attr(hist_total, "stages"), get_stages(model))
 
 # Test get_today_total ---------------------------------------------------------
 expect_silent(today_total <- get_today_total(model))
-expect_identical(names(today_total), c("status", "stage", "counts"))
+expect_identical(names(today_total), c("disease", "status", "stage", "counts"))
 expect_identical(today_total$stage, get_stages(model))
 expect_equal(sum(today_total$counts), size(model))
 
@@ -88,7 +89,7 @@ expect_inherits(trans_matrix, "epiworld_hist_transition")
 expect_inherits(trans_matrix, "data.frame")
 expect_identical(
   names(trans_matrix),
-  c("status_from", "stage_from", "status_to", "stage_to", "date", "counts")
+  c("disease", "status_from", "stage_from", "status_to", "stage_to", "date", "counts")
 )
 expect_true(!is.null(attr(trans_matrix, "states")))
 expect_true(!is.null(attr(trans_matrix, "nsteps")))

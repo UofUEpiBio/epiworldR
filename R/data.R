@@ -12,6 +12,9 @@
 #' (any model).
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-history
 #' @concept model-utility-functions
 #' @family History
@@ -53,17 +56,17 @@ NULL
 #' @export
 #' @returns
 #' - The `get_hist_total` function returns an object of class
-#' [epiworld_hist_total]: a data frame with one row per day, status and stage
-#' (`date`, `status`, `stage`, `counts`). Models without statuses have one,
+#' [epiworld_hist_total]: a data frame with one row per disease, day, status
+#' and stage (`disease`, `date`, `status`, `stage`, `counts`). Models without statuses have one,
 #' `"Free"`. Totals by stage (or by status) are a sum over the other column.
 #' @rdname epiworld-history
 #' @aliases epiworld_hist_total
-get_hist_total <- function(x) UseMethod("get_hist_total")
+get_hist_total <- function(x, disease = NULL) UseMethod("get_hist_total")
 
 #' @export
-get_hist_total.epiworld_model <- function(x) {
+get_hist_total.epiworld_model <- function(x, disease = NULL) {
 
-  res <- get_hist_total_cpp(x)
+  res <- get_hist_total_cpp(x, disease_index(x, disease))
   structure(
     res,
     class  = c("epiworld_hist_total", "epiworld_hist", "data.frame"),
@@ -76,13 +79,13 @@ get_hist_total.epiworld_model <- function(x) {
 #' @rdname epiworld-history
 #' @returns
 #' - The `get_today_total` function returns a data frame with the number of
-#' agents in each status and stage (`status`, `stage`, `counts`) at the end of
-#' the simulation. Models without statuses have one, `"Free"`.
-get_today_total <- function(x) UseMethod("get_today_total")
+#' agents in each status and stage of each disease (`disease`, `status`,
+#' `stage`, `counts`) at the end of the simulation. Models without statuses have one, `"Free"`.
+get_today_total <- function(x, disease = NULL) UseMethod("get_today_total")
 
 #' @export
-get_today_total.epiworld_model <- function(x) {
-  get_today_total_cpp(x)
+get_today_total.epiworld_model <- function(x, disease = NULL) {
+  get_today_total_cpp(x, disease_index(x, disease))
 }
 
 #' @export
@@ -98,11 +101,11 @@ plot.epiworld_hist <- function(x, y, ...) {
 #' [epiworld_hist_virus].
 #' @rdname epiworld-history
 #' @aliases epiworld_hist_virus
-get_hist_virus <- function(x) UseMethod("get_hist_virus")
+get_hist_virus <- function(x, disease = NULL) UseMethod("get_hist_virus")
 
 #' @export
-get_hist_virus.epiworld_model <- function(x) {
-  res <- get_hist_virus_cpp(x)
+get_hist_virus.epiworld_model <- function(x, disease = NULL) {
+  res <- get_hist_virus_cpp(x, disease_index(x, disease))
 
   structure(
     res,
@@ -116,11 +119,11 @@ get_hist_virus.epiworld_model <- function(x) {
 #' - The `get_hist_tool` function returns an object of [epiworld_hist_tool].
 #' @rdname epiworld-history
 #' @aliases epiworld_hist_tool
-get_hist_tool <- function(x) UseMethod("get_hist_tool")
+get_hist_tool <- function(x, disease = NULL) UseMethod("get_hist_tool")
 
 #' @export
-get_hist_tool.epiworld_model <- function(x) {
-  res <- get_hist_tool_cpp(x)
+get_hist_tool.epiworld_model <- function(x, disease = NULL) {
+  res <- get_hist_tool_cpp(x, disease_index(x, disease))
   structure(
     res,
     class  = c("epiworld_hist_tool", "epiworld_hist", "data.frame"),
@@ -140,6 +143,9 @@ get_hist_tool.epiworld_model <- function(x) {
 #'
 #' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
 #' (any model).
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-summaries
 #' @concept model-utility-functions
 #' @family Summaries
@@ -177,21 +183,49 @@ NULL
 #' @export
 #' @returns
 #' - The `get_transition_probability` function returns an object of class
-#' `matrix`, one row and column per stage (in a model with statuses, per pair
-#' of status and stage, labeled `"Status / Stage"`).
+#' `matrix` over a margin: `"pair"` (the default), one row and column per
+#' stage (in a model with statuses, per pair of status and stage, labeled
+#' `"Status / Stage"`); `"stage"`, per stage; or `"status"`, per status. The
+#' stage and pair margins are of one disease: with several, `disease` is
+#' required. With `normalize = FALSE`, the counts.
+#' @param margin The margin of the transition matrix: `"pair"`, `"stage"`, or
+#' `"status"`.
+#' @param normalize Logical scalar. Probabilities (`TRUE`) or counts.
 #' @rdname epiworld-summaries
-get_transition_probability <- function(x) {
+get_transition_probability <- function(
+  x,
+  margin    = c("pair", "stage", "status"),
+  disease   = NULL,
+  normalize = TRUE
+) {
   UseMethod("get_transition_probability")
 }
 
 #' @export
-get_transition_probability.epiworld_model <- function(x) {
-  res <- get_transition_probability_cpp(x)
-  s   <- cell_labels(x)
+get_transition_probability.epiworld_model <- function(
+  x,
+  margin    = c("pair", "stage", "status"),
+  disease   = NULL,
+  normalize = TRUE
+) {
+
+  margin <- match.arg(margin)
+  stopifnot_bool(normalize)
+  res <- get_transition_probability_cpp(
+    x, margin, disease_index(x, disease), normalize
+  )
+
+  s <- switch(
+    margin,
+    status = res$status,
+    stage  = res$stage,
+    pair   = if (length(unique(res$status)) == 1L) res$stage else
+      paste(res$status, res$stage, sep = " / ")
+  )
 
   ns <- length(s)
+  matrix(res$values, nrow = ns, ncol = ns, dimnames = list(s, s))
 
-  matrix(res, nrow = ns, ncol = ns, dimnames = list(s, s))
 }
 
 # ============================================================================
@@ -207,6 +241,9 @@ get_transition_probability.epiworld_model <- function(x) {
 #' (any model), or an object of class [epiworld_repnum].
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-repnum
 #' @concept model-utility-functions
 #' @family Epidemiological metrics
@@ -242,11 +279,11 @@ NULL
 #' [epiworld_repnum].
 #' @rdname epiworld-repnum
 #' @aliases epiworld_repnum
-get_reproductive_number <- function(x) UseMethod("get_reproductive_number")
+get_reproductive_number <- function(x, disease = NULL) UseMethod("get_reproductive_number")
 
 #' @export
-get_reproductive_number.epiworld_model <- function(x) {
-  res <- get_reproductive_number_cpp(x)
+get_reproductive_number.epiworld_model <- function(x, disease = NULL) {
+  res <- get_reproductive_number_cpp(x, disease_index(x, disease))
   res <- res[res[["source"]] != -1, , drop = FALSE]
   class(res) <- c("epiworld_repnum", class(res))
   res
@@ -429,6 +466,9 @@ plot_reproductive_number <- function(x, ...) {
 #' entries in the transition matrix.
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-transition
 #' @aliases epiworld_hist_transition
 #' @concept model-utility-functions
@@ -467,8 +507,8 @@ NULL
 
 # The engine's index of the pair (status, stage), as labels: the stage, or
 # "Status / Stage" in a model with statuses (stage by stage, as in C++)
-cell_labels <- function(x) {
-  stages   <- get_stages(x)
+cell_labels <- function(x, disease = NULL) {
+  stages   <- get_stages(x, disease)
   statuses <- get_statuses(x)
   if (length(statuses) == 1L)
     return(stages)
@@ -488,18 +528,28 @@ cell_label <- function(status, stage, labels) {
 #' @export
 #' @rdname epiworld-transition
 #' @returns
-#' - `get_hist_transition_matrix` returns a [data.frame] with six columns:
-#' "status_from", "stage_from", "status_to", "stage_to", "date", and "counts".
-get_hist_transition_matrix <- function(x, skip_zeros = FALSE)
+#' - `get_hist_transition_matrix` returns a [data.frame] with seven columns:
+#' "disease", "status_from", "stage_from", "status_to", "stage_to", "date",
+#' and "counts".
+get_hist_transition_matrix <- function(x, skip_zeros = FALSE, disease = NULL)
   UseMethod("get_hist_transition_matrix")
 
 #' @export
-get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
+get_hist_transition_matrix.epiworld_model <- function(
+  x,
+  skip_zeros = FALSE,
+  disease    = NULL
+) {
 
-  res <- get_hist_transition_matrix_cpp(x, skip_zeros)
+  res <- get_hist_transition_matrix_cpp(x, skip_zeros, disease_index(x, disease))
   class(res) <- c("epiworld_hist_transition", class(res))
 
-  attr(res, "states") <- cell_labels(x)
+  # The labels of one disease's cells (several: as.array() and the plot need
+  # the disease)
+  attr(res, "states") <- if (is.null(disease) && length(get_diseases(x)) > 1L)
+    NULL
+  else
+    cell_labels(x, disease)
   attr(res, "nsteps") <- get_ndays(x)
 
   res
@@ -511,11 +561,26 @@ get_hist_transition_matrix.epiworld_model <- function(x, skip_zeros = FALSE) {
 #' @rdname epiworld-transition
 #' @returns
 #' - `get_hist_transitions` returns a [data.frame] with how many times each
-#' declared transition fired each day: "date", "transition" (its name, see
-#' [add_rate()]), and "counts".
-get_hist_transitions <- function(x) {
+#' declared transition fired each day: "disease", "date", "transition" (its
+#' name, see [add_rate()]), and "counts". The statuses' transitions are counted
+#' once: with several diseases, they come after the first disease's, with the
+#' disease `""`, when every disease is asked for.
+get_hist_transitions <- function(x, disease = NULL) {
   stopifnot_model(x)
-  get_hist_transitions_cpp(x)
+  get_hist_transitions_cpp(x, disease_index(x, disease))
+}
+
+#' @export
+#' @rdname epiworld-transition
+#' @returns
+#' - `get_hist_virus_transitions` returns the same counts by virus (strain):
+#' "disease", "date", "virus_id", "virus", "transition", and "counts", for the
+#' transitions an agent with the virus can take (infections, under the virus
+#' caught, and the transitions out of a stage that carries it). Over a
+#' disease's viruses, they add up to `get_hist_transitions()`.
+get_hist_virus_transitions <- function(x, disease = NULL) {
+  stopifnot_model(x)
+  get_hist_virus_transitions_cpp(x, disease_index(x, disease))
 }
 
 #' @export
@@ -529,6 +594,12 @@ get_hist_transitions <- function(x) {
 as.array.epiworld_hist_transition <- function(x, ...) {
 
   states <- attr(x, "states")
+  if (is.null(states))
+    stop(
+      "The model has several diseases: get the transitions of one with ",
+      "get_hist_transition_matrix(model, disease = ...).",
+      call. = FALSE
+    )
   n_states <- length(states)
   n_steps  <- attr(x, "nsteps")
 
@@ -553,8 +624,8 @@ as.array.epiworld_hist_transition <- function(x, ...) {
 #' `get_hist_transition_matrix`.
 #' @details The `plot_incidence` function is a wrapper between
 #' [get_hist_transition_matrix] and its plot method.
-plot_incidence <- function(x, ...) {
-  plot(get_hist_transition_matrix(x), ...)
+plot_incidence <- function(x, disease = NULL, ...) {
+  plot(get_hist_transition_matrix(x, disease = disease), ...)
 }
 
 #' @export
@@ -583,6 +654,12 @@ plot.epiworld_hist_transition <- function(
   }
 
   states <- attr(x, "states")
+  if (is.null(states))
+    stop(
+      "The model has several diseases: get the transitions of one with ",
+      "get_hist_transition_matrix(model, disease = ...).",
+      call. = FALSE
+    )
   n_states <- length(states)
   n_steps  <- attr(x, "nsteps")
 
@@ -671,6 +748,9 @@ plot.epiworld_hist_transition <- function(
 #'
 #' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
 #' (any model).
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-transmissions
 #' @concept model-utility-functions
 #' @family Network outputs
@@ -709,18 +789,18 @@ NULL
 #' columns: `date`, `source`, `target`, `virus_id`, `virus`,
 #' `source_exposure_date`, and `layer` (the id of the contact layer the
 #' infection came through, `-1` for seeds and events; see [get_layer()]).
-get_transmissions <- function(x) UseMethod("get_transmissions")
+get_transmissions <- function(x, disease = NULL) UseMethod("get_transmissions")
 
 #' @export
-get_transmissions.epiworld_diffnet <- function(x) {
+get_transmissions.epiworld_diffnet <- function(x, disease = NULL) {
   warning("The transmission network is not necesarily relevant for the diffnet model")
-  get_transmissions.epiworld_model(x)
+  get_transmissions.epiworld_model(x, disease)
 }
 
 #' @export
-get_transmissions.epiworld_model <- function(x) {
+get_transmissions.epiworld_model <- function(x, disease = NULL) {
 
-  res <- get_transmissions_cpp(x)
+  res <- get_transmissions_cpp(x, disease_index(x, disease))
   structure(
     res,
     class = c("epiworld_transmissions", class(res))
@@ -741,6 +821,9 @@ get_transmissions.epiworld_model <- function(x) {
 #' (any model), or an object of class [epiworld_generation_time].
 #' @param ... In the case of plot methods, further arguments passed to
 #' [graphics::plot].
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-gentime
 #' @aliases epiworld_generation_time
 #' @concept model-utility-functions
@@ -775,10 +858,10 @@ NULL
 #' @return
 #' - The function `get_generation_time` returns a `data.frame` with
 #' the following columns: "agent", "virus_id", "virus", "date", and "gentime".
-get_generation_time <- function(x) {
+get_generation_time <- function(x, disease = NULL) {
 
   stopifnot_model(x)
-  res <- get_generation_time_cpp(x)
+  res <- get_generation_time_cpp(x, disease_index(x, disease))
 
   # Replacing -1 with NAs
   res[["gentime"]][res[["gentime"]] == -1] <- NA_integer_
@@ -939,9 +1022,9 @@ plot_generation_time <- function(x, ...) {
 #' - The function `get_active_cases` returns a data.frame with four columns:
 #' date, virus_id, virus, and active_cases indicating the number of active
 #' cases (individuals with a virus) at each point in time.
-get_active_cases <- function(x) {
+get_active_cases <- function(x, disease = NULL) {
   stopifnot_model(x)
-  return(get_active_cases_cpp(x))
+  return(get_active_cases_cpp(x, disease_index(x, disease)))
 }
 
 #' @export
@@ -950,9 +1033,9 @@ get_active_cases <- function(x) {
 #' - The function `get_outbreak_size` returns a data.frame with four columns:
 #' `date`, `virus_id`, `virus`, and `outbreak_size` indicating the outbreak
 #' size per virus at each point in time.
-get_outbreak_size <- function(x) {
+get_outbreak_size <- function(x, disease = NULL) {
   stopifnot_model(x)
-  return(get_outbreak_size_cpp(x))
+  return(get_outbreak_size_cpp(x, disease_index(x, disease)))
 }
 
 # ============================================================================
@@ -966,6 +1049,9 @@ get_outbreak_size <- function(x) {
 #'
 #' @param x An object of class [`epiworld_sir`], [`epiworld_seir`], etc.
 #' (any model).
+#' @param disease The disease, by name (see [get_diseases()]); `NULL` (the
+#' default) returns every disease, one after the other. Every result has a
+#' `disease` column, with one disease too.
 #' @name epiworld-hospitalizations
 #' @concept model-utility-functions
 #' @family Summaries
@@ -983,9 +1069,9 @@ NULL
 #' will show up twice under count, but with weights 0.5 for each count. Models
 #' with no hospitalization tracking will return the same data.frame with no
 #' rows.
-get_hospitalizations <- function(x) {
+get_hospitalizations <- function(x, disease = NULL) {
 
   stopifnot_model(x)
-  return(get_hospitalizations_cpp(x))
+  return(get_hospitalizations_cpp(x, disease_index(x, disease)))
 
 }

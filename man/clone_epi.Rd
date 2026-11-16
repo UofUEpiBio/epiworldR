@@ -38,9 +38,9 @@ example, cloning the vaccine of a measles model (retrieved with
 \code{\link[=tool]{tool()}} cannot create.
 
 Copies of tools and viruses are \emph{new} objects: once added to a model with
-\code{\link[=add_tool]{add_tool()}} or \code{\link[=add_virus]{add_virus()}}, they get their own id (and, for viruses,
-their own lineage), so the model records them separately from the
-original. Use \code{\link[=set_name_tool]{set_name_tool()}} or \code{\link[=set_name_virus]{set_name_virus()}} to tell them apart
+\code{\link[=add_tool]{add_tool()}} or \code{\link[=add_virus]{add_virus()}}, they get their own id, so the model records
+them separately from the original. A copy of a virus is a strain of the
+same disease (as with \code{\link[=strain]{strain()}}). Use \code{\link[=set_name_tool]{set_name_tool()}} or \code{\link[=set_name_virus]{set_name_virus()}} to tell them apart
 in the outputs.
 
 \code{clone_epi()} replaces \code{clone_model()}, which is deprecated.

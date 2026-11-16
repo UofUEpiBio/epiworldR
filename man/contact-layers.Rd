@@ -16,7 +16,8 @@
 \alias{has_edge}
 \alias{get_edgelist}
 \alias{set_weight}
-\alias{add_virus_target}
+\alias{add_target_layer}
+\alias{get_targets_layer}
 \alias{enable_tracing}
 \alias{disable_tracing}
 \alias{is_tracing}
@@ -51,7 +52,9 @@ get_edgelist(layer)
 
 set_weight(layer, param)
 
-add_virus_target(layer, virus)
+add_target_layer(layer, disease)
+
+get_targets_layer(layer)
 
 enable_tracing(layer, max_contacts = 200L)
 
@@ -106,8 +109,8 @@ parameter holding the proportion of ties rewired at the end of each step.}
 
 \item{i, j}{Integer. Ids of the agents at the ends of the tie (starting at 0).}
 
-\item{virus}{A virus added to the model, a list of them, or lineage ids:
-the lineages that spread through the layer (as in \code{\link[=add_target_tool]{add_target_tool()}}).}
+\item{disease}{Character scalar. A disease that spreads through the layer,
+by name (see \code{\link[=get_diseases]{get_diseases()}}).}
 
 \item{max_contacts}{Integer. Number of contacts the log keeps per agent
 (the most recent ones).}
@@ -126,7 +129,7 @@ the lineages that spread through the layer (as in \code{\link[=add_target_tool]{
 (returned invisibly).
 \item \code{add_edge()} and \code{rm_edge()} return (invisibly) whether the network
 changed; \code{has_edge()} whether the tie exists.
-\item \code{set_weight()}, \code{add_virus_target()}, \code{enable_tracing()} and
+\item \code{set_weight()}, \code{add_target_layer()}, \code{enable_tracing()} and
 \code{disable_tracing()} return the layer (invisibly).
 \item \code{is_tracing()} returns whether the layer keeps a log.
 \item \code{get_tracing()} returns the log of the last run as a data frame (columns
@@ -157,9 +160,10 @@ Every kind of layer has a weight and virus targets.
 \code{\link[=add_param]{add_param()}}). The odds of an infection through the layer's contacts are
 multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
 layer without a weight has weight 1.
-\item \code{add_virus_target()} restricts the layer to some viruses, by lineage, as
-\code{\link[=add_target_tool]{add_target_tool()}} does for tools. A layer without targets spreads every
-virus.
+\item \code{add_target_layer()} restricts the layer to some diseases, by name (see
+\code{\link[=get_diseases]{get_diseases()}}), as \code{\link[=add_target_tool]{add_target_tool()}} does for tools; the names are
+checked when the model runs. A layer without targets spreads every disease.
+\code{get_targets_layer()} returns them.
 \item \code{enable_tracing()} makes the layer log the contacts it samples: each
 contact of an infectious agent (the source) with another agent, with the
 day. The log starts empty at every run and keeps the last \code{max_contacts}

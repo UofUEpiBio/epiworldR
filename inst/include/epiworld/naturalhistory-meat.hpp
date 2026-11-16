@@ -108,6 +108,17 @@ inline Duration Duration::since(int s) const
     return d;
 }
 
+inline Duration Duration::of(std::string disease) const
+{
+    if (anchor < 0)
+        throw std::logic_error(
+            "of() names the disease of the stage in since(): call since() first."
+        );
+    Duration d(*this);
+    d.anchor_disease = std::move(disease);
+    return d;
+}
+
 inline int Duration::draw(Agent & agent, Model & model) const
 {
 
@@ -251,10 +262,28 @@ inline TransitionRef & TransitionRef::when(Nodes stages)
     return *this;
 }
 
+inline TransitionRef & TransitionRef::of(std::string disease)
+{
+    auto & t = nh->transitions[id];
+    if (t.when.empty())
+        throw std::logic_error(
+            "of() names the disease of the stages in when(): call when() first "
+            "(transition \"" + t.name + "\")."
+        );
+    t.when_disease = std::move(disease);
+    return *this;
+}
+
 // NaturalHistory --------------------------------------------------------------
 
+inline uint64_t NaturalHistory::next_key()
+{
+    static std::atomic< uint64_t > counter(0u);
+    return ++counter;
+}
+
 inline NaturalHistory::NaturalHistory(std::string name_) :
-    name(std::move(name_)) {}
+    name(std::move(name_)), key(next_key()) {}
 
 inline void NaturalHistory::check_stage(int s, const char * what) const
 {

@@ -12,19 +12,23 @@
 \alias{epiworld_hist_tool}
 \title{Model history and totals}
 \usage{
-get_hist_total(x)
+get_hist_total(x, disease = NULL)
 
-get_today_total(x)
+get_today_total(x, disease = NULL)
 
 \method{plot}{epiworld_hist}(x, y, ...)
 
-get_hist_virus(x)
+get_hist_virus(x, disease = NULL)
 
-get_hist_tool(x)
+get_hist_tool(x, disease = NULL)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model).}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); \code{NULL} (the
+default) returns every disease, one after the other. Every result has a
+\code{disease} column, with one disease too.}
 
 \item{y}{Ignored.}
 
@@ -34,15 +38,15 @@ get_hist_tool(x)
 \value{
 \itemize{
 \item The \code{get_hist_total} function returns an object of class
-\link{epiworld_hist_total}: a data frame with one row per day, status and stage
-(\code{date}, \code{status}, \code{stage}, \code{counts}). Models without statuses have one,
+\link{epiworld_hist_total}: a data frame with one row per disease, day, status
+and stage (\code{disease}, \code{date}, \code{status}, \code{stage}, \code{counts}). Models without statuses have one,
 \code{"Free"}. Totals by stage (or by status) are a sum over the other column.
 }
 
 \itemize{
 \item The \code{get_today_total} function returns a data frame with the number of
-agents in each status and stage (\code{status}, \code{stage}, \code{counts}) at the end of
-the simulation. Models without statuses have one, \code{"Free"}.
+agents in each status and stage of each disease (\code{disease}, \code{status},
+\code{stage}, \code{counts}) at the end of the simulation. Models without statuses have one, \code{"Free"}.
 }
 
 \itemize{

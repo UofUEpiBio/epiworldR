@@ -285,7 +285,7 @@ expect_equal(
 expect_true(
   all(vapply(
     state_history,
-    function(x) is.data.frame(x) && identical(names(x), c("status", "stage", "counts")),
+    function(x) is.data.frame(x) && identical(names(x), c("disease", "status", "stage", "counts")),
     logical(1)
   )),
   info = "Each state history entry should be a data frame of counts"

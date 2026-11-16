@@ -312,8 +312,14 @@ std::string get_name_virus_cpp(SEXP virus) {
 }
 
 [[cpp11::register]]
-int get_lineage_virus_cpp(SEXP virus) {
-  return external_pointer<Virus>(virus)->get_lineage_id();
+SEXP strain_cpp(SEXP virus, std::string name) {
+
+  // A copy of the virus, of the same disease, with its own name
+  external_pointer<Virus> ptr(
+    new Virus(external_pointer<Virus>(virus)->strain(name))
+  );
+  return ptr;
+
 }
 
 [[cpp11::register]]
