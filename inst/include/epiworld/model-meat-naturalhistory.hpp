@@ -158,7 +158,7 @@ inline void Model::nh_build_states()
         UpdateFun([](Agent * p, Model * m) -> void { m->nh_step(*p); }) :
         UpdateFun([](Agent * p, Model * m) -> void {
             const unsigned int c = p->state;
-            m->nh_step_stage(m->tracks[0u], *p, c, true);
+            m->nh_step_stage< true >(m->tracks[0u], *p, c);
             if (m->st)
                 m->nh_step_status(*p, c);
         });
@@ -670,7 +670,7 @@ inline void Model::nh_step(Agent & p)
     const int infected = (p.virus == nullptr) ? nh_step_infection(p, c) : -1;
     for (auto & track : tracks)
         if (track.id != infected)
-            nh_step_stage(track, p, c, false);
+            nh_step_stage< false >(track, p, c);
 
     if (st)
         nh_step_status(p, c);
@@ -751,11 +751,11 @@ inline int Model::nh_step_infection(Agent & p, unsigned int c)
 
 }
 
+template< bool One >
 inline bool Model::nh_step_stage(
     Track & track,
     Agent & p,
-    unsigned int c,
-    bool one
+    unsigned int c
 )
 {
 
@@ -766,12 +766,12 @@ inline bool Model::nh_step_stage(
     // track's (with one disease the virus is always of it; see nh_of())
     const auto & v = p.virus;
     const NaturalHistory & h =
-        (v && v->nh_def && (one || (v->disease == track.id))) ?
+        (v && v->nh_def && (One || (v->disease == track.id))) ?
         *v->nh_def : *track.nh;
 
     // 1. Infection by contact (one disease; not out of the layers)
     if (
-        one && (si.infection >= 0) && (p.virus == nullptr) &&
+        One && (si.infection >= 0) && (p.virus == nullptr) &&
         (state_excluded.empty() || !state_excluded[c])
     )
     {
@@ -982,9 +982,12 @@ inline void Model::nh_enter(
 
 inline void Model::nh_react(Agent & p, int transition, int track, int stage_old)
 {
+    if (!nh_reactions.empty())
+        nh_react_fire(p, transition, track, stage_old);
+}
 
-    if (nh_reactions.empty())
-        return;
+inline void Model::nh_react_fire(Agent & p, int transition, int track, int stage_old)
+{
 
     const size_t id = static_cast< size_t >(p.id);
     const Track & t = tracks[static_cast< size_t >(track)];

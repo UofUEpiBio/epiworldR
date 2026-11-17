@@ -490,7 +490,10 @@ protected:
     const Track & nh_local(int global, int & local) const;
 
     void nh_build_states();
+
+    /// The reactions to `p`'s change (checked inline: most models have none)
     void nh_react(Agent & p, int transition, int track, int stage_old);
+    void nh_react_fire(Agent & p, int transition, int track, int stage_old);
 
     void nh_install(std::shared_ptr< NaturalHistory > def);
     void nh_reset();
@@ -500,9 +503,14 @@ protected:
     /// The diseases (bits) whose viruses the current draw may give (see
     /// nh_step_infection(); all, except during a draw of several diseases)
     uint64_t nh_trial_mask = ~uint64_t(0);
-    /// nh_step()'s stage part (`one`: the model has one disease, whose
-    /// infection is drawn first)
-    bool nh_step_stage(Track & track, Agent & p, unsigned int cell, bool one);
+    /**
+     * nh_step()'s stage part. `One`: the model has one disease, whose
+     * infection is drawn first; a template, so that the one-disease update
+     * (the common case) is compiled without the checks of several diseases
+     * and can be inlined.
+     */
+    template< bool One >
+    bool nh_step_stage(Track & track, Agent & p, unsigned int cell);
     void nh_step_status(Agent & p, unsigned int cell); ///< nh_step()'s status part
 
     /// The natural history whose values apply to `p` in a track: its

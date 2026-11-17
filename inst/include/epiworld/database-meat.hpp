@@ -721,6 +721,21 @@ inline size_t DataBase::get_n_viruses() const
     return reg.virus_name.size();
 }
 
+inline const std::string & DataBase::get_virus_name(int virus_id) const
+{
+    if ((virus_id < 0) || (static_cast< size_t >(virus_id) >= reg.virus_name.size()))
+        throw std::out_of_range(
+            "No variant has the id " + std::to_string(virus_id) + "."
+        );
+    return reg.virus_name[static_cast< size_t >(virus_id)];
+}
+
+inline int DataBase::get_virus_disease(int virus_id) const
+{
+    get_virus_name(virus_id); // Checks the id
+    return disease_of_virus(virus_id);
+}
+
 inline size_t DataBase::get_n_tools() const
 {
     return reg.tool_name.size();

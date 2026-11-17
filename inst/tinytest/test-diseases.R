@@ -104,3 +104,42 @@ for (out in list(
   get_hospitalizations(model)
 ))
   expect_equal(names(out)[1L], "disease")
+
+# Variants born by mutation are labelled too -----------------------------------
+# Mutants are in the database, not among the model's viruses. Mutating needs a
+# C++ extension, so this runs at home only.
+toolchain <- c(
+  "cpp11", "brio", "callr", "cli", "decor", "desc", "glue", "tibble", "vctrs"
+)
+if (at_home() &&
+  all(vapply(toolchain, requireNamespace, logical(1), quietly = TRUE))) {
+  cpp_source_epiworld(code = '
+  [[cpp11::register]]
+  int mutate_every_day(SEXP model) {
+    auto & m = epiworldR::as_model(model);
+    m.get_virus(0).set_mutation(
+      [](epiworld::Agent *, epiworld::Virus &, epiworld::Model *) -> bool {
+        return true;
+      }
+    );
+    return 0;
+  }
+  ', quiet = TRUE)
+
+  m <- ModelSIR("Flu", n = 500, prevalence = 0.05, transmission_prob = 0.4,
+    recovery_rate = 0.1)
+  add_layer(m, layer_network("contacts", graph_smallworld(k = 8, p = .05)))
+  verbose_off(m)
+  mutate_every_day(m)
+  run(m, ndays = 20, seed = 77)
+
+  hv <- get_hist_virus(m)
+  expect_true(length(unique(hv$virus_id)) > 1L)
+  rn <- get_reproductive_number(m)
+  ht <- get_hist_virus_transitions(m)
+  for (out in list(hv, rn, ht)) {
+    expect_true(nrow(out) > 0L)
+    expect_false(anyNA(out$virus))
+    expect_true(all(out$disease == "Flu"))
+  }
+}

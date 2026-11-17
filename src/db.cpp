@@ -12,21 +12,18 @@ using namespace cpp11;
 // Every output takes a disease (its index, see get_diseases(); -1: every
 // disease, one after the other) and returns a `disease` column first.
 
-// The names of the viruses (variants) with these ids
+// The names of the viruses (variants) with these ids: from the database, which
+// knows the variants born by mutation, not only the model's viruses
 static std::vector< std::string > virus_names(
   Model & model,
   const std::vector< int > & id
 ) {
 
-  std::vector< std::string > viruses;
-  for (const auto & v : model.get_viruses())
-    viruses.push_back(v->get_name());
-
-  std::vector< std::string > out(id.size());
-  std::transform(
-    id.begin(), id.end(), out.begin(),
-    [&viruses](int i) { return viruses[static_cast< size_t >(i)]; }
-  );
+  const auto & db = model.get_db();
+  std::vector< std::string > out;
+  out.reserve(id.size());
+  for (int i : id)
+    out.push_back(db.get_virus_name(i));
   return out;
 
 }
@@ -228,7 +225,7 @@ cpp11::data_frame get_reproductive_number_cpp(SEXP model, int disease) {
   std::vector< std::string > dnames(virus.size());
   for (size_t i = 0u; i < virus.size(); ++i)
     dnames[i] = diseases[static_cast< size_t >(
-      ptr->get_virus(static_cast< size_t >(virus[i])).get_disease()
+      ptr->get_db().get_virus_disease(virus[i])
     )];
 
   return cpp11::writable::data_frame({
