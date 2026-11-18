@@ -5,18 +5,21 @@
 \alias{epiworld_hist_transition}
 \alias{get_hist_transition_matrix}
 \alias{get_hist_transitions}
+\alias{get_hist_virus_transitions}
 \alias{as.array.epiworld_hist_transition}
 \alias{plot_incidence}
 \alias{plot.epiworld_hist_transition}
 \title{Transition dynamics and incidence}
 \usage{
-get_hist_transition_matrix(x, skip_zeros = FALSE)
+get_hist_transition_matrix(x, skip_zeros = FALSE, disease = NULL)
 
-get_hist_transitions(x)
+get_hist_transitions(x, disease = NULL)
+
+get_hist_virus_transitions(x, disease = NULL)
 
 \method{as.array}{epiworld_hist_transition}(x, ...)
 
-plot_incidence(x, ...)
+plot_incidence(x, disease = NULL, ...)
 
 \method{plot}{epiworld_hist_transition}(
   x,
@@ -35,6 +38,10 @@ plot_incidence(x, ...)
 \item{skip_zeros}{Logical scalar. When \code{FALSE} it will return all the
 entries in the transition matrix.}
 
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); \code{NULL} (the
+default) returns every disease, one after the other. Every result has a
+\code{disease} column, with one disease too.}
+
 \item{...}{In the case of plot methods, further arguments passed to
 \link[graphics:plot]{graphics::plot}.}
 
@@ -45,14 +52,25 @@ desired statistic.}
 }
 \value{
 \itemize{
-\item \code{get_hist_transition_matrix} returns a \link{data.frame} with six columns:
-"status_from", "stage_from", "status_to", "stage_to", "date", and "counts".
+\item \code{get_hist_transition_matrix} returns a \link{data.frame} with seven columns:
+"disease", "status_from", "stage_from", "status_to", "stage_to", "date",
+and "counts".
 }
 
 \itemize{
 \item \code{get_hist_transitions} returns a \link{data.frame} with how many times each
-declared transition fired each day: "date", "transition" (its name, see
-\code{\link[=add_rate]{add_rate()}}), and "counts".
+declared transition fired each day: "disease", "date", "transition" (its
+name, see \code{\link[=add_rate]{add_rate()}}), and "counts". The statuses' transitions are counted
+once: with several diseases, they come after the first disease's, with the
+disease \code{""}, when every disease is asked for.
+}
+
+\itemize{
+\item \code{get_hist_virus_transitions} returns the same counts by virus (strain):
+"disease", "date", "virus_id", "virus", "transition", and "counts", for the
+transitions an agent with the virus can take (infections, under the virus
+caught, and the transitions out of a stage that carries it). Over a
+disease's viruses, they add up to \code{get_hist_transitions()}.
 }
 
 \itemize{

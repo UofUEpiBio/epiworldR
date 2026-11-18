@@ -48,7 +48,8 @@ inline Virus::Virus(const Virus& other)
       date(other.date),
       id(other.id),
       lineage_id(other.lineage_id),
-      lineage_bit(other.lineage_bit),
+      disease(other.disease),
+      disease_bit(other.disease_bit),
       param_redirects(other.param_redirects),
       nh_def(other.nh_def)
 {
@@ -62,7 +63,8 @@ inline Virus::Virus(Virus&& other) noexcept
       date(other.date),
       id(other.id),
       lineage_id(other.lineage_id),
-      lineage_bit(other.lineage_bit),
+      disease(other.disease),
+      disease_bit(other.disease_bit),
       param_redirects(std::move(other.param_redirects)),
       nh_def(std::move(other.nh_def))
 {
@@ -79,7 +81,8 @@ inline Virus& Virus::operator=(const Virus& other)
         date = other.date;
         id = other.id;
         lineage_id = other.lineage_id;
-        lineage_bit = other.lineage_bit;
+        disease = other.disease;
+        disease_bit = other.disease_bit;
         param_redirects = other.param_redirects;
         nh_def = other.nh_def;
         counter_copy_assign++;
@@ -96,7 +99,8 @@ inline Virus& Virus::operator=(Virus&& other) noexcept
         date = other.date;
         id = other.id;
         lineage_id = other.lineage_id;
-        lineage_bit = other.lineage_bit;
+        disease = other.disease;
+        disease_bit = other.disease_bit;
         param_redirects = std::move(other.param_redirects);
         nh_def = std::move(other.nh_def);
         other.agent = nullptr;
@@ -265,6 +269,26 @@ inline NaturalHistory & Virus::nh_edit()
         nh_def = std::make_shared< NaturalHistory >(*nh_def);
 
     return *nh_def;
+}
+
+inline Virus Virus::strain(std::string name) const
+{
+    if (!nh_def)
+        throw std::logic_error(
+            "The virus \"" + virus_name + "\" has no natural history: a strain "
+            "shares its virus's, so declare it first."
+        );
+
+    // The same disease, out of any model
+    Virus v(*this);
+    v.virus_name = std::move(name);
+    v.agent = nullptr;
+    v.date = -99;
+    v.id = -99;
+    v.lineage_id = -99;
+    v.disease = -1;
+    v.disease_bit = 0u;
+    return v;
 }
 
 inline int Virus::add_stage(std::string label, unsigned int flags)

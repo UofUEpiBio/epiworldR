@@ -277,16 +277,18 @@ use_param <- function(virus, param, replacement) {
 #' @export
 #' @param x A virus or a model.
 #' @rdname virus
-get_stages <- function(x) UseMethod("get_stages")
+get_stages <- function(x, ...) UseMethod("get_stages")
 
 #' @export
-get_stages.epiworld_virus <- function(x) {
+get_stages.epiworld_virus <- function(x, ...) {
   as.data.frame(get_stages_virus_cpp(x))
 }
 
 #' @export
-get_stages.epiworld_model <- function(x) {
-  get_stages_model_cpp(x)
+#' @param disease In `get_stages()` of a model, the disease (by name, see
+#' [get_diseases()]); required when the model has several.
+get_stages.epiworld_model <- function(x, disease = NULL, ...) {
+  get_stages_model_cpp(x, disease_index(x, disease))
 }
 
 #' @export

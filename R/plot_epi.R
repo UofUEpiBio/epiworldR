@@ -78,13 +78,17 @@ plot_epi.epiworld_hist_virus <- function(
   ...
 ) {
 
-  res <- lapply(sort(unique(x$id)), function(i) x[x$id == i, ])
+  res <- lapply(sort(unique(x$virus_id)), function(i) {
+    r <- x[x$virus_id == i, , drop = FALSE]
+    attr(r, "stages") <- unique(r$stage)
+    r
+  })
 
   lapply(res, function(r) {
     plot_epi.epiworld_hist(
       r,
       auto_trunc = auto_trunc,
-      main = paste0("Variant id ", r$id[1])
+      main = paste0("Virus ", r$virus[1], " (id ", r$virus_id[1], ")")
     )
   })
   invisible(x)
@@ -99,6 +103,29 @@ plot_epi.epiworld_hist <- function(
   counts_scale,
   ...
 ) {
+  # Several diseases: one panel each (their stages are their own)
+  diseases <- unique(x$disease)
+  if (length(diseases) > 1L) {
+
+    op <- graphics::par(mfrow = grDevices::n2mfrow(length(diseases)))
+    on.exit(graphics::par(op))
+
+    for (d in diseases) {
+      x_d <- x[x$disease == d, , drop = FALSE]
+      attr(x_d, "stages") <- unique(x_d$stage)
+      plot_epi.epiworld_hist(
+        x_d,
+        auto_trunc   = auto_trunc,
+        main         = if (nzchar(main)) paste0(main, ": ", d) else d,
+        counts_scale = counts_scale,
+        ...
+      )
+    }
+
+    return(invisible(x))
+
+  }
+
   # One curve per stage (summed over the statuses)
   curves      <- stats::aggregate(counts ~ date + stage, data = x, FUN = sum)
   state_names <- attr(x, "stages")

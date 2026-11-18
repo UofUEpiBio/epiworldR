@@ -146,6 +146,7 @@ private:
     Value sd;
     DurationFun fun = nullptr;
     int anchor = -1;
+    std::string anchor_disease; ///< The disease of `anchor` (see `of()`)
 
     friend class NaturalHistory;
 
@@ -161,8 +162,15 @@ public:
     /// Counts from the day the agent entered stage `s` in this infection.
     Duration since(int s) const;
 
+    /**
+     * The disease of the stage in `since()`, by name: required, in a status's
+     * duration, when the model has several diseases.
+     */
+    Duration of(std::string disease) const;
+
     Kind get_kind() const { return kind; }
     int get_anchor() const { return anchor; }
+    const std::string & get_anchor_disease() const { return anchor_disease; }
 
     /// Draws a number of days (at least one).
     int draw(Agent & agent, Model & model) const;
@@ -192,6 +200,7 @@ struct Transition {
 
     /// A status transition: only for agents in one of these stages (empty: any)
     std::vector< int > when;
+    std::string when_disease; ///< The disease of `when` (see `TransitionRef::of()`)
 };
 
 /**
@@ -222,6 +231,10 @@ public:
     /// A status transition: only for agents in these stages (read at the
     /// start of the day).
     TransitionRef & when(Nodes stages);
+
+    /// The disease of the stages in `when()`, by name: required when the
+    /// model has several diseases.
+    TransitionRef & of(std::string disease);
 };
 
 /**
@@ -254,6 +267,11 @@ struct StageInfo {
 class NaturalHistory {
 protected:
     std::string name;
+
+    /// Which disease it is: set when it is created, kept by its copies (the
+    /// strains and the variants of a virus share it; see `Model::add_virus()`)
+    uint64_t key = 0u;
+    static uint64_t next_key();
     std::vector< std::string > stage_labels;
     std::vector< unsigned int > stage_flags;
     std::vector< epiworld_double > stage_contact;
@@ -290,6 +308,7 @@ public:
     TransitionRef external(Nodes from, int to, std::string label);
 
     const std::string & get_name() const { return name; }
+    uint64_t get_key() const { return key; }
     size_t get_n_stages() const { return stage_labels.size(); }
     size_t get_n_transitions() const { return transitions.size(); }
     const std::vector< std::string > & get_stages() const { return stage_labels; }
@@ -355,20 +374,30 @@ public:
 /**
  * @brief What a reaction responds to (see `Model::react()`).
  * @details `Trigger::entered(s)`: an agent enters stage `s`;
- * `Trigger::fired(t)`: transition `t` is applied. `.was({statuses})`: only if
- * the agent's status at the start of the day was one of these.
+ * `Trigger::fired(t)`: transition `t` (its id in the model, see
+ * `Model::transition_id()`) is applied. `.was({statuses})`: only if the
+ * agent's status at the start of the day was one of these. `.of(disease)`:
+ * the disease of the stage in `entered()`, by name, required when the model
+ * has several diseases.
  */
 struct Trigger {
     enum class Kind : uint8_t { entered, fired } kind = Kind::entered;
     int target = -1;
     std::vector< int > was_status; ///< Empty: any status
+    std::string disease;           ///< Of `entered()` (see `of()`)
 
-    static Trigger entered(int stage) { return {Kind::entered, stage, {}}; }
-    static Trigger fired(int transition) { return {Kind::fired, transition, {}}; }
+    static Trigger entered(int stage) { return {Kind::entered, stage, {}, {}}; }
+    static Trigger fired(int transition) { return {Kind::fired, transition, {}, {}}; }
     Trigger was(std::vector< int > statuses) const
     {
         Trigger t(*this);
         t.was_status = std::move(statuses);
+        return t;
+    }
+    Trigger of(std::string disease_name) const
+    {
+        Trigger t(*this);
+        t.disease = std::move(disease_name);
         return t;
     }
 };

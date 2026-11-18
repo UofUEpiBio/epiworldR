@@ -3,6 +3,8 @@
 #' Functions to retrieve and modify the agents of a model.
 #'
 #' @param model Model object of class [epiworld_model].
+#' @param disease The disease, by name (see [get_diseases()]); required when the
+#' model has several.
 #' @export
 #' @concept model-utility-functions
 #' @name agent-functions
@@ -15,16 +17,16 @@
 #' add_layer(sir, layer_network("contacts", graph_smallworld(k = 5, p = .01)))
 #' run(sir, ndays = 100, seed = 1912)
 #' table(get_agents_stages(sir))
-get_agents_stages <- function(model) {
+get_agents_stages <- function(model, disease = NULL) {
   stopifnot_model(model)
-  get_agents_stages_cpp(model, FALSE)
+  get_agents_stages_cpp(model, FALSE, disease_index(model, disease))
 }
 
 #' @export
 #' @rdname agent-functions
 get_agents_statuses <- function(model) {
   stopifnot_model(model)
-  get_agents_stages_cpp(model, TRUE)
+  get_agents_stages_cpp(model, TRUE, -1L)
 }
 
 #' @export

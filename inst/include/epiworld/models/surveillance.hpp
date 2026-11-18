@@ -126,7 +126,7 @@ inline ModelSURV::ModelSURV(
         ) -> void
     {
 
-        const auto * nh = m->get_natural_history();
+        const auto * nh = m->get_natural_history(0);
         const int detected = nh->transition_id("Detected");
         const int detected_asympt = nh->transition_id("Detected asymptomatic");
 
@@ -155,12 +155,12 @@ inline ModelSURV::ModelSURV(
             Agent * p = &pop[i];
             
             // If still exposed for the next term
-            if (IN(m->get_stage(*p), exposed_state ))
+            if (IN(m->get_stage(*p, 0), exposed_state ))
             {
 
                 // The ones already isolated stay so
                 ndetected += 1.0;
-                if (m->get_stage(*p) == ModelSURV::ASYMPTOMATIC)
+                if (m->get_stage(*p, 0) == ModelSURV::ASYMPTOMATIC)
                 {
                     ndetected_asympt += 1.0;
                     m->fire(detected_asympt, *p);
@@ -258,6 +258,7 @@ inline ModelSURV::ModelSURV(
     Tool vax("Vaccine");
     vax.set_susceptibility_reduction("Vax efficacy");
     vax.set_transmission_reduction("Vax redux transmission");
+    vax.add_target(vname);
 
     this->add_tool(vax, assign::share(prop_vaccinated));
 

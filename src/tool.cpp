@@ -250,21 +250,21 @@ SEXP set_name_tool_cpp(SEXP tool, std::string name) {
   return tool;
 }
 
-// Virus targets ---------------------------------------------------------------
+// Disease targets (by name) ---------------------------------------------------
 [[cpp11::register]]
-SEXP add_target_tool_cpp(SEXP tool, int lineage_id) {
+SEXP add_target_tool_cpp(SEXP tool, std::string disease) {
 
   WrapTool(toolptr)(tool);
-  toolptr->add_target(lineage_id);
+  toolptr->add_target(disease);
   return tool;
 
 }
 
 [[cpp11::register]]
-SEXP set_targets_tool_cpp(SEXP tool, integers lineage_ids) {
+SEXP set_targets_tool_cpp(SEXP tool, cpp11::strings diseases) {
 
   WrapTool(toolptr)(tool);
-  toolptr->set_targets(as_cpp<std::vector<int>>(lineage_ids));
+  toolptr->set_targets(as_cpp<std::vector<std::string>>(diseases));
   return tool;
 
 }
@@ -279,15 +279,10 @@ SEXP clear_targets_tool_cpp(SEXP tool) {
 }
 
 [[cpp11::register]]
-cpp11::writable::integers get_targets_tool_cpp(SEXP tool) {
+cpp11::writable::strings get_targets_tool_cpp(SEXP tool) {
 
   WrapTool(toolptr)(tool);
-
-  cpp11::writable::integers res;
-  for (const auto & id : toolptr->get_targets())
-    res.push_back(id);
-
-  return res;
+  return cpp11::writable::strings(toolptr->get_targets());
 
 }
 

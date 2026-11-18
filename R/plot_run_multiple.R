@@ -100,6 +100,12 @@ compute_ts_ci_area <- function(
 #' @export
 #' @concept epiworld-model-diagrams
 plot_multiple_transition <- function(x, ...) {
+  # With several diseases, each disease's stages are its own: "Disease: Stage"
+  if (length(unique(x$disease)) > 1L) {
+    x$from_stage <- paste0(x$disease, ": ", x$from_stage)
+    x$to_stage   <- paste0(x$disease, ": ", x$to_stage)
+  }
+
   # Figuring out the stages
   states <- unique(c(x$from_stage, x$to_stage)) |>
     sort()
@@ -150,8 +156,11 @@ plot.epiworld_multiple_save_i <- function(x, y = NULL, ...) {
   } else if (what == "transition") {
     plot_multiple_transition(x, ...)
   } else {
-    # One panel per stage (summed over the statuses)
+    # One panel per stage (summed over the statuses); with several diseases,
+    # per disease and stage
     counts <- if ("counts" %in% names(x)) "counts" else "n"
+    if (length(unique(x$disease)) > 1L)
+      x$stage <- paste0(x$disease, ": ", x$stage)
     x <- stats::aggregate(
       x[[counts]],
       by  = list(sim_num = x$sim_num, date = x$date, stage = x$stage),

@@ -174,6 +174,14 @@ defunct_table <- c(
   grouping_random = paste(
     "Give layer_mixing() a placement whose labels are the groups:",
     "assign_counts(sizes) or assign_shares(proportions) (see help(\"assign\"))."
+  ),
+  add_virus_target = paste(
+    "Layers target diseases, by name: add_target_layer(layer, disease) (see",
+    "help(\"get_diseases\")); a layer without targets spreads every disease."
+  ),
+  get_lineage_virus = paste(
+    "Targets are diseases, not virus lineages: add_target_tool(tool, disease)",
+    "and add_target_layer(layer, disease), by name (see help(\"get_diseases\"))."
   )
 )
 
@@ -442,3 +450,11 @@ add_tool_n <- function(...) defunct("add_tool_n")
 #' @export
 #' @rdname epiworldR-defunct
 grouping_random <- function(...) defunct("grouping_random")
+
+#' @export
+#' @rdname epiworldR-defunct
+add_virus_target <- function(...) defunct("add_virus_target")
+
+#' @export
+#' @rdname epiworldR-defunct
+get_lineage_virus <- function(...) defunct("get_lineage_virus")

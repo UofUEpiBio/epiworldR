@@ -117,11 +117,13 @@ print.epiworld_agents <- function(x, compressed = TRUE, max_print = 10, ...) {
 #' @export
 #' @returns
 #' - `get_stage` and `get_status` return the agent's stage and status (labels).
+#' @param disease In `get_stage()`, the disease (by name, see [get_diseases()]);
+#' required when the model has several.
 #' @rdname agents
-get_stage <- function(model, x) {
+get_stage <- function(model, x, disease = NULL) {
   stopifnot_model(model)
   stopifnot_agent(x)
-  get_stage_agent_cpp(model, x)
+  get_stage_agent_cpp(model, x, disease_index(model, disease))
 }
 
 #' @export

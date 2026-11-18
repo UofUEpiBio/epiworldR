@@ -24,6 +24,7 @@ class Virus {
     friend class DataBase;
     friend class Tool;
     friend class ContactLayer;
+    friend struct DiseaseTargets;
 private:
     
     Agent * agent = nullptr;
@@ -33,7 +34,8 @@ private:
     int date = -99;
     int id   = -99;    
     int lineage_id = -99; ///< Id of the founding virus (kept across mutations).
-    uint64_t lineage_bit = uint64_t(1) << 63; ///< Bit matched against Tool::target_mask.
+    int disease = -1;     ///< The model's disease it belongs to (see `Model::add_virus()`)
+    uint64_t disease_bit = 0u; ///< Its bit in a target mask (none: not in a model)
     MutFun          mutation                 = nullptr;
 
     /// Parameters this variant reads in place of others (see `use_param()`)
@@ -98,8 +100,7 @@ public:
      * 
      * The id assigned to the founding virus when it was added to the model
      * (see `Model::add_virus()`). Mutations change the virus id but keep
-     * the lineage id, so all variants of a virus share it. Tools target
-     * viruses by lineage (see `Tool::add_target()`).
+     * the lineage id, so all variants of a virus share it.
      * 
      * @return int The lineage id (-99 if the virus has not been recorded).
      */
@@ -118,10 +119,11 @@ public:
      * @name Natural history
      * @brief The disease's stages and the transitions between them, declared
      * on the virus (see `NaturalHistory` for each method).
-     * @details `Model::add_virus()` gives the model the virus's stages (its
-     * states). A copy of the virus (a strain, or a variant from a mutation)
-     * keeps the natural history; it can read other parameters with
-     * `use_param()`. The viruses of one model share their stages.
+     * @details A natural history is a disease. A virus built from scratch
+     * (with `add_stage()` and the others) starts a new disease; a copy of it
+     * (a strain, see `strain()`, or a variant from a mutation) belongs to the
+     * same disease: it keeps the stages and transitions, and can read other
+     * parameters with `use_param()` (see `Model::add_virus()`).
      */
     ///@{
     int add_stage(std::string label, unsigned int flags = 0u);
@@ -133,6 +135,18 @@ public:
 
     /// The natural history (`nullptr` if the virus has none).
     const NaturalHistory * get_natural_history() const { return nh_def.get(); }
+
+    /**
+     * @brief A strain of this virus: a copy named `name`, of the same disease.
+     * @details It shares the natural history, so `Model::add_virus()` adds it
+     * to the disease of this virus, and can read other parameters
+     * (`use_param()`). It is not in a model until added.
+     */
+    Virus strain(std::string name) const;
+
+    /// The index of its disease in its model (`Model::disease_id()`; -1 if it
+    /// is not in a model).
+    int get_disease() const { return disease; }
     ///@}
 
     /**

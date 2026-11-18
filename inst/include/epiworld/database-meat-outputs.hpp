@@ -33,16 +33,38 @@ inline RunOutputs DataBase::get_run_outputs(
         return names;
     };
 
-    // The status and stage columns of a vector of states
+    // The status and stage columns of a vector of cells of disease `d`
     auto add_pairs = [this](
         OutputTable & t,
-        const std::vector< epiworld_fast_uint > & states,
+        int d,
+        const std::vector< epiworld_fast_uint > & cells,
         const std::string & prefix
     ) {
         std::vector< std::string > status, stage;
-        split_states(states, &status, &stage);
+        split_states(d, cells, &status, &stage);
         t.add(prefix + "status", status);
         t.add(prefix + "stage", stage);
+    };
+
+    // Keeps the rows of disease `d`'s viruses (with several diseases, the
+    // per-virus outputs list every virus in every disease's computation)
+    auto keep_virus_rows = [this](
+        int d,
+        std::vector< int > & date,
+        std::vector< int > & id,
+        std::vector< int > & n
+    ) {
+        std::vector< int > date_, id_, n_;
+        for (size_t i = 0u; i < n.size(); ++i)
+            if ((n[i] > 0) && ((recs.size() == 1u) || (disease_of_virus(id[i]) == d)))
+            {
+                date_.push_back(date[i]);
+                id_.push_back(id[i]);
+                n_.push_back(n[i]);
+            }
+        date.swap(date_);
+        id.swap(id_);
+        n.swap(n_);
     };
 
     RunOutputs out;
@@ -50,154 +72,43 @@ inline RunOutputs DataBase::get_run_outputs(
     for (const auto & what : whats)
     {
 
-        OutputTable t;
-
+        // The tables of the registry: once
         if (what == "virus_info")
         {
+            OutputTable t;
             std::vector< int > id(reg.virus_name.size());
             std::iota(id.begin(), id.end(), 0);
+            std::vector< std::string > names;
+            for (int v : id)
+                disease_rows(&names, 1u, model->tracks.empty() ? 0 : disease_of_virus(v));
+            t.add("disease", names);
             t.add("virus_id", id);
             t.add("virus", reg.virus_name);
             t.add("date_recorded", reg.virus_origin_date);
             t.add("parent", reg.virus_parent_id);
+            out[what] = std::move(t);
+            continue;
         }
-        else if (what == "virus_hist")
+
+        if (what == "tool_info")
         {
-            t.add("date", rec.hist_virus_date);
-            t.add("virus_id", rec.hist_virus_id);
-            t.add("virus", vnames(rec.hist_virus_id));
-            add_pairs(t, rec.hist_virus_state, "");
-            t.add("n", rec.hist_virus_counts);
-        }
-        else if (what == "tool_info")
-        {
+            OutputTable t;
             std::vector< int > id(reg.tool_name.size());
             std::iota(id.begin(), id.end(), 0);
             t.add("id", id);
             t.add("tool_name", reg.tool_name);
             t.add("date_recorded", reg.tool_origin_date);
+            out[what] = std::move(t);
+            continue;
         }
-        else if (what == "tool_hist")
-        {
-            t.add("date", rec.hist_tool_date);
-            t.add("id", rec.hist_tool_id);
-            add_pairs(t, rec.hist_tool_state, "");
-            t.add("n", rec.hist_tool_counts);
-        }
-        else if (what == "total_hist")
-        {
-            t.add("date", rec.hist_total_date);
-            t.add("nviruses", rec.hist_total_nviruses_active);
-            add_pairs(t, rec.hist_total_state, "");
-            t.add("counts", rec.hist_total_counts);
-        }
-        else if (what == "transmission")
-        {
-            t.add("date", rec.transmission_date);
-            t.add("virus_id", rec.transmission_virus);
-            t.add("virus", vnames(rec.transmission_virus));
-            t.add("source_exposure_date", rec.transmission_source_exposure_date);
-            t.add("source", rec.transmission_source);
-            t.add("target", rec.transmission_target);
-            t.add("layer_id", rec.transmission_layer);
-            t.add("layer", lnames(rec.transmission_layer));
-        }
-        else if (what == "transition")
-        {
-            std::vector< int > date, counts;
-            std::vector< epiworld_fast_uint > from, to;
-            int ns = model->nstates;
-            for (int i = 0; i <= model->today(); ++i)
-                for (int f = 0; f < ns; ++f)
-                    for (int s = 0; s < ns; ++s)
-                    {
-                        int n = rec.hist_transition_matrix[i * (ns * ns) + s * ns + f];
-                        if (n == 0)
-                            continue;
-                        date.push_back(i);
-                        from.push_back(static_cast< epiworld_fast_uint >(f));
-                        to.push_back(static_cast< epiworld_fast_uint >(s));
-                        counts.push_back(n);
-                    }
-            t.add("date", date);
-            add_pairs(t, from, "from_");
-            add_pairs(t, to, "to_");
-            t.add("counts", counts);
-        }
-        else if (what == "reproductive")
-        {
-            std::vector< int > id, source, date, rt;
-            for (const auto & m : get_reproductive_number())
-            {
-                id.push_back(m.first[0u]);
-                source.push_back(m.first[1u]);
-                date.push_back(m.first[2u]);
-                rt.push_back(m.second);
-            }
-            t.add("virus_id", id);
-            t.add("virus", vnames(id));
-            t.add("source", source);
-            t.add("source_exposure_date", date);
-            t.add("rt", rt);
-        }
-        else if (what == "generation")
-        {
-            std::vector< int > agent, virus, time, gentime;
-            get_generation_time(agent, virus, time, gentime);
-            t.add("virus", virus);
-            t.add("source", agent);
-            t.add("source_exposure_date", time);
-            t.add("gentime", gentime);
-        }
-        else if (what == "active_cases" || what == "outbreak_size")
-        {
-            std::vector< int > date, id, n;
-            if (what == "active_cases")
-                get_active_cases(date, id, n);
-            else
-                get_outbreak_size(date, id, n);
 
-            // Skipping the zeros
-            std::vector< int > date_, id_, n_;
-            for (size_t i = 0u; i < n.size(); ++i)
-                if (n[i] > 0)
-                {
-                    date_.push_back(date[i]);
-                    id_.push_back(id[i]);
-                    n_.push_back(n[i]);
-                }
-
-            t.add("date", date_);
-            t.add("virus_id", id_);
-            t.add("virus", vnames(id_));
-            t.add(what, n_);
-        }
-        else if (what == "hospitalizations")
-        {
-            std::vector< int > date, id, tool, count;
-            std::vector< double > weight;
-            get_hospitalizations(date, id, tool, count, weight);
-
-            // Skipping the zeros
-            std::vector< int > date_, id_, tool_, count_;
-            std::vector< double > weight_;
-            for (size_t i = 0u; i < date.size(); ++i)
-                if (count[i] > 0 || weight[i] > 0.0)
-                {
-                    date_.push_back(date[i]);
-                    id_.push_back(id[i]);
-                    tool_.push_back(tool[i]);
-                    count_.push_back(count[i]);
-                    weight_.push_back(weight[i]);
-                }
-
-            t.add("date", date_);
-            t.add("virus_id", id_);
-            t.add("tool_id", tool_);
-            t.add("count", count_);
-            t.add("weight", weight_);
-        }
-        else
+        if (
+            (what != "virus_hist") && (what != "tool_hist") &&
+            (what != "total_hist") && (what != "transmission") &&
+            (what != "transition") && (what != "reproductive") &&
+            (what != "generation") && (what != "active_cases") &&
+            (what != "outbreak_size") && (what != "hospitalizations")
+        )
         {
             std::string valid;
             for (const auto & n : run_output_names())
@@ -207,16 +118,148 @@ inline RunOutputs DataBase::get_run_outputs(
             );
         }
 
-        // The disease of each row, first (tools are not one disease's)
-        if (what != "tool_info")
+        // The disease's tables, one disease after the other, with the disease
+        // of each row first
+        OutputTable all;
+        for (size_t di = 0u; di < recs.size(); ++di)
         {
+
+            const int d = static_cast< int >(di);
+            const auto & r = recs[di];
+            OutputTable t;
+
+            if (what == "virus_hist")
+            {
+                t.add("date", r.hist_virus_date);
+                t.add("virus_id", r.hist_virus_id);
+                t.add("virus", vnames(r.hist_virus_id));
+                add_pairs(t, d, r.hist_virus_state, "");
+                t.add("n", r.hist_virus_counts);
+            }
+            else if (what == "tool_hist")
+            {
+                t.add("date", r.hist_tool_date);
+                t.add("id", r.hist_tool_id);
+                add_pairs(t, d, r.hist_tool_state, "");
+                t.add("n", r.hist_tool_counts);
+            }
+            else if (what == "total_hist")
+            {
+                t.add("date", r.hist_total_date);
+                t.add("nviruses", r.hist_total_nviruses_active);
+                add_pairs(t, d, r.hist_total_state, "");
+                t.add("counts", r.hist_total_counts);
+            }
+            else if (what == "transmission")
+            {
+                t.add("date", r.transmission_date);
+                t.add("virus_id", r.transmission_virus);
+                t.add("virus", vnames(r.transmission_virus));
+                t.add("source_exposure_date", r.transmission_source_exposure_date);
+                t.add("source", r.transmission_source);
+                t.add("target", r.transmission_target);
+                t.add("layer_id", r.transmission_layer);
+                t.add("layer", lnames(r.transmission_layer));
+            }
+            else if (what == "transition")
+            {
+                std::vector< int > date, counts;
+                std::vector< epiworld_fast_uint > from, to;
+                const int ns = static_cast< int >(r.ncells);
+                for (int i = 0; i <= model->today(); ++i)
+                    for (int f = 0; f < ns; ++f)
+                        for (int s = 0; s < ns; ++s)
+                        {
+                            int n = r.hist_transition_matrix[i * (ns * ns) + s * ns + f];
+                            if (n == 0)
+                                continue;
+                            date.push_back(i);
+                            from.push_back(static_cast< epiworld_fast_uint >(f));
+                            to.push_back(static_cast< epiworld_fast_uint >(s));
+                            counts.push_back(n);
+                        }
+                t.add("date", date);
+                add_pairs(t, d, from, "from_");
+                add_pairs(t, d, to, "to_");
+                t.add("counts", counts);
+            }
+            else if (what == "reproductive")
+            {
+                std::vector< int > id, source, date, rt;
+                for (const auto & m : get_reproductive_number(model->tracks.empty() ? all_diseases : d))
+                {
+                    id.push_back(m.first[0u]);
+                    source.push_back(m.first[1u]);
+                    date.push_back(m.first[2u]);
+                    rt.push_back(m.second);
+                }
+                t.add("virus_id", id);
+                t.add("virus", vnames(id));
+                t.add("source", source);
+                t.add("source_exposure_date", date);
+                t.add("rt", rt);
+            }
+            else if (what == "generation")
+            {
+                std::vector< int > agent, virus, time, gentime;
+                get_generation_time(agent, virus, time, gentime, model->tracks.empty() ? all_diseases : d);
+                t.add("virus", virus);
+                t.add("source", agent);
+                t.add("source_exposure_date", time);
+                t.add("gentime", gentime);
+            }
+            else if (what == "active_cases" || what == "outbreak_size")
+            {
+                std::vector< int > date, id, n;
+                if (what == "active_cases")
+                    get_active_cases(date, id, n, model->tracks.empty() ? all_diseases : d);
+                else
+                    get_outbreak_size(date, id, n, model->tracks.empty() ? all_diseases : d);
+
+                // Skipping the zeros
+                keep_virus_rows(d, date, id, n);
+
+                t.add("date", date);
+                t.add("virus_id", id);
+                t.add("virus", vnames(id));
+                t.add(what, n);
+            }
+            else if (what == "hospitalizations")
+            {
+                std::vector< int > date, id, tool, count;
+                std::vector< double > weight;
+                get_hospitalizations(date, id, tool, count, weight, model->tracks.empty() ? all_diseases : d);
+
+                // Skipping the zeros
+                std::vector< int > date_, id_, tool_, count_;
+                std::vector< double > weight_;
+                for (size_t i = 0u; i < date.size(); ++i)
+                    if (count[i] > 0 || weight[i] > 0.0)
+                    {
+                        date_.push_back(date[i]);
+                        id_.push_back(id[i]);
+                        tool_.push_back(tool[i]);
+                        count_.push_back(count[i]);
+                        weight_.push_back(weight[i]);
+                    }
+
+                t.add("date", date_);
+                t.add("virus_id", id_);
+                t.add("tool_id", tool_);
+                t.add("count", count_);
+                t.add("weight", weight_);
+            }
+
             std::vector< std::string > names;
-            disease_rows(&names, t.nrow());
+            disease_rows(&names, t.nrow(), d);
             t.colnames.insert(t.colnames.begin(), "disease");
             t.columns.insert(t.columns.begin(), std::move(names));
+
+            all.append(t);
+
         }
 
-        out[what] = std::move(t);
+        out[what] = std::move(all);
 
     }
 

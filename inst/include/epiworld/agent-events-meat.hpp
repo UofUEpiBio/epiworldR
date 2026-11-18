@@ -36,15 +36,11 @@ inline void Model::_event_add_virus(Event & a)
     }
 
     // Lastly, we increase the daily count of the virus
-    #ifdef EPI_DEBUG
-    db.rec.today_virus.at(p->virus->get_id()).at(
-        a.new_state != -99 ? a.new_state : p->state
-    )++;
-    #else
-    db.rec.today_virus[p->virus->get_id()][
-        a.new_state != -99 ? a.new_state : p->state
-    ]++;
-    #endif
+    db.count_virus(
+        p->virus->get_id(),
+        static_cast< epiworld_fast_uint >(a.new_state != -99 ? a.new_state : p->state),
+        1
+    );
 
 }
 
@@ -77,9 +73,11 @@ inline void Model::_event_add_tool(Event & a)
             );
     }
 
-    db.rec.today_tool[p->tools[tool_pos]->get_id()][
-        a.new_state != -99 ? a.new_state : p->state
-    ]++;
+    db.count_tool(
+        p->tools[tool_pos]->get_id(),
+        static_cast< epiworld_fast_uint >(a.new_state != -99 ? a.new_state : p->state),
+        1
+    );
 
 
 }
@@ -111,11 +109,7 @@ inline void Model::_event_rm_virus(Event & a)
     // The counter of the removed virus must be decremented from the
     // agent's current state (pre-transition), not state_prev.
     // state_prev may refer to an earlier same-day state.
-    #ifdef EPI_DEBUG
-    db.rec.today_virus.at(v->get_id()).at(p->state)--;
-    #else
-    db.rec.today_virus[v->get_id()][p->state]--;
-    #endif
+    db.count_virus(v->get_id(), p->state, -1);
 
     
     return;
@@ -169,11 +163,7 @@ inline void Model::_event_rm_tool(Event & a)
     // the agent changed state earlier in the day.
     if (removed)
     {
-        #ifdef EPI_DEBUG
-        db.rec.today_tool.at(t->get_id()).at(p->state)--;
-        #else
-        db.rec.today_tool[t->get_id()][p->state]--;
-        #endif
+        db.count_tool(t->get_id(), p->state, -1);
 
         t->agent = nullptr;
         t->pos_in_agent = -99;

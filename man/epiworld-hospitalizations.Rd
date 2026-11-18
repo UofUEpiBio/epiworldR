@@ -5,11 +5,15 @@
 \alias{get_hospitalizations}
 \title{Hospitalizations by tool}
 \usage{
-get_hospitalizations(x)
+get_hospitalizations(x, disease = NULL)
 }
 \arguments{
 \item{x}{An object of class \code{\link{epiworld_sir}}, \code{\link{epiworld_seir}}, etc.
 (any model).}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); \code{NULL} (the
+default) returns every disease, one after the other. Every result has a
+\code{disease} column, with one disease too.}
 }
 \value{
 \itemize{

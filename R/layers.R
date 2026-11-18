@@ -15,8 +15,8 @@
 #' @param param String. In `set_weight()`, the name of the model parameter
 #' holding the layer's weight; in `rewire_degseq()`, the name of the model
 #' parameter holding the proportion of ties rewired at the end of each step.
-#' @param virus A virus added to the model, a list of them, or lineage ids:
-#' the lineages that spread through the layer (as in [add_target_tool()]).
+#' @param disease Character scalar. A disease that spreads through the layer,
+#' by name (see [get_diseases()]).
 #' @param graph Either a network generator (`graph_smallworld()`,
 #' `graph_bernoulli()`, `graph_sbm()`), which draws a new network at the start
 #' of every run and replicate, or a fixed network (`graph_edgelist()`).
@@ -54,9 +54,10 @@
 #' [add_param()]). The odds of an infection through the layer's contacts are
 #' multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
 #' layer without a weight has weight 1.
-#' - `add_virus_target()` restricts the layer to some viruses, by lineage, as
-#' [add_target_tool()] does for tools. A layer without targets spreads every
-#' virus.
+#' - `add_target_layer()` restricts the layer to some diseases, by name (see
+#' [get_diseases()]), as [add_target_tool()] does for tools; the names are
+#' checked when the model runs. A layer without targets spreads every disease.
+#' `get_targets_layer()` returns them.
 #' - `enable_tracing()` makes the layer log the contacts it samples: each
 #' contact of an infectious agent (the source) with another agent, with the
 #' day. The log starts empty at every run and keeps the last `max_contacts`
@@ -76,7 +77,7 @@
 #' (returned invisibly).
 #' - `add_edge()` and `rm_edge()` return (invisibly) whether the network
 #' changed; `has_edge()` whether the tie exists.
-#' - `set_weight()`, `add_virus_target()`, `enable_tracing()` and
+#' - `set_weight()`, `add_target_layer()`, `enable_tracing()` and
 #' `disable_tracing()` return the layer (invisibly).
 #' - `is_tracing()` returns whether the layer keeps a log.
 #' - `get_tracing()` returns the log of the last run as a data frame (columns
@@ -309,15 +310,19 @@ set_weight <- function(layer, param) {
 
 #' @export
 #' @rdname contact-layers
-add_virus_target <- function(layer, virus) {
+add_target_layer <- function(layer, disease) {
 
   stopifnot_layer(layer)
+  stopifnot_string(disease)
+  invisible(add_target_layer_cpp(layer, disease))
 
-  for (id in as_lineage_ids(virus))
-    add_virus_target_cpp(layer, id)
+}
 
-  invisible(layer)
-
+#' @export
+#' @rdname contact-layers
+get_targets_layer <- function(layer) {
+  stopifnot_layer(layer)
+  get_targets_layer_cpp(layer)
 }
 
 #' @export

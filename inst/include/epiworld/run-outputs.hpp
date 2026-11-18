@@ -32,6 +32,26 @@ struct OutputTable
             0u :
             std::visit([](const auto & c) { return c.size(); }, columns[0u]);
     }
+
+    /// Appends the rows of a table with the same columns (or takes them all,
+    /// if this one has none)
+    void append(const OutputTable & other)
+    {
+        if (columns.empty())
+        {
+            *this = other;
+            return;
+        }
+        for (size_t j = 0u; j < columns.size(); ++j)
+            std::visit(
+                [&](auto & dst)
+                {
+                    const auto & src = std::get< std::decay_t< decltype(dst) > >(other.columns[j]);
+                    dst.insert(dst.end(), src.begin(), src.end());
+                },
+                columns[j]
+            );
+    }
 };
 
 /// Tables of one simulation (or, in `SaverMemory::results()`, of all of

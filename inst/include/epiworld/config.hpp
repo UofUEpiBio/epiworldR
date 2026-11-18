@@ -167,6 +167,7 @@ struct Event {
     EventAction action;
     int layer = -1; ///< Layer of the contact that transmitted the virus, if any
     int transition = -1; ///< Declared transition of the natural history (-1: none)
+    int track = 0;       ///< Its disease (a stage transition's id is its disease's)
 public:
 /**
      * @brief Construct a new Event object

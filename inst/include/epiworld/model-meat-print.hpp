@@ -1,6 +1,16 @@
 #ifndef EPIWORLD_MODEL_MEAT_PRINT_HPP
 #define EPIWORLD_MODEL_MEAT_PRINT_HPP
 
+inline std::string Model::db_label(int d, size_t cell) const
+{
+    // One disease (or none): the engine's labels
+    if (tracks.size() <= 1u)
+        return states_labels[cell];
+    std::string status, stage;
+    db.split_state(d, static_cast< epiworld_fast_uint >(cell), status, stage);
+    return st ? status + " / " + stage : stage;
+}
+
 inline const Model & Model::print(bool lite) const
 {
 
@@ -38,20 +48,28 @@ inline const Model & Model::print(bool lite) const
                 "\nThe final distribution is: "
             );
 
-            int nstate_int = static_cast<int>(nstates);
-
-            for (int i = 0u; i < nstate_int; ++i)
+            for (size_t d = 0u; d < db.recs.size(); ++d)
             {
-                printf_epiworld(
-                    "%i %s%s",
-                    static_cast<int>(db.rec.today_total[ i ]),
-                    states_labels[i].c_str(),
-                    (
-                        i == (nstate_int - 2)
-                        ) ? ", and " : (
-                            (i == (nstate_int - 1)) ? ".\n" : ", "
-                            )
-                );
+
+                if (db.recs.size() > 1u) {
+                    printf_epiworld("\n  %s: ", tracks[d].nh->get_name().c_str());
+                }
+
+                const int nstate_int = static_cast<int>(db.recs[d].ncells);
+                for (int i = 0u; i < nstate_int; ++i)
+                {
+                    printf_epiworld(
+                        "%i %s%s",
+                        static_cast<int>(db.recs[d].today_total[ i ]),
+                        db_label(static_cast< int >(d), static_cast< size_t >(i)).c_str(),
+                        (
+                            i == (nstate_int - 2)
+                            ) ? ", and " : (
+                                (i == (nstate_int - 1)) ? ".\n" : ", "
+                                )
+                    );
+                }
+
             }
         } else {
             printf_epiworld(" The model hasn't been run yet.\n");
@@ -268,9 +286,10 @@ inline const Model & Model::print(bool lite) const
     }
 
     nchar = 0u;
-    for (auto & p : states_labels)
-        if (p.length() > nchar)
-            nchar = p.length();
+    for (size_t d = 0u; d < db.recs.size(); ++d)
+        for (size_t c = 0u; c < db.recs[d].ncells; ++c)
+            if (db_label(static_cast< int >(d), c).length() > nchar)
+                nchar = db_label(static_cast< int >(d), c).length();
 
     
 
@@ -292,27 +311,38 @@ inline const Model & Model::print(bool lite) const
     }
         
     if (today() != 0)
-    {
-        printf_epiworld("\nDistribution of the population at time %i:\n", today());
-        for (size_t s = 0u; s < nstates; ++s)
+        for (size_t d = 0u; d < db.recs.size(); ++d)
         {
 
+            const auto & r = db.recs[d];
+            // (printf_epiworld is two statements: braces)
+            if (db.recs.size() > 1u) {
+                printf_epiworld(
+                    "\nDistribution of the population at time %i (%s):\n",
+                    today(), tracks[d].nh->get_name().c_str()
+                );
+            } else {
+                printf_epiworld("\nDistribution of the population at time %i:\n", today());
+            }
+
+            for (size_t s = 0u; s < r.ncells; ++s)
+            {
                 printf_epiworld(
                     fmt.c_str(),
                     s,
-                    states_labels[s].c_str(),
-                    db.rec.hist_total_counts[s],
-                    db.rec.today_total[ s ]
+                    db_label(static_cast< int >(d), s).c_str(),
+                    r.hist_total_counts[s],
+                    r.today_total[ s ]
                     );
+            }
+
+            // Over the stages without statuses (the labels the model had before)
+            db.get_transition_probability(
+                st ? Margin::pair : Margin::stage,
+                tracks.empty() ? all_diseases : static_cast< int >(d)
+            ).print();
 
         }
-    }
-
-    // Over the stages without statuses (the labels the model had before)
-    if (today() != 0)
-        db.get_transition_probability(
-            st ? Margin::pair : Margin::stage
-        ).print();
 
     return *this;
 

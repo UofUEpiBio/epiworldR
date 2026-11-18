@@ -60,11 +60,11 @@ SEXP print_agent_cpp(
 
 // The agent's stage and status, by label
 [[cpp11::register]]
-std::string get_stage_agent_cpp(SEXP model, SEXP agent) {
+std::string get_stage_agent_cpp(SEXP model, SEXP agent, int disease) {
 
   cpp11::external_pointer<Model> ptr(model);
-  const int s = ptr->get_stage(*cpp11::external_pointer<Agent>(agent));
-  return ptr->get_natural_history()->get_stages()[static_cast<size_t>(s)];
+  const int s = ptr->get_stage(*cpp11::external_pointer<Agent>(agent), disease);
+  return ptr->get_stages(disease)[static_cast<size_t>(s)];
 
 }
 
@@ -83,24 +83,35 @@ std::string get_status_agent_cpp(SEXP model, SEXP agent) {
 
 // Every agent's stage (or status), by label
 [[cpp11::register]]
-std::vector<std::string> get_agents_stages_cpp(SEXP model, bool status) {
+std::vector<std::string> get_agents_stages_cpp(
+  SEXP model,
+  bool status,
+  int disease
+) {
 
   cpp11::external_pointer<Model> ptr(model);
-  const NaturalHistory * labels = status ?
-    static_cast< const NaturalHistory * >(ptr->get_statuses()) :
-    ptr->get_natural_history();
 
   std::vector<std::string> res;
   res.reserve(ptr->size());
-  for (auto & a : ptr->get_agents())
+
+  if (status)
   {
-    if (labels == nullptr)
-      res.push_back(status ? "Free" : "");
-    else
-      res.push_back(labels->get_stages()[static_cast<size_t>(
-        status ? ptr->get_status(a) : ptr->get_stage(a)
-      )]);
+    const Statuses * st = ptr->get_statuses();
+    for (auto & a : ptr->get_agents())
+      res.push_back(st == nullptr ? "Free" :
+        st->get_stages()[static_cast<size_t>(ptr->get_status(a))]);
+    return res;
   }
+
+  if (ptr->get_n_diseases() == 0u)
+  {
+    res.assign(ptr->size(), "");
+    return res;
+  }
+
+  const auto & labels = ptr->get_stages(disease);
+  for (int s : ptr->get_agents_stages(disease))
+    res.push_back(labels[static_cast<size_t>(s)]);
 
   return res;
 

@@ -65,6 +65,8 @@
 \alias{distribute_tool_to_groups}
 \alias{add_tool_n}
 \alias{grouping_random}
+\alias{add_virus_target}
+\alias{get_lineage_virus}
 \title{Defunct functions in epiworldR}
 \usage{
 agents_smallworld(...)
@@ -192,6 +194,10 @@ distribute_tool_to_groups(...)
 add_tool_n(...)
 
 grouping_random(...)
+
+add_virus_target(...)
+
+get_lineage_virus(...)
 }
 \arguments{
 \item{...}{Ignored.}
@@ -271,6 +277,8 @@ Calling them is an error that says what to use instead:
 \item \code{distribute_tool_to_groups()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
 \item \code{add_tool_n()}: Place the tool when adding it: add_tool(model, tool, assign), with assign_share(p), assign_count(n), assign_agents(ids) or assign_group_shares(layer, p) (see help("assign")).
 \item \code{grouping_random()}: Give layer_mixing() a placement whose labels are the groups: assign_counts(sizes) or assign_shares(proportions) (see help("assign")).
+\item \code{add_virus_target()}: Layers target diseases, by name: add_target_layer(layer, disease) (see help("get_diseases")); a layer without targets spreads every disease.
+\item \code{get_lineage_virus()}: Targets are diseases, not virus lineages: add_target_tool(tool, disease) and add_target_layer(layer, disease), by name (see help("get_diseases")).
 }
 }
 \keyword{internal}

@@ -11,6 +11,10 @@
 #' @param transition Character scalar. A declared transition, by name (see
 #' [add_external()]).
 #' @param agent_id Integer scalar. The agent (starting at 0).
+#' @param disease The disease, by name (see [get_diseases()]): the stages of
+#' `assign` (in `set_initial()`) or the transition (in `fire()`) are of it.
+#' Required when the model has several diseases (a status transition needs
+#' none).
 #'
 #' @details
 #' `set_initial()` places agents, at the start of each run, in stages without
@@ -62,11 +66,11 @@ Model <- function(n) {
 
 #' @export
 #' @rdname model_builder
-set_initial <- function(model, assign) {
+set_initial <- function(model, assign, disease = NULL) {
 
   stopifnot_model(model)
   stopifnot_assign(assign, null_ok = FALSE)
-  set_initial_cpp(model, assign)
+  set_initial_cpp(model, assign, disease_index(model, disease))
   if (uses_r(assign))
     attr(model, "single_threaded") <- TRUE
   invisible(model)
@@ -84,11 +88,11 @@ get_statuses <- function(model) {
 
 #' @export
 #' @rdname model_builder
-fire <- function(model, transition, agent_id) {
+fire <- function(model, transition, agent_id, disease = NULL) {
 
   stopifnot_model(model)
   stopifnot_string(transition)
   stopifnot_int(agent_id, lb = 0L)
-  fire_cpp(model, transition, as.integer(agent_id))
+  fire_cpp(model, transition, as.integer(agent_id), disease_index(model, disease))
 
 }

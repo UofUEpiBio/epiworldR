@@ -182,9 +182,11 @@ plot_incidence(model_sir)
 
 ## Adding more viruses/viruses
 
-epiworldR supports multi-virus models. A second virus in a model is a strain
-of the model's own: a copy of it (`clone_epi(get_virus(model, 0))`) with its
-own name, whose transitions may read other model parameters (`use_param()`).
+epiworldR supports multi-virus models. A second virus can be a strain of the
+model's own disease: a copy of it (`strain(get_virus(model, 0), name)`) with
+its own name, whose transitions may read other model parameters
+(`use_param()`). A virus built from scratch with `virus()` is instead a second
+disease, with its own stages (see `help("diseases")`).
 In this example, the flu has its own transmission probability. To add the new
 virus to the model, use the `add_virus` function with the model, the new virus,
 and its placement: here, 0.01% of the agents have it at the start (see
@@ -193,8 +195,7 @@ and its placement: here, 0.01% of the agents have it at the start (see
 ```{r}
 #| label: design-and-add
 # Building the virus: a strain of the model's, with its own transmission
-flu <- clone_epi(get_virus(model_sir, 0))
-set_name_virus(flu, "Flu")
+flu <- strain(get_virus(model_sir, 0), "Flu")
 add_param(model_sir, "Flu transmission probability", .3)
 use_param(flu, "Transmission probability", "Flu transmission probability")
 

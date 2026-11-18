@@ -309,83 +309,27 @@ inline std::string Tool::get_name() const {
 
 }
 
-inline uint64_t Tool::target_bit(int lineage_id)
+inline void DiseaseTargets::add(std::string disease)
 {
-
-    if ((lineage_id < 0) || (lineage_id >= 63))
-        throw std::range_error(
-            std::string("The virus lineage id ") +
-            std::to_string(lineage_id) +
-            std::string(" cannot be targeted. Only lineages 0 to 62 can be ") +
-            std::string("targeted.")
-        );
-
-    return uint64_t(1) << lineage_id;
-
+    if (std::find(names.begin(), names.end(), disease) == names.end())
+        names.push_back(std::move(disease));
 }
 
-inline void Tool::add_target(int lineage_id)
+inline bool DiseaseTargets::has(const Virus & v) const
 {
-
-    uint64_t bit = target_bit(lineage_id);
-
-    // The first target replaces the default (every virus)
-    if (target_mask == ~uint64_t(0))
-        target_mask = 0u;
-
-    target_mask |= bit;
-
+    return (mask & v.disease_bit) != 0u;
 }
 
-inline void Tool::add_target(const Virus & v)
+inline void Tool::add_target(std::string disease)
 {
-
-    if (v.get_lineage_id() < 0)
-        throw std::logic_error(
-            std::string("The virus \"") + v.get_name() +
-            std::string("\" has no lineage id. Add it to the model with ") +
-            std::string("Model::add_virus() before targeting it.")
-        );
-
-    add_target(v.get_lineage_id());
-
+    targets_.add(std::move(disease));
 }
 
-inline void Tool::set_targets(const std::vector< int > & lineage_ids)
+inline void Tool::set_targets(std::vector< std::string > diseases)
 {
-
-    // Validate every id before touching the current targets
-    uint64_t mask = lineage_ids.empty() ? ~uint64_t(0) : 0u;
-    for (auto id : lineage_ids)
-        mask |= target_bit(id);
-
-    target_mask = mask;
-
-}
-
-inline std::vector< int > Tool::get_targets() const
-{
-
-    std::vector< int > res;
-    if (target_mask == ~uint64_t(0))
-        return res;
-
-    for (int i = 0; i < 63; ++i)
-        if (target_mask & (uint64_t(1) << i))
-            res.push_back(i);
-
-    return res;
-
-}
-
-inline void Tool::clear_targets()
-{
-    target_mask = ~uint64_t(0);
-}
-
-inline bool Tool::targets(const Virus & v) const
-{
-    return (target_mask & v.lineage_bit) != 0u;
+    targets_ = DiseaseTargets();
+    for (auto & d : diseases)
+        targets_.add(std::move(d));
 }
 
 inline Agent * Tool::get_agent()
@@ -429,7 +373,7 @@ inline bool Tool::operator==(const Tool & other) const
 
 
 
-    if (target_mask != other.target_mask)
+    if (!(targets_ == other.targets_))
         return false;
 
     return true;
@@ -443,11 +387,11 @@ inline void Tool::print() const
     printf_epiworld("Tool       : %s\n", this->get_name().c_str());
     printf_epiworld("Id         : %s\n", (id < 0)? std::string("(empty)").c_str() : std::to_string(id).c_str());
 
-    if (target_mask != ~uint64_t(0))
+    if (!targets_.names.empty())
     {
         std::string tgts;
-        for (auto i : get_targets())
-            tgts += (tgts.empty() ? "" : ", ") + std::to_string(i);
+        for (const auto & n : targets_.names)
+            tgts += (tgts.empty() ? "" : ", ") + n;
         printf_epiworld("targets    : %s\n", tgts.c_str());
     }
 

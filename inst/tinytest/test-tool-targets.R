@@ -1,8 +1,8 @@
 # Test just this file: tinytest::run_test_file("inst/tinytest/test-tool-targets.R")
 
-# Two-virus model: virus "A" is created by the model (lineage 0) and virus "B",
-# a strain of it, is added afterwards (lineage 1).
-two_virus_model <- function() {
+# Two diseases: "A" is created by the model; "B", built from scratch, is a
+# second disease. An agent carries one infection at a time.
+two_disease_model <- function() {
 
   model <- ModelSIR(
     name              = "A",
@@ -17,19 +17,21 @@ two_virus_model <- function() {
     layer_mixing("everyone", groups = rep(0, 1000), contact_matrix = 1) |>
       set_contact_rate("Contact rate")
   )
-
   verbose_off(model)
 
-  virus_b <- clone_epi(get_virus(model, 0))
-  set_name_virus(virus_b, "B")
-  add_virus(model, virus_b, assign_count(20))
+  b <- virus("B") |>
+    add_stage("Susceptible") |>
+    add_stage("Infected", infectious = TRUE) |>
+    add_stage("Recovered") |>
+    add_infection("Susceptible", "Infected", rate = 0.5) |>
+    add_rate("Infected", "Recovered", rate = 0.2)
+  add_virus(model, b, assign_count(20))
 
-  # The model's copy has the lineage id (the caller's has none)
-  list(model = model, virus_b = get_virus(model, 1), added = virus_b)
+  model
 
 }
 
-# Everyone gets a tool that fully blocks infection
+# A tool that fully blocks infection
 make_tool <- function() {
   tool(
     name                     = "Perfect vaccine",
@@ -40,105 +42,106 @@ make_tool <- function() {
   )
 }
 
-# Number of transmissions (excluding the initial cases) by virus id
-n_transmissions <- function(model, virus_id) {
-  tn <- get_transmissions(model)
-  sum(tn$source >= 0 & tn$virus_id == virus_id)
+# Number of transmissions (excluding the initial cases) of a disease
+n_transmissions <- function(model, disease) {
+  tn <- get_transmissions(model, disease = disease)
+  sum(tn$source >= 0)
 }
-
-# Lineage ids ------------------------------------------------------------------
-m <- two_virus_model()
-expect_equal(get_lineage_virus(get_virus(m$model, 0)), 0L)
-expect_equal(get_lineage_virus(get_virus(m$model, 1)), 1L)
-expect_equal(get_lineage_virus(m$virus_b), 1L) # The model's copy
-
-# The copy given to add_virus() is unchanged: it keeps its source's lineage
-expect_equal(get_lineage_virus(m$added), 0L)
-
-virus_c <- virus("C")
-expect_true(is.na(get_lineage_virus(virus_c))) # never in a model
 
 # Getters and setters ----------------------------------------------------------
 t0 <- make_tool()
-expect_identical(get_targets_tool(t0), integer(0)) # default: every virus
+expect_identical(get_targets_tool(t0), character(0)) # default: every disease
 
-expect_silent(add_target_tool(t0, m$virus_b))
-expect_identical(get_targets_tool(t0), 1L)
+expect_silent(add_target_tool(t0, "A"))
+expect_silent(add_target_tool(t0, "B"))
+expect_identical(get_targets_tool(t0), c("A", "B"))
 
-expect_silent(add_target_tool(t0, 0))
-expect_identical(get_targets_tool(t0), c(0L, 1L))
-
-expect_silent(set_targets_tool(t0, 5L))
-expect_identical(get_targets_tool(t0), 5L)
-
-expect_silent(set_targets_tool(t0, list(get_virus(m$model, 0), m$virus_b)))
-expect_identical(get_targets_tool(t0), c(0L, 1L))
+expect_silent(set_targets_tool(t0, "B"))
+expect_identical(get_targets_tool(t0), "B")
 
 expect_silent(set_targets_tool(t0, NULL))
-expect_identical(get_targets_tool(t0), integer(0))
+expect_identical(get_targets_tool(t0), character(0))
 
-expect_silent(set_targets_tool(t0, c(2, 62)))
+expect_silent(set_targets_tool(t0, c("A", "B")))
 expect_silent(clear_targets_tool(t0))
-expect_identical(get_targets_tool(t0), integer(0))
+expect_identical(get_targets_tool(t0), character(0))
 
-expect_inherits(add_target_tool(t0, 3), "epiworld_tool")
-expect_inherits(set_targets_tool(t0, 3), "epiworld_tool")
+expect_inherits(add_target_tool(t0, "A"), "epiworld_tool")
+expect_inherits(set_targets_tool(t0, "A"), "epiworld_tool")
 expect_inherits(clear_targets_tool(t0), "epiworld_tool")
 
-# Input validation -------------------------------------------------------------
-expect_error(add_target_tool(t0, virus_c), "has no lineage id")
-expect_error(add_target_tool(t0, 63), "0 to 62")
-expect_error(add_target_tool(t0, -1), "0 to 62")
-expect_error(add_target_tool(t0, 1.5), "integer lineage ids")
-expect_error(add_target_tool(t0, NA), "integer lineage ids")
-expect_error(add_target_tool(t0, "A"), "integer lineage ids")
-expect_error(add_target_tool(t0, list(m$virus_b, "A")), "epiworld_virus")
-expect_error(set_targets_tool(t0, 63), "0 to 62")
-expect_error(add_target_tool(m$model, 0), "epiworld_tool")
-expect_error(get_targets_tool(m$virus_b), "epiworld_tool")
-expect_error(get_lineage_virus(t0), "epiworld_virus")
+# Input validation: diseases are names, not viruses or ids
+m <- two_disease_model()
+expect_error(add_target_tool(t0, 0), "disease's name")
+expect_error(add_target_tool(t0, get_virus(m, 0)), "disease's name")
+expect_error(add_target_tool(t0, c("A", "B")), "disease's name")
+expect_error(set_targets_tool(t0, 1:2), "disease names")
+expect_error(add_target_tool(m, "A"), "epiworld_tool")
+expect_error(get_targets_tool(get_virus(m, 0)), "epiworld_tool")
 
-# A failed set_targets_tool() leaves the targets unchanged
-expect_silent(set_targets_tool(t0, 4))
-expect_error(set_targets_tool(t0, c(1, 70)))
-expect_identical(get_targets_tool(t0), 4L)
+# The defunct lineage functions say what to use
+expect_error(get_lineage_virus(get_virus(m, 0)), "add_target_tool")
+expect_error(add_virus_target(get_layer(m, 0), get_virus(m, 0)), "add_target_layer")
 
-# Default: the tool acts on every virus ----------------------------------------
-m_all <- two_virus_model()
-add_tool(m_all$model, make_tool(), assign_share(1))
-run(m_all$model, ndays = 20, seed = 1231)
-expect_equal(n_transmissions(m_all$model, 0), 0)
-expect_equal(n_transmissions(m_all$model, 1), 0)
+# With several diseases, a tool must name its diseases -------------------------
+m_none <- two_disease_model()
+add_tool(m_none, make_tool(), assign_share(1))
+expect_error(run(m_none, ndays = 5, seed = 1), "target")
+
+# A disease the model does not have is an error when the model runs
+m_bad <- two_disease_model()
+t_bad <- make_tool()
+add_target_tool(t_bad, "C")
+add_tool(m_bad, t_bad, assign_share(1))
+expect_error(run(m_bad, ndays = 5, seed = 1), "C")
 
 # Targeting A: protects against A but not B ------------------------------------
-m_a <- two_virus_model()
+m_a <- two_disease_model()
 t_a <- make_tool()
-add_target_tool(t_a, get_virus(m_a$model, 0))
-add_tool(m_a$model, t_a, assign_share(1))
-expect_identical(get_targets_tool(get_tool(m_a$model, 0)), 0L)
-run(m_a$model, ndays = 20, seed = 1231)
-expect_equal(n_transmissions(m_a$model, 0), 0)
-expect_true(n_transmissions(m_a$model, 1) > 0)
+add_target_tool(t_a, "A")
+add_tool(m_a, t_a, assign_share(1))
+expect_identical(get_targets_tool(get_tool(m_a, 0)), "A")
+run(m_a, ndays = 20, seed = 1231)
+expect_equal(n_transmissions(m_a, "A"), 0)
+expect_true(n_transmissions(m_a, "B") > 0)
 
-# Targeting B (by virus object): protects against B but not A ------------------
-m_b <- two_virus_model()
+# Its history is kept in A only
+expect_equal(nrow(get_hist_tool(m_a, disease = "B")), 0L)
+expect_true(nrow(get_hist_tool(m_a, disease = "A")) > 0L)
+
+# Targeting B: protects against B but not A ------------------------------------
+m_b <- two_disease_model()
 t_b <- make_tool()
-add_target_tool(t_b, m_b$virus_b)
-add_tool(m_b$model, t_b, assign_share(1))
-run(m_b$model, ndays = 20, seed = 1231)
-expect_true(n_transmissions(m_b$model, 0) > 0)
-expect_equal(n_transmissions(m_b$model, 1), 0)
+add_target_tool(t_b, "B")
+add_tool(m_b, t_b, assign_share(1))
+run(m_b, ndays = 20, seed = 1231)
+expect_true(n_transmissions(m_b, "A") > 0)
+expect_equal(n_transmissions(m_b, "B"), 0)
+
+# With one disease, a tool without targets acts on it --------------------------
+m_one <- ModelSIR(
+  name              = "A",
+  n                 = 1000,
+  prevalence        = 0.02,
+  transmission_prob = 0.5,
+  recovery_rate     = 0.2
+)
+add_layer(m_one, layer_network("contacts", graph_smallworld(k = 6, p = .1)))
+verbose_off(m_one)
+add_tool(m_one, make_tool(), assign_share(1))
+run(m_one, ndays = 20, seed = 1231)
+expect_equal(n_transmissions(m_one, "A"), 0)
 
 # Targets survive run_multiple() (the model's tools are copied per thread) ----
-m_mult <- two_virus_model()
+m_mult <- two_disease_model()
 t_mult <- make_tool()
-add_target_tool(t_mult, 0)
-add_tool(m_mult$model, t_mult, assign_share(1))
+add_target_tool(t_mult, "A")
+add_tool(m_mult, t_mult, assign_share(1))
 saver <- make_saver("transmission")
 run_multiple(
-  m_mult$model, ndays = 20, nsims = 2, seed = 1231, saver = saver,
+  m_mult, ndays = 20, nsims = 2, seed = 1231, saver = saver,
   nthreads = 1, verbose = FALSE
 )
-tn_mult <- run_multiple_get_results(m_mult$model, nthreads = 1)$transmission
-expect_equal(sum(tn_mult$source >= 0 & tn_mult$virus_id == 0), 0)
-expect_true(sum(tn_mult$source >= 0 & tn_mult$virus_id == 1) > 0)
+tn_mult <- run_multiple_get_results(m_mult, nthreads = 1)$transmission
+expect_equal(sum(tn_mult$source >= 0 & tn_mult$disease == "A"), 0)
+expect_true(sum(tn_mult$source >= 0 & tn_mult$disease == "B") > 0)

@@ -11,7 +11,7 @@
 \alias{get_agents_tools}
 \title{Agent functions}
 \usage{
-get_agents_stages(model)
+get_agents_stages(model, disease = NULL)
 
 get_agents_statuses(model)
 
@@ -27,6 +27,9 @@ get_agents_tools(model)
 }
 \arguments{
 \item{model}{Model object of class \link{epiworld_model}.}
+
+\item{disease}{The disease, by name (see \code{\link[=get_diseases]{get_diseases()}}); required when the
+model has several.}
 
 \item{agent}{Agent object of class \code{epiworld_agent}.}
 

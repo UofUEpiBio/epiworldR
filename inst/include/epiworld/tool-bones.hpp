@@ -10,12 +10,36 @@ class Model;
 class Tool;
 
 /**
+ * @brief The diseases a tool or a contact layer acts on, by name.
+ * @details Resolved to a mask of the model's diseases when a run starts
+ * (`resolve()`, see `Model::reset()`); all of them until then.
+ */
+struct DiseaseTargets {
+    std::vector< std::string > names; ///< Empty: see `resolve()`
+    uint64_t mask = ~uint64_t(0);     ///< Bit `d`: disease `d`
+
+    void add(std::string disease);
+
+    /**
+     * Makes the names a mask. Without names: every disease, unless `required`
+     * and the model has several (an error naming `owner`).
+     */
+    void resolve(const Model & model, const std::string & owner, bool required);
+
+    /// Whether it acts on `v` (a virus not in a model: no)
+    bool has(const Virus & v) const;
+
+    bool operator==(const DiseaseTargets & o) const { return names == o.names; }
+};
+
+/**
  * @brief Tools for defending the agent against the virus
  * 
  */
 class Tool {
     friend class Agent;
     friend class Model;
+    friend class DataBase;
 protected:
 
     Agent * agent = nullptr;
@@ -32,16 +56,12 @@ protected:
     ToolFun death_reduction          = nullptr;
 
 
-    /// Bitmask of targeted virus lineages (all ones: every virus).
-    uint64_t target_mask = ~uint64_t(0);
+    DiseaseTargets targets_; ///< The diseases it acts on (see add_target())
 
 
     void set_agent(Agent * p, size_t idx);
 
 public:
-
-    /// Bit of a virus lineage in a target mask (contact layers use it too).
-    static uint64_t target_bit(int lineage_id); ///< Throws for ids out of range.
 
     Tool();
     Tool(std::string name = "unknown tool");
@@ -86,28 +106,24 @@ public:
     ///@}
 
     /**
-     * @name Virus targets
-     * 
-     * @details
-     * By default, a tool acts on every virus. Adding targets restricts the
-     * tool (all four effects: susceptibility and transmission reduction,
-     * recovery enhancer, and death reduction) to the listed virus lineages.
-     * A lineage is a virus added with `Model::add_virus()` together with all
-     * of its mutations, so a tool targeting a virus also acts on its
-     * variants. Lineage ids are the virus ids assigned by
-     * `Model::add_virus()`; only lineages 0 to 62 can be targeted.
-     * 
-     * @param lineage_id Id of the virus lineage (see
-     * `Virus::get_lineage_id()`).
-     * @param v A virus already added to the model.
+     * @name Disease targets
+     *
+     * @details A tool acts (all four effects: susceptibility and transmission
+     * reduction, recovery enhancer, and death reduction) on the viruses of
+     * the diseases it targets, every strain and variant of each, by the
+     * disease's name (see `Model::get_diseases()`). In a model with one
+     * disease, a tool without targets acts on it; with several, a tool must
+     * name its diseases (an error at the start of the run otherwise): a
+     * measles vaccine does not protect against influenza unless it says so.
+     *
+     * @param disease The name of a disease of the model.
      */
     ///@{
-    void add_target(int lineage_id);
-    void add_target(const Virus & v);
-    void set_targets(const std::vector< int > & lineage_ids);
-    std::vector< int > get_targets() const; ///< Empty if the tool acts on every virus.
-    void clear_targets();
-    bool targets(const Virus & v) const;
+    void add_target(std::string disease);
+    void set_targets(std::vector< std::string > diseases);
+    const std::vector< std::string > & get_targets() const { return targets_.names; }
+    void clear_targets() { targets_ = DiseaseTargets(); }
+    bool targets(const Virus & v) const { return targets_.has(v); }
     ///@}
 
     void set_name(std::string name);

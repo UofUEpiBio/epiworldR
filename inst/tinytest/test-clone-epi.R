@@ -97,10 +97,11 @@ expect_equal(get_n_viruses(model), 2L)
 expect_equal(get_name_virus(get_virus(model, 0)), "A")
 expect_equal(get_name_virus(get_virus(model, 1)), "B")
 
-# The copy founds its own lineage
+# The copy is a strain of the same disease, recorded as its own virus
 run(model, ndays = 10, seed = 123)
-expect_equal(get_lineage_virus(get_virus(model, 0)), 0L)
-expect_equal(get_lineage_virus(get_virus(model, 1)), 1L)
+expect_equal(get_diseases(model), "A")
+expect_equal(sort(unique(get_hist_virus(model)$virus_id)), c(0L, 1L))
+expect_equal(unique(get_hist_virus(model)$disease), "A")
 
 # ------------------------------------------------------------------------------
 # Models and other objects
