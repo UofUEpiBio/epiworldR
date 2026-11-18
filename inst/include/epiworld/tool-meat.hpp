@@ -325,6 +325,93 @@ inline void Tool::add_target(std::string disease)
     targets_.add(std::move(disease));
 }
 
+inline void LayerTargets::add(std::string layer)
+{
+    if (std::find(names.begin(), names.end(), layer) != names.end())
+        return;
+
+    names.push_back(std::move(layer));
+    resolved = false;
+}
+
+inline bool LayerTargets::has(int layer) const
+{
+    if (names.empty())
+        return true;
+
+    return (layer >= 0) && (layer < 64) && (((mask >> layer) & 1u) != 0u);
+}
+
+inline void LayerTargets::resolve(Model & model, const std::string & owner)
+{
+
+    // Unresolved until the loop ends (an unknown layer leaves it so)
+    resolved = false;
+    if (names.empty())
+    {
+        mask = ~uint64_t(0);
+        resolved = true;
+        return;
+    }
+
+    mask = 0u;
+    for (const auto & n : names)
+    {
+        size_t id = 0u;
+        try
+        {
+            id = model.get_layer_id(n);
+        }
+        catch (const std::exception &)
+        {
+            std::string all;
+            for (size_t l = 0u; l < model.get_n_layers(); ++l)
+                all += (all.empty() ? "\"" : ", \"") +
+                    model.get_layer(l).get_name() + "\"";
+            throw std::logic_error(
+                owner + " targets the layer \"" + n + "\", which the model "
+                "does not have (its layers: " + (all.empty() ? "none" : all) +
+                ")."
+            );
+        }
+
+        if (id >= 64u)
+            throw std::logic_error(
+                owner + " targets the layer \"" + n + "\", whose id (" +
+                std::to_string(id) + ") is above 63, the most a tool can target."
+            );
+
+        mask |= uint64_t(1) << id;
+    }
+
+    resolved = true;
+
+}
+
+inline bool Tool::acts_in(int layer) const
+{
+    if (!layers_.resolved && !layers_.names.empty())
+        throw std::logic_error(
+            "The tool \"" + get_name() + "\" has layer targets that are not "
+            "resolved yet: they are resolved when the run starts, or when the "
+            "tool is added to a running model (change them before then)."
+        );
+
+    return layers_.has(layer);
+}
+
+inline void Tool::add_layer_target(std::string layer)
+{
+    layers_.add(std::move(layer));
+}
+
+inline void Tool::set_layer_targets(std::vector< std::string > layers)
+{
+    layers_ = LayerTargets();
+    for (auto & l : layers)
+        layers_.add(std::move(l));
+}
+
 inline void Tool::set_targets(std::vector< std::string > diseases)
 {
     targets_ = DiseaseTargets();
@@ -374,6 +461,9 @@ inline bool Tool::operator==(const Tool & other) const
 
 
     if (!(targets_ == other.targets_))
+        return false;
+
+    if (!(layers_ == other.layers_))
         return false;
 
     return true;

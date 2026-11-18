@@ -182,12 +182,22 @@ inline ModelSIRLogit::ModelSIRLogit(
 
             size_t nviruses_tmp = 0u;
 
-            // Every network layer, in the order the layers were added
+            // Every network layer, in the order the layers were added: open,
+            // and without p or the neighbor in a status it excludes
             for (auto * net : m.get_network_layers())
+            {
+
+            if (net->is_closed() || net->excludes_agent(static_cast< size_t >(p.get_id())))
+                continue;
+
+            const int layer_id = static_cast< int >(net->get_id());
             for (auto * neighbor : net->neighbors_view(static_cast< size_t >(p.get_id())))
             {
 
                 if (neighbor->get_virus() == nullptr)
+                    continue;
+
+                if (net->excludes_agent(static_cast< size_t >(neighbor->get_id())))
                     continue;
 
                 auto & v = neighbor->get_virus();
@@ -195,13 +205,15 @@ inline ModelSIRLogit::ModelSIRLogit(
                 m.reserve_tmp(nviruses_tmp + 1u);
 
                 const double x = baseline +
-                    (1.0 - p.get_susceptibility_reduction(v, m)) *
+                    (1.0 - p.get_susceptibility_reduction(v, m, layer_id)) *
                     p_contact.eval(p, v.get(), m) *
-                    (1.0 - neighbor->get_transmission_reduction(v, m)) *
+                    (1.0 - neighbor->get_transmission_reduction(v, m, layer_id)) *
                     coef_exposure;
 
                 m.array_double_tmp[nviruses_tmp] = 1.0 / (1.0 + std::exp(-x));
                 m.array_virus_tmp[nviruses_tmp++] = &(*v);
+
+            }
 
             }
 

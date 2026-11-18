@@ -213,8 +213,10 @@ public:
      * @return epiworld_double 
      */
     ///@{
-    epiworld_double get_susceptibility_reduction(VirusPtr & v, Model & model);
-    epiworld_double get_transmission_reduction(VirusPtr & v, Model & model);
+    /// The tools' combined contact effects on a contact through layer
+    /// `layer` (-1: not through a layer; see `Tool::add_layer_target()`).
+    epiworld_double get_susceptibility_reduction(VirusPtr & v, Model & model, int layer = -1);
+    epiworld_double get_transmission_reduction(VirusPtr & v, Model & model, int layer = -1);
     epiworld_double get_recovery_enhancer(VirusPtr & v, Model & model);
     epiworld_double get_death_reduction(VirusPtr & v, Model & model);
     ///@}

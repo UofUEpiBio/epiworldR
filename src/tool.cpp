@@ -286,6 +286,42 @@ cpp11::writable::strings get_targets_tool_cpp(SEXP tool) {
 
 }
 
+// Contact layer targets (by name) ---------------------------------------------
+[[cpp11::register]]
+SEXP add_layer_target_tool_cpp(SEXP tool, std::string layer) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->add_layer_target(layer);
+  return tool;
+
+}
+
+[[cpp11::register]]
+SEXP set_layer_targets_tool_cpp(SEXP tool, cpp11::strings layers) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->set_layer_targets(as_cpp<std::vector<std::string>>(layers));
+  return tool;
+
+}
+
+[[cpp11::register]]
+cpp11::writable::strings get_layer_targets_tool_cpp(SEXP tool) {
+
+  WrapTool(toolptr)(tool);
+  return cpp11::writable::strings(toolptr->get_layer_targets());
+
+}
+
+[[cpp11::register]]
+SEXP clear_layer_targets_tool_cpp(SEXP tool) {
+
+  WrapTool(toolptr)(tool);
+  toolptr->clear_layer_targets();
+  return tool;
+
+}
+
 [[cpp11::register]]
 SEXP print_tool_cpp(SEXP t) {
 

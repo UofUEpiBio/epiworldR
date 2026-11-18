@@ -22,6 +22,7 @@
 #' of every run and replicate, or a fixed network (`graph_edgelist()`).
 #' @param model Model object of class [epiworld_model].
 #' @param layer Layer object of class `epiworld_layer`.
+#' @param status Character scalar. A status name from [get_statuses()].
 #' @param k Integer. Number of ties per agent in the ring lattice of the small
 #' world network.
 #' @param p Double. In `graph_smallworld()`, the probability of rewiring a tie;
@@ -49,7 +50,19 @@
 #' it (e.g., with `add_edge()`) edits the model's layer. An edit made while
 #' the model runs lasts for that run only; an edit made between runs is kept.
 #'
-#' Every kind of layer has a weight and virus targets.
+#' Every kind of layer supports participation settings, a weight and disease
+#' targets.
+#' - `exclude_status()` takes agents in the named status out of this layer
+#' only: they neither sample its contacts nor are sampled through it. Other
+#' layers still include them. Set exclusions between runs; calling it during
+#' a run is an error. An unknown status name is an error when the run starts.
+#' `get_excluded_statuses()` returns the excluded names.
+#' - `close_layer()` stops all contacts through the layer: it logs no contacts
+#' and transmits nothing. Closing between runs keeps it closed in every run
+#' until `reopen_layer()` is called. Closing during a run (for example, in a
+#' global event) takes effect from the next day and lasts for that run only.
+#' Reopening follows the same timing. `is_layer_closed()` reports whether the
+#' layer is closed today.
 #' - `set_weight()` ties the layer's weight to a model parameter (add it with
 #' [add_param()]). The odds of an infection through the layer's contacts are
 #' multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
@@ -80,6 +93,9 @@
 #' - `set_weight()`, `add_target_layer()`, `enable_tracing()` and
 #' `disable_tracing()` return the layer (invisibly).
 #' - `is_tracing()` returns whether the layer keeps a log.
+#' - `exclude_status()`, `close_layer()` and `reopen_layer()` return the layer
+#' invisibly. `get_excluded_statuses()` returns a character vector (empty when
+#' no statuses are excluded); `is_layer_closed()` returns a logical scalar.
 #' - `get_tracing()` returns the log of the last run as a data frame (columns
 #' `source`, `contact` and `day`; agent ids start at 0). It is an error to
 #' call it on a layer that is not traced.
@@ -323,6 +339,46 @@ add_target_layer <- function(layer, disease) {
 get_targets_layer <- function(layer) {
   stopifnot_layer(layer)
   get_targets_layer_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+exclude_status <- function(layer, status) {
+  stopifnot_layer(layer)
+  if (!is.character(status) || length(status) != 1L || is.na(status))
+    stop("-status- must be a status name (a character scalar).", call. = FALSE)
+  exclude_status_cpp(layer, status)
+  invisible(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+get_excluded_statuses <- function(layer) {
+  stopifnot_layer(layer)
+  get_excluded_statuses_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+close_layer <- function(layer) {
+  stopifnot_layer(layer)
+  close_layer_cpp(layer)
+  invisible(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+reopen_layer <- function(layer) {
+  stopifnot_layer(layer)
+  reopen_layer_cpp(layer)
+  invisible(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+is_layer_closed <- function(layer) {
+  stopifnot_layer(layer)
+  is_layer_closed_cpp(layer)
 }
 
 #' @export

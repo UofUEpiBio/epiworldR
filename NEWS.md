@@ -5,6 +5,22 @@ come from contact layers. This is a breaking release: code written for 0.x
 needs the changes below, and removed functions are defunct (calling them is an
 error that names the replacement; see `?"epiworldR-defunct"`).
 
+* Contact layers can exclude agents by status with `exclude_status()` and
+  report exclusions with `get_excluded_statuses()`. `close_layer()` and
+  `reopen_layer()` stop and resume contacts, with `is_layer_closed()` reporting
+  today's closure. Tools can restrict susceptibility and transmission
+  reductions to named layers with `add_layer_target_tool()` and
+  `set_layer_targets_tool()`; `get_layer_targets_tool()` and
+  `clear_layer_targets_tool()` inspect and remove those targets. Recovery
+  and death effects are unaffected by layer targets.
+  `ModelSIRLogit()` and `ModelDiffNet()` sample their own contacts and now
+  honor closed layers and excluded statuses too. Two fixes change their
+  results: `ModelSIRLogit()` no longer lets carriers of contact weight 0
+  transmit, and `ModelDiffNet()` reads the transmission reduction of the
+  neighbor, not of the adopting agent (it changes results with tools that
+  reduce transmission). The C++ headers are re-vendored (epiworld
+  `a4cb34dc`, Phase 4a and 4b: UofUEpiBio/epiworld#380, #381).
+
 ## Breaking changes
 
 * **Several diseases per model** (epiworld NH-5): a model can hold several

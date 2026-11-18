@@ -630,13 +630,14 @@ inline void Model::events_run()
 ///@{
 inline epiworld_double Model::susceptibility_reduction_mixer(
     Agent* p,
-    VirusPtr & v
+    VirusPtr & v,
+    int layer
 )
 {
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
     {
-        if (!tool->targets(*v))
+        if (!tool->targets(*v) || !tool->acts_in(layer))
             continue;
 
         total *= (1.0 - tool->get_susceptibility_reduction(v, this));
@@ -648,13 +649,14 @@ inline epiworld_double Model::susceptibility_reduction_mixer(
 
 inline epiworld_double Model::transmission_reduction_mixer(
     Agent* p,
-    VirusPtr & v
+    VirusPtr & v,
+    int layer
 )
 {
     epiworld_double total = 1.0;
     for (auto & tool : p->get_tools())
     {
-        if (!tool->targets(*v))
+        if (!tool->targets(*v) || !tool->acts_in(layer))
             continue;
 
         total *= (1.0 - tool->get_transmission_reduction(v, this));
@@ -1277,6 +1279,10 @@ inline void Model::add_tool(const Tool & t, Assign a)
     auto cloned = t.clone_ptr();
     if (running && !tracks.empty())
         cloned->targets_.resolve(*this, "The tool \"" + cloned->get_name() + "\"", true);
+    if (running)
+        cloned->layers_.resolve(*this, "The tool \"" + cloned->get_name() + "\"");
+    else
+        cloned->layers_.resolved = false; // A copy may carry another model's mask
     db.record_tool(*cloned);
     tools.push_back(std::shared_ptr<Tool>(std::move(cloned)));
     tool_assign.push_back(std::move(a));
@@ -1917,6 +1923,7 @@ inline void Model::reset() {
     // them.
     for (auto & layer : layers)
     {
+        layer->reset_participation(*this);
         layer->reset(*this);
         layer->reset_tracing(population.size());
     }
@@ -1976,6 +1983,11 @@ inline void Model::reset() {
         nh_resolve();
         nh_reset();
     }
+
+    // The layers the tools' contact effects act in (with or without a
+    // natural history)
+    for (auto & t : tools)
+        t->layers_.resolve(*this, "The tool \"" + t->get_name() + "\"");
 
     // The batch of sampled contacts
     if (post_sampling_on)
@@ -2405,7 +2417,10 @@ inline void Model::set_running(bool value)
 inline void Model::update_layers()
 {
     for (auto & layer : layers)
+    {
+        layer->apply_closure(today());
         layer->update(*this);
+    }
 }
 
 inline void Model::layers_attach()

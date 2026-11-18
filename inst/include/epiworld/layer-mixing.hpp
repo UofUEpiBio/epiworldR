@@ -18,8 +18,10 @@ std::shared_ptr< Mixing > mixing(std::string name);
  * @details Created with `layer::mixing()`. Every agent of a group takes part
  * in the mixing (the contacts are spread over all of them), and the agents in
  * the model's infectious states transmit (`Model::set_infectious_states()`).
- * The quarantine model takes its isolated agents out of the mixing altogether
- * (see `Model::set_excluded_states()`).
+ * Agents in a status or stage of contact weight 0 are out of every layer, and
+ * those in a status the layer excludes (`exclude_status()`) out of this one:
+ * they are not in the mixing, and the contact rate is spread over the agents
+ * present (see `ContactLayer`).
  *
  * ### Groups
  *
@@ -770,7 +772,8 @@ inline void Mixing::update(Model & model)
         rebuild_layout();
 
     const size_t ns = static_cast< size_t >(model.nstates);
-    const auto & not_infectious = model.state_not_infectious;
+    // States that transmit nothing here (not infectious, or out of the layer)
+    const std::vector< bool > * silent_states = this->silent();
 
     std::fill(counts.begin(), counts.end(), 0u);
 
@@ -780,7 +783,7 @@ inline void Mixing::update(Model & model)
     for (size_t s = 0u; s < ns; ++s)
     {
         if ((model.state_carriers[s] == 0u) ||
-            (!not_infectious.empty() && not_infectious[s]))
+            ((silent_states != nullptr) && (*silent_states)[s]))
             continue;
 
         for (size_t id : model.state_index_members(s))
@@ -810,7 +813,7 @@ inline void Mixing::update(Model & model)
         pool[offsets[g] + counts[g]++] = id;
     }
 
-    // In the mixing = group size - agents in excluded states
+    // In the mixing = group size - agents out of the layer
     for (size_t g = 0u; g < n_groups; ++g)
         n_available[g] = group_size[g];
 
@@ -820,7 +823,7 @@ inline void Mixing::update(Model & model)
         size_t k = 0u;
         for (size_t id : absent_ids)
         {
-            if (model.state_excluded[model.agent_state[id]])
+            if (this->excludes(model.agent_state[id]))
                 absent_ids[k++] = id;
             else
             {
@@ -833,7 +836,7 @@ inline void Mixing::update(Model & model)
 
     for (size_t s = 0u; s < ns; ++s)
     {
-        if (!model.state_excluded[s])
+        if (!this->excludes(static_cast< epiworld_fast_uint >(s)))
             continue;
 
         for (size_t id : model.state_index_members(s))
@@ -941,9 +944,11 @@ inline void Mixing::groupmates_of(
     d1 = std::max(d1, 1);
     d2 = std::min(d2, this->model->today());
 
-    // One entry per shared span, merged per groupmate below
+    // One entry per shared span, merged per groupmate below; the days the
+    // layer was closed are not shared
     out.clear();
-    spells(agent_id, d1, d2, [&](size_t g, int a, int b) {
+    this->open_days(d1, d2, [&](int open_from, int open_to) {
+    spells(agent_id, open_from, open_to, [&](size_t g, int a, int b) {
 
         auto shared = [&](size_t other) {
             spells(other, a, b, [&](size_t h, int first, int last) {
@@ -966,6 +971,7 @@ inline void Mixing::groupmates_of(
             )
                 shared(d->agent);
 
+    });
     });
 
     std::sort(out.begin(), out.end(), [](const auto & x, const auto & y) {
@@ -1136,7 +1142,7 @@ inline size_t Mixing::sample(
                 agent, model, out
             );
     }
-    else if (!model.state_excluded[model.agent_state[agent]])
+    else if (!this->excludes(model.agent_state[agent]))
     {
 
         // The day's draws of the agent's group (see update())

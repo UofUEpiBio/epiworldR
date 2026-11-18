@@ -260,6 +260,26 @@ groupmates_of_cpp <- function(layer, agent, from, to) {
   .Call(`_epiworldR_groupmates_of_cpp`, layer, agent, from, to)
 }
 
+exclude_status_cpp <- function(layer, status) {
+  .Call(`_epiworldR_exclude_status_cpp`, layer, status)
+}
+
+get_excluded_statuses_cpp <- function(layer) {
+  .Call(`_epiworldR_get_excluded_statuses_cpp`, layer)
+}
+
+close_layer_cpp <- function(layer) {
+  .Call(`_epiworldR_close_layer_cpp`, layer)
+}
+
+reopen_layer_cpp <- function(layer) {
+  .Call(`_epiworldR_reopen_layer_cpp`, layer)
+}
+
+is_layer_closed_cpp <- function(layer) {
+  .Call(`_epiworldR_is_layer_closed_cpp`, layer)
+}
+
 set_weight_cpp <- function(layer, param) {
   .Call(`_epiworldR_set_weight_cpp`, layer, param)
 }
@@ -670,6 +690,22 @@ clear_targets_tool_cpp <- function(tool) {
 
 get_targets_tool_cpp <- function(tool) {
   .Call(`_epiworldR_get_targets_tool_cpp`, tool)
+}
+
+add_layer_target_tool_cpp <- function(tool, layer) {
+  .Call(`_epiworldR_add_layer_target_tool_cpp`, tool, layer)
+}
+
+set_layer_targets_tool_cpp <- function(tool, layers) {
+  .Call(`_epiworldR_set_layer_targets_tool_cpp`, tool, layers)
+}
+
+get_layer_targets_tool_cpp <- function(tool) {
+  .Call(`_epiworldR_get_layer_targets_tool_cpp`, tool)
+}
+
+clear_layer_targets_tool_cpp <- function(tool) {
+  .Call(`_epiworldR_clear_layer_targets_tool_cpp`, tool)
 }
 
 print_tool_cpp <- function(t) {

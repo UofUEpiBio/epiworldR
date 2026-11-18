@@ -279,6 +279,34 @@ cpp11::data_frame groupmates_of_cpp(SEXP layer, int agent, int from, int to) {
 // Every kind of layer -----------------------------------------------------------
 
 [[cpp11::register]]
+SEXP exclude_status_cpp(SEXP layer, std::string status) {
+  layer_ptr(layer)->exclude_status(status);
+  return layer;
+}
+
+[[cpp11::register]]
+cpp11::writable::strings get_excluded_statuses_cpp(SEXP layer) {
+  return cpp11::writable::strings(layer_ptr(layer)->get_excluded_statuses());
+}
+
+[[cpp11::register]]
+SEXP close_layer_cpp(SEXP layer) {
+  layer_ptr(layer)->close();
+  return layer;
+}
+
+[[cpp11::register]]
+SEXP reopen_layer_cpp(SEXP layer) {
+  layer_ptr(layer)->reopen();
+  return layer;
+}
+
+[[cpp11::register]]
+bool is_layer_closed_cpp(SEXP layer) {
+  return layer_ptr(layer)->is_closed();
+}
+
+[[cpp11::register]]
 SEXP set_weight_cpp(SEXP layer, std::string param) {
   layer_ptr(layer)->set_weight(param);
   return layer;

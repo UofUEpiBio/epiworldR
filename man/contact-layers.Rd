@@ -18,6 +18,11 @@
 \alias{set_weight}
 \alias{add_target_layer}
 \alias{get_targets_layer}
+\alias{exclude_status}
+\alias{get_excluded_statuses}
+\alias{close_layer}
+\alias{reopen_layer}
+\alias{is_layer_closed}
 \alias{enable_tracing}
 \alias{disable_tracing}
 \alias{is_tracing}
@@ -55,6 +60,16 @@ set_weight(layer, param)
 add_target_layer(layer, disease)
 
 get_targets_layer(layer)
+
+exclude_status(layer, status)
+
+get_excluded_statuses(layer)
+
+close_layer(layer)
+
+reopen_layer(layer)
+
+is_layer_closed(layer)
 
 enable_tracing(layer, max_contacts = 200L)
 
@@ -112,6 +127,8 @@ parameter holding the proportion of ties rewired at the end of each step.}
 \item{disease}{Character scalar. A disease that spreads through the layer,
 by name (see \code{\link[=get_diseases]{get_diseases()}}).}
 
+\item{status}{Character scalar. A status name from \code{\link[=get_statuses]{get_statuses()}}.}
+
 \item{max_contacts}{Integer. Number of contacts the log keeps per agent
 (the most recent ones).}
 }
@@ -132,6 +149,9 @@ changed; \code{has_edge()} whether the tie exists.
 \item \code{set_weight()}, \code{add_target_layer()}, \code{enable_tracing()} and
 \code{disable_tracing()} return the layer (invisibly).
 \item \code{is_tracing()} returns whether the layer keeps a log.
+\item \code{exclude_status()}, \code{close_layer()} and \code{reopen_layer()} return the layer
+invisibly. \code{get_excluded_statuses()} returns a character vector (empty when
+no statuses are excluded); \code{is_layer_closed()} returns a logical scalar.
 \item \code{get_tracing()} returns the log of the last run as a data frame (columns
 \code{source}, \code{contact} and \code{day}; agent ids start at 0). It is an error to
 call it on a layer that is not traced.
@@ -154,8 +174,20 @@ A layer object shares its layer with the model it is added to, so editing
 it (e.g., with \code{add_edge()}) edits the model's layer. An edit made while
 the model runs lasts for that run only; an edit made between runs is kept.
 
-Every kind of layer has a weight and virus targets.
+Every kind of layer supports participation settings, a weight and disease
+targets.
 \itemize{
+\item \code{exclude_status()} takes agents in the named status out of this layer
+only: they neither sample its contacts nor are sampled through it. Other
+layers still include them. Set exclusions between runs; calling it during
+a run is an error. An unknown status name is an error when the run starts.
+\code{get_excluded_statuses()} returns the excluded names.
+\item \code{close_layer()} stops all contacts through the layer: it logs no contacts
+and transmits nothing. Closing between runs keeps it closed in every run
+until \code{reopen_layer()} is called. Closing during a run (for example, in a
+global event) takes effect from the next day and lasts for that run only.
+Reopening follows the same timing. \code{is_layer_closed()} reports whether the
+layer is closed today.
 \item \code{set_weight()} ties the layer's weight to a model parameter (add it with
 \code{\link[=add_param]{add_param()}}). The odds of an infection through the layer's contacts are
 multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
