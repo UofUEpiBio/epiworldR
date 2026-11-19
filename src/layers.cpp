@@ -365,3 +365,67 @@ cpp11::data_frame get_tracing_cpp(SEXP layer) {
   });
 
 }
+
+// Schedules (any layer) -------------------------------------------------------
+
+[[cpp11::register]]
+SEXP set_schedule_cpp(SEXP layer, cpp11::logicals days) {
+  std::vector< bool > d(days.size());
+  for (R_xlen_t i = 0; i < days.size(); ++i)
+    d[i] = days[i] == TRUE;
+  layer_ptr(layer)->set_schedule(d);
+  return layer;
+}
+
+[[cpp11::register]]
+SEXP clear_schedule_cpp(SEXP layer) {
+  layer_ptr(layer)->clear_schedule();
+  return layer;
+}
+
+[[cpp11::register]]
+bool has_schedule_cpp(SEXP layer) {
+  return layer_ptr(layer)->has_schedule();
+}
+
+[[cpp11::register]]
+bool is_scheduled_cpp(SEXP layer, int day) {
+  return layer_ptr(layer)->is_scheduled(day);
+}
+
+// Persistence (mixing layers, within groups) ----------------------------------
+
+[[cpp11::register]]
+SEXP set_pools_cpp(SEXP layer, std::vector< int > pools) {
+  mixing_ref(layer).set_pools(std::vector< size_t >(pools.begin(), pools.end()));
+  return layer;
+}
+
+[[cpp11::register]]
+std::vector< int > get_pools_cpp(SEXP layer) {
+  const auto & p = mixing_ref(layer).get_pools();
+  return std::vector< int >(p.begin(), p.end());
+}
+
+[[cpp11::register]]
+SEXP set_persistence_cpp(SEXP layer, std::vector< double > persistence) {
+  mixing_ref(layer).set_persistence(persistence);
+  return layer;
+}
+
+[[cpp11::register]]
+std::vector< double > get_persistence_cpp(SEXP layer) {
+  return mixing_ref(layer).get_persistence();
+}
+
+[[cpp11::register]]
+SEXP clear_persistence_cpp(SEXP layer) {
+  mixing_ref(layer).clear_persistence();
+  return layer;
+}
+
+[[cpp11::register]]
+int get_usual_group_cpp(SEXP layer, int agent) {
+  size_t g = mixing_ref(layer).get_usual_group(agent);
+  return (g == layer::Mixing::NO_GROUP) ? NA_INTEGER : static_cast< int >(g);
+}

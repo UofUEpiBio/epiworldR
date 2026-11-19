@@ -223,6 +223,47 @@ set_param.epiworld_model <- function(x, pname, pval) {
 }
 
 #' @export
+#' @param values Numeric vector. In `set_param_cycle()`, the values the
+#' parameter takes over a cycle that repeats (day 1 takes the first one).
+#' @details
+#' `set_param_cycle()` makes a parameter follow a cycle: on day `d` it takes
+#' `values[(d - 1) %% length(values) + 1]`, so seven values give a weekly cycle
+#' (from a Monday). Layers that read the parameter every day follow it, e.g.,
+#' a mixing layer's contact rate ([set_contact_rate()]) or a layer's weight
+#' ([set_weight()]): more public contacts on weekends. A global event that
+#' sets the parameter at the end of each day gives the same run. The cycle
+#' starts over at every run, is set between runs, and after a run the
+#' parameter has the last day's value. Beware double counting: a contact rate
+#' estimated from data averaged over the week already includes the weekends.
+#' @returns
+#' - `set_param_cycle()` and `clear_param_cycle()` return the model invisibly;
+#' `has_param_cycle()` returns a logical scalar.
+#' @rdname epiworld-methods
+set_param_cycle <- function(model, pname, values) {
+  stopifnot_model(model)
+  stopifnot_string(pname)
+  if (!is.numeric(values) || !length(values) || anyNA(values))
+    stop("-values- must be a numeric vector with no NA values.", call. = FALSE)
+  invisible(set_param_cycle_cpp(model, pname, as.double(values)))
+}
+
+#' @export
+#' @rdname epiworld-methods
+clear_param_cycle <- function(model, pname) {
+  stopifnot_model(model)
+  stopifnot_string(pname)
+  invisible(clear_param_cycle_cpp(model, pname))
+}
+
+#' @export
+#' @rdname epiworld-methods
+has_param_cycle <- function(model, pname) {
+  stopifnot_model(model)
+  stopifnot_string(pname)
+  has_param_cycle_cpp(model, pname)
+}
+
+#' @export
 #' @param mname String. Name of the model.
 #' @returns
 #' - The `set_name` function does not return a value but instead alters an object

@@ -23,6 +23,10 @@
 \alias{close_layer}
 \alias{reopen_layer}
 \alias{is_layer_closed}
+\alias{set_schedule}
+\alias{clear_schedule}
+\alias{has_schedule}
+\alias{is_scheduled}
 \alias{enable_tracing}
 \alias{disable_tracing}
 \alias{is_tracing}
@@ -70,6 +74,14 @@ close_layer(layer)
 reopen_layer(layer)
 
 is_layer_closed(layer)
+
+set_schedule(layer, days)
+
+clear_schedule(layer)
+
+has_schedule(layer)
+
+is_scheduled(layer, day)
 
 enable_tracing(layer, max_contacts = 200L)
 
@@ -129,6 +141,11 @@ by name (see \code{\link[=get_diseases]{get_diseases()}}).}
 
 \item{status}{Character scalar. A status name from \code{\link[=get_statuses]{get_statuses()}}.}
 
+\item{days}{Logical vector. In \code{set_schedule()}, whether the layer has
+contacts on each day of a cycle that repeats (day 1 is the first entry).}
+
+\item{day}{Integer. A day of the run (the first day is 1).}
+
 \item{max_contacts}{Integer. Number of contacts the log keeps per agent
 (the most recent ones).}
 }
@@ -149,6 +166,8 @@ changed; \code{has_edge()} whether the tie exists.
 \item \code{set_weight()}, \code{add_target_layer()}, \code{enable_tracing()} and
 \code{disable_tracing()} return the layer (invisibly).
 \item \code{is_tracing()} returns whether the layer keeps a log.
+\item \code{set_schedule()} and \code{clear_schedule()} return the layer invisibly;
+\code{has_schedule()} and \code{is_scheduled()} return a logical scalar.
 \item \code{exclude_status()}, \code{close_layer()} and \code{reopen_layer()} return the layer
 invisibly. \code{get_excluded_statuses()} returns a character vector (empty when
 no statuses are excluded); \code{is_layer_closed()} returns a logical scalar.
@@ -187,7 +206,14 @@ and transmits nothing. Closing between runs keeps it closed in every run
 until \code{reopen_layer()} is called. Closing during a run (for example, in a
 global event) takes effect from the next day and lasts for that run only.
 Reopening follows the same timing. \code{is_layer_closed()} reports whether the
-layer is closed today.
+layer has no contacts today: closed, or off its schedule.
+\item \code{set_schedule()} makes the layer sample contacts on some days only: \code{days}
+repeats, day \code{d} using \code{days[(d - 1) \%\% length(days) + 1]}, so
+\code{c(rep(TRUE, 5), FALSE, FALSE)} is weekdays, with day 1 a Monday. A day off
+the schedule is a day without contacts in the layer, as a closure is. The
+schedule is a setting: it lasts across runs and is set between runs.
+\code{clear_schedule()} removes it, \code{has_schedule()} says whether there is one,
+and \code{is_scheduled()} whether the layer is on its schedule on a given day.
 \item \code{set_weight()} ties the layer's weight to a model parameter (add it with
 \code{\link[=add_param]{add_param()}}). The odds of an infection through the layer's contacts are
 multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a

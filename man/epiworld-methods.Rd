@@ -13,6 +13,9 @@
 \alias{add_param}
 \alias{add_param.epiworld_model}
 \alias{set_param}
+\alias{set_param_cycle}
+\alias{clear_param_cycle}
+\alias{has_param_cycle}
 \alias{set_name}
 \alias{get_name}
 \alias{get_n_viruses}
@@ -46,6 +49,12 @@ add_param(x, pname, pval)
 \method{add_param}{epiworld_model}(x, pname, pval)
 
 set_param(x, pname, pval)
+
+set_param_cycle(model, pname, values)
+
+clear_param_cycle(model, pname)
+
+has_param_cycle(model, pname)
 
 set_name(x, mname)
 
@@ -88,6 +97,9 @@ get_tool(model, tool_pos)
 
 \item{pval}{Numeric. Value of the parameter.}
 
+\item{values}{Numeric vector. In \code{set_param_cycle()}, the values the
+parameter takes over a cycle that repeats (day 1 takes the first one).}
+
 \item{mname}{String. Name of the model.}
 
 \item{data}{A numeric matrix.}
@@ -124,6 +136,11 @@ of class \code{epiworld_model}.
 \itemize{
 \item The \code{set_param} function does not return a value but instead alters a
 parameter value.
+}
+
+\itemize{
+\item \code{set_param_cycle()} and \code{clear_param_cycle()} return the model invisibly;
+\code{has_param_cycle()} returns a logical scalar.
 }
 
 \itemize{
@@ -186,6 +203,16 @@ and running the simulation.
 \details{
 The \code{verbose_on} and \code{verbose_off} functions activate and deactivate printing
 progress on screen, respectively. Both functions return the model (\code{x}) invisibly.
+
+\code{set_param_cycle()} makes a parameter follow a cycle: on day \code{d} it takes
+\code{values[(d - 1) \%\% length(values) + 1]}, so seven values give a weekly cycle
+(from a Monday). Layers that read the parameter every day follow it, e.g.,
+a mixing layer's contact rate (\code{\link[=set_contact_rate]{set_contact_rate()}}) or a layer's weight
+(\code{\link[=set_weight]{set_weight()}}): more public contacts on weekends. A global event that
+sets the parameter at the end of each day gives the same run. The cycle
+starts over at every run, is set between runs, and after a run the
+parameter has the last day's value. Beware double counting: a contact rate
+estimated from data averaged over the week already includes the weekends.
 }
 \examples{
 

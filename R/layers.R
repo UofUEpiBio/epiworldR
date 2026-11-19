@@ -44,6 +44,9 @@
 #' @param i,j Integer. Ids of the agents at the ends of the tie (starting at 0).
 #' @param max_contacts Integer. Number of contacts the log keeps per agent
 #' (the most recent ones).
+#' @param days Logical vector. In `set_schedule()`, whether the layer has
+#' contacts on each day of a cycle that repeats (day 1 is the first entry).
+#' @param day Integer. A day of the run (the first day is 1).
 #'
 #' @details
 #' A layer object shares its layer with the model it is added to, so editing
@@ -62,7 +65,14 @@
 #' until `reopen_layer()` is called. Closing during a run (for example, in a
 #' global event) takes effect from the next day and lasts for that run only.
 #' Reopening follows the same timing. `is_layer_closed()` reports whether the
-#' layer is closed today.
+#' layer has no contacts today: closed, or off its schedule.
+#' - `set_schedule()` makes the layer sample contacts on some days only: `days`
+#' repeats, day `d` using `days[(d - 1) %% length(days) + 1]`, so
+#' `c(rep(TRUE, 5), FALSE, FALSE)` is weekdays, with day 1 a Monday. A day off
+#' the schedule is a day without contacts in the layer, as a closure is. The
+#' schedule is a setting: it lasts across runs and is set between runs.
+#' `clear_schedule()` removes it, `has_schedule()` says whether there is one,
+#' and `is_scheduled()` whether the layer is on its schedule on a given day.
 #' - `set_weight()` ties the layer's weight to a model parameter (add it with
 #' [add_param()]). The odds of an infection through the layer's contacts are
 #' multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
@@ -93,6 +103,8 @@
 #' - `set_weight()`, `add_target_layer()`, `enable_tracing()` and
 #' `disable_tracing()` return the layer (invisibly).
 #' - `is_tracing()` returns whether the layer keeps a log.
+#' - `set_schedule()` and `clear_schedule()` return the layer invisibly;
+#' `has_schedule()` and `is_scheduled()` return a logical scalar.
 #' - `exclude_status()`, `close_layer()` and `reopen_layer()` return the layer
 #' invisibly. `get_excluded_statuses()` returns a character vector (empty when
 #' no statuses are excluded); `is_layer_closed()` returns a logical scalar.
@@ -379,6 +391,37 @@ reopen_layer <- function(layer) {
 is_layer_closed <- function(layer) {
   stopifnot_layer(layer)
   is_layer_closed_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+set_schedule <- function(layer, days) {
+  stopifnot_layer(layer)
+  if (!is.logical(days) || !length(days) || anyNA(days))
+    stop("-days- must be a logical vector with no NA values.", call. = FALSE)
+  invisible(set_schedule_cpp(layer, days))
+}
+
+#' @export
+#' @rdname contact-layers
+clear_schedule <- function(layer) {
+  stopifnot_layer(layer)
+  invisible(clear_schedule_cpp(layer))
+}
+
+#' @export
+#' @rdname contact-layers
+has_schedule <- function(layer) {
+  stopifnot_layer(layer)
+  has_schedule_cpp(layer)
+}
+
+#' @export
+#' @rdname contact-layers
+is_scheduled <- function(layer, day) {
+  stopifnot_layer(layer)
+  stopifnot_int(day, lb = 1)
+  is_scheduled_cpp(layer, as.integer(day))
 }
 
 #' @export

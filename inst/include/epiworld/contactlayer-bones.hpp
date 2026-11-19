@@ -61,6 +61,12 @@
  * probability per pair does). Who is out is the status, so the status history
  * already counts them. Excluded statuses are a setting, made between runs.
  *
+ * `set_schedule()` makes a layer sample contacts on some days only, routinely
+ * (work and transit on weekdays): a day off the schedule is a day closed, but
+ * the schedule is a setting, made between runs, while `close()` is the
+ * one-off intervention a global event makes during a run. `is_closed()` says
+ * whether the layer has contacts today, for either reason.
+ *
  * `close()` takes the whole layer out (a school closure) until `reopen()`:
  * it samples no contacts, so it logs none and transmits nothing, and the
  * days it was closed are not days shared in `layer::Mixing::groupmates_of()`.
@@ -109,15 +115,20 @@ private:
     std::vector< bool > state_silent;   ///< [state] Transmits nothing here; empty: the model's
 
     bool closed_base = false; ///< Closed in every run (closed between runs)
-    bool closed = false;      ///< Closed today
+    bool closed = false;      ///< No contacts today (closed, or off its schedule)
     bool closed_next = false; ///< Closed from tomorrow (applied at the step's end)
-    /// The spans of days closed this run, `[first, last]` (`INT_MAX`: still)
+    /// The spans of days without contacts this run, `[first, last]`
+    /// (`INT_MAX`: still)
     std::vector< std::pair< int, int > > closed_spans;
+
+    /// The days the layer samples contacts (empty: every day; see set_schedule())
+    std::function< bool(int) > schedule;
 
     /// The masks of the run and the baseline closure (the model calls it at reset).
     void reset_participation(const Model & model);
 
-    /// Applies today's `close()` / `reopen()` (the model calls it at the step's end).
+    /// Applies today's `close()` / `reopen()` and the schedule, for tomorrow
+    /// (the model calls it at the step's end).
     void apply_closure(int today);
 
 protected:
@@ -139,6 +150,9 @@ protected:
     /// Call it from `reset()` once the baseline has been restored.
     void mark_clean() { dirty = false; }
 
+    /// Whether the model runs (settings are made between runs).
+    bool in_a_run() const { return in_run; }
+
 public:
 
     explicit ContactLayer(std::string name_) : name(std::move(name_)) {}
@@ -151,7 +165,7 @@ public:
         excluded_statuses(other.excluded_statuses), state_out(other.state_out),
         state_silent(other.state_silent), closed_base(other.closed_base),
         closed(other.closed), closed_next(other.closed_next),
-        closed_spans(other.closed_spans) {}
+        closed_spans(other.closed_spans), schedule(other.schedule) {}
 
     ContactLayer & operator=(const ContactLayer &) = delete;
 
@@ -228,7 +242,28 @@ public:
 
     void close();  ///< Closed from the next day (or every run, between runs)
     void reopen(); ///< Open from the next day (or every run, between runs)
-    bool is_closed() const { return closed; } ///< Closed today
+    /// No contacts today: closed, or off its schedule. After a run, "today"
+    /// is the day after its last (the run's last step prepares it).
+    bool is_closed() const { return closed; }
+
+    /**
+     * @brief The days the layer samples contacts, as a cycle (between runs).
+     * @param days Day `d` (contacts start on day 1) is on if `days[(d - 1) %
+     * days.size()]`; e.g., five `true` and two `false` for weekdays only, the
+     * run starting on a Monday.
+     */
+    void set_schedule(std::vector< bool > days);
+
+    /// The days the layer samples contacts: those where `on(day)` is true
+    /// (between runs; read at the end of the day before).
+    void set_schedule(std::function< bool(int day) > on);
+
+    void clear_schedule(); ///< Every day (the default; between runs)
+    bool has_schedule() const { return static_cast< bool >(schedule); }
+
+    /// Whether the schedule has day `day` on (always, without one); a closure
+    /// takes the layer out on top of it.
+    bool is_scheduled(int day) const { return !schedule || schedule(day); }
 
     /// Whether an agent in engine state `state` is out of the layer.
     bool excludes(epiworld_fast_uint state) const;
