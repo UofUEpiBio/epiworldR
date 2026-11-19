@@ -37,7 +37,8 @@
  * ### Weight and viruses
  *
  * `set_weight()` makes the layer's contacts count more or less than the others':
- * the odds of infection through the layer are multiplied by the weight (a
+ * the hazard of infection through the layer, `-log(1 - p)`, is multiplied by
+ * the weight, so a contact of probability `p` counts as `1 - (1 - p)^weight` (a
  * model parameter, read at every step; 1 if none is set; 0 turns the layer
  * off). `add_target()` restricts the layer to some diseases, by name, as tools
  * are restricted; by default every disease spreads through every layer.

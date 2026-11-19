@@ -42,7 +42,7 @@ Controls how models compute transmission each day.
 \details{
 In a \emph{pull} step, each susceptible agent draws its contacts from every
 layer: its neighbors in a network, the agents it meets in a mixing layer. In
-a \emph{push} step, each infected agent adds its infection odds to the
+a \emph{push} step, each infected agent adds its infection hazards to the
 susceptible agents it reaches: its neighbors, and the agents a mixing layer
 draws for it, each as likely as their own pull would draw it. Both give the
 same distribution of infections; they differ only in speed and in the

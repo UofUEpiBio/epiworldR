@@ -59,14 +59,19 @@ Other steps included in `epiworld` but not in `epiworldR` are the network rewiri
 
 ## Transmission probability
 
-Generally, `epiworldR` assumes that at each step of the simulation,
-susceptible agents can acquire the disease from at most one infected
-agent. The probability of transmission from $i$
-to $j$ is given by the following formula:
+At each step of the simulation, a susceptible agent $j$ is exposed
+independently to each of its infected contacts $i$, and acquires the disease
+from at most one of them. It escapes infection with probability
+$\prod_i (1 - p_{ij})$, and if infected, the infector is $i$ with probability
+proportional to its hazard $\lambda_{ij} = -\log(1 - p_{ij})$:
 
 $$
-P(i\to j| \mbox{at most one}) = \frac{p_{ij} \times \prod_{k\neq i}\left(1 - p_{kj}\right)}{\prod_k\left(1 - p_{kj}\right) + \sum_k p_{kj} \times \prod_{l\neq k}\left(1 - p_{lj}\right)}
+P(i\to j) = \frac{\lambda_{ij}}{\sum_k \lambda_{kj}} \left(1 - \prod_k\left(1 - p_{kj}\right)\right)
 $$
+
+A layer's weight $w$ multiplies the hazards of its contacts. Before 1.0.0,
+`epiworldR` conditioned the draw on at most one transmission, which lowers
+the probability of infection as infected contacts pile up.
 
 The adjusted probabilities $p_{ij}$ are computed as a function of $i$, $j$,
 and the virus. The following section describes how these probabilities are

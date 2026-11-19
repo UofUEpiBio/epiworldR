@@ -233,6 +233,13 @@ protected:
 
     /// One draw over the first `n_exposures` exposures.
     Virus * draw_exposure(size_t n_exposures);
+
+    /**
+     * @brief The hazard of an exposure of probability `p` through a layer of
+     * weight `weight`: `-weight * log(1 - p)` (infinite if `p >= 1`, 0 if
+     * `p <= 0`).
+     */
+    static epiworld_double exposure_hazard(epiworld_double p, epiworld_double weight);
     void layers_attach(); ///< Points the layers at this model, lists the networks
     void layers_classify(); ///< Sets `pull_only`, `queue_blind` and `group_layers`
     void layers_detach(); ///< Leaves the layers without a model (they may outlive it)
@@ -345,7 +352,7 @@ protected:
 
     struct PushTarget {
         size_t id;
-        double odds;                // Sum of p / (1 - p) over the contacts
+        double hazard;              // Sum of -log(1 - p) over the contacts
         unsigned int n_certain;     // Contacts with p >= 1
         Virus * candidate;    // Infector's virus drawn so far
         int layer;                  // Layer of the candidate's contact
@@ -618,7 +625,8 @@ public:
      * @name Scratch arrays for sampling exposures
      * @details Update functions store each exposure's probability in
      * `array_double_tmp` and its virus in `array_virus_tmp`, then draw with
-     * `roulette()`, which uses two doubles per exposure. An agent can have any
+     * `roulette()` (two doubles per exposure), or, for transmission, store
+     * hazards and draw with `draw_exposure()`. An agent can have any
      * number of exposures across its layers, so call `reserve_tmp()` before
      * storing them.
      */
@@ -1052,10 +1060,12 @@ public:
      * @details This is where contacts become an infection. Every contact that
      * carries a virus is an exposure with probability
      * `(1 - susceptibility reduction of agent) * probability of infecting *
-     * (1 - transmission reduction of the contact)`, and one draw
-     * (`roulette()`) picks at most one infector. A contact listed twice is
-     * two exposures.
-     * With a `layer`, the probabilities follow its weight and the viruses it
+     * (1 - transmission reduction of the contact)`. The exposures are
+     * independent: the agent escapes all of them with probability
+     * `prod(1 - p)`, and one draw picks at most one infector, each with
+     * probability proportional to its hazard `-log(1 - p)`. A contact listed
+     * twice is two exposures.
+     * With a `layer`, the hazards are multiplied by its weight, only the viruses it
      * admits (see `ContactLayer`), and the layer is recorded as the one of the
      * transmission.
      * @param agent Agent without a virus.
@@ -1102,7 +1112,7 @@ public:
      * @details Stages whose only drawn exit is a default infection (no
      * custom sampler) can be updated by pulling (each susceptible agent draws
      * its contacts from every layer: its ties, the agents it meets in a mixing
-     * layer) or by pushing (each agent with a virus adds its infection odds to
+     * layer) or by pushing (each agent with a virus adds its infection hazards to
      * the susceptible agents it reaches: its ties, and the agents a mixing
      * layer draws for it, each as likely as their pull would draw it; see
      * `ContactLayer::sample_reverse()`). Both give the same distribution of

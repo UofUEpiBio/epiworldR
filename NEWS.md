@@ -5,6 +5,18 @@ come from contact layers. This is a breaking release: code written for 0.x
 needs the changes below, and removed functions are defunct (calling them is an
 error that names the replacement; see `?"epiworldR-defunct"`).
 
+* Exposures are now independent (epiworld Phase 6a, UofUEpiBio/epiworld#388).
+  A susceptible agent escapes infection with probability `prod(1 - p)` over
+  its infected contacts in every layer. If it is infected, the infector is
+  drawn in proportion to its hazard `-log(1 - p)`. Until now the draw was
+  conditioned on at most one transmission (`1 / (1 + sum of odds)`), which
+  lowered the probability of infection as contacts piled up. A layer's
+  weight (`set_weight()`) now multiplies the hazard, so a contact counts as
+  `1 - (1 - p)^weight`; before, it scaled the odds. **Results change**:
+  infection is more likely when agents have several infected contacts, so
+  parameters calibrated with 0.x should be recalibrated. The C++ headers are
+  re-vendored (epiworld `bb78cbbd`).
+
 * Models with a mixing layer can be pushed (`set_transmission_mode()`): an
   infected agent adds its odds to the agents a mixing layer draws for it,
   each as likely as their own pull would draw it, so the distribution of

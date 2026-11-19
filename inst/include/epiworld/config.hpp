@@ -113,16 +113,15 @@ enum class EventAction : uint8_t {
  * (no custom sampler) can acquire a virus in two ways that give the same
  * distribution of outcomes:
  *
- * - `pull`: each susceptible agent scans its neighbors and draws its infector
- *   with `roulette()` (the approach of epiworld <= 0.15).
- * - `push`: each agent carrying a virus adds its infection odds to its
+ * - `pull`: each susceptible agent scans its contacts and draws its infector
+ *   (`Model::sample_virus()`).
+ * - `push`: each agent carrying a virus adds its infection hazards to its
  *   susceptible neighbors, and each of those then makes one draw. Its cost
  *   scales with the carriers' ties rather than with the susceptibles'.
  * - `automatic` (the default): picks whichever of the two is cheaper at each
  *   step.
  *
- * Only the stream of random numbers differs between the modes; `pull`
- * reproduces the streams of earlier versions. See
+ * Only the stream of random numbers differs between the modes. See
  * `Model::set_transmission_mode()`.
  */
 enum class TransmissionMode : uint8_t {

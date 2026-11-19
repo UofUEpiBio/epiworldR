@@ -404,3 +404,39 @@ expect_error(entity("Population 1", 300, FALSE), "layer_mixing")
 expect_error(add_entity(sir), "assign_counts")
 expect_error(distribute_tool_to_entities(c(.5, .5), TRUE), "assign_group_shares")
 expect_error(distribute_virus_to_entities(c(.5, .5), TRUE), "assign_group_shares")
+
+# Independent exposures and weights ------------------------------------------
+# Pairs (2k, 2k + 1): the even agent is infected, and the odd one meets it on
+# day 1 with p = 0.2 through a layer of weight w. Exposures are independent and
+# the weight multiplies the hazard -log(1 - p), so the odd agent is infected
+# with probability 1 - (1 - p)^w: 0.36 with w = 2 (the 0.x rule, which scaled
+# the odds, gave 0.33).
+npairs <- 20000
+p      <- .2
+pairs  <- ModelSIR(
+  "flu",
+  n                 = 2 * npairs,
+  prevalence        = 0,
+  transmission_prob = p,
+  recovery_rate     = 0
+)
+verbose_off(pairs)
+evens <- seq(0, 2 * npairs - 1, by = 2)
+assign_virus(pairs, 0, assign_agents(evens))
+add_layer(
+  pairs,
+  layer_network("pairs", graph_edgelist(evens, evens + 1, 2 * npairs))
+)
+add_param(pairs, "pair weight", 1)
+set_weight(get_layer(pairs, "pairs"), "pair weight")
+
+for (w in c(1, 2, 3)) {
+  set_param(pairs, "pair weight", w)
+  run(pairs, ndays = 1, seed = 33)
+  share    <- (get_today_total(pairs)$counts[2] - npairs) / npairs
+  expected <- 1 - (1 - p)^w
+  expect_true(
+    abs(share - expected) < 4 * sqrt(expected * (1 - expected) / npairs),
+    info = sprintf("weight %g: %.4f vs %.4f", w, share, expected)
+  )
+}

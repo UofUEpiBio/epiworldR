@@ -74,9 +74,10 @@
 #' `clear_schedule()` removes it, `has_schedule()` says whether there is one,
 #' and `is_scheduled()` whether the layer is on its schedule on a given day.
 #' - `set_weight()` ties the layer's weight to a model parameter (add it with
-#' [add_param()]). The odds of an infection through the layer's contacts are
-#' multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
-#' layer without a weight has weight 1.
+#' [add_param()]). The hazard of an infection through the layer's contacts,
+#' `-log(1 - p)`, is multiplied by the weight, so a contact of probability `p`
+#' counts as `1 - (1 - p)^weight`: 0 turns the layer off, 1 changes nothing, 2
+#' is two independent exposures, and a layer without a weight has weight 1.
 #' - `add_target_layer()` restricts the layer to some diseases, by name (see
 #' [get_diseases()]), as [add_target_tool()] does for tools; the names are
 #' checked when the model runs. A layer without targets spreads every disease.

@@ -1721,7 +1721,7 @@ inline Model & Model::run_multiple(
 inline void Model::update_state() {
 
     // Susceptible states using the default sampler can be updated by pushing
-    // infection odds from the carriers (see model-meat-transmission.hpp) --
+    // infection hazards from the carriers (see model-meat-transmission.hpp) --
     // same distribution, and cheaper while few agents carry a virus. Directed
     // networks always pull: a tie there is kept by its source only (see
     // layer::Network::is_directed()), so it is not visible from both ends.
