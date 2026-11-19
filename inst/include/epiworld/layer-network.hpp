@@ -202,6 +202,10 @@ public:
     /// An undirected network: a carrier's ties are its contacts' ties too.
     bool supports_queue() const override { return !directed; }
 
+    /// An undirected network: the model pushes along a carrier's ties
+    /// directly (a directed network is pulled).
+    bool supports_push() const override { return !directed; }
+
     std::shared_ptr< ContactLayer > clone() const override
     {
         return std::make_shared< Network >(*this);

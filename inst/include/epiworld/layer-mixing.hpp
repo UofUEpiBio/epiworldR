@@ -250,6 +250,11 @@ private:
 
     void rebuild_layout();
     void rebuild_members();
+
+    /// Appends `k` distinct members of group `h` drawn uniformly (all of them
+    /// if `k` is the group size), skipping `skip`; the members' order is kept.
+    void draw_members(size_t h, size_t k, size_t skip, Model & model, std::vector< size_t > & out);
+    std::vector< size_t > swaps; ///< Scratch for draw_members()
     void move(size_t agent_id, size_t group, bool notify_queue);
     void check_agent(size_t agent_id) const;
     void check_group(size_t group) const;
@@ -434,6 +439,23 @@ public:
 
     /// Within groups only: a carrier reaches only its own group.
     bool supports_queue() const override { return within_groups(); }
+
+    /**
+     * @brief Push: the agents `source` meets this step.
+     * @details For a carrier in group `g`, each member of group `h` is met
+     * with the probability a pull of that member would meet the carrier:
+     * `q[g]` within groups (`h = g` only), and `min(1, rate * c(h, g) /
+     * others(g))` with a contact matrix, `others(g)` being the agents of `g`
+     * in the mixing other than the member. A binomial number of members, drawn
+     * without repeats. A carrier out of the layer, or in a state that
+     * transmits nothing here, meets no one.
+     */
+    bool supports_push() const override { return true; }
+    size_t sample_reverse(
+        size_t source,
+        Model & model,
+        std::vector< size_t > & out
+    ) override;
 
     /**
      * @brief Restores the baseline and sizes all buffers for the model (the
@@ -1488,6 +1510,115 @@ inline void Mixing::draw(
             out.push_back(id);
 
     }
+
+}
+
+inline void Mixing::draw_members(
+    size_t h,
+    size_t k,
+    size_t skip,
+    Model & model,
+    std::vector< size_t > & out
+)
+{
+
+    auto & m = members[h];
+    const size_t n = m.size();
+
+    // Everyone, with no draws
+    if (k >= n)
+    {
+        for (size_t id : m)
+            if (id != skip)
+                out.push_back(id);
+        return;
+    }
+
+    // A partial shuffle puts the ones met first; undoing the swaps keeps the
+    // members' order (other draws depend on it)
+    swaps.clear();
+    for (size_t s = 0u; s < k; ++s)
+    {
+        size_t which = s + static_cast< size_t >(
+            model.runif() * static_cast< double >(n - s)
+        );
+        if (which >= n)
+            which = n - 1u;
+
+        std::swap(m[s], m[which]);
+        swaps.push_back(which);
+
+        if (m[s] != skip)
+            out.push_back(m[s]);
+    }
+
+    for (size_t s = k; s-- > 0u; )
+        std::swap(m[s], m[swaps[s]]);
+
+}
+
+inline size_t Mixing::sample_reverse(
+    size_t source,
+    Model & model,
+    std::vector< size_t > & out
+)
+{
+
+    const size_t first = out.size();
+
+    // Out of the layer, or in a state that transmits nothing here: not in
+    // anyone's pool
+    if (!in_layer(source))
+        return 0u;
+
+    const std::vector< bool > * silent_states = this->silent();
+    if ((silent_states != nullptr) && (*silent_states)[model.agent_state[source]])
+        return 0u;
+
+    const size_t g = groups[source];
+
+    if (within_groups())
+    {
+        const double q = contact_prob[g];
+        const size_t n = members[g].size();
+        if ((n > 0u) && (q > 0.0))
+            draw_members(
+                g,
+                (q < 1.0) ?
+                    static_cast< size_t >(model.rbinom(static_cast< int >(n), q)) :
+                    n,
+                source, model, out
+            );
+        return out.size() - first;
+    }
+
+    // A member of h meets the source as its pull would (see daily_build()):
+    // entry (h, g) of the matrix, over the others of g
+    const double scale = get_contact_rate(model);
+    for (size_t h = 0u; h < n_groups; ++h)
+    {
+        const size_t n = members[h].size();
+        const size_t others = n_available[g] - ((g == h) ? 1u : 0u);
+        if ((n == 0u) || (others == 0u) || (n_available[g] == 0u))
+            continue;
+
+        const double p = std::min(
+            1.0,
+            scale * contact_matrix[g * n_groups + h] / static_cast< double >(others)
+        );
+        if (p <= 0.0)
+            continue;
+
+        draw_members(
+            h,
+            (p < 1.0) ?
+                static_cast< size_t >(model.rbinom(static_cast< int >(n), p)) :
+                n,
+            source, model, out
+        );
+    }
+
+    return out.size() - first;
 
 }
 

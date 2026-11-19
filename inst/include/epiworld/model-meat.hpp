@@ -1446,55 +1446,60 @@ inline Model & Model::run(
     last_seed = seed;
 
     // From here on get_ndays() is the run's horizon (see is_running()). The
-    // guard clears the flag however the run ends, exceptions included.
-    struct RunningGuard {
-        Model & model;
-        explicit RunningGuard(Model & m) : model(m) { model.set_running(true); }
-        ~RunningGuard() { model.set_running(false); }
-    } running_guard(*this);
+    // flag is cleared however the run ends, exceptions included. (Not with a
+    // guard object: GCC 13 at -O2 dropped the guard's store on the exception
+    // path, leaving the model "running" after a run that threw.)
+    set_running(true);
+    try {
 
-    // Starting first infection and tools
-    reset();
+        // Starting first infection and tools
+        reset();
 
-    // Record the baseline (day 0) and advance to day 1
-    next();
+        // Record the baseline (day 0) and advance to day 1
+        next();
 
-    // Initializing the simulation
-    chrono_start();
+        // Initializing the simulation
+        chrono_start();
 
-    // Verifying if the user wants to see the progress bar
-    if (get_verbose())
-    {
-        printf_epiworld("Running the model...\n");
+        // Verifying if the user wants to see the progress bar
+        if (get_verbose())
+        {
+            printf_epiworld("Running the model...\n");
+        }
+
+        for (epiworld_fast_uint niter = 0; niter < get_ndays(); ++niter)
+        {
+
+            #ifdef EPI_DEBUG
+            db.n_transmissions_potential = 0;
+            db.n_transmissions_today = 0;
+            #endif
+
+            // We can execute these components in whatever order the
+            // user needs.
+            this->update_state();
+
+            // We start with the Global events
+            this->run_globalevents();
+
+            // This locks all the changes (the layers, including their rewiring,
+            // are updated first)
+            this->next();
+
+            // Mutation must happen at the very end of all
+            this->mutate_virus();
+
+        }
+
+        // The last reaches the end... (the parameters too: the last day's values)
+        this->current_date--;
+        apply_param_cycles(today());
+
+    } catch (...) {
+        set_running(false);
+        throw;
     }
-
-    for (epiworld_fast_uint niter = 0; niter < get_ndays(); ++niter)
-    {
-
-        #ifdef EPI_DEBUG
-        db.n_transmissions_potential = 0;
-        db.n_transmissions_today = 0;
-        #endif
-
-        // We can execute these components in whatever order the
-        // user needs.
-        this->update_state();
-
-        // We start with the Global events
-        this->run_globalevents();
-
-        // This locks all the changes (the layers, including their rewiring,
-        // are updated first)
-        this->next();
-
-        // Mutation must happen at the very end of all
-        this->mutate_virus();
-
-    }
-
-    // The last reaches the end... (the parameters too: the last day's values)
-    this->current_date--;
-    apply_param_cycles(today());
+    set_running(false);
 
     chrono_end();
 
@@ -2524,8 +2529,7 @@ inline void Model::layers_classify()
     group_layers.clear();
     for (const auto & layer : layers)
     {
-        const auto * net = layer->as_network();
-        pull_only = pull_only || (net == nullptr) || net->is_directed();
+        pull_only = pull_only || !layer->supports_push();
         queue_blind = queue_blind || !layer->supports_queue();
 
         auto * mix = layer->as_mixing();

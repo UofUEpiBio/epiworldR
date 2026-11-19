@@ -1,23 +1,29 @@
 #' Transmission mode (push or pull)
 #'
-#' Controls how network models compute transmission each day.
+#' Controls how models compute transmission each day.
 #'
-#' In a *pull* step, each susceptible agent looks at its infected neighbors. In
-#' a *push* step, each infected agent adds its infection odds to its
-#' susceptible neighbors. Both give the same distribution of infections; they
-#' differ only in speed and in the random numbers drawn, so the same seed gives
-#' different (but equally valid) runs under each mode.
+#' In a *pull* step, each susceptible agent draws its contacts from every
+#' layer: its neighbors in a network, the agents it meets in a mixing layer. In
+#' a *push* step, each infected agent adds its infection odds to the
+#' susceptible agents it reaches: its neighbors, and the agents a mixing layer
+#' draws for it, each as likely as their own pull would draw it. Both give the
+#' same distribution of infections; they differ only in speed and in the
+#' random numbers drawn, so the same seed gives different (but equally valid)
+#' runs under each mode. A step pushes or pulls every layer.
 #'
 #' Pushing is cheaper while few agents are infected; pulling can be cheaper
 #' near the peak of a large outbreak. `"auto"`, the default, chooses each day:
 #' it pushes when \eqn{D_c + 4 N_c \le \kappa (D_s + 4 N_s)}, where \eqn{D} is
 #' the sum of the agents' degrees and \eqn{N} the number of agents, over the
 #' infected agents that can transmit (\eqn{c}) and the susceptible agents
-#' (\eqn{s}), and pulls otherwise.
+#' (\eqn{s}), and pulls otherwise. Each mixing layer adds 4 to the price of
+#' every agent per group it draws from (all of them with a contact matrix,
+#' its own with contact probabilities), on both sides.
 #'
-#' Only susceptible states that use epiworld's default network sampler can be
-#' pushed. Models with a mixing layer (see [layer_mixing()]) always pull, as do
-#' directed networks.
+#' Only susceptible states that use epiworld's default sampler can be pushed.
+#' Models with a directed network always pull. Models with a mixing layer
+#' (see [layer_mixing()]) may push too: set `"pull"` to reproduce runs from
+#' before that change.
 #'
 #' @param model An `epiworld_model` object.
 #' @param mode Character scalar. One of `"auto"`, `"push"`, or `"pull"`.

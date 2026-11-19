@@ -5,6 +5,17 @@ come from contact layers. This is a breaking release: code written for 0.x
 needs the changes below, and removed functions are defunct (calling them is an
 error that names the replacement; see `?"epiworldR-defunct"`).
 
+* Models with a mixing layer can be pushed (`set_transmission_mode()`): an
+  infected agent adds its odds to the agents a mixing layer draws for it,
+  each as likely as their own pull would draw it, so the distribution of
+  infections is the same. The default, `"auto"`, now pushes them while few
+  agents are infected, which is much faster with a contact matrix; results
+  of models with a mixing layer change (same distribution, other random
+  numbers), and `set_transmission_mode(model, "pull")` reproduces the old
+  runs. Also, a run that ends in an error no longer leaves the model unable
+  to take settings between runs. The C++ headers are re-vendored (epiworld
+  `da6bdcb6`, Phases 4d and 5: UofUEpiBio/epiworld#384, #386).
+
 * Contact layers can follow a schedule: `set_schedule()` takes a logical
   vector that repeats (e.g., weekdays), and a day off the schedule has no
   contacts in the layer; `clear_schedule()`, `has_schedule()` and
