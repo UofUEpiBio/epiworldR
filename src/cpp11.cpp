@@ -544,6 +544,76 @@ extern "C" SEXP _epiworldR_get_tracing_cpp(SEXP layer) {
     return cpp11::as_sexp(get_tracing_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
   END_CPP11
 }
+// layers.cpp
+SEXP set_schedule_cpp(SEXP layer, cpp11::logicals days);
+extern "C" SEXP _epiworldR_set_schedule_cpp(SEXP layer, SEXP days) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_schedule_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<cpp11::logicals>>(days)));
+  END_CPP11
+}
+// layers.cpp
+SEXP clear_schedule_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_clear_schedule_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clear_schedule_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+bool has_schedule_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_has_schedule_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(has_schedule_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+bool is_scheduled_cpp(SEXP layer, int day);
+extern "C" SEXP _epiworldR_is_scheduled_cpp(SEXP layer, SEXP day) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(is_scheduled_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(day)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_pools_cpp(SEXP layer, std::vector< int > pools);
+extern "C" SEXP _epiworldR_set_pools_cpp(SEXP layer, SEXP pools) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_pools_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::vector< int >>>(pools)));
+  END_CPP11
+}
+// layers.cpp
+std::vector< int > get_pools_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_pools_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_pools_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+SEXP set_persistence_cpp(SEXP layer, std::vector< double > persistence);
+extern "C" SEXP _epiworldR_set_persistence_cpp(SEXP layer, SEXP persistence) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_persistence_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(persistence)));
+  END_CPP11
+}
+// layers.cpp
+std::vector< double > get_persistence_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_persistence_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_persistence_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+SEXP clear_persistence_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_clear_persistence_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clear_persistence_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+int get_usual_group_cpp(SEXP layer, int agent);
+extern "C" SEXP _epiworldR_get_usual_group_cpp(SEXP layer, SEXP agent) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_usual_group_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<int>>(agent)));
+  END_CPP11
+}
 // lfmcmc.cpp
 SEXP LFMCMC_cpp(SEXP model);
 extern "C" SEXP _epiworldR_LFMCMC_cpp(SEXP model) {
@@ -895,6 +965,27 @@ SEXP set_param_cpp(SEXP model, std::string pname, double val);
 extern "C" SEXP _epiworldR_set_param_cpp(SEXP model, SEXP pname, SEXP val) {
   BEGIN_CPP11
     return cpp11::as_sexp(set_param_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname), cpp11::as_cpp<cpp11::decay_t<double>>(val)));
+  END_CPP11
+}
+// model.cpp
+SEXP set_param_cycle_cpp(SEXP model, std::string pname, std::vector< double > values);
+extern "C" SEXP _epiworldR_set_param_cycle_cpp(SEXP model, SEXP pname, SEXP values) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_param_cycle_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname), cpp11::as_cpp<cpp11::decay_t<std::vector< double >>>(values)));
+  END_CPP11
+}
+// model.cpp
+SEXP clear_param_cycle_cpp(SEXP model, std::string pname);
+extern "C" SEXP _epiworldR_clear_param_cycle_cpp(SEXP model, SEXP pname) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clear_param_cycle_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname)));
+  END_CPP11
+}
+// model.cpp
+bool has_param_cycle_cpp(SEXP model, std::string pname);
+extern "C" SEXP _epiworldR_has_param_cycle_cpp(SEXP model, SEXP pname) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(has_param_cycle_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(model), cpp11::as_cpp<cpp11::decay_t<std::string>>(pname)));
   END_CPP11
 }
 // model.cpp
@@ -1457,6 +1548,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_assign_virus_cpp",                     (DL_FUNC) &_epiworldR_assign_virus_cpp,                      3},
     {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          15},
     {"_epiworldR_clear_layer_targets_tool_cpp",         (DL_FUNC) &_epiworldR_clear_layer_targets_tool_cpp,          1},
+    {"_epiworldR_clear_param_cycle_cpp",                (DL_FUNC) &_epiworldR_clear_param_cycle_cpp,                 2},
+    {"_epiworldR_clear_persistence_cpp",                (DL_FUNC) &_epiworldR_clear_persistence_cpp,                 1},
+    {"_epiworldR_clear_schedule_cpp",                   (DL_FUNC) &_epiworldR_clear_schedule_cpp,                    1},
     {"_epiworldR_clear_targets_tool_cpp",               (DL_FUNC) &_epiworldR_clear_targets_tool_cpp,                1},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
     {"_epiworldR_clone_tool_cpp",                       (DL_FUNC) &_epiworldR_clone_tool_cpp,                        1},
@@ -1528,6 +1622,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_observed_stats_cpp",               (DL_FUNC) &_epiworldR_get_observed_stats_cpp,                1},
     {"_epiworldR_get_outbreak_size_cpp",                (DL_FUNC) &_epiworldR_get_outbreak_size_cpp,                 2},
     {"_epiworldR_get_param_cpp",                        (DL_FUNC) &_epiworldR_get_param_cpp,                         2},
+    {"_epiworldR_get_persistence_cpp",                  (DL_FUNC) &_epiworldR_get_persistence_cpp,                   1},
+    {"_epiworldR_get_pools_cpp",                        (DL_FUNC) &_epiworldR_get_pools_cpp,                         1},
     {"_epiworldR_get_reproductive_number_cpp",          (DL_FUNC) &_epiworldR_get_reproductive_number_cpp,           2},
     {"_epiworldR_get_stage_agent_cpp",                  (DL_FUNC) &_epiworldR_get_stage_agent_cpp,                   3},
     {"_epiworldR_get_stages_model_cpp",                 (DL_FUNC) &_epiworldR_get_stages_model_cpp,                  2},
@@ -1543,6 +1639,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_transmission_kappa_cpp",           (DL_FUNC) &_epiworldR_get_transmission_kappa_cpp,            1},
     {"_epiworldR_get_transmission_mode_cpp",            (DL_FUNC) &_epiworldR_get_transmission_mode_cpp,             1},
     {"_epiworldR_get_transmissions_cpp",                (DL_FUNC) &_epiworldR_get_transmissions_cpp,                 2},
+    {"_epiworldR_get_usual_group_cpp",                  (DL_FUNC) &_epiworldR_get_usual_group_cpp,                   2},
     {"_epiworldR_get_virus_model_cpp",                  (DL_FUNC) &_epiworldR_get_virus_model_cpp,                   2},
     {"_epiworldR_globalevent_fun_cpp",                  (DL_FUNC) &_epiworldR_globalevent_fun_cpp,                   3},
     {"_epiworldR_globalevent_set_param_cpp",            (DL_FUNC) &_epiworldR_globalevent_set_param_cpp,             4},
@@ -1554,9 +1651,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_graph_smallworld_cpp",                 (DL_FUNC) &_epiworldR_graph_smallworld_cpp,                  3},
     {"_epiworldR_groupmates_of_cpp",                    (DL_FUNC) &_epiworldR_groupmates_of_cpp,                     4},
     {"_epiworldR_has_edge_cpp",                         (DL_FUNC) &_epiworldR_has_edge_cpp,                          3},
+    {"_epiworldR_has_param_cycle_cpp",                  (DL_FUNC) &_epiworldR_has_param_cycle_cpp,                   2},
+    {"_epiworldR_has_schedule_cpp",                     (DL_FUNC) &_epiworldR_has_schedule_cpp,                      1},
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
     {"_epiworldR_is_layer_closed_cpp",                  (DL_FUNC) &_epiworldR_is_layer_closed_cpp,                   1},
+    {"_epiworldR_is_scheduled_cpp",                     (DL_FUNC) &_epiworldR_is_scheduled_cpp,                      2},
     {"_epiworldR_is_tracing_cpp",                       (DL_FUNC) &_epiworldR_is_tracing_cpp,                        1},
     {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      1},
     {"_epiworldR_layer_network_generator_cpp",          (DL_FUNC) &_epiworldR_layer_network_generator_cpp,           2},
@@ -1602,12 +1702,16 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},
     {"_epiworldR_set_observed_data_cpp",                (DL_FUNC) &_epiworldR_set_observed_data_cpp,                 2},
     {"_epiworldR_set_param_cpp",                        (DL_FUNC) &_epiworldR_set_param_cpp,                         3},
+    {"_epiworldR_set_param_cycle_cpp",                  (DL_FUNC) &_epiworldR_set_param_cycle_cpp,                   3},
     {"_epiworldR_set_params_names_cpp",                 (DL_FUNC) &_epiworldR_set_params_names_cpp,                  2},
+    {"_epiworldR_set_persistence_cpp",                  (DL_FUNC) &_epiworldR_set_persistence_cpp,                   2},
+    {"_epiworldR_set_pools_cpp",                        (DL_FUNC) &_epiworldR_set_pools_cpp,                         2},
     {"_epiworldR_set_proposal_fun_cpp",                 (DL_FUNC) &_epiworldR_set_proposal_fun_cpp,                  2},
     {"_epiworldR_set_recovery_enhancer_cpp",            (DL_FUNC) &_epiworldR_set_recovery_enhancer_cpp,             2},
     {"_epiworldR_set_recovery_enhancer_fun_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_fun_cpp,         3},
     {"_epiworldR_set_recovery_enhancer_ptr_cpp",        (DL_FUNC) &_epiworldR_set_recovery_enhancer_ptr_cpp,         3},
     {"_epiworldR_set_rewiring_cpp",                     (DL_FUNC) &_epiworldR_set_rewiring_cpp,                      2},
+    {"_epiworldR_set_schedule_cpp",                     (DL_FUNC) &_epiworldR_set_schedule_cpp,                      2},
     {"_epiworldR_set_simulation_fun_cpp",               (DL_FUNC) &_epiworldR_set_simulation_fun_cpp,                2},
     {"_epiworldR_set_stats_names_cpp",                  (DL_FUNC) &_epiworldR_set_stats_names_cpp,                   2},
     {"_epiworldR_set_summary_fun_cpp",                  (DL_FUNC) &_epiworldR_set_summary_fun_cpp,                   2},

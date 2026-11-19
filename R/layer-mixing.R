@@ -45,6 +45,11 @@
 #' parameter the contact matrix is multiplied by (add it with [add_param()]).
 #' @param from,to Integers. In `groupmates_of()`, the first and last day of
 #' the window (days after the last one simulated are left out).
+#' @param pools Integer vector with the pool of each group (starting at 0),
+#' one per group.
+#' @param persistence Numeric vector in `[0, 1]`: the probability that an
+#' agent is in its usual group on a given day, one for all agents or one per
+#' agent.
 #'
 #' @details
 #' Give exactly one of `contact_matrix` and `contact_prob`. The number of
@@ -75,13 +80,26 @@
 #' turned on during a run, or groups placed after it, gives none (an
 #' error) until the next run.
 #'
+#' Persistence (contact probabilities only): `set_pools()` gathers the groups
+#' into pools (e.g., the trips of a transit route), one pool id per group.
+#' `set_persistence()` keeps each agent in its usual group with probability
+#' `persistence` a day, and otherwise sends it to another group of the same
+#' pool for that day (familiar strangers): 1 keeps fixed cohorts, 0 another
+#' group every day. One number applies to every agent, or give one per agent.
+#' `get_usual_group()` returns an agent's usual group and `get_group()` the
+#' group of the current day (after a run, the day after the last). Persistence
+#' needs pools, is set between runs, and `clear_persistence()` removes it.
+#'
 #' @return
 #' - `layer_mixing()` returns a mixing layer, of class
 #' `epiworld_layer_mixing`.
 #' - `get_contact_prob()` returns the contact probabilities (one per group once
 #' the model has run; empty for a layer with a contact matrix).
-#' - `set_contact_prob()`, `set_contact_rate()` and `set_group()` return the
-#' layer invisibly.
+#' - `set_contact_prob()`, `set_contact_rate()`, `set_group()`, `set_pools()`,
+#' `set_persistence()` and `clear_persistence()` return the layer invisibly.
+#' - `get_pools()` returns the pool of each group, `get_persistence()` the
+#' persistence (empty without one), and `get_usual_group()` the usual group of
+#' the agent (`NA` if none).
 #' - `get_group()` returns the group of the agent (`NA` if none).
 #' - `members_of()` returns the ids of the agents in the group, in no
 #' particular order.
@@ -259,6 +277,51 @@ set_group <- function(layer, agent, group) {
 
   invisible(set_group_cpp(layer, agent, as.integer(group)))
 
+}
+
+#' @export
+#' @rdname mixing-layers
+set_pools <- function(layer, pools) {
+  stopifnot_layer(layer, "mixing")
+  stopifnot_int(pools, lb = 0)
+  invisible(set_pools_cpp(layer, as.integer(pools)))
+}
+
+#' @export
+#' @rdname mixing-layers
+get_pools <- function(layer) {
+  stopifnot_layer(layer, "mixing")
+  get_pools_cpp(layer)
+}
+
+#' @export
+#' @rdname mixing-layers
+set_persistence <- function(layer, persistence) {
+  stopifnot_layer(layer, "mixing")
+  stopifnot_double(persistence, lb = 0, ub = 1)
+  invisible(set_persistence_cpp(layer, as.double(persistence)))
+}
+
+#' @export
+#' @rdname mixing-layers
+get_persistence <- function(layer) {
+  stopifnot_layer(layer, "mixing")
+  get_persistence_cpp(layer)
+}
+
+#' @export
+#' @rdname mixing-layers
+clear_persistence <- function(layer) {
+  stopifnot_layer(layer, "mixing")
+  invisible(clear_persistence_cpp(layer))
+}
+
+#' @export
+#' @rdname mixing-layers
+get_usual_group <- function(layer, agent) {
+  stopifnot_layer(layer, "mixing")
+  stopifnot_int(agent, lb = 0)
+  get_usual_group_cpp(layer, as.integer(agent))
 }
 
 #' @export

@@ -740,6 +740,7 @@ inline Model::Model(const Model & model) :
     param_values(model.param_values),
     param_index(model.param_index),
     param_layout_id(model.param_layout_id),
+    param_cycles(model.param_cycles),
     ndays(model.ndays),
     pb(model.pb),
     state_fun(model.state_fun),
@@ -847,6 +848,7 @@ inline Model::Model(Model && model) :
     param_values(std::move(model.param_values)),
     param_index(std::move(model.param_index)),
     param_layout_id(model.param_layout_id),
+    param_cycles(std::move(model.param_cycles)),
     // Others
     ndays(model.ndays),
     pb(std::move(model.pb)),
@@ -927,6 +929,7 @@ inline Model & Model::operator=(const Model & m)
     param_values    = m.param_values;
     param_index     = m.param_index;
     param_layout_id = m.param_layout_id;
+    param_cycles    = m.param_cycles;
     ndays      = m.ndays;
     pb         = m.pb;
 
@@ -1401,7 +1404,9 @@ inline void Model::next() {
 
     #endif
 
-    // The layers see what changed during the step before the next one samples
+    // Tomorrow's parameters, then the layers see what changed during the step
+    // before the next one samples
+    apply_param_cycles(today() + 1);
     update_layers();
 
     db.record();
@@ -1487,8 +1492,9 @@ inline Model & Model::run(
 
     }
 
-    // The last reaches the end...
+    // The last reaches the end... (the parameters too: the last day's values)
     this->current_date--;
+    apply_param_cycles(today());
 
     chrono_end();
 
@@ -1911,6 +1917,9 @@ inline void Model::reset() {
     // Restablishing people
     pb = Progress(ndays, 80);
 
+    // The cycles start over (day 1's values)
+    apply_param_cycles(1);
+
     for (auto & p : population)
         p.reset();
 
@@ -2133,6 +2142,48 @@ inline void Model::set_param_at(ParamId id, epiworld_double value)
             std::to_string(param_values.size()) + " parameters)."
         );
     param_values[id.idx] = value;
+}
+
+inline void Model::set_param_cycle(
+    std::string_view pname, std::vector< epiworld_double > values
+)
+{
+    if (is_running())
+        throw std::logic_error(
+            "set_param_cycle(\"" + std::string(pname) + "\"): a cycle is set "
+            "between runs."
+        );
+
+    if (values.empty())
+        throw std::length_error(
+            "set_param_cycle(\"" + std::string(pname) + "\"): the cycle has "
+            "no values."
+        );
+
+    param_cycles[get_param_id(pname).idx] = std::move(values);
+}
+
+inline void Model::clear_param_cycle(std::string_view pname)
+{
+    if (is_running())
+        throw std::logic_error(
+            "clear_param_cycle(\"" + std::string(pname) + "\"): a cycle is "
+            "cleared between runs."
+        );
+
+    param_cycles.erase(get_param_id(pname).idx);
+}
+
+inline bool Model::has_param_cycle(std::string_view pname) const
+{
+    return param_cycles.count(get_param_id(pname).idx) > 0u;
+}
+
+inline void Model::apply_param_cycles(int day)
+{
+    const size_t d = static_cast< size_t >(std::max(day - 1, 0));
+    for (const auto & [idx, values] : param_cycles)
+        param_values[idx] = values[d % values.size()];
 }
 
 #define DURCAST(tunit,txtunit) {\
@@ -2703,6 +2754,23 @@ inline bool Model::operator==(const Model & other) const
         // By name, so the order parameters were added in does not matter
         params() != other.params(),
         "Model:: parameters don't match"
+    )
+
+    // The cycles, by name too
+    auto cycles_by_name = [](const Model & m) {
+        std::map< std::string, std::vector< epiworld_double > > res;
+        for (const auto & p : m.param_index)
+        {
+            const auto c = m.param_cycles.find(p.second);
+            if (c != m.param_cycles.end())
+                res.emplace(p.first, c->second);
+        }
+        return res;
+    };
+
+    EPI_DEBUG_FAIL_AT_TRUE(
+        cycles_by_name(*this) != cycles_by_name(other),
+        "Model:: parameter cycles don't match"
     )
 
     EPI_DEBUG_FAIL_AT_TRUE(

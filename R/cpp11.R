@@ -308,6 +308,46 @@ get_tracing_cpp <- function(layer) {
   .Call(`_epiworldR_get_tracing_cpp`, layer)
 }
 
+set_schedule_cpp <- function(layer, days) {
+  .Call(`_epiworldR_set_schedule_cpp`, layer, days)
+}
+
+clear_schedule_cpp <- function(layer) {
+  .Call(`_epiworldR_clear_schedule_cpp`, layer)
+}
+
+has_schedule_cpp <- function(layer) {
+  .Call(`_epiworldR_has_schedule_cpp`, layer)
+}
+
+is_scheduled_cpp <- function(layer, day) {
+  .Call(`_epiworldR_is_scheduled_cpp`, layer, day)
+}
+
+set_pools_cpp <- function(layer, pools) {
+  .Call(`_epiworldR_set_pools_cpp`, layer, pools)
+}
+
+get_pools_cpp <- function(layer) {
+  .Call(`_epiworldR_get_pools_cpp`, layer)
+}
+
+set_persistence_cpp <- function(layer, persistence) {
+  .Call(`_epiworldR_set_persistence_cpp`, layer, persistence)
+}
+
+get_persistence_cpp <- function(layer) {
+  .Call(`_epiworldR_get_persistence_cpp`, layer)
+}
+
+clear_persistence_cpp <- function(layer) {
+  .Call(`_epiworldR_clear_persistence_cpp`, layer)
+}
+
+get_usual_group_cpp <- function(layer, agent) {
+  .Call(`_epiworldR_get_usual_group_cpp`, layer, agent)
+}
+
 LFMCMC_cpp <- function(model) {
   .Call(`_epiworldR_LFMCMC_cpp`, model)
 }
@@ -506,6 +546,18 @@ get_param_cpp <- function(model, pname) {
 
 set_param_cpp <- function(model, pname, val) {
   .Call(`_epiworldR_set_param_cpp`, model, pname, val)
+}
+
+set_param_cycle_cpp <- function(model, pname, values) {
+  .Call(`_epiworldR_set_param_cycle_cpp`, model, pname, values)
+}
+
+clear_param_cycle_cpp <- function(model, pname) {
+  .Call(`_epiworldR_clear_param_cycle_cpp`, model, pname)
+}
+
+has_param_cycle_cpp <- function(model, pname) {
+  .Call(`_epiworldR_has_param_cycle_cpp`, model, pname)
 }
 
 add_param_cpp <- function(model, pname, val) {

@@ -3,8 +3,8 @@
 
 /**
  * @file contactlayer-meat.hpp
- * @brief Who takes part in a contact layer: its excluded statuses and its
- * closures (see `ContactLayer`).
+ * @brief Who takes part in a contact layer: its excluded statuses, its
+ * closures and its schedule (see `ContactLayer`).
  */
 
 inline void ContactLayer::exclude_status(std::string status)
@@ -36,6 +36,54 @@ inline void ContactLayer::reopen()
     closed_next = false;
     if (!in_run)
         closed_base = closed = false;
+}
+
+inline void ContactLayer::set_schedule(std::vector< bool > days)
+{
+
+    if (days.empty())
+        throw std::length_error(
+            "The contact layer '" + name + "': set_schedule() needs at least "
+            "one day."
+        );
+
+    set_schedule(std::function< bool(int) >([days = std::move(days)](int d) {
+        const size_t k = static_cast< size_t >(std::max(d - 1, 0));
+        return static_cast< bool >(days[k % days.size()]);
+    }));
+
+}
+
+inline void ContactLayer::set_schedule(std::function< bool(int day) > on)
+{
+
+    if (in_run)
+        throw std::logic_error(
+            "The contact layer '" + name + "': its schedule is set between "
+            "runs (close() and reopen() act during a run)."
+        );
+
+    if (!on)
+        throw std::invalid_argument(
+            "The contact layer '" + name + "': set_schedule() got an empty "
+            "function (clear_schedule() removes the schedule)."
+        );
+
+    schedule = std::move(on);
+
+}
+
+inline void ContactLayer::clear_schedule()
+{
+
+    if (in_run)
+        throw std::logic_error(
+            "The contact layer '" + name + "': its schedule is set between "
+            "runs."
+        );
+
+    schedule = nullptr;
+
 }
 
 inline bool ContactLayer::excludes(epiworld_fast_uint state) const
@@ -113,15 +161,17 @@ inline void ContactLayer::reset_participation(const Model & m)
 inline void ContactLayer::apply_closure(int today)
 {
 
-    if (closed_next == closed)
+    // Tomorrow: closed by close(), or off the schedule
+    const bool off = closed_next || !is_scheduled(today + 1);
+    if (off == closed)
         return;
 
-    if (closed_next)
+    if (off)
         closed_spans.push_back({today + 1, INT_MAX});
     else
         closed_spans.back().second = today;
 
-    closed = closed_next;
+    closed = off;
 
 }
 

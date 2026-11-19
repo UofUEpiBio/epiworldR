@@ -8,6 +8,12 @@
 \alias{set_contact_prob}
 \alias{get_group}
 \alias{set_group}
+\alias{set_pools}
+\alias{get_pools}
+\alias{set_persistence}
+\alias{get_persistence}
+\alias{clear_persistence}
+\alias{get_usual_group}
 \alias{members_of}
 \alias{groupmates_of}
 \title{Mixing layers}
@@ -23,6 +29,18 @@ set_contact_prob(layer, contact_prob)
 get_group(layer, agent)
 
 set_group(layer, agent, group)
+
+set_pools(layer, pools)
+
+get_pools(layer)
+
+set_persistence(layer, persistence)
+
+get_persistence(layer)
+
+clear_persistence(layer)
+
+get_usual_group(layer, agent)
 
 members_of(layer, group)
 
@@ -53,6 +71,13 @@ parameter the contact matrix is multiplied by (add it with \code{\link[=add_para
 \item{group}{Integer. Id of a group (starting at 0); in \code{set_group()}, \code{NA}
 takes the agent out of the layer.}
 
+\item{pools}{Integer vector with the pool of each group (starting at 0),
+one per group.}
+
+\item{persistence}{Numeric vector in \verb{[0, 1]}: the probability that an
+agent is in its usual group on a given day, one for all agents or one per
+agent.}
+
 \item{from, to}{Integers. In \code{groupmates_of()}, the first and last day of
 the window (days after the last one simulated are left out).}
 }
@@ -62,8 +87,11 @@ the window (days after the last one simulated are left out).}
 \code{epiworld_layer_mixing}.
 \item \code{get_contact_prob()} returns the contact probabilities (one per group once
 the model has run; empty for a layer with a contact matrix).
-\item \code{set_contact_prob()}, \code{set_contact_rate()} and \code{set_group()} return the
-layer invisibly.
+\item \code{set_contact_prob()}, \code{set_contact_rate()}, \code{set_group()}, \code{set_pools()},
+\code{set_persistence()} and \code{clear_persistence()} return the layer invisibly.
+\item \code{get_pools()} returns the pool of each group, \code{get_persistence()} the
+persistence (empty without one), and \code{get_usual_group()} the usual group of
+the agent (\code{NA} if none).
 \item \code{get_group()} returns the group of the agent (\code{NA} if none).
 \item \code{members_of()} returns the ids of the agents in the group, in no
 particular order.
@@ -130,6 +158,16 @@ with \code{agent}, both present, between days \code{from} and \code{to}. With
 have met ("notify the household"). The history covers whole runs: tracing
 turned on during a run, or groups placed after it, gives none (an
 error) until the next run.
+
+Persistence (contact probabilities only): \code{set_pools()} gathers the groups
+into pools (e.g., the trips of a transit route), one pool id per group.
+\code{set_persistence()} keeps each agent in its usual group with probability
+\code{persistence} a day, and otherwise sends it to another group of the same
+pool for that day (familiar strangers): 1 keeps fixed cohorts, 0 another
+group every day. One number applies to every agent, or give one per agent.
+\code{get_usual_group()} returns an agent's usual group and \code{get_group()} the
+group of the current day (after a run, the day after the last). Persistence
+needs pools, is set between runs, and \code{clear_persistence()} removes it.
 }
 \examples{
 # 1,000 agents in households of 4: everyone meets their housemates daily

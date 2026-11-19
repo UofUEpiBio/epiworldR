@@ -5,6 +5,19 @@ come from contact layers. This is a breaking release: code written for 0.x
 needs the changes below, and removed functions are defunct (calling them is an
 error that names the replacement; see `?"epiworldR-defunct"`).
 
+* Contact layers can follow a schedule: `set_schedule()` takes a logical
+  vector that repeats (e.g., weekdays), and a day off the schedule has no
+  contacts in the layer; `clear_schedule()`, `has_schedule()` and
+  `is_scheduled()` inspect it. Mixing layers with contact probabilities can
+  have persistence: `set_pools()` gathers groups into pools and
+  `set_persistence()` keeps each agent in its usual group with some
+  probability a day, otherwise in another group of its pool (familiar
+  strangers); `get_usual_group()`, `get_pools()`, `get_persistence()` and
+  `clear_persistence()` go with them. `set_param_cycle()` makes a model
+  parameter follow a cycle (e.g., a contact rate higher on weekends), with
+  `clear_param_cycle()` and `has_param_cycle()`. The C++ headers are
+  re-vendored (epiworld `fe1e229d`, Phase 4c: UofUEpiBio/epiworld#383).
+
 * Contact layers can exclude agents by status with `exclude_status()` and
   report exclusions with `get_excluded_statuses()`. `close_layer()` and
   `reopen_layer()` stop and resume contacts, with `is_layer_closed()` reporting

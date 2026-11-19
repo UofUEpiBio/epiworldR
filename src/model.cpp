@@ -184,6 +184,26 @@ SEXP set_param_cpp(SEXP model, std::string pname, double val) {
 }
 
 [[cpp11::register]]
+SEXP set_param_cycle_cpp(SEXP model, std::string pname, std::vector< double > values) {
+  external_pointer<Model> ptr(model);
+  ptr->set_param_cycle(pname, values);
+  return model;
+}
+
+[[cpp11::register]]
+SEXP clear_param_cycle_cpp(SEXP model, std::string pname) {
+  external_pointer<Model> ptr(model);
+  ptr->clear_param_cycle(pname);
+  return model;
+}
+
+[[cpp11::register]]
+bool has_param_cycle_cpp(SEXP model, std::string pname) {
+  external_pointer<Model> ptr(model);
+  return ptr->has_param_cycle(pname);
+}
+
+[[cpp11::register]]
 SEXP add_param_cpp(SEXP model, std::string pname, double val) {
 
   external_pointer<Model> ptr(model);

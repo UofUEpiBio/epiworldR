@@ -157,6 +157,11 @@ protected:
     std::vector< epiworld_double > param_values;
     std::map<std::string, size_t, std::less<> > param_index;
     uint32_t param_layout_id = new_param_layout_id();
+
+    // Parameters that follow a cycle (set_param_cycle()), by position
+    std::map< size_t, std::vector< epiworld_double > > param_cycles;
+    void apply_param_cycles(int day);
+
     epiworld_fast_uint ndays = 0;
     Progress pb;
 
@@ -1216,6 +1221,43 @@ public:
     void set_param_at(ParamId id, epiworld_double val);
     size_t get_n_params() const { return param_values.size(); };
     uint32_t get_param_layout_id() const { return param_layout_id; };
+    ///@}
+
+    /**
+     * @name Parameters that follow a cycle
+     *
+     * @details `set_param_cycle(pname, values)` makes the parameter take
+     * `values[(d - 1) % values.size()]` on day `d`: the first value on day 1,
+     * the last on day `values.size()`, then the first again. Seven values give
+     * a weekly cycle, from a Monday:
+     *
+     * ```
+     * model.set_param_cycle("Public contact rate", {4, 4, 4, 4, 4, 6, 6});
+     * ```
+     *
+     * Anything that reads the parameter every day follows it: a layer's
+     * contact rate (`set_contact_rate()`) or weight (`set_weight()`), a rate in
+     * a natural history, a tool's effect. The day's value is set when the day
+     * is prepared, after the global events of the day before (where a global
+     * event that sets the parameter would set it), and at `reset()` for the
+     * start of a run (day 1's value). After a run, the parameter has the
+     * last day's value.
+     *
+     * While a cycle is set, it decides the parameter's value: `set_param()`
+     * lasts until the next day is prepared. The cycle is a setting: it lasts
+     * across runs, and setting or clearing it during a run is an error.
+     *
+     * Beware double counting: a rate from weekly-averaged data (e.g., a contact
+     * survey weighted by day of the week) already includes the weekends. A
+     * cycle around it should keep its weekly mean, as a weekday rate of
+     * `7/5` times the mean on a weekday-only layer does.
+     */
+    ///@{
+    void set_param_cycle(
+        std::string_view pname, std::vector< epiworld_double > values
+    );
+    void clear_param_cycle(std::string_view pname);
+    bool has_param_cycle(std::string_view pname) const;
     ///@}
 
     void get_elapsed(
