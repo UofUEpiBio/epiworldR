@@ -335,7 +335,39 @@ public:
      */
     virtual bool supports_queue() const { return false; }
 
+    /**
+     * @name Push
+     *
+     * @details A model pushes a step (see `Model::set_transmission_mode()`)
+     * only when every layer supports it: each carrier that can transmit asks
+     * each layer for the agents it reaches, instead of each susceptible agent
+     * asking for its contacts. `sample_reverse(source, ...)` appends the agents
+     * `source` meets this step, each with the probability that its own pull
+     * (`sample()`) would meet `source`, independently: then each agent's
+     * exposures have the same distribution either way. Whom they are, and
+     * whether they can be infected, is up to the model.
+     */
+    ///@{
+    virtual bool supports_push() const { return false; }
+    virtual size_t sample_reverse(
+        size_t source,
+        Model & model,
+        std::vector< size_t > & out
+    );
+    ///@}
+
 };
+
+inline size_t ContactLayer::sample_reverse(
+    size_t,
+    Model &,
+    std::vector< size_t > &
+)
+{
+    throw std::logic_error(
+        "The layer '" + name + "' does not support push (supports_push())."
+    );
+}
 
 inline void ContactLayer::enable_tracing(size_t max_contacts)
 {

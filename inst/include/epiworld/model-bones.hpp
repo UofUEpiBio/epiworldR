@@ -240,10 +240,10 @@ protected:
     size_t network_degree(size_t id) const; ///< Ties of agent `id`, all networks
 
     /**
-     * Whether some layer's contacts are not seen from both ends or not by the
-     * queue: a directed network (a tie is kept by its source only) or a layer
-     * that is not a network. The model then pulls, and visits every agent
-     * instead of using the queue.
+     * Whether some layer cannot be pushed (see
+     * `ContactLayer::supports_push()`): a directed network (a tie is kept by
+     * its source only) or a layer type without `sample_reverse()`. The model
+     * then pulls.
      */
     bool has_pull_only_layer() const { return pull_only; }
 
@@ -356,6 +356,7 @@ protected:
     std::vector< int >  push_slot;           ///< [agent] Index in push_targets, or -1
     std::vector< PushTarget > push_targets;
     std::vector< uint64_t > push_visit;      ///< [agent bit] To update after a push
+    std::vector< size_t > push_reached;      ///< Agents a carrier reaches through a layer (sample_reverse())
     std::vector< uint64_t > push_sources;    ///< [agent bit] Carriers that push this step
 
     bool transmission_prepare();
@@ -1096,19 +1097,24 @@ public:
     Virus * sample_virus(Agent * agent);
 
     /**
-     * @name Network transmission mode
+     * @name Transmission mode
      *
      * @details Stages whose only drawn exit is a default infection (no
-     * custom sampler) can be updated by pulling (each
-     * susceptible agent scans its neighbors) or by pushing (each agent with a
-     * virus adds its infection odds to its susceptible neighbors). Both give
-     * the same distribution of who gets infected, and by whom; only the random
-     * number stream differs. See `TransmissionMode`.
+     * custom sampler) can be updated by pulling (each susceptible agent draws
+     * its contacts from every layer: its ties, the agents it meets in a mixing
+     * layer) or by pushing (each agent with a virus adds its infection odds to
+     * the susceptible agents it reaches: its ties, and the agents a mixing
+     * layer draws for it, each as likely as their pull would draw it; see
+     * `ContactLayer::sample_reverse()`). Both give the same distribution of
+     * who gets infected, and by whom; only the random number stream differs.
+     * A step pushes or pulls every layer. See `TransmissionMode`.
      *
      * With `"auto"` (the default) the model estimates the cost of each step,
      * as the ties to scan plus a fixed price per agent visited
-     * (`EPI_TRANSMISSION_AGENT_COST` ties), for the carriers that can transmit
-     * (push) and for the susceptible agents (pull). It pushes whenever the
+     * (`EPI_TRANSMISSION_AGENT_COST` ties, plus `EPI_TRANSMISSION_DRAW_COST`
+     * per binomial draw of each mixing layer: one per group with a contact
+     * matrix, one within groups), for the carriers that can transmit (push)
+     * and for the susceptible agents (pull). It pushes whenever the
      * push cost is no more than `kappa` times the pull cost, and pulls
      * otherwise; `kappa` only matters in this mode. The choice depends only on
      * the model's state, never on the queueing system, so turning queuing on or
@@ -1118,8 +1124,10 @@ public:
      * the costs do not see. It was fitted together with the per-agent price
      * with `examples/20-transmission-benchmark`.
      *
-     * Directed networks, and states with other update functions, always pull.
-     * Set `"pull"` to reproduce the random streams of epiworld <= 0.15.
+     * A model with a directed network, or a layer type without push, always
+     * pulls; so do states with other update functions. Set `"pull"` to
+     * reproduce the random streams of epiworld <= 0.15 (and, for models with
+     * mixing layers, of epiworld 1.0 before its Phase 5).
      *
      * @param mode `"auto"`, `"push"`, or `"pull"` (or the enum).
      * @param kappa Relative cost threshold used by `"auto"`: a finite,

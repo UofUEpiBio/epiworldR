@@ -53,7 +53,7 @@ expect_equal(get_last_transmission_mode(model), "pull")
 set_transmission_mode(model, "auto")
 expect_equal(get_transmission_kappa(model), 0.5)
 
-# Models with a mixing layer always pull ---------------------------------------
+# Models with a mixing layer push too; a directed network forces a pull -------
 mixing <- ModelSIR(
   name = "Flu", n = 1000, prevalence = .01, transmission_prob = .1,
   recovery_rate = 1/7
@@ -62,7 +62,31 @@ add_layer(mixing, layer_mixing("mixing", rep(0, 1000), contact_matrix = 5))
 verbose_off(mixing)
 set_transmission_mode(mixing, "push")
 run(mixing, ndays = 5, seed = 1)
-expect_equal(get_last_transmission_mode(mixing), "pull")
+expect_equal(get_last_transmission_mode(mixing), "push")
+
+# Pushed and pulled, the same mean outbreak size
+outbreak <- function(mode) {
+  set_transmission_mode(mixing, mode)
+  mean(vapply(1:40, function(s) {
+    run(mixing, ndays = 30, seed = s)
+    h <- get_hist_total(mixing)
+    1000 - sum(h$counts[h$date == 30 & h$stage == "Susceptible"])
+  }, numeric(1)))
+}
+expect_equal(outbreak("push"), outbreak("pull"), tolerance = 0.1)
+
+directed <- ModelSIR(
+  name = "Flu", n = 1000, prevalence = .01, transmission_prob = .1,
+  recovery_rate = 1/7
+)
+add_layer(
+  directed,
+  layer_network("contacts", graph_smallworld(k = 4, p = .1, directed = TRUE))
+)
+verbose_off(directed)
+set_transmission_mode(directed, "push")
+run(directed, ndays = 5, seed = 1)
+expect_equal(get_last_transmission_mode(directed), "pull")
 
 # Invalid inputs ---------------------------------------------------------------
 model <- make_model()

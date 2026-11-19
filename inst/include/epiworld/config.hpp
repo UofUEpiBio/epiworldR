@@ -155,6 +155,14 @@ enum class TransmissionMode : uint8_t {
 #endif
 
 /**
+ * @brief Cost of one binomial draw of a mixing layer, in ties, in the
+ * automatic push/pull choice (see `Model::set_transmission_mode()`).
+ */
+#ifndef EPI_TRANSMISSION_DRAW_COST
+    #define EPI_TRANSMISSION_DRAW_COST 4.0
+#endif
+
+/**
  * @brief Event data for update an agent
  *
  */

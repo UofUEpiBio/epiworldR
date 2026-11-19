@@ -290,15 +290,29 @@ inline bool Model::transmission_choose_push() const
     // the susceptibles with no infectious neighbor, which the sums do not see,
     // and the per-agent term raises the pull side wherever susceptibles
     // outnumber carriers. The default was fitted so the two balance.
+    //
+    // A mixing layer costs each visited agent one binomial draw per group it
+    // draws from (all the groups with a contact matrix, its own within
+    // groups), EPI_TRANSMISSION_DRAW_COST ties each, on either side: pushing
+    // draws whom a carrier meets, pulling whom a susceptible meets.
     const TransmissionSums sums = get_transmission_sums();
+
+    double draws = 0.0;
+    for (const auto & layer : layers)
+        if (const auto * mix = layer->as_mixing())
+            draws += mix->within_groups() ?
+                1.0 : static_cast< double >(mix->get_n_groups());
+
+    const double per_agent = EPI_TRANSMISSION_AGENT_COST +
+        EPI_TRANSMISSION_DRAW_COST * draws;
 
     const double cost_push =
         static_cast< double >(sums.carrier_degree) +
-        EPI_TRANSMISSION_AGENT_COST * static_cast< double >(sums.carriers);
+        per_agent * static_cast< double >(sums.carriers);
 
     const double cost_pull =
         static_cast< double >(sums.susceptible_degree) +
-        EPI_TRANSMISSION_AGENT_COST * static_cast< double >(sums.susceptibles);
+        per_agent * static_cast< double >(sums.susceptibles);
 
     return cost_push <= transmission_kappa * cost_pull;
 
@@ -336,8 +350,8 @@ inline void Model::transmission_push()
 
     // The recording path is chosen once per step, not per contact
     bool record = post_sampling_on;
-    for (const auto * net : network_layers)
-        record = record || net->is_tracing();
+    for (const auto & layer : layers)
+        record = record || layer->is_tracing();
 
     if (record)
         transmission_push_impl<true>();
@@ -357,9 +371,13 @@ inline void Model::transmission_push_impl()
 
     push_targets.clear();
 
-    // Phase 1: every carrier that can transmit adds its odds to its eligible
-    // neighbors. Nothing changes state until events_run(), so this sees the
-    // model as it was at the start of the step, as pulling does.
+    // A pull visits only queued agents, unless a layer is blind to the queue
+    // (a contact matrix): then it visits everyone, and so does the push
+    const bool queue_filter = use_queuing && !has_queue_blind_layer();
+
+    // Phase 1: every carrier that can transmit adds its odds to the eligible
+    // agents it reaches. Nothing changes state until events_run(), so this sees
+    // the model as it was at the start of the step, as pulling does.
     //
     // The carriers are visited in ascending id order (marked in a bitset, then
     // walked), not in the index's order: networks are usually built with
@@ -398,60 +416,64 @@ inline void Model::transmission_push_impl()
 
             VirusPtr & v = j.virus;
 
-            // Every network, in the order the layers were added, as a pull
-            // reads them
-            for (auto * net : network_layers)
+            // Every layer, in the order the layers were added, as a pull reads
+            // them
+            for (const auto & layer_ptr : layers)
             {
+
+                ContactLayer * layer = layer_ptr.get();
 
                 // A closed layer, or one whose statuses leave the carrier out,
                 // reaches no one (a carrier out of every layer is no source)
-                const std::vector< char > * net_out = net->own_exclusions();
-                if (net->is_closed() || ((net_out != nullptr) && (*net_out)[agent_state[j_id]]))
+                const std::vector< char > * out = layer->own_exclusions();
+                if (layer->is_closed() || ((out != nullptr) && (*out)[agent_state[j_id]]))
                     continue;
 
                 // Layer rules, as add_exposures() applies them in a pull
-                const bool weighted = net->has_weight();
+                const bool weighted = layer->has_weight();
                 const epiworld_double weight = weighted ?
-                    net->get_weight(*this) : 1.0;
-                const bool admitted = net->admits(*v);
-                const int layer_id = static_cast< int >(net->get_id());
+                    layer->get_weight(*this) : 1.0;
+                const bool admitted = layer->admits(*v);
+                const int layer_id = static_cast< int >(layer->get_id());
 
-                for (size_t i_id : net->ties[j_id])
-                {
+                // The agent i reached through the layer
+                auto reach = [&](size_t i_id) -> void {
 
-                    // Most neighbors are usually not susceptible; the compact copy
-                    // of the states rules them out without loading the agent.
+                    // Most agents reached are usually not susceptible; the
+                    // compact copy of the states rules them out without
+                    // loading the agent.
                     const size_t t = agent_state[i_id];
 
-                    if (!push_pushable[t] || ((net_out != nullptr) && (*net_out)[t]))
-                        continue;
+                    if (!push_pushable[t] || ((out != nullptr) && (*out)[t]))
+                        return;
 
                     Agent & i = population[i_id];
 
                     // An agent with a virus is not susceptible (pulling would
                     // refuse it; update_state() reports it).
                     if (i.virus != nullptr)
-                        continue;
+                        return;
 
                     // Pulling only updates queued agents.
-                    if (use_queuing && (queue[i_id] <= 0))
-                        continue;
+                    if (queue_filter && (queue[i_id] <= 0))
+                        return;
 
                     // The post-sampling callback and the layer's log see every
-                    // eligible contact, also the ones that cannot transmit, as a
-                    // pull reports them. The carriers are visited in ascending id
-                    // order, so the pairs come out grouped by infectious agent.
+                    // eligible contact, also the ones that cannot transmit, as
+                    // a pull reports them. The carriers are visited in
+                    // ascending id order, so the pairs come out grouped by
+                    // infectious agent.
                     if constexpr (Record)
                     {
                         if (post_sampling_on)
                             register_sampled_contact(j_id, i_id);
-                        net->trace(j_id, i_id);
+                        layer->trace(j_id, i_id);
                     }
 
                     // A layer of weight 0, or closed to this virus, transmits
                     // nothing (its contacts were still reported above)
                     if (!admitted || (weighted && (weight <= 0.0)))
-                        continue;
+                        return;
 
                     // Exactly the expression the pull uses, in the same order.
                     epiworld_double p =
@@ -466,7 +488,7 @@ inline void Model::transmission_push_impl()
 
                     // No chance of transmission (also catches NaN)
                     if (!(p > 0.0))
-                        continue;
+                        return;
 
                     int & slot = push_slot[i_id];
                     if (slot < 0)
@@ -496,13 +518,13 @@ inline void Model::transmission_push_impl()
                             target.layer = layer_id;
                         }
 
-                        continue;
+                        return;
 
                     }
 
                     // A certain transmission wins outright
                     if (target.n_certain > 0u)
-                        continue;
+                        return;
 
                     // Weighted reservoir: keep this infector with probability
                     // r / (sum of odds so far).
@@ -519,6 +541,22 @@ inline void Model::transmission_push_impl()
                         target.layer = layer_id;
                     }
 
+                };
+
+                // A network: the carrier's ties. Another layer: the agents it
+                // meets this step, drawn as likely as their pulls would draw
+                // it (see ContactLayer::sample_reverse()).
+                if (auto * net = layer->as_network())
+                {
+                    for (size_t i_id : net->ties[j_id])
+                        reach(i_id);
+                }
+                else
+                {
+                    push_reached.clear();
+                    layer->sample_reverse(j_id, *this, push_reached);
+                    for (size_t i_id : push_reached)
+                        reach(i_id);
                 }
 
             }
@@ -579,7 +617,7 @@ inline void Model::transmission_update_others()
         {
 
             const auto & p = population[id];
-            if ((p.virus != nullptr) && (!use_queuing || (queue[id] > 0)))
+            if ((p.virus != nullptr) && (!use_queuing || has_queue_blind_layer() || (queue[id] > 0)))
                 throw std::logic_error(
                     std::string("A pushed-to stage has agents WITH viruses! ") +
                     std::string("Agent id ") + std::to_string(p.get_id()) +
@@ -617,8 +655,9 @@ inline void Model::transmission_update_others()
             word &= (word - 1u);
 
             // Queued agents only, read as the loop reaches them (a state
-            // function may change the queue by editing ties).
-            if (use_queuing && (queue[id] <= 0))
+            // function may change the queue by editing ties), unless a layer
+            // is blind to the queue: a pull then visits everyone
+            if (use_queuing && !has_queue_blind_layer() && (queue[id] <= 0))
                 continue;
 
             auto & p = population[id];
