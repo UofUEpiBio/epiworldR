@@ -140,6 +140,13 @@ inline void Agent::add_tool(
 
     ToolPtr tool_ptr = std::shared_ptr<Tool>(tool.clone_ptr());
 
+    // The model's copy is resolved at reset, or when added during a run; one
+    // added between a reset and a manual day loop is resolved here
+    if (!tool_ptr->layers_.resolved)
+        tool_ptr->layers_.resolve(
+            model, "The tool \"" + tool_ptr->get_name() + "\""
+        );
+
     model._add_event(
         this, nullptr, tool_ptr, state_new, queue, EventAction::AddTool
         );
@@ -287,17 +294,19 @@ inline void Agent::rm_virus(
 
 inline epiworld_double Agent::get_susceptibility_reduction(
     VirusPtr & v,
-    Model & model
+    Model & model,
+    int layer
 ) {
 
-    return model.susceptibility_reduction_mixer(this, v);
+    return model.susceptibility_reduction_mixer(this, v, layer);
 }
 
 inline epiworld_double Agent::get_transmission_reduction(
     VirusPtr & v,
-    Model & model
+    Model & model,
+    int layer
 ) {
-    return model.transmission_reduction_mixer(this, v);
+    return model.transmission_reduction_mixer(this, v, layer);
 }
 
 inline epiworld_double Agent::get_recovery_enhancer(

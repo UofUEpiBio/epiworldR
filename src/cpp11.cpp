@@ -461,6 +461,41 @@ extern "C" SEXP _epiworldR_groupmates_of_cpp(SEXP layer, SEXP agent, SEXP from, 
   END_CPP11
 }
 // layers.cpp
+SEXP exclude_status_cpp(SEXP layer, std::string status);
+extern "C" SEXP _epiworldR_exclude_status_cpp(SEXP layer, SEXP status) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(exclude_status_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer), cpp11::as_cpp<cpp11::decay_t<std::string>>(status)));
+  END_CPP11
+}
+// layers.cpp
+cpp11::writable::strings get_excluded_statuses_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_get_excluded_statuses_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_excluded_statuses_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+SEXP close_layer_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_close_layer_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(close_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+SEXP reopen_layer_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_reopen_layer_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(reopen_layer_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
+bool is_layer_closed_cpp(SEXP layer);
+extern "C" SEXP _epiworldR_is_layer_closed_cpp(SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(is_layer_closed_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(layer)));
+  END_CPP11
+}
+// layers.cpp
 SEXP set_weight_cpp(SEXP layer, std::string param);
 extern "C" SEXP _epiworldR_set_weight_cpp(SEXP layer, SEXP param) {
   BEGIN_CPP11
@@ -1186,6 +1221,34 @@ extern "C" SEXP _epiworldR_get_targets_tool_cpp(SEXP tool) {
   END_CPP11
 }
 // tool.cpp
+SEXP add_layer_target_tool_cpp(SEXP tool, std::string layer);
+extern "C" SEXP _epiworldR_add_layer_target_tool_cpp(SEXP tool, SEXP layer) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(add_layer_target_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<std::string>>(layer)));
+  END_CPP11
+}
+// tool.cpp
+SEXP set_layer_targets_tool_cpp(SEXP tool, cpp11::strings layers);
+extern "C" SEXP _epiworldR_set_layer_targets_tool_cpp(SEXP tool, SEXP layers) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(set_layer_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool), cpp11::as_cpp<cpp11::decay_t<cpp11::strings>>(layers)));
+  END_CPP11
+}
+// tool.cpp
+cpp11::writable::strings get_layer_targets_tool_cpp(SEXP tool);
+extern "C" SEXP _epiworldR_get_layer_targets_tool_cpp(SEXP tool) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(get_layer_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool)));
+  END_CPP11
+}
+// tool.cpp
+SEXP clear_layer_targets_tool_cpp(SEXP tool);
+extern "C" SEXP _epiworldR_clear_layer_targets_tool_cpp(SEXP tool) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(clear_layer_targets_tool_cpp(cpp11::as_cpp<cpp11::decay_t<SEXP>>(tool)));
+  END_CPP11
+}
+// tool.cpp
 SEXP print_tool_cpp(SEXP t);
 extern "C" SEXP _epiworldR_print_tool_cpp(SEXP t) {
   BEGIN_CPP11
@@ -1380,6 +1443,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_add_globalevent_cpp",                  (DL_FUNC) &_epiworldR_add_globalevent_cpp,                   2},
     {"_epiworldR_add_infection_cpp",                    (DL_FUNC) &_epiworldR_add_infection_cpp,                     5},
     {"_epiworldR_add_layer_cpp",                        (DL_FUNC) &_epiworldR_add_layer_cpp,                         2},
+    {"_epiworldR_add_layer_target_tool_cpp",            (DL_FUNC) &_epiworldR_add_layer_target_tool_cpp,             2},
     {"_epiworldR_add_param_cpp",                        (DL_FUNC) &_epiworldR_add_param_cpp,                         3},
     {"_epiworldR_add_rate_cpp",                         (DL_FUNC) &_epiworldR_add_rate_cpp,                          6},
     {"_epiworldR_add_stage_cpp",                        (DL_FUNC) &_epiworldR_add_stage_cpp,                         4},
@@ -1392,10 +1456,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_assign_tool_cpp",                      (DL_FUNC) &_epiworldR_assign_tool_cpp,                       3},
     {"_epiworldR_assign_virus_cpp",                     (DL_FUNC) &_epiworldR_assign_virus_cpp,                      3},
     {"_epiworldR_bubbles_cpp",                          (DL_FUNC) &_epiworldR_bubbles_cpp,                          15},
+    {"_epiworldR_clear_layer_targets_tool_cpp",         (DL_FUNC) &_epiworldR_clear_layer_targets_tool_cpp,          1},
     {"_epiworldR_clear_targets_tool_cpp",               (DL_FUNC) &_epiworldR_clear_targets_tool_cpp,                1},
     {"_epiworldR_clone_model_cpp",                      (DL_FUNC) &_epiworldR_clone_model_cpp,                       1},
     {"_epiworldR_clone_tool_cpp",                       (DL_FUNC) &_epiworldR_clone_tool_cpp,                        1},
     {"_epiworldR_clone_virus_cpp",                      (DL_FUNC) &_epiworldR_clone_virus_cpp,                       1},
+    {"_epiworldR_close_layer_cpp",                      (DL_FUNC) &_epiworldR_close_layer_cpp,                       1},
     {"_epiworldR_default_transmission_kappa_cpp",       (DL_FUNC) &_epiworldR_default_transmission_kappa_cpp,        0},
     {"_epiworldR_disable_tracing_cpp",                  (DL_FUNC) &_epiworldR_disable_tracing_cpp,                   1},
     {"_epiworldR_draw_from_data_cpp",                   (DL_FUNC) &_epiworldR_draw_from_data_cpp,                    4},
@@ -1406,6 +1472,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_duration_cpp",                         (DL_FUNC) &_epiworldR_duration_cpp,                          3},
     {"_epiworldR_enable_tracing_cpp",                   (DL_FUNC) &_epiworldR_enable_tracing_cpp,                    2},
     {"_epiworldR_epiworld_cpp_version_cpp",             (DL_FUNC) &_epiworldR_epiworld_cpp_version_cpp,              0},
+    {"_epiworldR_exclude_status_cpp",                   (DL_FUNC) &_epiworldR_exclude_status_cpp,                    2},
     {"_epiworldR_fire_cpp",                             (DL_FUNC) &_epiworldR_fire_cpp,                              4},
     {"_epiworldR_get_active_cases_cpp",                 (DL_FUNC) &_epiworldR_get_active_cases_cpp,                  2},
     {"_epiworldR_get_agent_cpp",                        (DL_FUNC) &_epiworldR_get_agent_cpp,                         2},
@@ -1429,6 +1496,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_current_proposed_stats_cpp",       (DL_FUNC) &_epiworldR_get_current_proposed_stats_cpp,        1},
     {"_epiworldR_get_diseases_cpp",                     (DL_FUNC) &_epiworldR_get_diseases_cpp,                      1},
     {"_epiworldR_get_edgelist_cpp",                     (DL_FUNC) &_epiworldR_get_edgelist_cpp,                      1},
+    {"_epiworldR_get_excluded_statuses_cpp",            (DL_FUNC) &_epiworldR_get_excluded_statuses_cpp,             1},
     {"_epiworldR_get_generation_time_cpp",              (DL_FUNC) &_epiworldR_get_generation_time_cpp,               2},
     {"_epiworldR_get_group_cpp",                        (DL_FUNC) &_epiworldR_get_group_cpp,                         2},
     {"_epiworldR_get_hist_tool_cpp",                    (DL_FUNC) &_epiworldR_get_hist_tool_cpp,                     2},
@@ -1443,6 +1511,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_get_layer_cpp",                        (DL_FUNC) &_epiworldR_get_layer_cpp,                         2},
     {"_epiworldR_get_layer_kind_cpp",                   (DL_FUNC) &_epiworldR_get_layer_kind_cpp,                    1},
     {"_epiworldR_get_layer_name_cpp",                   (DL_FUNC) &_epiworldR_get_layer_name_cpp,                    1},
+    {"_epiworldR_get_layer_targets_tool_cpp",           (DL_FUNC) &_epiworldR_get_layer_targets_tool_cpp,            1},
     {"_epiworldR_get_mean_params_cpp",                  (DL_FUNC) &_epiworldR_get_mean_params_cpp,                   1},
     {"_epiworldR_get_mean_stats_cpp",                   (DL_FUNC) &_epiworldR_get_mean_stats_cpp,                    1},
     {"_epiworldR_get_model_info_cpp",                   (DL_FUNC) &_epiworldR_get_model_info_cpp,                    1},
@@ -1487,6 +1556,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_has_edge_cpp",                         (DL_FUNC) &_epiworldR_has_edge_cpp,                          3},
     {"_epiworldR_has_tool_cpp",                         (DL_FUNC) &_epiworldR_has_tool_cpp,                          2},
     {"_epiworldR_has_virus_cpp",                        (DL_FUNC) &_epiworldR_has_virus_cpp,                         2},
+    {"_epiworldR_is_layer_closed_cpp",                  (DL_FUNC) &_epiworldR_is_layer_closed_cpp,                   1},
     {"_epiworldR_is_tracing_cpp",                       (DL_FUNC) &_epiworldR_is_tracing_cpp,                        1},
     {"_epiworldR_layer_mixing_cpp",                     (DL_FUNC) &_epiworldR_layer_mixing_cpp,                      1},
     {"_epiworldR_layer_network_generator_cpp",          (DL_FUNC) &_epiworldR_layer_network_generator_cpp,           2},
@@ -1505,6 +1575,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_queuing_off_cpp",                      (DL_FUNC) &_epiworldR_queuing_off_cpp,                       1},
     {"_epiworldR_queuing_on_cpp",                       (DL_FUNC) &_epiworldR_queuing_on_cpp,                        1},
     {"_epiworldR_rate_fun_logit_cpp",                   (DL_FUNC) &_epiworldR_rate_fun_logit_cpp,                    3},
+    {"_epiworldR_reopen_layer_cpp",                     (DL_FUNC) &_epiworldR_reopen_layer_cpp,                      1},
     {"_epiworldR_rewire_degseq_cpp",                    (DL_FUNC) &_epiworldR_rewire_degseq_cpp,                     1},
     {"_epiworldR_rm_edge_cpp",                          (DL_FUNC) &_epiworldR_rm_edge_cpp,                           3},
     {"_epiworldR_rm_globalevent_cpp",                   (DL_FUNC) &_epiworldR_rm_globalevent_cpp,                    2},
@@ -1525,6 +1596,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_epiworldR_set_groups_cpp",                       (DL_FUNC) &_epiworldR_set_groups_cpp,                        3},
     {"_epiworldR_set_initial_cpp",                      (DL_FUNC) &_epiworldR_set_initial_cpp,                       3},
     {"_epiworldR_set_kernel_fun_cpp",                   (DL_FUNC) &_epiworldR_set_kernel_fun_cpp,                    2},
+    {"_epiworldR_set_layer_targets_tool_cpp",           (DL_FUNC) &_epiworldR_set_layer_targets_tool_cpp,            2},
     {"_epiworldR_set_name_cpp",                         (DL_FUNC) &_epiworldR_set_name_cpp,                          2},
     {"_epiworldR_set_name_tool_cpp",                    (DL_FUNC) &_epiworldR_set_name_tool_cpp,                     2},
     {"_epiworldR_set_name_virus_cpp",                   (DL_FUNC) &_epiworldR_set_name_virus_cpp,                    2},

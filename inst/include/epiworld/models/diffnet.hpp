@@ -83,10 +83,20 @@ inline ModelDiffNet::ModelDiffNet(
         ModelDiffNet * diffmodel = model_cast<ModelDiffNet>(&m);
 
         size_t n_neighbors = 0u;
-        // Every network layer, in the order the layers were added
+        // Every network layer, in the order the layers were added: open, and
+        // without the agent or the neighbor out of it
         for (auto * net : m.get_network_layers())
+        {
+
+        if (net->is_closed() || net->excludes_agent(static_cast< size_t >(agent.get_id())))
+            continue;
+
+        const int layer_id = static_cast< int >(net->get_id());
         for (auto * neighbor : net->neighbors_view(static_cast< size_t >(agent.get_id())))
         {
+
+            if (net->excludes_agent(static_cast< size_t >(neighbor->get_id())))
+                continue;
 
             ++n_neighbors;
 
@@ -99,8 +109,10 @@ inline ModelDiffNet::ModelDiffNet(
                 innovations[vid] = &(*v);
 
             exposure[vid] +=
-                (1.0 - agent.get_susceptibility_reduction(v, m)) *
-                (1.0 - agent.get_transmission_reduction(v, m));
+                (1.0 - agent.get_susceptibility_reduction(v, m, layer_id)) *
+                (1.0 - neighbor->get_transmission_reduction(v, m, layer_id));
+
+        }
 
         }
 

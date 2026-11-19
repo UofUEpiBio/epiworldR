@@ -121,9 +121,9 @@ inline size_t Model::add_exposures_impl(
             continue;
 
         epiworld_double p =
-            (1.0 - agent->get_susceptibility_reduction(v, *this)) *
+            (1.0 - agent->get_susceptibility_reduction(v, *this, layer_id)) *
             p_inf *
-            (1.0 - contact.get_transmission_reduction(v, *this))
+            (1.0 - contact.get_transmission_reduction(v, *this, layer_id))
             ;
 
         // The weight scales the odds p / (1 - p); a certain exposure stays so
@@ -180,16 +180,22 @@ inline Virus * Model::sample_virus(Agent * agent)
         );
 
     const size_t id = static_cast< size_t >(agent->get_id());
-    const std::vector< bool > * exclude =
-        state_not_infectious.empty() ? nullptr : &state_not_infectious;
+    const epiworld_fast_uint state = agent_state[id];
 
     size_t n_contacts = 0u;
     size_t n_exposures = 0u;
     for (const auto & layer : layers)
     {
 
+        // A closed layer, or one whose statuses leave the agent out, has no
+        // contacts for it (the states out of every layer are the layers' to
+        // handle, as before)
+        const std::vector< char > * out = layer->own_exclusions();
+        if (layer->is_closed() || ((out != nullptr) && (*out)[state]))
+            continue;
+
         layer_contacts.clear();
-        const size_t n = layer->sample(id, *this, exclude, layer_contacts);
+        const size_t n = layer->sample(id, *this, layer->silent(), layer_contacts);
         if (n == 0u)
             continue;
 
@@ -397,6 +403,12 @@ inline void Model::transmission_push_impl()
             for (auto * net : network_layers)
             {
 
+                // A closed layer, or one whose statuses leave the carrier out,
+                // reaches no one (a carrier out of every layer is no source)
+                const std::vector< char > * net_out = net->own_exclusions();
+                if (net->is_closed() || ((net_out != nullptr) && (*net_out)[agent_state[j_id]]))
+                    continue;
+
                 // Layer rules, as add_exposures() applies them in a pull
                 const bool weighted = net->has_weight();
                 const epiworld_double weight = weighted ?
@@ -411,7 +423,7 @@ inline void Model::transmission_push_impl()
                     // of the states rules them out without loading the agent.
                     const size_t t = agent_state[i_id];
 
-                    if (!push_pushable[t])
+                    if (!push_pushable[t] || ((net_out != nullptr) && (*net_out)[t]))
                         continue;
 
                     Agent & i = population[i_id];
@@ -443,9 +455,9 @@ inline void Model::transmission_push_impl()
 
                     // Exactly the expression the pull uses, in the same order.
                     epiworld_double p =
-                        (1.0 - i.get_susceptibility_reduction(v, *this)) *
+                        (1.0 - i.get_susceptibility_reduction(v, *this, layer_id)) *
                         nh_infection_prob(i, *v, tracks[0u]) *
-                        (1.0 - j.get_transmission_reduction(v, *this))
+                        (1.0 - j.get_transmission_reduction(v, *this, layer_id))
                         ;
 
                     // The weight scales the odds; a certain exposure stays so

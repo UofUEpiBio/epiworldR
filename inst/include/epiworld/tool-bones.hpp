@@ -33,6 +33,28 @@ struct DiseaseTargets {
 };
 
 /**
+ * @brief The contact layers a tool's contact effects act in, by name (see
+ * `Tool::add_layer_target()`).
+ */
+struct LayerTargets {
+    std::vector< std::string > names; ///< Empty: every layer
+    uint64_t mask = ~uint64_t(0);     ///< Bit `l`: layer `l` (once resolved)
+    bool resolved = false;            ///< Whether `mask` matches `names`
+
+    void add(std::string layer);
+
+    /// Makes the names a mask (an unknown layer is an error naming `owner`).
+    void resolve(Model & model, const std::string & owner);
+
+    /// Whether it acts through layer `layer` (-1: not through a layer, where
+    /// only a tool without layer targets acts). With names, `resolve()` must
+    /// have run since they last changed (`Tool::acts_in()` checks).
+    bool has(int layer) const;
+
+    bool operator==(const LayerTargets & o) const { return names == o.names; }
+};
+
+/**
  * @brief Tools for defending the agent against the virus
  * 
  */
@@ -57,6 +79,7 @@ protected:
 
 
     DiseaseTargets targets_; ///< The diseases it acts on (see add_target())
+    LayerTargets layers_;    ///< The layers its contact effects act in
 
 
     void set_agent(Agent * p, size_t idx);
@@ -124,6 +147,32 @@ public:
     const std::vector< std::string > & get_targets() const { return targets_.names; }
     void clear_targets() { targets_ = DiseaseTargets(); }
     bool targets(const Virus & v) const { return targets_.has(v); }
+    ///@}
+
+    /**
+     * @name Layer targets
+     *
+     * @details A tool's contact effects (susceptibility and transmission
+     * reduction) act on the contacts through the layers it targets, by the
+     * layer's name (see `Model::add_layer()`): e.g., a mask worn at work and
+     * school, not at home. Without layer targets, they act in every layer.
+     * The recovery enhancer and death reduction are not about contacts, so
+     * layer targets leave them alone. An infection not drawn from a layer
+     * (e.g., given by code) sees only the tools without layer targets. A
+     * name the model has no layer of is an error at the start of the run; at
+     * most 64 layers can be targeted (ids 0 to 63).
+     *
+     * @param layer The name of a layer of the model.
+     */
+    ///@{
+    void add_layer_target(std::string layer);
+    void set_layer_targets(std::vector< std::string > layers);
+    const std::vector< std::string > & get_layer_targets() const { return layers_.names; }
+    void clear_layer_targets() { layers_ = LayerTargets(); }
+    /// Whether its contact effects act through layer `layer` (-1: no layer).
+    /// With layer targets, an error until they are resolved: when the run
+    /// starts, or when the tool is added to a running model.
+    bool acts_in(int layer) const;
     ///@}
 
     void set_name(std::string name);

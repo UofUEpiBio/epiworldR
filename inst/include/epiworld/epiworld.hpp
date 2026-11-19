@@ -89,6 +89,7 @@ namespace epiworld {
     #include "contacttracing-bones.hpp"
     #include "model-bones.hpp"
     #include "contactlayer-bones.hpp"
+    #include "contactlayer-meat.hpp"
     #include "agentssample-bones.hpp"
     #include "globalevents/quarantinetrigger-bones.hpp"
     #include "globalevents/bubbles-bones.hpp"

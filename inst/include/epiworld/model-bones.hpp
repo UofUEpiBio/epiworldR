@@ -75,6 +75,7 @@ class Model {
     friend class Queue;
     friend class layer::Network;
     friend class layer::Mixing;
+    friend class ContactLayer;
 
 protected:
 
@@ -579,11 +580,14 @@ protected:
      * the susceptibility for a given virus.
      *
      */
+    ///
+    /// The contact effects take the layer of the contact (-1: none; see
+    /// `Tool::add_layer_target()`).
     virtual epiworld_double susceptibility_reduction_mixer(
-        Agent * agent, VirusPtr & virus
+        Agent * agent, VirusPtr & virus, int layer = -1
     );
     virtual epiworld_double transmission_reduction_mixer(
-        Agent * agent, VirusPtr & virus
+        Agent * agent, VirusPtr & virus, int layer = -1
     );
     virtual epiworld_double recovery_enhancer_mixer(
         Agent * agent, VirusPtr & virus
