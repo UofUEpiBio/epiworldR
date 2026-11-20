@@ -1,4 +1,4 @@
-# epiworldR 1.0.0-0 (development)
+# epiworldR 1.0.0-1 (development)
 
 Tracks the epiworld 1.0.0 development branch (`v1-layers`), where contacts
 come from contact layers. This is a breaking release: code written for 0.x
@@ -6,25 +6,29 @@ needs the changes below, and removed functions are defunct (calling them is an
 error that names the replacement; see `?"epiworldR-defunct"`).
 
 * Exposures are now independent (epiworld Phase 6a, UofUEpiBio/epiworld#388).
-  A susceptible agent escapes infection with probability `prod(1 - p)` over
-  its infected contacts in every layer. If it is infected, the infector is
-  drawn in proportion to its hazard `-log(1 - p)`. Until now the draw was
+  A susceptible agent escapes infection with probability `prod((1 - p)^w)`
+  over its infected contacts in every layer, where `w` is the weight of the
+  contact's layer (1 unless set). If it is infected, the infector is drawn in
+  proportion to its hazard `-w log(1 - p)` (uniformly among the contacts with
+  `p = 1`, if any). No transmission mode reproduces earlier runs, `"pull"`
+  included. Until now the draw was
   conditioned on at most one transmission (`1 / (1 + sum of odds)`), which
   lowered the probability of infection as contacts piled up. A layer's
   weight (`set_weight()`) now multiplies the hazard, so a contact counts as
   `1 - (1 - p)^weight`; before, it scaled the odds. **Results change**:
   infection is more likely when agents have several infected contacts, so
   parameters calibrated with 0.x should be recalibrated. The C++ headers are
-  re-vendored (epiworld `bb78cbbd`).
+  re-vendored (epiworld `bb78cbbd`), and the version is `1.0.0-1`, so
+  that packages that link to epiworldR (e.g., measles) can require this rule.
 
 * Models with a mixing layer can be pushed (`set_transmission_mode()`): an
-  infected agent adds its odds to the agents a mixing layer draws for it,
+  infected agent adds its infection hazards to the agents a mixing layer draws for it,
   each as likely as their own pull would draw it, so the distribution of
   infections is the same. The default, `"auto"`, now pushes them while few
   agents are infected, which is much faster with a contact matrix; results
   of models with a mixing layer change (same distribution, other random
-  numbers), and `set_transmission_mode(model, "pull")` reproduces the old
-  runs. Also, a run that ends in an error no longer leaves the model unable
+  numbers); `set_transmission_mode(model, "pull")` gave the old runs back
+  until independent exposures (above) changed results in both modes. Also, a run that ends in an error no longer leaves the model unable
   to take settings between runs. The C++ headers are re-vendored (epiworld
   `da6bdcb6`, Phases 4d and 5: UofUEpiBio/epiworld#384, #386).
 
@@ -204,8 +208,8 @@ error that names the replacement; see `?"epiworldR-defunct"`).
 
 * `get_transmissions()` gains a `layer` column: the id of the layer the
   infection came through (`-1` for seeds), which `get_layer(model, id)`
-  retrieves. `set_weight(layer, param)` scales the odds of infection through
-  a layer by a model parameter, and `add_virus_target(layer, virus)`
+  retrieves. `set_weight(layer, param)` multiplies the hazard of infection
+  through a layer by a model parameter, and `add_virus_target(layer, virus)`
   restricts a layer to some viruses.
 
 * A layer object is the model's layer: `get_layer(model, name)` retrieves it,

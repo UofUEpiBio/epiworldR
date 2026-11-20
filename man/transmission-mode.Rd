@@ -20,7 +20,8 @@ get_transmission_kappa(model)
 \item{model}{An \code{epiworld_model} object.}
 
 \item{mode}{Character scalar. One of \code{"auto"}, \code{"push"}, or \code{"pull"}.
-\code{"pull"} reproduces the random streams of epiworld 0.15 and earlier.}
+\code{"pull"} draws every contact from the susceptible side, as epiworld 0.x
+did.}
 
 \item{kappa}{Numeric scalar. Threshold used by \code{"auto"}; a finite,
 non-negative number. Smaller values pull more often. When \code{NULL}, the
@@ -60,8 +61,9 @@ its own with contact probabilities), on both sides.
 
 Only susceptible states that use epiworld's default sampler can be pushed.
 Models with a directed network always pull. Models with a mixing layer
-(see \code{\link[=layer_mixing]{layer_mixing()}}) may push too: set \code{"pull"} to reproduce runs from
-before that change.
+(see \code{\link[=layer_mixing]{layer_mixing()}}) may push too. No mode reproduces runs of earlier
+versions: since epiworld 1.0.0 every exposure is independent, which
+changes results in both modes.
 }
 \examples{
 model <- ModelSIR(

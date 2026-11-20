@@ -22,12 +22,14 @@
 #'
 #' Only susceptible states that use epiworld's default sampler can be pushed.
 #' Models with a directed network always pull. Models with a mixing layer
-#' (see [layer_mixing()]) may push too: set `"pull"` to reproduce runs from
-#' before that change.
+#' (see [layer_mixing()]) may push too. No mode reproduces runs of earlier
+#' versions: since epiworld 1.0.0 every exposure is independent, which
+#' changes results in both modes.
 #'
 #' @param model An `epiworld_model` object.
 #' @param mode Character scalar. One of `"auto"`, `"push"`, or `"pull"`.
-#' `"pull"` reproduces the random streams of epiworld 0.15 and earlier.
+#' `"pull"` draws every contact from the susceptible side, as epiworld 0.x
+#' did.
 #' @param kappa Numeric scalar. Threshold used by `"auto"`; a finite,
 #' non-negative number. Smaller values pull more often. When `NULL`, the
 #' default of the C++ library is used (0.5).

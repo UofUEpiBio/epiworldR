@@ -61,15 +61,20 @@ Other steps included in `epiworld` but not in `epiworldR` are the network rewiri
 
 At each step of the simulation, a susceptible agent $j$ is exposed
 independently to each of its infected contacts $i$, and acquires the disease
-from at most one of them. It escapes infection with probability
-$\prod_i (1 - p_{ij})$, and if infected, the infector is $i$ with probability
-proportional to its hazard $\lambda_{ij} = -\log(1 - p_{ij})$:
+from at most one of them. Each contact has a hazard
+$\lambda_{ij} = -w_{ij} \log(1 - p_{ij})$, where $w_{ij}$ is the weight of
+the contact's layer (1 unless set with `set_weight()`), so it transmits with
+probability $1 - (1 - p_{ij})^{w_{ij}}$. The agent escapes infection with
+probability $\exp(-\sum_k \lambda_{kj}) = \prod_k (1 - p_{kj})^{w_{kj}}$,
+and if infected, the infector is $i$ with probability proportional to its
+hazard:
 
 $$
-P(i\to j) = \frac{\lambda_{ij}}{\sum_k \lambda_{kj}} \left(1 - \prod_k\left(1 - p_{kj}\right)\right)
+P(i\to j) = \frac{\lambda_{ij}}{\sum_k \lambda_{kj}} \left(1 - \prod_k\left(1 - p_{kj}\right)^{w_{kj}}\right)
 $$
 
-A layer's weight $w$ multiplies the hazards of its contacts. Before 1.0.0,
+A contact with $p_{ij} = 1$ has an infinite hazard: the agent is infected for
+certain, and the infector is drawn uniformly among such contacts. Before 1.0.0,
 `epiworldR` conditioned the draw on at most one transmission, which lowers
 the probability of infection as infected contacts pile up.
 
