@@ -215,9 +215,10 @@ schedule is a setting: it lasts across runs and is set between runs.
 \code{clear_schedule()} removes it, \code{has_schedule()} says whether there is one,
 and \code{is_scheduled()} whether the layer is on its schedule on a given day.
 \item \code{set_weight()} ties the layer's weight to a model parameter (add it with
-\code{\link[=add_param]{add_param()}}). The odds of an infection through the layer's contacts are
-multiplied by the weight: 0 turns the layer off, 1 changes nothing, and a
-layer without a weight has weight 1.
+\code{\link[=add_param]{add_param()}}). The hazard of an infection through the layer's contacts,
+\code{-log(1 - p)}, is multiplied by the weight, so a contact of probability \code{p}
+counts as \code{1 - (1 - p)^weight}: 0 turns the layer off, 1 changes nothing, 2
+is two independent exposures, and a layer without a weight has weight 1.
 \item \code{add_target_layer()} restricts the layer to some diseases, by name (see
 \code{\link[=get_diseases]{get_diseases()}}), as \code{\link[=add_target_tool]{add_target_tool()}} does for tools; the names are
 checked when the model runs. A layer without targets spreads every disease.

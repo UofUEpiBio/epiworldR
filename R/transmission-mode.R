@@ -4,7 +4,7 @@
 #'
 #' In a *pull* step, each susceptible agent draws its contacts from every
 #' layer: its neighbors in a network, the agents it meets in a mixing layer. In
-#' a *push* step, each infected agent adds its infection odds to the
+#' a *push* step, each infected agent adds its infection hazards to the
 #' susceptible agents it reaches: its neighbors, and the agents a mixing layer
 #' draws for it, each as likely as their own pull would draw it. Both give the
 #' same distribution of infections; they differ only in speed and in the
@@ -22,12 +22,14 @@
 #'
 #' Only susceptible states that use epiworld's default sampler can be pushed.
 #' Models with a directed network always pull. Models with a mixing layer
-#' (see [layer_mixing()]) may push too: set `"pull"` to reproduce runs from
-#' before that change.
+#' (see [layer_mixing()]) may push too. No mode reproduces runs of earlier
+#' versions: since epiworld 1.0.0 every exposure is independent, which
+#' changes results in both modes.
 #'
 #' @param model An `epiworld_model` object.
 #' @param mode Character scalar. One of `"auto"`, `"push"`, or `"pull"`.
-#' `"pull"` reproduces the random streams of epiworld 0.15 and earlier.
+#' `"pull"` draws every contact from the susceptible side, as epiworld 0.x
+#' did.
 #' @param kappa Numeric scalar. Threshold used by `"auto"`; a finite,
 #' non-negative number. Smaller values pull more often. When `NULL`, the
 #' default of the C++ library is used (0.5).
