@@ -1,4 +1,4 @@
-# epiworldR 1.0.0-1 (development)
+# epiworldR 1.0.0-0 (development)
 
 Tracks the epiworld 1.0.0 development branch (`v1-layers`), where contacts
 come from contact layers. This is a breaking release: code written for 0.x
@@ -18,8 +18,7 @@ error that names the replacement; see `?"epiworldR-defunct"`).
   `1 - (1 - p)^weight`; before, it scaled the odds. **Results change**:
   infection is more likely when agents have several infected contacts, so
   parameters calibrated with 0.x should be recalibrated. The C++ headers are
-  re-vendored (epiworld `bb78cbbd`), and the version is `1.0.0-1`, so
-  that packages that link to epiworldR (e.g., measles) can require this rule.
+  re-vendored (epiworld `bb78cbbd`).
 
 * Models with a mixing layer can be pushed (`set_transmission_mode()`): an
   infected agent adds its infection hazards to the agents a mixing layer draws for it,
